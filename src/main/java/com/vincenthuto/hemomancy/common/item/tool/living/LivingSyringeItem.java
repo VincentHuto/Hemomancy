@@ -122,7 +122,7 @@ public class LivingSyringeItem extends LivingItemItem {
 		vials.set(emptySlot, sampledVial);
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);
-		player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
+		player.playSound(SoundEvents.BOTTLE_FILL, 2.0F, 0.8F);
 		PacketHandler.sendLivingToolBreakParticles(target.position().add(0, target.getBbHeight() * 0.5, 0),
 				EntityParticleUtils.getColorFromPredicate(EntityParticleUtils.getEntityPredicate(target)),
 				16, player.level().dimension());
@@ -146,7 +146,7 @@ public class LivingSyringeItem extends LivingItemItem {
 				if (candidate.isEmpty()) {
 					player.getInventory().setItem(i, ItemStack.EMPTY);
 				}
-				player.playSound(SoundEvents.ITEM_FRAME_ADD_ITEM, 0.8F, 1.0F);
+				player.playSound(SoundEvents.ITEM_FRAME_ADD_ITEM, 2.0F, 0.7F);
 				return true;
 			}
 		}
@@ -162,7 +162,7 @@ public class LivingSyringeItem extends LivingItemItem {
 		if (!player.getInventory().add(rack)) {
 			player.drop(rack, false);
 		}
-		player.playSound(SoundEvents.ITEM_FRAME_REMOVE_ITEM, 0.8F, 1.0F);
+		player.playSound(SoundEvents.ITEM_FRAME_REMOVE_ITEM, 2.0F, 0.7F);
 		return true;
 	}
 

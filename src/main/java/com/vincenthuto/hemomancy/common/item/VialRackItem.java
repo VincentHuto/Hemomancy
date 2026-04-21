@@ -11,6 +11,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -42,7 +43,11 @@ public class VialRackItem extends Item {
 					tooltip.add(slotLabel.copy().append(
 							Component.translatable("item.hemomancy.vial_rack.slot_empty").withStyle(ChatFormatting.GRAY)));
 				} else {
-					tooltip.add(slotLabel.copy().append(vial.getHoverName().copy().withStyle(ChatFormatting.RED)));
+					EntityType<?> entityType = BloodVialItem.getEntityType(vial);
+					String entityName = entityType != null
+							? net.minecraft.client.resources.language.I18n.get(entityType.getDescriptionId()) + " Sample"
+							: vial.getHoverName().getString();
+					tooltip.add(slotLabel.copy().append(Component.literal(entityName).withStyle(ChatFormatting.RED)));
 				}
 			}
 		} else {
