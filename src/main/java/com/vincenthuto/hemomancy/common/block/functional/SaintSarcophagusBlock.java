@@ -380,9 +380,7 @@ return InteractionResult.PASS;
 		// Drain blood and record offering
 		volume.drain(BLOOD_COST_PER_OFFERING);
 		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> serverPlayer),
-				new BloodVolumeServerPacket(volume));
+			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
 		sarcophagus.addOffering();
 

@@ -73,9 +73,7 @@ public class VitalReservoirManip extends BloodManipulation {
 
 		// Sync blood volume to client
 		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> serverPlayer),
-					new BloodVolumeServerPacket(volume));
+			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
 
 		world.playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 0.6f);

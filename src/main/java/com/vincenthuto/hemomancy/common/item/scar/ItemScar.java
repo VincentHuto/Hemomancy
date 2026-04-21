@@ -87,9 +87,7 @@ public class ItemScar extends Item implements IScar {
 				if (coven != null) {
 					coven.setTendencyAlignment(getAssignedTendency(), getDeepenAmount());
 					Player playerEnt = (Player) player;
-					PacketHandler.CHANNELBLOODTENDENCY.send(
-							PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEnt),
-							new BloodTendencyServerPacket(coven.getTendency()));
+					PacketHandler.sendToPlayer((ServerPlayer) playerEnt, new BloodTendencyServerPacket(coven.getTendency()));
 				}
 
 				for (ScarModifier mod : passiveModifiers) {
@@ -116,9 +114,7 @@ public class ItemScar extends Item implements IScar {
 				if (coven != null) {
 					coven.setTendencyAlignment(getAssignedTendency(), -getDeepenAmount());
 					Player playerEnt = (Player) player;
-					PacketHandler.CHANNELBLOODTENDENCY.send(
-							PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEnt),
-							new BloodTendencyServerPacket(coven.getTendency()));
+					PacketHandler.sendToPlayer((ServerPlayer) playerEnt, new BloodTendencyServerPacket(coven.getTendency()));
 				}
 
 				for (ScarModifier mod : passiveModifiers) {

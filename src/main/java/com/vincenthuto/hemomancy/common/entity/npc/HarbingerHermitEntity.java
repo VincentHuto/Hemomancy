@@ -90,9 +90,7 @@ public class HarbingerHermitEntity extends PathfinderMob {
 
             DialogueTree tree = HarbingerHermitDialogueTrees.forDegree(degree, hasActiveBlood, this.getId());
 
-            PacketHandler.CHANNELBLOODVOLUME.send(
-                    PacketDistributor.PLAYER.with(() -> serverPlayer),
-                    new OpenDialoguePacket(tree));
+            PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }

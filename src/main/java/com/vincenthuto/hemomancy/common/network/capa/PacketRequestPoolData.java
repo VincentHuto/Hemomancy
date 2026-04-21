@@ -40,9 +40,7 @@ public class PacketRequestPoolData {
 					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 					Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 					if (globalLine != null) {
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> player),
-								new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+						PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
 										globalLine.getMaxBloodVolume(),
 										globalLine.getPlayerUUIDS().size()));
 					}

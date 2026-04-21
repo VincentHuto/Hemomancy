@@ -130,9 +130,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 						float damageMod = 50f;
 						if (playerVolume.getBloodVolume() > damageMod) {
 							playerVolume.drain(damageMod);
-							PacketHandler.CHANNELBLOODVOLUME.send(
-									PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-									new BloodVolumeServerPacket(playerVolume));
+							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 						} else {
 							playerVolume.drain(damageMod);
 							crossbow.hurtAndBreak(2050, shooter, (p_220017_1_) -> {

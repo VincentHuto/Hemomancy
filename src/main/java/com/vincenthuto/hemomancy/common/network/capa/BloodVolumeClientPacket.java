@@ -28,8 +28,7 @@ public class BloodVolumeClientPacket {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						.orElseThrow(IllegalStateException::new);
 				// Send message back to the client to set the information
-				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),
-						new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer(sender, new BloodVolumeServerPacket(volume));
 			}
 		});
 		ctx.get().setPacketHandled(true);

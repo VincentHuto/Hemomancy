@@ -33,8 +33,7 @@ public class SummonAvatarManip extends BloodManipulation {
 		if (playerIn.isAddedToWorld()) {
 			HemoCapabilityAccess.getKnownManipulations(playerIn).ifPresent((manip) -> {
 				manip.setAvatarActive(!manip.isAvatarActive());
-				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new KnownManipulationServerPacket(manip));
+				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(manip));
 				List<ServerPlayer> receivers = new ArrayList<>(((ServerLevel) playerIn.level()).players());
 				KnownManipulationEvents.syncAvatar(playerIn, receivers, manip.isAvatarActive());
 			});

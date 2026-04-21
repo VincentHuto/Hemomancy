@@ -90,9 +90,7 @@ public class ExsanguinateManip extends BloodManipulation {
 			double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
 			volume.addBloodVolume(toRestore);
 			if (player instanceof ServerPlayer serverPlayer) {
-				PacketHandler.CHANNELBLOODVOLUME.send(
-						PacketDistributor.PLAYER.with(() -> serverPlayer),
-						new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 			}
 		}
 

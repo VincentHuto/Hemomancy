@@ -160,9 +160,7 @@ public class QliphothBloomEvents {
 		// ── Notify the bloom owner via Fungal Whisper dialogue ──
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(bloom.ownerUUID());
 		if (owner != null) {
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> owner),
-					new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped)));
+			PacketHandler.sendToPlayer(owner, new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped)));
 		}
 	}
 

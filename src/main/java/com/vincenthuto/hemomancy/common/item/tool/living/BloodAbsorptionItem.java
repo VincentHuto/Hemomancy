@@ -118,9 +118,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 					livingTarget.hurt(player.damageSources().generic(), dam);
 					if (!worldIn.isClientSide) {
 						volume.fill(dam);
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new BloodVolumeServerPacket(volume));
+						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 					}
 				}
 			});

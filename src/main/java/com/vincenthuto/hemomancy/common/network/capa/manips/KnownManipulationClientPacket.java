@@ -27,8 +27,7 @@ public class KnownManipulationClientPacket {
 			if (sender != null) {
 				IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(sender)
 						.orElseThrow(IllegalStateException::new);
-				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> sender),
-						new KnownManipulationServerPacket(manips));
+				PacketHandler.sendToPlayer(sender, new KnownManipulationServerPacket(manips));
 			}
 		});
 		ctx.get().setPacketHandled(true);

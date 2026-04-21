@@ -130,7 +130,7 @@ public class RadialChooseManipScreen extends Screen {
 						Component.literal(c.getProperName())) {
 					@Override
 					public boolean onClick() {
-						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UpdateCurrentManipPacket(slot));
+						PacketHandler.sendToServer(new UpdateCurrentManipPacket(slot));
 						RadialChooseManipScreen.this.menu.close();
 						return true;
 					}

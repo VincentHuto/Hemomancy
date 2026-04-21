@@ -155,7 +155,7 @@ public class VisceralMirrorScreen extends Screen {
 		// If ritual is active, send cancel
 		if (phase != VisceralMirrorBlockEntity.RitualPhase.IDLE
 				&& phase != VisceralMirrorBlockEntity.RitualPhase.COMPLETE) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new VisceralMirrorCancelPacket(mirrorPos));
+			PacketHandler.sendToServer(new VisceralMirrorCancelPacket(mirrorPos));
 		}
 		super.onClose();
 	}
@@ -480,7 +480,7 @@ public class VisceralMirrorScreen extends Screen {
 						&& organ.getTier() <= degree
 						&& bloodVolume >= organ.getTier() * 500.0;
 				if (canExtract) {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+					PacketHandler.sendToServer(
 							new VisceralMirrorExtractPacket(mirrorPos, selectedOrgan));
 					return true;
 				}
@@ -491,7 +491,7 @@ public class VisceralMirrorScreen extends Screen {
 		if (cancelBtnW > 0 && mx >= cancelBtnX && mx < cancelBtnX + cancelBtnW
 				&& my >= cancelBtnY && my < cancelBtnY + cancelBtnH) {
 			if (isRitualActive()) {
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+				PacketHandler.sendToServer(
 						new VisceralMirrorCancelPacket(mirrorPos));
 				return true;
 			}

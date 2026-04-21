@@ -148,9 +148,7 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId());
             }
 
-            PacketHandler.CHANNELBLOODVOLUME.send(
-                    PacketDistributor.PLAYER.with(() -> serverPlayer),
-                    new OpenDialoguePacket(tree));
+            PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }

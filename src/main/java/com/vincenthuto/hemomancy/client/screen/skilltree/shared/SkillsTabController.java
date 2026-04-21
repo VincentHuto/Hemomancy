@@ -240,7 +240,7 @@ public class SkillsTabController implements IProgressTab {
 
     private void tryUnlock(SkillPoint sp) {
         if (sp.isDegreeLocked(playerDegree)) return;
-        PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketUnlockSkill(sp.getId()));
+        PacketHandler.sendToServer(new PacketUnlockSkill(sp.getId()));
     }
 
     private static String getSkillInitial(SkillPoint sp) {

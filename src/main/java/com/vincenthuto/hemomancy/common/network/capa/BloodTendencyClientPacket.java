@@ -27,8 +27,7 @@ public class BloodTendencyClientPacket {
 			if (sender != null) {
 				IBloodTendency bloodTendency = HemoCapabilityAccess.getBloodTendency(sender)
 						.orElseThrow(IllegalStateException::new);
-				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> sender),
-						new BloodTendencyServerPacket(bloodTendency.getTendency()));
+				PacketHandler.sendToPlayer(sender, new BloodTendencyServerPacket(bloodTendency.getTendency()));
 			}
 		});
 		ctx.get().setPacketHandled(true);

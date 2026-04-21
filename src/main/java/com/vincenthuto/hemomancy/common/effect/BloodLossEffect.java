@@ -46,9 +46,7 @@ public class BloodLossEffect extends MobEffect {
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume != null) {
 						playerVolume.drain(0.5f * amplifier);
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-								new BloodVolumeServerPacket(playerVolume));
+						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 					}
 
 				}

@@ -276,8 +276,7 @@ public class EquippedMorphlingEvents {
 
 	public static void syncToClient(ServerPlayer player) {
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			PacketHandler.CHANNELMORPHLINGJAR.send(
-					PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
 					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling()));
 		});
 	}

@@ -83,8 +83,6 @@ public class FungalWhisperEvents {
 
 		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, variant);
 
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> serverPlayer),
-				new OpenDialoguePacket(tree));
+		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 	}
 }

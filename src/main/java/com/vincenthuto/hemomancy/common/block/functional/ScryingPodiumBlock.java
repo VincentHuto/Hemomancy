@@ -116,7 +116,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELSCARS.sendToServer(new PacketOpenScarsInv());
+				PacketHandler.sendToServer(new PacketOpenScarsInv());
 			}
 		} else {
 			if (!worldIn.isClientSide) {

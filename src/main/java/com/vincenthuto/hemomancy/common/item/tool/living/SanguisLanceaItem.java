@@ -72,13 +72,11 @@ public class SanguisLanceaItem extends LivingToolItem {
 		 * .orElseThrow(NullPointerException::new); float damageMod =
 		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
 		 * { playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayer) playerIn), new
+		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
 		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 		 * playerVolume.getBloodVolume())); } else {
 		 * playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayer) playerIn), new
+		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
 		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 		 * playerVolume.getBloodVolume())); stack.damageItem(getMaxDamage() + 10,
 		 * attacker, (p_220017_1_) -> {

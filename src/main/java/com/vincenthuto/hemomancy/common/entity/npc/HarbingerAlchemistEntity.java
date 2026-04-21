@@ -101,9 +101,7 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId());
             }
 
-            PacketHandler.CHANNELBLOODVOLUME.send(
-                    PacketDistributor.PLAYER.with(() -> serverPlayer),
-                    new OpenDialoguePacket(tree));
+            PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }

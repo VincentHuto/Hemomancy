@@ -225,16 +225,14 @@ public class VascularSystemEvents {
 	// ───── Sync & Lifecycle ─────
 
 	public static void syncVascular(ServerPlayer player, IVascularSystem vascular) {
-		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new VascularSystemServerPacket(vascular.getVascularSystem()));
+		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(vascular.getVascularSystem()));
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
-		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new VascularSystemServerPacket(BloodFlow));
+		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(BloodFlow));
 	}
 
 	@SubscribeEvent
@@ -255,8 +253,7 @@ public class VascularSystemEvents {
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
-		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new VascularSystemServerPacket(BloodFlow));
+		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(BloodFlow));
 	}
 
 	@SubscribeEvent
@@ -266,8 +263,7 @@ public class VascularSystemEvents {
 			if (!player.getCommandSenderWorld().isClientSide) {
 				IVascularSystem section = HemoCapabilityAccess.getVascularSystem(player)
 						.orElseThrow(IllegalArgumentException::new);
-				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new VascularSystemServerPacket(section.getVascularSystem()));
+				PacketHandler.sendToPlayer((ServerPlayer) player, new VascularSystemServerPacket(section.getVascularSystem()));
 			}
 		}
 	}

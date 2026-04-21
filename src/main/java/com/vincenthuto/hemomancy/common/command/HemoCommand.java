@@ -385,9 +385,7 @@ public class HemoCommand {
 	}
 
 	private static void syncSkills(ServerPlayer player) {
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new PacketSyncSkills(SkillPointInit.serializeAll()));
+		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
 	}
 
 	// ═══════════════════ Unstained Progression ═══════════════════
@@ -654,7 +652,7 @@ public class HemoCommand {
 			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.start")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		}
-		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(true));
+		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(true));
 		source.sendSuccess(() -> Component.literal("Blood Moon summoned.")
 				.withStyle(ChatFormatting.DARK_RED), true);
 		return 1;
@@ -672,7 +670,7 @@ public class HemoCommand {
 			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.end")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
-		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(false));
+		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(false));
 		source.sendSuccess(() -> Component.literal("Blood Moon cancelled.")
 				.withStyle(ChatFormatting.GRAY), true);
 		return 1;

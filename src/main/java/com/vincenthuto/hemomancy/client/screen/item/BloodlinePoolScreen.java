@@ -66,7 +66,7 @@ public class BloodlinePoolScreen extends Screen {
 
 	public static void openScreen() {
 		// Request fresh pool data from the server before opening
-		PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketRequestPoolData());
+		PacketHandler.sendToServer(new PacketRequestPoolData());
 		Minecraft.getInstance().setScreen(new BloodlinePoolScreen());
 	}
 
@@ -119,9 +119,9 @@ public class BloodlinePoolScreen extends Screen {
 			try {
 				double amount = Double.parseDouble(donateAmountField.getValue());
 				if (amount > 0) {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketLumpDonate(amount));
+					PacketHandler.sendToServer(new PacketLumpDonate(amount));
 					// Refresh pool data after a short delay (server processes first)
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketRequestPoolData());
+					PacketHandler.sendToServer(new PacketRequestPoolData());
 				}
 			} catch (NumberFormatException ignored) {
 			}
@@ -174,7 +174,7 @@ public class BloodlinePoolScreen extends Screen {
 				threshold = Double.parseDouble(autoDrawThresholdField.getValue()) / 100.0;
 			} catch (NumberFormatException ignored) {
 			}
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+			PacketHandler.sendToServer(
 					new PacketUpdatePoolSettings(trickle, rate, autoDraw, threshold));
 		}).bounds(widgetX, y, widgetW, 20).build();
 		addRenderableWidget(applySettingsButton);
@@ -190,7 +190,7 @@ public class BloodlinePoolScreen extends Screen {
 		sendMessageButton = Button.builder(Component.literal("Send"), btn -> {
 			String msg = messageField.getValue().trim();
 			if (!msg.isEmpty()) {
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodlineMessage(msg));
+				PacketHandler.sendToServer(new PacketBloodlineMessage(msg));
 				messageField.setValue("");
 			}
 		}).bounds(widgetX + widgetW - 54, y, 54, 18).build();
@@ -229,8 +229,8 @@ public class BloodlinePoolScreen extends Screen {
 						List<UUID> kickable = getKickableMembers(localPlayer);
 						if (!kickable.isEmpty()) {
 							int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
-							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
-							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketRequestPoolData());
+							PacketHandler.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
+							PacketHandler.sendToServer(new PacketRequestPoolData());
 							kickTargetIndex = 0;
 						}
 					}).bounds(kickButtonX, kickRowY, kickButtonW, 18).build();

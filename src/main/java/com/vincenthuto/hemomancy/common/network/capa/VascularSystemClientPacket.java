@@ -27,8 +27,7 @@ public class VascularSystemClientPacket {
 			if (sender != null) {
 				IVascularSystem BloodFlow = HemoCapabilityAccess.getVascularSystem(sender)
 						.orElseThrow(IllegalStateException::new);
-				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> sender),
-						new VascularSystemServerPacket(BloodFlow.getVascularSystem()));
+				PacketHandler.sendToPlayer(sender, new VascularSystemServerPacket(BloodFlow.getVascularSystem()));
 			}
 		});
 		ctx.get().setPacketHandled(true);

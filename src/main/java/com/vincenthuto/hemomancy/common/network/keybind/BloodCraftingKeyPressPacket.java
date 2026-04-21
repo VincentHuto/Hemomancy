@@ -182,9 +182,7 @@ public class BloodCraftingKeyPressPacket {
 												float halfD = (maxZ - minZ) / 2.0f + 0.5f;
 												float startRadius = Math.max(halfW, halfD) + 2.0f;
 												int animDuration = 30; // ticks (~1.5 seconds)
-												PacketHandler.CHANNELBLOODVOLUME.send(
-														PacketDistributor.ALL.noArg(),
-														new PacketBloodCraftRing(ringCenter, startRadius,
+												PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
 																centerY, animDuration));
 
 												// ── Drain blood and consume held item now ──
@@ -192,9 +190,7 @@ public class BloodCraftingKeyPressPacket {
 												player.setItemInHand(InteractionHand.MAIN_HAND,
 														new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
 												bloodVolume.drain(targetPattern.getBloodCost());
-												PacketHandler.CHANNELBLOODVOLUME.send(
-														PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-														new BloodVolumeServerPacket(bloodVolume));
+												PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
 
 												// ── Schedule block breaking + result drop after ring collapses ──
 												PendingBloodCraftManager.schedule(

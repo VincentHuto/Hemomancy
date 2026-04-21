@@ -103,9 +103,7 @@ public class BloodMoonEvents {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ServerLevel overworld = player.server.overworld();
 		boolean active = BloodMoonSavedData.get(overworld).isActive();
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new PacketSyncBloodMoon(active));
+		PacketHandler.sendToPlayer(player, new PacketSyncBloodMoon(active));
 	}
 
 	// ---------------------------------------------------------------------------
@@ -262,7 +260,6 @@ public class BloodMoonEvents {
 
 	private static void syncToAllPlayers(ServerLevel sLevel, boolean active) {
 		PacketSyncBloodMoon packet = new PacketSyncBloodMoon(active);
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.ALL.noArg(), packet);
+		PacketDistributor.sendToAllPlayers(packet);
 	}
 }

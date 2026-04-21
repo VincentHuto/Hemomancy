@@ -323,7 +323,7 @@ public class UnstainedProgressScreen extends Screen {
 				if (begunPurification) {
 					int clickedBonus = getBonusButtonAt(mx, my);
 					if (clickedBonus >= 0) {
-						PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketToggleUnstainedBonus(clickedBonus));
+						PacketHandler.sendToServer(new PacketToggleUnstainedBonus(clickedBonus));
 						return true;
 					}
 				}

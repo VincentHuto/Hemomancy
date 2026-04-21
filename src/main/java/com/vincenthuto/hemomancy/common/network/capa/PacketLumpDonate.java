@@ -68,9 +68,7 @@ public class PacketLumpDonate {
 						BloodVolumeEvents.syncVolume(player, volume);
 
 						// Sync pool data to the donor
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> player),
-								new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+						PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
 										globalLine.getMaxBloodVolume(),
 										globalLine.getPlayerUUIDS().size()));
 

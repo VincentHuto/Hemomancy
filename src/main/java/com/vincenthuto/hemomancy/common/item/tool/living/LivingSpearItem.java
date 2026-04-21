@@ -76,13 +76,11 @@ public class LivingSpearItem extends LivingToolItem {
 		 * .orElseThrow(NullPointerException::new); float damageMod =
 		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
 		 * { playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayer) playerIn), new
+		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
 		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 		 * playerVolume.getBloodVolume())); } else {
 		 * playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayer) playerIn), new
+		 * PacketHandler.sendToPlayer(* (ServerPlayer) playerIn, new
 		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 		 * playerVolume.getBloodVolume())); stack.damageItem(getMaxDamage() + 10,
 		 * attacker, (p_220017_1_) -> {
@@ -138,8 +136,7 @@ public class LivingSpearItem extends LivingToolItem {
 				 * HemoCapabilityAccess.getBloodVolume(player)
 				 * .orElseThrow(NullPointerException::new); if (playerVolume.getBloodVolume() >
 				 * 50f) { if (!worldIn.isRemote) { playerVolume.subtractBloodVolume(50f);
-				 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-				 * (ServerPlayer) player), new
+				 * PacketHandler.sendToPlayer(* (ServerPlayer) player, new
 				 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 				 * playerVolume.getBloodVolume()));
 				 *

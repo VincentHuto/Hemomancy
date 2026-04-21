@@ -115,9 +115,7 @@ public class OurLadyWhisperEvents {
 					? OurLadyWhisperDialogueTrees.forClarityStage(stageLevel, variant)
 					: OurLadyWhisperDialogueTrees.forPurityStage(stageLevel, variant);
 
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> serverPlayer),
-					new OpenDialoguePacket(tree));
+			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		});
 	}
 }

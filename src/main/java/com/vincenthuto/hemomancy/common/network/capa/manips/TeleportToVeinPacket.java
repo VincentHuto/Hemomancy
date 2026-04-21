@@ -60,9 +60,7 @@ public class TeleportToVeinPacket {
 										if (loc.getPosition().equals(selected.getPosition())) {
 											known.getVeinList().add(known.getVeinList().indexOf(loc), te.getLoc());
 											known.getVeinList().remove(loc);
-											PacketHandler.CHANNELKNOWNMANIPS.send(
-													PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-													new KnownManipulationServerPacket(known));
+											PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 										}
 									}
 								}
@@ -73,9 +71,7 @@ public class TeleportToVeinPacket {
 											true);
 									known.getVeinList().remove(selected);
 									known.setSelectedVein(VeinLocation.BLANK);
-									PacketHandler.CHANNELKNOWNMANIPS.send(
-											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-											new KnownManipulationServerPacket(known));
+									PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 								} else {
 									ChunkPos chunkpos = new ChunkPos(bp);
 									((ServerLevel) player.level()).getChunkSource().addRegionTicket(
@@ -86,9 +82,7 @@ public class TeleportToVeinPacket {
 									player.displayClientMessage(Component.literal("TELEPORTING"), true);
 									HLParticleUtils.spawnPoof(ovw, bp, ParticleTypes.CRIMSON_SPORE);
 									HLParticleUtils.spawnPoof(ovw, bp, DustParticleOptions.REDSTONE);
-									PacketHandler.CHANNELBLOODVOLUME.send(
-											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-											new BloodVolumeServerPacket(volume));
+									PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 								}
 
 							} else {
@@ -97,9 +91,7 @@ public class TeleportToVeinPacket {
 								for (VeinLocation loc : known.getVeinList()) {
 									if (loc.getPosition().equals(selected.getPosition())) {
 										known.getVeinList().remove(known.getVeinList().indexOf(loc));
-										PacketHandler.CHANNELKNOWNMANIPS.send(
-												PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-												new KnownManipulationServerPacket(known));
+										PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 									}
 								}
 							}

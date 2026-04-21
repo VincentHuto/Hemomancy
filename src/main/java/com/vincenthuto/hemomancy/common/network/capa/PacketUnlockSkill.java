@@ -164,8 +164,6 @@ public class PacketUnlockSkill {
 	 * {@link PacketSyncSkills}.
 	 */
 	private static void syncSkills(ServerPlayer player) {
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new PacketSyncSkills(SkillPointInit.serializeAll()));
+		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
 	}
 }

@@ -44,8 +44,7 @@ public class BloodFormationKeyPressPacket {
 				if (bloodVolume.getBloodVolume() > 100) {
 					player.displayClientMessage(Component.literal("Blood has been drawn for a greater cause"), true);
 					bloodVolume.drain(100);
-					PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-							new BloodVolumeServerPacket(bloodVolume));
+					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
 					BlockPos pos = player.blockPosition();
 					RandomSource random = player.level().random;
 					for (int i = 0; i < 30; i++) {

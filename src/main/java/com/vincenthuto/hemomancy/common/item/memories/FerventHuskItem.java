@@ -52,8 +52,7 @@ public class FerventHuskItem extends Item {
 			if(known.getSelectedManip() != null) {
 				known.incrSelectedManipLevel(1);
 
-				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new KnownManipulationServerPacket(known));
+				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(known));
 				stack.shrink(1);
 			}
 

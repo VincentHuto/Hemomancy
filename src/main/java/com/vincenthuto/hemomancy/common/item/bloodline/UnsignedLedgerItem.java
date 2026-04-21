@@ -89,9 +89,7 @@ public class UnsignedLedgerItem extends Item {
 					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 					savedData.registerBloodline(playerLine);
 
-					PacketHandler.CHANNELBLOODVOLUME.send(
-							PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-							new BloodVolumeServerPacket(volume));
+					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
 					playerIn.displayClientMessage(
 							Component.literal("You have founded: " + playerLine.getName())
 									.withStyle(ChatFormatting.DARK_RED),
@@ -136,9 +134,7 @@ public class UnsignedLedgerItem extends Item {
 							stack.setTag(compound);
 
 							playerIn.playSound(SoundEvents.BOOK_PUT, 0.40f, 1F);
-							PacketHandler.CHANNELBLOODVOLUME.send(
-									PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-									new BloodVolumeServerPacket(volume));
+							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
 							playerIn.displayClientMessage(
 									Component.literal("You have joined: " + globalLine.getName())
 											.withStyle(ChatFormatting.DARK_RED),

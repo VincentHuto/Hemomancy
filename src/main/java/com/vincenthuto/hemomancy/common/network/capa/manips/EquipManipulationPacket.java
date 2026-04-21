@@ -68,9 +68,7 @@ public class EquipManipulationPacket {
 			}
 
 			// Sync updated state back to client
-			PacketHandler.CHANNELKNOWNMANIPS.send(
-					PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new KnownManipulationServerPacket(known));
+			PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 		});
 		ctx.get().setPacketHandled(true);
 	}

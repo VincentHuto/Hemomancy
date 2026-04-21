@@ -201,9 +201,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 					worldIn.removeBlock(pos, false);
 
 					// Fire the post-shatter Fungal Whisper so the Entity comments on what was inside
-					PacketHandler.CHANNELBLOODVOLUME.send(
-							PacketDistributor.PLAYER.with(() -> serverPlayer),
-							new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
+					PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
 					return;
 				}
 				worldIn.sendBlockUpdated(pos, state, state, 3);
@@ -213,9 +211,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 					? SanguineMonolithDialogueTrees.unworthy()
 					: SanguineMonolithDialogueTrees.forDegree(degreeNumber);
 
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> serverPlayer),
-					new OpenDialoguePacket(tree));
+			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		});
 
 		return InteractionResult.SUCCESS;

@@ -263,9 +263,7 @@ public class QliphothPomeItem extends Item {
 			persistentData.putBoolean(QLIPHOTH_COMMUNION_DONE_KEY, true);
 
 			DialogueTree communion = FungalWhisperDialogueTrees.qliphothCommunion();
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> player),
-					new OpenDialoguePacket(communion));
+			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(communion));
 		}
 	}
 

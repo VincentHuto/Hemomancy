@@ -43,8 +43,7 @@ public class BloodStainedStoneItem extends Item {
 
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {
-				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new KnownManipulationServerPacket(manips));
+				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(manips));
 			} else {
 			//	ClientEvents.openManipGui();
 			}

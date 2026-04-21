@@ -215,9 +215,7 @@ public class LivingStaffItem extends LivingItemItem {
 								morphling.use(player, player.getUsedItemHand(), stack, worldIn);
 								playerVolume.drain(morphling.getBloodCost());
 
-								PacketHandler.CHANNELBLOODVOLUME.send(
-										PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-										new BloodVolumeServerPacket(playerVolume));
+								PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
 							}
 						});
 
@@ -225,9 +223,7 @@ public class LivingStaffItem extends LivingItemItem {
 						this.summonDirectedOrb(worldIn, player);
 						playerVolume.drain(50f);
 
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new BloodVolumeServerPacket(playerVolume));
+						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
 					}
 				} else {
 					player.playSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,

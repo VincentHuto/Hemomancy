@@ -83,14 +83,10 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 					float damageMod = this.getAttackDamage() * 25f;
 					if (playerVolume.getBloodVolume() > damageMod) {
 						playerVolume.drain(damageMod);
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-								new BloodVolumeServerPacket(playerVolume));
+						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 					} else {
 						playerVolume.drain(damageMod);
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-								new BloodVolumeServerPacket(playerVolume));
+						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 						stack.hurtAndBreak(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
 							p_220017_1_.broadcastBreakEvent(attacker.getUsedItemHand());
 						});

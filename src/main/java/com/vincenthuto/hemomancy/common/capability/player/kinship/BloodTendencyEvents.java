@@ -142,16 +142,14 @@ public class BloodTendencyEvents {
 	// ───── Sync & Lifecycle ─────
 
 	public static void syncTendency(ServerPlayer player, IBloodTendency tendency) {
-		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodTendencyServerPacket(tendency.getTendency()));
+		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency.getTendency()));
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
-		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodTendencyServerPacket(BloodTendency));
+		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(BloodTendency));
 	}
 
 
@@ -175,8 +173,7 @@ public class BloodTendencyEvents {
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
-		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodTendencyServerPacket(BloodTendency));
+		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(BloodTendency));
 	}
 
 	@SubscribeEvent
@@ -186,8 +183,7 @@ public class BloodTendencyEvents {
 			if (!player.getCommandSenderWorld().isClientSide) {
 				IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
 						.orElseThrow(IllegalArgumentException::new);
-				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new BloodTendencyServerPacket(tendency.getTendency()));
+				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTendencyServerPacket(tendency.getTendency()));
 			}
 		}
 	}

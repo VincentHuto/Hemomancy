@@ -197,9 +197,7 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 				.map(d -> d.getDegreeNumber()).orElse(0);
 
 		// Send the packet to open the screen
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> serverPlayer),
-				new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVol, maxBloodVol, degree));
+		PacketHandler.sendToPlayer(serverPlayer, new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVol, maxBloodVol, degree));
 
 		return InteractionResult.SUCCESS;
 	}

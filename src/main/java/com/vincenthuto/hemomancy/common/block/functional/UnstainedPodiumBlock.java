@@ -217,9 +217,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		// Disable blood magic permanently
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			volume.setActive(false);
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new BloodVolumeServerPacket(volume));
+			PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 		});
 		player.displayClientMessage(
 				Component.translatable("hemomancy.unstained.clarity_unlocked"), false);

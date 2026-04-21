@@ -104,8 +104,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		}
 		if (!worldIn.isClientSide) {
 
-			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new BloodVolumeServerPacket(playerVolume));
+			PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
 		}
 	}
 

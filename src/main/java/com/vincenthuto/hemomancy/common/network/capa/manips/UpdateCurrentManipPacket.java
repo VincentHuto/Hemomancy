@@ -40,9 +40,7 @@ public class UpdateCurrentManipPacket {
 						player.displayClientMessage(
 								Component.literal("Selected:" + target.getProperName()),
 								true);
-						PacketHandler.CHANNELKNOWNMANIPS.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new KnownManipulationServerPacket(known));
+						PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 					}
 				}
 			});

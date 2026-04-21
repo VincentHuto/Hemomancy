@@ -176,9 +176,7 @@ public class DialogueEventHandler {
 				volume.setBloodLine(updatedLine);
 
 				// Sync updated bloodline state to client
-				PacketHandler.CHANNELBLOODVOLUME.send(
-						PacketDistributor.PLAYER.with(() -> player),
-						new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
 
 				// Success feedback
 				String npcName = entity.getName().getString();

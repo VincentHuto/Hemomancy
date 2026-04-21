@@ -27,9 +27,7 @@ public class InitiatoryDegreeEvents {
 	}
 
 	public static void syncDegree(ServerPlayer player, IInitiatoryDegree degree) {
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new PacketSyncDegree(degree.getDegreeNumber()));
+		PacketHandler.sendToPlayer(player, new PacketSyncDegree(degree.getDegreeNumber()));
 	}
 
 	@SubscribeEvent

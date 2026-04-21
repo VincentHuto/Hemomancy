@@ -71,7 +71,7 @@ public class LedgerScreen extends Screen {
 		addRenderableWidget(Button.builder(
 				Component.literal("\u2720 Summon Harbingers"),
 				btn -> {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SUMMON_NPCS));
 					onClose();
 				}).bounds(btnX, y, btnW, 20).build());
@@ -82,7 +82,7 @@ public class LedgerScreen extends Screen {
 		addRenderableWidget(Button.builder(
 				Component.literal("\u2302 Recall to Lodge"),
 				btn -> {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_RECALL_TO_LODGE));
 					onClose();
 				}).bounds(btnX, y, btnW, 20).build());
@@ -93,7 +93,7 @@ public class LedgerScreen extends Screen {
 		addRenderableWidget(Button.builder(
 				Component.literal("\u2691 Set Recall Point"),
 				btn -> {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SET_RECALL_POINT));
 					onClose();
 				}).bounds(btnX, y, btnW, 20).build());
