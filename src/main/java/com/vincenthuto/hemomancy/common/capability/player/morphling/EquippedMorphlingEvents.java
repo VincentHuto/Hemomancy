@@ -65,7 +65,7 @@ public class EquippedMorphlingEvents {
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get()) return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
 			if (!morphCap.hasMorphling()) return;
 
 			int drainInterval = HemoServerConfig.MORPHLING_DRAIN_INTERVAL.get();
@@ -114,7 +114,7 @@ public class EquippedMorphlingEvents {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
@@ -134,7 +134,7 @@ public class EquippedMorphlingEvents {
 		if (target.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
@@ -154,7 +154,7 @@ public class EquippedMorphlingEvents {
 		if (victim.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
@@ -175,7 +175,7 @@ public class EquippedMorphlingEvents {
 		// Only trigger on falls that would actually cause damage (distance > 3)
 		if (event.getDistance() <= 3.0f) return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
@@ -248,8 +248,8 @@ public class EquippedMorphlingEvents {
 			Player original = event.getOriginal();
 			Player newPlayer = event.getEntity();
 			original.reviveCaps();
-			original.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(oldCap -> {
-				newPlayer.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(newCap -> {
+			HemoCapabilityAccess.getEquippedMorphling(original).ifPresent(oldCap -> {
+				HemoCapabilityAccess.getEquippedMorphling(newPlayer).ifPresent(newCap -> {
 					newCap.setEquippedMorphling(oldCap.getEquippedMorphling().copy());
 				});
 			});
@@ -275,7 +275,7 @@ public class EquippedMorphlingEvents {
 	}
 
 	public static void syncToClient(ServerPlayer player) {
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 			PacketHandler.CHANNELMORPHLINGJAR.send(
 					PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
 					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling()));

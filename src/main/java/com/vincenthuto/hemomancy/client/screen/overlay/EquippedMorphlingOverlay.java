@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,7 +22,7 @@ public class EquippedMorphlingOverlay {
 		if (player == null)
 			return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 			ItemStack equipped = cap.getEquippedMorphling();
 			if (!equipped.isEmpty()) {
 				// Position: bottom-left, just above the hotbar

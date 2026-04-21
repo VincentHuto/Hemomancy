@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyP
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
@@ -136,5 +138,25 @@ return getInitiatoryDegree(player).orElseThrow(IllegalStateException::new);
 
 public static IInitiatoryDegree requireInitiatoryDegree(Entity entity) {
 return getInitiatoryDegree(entity).orElseThrow(IllegalStateException::new);
+}
+
+// ── Equipped Morphling ────────────────────────────────────────────────────
+
+/** Access equipped morphling from a player. */
+public static Optional<IEquippedMorphling> getEquippedMorphling(Player player) {
+return player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA);
+}
+
+/** Access equipped morphling from any entity. */
+public static Optional<IEquippedMorphling> getEquippedMorphling(Entity entity) {
+return entity.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA);
+}
+
+public static IEquippedMorphling requireEquippedMorphling(Player player) {
+return getEquippedMorphling(player).orElseThrow(IllegalStateException::new);
+}
+
+public static IEquippedMorphling requireEquippedMorphling(Entity entity) {
+return getEquippedMorphling(entity).orElseThrow(IllegalStateException::new);
 }
 }

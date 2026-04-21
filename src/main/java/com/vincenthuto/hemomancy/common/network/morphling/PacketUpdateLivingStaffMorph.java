@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
@@ -29,7 +29,7 @@ public class PacketUpdateLivingStaffMorph {
 
 				// ── Unequip: selected == -1 means clear the equipped morphling ──────────
 				if (msg.selected == -1) {
-					player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+					HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 						cap.clearMorphling();
 					});
 					EquippedMorphlingEvents.syncToClient(player);
@@ -57,7 +57,7 @@ public class PacketUpdateLivingStaffMorph {
 					return;
 
 				// ── Equip to player capability ───────────────────────────────────────────
-				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 					cap.setEquippedMorphling(fromJar.copy());
 				});
 

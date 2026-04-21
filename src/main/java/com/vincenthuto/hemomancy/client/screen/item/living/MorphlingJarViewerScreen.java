@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.item.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
@@ -206,7 +206,7 @@ public class MorphlingJarViewerScreen extends Screen {
 
 		// Discover which jar slot matches the player's currently equipped morphling
 		activeIndex = -1;
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 			ItemStack equipped = cap.getEquippedMorphling();
 			if (!equipped.isEmpty()) {
 				for (int i = 0; i < slotCount; i++) {

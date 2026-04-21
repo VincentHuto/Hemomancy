@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingVisualMutation;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 
@@ -51,7 +51,7 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
         if (!(entity instanceof Player player))
             return;
 
-        player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+        HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
             ItemStack morphlingStack = cap.getEquippedMorphling();
             if (morphlingStack.isEmpty())
                 return;

@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
@@ -114,7 +113,7 @@ public class LivingStaffItem extends LivingItemItem {
 		if (worldIn != null && worldIn.isClientSide) {
 			net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
 			if (player != null) {
-				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 					ItemStack equipped = cap.getEquippedMorphling();
 					if (!equipped.isEmpty()) {
 						tooltip.add(equipped.getHoverName());
@@ -209,7 +208,7 @@ public class LivingStaffItem extends LivingItemItem {
 					 * "Abuse of Power does not come without consequence"), true); }
 					 */
 					if (!player.isCrouching()) {
-						player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+						HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 							ItemStack selectedStack = cap.getEquippedMorphling();
 							if (!selectedStack.isEmpty() && selectedStack.getItem() instanceof IMorphling) {
 								IMorphling morphling = (IMorphling) selectedStack.getItem();
