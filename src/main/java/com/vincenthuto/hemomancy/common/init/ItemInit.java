@@ -468,6 +468,8 @@ public class ItemInit {
 
     public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
             () -> new BloodVialItem(new Item.Properties()));
+    public static final RegistryObject<Item> vial_rack = SPECIALITEMS.register("vial_rack",
+            () -> new VialRackItem(new Item.Properties()));
 
     // Equipment
 

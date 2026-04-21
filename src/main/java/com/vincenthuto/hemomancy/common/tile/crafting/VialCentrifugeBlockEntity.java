@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.ConsecratedSyringeItem;
+import com.vincenthuto.hemomancy.common.item.VialRackItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 
@@ -200,6 +201,40 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	public List<ItemStack> getOutputSlots() {
 		return inventory.subList(10, 18);
+	}
+
+	public int insertVialsFromRack(ItemStack rackStack) {
+		if (!(rackStack.getItem() instanceof VialRackItem)) {
+			return 0;
+		}
+		NonNullList<ItemStack> rackVials = VialRackItem.getVials(rackStack);
+		int moved = 0;
+		for (int i = 0; i < rackVials.size(); i++) {
+			ItemStack rackVial = rackVials.get(i);
+			if (!rackVial.isEmpty() && !VialRackItem.isEmptyVial(rackVial)) {
+				int destination = firstEmptyCentrifugeVialSlot();
+				if (destination == -1) {
+					break;
+				}
+				inventory.set(destination, rackVial.copyWithCount(1));
+				rackVials.set(i, new ItemStack(ItemInit.bloody_vial.get()));
+				moved++;
+			}
+		}
+		if (moved > 0) {
+			VialRackItem.setVials(rackStack, rackVials);
+			sendUpdates();
+		}
+		return moved;
+	}
+
+	private int firstEmptyCentrifugeVialSlot() {
+		for (int i = 2; i <= 9; i++) {
+			if (inventory.get(i).isEmpty()) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	// ---- Blood slot processing ----
