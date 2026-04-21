@@ -58,12 +58,12 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ItemInit {
-    public static final DeferredRegister<Item> BASEITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
+    public static final DeferredRegister.Items BASEITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
     public static final DeferredRegister<BannerPattern> BANNERPATTERNS = DeferredRegister
             .create(Registries.BANNER_PATTERN, Hemomancy.MOD_ID);
-    public static final DeferredRegister<Item> HANDHELDITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
-    public static final DeferredRegister<Item> SPECIALITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
-    public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.createItems(Hemomancy.MOD_ID);
+    public static final DeferredRegister.Items HANDHELDITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
+    public static final DeferredRegister.Items SPECIALITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
+    public static final DeferredRegister.Items SPAWNEGGS = DeferredRegister.createItems(Hemomancy.MOD_ID);
 
     // public static final DamageSource bloodLoss = new DamageSource("bloodloss");
 

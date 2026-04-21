@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class MnAPluginBlockInit {
-	public static final DeferredRegister<Block> MNABLOCKS = DeferredRegister.createBlocks(Hemomancy.MOD_ID);
+	public static final DeferredRegister.Blocks MNABLOCKS = DeferredRegister.createBlocks(Hemomancy.MOD_ID);
 
 
 	public static final DeferredBlock<Block> broken_mana_trapazahedron = MNABLOCKS.register("broken_mana_trapazahedron", BrokenManaTrapazahedronBlock::new);

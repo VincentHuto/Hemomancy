@@ -17,7 +17,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class MnAPluginItemInit {
 
-	public static final DeferredRegister<Item> MNAITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
+	public static final DeferredRegister.Items MNAITEMS = DeferredRegister.createItems(Hemomancy.MOD_ID);
 
 
 	public static final DeferredItem<Item> blood_shot_occulus = MNAITEMS.register("blood_shot_occulus",
