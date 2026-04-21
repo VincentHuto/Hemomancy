@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-19
+> **Last Updated:** 2026-04-21
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -14,11 +14,12 @@
 
 Hemomancy is a blood magic mod built around the *quality* of blood manipulation rather than just quantity. It covers topics of gore, magic, exaggerated biology, fungi, secret societies, and cosmic horror. The power to control blood is the result of a **special fungal infection** — a sentient extraterrestrial fungus that deliberately broke off from a larger hive-mind organism (itself the physical manifestation of an outer-god-type entity) and landed on the Minecraft world, slowly taking hold.
 
-> **Current Gameplay State Snapshot (2026-04-19 audit):**
-> - Core progression systems are in place and playable: Harbinger degree progression, Unstained purity/clarity progression, blood manipulations, skills, bloodlines, morphlings, scars, armor set bonuses, and NPC dialogue trees.
-> - Content breadth is large and actively expanded (`ItemInit`, `BlockInit`, `EntityInit`, `ManipulationInit`, `EffectInit` all show substantial registered content; `SoundInit` now registers **78** custom sound events).
-> - Ongoing major WIP remains focused on advanced/endgame content: Fungal Dimension polish, Saints encounters, Founding Sanctum mechanics, Blood Moon balancing, and late-stage organ-effect tuning.
-> - Data-generation server providers and generated entity-loot workflow are still partially disabled (`DataGeneration` and `HemoEntityLootProvider`), so gameplay state should continue to be treated as evolving.
+> **Current Gameplay State Snapshot (2026-04-21 audit):**
+> - The Harbinger endgame loop is now explicitly wired through Qliphoth Communion + Apotheos gating, with the full Harbinger advancement chain implemented in data + programmatic grant flow.
+> - Morphling support gameplay expanded with the new **Morphling Cradle** block entity (owner-bound hosted morphling, aura support, blood upkeep/leech behavior, and floor/wall/ceiling placement support).
+> - Blood extraction flow was modernized: **Living Syringe** now uses loadable **Vial Rack** storage (8-vial rack state), and the **Vial Centrifuge** can bulk-load sampled vials directly from racks.
+> - Bloodline administration now includes leader-side member expulsion in `BloodlinePoolScreen` + `PacketKickBloodlinePlayer`.
+> - Client progression UIs were modularized (`HarbingerProgressScreen` + shared tab controllers used by both Harbinger and Unstained screens), and manipulation star overlays now include numeric tendency values.
 
 ---
 
@@ -517,7 +518,7 @@ The player has alignment scores across **8 blood tendencies**. These represent t
 | **Ferric** | Iron, Barbs, Solidity, Unchanging | Gray (53,53,53) | ![](src/main/resources/assets/hemomancy/textures/item/ferric_enzyme.png) Ferric Enzyme |
 | **Tenebris** | Darkness, Stealth, The End | Purple (70,0,110) | ![](src/main/resources/assets/hemomancy/textures/item/umbral_enzyme.png) Umbral Enzyme |
 
-Enzymes are obtained using a **Living Syringe** on mobs (primed with blood vials), then processed in a **Vial Centrifuge** to extract enzymes and Hematic Iron Powder.
+Enzymes are obtained using a **Living Syringe** on mobs (now rack-fed via **Vial Rack** storage), then processed in a **Vial Centrifuge** to extract enzymes and Hematic Iron Powder.
 
 ---
 
@@ -612,6 +613,7 @@ A multiplayer social system where players form blood-bound groups.
 - **Shared Pool:** Each member contributes 5,000 blood to a communal pool
 - **Trickle Donation:** Optionally auto-donate blood to the shared pool at a configurable rate
 - **Auto-Draw:** Optionally auto-draw from the shared pool when personal blood falls below a threshold
+- **Member Expulsion:** Bloodline progenitors can expel member players through `BloodlinePoolScreen` (server-validated via `PacketKickBloodlinePlayer`)
 - **Persistence:** Bloodline data is stored in world-level `BloodlineSavedData`
 - **Monitoring:** The **Bloodline Pool Monitor** item shows pool status; the **BloodlinePoolScreen** provides a GUI
 
@@ -659,6 +661,16 @@ Each morphling has a **maturity level** (1–4) that determines its power and wh
 | 4 | Apex | Third reactive ability unlocked (powerful signature ability with longer cooldown) |
 
 Each morphling type has a **preferred tendency** and **secondary tendency** — feeding the corresponding enzymes during incubation accelerates maturity. The passive effect's amplifier scales with maturity level.
+
+### 11.4 Morphling Cradle (new support block)
+
+The **Morphling Cradle** (`MorphlingCradleBlockEntity`) is an owner-bound support station for hosting a single morphling item outside the staff.
+
+- Supports **floor / wall / ceiling** placement (`AttachFace` + `FACING` state)
+- Only the bound owner can swap/remove the hosted morphling
+- Applies hosted morphling support effects to the owner and valid bloodline members in range
+- Uses staged upkeep/action blood costs, with fallback draw from owner bloodline pool when enabled
+- Can leech nearby valid hostile targets into a cradle blood buffer and redistribute that blood to nearby cradles / owner blood volume
 
 ---
 
@@ -795,6 +807,7 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_black.png) Blood Gourd Black | Ashen tier |
 | ![](src/main/resources/assets/hemomancy/textures/item/curved_horn.png) Curved Horn | Horn tier |
 | ![](src/main/resources/assets/hemomancy/textures/item/bloody_vial.png) Bloody Vial | Holds extracted blood for centrifuging |
+| ![](src/main/resources/assets/hemomancy/textures/item/vial_rack.png) Vial Rack | Holds 8 vials for Living Syringe/Centrifuge workflows (item-state visual variants: empty/partial/full) |
 
 > **Blood Gourd 3D models (open/closed):**
 >
@@ -927,7 +940,7 @@ All are single-stack, use the `LIVING` tool tier:
 | Living Spear | `LivingSpearItem` | Blood-feeding polearm |
 | Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding claw weapon |
 | Living Staff | `LivingStaffItem` | Channels morphlings and blood magic |
-| Living Syringe | `LivingSyringeItem` | Extracts blood vials from mobs |
+| Living Syringe | `LivingSyringeItem` | Extracts blood vials from mobs into a loaded Vial Rack (Shift to eject rack) |
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
 | Sanguis Lancea | `SanguisLanceaItem` | Throwable blood lance (25 base dmg) |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_absorption.png) Blood Absorption | `BloodAbsorptionItem` | Conjured blood-absorbing tool |
@@ -1030,10 +1043,11 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Mortal Display**                   | `MortalDisplayBlockEntity`                 | Activates blood magic when clicked in a Blood Temple ![](src/main/resources/assets/hemomancy/textures/entity/model_floating_heart.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | **Scrying Podium**                   | `ScryingPodiumBlockEntity`                 | Opens the Charm/Gourd slot screen for equipping the Charm of Vascularium and Blood Gourds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | **Somatic Loom**                     | `SomaticLoomBlockEntity`                   | Crafting station for creating Hematic Memories using enzymes, blank memories, and catalysts                  ![](src/main/resources/assets/hemomancy/textures/ref doc images/somatic_loom.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Vial Centrifuge**                  | `VialCentrifugeBlockEntity`                | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. ![](src/main/resources/assets/hemomancy/textures/ref doc images/vial_centrifuge.png)                                                                                                                                                                                                                                                                                                                                      |
+| **Vial Centrifuge**                  | `VialCentrifugeBlockEntity`                | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. Accepts **Vial Rack** right-click bulk inserts, and startup now requires at least one processable vial with valid output fit. ![](src/main/resources/assets/hemomancy/textures/ref doc images/vial_centrifuge.png)                                                                                                                                                                                                                                   |
 | **ghastly_alembic**                  | `GhastlyAlembicBlockEntity`                | Squeezes items to extract blood (requires fire below). Has 4 slots: Input (slot 0), Flask (slot 1, fills Cured Clay Flasks into Bloody Flasks), Result (slot 2), and **Catalyst (slot 3)** — an optional catalyst ingredient that modifies or enhances the recipe output. Hopper access: top → input, bottom → result, sides → flask + catalyst. Renders via custom `GhastlyAlembicRenderer` (3D entity model `GhastlyAlembicModel`, facing-aware)![](src/main/resources/assets/hemomancy/textures/ref doc images/ghastly_alembic.png)   .                                                                                                                           |
 | **Cerebral Scarring Station**        | `ScarStationBlockEntity`                   | Crafts scars from patterns and blanks                    ![](src/main/resources/assets/hemomancy/textures/ref doc images/scar_station.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](src/main/resources/assets/hemomancy/textures/ref doc images/morphling_incubator.png) 
+| **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Fungal-related interaction station                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/ref doc images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -1171,6 +1185,7 @@ All applicable flowers have **potted** variants.
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
 | Blood Gourd Upgrade | `CopyBloodGourdRecipe.Serializer` | Crafting | Upgrading blood gourds |
 | Blood Gourd Fill | `FillBloodGourdRecipe.Serializer` | Crafting | Filling gourds with blood |
+| Vial Rack | Vanilla shaped recipe | Crafting | 8 Bloody Vials + Hematic Iron Scrap → Vial Rack |
 
 ### 18.1 Blood Structure Crafting
 
@@ -1696,7 +1711,7 @@ JEI recipe category support for:
 | Screen | Opened From | Purpose |
 |--------|------------|---------|
 | `CharmGourdScreen` | Scrying Podium | Equip Charm of Vascularium + Blood Gourds |
-| `SkillTreeScreen` | Dendritic Distributor | Skill tree + manipulation tree (pan/zoom, animated vein BG) |
+| `HarbingerProgressScreen` | Dendritic Distributor | Harbinger progress suite (Skills/Manipulations/Crafting/Scars/Rites/Materials), now tab-controller modularized; Skills overlay includes rank title text |
 | `TendencyViewScreen` | Blood Tendency Gauge | View blood tendency alignments |
 | `VascularViewScreen` | Vascular Status Gauge | View vein section health |
 | `VascularStatusScreen` | — | Detailed vascular status |
@@ -1704,6 +1719,7 @@ JEI recipe category support for:
 | `GhastlyAlembicScreen` | ghastly_alembic block | ghastly_alembic crafting GUI |
 | `VialCentrifugeScreen` | Vial Centrifuge | Centrifuge crafting GUI (reworked with new 3D stand model) |
 | `MorphlingIncubatorScreen` | Morphling Incubator | Incubation crafting GUI |
+| `UnstainedProgressScreen` | Self Reflection Mirror | Unstained progress + shared Rites/Crafting/Materials tab controller stack |
 | `MnemonicReliquaryScreen` | Mnemonic Reliquary block | Reliquary viewing GUI — opens animated lid on interaction |
 | `SporeImplantScreen` | Fungal Implantation Pylon | Spore implantation GUI |
 | `StructureSpawnerScreen` | Structure Spawner item | Debug structure spawning |

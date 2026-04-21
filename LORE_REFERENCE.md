@@ -2,11 +2,12 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-04-19 (gameplay/lore state alignment pass)
+> **Last Updated:** 2026-04-21 (recent systems + lore alignment pass)
 
-> **Current Lore-State Snapshot (2026-04-19 audit):**
-> - Core narrative pillars are now directly represented in gameplay: Harbinger initiation/degrees, Unstained purification path, faction NPC dialogue trees, blood-memory manipulation framing, and fungal-whisper escalation.
+> **Current Lore-State Snapshot (2026-04-21 audit):**
+> - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain WIP in gameplay implementation: full Fungal Dimension progression, Saints encounters/chambers, and the Stained Priestess storyline boss arc.
+> - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
 ---
@@ -406,6 +407,7 @@ Hemomancy draws on this concept not as good-versus-evil but as complementary for
 The Qliphoth Tree:
 - Provides **blood volume regeneration** and enhanced regen auras in its area
 - Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system; eating all nine from a single bloom is the unnamed act that precedes the Eighth Degree.
+- Whispers through those fruits in a personal register — the voice naming the husk feels directed to the current bearer, not to the crowd at large.
 - **Must be summoned through ritual** — placed trees don't work, because you can't cheat god
 - Grows with slight random variation each time (no two trees are identical)
 - Can be removed by the **Rite of Cult Pruning**, which can be performed by either Hemomancers or the Unstained. If the Unstained prune a tree that still bears pomes, those pomes are severed from their source incorrectly — tainted pomes that bring weakness rather than power.
@@ -425,6 +427,8 @@ There is a suggestion that natural infection is like shingles: even if you clean
 ### 13.2 Bloodline vs. Biological Family
 
 **"Bloodline"** in the game's mechanics refers to the **Harbinger Covenant** — a sworn group of practitioners who share a blood pool, communicate secretly, and form a chosen family. This has nothing to do with biological lineage.
+
+Because it is a covenant rather than genealogy, membership can be ritually severed by the bloodline progenitor; "family" here is oath-bound, not irreversible by birth.
 
 The Hematic Order implicitly expects its members to separate from their biological families — not cruelly, but practically. A Harbinger's life, worldview, and community are fundamentally different from a typical person's. It is easier for both parties if the Harbinger joins their new family fully.
 
@@ -451,6 +455,7 @@ Each faction's relationship with materials reflects their worldview.
 | Material | Faction | Significance |
 |----------|---------|--------------|
 | **Hematic Iron** | Harbingers | Blood-fused iron — the organic and the mineral made one. The body's mineral content, weaponized. |
+| **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |
 | **Living materials** (bone, chitin, organic tools) | Harbingers | Blood magic makes materials *alive* — tools that feed and grow. |
 | **Copper** | Unstained | Antiseptic in nature; the Unstained discovered it historically staved off illness. The foundational material of their practice. |
 | **Oxidized Copper (Verdigris)** | Unstained | The "sacred" form — copper that has absorbed so much corruption it has been consecrated by the act. To carry fully patinated copper is proof of survival and devotion. |
