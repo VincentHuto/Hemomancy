@@ -72,15 +72,26 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 		ItemStack hosted = te.getHostedMorphling();
 		if (!hosted.isEmpty()) {
 			float time = ((te.getLevel() != null ? te.getLevel().getGameTime() : (Util.getMillis() / 50.0f)) + partialTicks);
+			float bob = Mth.sin(time * 0.1F) * 0.04F;
 			poseStack.pushPose();
-			float itemY = switch (face) {
-				case CEILING -> 0.35F;
-				case WALL -> 0.6F;
-				case FLOOR -> 0.9F;
-			};
-			poseStack.translate(0.5F, itemY, 0.5F);
-			poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
-			poseStack.translate(0.0F, Mth.sin(time * 0.1F) * 0.04F, 0.0F);
+			if (face == AttachFace.FLOOR) {
+				// Float just above the bowl opening (~y=0.5 in world space).
+				poseStack.translate(0.5F, 0.65F, 0.5F);
+				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
+				poseStack.translate(0.0F, bob, 0.0F);
+			} else if (face == AttachFace.CEILING) {
+				// Bowl opens downward; float below the opening (~y=0.5), bob away from ceiling.
+				poseStack.translate(0.5F, 0.35F, 0.5F);
+				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
+				poseStack.translate(0.0F, -bob, 0.0F);
+			} else { // WALL
+				// Bowl opens in the facing direction; offset outward from the wall along that axis.
+				float itemX = 0.5F + facing.getStepX() * 0.6F;
+				float itemZ = 0.5F + facing.getStepZ() * 0.6F;
+				poseStack.translate(itemX, 0.5F, itemZ);
+				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
+				poseStack.translate(facing.getStepX() * bob, 0.0F, facing.getStepZ() * bob);
+			}
 			poseStack.scale(0.55F, 0.55F, 0.55F);
 			Minecraft.getInstance().getItemRenderer().renderStatic(null, hosted, ItemDisplayContext.FIXED, true,
 					poseStack, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
