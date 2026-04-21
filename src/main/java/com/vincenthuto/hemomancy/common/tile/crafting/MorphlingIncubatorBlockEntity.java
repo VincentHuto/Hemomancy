@@ -119,7 +119,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
-			vol.setMaxBloodVolume(2000f);
+			vol.setMaxBloodVolume(2500f);
 		}
 	}
 
