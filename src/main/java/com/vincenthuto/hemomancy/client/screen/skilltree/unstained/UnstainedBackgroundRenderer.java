@@ -9,13 +9,15 @@ import net.minecraft.util.Mth;
 
 public final class UnstainedBackgroundRenderer {
     private static final int RHOMBUS_COUNT = 10;
+    // [particle][param]:
+    // 0=startX ratio, 1=startY ratio, 2=half-size, 3=velX, 4=velY, 5=phase, 6=brightness, 7=rotation speed
     private float[][] rhombusParams;
 
     public UnstainedBackgroundRenderer() {
         seed(99L);
     }
 
-    public void seed(long seed) {
+    private void seed(long seed) {
         Random rand = new Random(seed);
         rhombusParams = new float[RHOMBUS_COUNT][8];
         for (int i = 0; i < RHOMBUS_COUNT; i++) {
@@ -56,13 +58,15 @@ public final class UnstainedBackgroundRenderer {
             drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
         }
 
-        Random speckRand = new Random(54321L);
         for (int s = 0; s < 120; s++) {
-            int spx = gx + speckRand.nextInt(gw);
-            int spy = gy + speckRand.nextInt(gh);
-            int sb = 10 + speckRand.nextInt(20);
-            int sg = speckRand.nextInt(8);
-            int sa = 15 + speckRand.nextInt(25);
+            int h1 = mix(54321, s);
+            int h2 = mix(98731, s);
+            int h3 = mix(24691, s);
+            int spx = gx + Math.floorMod(h1, gw);
+            int spy = gy + Math.floorMod(h2, gh);
+            int sb = 10 + Math.floorMod(h3, 20);
+            int sg = Math.floorMod(mix(11939, s), 8);
+            int sa = 15 + Math.floorMod(mix(7727, s), 25);
             gfx.fill(spx, spy, spx + 1, spy + 1, (sa << 24) | (sg << 8) | sb);
         }
 
@@ -134,5 +138,13 @@ public final class UnstainedBackgroundRenderer {
                 gfx.fill(cx + spanStart, cy + dy, cx + bound + 1, cy + dy + 1, color);
             }
         }
+    }
+
+    private static int mix(int salt, int value) {
+        int x = value * 0x45d9f3b ^ salt;
+        x ^= x >>> 16;
+        x *= 0x45d9f3b;
+        x ^= x >>> 16;
+        return x;
     }
 }
