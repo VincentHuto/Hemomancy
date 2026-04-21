@@ -8,11 +8,11 @@ import com.vincenthuto.hemomancy.common.block.functional.MorphlingCradleBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.MorphlingCradleBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -24,9 +24,11 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCradleBlockEntity> {
 	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/block/hematic_iron_block.png");
 	private final MorphlingCradleModel model;
+	private final ItemRenderer itemRenderer;
 
 	public MorphlingCradleRenderer(BlockEntityRendererProvider.Context context) {
 		this.model = new MorphlingCradleModel(context.bakeLayer(MorphlingCradleModel.LAYER_LOCATION));
+		this.itemRenderer = context.getItemRenderer();
 	}
 
 	@Override
@@ -71,29 +73,30 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 
 		ItemStack hosted = te.getHostedMorphling();
 		if (!hosted.isEmpty()) {
-			float time = ((te.getLevel() != null ? te.getLevel().getGameTime() : (Util.getMillis() / 50.0f)) + partialTicks);
+			long gameTime = te.getLevel() != null ? te.getLevel().getGameTime() : (Util.getMillis() / 50L);
+			float time = gameTime + partialTicks;
 			float bob = Mth.sin(time * 0.1F) * 0.04F;
 			poseStack.pushPose();
 			if (face == AttachFace.FLOOR) {
-				// Float just above the bowl opening (~y=0.5 in world space).
-				poseStack.translate(0.5F, 0.65F, 0.5F);
+				// Arms top at ~world y=0.56; float item clearly above at y=0.9, bob upward.
+				poseStack.translate(0.5F, 0.9F, 0.5F);
 				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
 				poseStack.translate(0.0F, bob, 0.0F);
 			} else if (face == AttachFace.CEILING) {
-				// Bowl opens downward; float below the opening (~y=0.5), bob away from ceiling.
-				poseStack.translate(0.5F, 0.35F, 0.5F);
+				// Hanging arms bottom at ~world y=0.44; float item below at y=0.25, bob downward.
+				poseStack.translate(0.5F, 0.25F, 0.5F);
 				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
 				poseStack.translate(0.0F, -bob, 0.0F);
 			} else { // WALL
-				// Bowl opens in the facing direction; offset outward from the wall along that axis.
-				float itemX = 0.5F + facing.getStepX() * 0.6F;
-				float itemZ = 0.5F + facing.getStepZ() * 0.6F;
-				poseStack.translate(itemX, 0.5F, itemZ);
+				// Bowl opens in the facing direction; item floats outward along that axis.
+				float outX = 0.5F + facing.getStepX() * 0.5F;
+				float outZ = 0.5F + facing.getStepZ() * 0.5F;
+				poseStack.translate(outX, 0.5F, outZ);
 				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
-				poseStack.translate(facing.getStepX() * bob, 0.0F, facing.getStepZ() * bob);
+				poseStack.translate(0.0F, bob, 0.0F);
 			}
 			poseStack.scale(0.55F, 0.55F, 0.55F);
-			Minecraft.getInstance().getItemRenderer().renderStatic(null, hosted, ItemDisplayContext.FIXED, true,
+			this.itemRenderer.renderStatic(null, hosted, ItemDisplayContext.FIXED, true,
 					poseStack, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
 			poseStack.popPose();
 		}
