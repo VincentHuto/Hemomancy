@@ -99,6 +99,10 @@ public final class MaterialsData {
 				"A crystallised concentration of sanguine energy.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.blood_crystal.get())));
 
+		list.add(new MaterialEntry("suspended_vivianite", "Suspended Vivianite",
+				"A vivianite crystal frame grown from bog-body blood mineral deposits.",
+				"Functional Blocks", () -> new ItemStack(BlockInit.suspended_vivianite.get())));
+
 		// ── Building Blocks ──
 		list.add(new MaterialEntry("venous_stone", "Venous Stone",
 				"Dark stone veined with sanguine minerals. Core building material.",
@@ -111,6 +115,10 @@ public final class MaterialsData {
 		list.add(new MaterialEntry("sanguine_glass", "Sanguine Glass",
 				"Translucent glass infused with blood. Decorative building material.",
 				"Building Blocks", () -> new ItemStack(BlockInit.sanguine_glass.get())));
+
+		list.add(new MaterialEntry("vivianite_glass", "Vivianite Glass",
+				"Translucent glass made from blood-aligned vivianite mineral.",
+				"Building Blocks", () -> new ItemStack(BlockInit.vivianite_glass.get())));
 
 		list.add(new MaterialEntry("conscious_mass", "Conscious Mass",
 				"Pulsing organic block formed from concentrated blood energy.",
@@ -379,10 +387,6 @@ public final class MaterialsData {
 				"A blood crystal purified through Unstained rites. Radiates cleansing energy.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.suspended_cleansed_blood_crystal.get())));
 
-		list.add(new MaterialEntry("suspended_vivianite", "Suspended Vivianite",
-				"Vivianite crystal suspended in a purified frame. Resonates with clarity.",
-				"Functional Blocks", () -> new ItemStack(BlockInit.suspended_vivianite.get())));
-
 		// ── Building Blocks ──
 		list.add(new MaterialEntry("cleansed_stone", "Cleansed Stone",
 				"Stone purified of all sanguine taint. Foundation for Unstained structures.",
@@ -395,10 +399,6 @@ public final class MaterialsData {
 		list.add(new MaterialEntry("cleansed_sanguine_glass", "Cleansed Sanguine Glass",
 				"Purified glass that blocks blood resonance.",
 				"Building Blocks", () -> new ItemStack(BlockInit.cleansed_sanguine_glass.get())));
-
-		list.add(new MaterialEntry("vivianite_glass", "Vivianite Glass",
-				"Translucent glass made from vivianite mineral.",
-				"Building Blocks", () -> new ItemStack(BlockInit.vivianite_glass.get())));
 
 		list.add(new MaterialEntry("pale_silver_block", "Pale Silver Block",
 				"A block of compressed pale silver. Used in Unstained rite structures.",
