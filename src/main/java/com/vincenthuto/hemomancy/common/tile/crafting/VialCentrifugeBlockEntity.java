@@ -368,7 +368,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		// 4 8
 		// 9 5
 		// These are the Slots that are across and need to be balanced
-		if (isCentrifugeEmpty()) {
+		if (isCentrifugeEmpty() || !hasAtLeastOneProcessableVial()) {
 			return false;
 		} else {
 			if ((checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7) && checkBalancedSpots(4, 8)
@@ -382,6 +382,37 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			}
 		}
 		return false;
+	}
+
+	private boolean hasAtLeastOneProcessableVial() {
+		for (int inputSlot = 2; inputSlot <= 9; inputSlot++) {
+			ItemStack vialStack = inventory.get(inputSlot);
+			if (vialStack.isEmpty() || !(vialStack.getItem() instanceof BloodVialItem)) {
+				continue;
+			}
+			EntityType<?> sampledMob = BloodVialItem.getEntityType(vialStack);
+			if (sampledMob == null) {
+				continue;
+			}
+			ItemStack resultStack = getResultFromVial(sampledMob);
+			if (resultStack.isEmpty()) {
+				continue;
+			}
+			Integer outputSlot = inOutMap.get(inputSlot);
+			if (outputSlot != null && canFitOutput(outputSlot, resultStack)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean canFitOutput(int outputSlot, ItemStack resultStack) {
+		ItemStack outputStack = inventory.get(outputSlot);
+		if (outputStack.isEmpty()) {
+			return true;
+		}
+		return outputStack.getItem() == resultStack.getItem()
+				&& outputStack.getCount() + resultStack.getCount() <= outputStack.getMaxStackSize();
 	}
 
 	public boolean checkBalancedSpots(int a, int b) {
