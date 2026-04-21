@@ -222,7 +222,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		}
 	}
 
-	private void runMorphlingAura(int stageIdx) {
+	private void runMorphlingAura(int stageIndex) {
 		if (!(morphlingItem.getItem() instanceof IMorphling morphling) || ownerUUID == null) {
 			return;
 		}
@@ -237,7 +237,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			}
 		}
 
-		double range = SUPPORT_AURA_RANGE[stageIdx];
+		double range = SUPPORT_AURA_RANGE[stageIndex];
 		AABB area = new AABB(worldPosition).inflate(range);
 		List<Player> nearbyPlayers = level.getEntitiesOfClass(Player.class, area, Player::isAlive);
 		for (Player nearby : nearbyPlayers) {
