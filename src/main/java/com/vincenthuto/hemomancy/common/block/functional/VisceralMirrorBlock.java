@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
@@ -7,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
@@ -190,9 +190,9 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 			hasEcho[i] = playerHasEcho(player, organs[i]);
 		}
 
-		double bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		double bloodVol = HemoCapabilityAccess.getBloodVolume(player)
 				.map(IBloodVolume::getBloodVolume).orElse(0.0);
-		double maxBloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		double maxBloodVol = HemoCapabilityAccess.getBloodVolume(player)
 				.map(IBloodVolume::getMaxBloodVolume).orElse(0.0);
 		int degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
 				.map(d -> d.getDegreeNumber()).orElse(0);

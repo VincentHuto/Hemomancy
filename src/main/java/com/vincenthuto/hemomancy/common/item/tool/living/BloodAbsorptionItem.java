@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -9,7 +10,6 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyP
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -109,7 +109,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
 		if (!targets.isEmpty()) {
@@ -138,7 +138,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
-		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
 		if (volume.isActive()) {
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {

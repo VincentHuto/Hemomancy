@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
@@ -7,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -140,7 +140,7 @@ public class PacketUnlockSkill {
 	 * @return true if the drain succeeded; false (with message) otherwise.
 	 */
 	private static boolean tryDrainBlood(ServerPlayer player, double cost) {
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(
 					Component.literal("Blood system is not active!")

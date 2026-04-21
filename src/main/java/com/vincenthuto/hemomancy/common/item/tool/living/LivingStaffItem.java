@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.Random;
 
@@ -8,7 +9,6 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
@@ -198,7 +198,7 @@ public class LivingStaffItem extends LivingItemItem {
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
 		if (entityLiving instanceof Player) {
 			Player player = (Player) entityLiving;
-			IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 					.orElseThrow(NullPointerException::new);
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isClientSide) {

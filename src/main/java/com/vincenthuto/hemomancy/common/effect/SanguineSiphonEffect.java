@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,7 +28,7 @@ public class SanguineSiphonEffect extends MobEffect {
 		if (entity == null || entity.level().isClientSide) return;
 		if (!(entity instanceof Player player)) return;
 
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (!volume.isActive()) return;
 			if (!volume.isFull()) {
 				double fillAmount = 1.0 + amplifier * 0.5;

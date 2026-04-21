@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.tool;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.BloodGourdItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.EnumBloodGourdTiers;
 
@@ -49,9 +49,9 @@ public class BloodGourdItem extends Item implements IScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		boolean bloodPresent = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent();
+		boolean bloodPresent = HemoCapabilityAccess.getBloodVolume(stack).isPresent();
 		if (bloodPresent) {
-			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
 					.orElseThrow(NullPointerException::new);
 			tooltip.add(Component.literal("Max Blood Volume: " + tier.getMaxVolume())
 					.withStyle(ChatFormatting.GOLD));
@@ -79,7 +79,7 @@ public class BloodGourdItem extends Item implements IScar {
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
 				.orElseThrow(NullPointerException::new);
 		if (entityIn instanceof Player) {
 			Player player = (Player) entityIn;
@@ -92,7 +92,7 @@ public class BloodGourdItem extends Item implements IScar {
 				}
 				if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
 					// Restore player blood
-					IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
 						bloodVolume.drain(this.tier.getTierLevel()/2f);

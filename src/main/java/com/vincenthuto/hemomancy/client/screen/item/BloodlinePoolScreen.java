@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
@@ -96,7 +96,7 @@ public class BloodlinePoolScreen extends Screen {
 		// Read current settings from capability
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 				trickleEnabled = vol.isTrickleEnabled();
 				trickleRate = vol.getTrickleRate();
 				autoDrawEnabled = vol.isAutoDrawEnabled();
@@ -206,7 +206,7 @@ public class BloodlinePoolScreen extends Screen {
 			final int kickNextX = widgetX + 98;
 			final int kickButtonX = widgetX + 122;
 			final int kickButtonW = widgetW - 122;
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 				Bloodline line = vol.getBloodLine();
 				if (line.isValid() && localPlayer.getUUID().equals(line.getLeaderUUID())) {
 					kickPrevButton = Button.builder(Component.literal("<"), btn -> {
@@ -266,7 +266,7 @@ public class BloodlinePoolScreen extends Screen {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
 
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			Bloodline bloodline = volume.getBloodLine();
 
 			if (!bloodline.isValid()) {
@@ -491,7 +491,7 @@ public class BloodlinePoolScreen extends Screen {
 
 	private static List<UUID> getKickableMembers(LocalPlayer player) {
 		List<UUID> kickable = new ArrayList<>();
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 			Bloodline bloodline = vol.getBloodLine();
 			for (UUID member : bloodline.getPlayerUUIDS()) {
 				if (!member.equals(player.getUUID())) {

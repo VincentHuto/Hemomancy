@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.compat.mna.spell;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +19,6 @@ import com.mna.api.spells.targeting.SpellContext;
 import com.mna.api.spells.targeting.SpellSource;
 import com.mna.api.spells.targeting.SpellTarget;
 import com.mna.capabilities.playerdata.magic.PlayerMagicProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
 import net.minecraft.core.particles.ParticleType;
@@ -69,7 +69,7 @@ public class ComponentBloodToMana extends SpellEffect {
 		}
 
 		// Get blood capability on the blood source
-		IBloodVolume blood = bloodSource.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(bloodSource).orElse(null);
 		if (blood == null || !blood.isActive()) {
 			return ComponentApplicationResult.FAIL;
 		}

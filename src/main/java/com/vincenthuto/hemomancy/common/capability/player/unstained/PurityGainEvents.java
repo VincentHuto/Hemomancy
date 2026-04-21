@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 
@@ -298,7 +298,7 @@ public class PurityGainEvents {
 
         // Case 2: player self-healing without blood magic
         if (entity instanceof ServerPlayer player && event.getAmount() >= 2.0f) {
-            player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(blood -> {
+            HemoCapabilityAccess.getBloodVolume(player).ifPresent(blood -> {
                 if (!blood.isActive() || blood.getBloodVolume() <= 0) {
                     tryAddPurity(player, PURITY_HEAL);
                 }
@@ -347,7 +347,7 @@ public class PurityGainEvents {
 
             // ── Empty blood renunciation ──
             if (currentTick % EMPTY_BLOOD_INTERVAL < 20) {
-                serverPlayer.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(blood -> {
+                HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(blood -> {
                     if (!blood.isActive() || blood.getBloodVolume() <= 0) {
                         progress.addPurity(PURITY_EMPTY_BLOOD);
                         if (!progress.hasEmptiedBlood()) progress.setEmptiedBlood(true);

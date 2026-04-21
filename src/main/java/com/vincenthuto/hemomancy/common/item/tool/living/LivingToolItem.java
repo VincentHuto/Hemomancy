@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.HashSet;
 
 import com.google.common.collect.Sets;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -78,7 +78,7 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 			if (attacker instanceof Player) {
 				if (!attacker.level().isClientSide) {
 					Player playerIn = (Player) attacker;
-					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 							.orElseThrow(NullPointerException::new);
 					float damageMod = this.getAttackDamage() * 25f;
 					if (playerVolume.getBloodVolume() > damageMod) {

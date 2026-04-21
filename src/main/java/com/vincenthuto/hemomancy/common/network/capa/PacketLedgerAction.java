@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -58,7 +58,7 @@ public class PacketLedgerAction {
 			ServerPlayer player = ctx.get().getSender();
 			if (player == null) return;
 
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				switch (msg.action) {
 					case ACTION_SUMMON_NPCS -> handleNpcSummon(player, volume);
 					case ACTION_RECALL_TO_LODGE -> handleLodgeRecall(player, volume);

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
@@ -26,7 +26,7 @@ public class BloodVolumeItemServerPacket {
 		ctx.get().enqueueWork(() -> {
 
 			if (Minecraft.getInstance().player != null) {
-				IBloodVolume capa = Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume capa = HemoCapabilityAccess.getBloodVolume(Minecraft.getInstance().player)
 						.orElseThrow(NullPointerException::new);
 				capa.setActive(msg.active);
 				capa.setMaxBloodVolume(msg.max);

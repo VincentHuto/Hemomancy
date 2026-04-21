@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingBladeItemRenderer;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -59,7 +59,7 @@ public class LivingBladeItem extends LivingToolItem {
 			target.hurt(target.damageSources().generic(), 20);
 			if (!attacker.level().isClientSide) {
 				Player playerIn = (Player) attacker;
-				IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						.orElseThrow(NullPointerException::new);
 				float damageMod = this.getAttackDamage() * 75f;
 				if (playerVolume.getBloodVolume() > damageMod) {

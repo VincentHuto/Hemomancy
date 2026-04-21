@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -100,7 +100,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
 
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 		if (!volume.isActive()) {

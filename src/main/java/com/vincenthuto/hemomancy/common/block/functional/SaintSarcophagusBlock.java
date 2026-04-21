@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.encounter.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -367,7 +367,7 @@ return InteractionResult.PASS;
 
 		if (hitFace == bowlFace) {
 		// Attempt to drain blood from the player
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || volume.getBloodVolume() < BLOOD_COST_PER_OFFERING) {
 			player.displayClientMessage(
 				Component.literal("You lack sufficient blood to offer.")

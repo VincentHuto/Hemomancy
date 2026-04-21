@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.tool.living.IDispellable;
@@ -58,7 +58,7 @@ public class UseManipKeyPacket {
 							.withStyle(ChatFormatting.RED), true);
 					return;
 				}
-				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(NullPointerException::new);

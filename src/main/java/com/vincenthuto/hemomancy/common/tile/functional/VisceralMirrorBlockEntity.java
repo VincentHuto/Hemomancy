@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -164,7 +164,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 
 		// Check blood cost
 		double cost = organ.getTier() * BLOOD_COST_PER_TIER;
-		IBloodVolume vol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (vol == null || vol.getBloodVolume() < cost) {
 			sendStatusToPlayer(player, "Insufficient blood to sustain the extraction ritual.");
 			return false;
@@ -204,7 +204,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 
 		// Drain blood gradually
 		double drainPerTick = (targetOrgan.getTier() * BLOOD_COST_PER_TIER) / totalRitualTicks;
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 			if (!vol.drain(drainPerTick)) {
 				if (player instanceof ServerPlayer sp) {
 					sendProgressUpdate(sp, "Your blood runs dry. The ritual fails.");

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -57,7 +57,7 @@ public class BloodThrallItem extends Item {
 
         // ── Shift+click on an IBloodTile → bind source/dest ──
         if (player.isShiftKeyDown() && be != null
-                && be.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
+                && HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
             CompoundTag tag = stack.getOrCreateTag();
 
             if (!tag.contains(TAG_SOURCE)) {
@@ -104,7 +104,7 @@ public class BloodThrallItem extends Item {
 
             if (!level.isClientSide) {
                 // Blood cost
-                IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
                 if (playerVol == null || playerVol.getBloodVolume() < SPAWN_BLOOD_COST) {
                     player.displayClientMessage(
                             Component.literal("§cNot enough blood! Need " + (int) SPAWN_BLOOD_COST + " mL."), true);

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
@@ -64,7 +64,7 @@ public class BloodTendencyEvents {
 		if (!HemoServerConfig.TENDENCY_SHIFT_ON_KILL_ENABLED.get()) return;
 
 		// Only shift tendency when the blood system is active
-		boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) return;
 

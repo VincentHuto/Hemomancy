@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
@@ -38,7 +38,7 @@ public class PacketGourdScarSync {
 	public void handle(Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			if (mindscar.getItem() instanceof BloodGourdItem gourd) {
-				IBloodVolume bloodVolume = mindscar.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(mindscar)
 						.orElseThrow(NullPointerException::new);
 				Entity p = Minecraft.getInstance().level.getEntity(playerId);
 				if (p instanceof Player) {

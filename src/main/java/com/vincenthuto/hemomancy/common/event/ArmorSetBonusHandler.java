@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.armor.EnumModArmorTiers;
@@ -110,7 +110,7 @@ public class ArmorSetBonusHandler {
 
 		// Hematic Iron set bonus: passive blood regen (every HEMATIC_IRON_REGEN_INTERVAL ticks)
 		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				if (volume.isActive() && !volume.isFull()) {
 					volume.fill(HEMATIC_IRON_BLOOD_REGEN);
 					syncVolume((ServerPlayer) player, volume);
@@ -213,7 +213,7 @@ public class ArmorSetBonusHandler {
 
 		boolean hasBlood = false;
 		if (hasCrown) {
-			hasBlood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			hasBlood = HemoCapabilityAccess.getBloodVolume(player)
 					.map(vol -> vol.isActive() && vol.getBloodVolume() > vol.getMaxBloodVolume() * MARROW_CROWN_BLOOD_THRESHOLD)
 					.orElse(false);
 		}

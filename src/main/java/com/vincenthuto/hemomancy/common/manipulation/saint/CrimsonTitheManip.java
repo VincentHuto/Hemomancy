@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -57,7 +57,7 @@ public class CrimsonTitheManip extends BloodManipulation {
 			return;
 		}
 
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || !volume.isActive()) {
 			return;
 		}
@@ -95,7 +95,7 @@ public class CrimsonTitheManip extends BloodManipulation {
 	private void applyHemorrhage(Player player, Level world) {
 		double storedAmount = player.getPersistentData().getDouble(TITHE_STORED_KEY);
 
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume != null) {
 			// Drain double what was stored as punishment
 			volume.drain(storedAmount * 2.0);

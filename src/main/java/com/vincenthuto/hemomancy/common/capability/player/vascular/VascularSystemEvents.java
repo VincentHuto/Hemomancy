@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.capability.player.vascular;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -49,7 +49,7 @@ public class VascularSystemEvents {
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED.get()) return;
 
-		boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) return;
 
@@ -155,7 +155,7 @@ public class VascularSystemEvents {
 		Player player = event.player;
 		if (player.level().isClientSide) return;
 
-		boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) return;
 

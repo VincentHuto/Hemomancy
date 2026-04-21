@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
@@ -8,7 +9,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -216,7 +216,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		stack.shrink(1);
 		unstained.setClarityUnlocked(true);
 		// Disable blood magic permanently
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			volume.setActive(false);
 			PacketHandler.CHANNELBLOODVOLUME.send(
 					PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),

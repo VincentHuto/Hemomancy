@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
@@ -77,10 +77,10 @@ public class CopyBloodGourdRecipe extends ShapedRecipe {
 			if (dataSource.getItem() instanceof BloodGourdItem) {
 				if (!dataSource.isEmpty() && dataSource.hasTag()) {
 					craftingResult.setTag(dataSource.getTag().copy());
-					IBloodVolume bloodVolume = dataSource.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(dataSource)
 							.orElseThrow(NullPointerException::new);
 					if (craftingResult.getItem() instanceof BloodGourdItem) {
-						IBloodVolume resultVolume = craftingResult.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						IBloodVolume resultVolume = HemoCapabilityAccess.getBloodVolume(craftingResult)
 								.orElseThrow(NullPointerException::new);
 						resultVolume.setBloodVolume(bloodVolume.getBloodVolume());
 					}

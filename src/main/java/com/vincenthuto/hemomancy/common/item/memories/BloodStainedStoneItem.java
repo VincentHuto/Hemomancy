@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.memories;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
@@ -37,7 +37,7 @@ public class BloodStainedStoneItem extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		IBloodVolume volCap = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
 		IKnownManipulations manips = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);

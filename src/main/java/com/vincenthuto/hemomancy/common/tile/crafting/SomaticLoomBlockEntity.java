@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 import java.util.UUID;
 
@@ -8,7 +9,6 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -73,7 +73,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	/** Slot 0 = hematic memory, Slot 1 = catalyst item. */
 	public NonNullList<ItemStack> contents = NonNullList.withSize(2, ItemStack.EMPTY);
 
-	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
 	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA).orElseThrow(IllegalStateException::new);
 
 	private MemoryWeavingRecipe curRecipe = null;
@@ -152,7 +152,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 
 		// --- Blood gourd: drain blood from gourd into block ---
 		if (stack.getItem() instanceof BloodGourdItem) {
-			IBloodVolume gourdVol = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+			IBloodVolume gourdVol = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
 			if (gourdVol == null || gourdVol.getBloodVolume() <= 0 || volume.isFull()) return false;
 			double transfer = Math.min(gourdVol.getBloodVolume(),
 					volume.getMaxBloodVolume() - volume.getBloodVolume());

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.memories;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -39,7 +40,7 @@ public class HematicMemoryItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-//		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+//		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 //				.orElseThrow(NullPointerException::new);
 //		if (!worldIn.isClientSide) {
 //			volume.setActive(!volume.isActive());

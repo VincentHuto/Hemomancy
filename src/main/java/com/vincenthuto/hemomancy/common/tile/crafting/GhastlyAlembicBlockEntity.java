@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -171,7 +171,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	@Nullable
 	private IBloodVolume resolveVolume() {
-		return getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		return HemoCapabilityAccess.getBloodVolume(this).orElse(null);
 	}
 
 	// ---- Ticking ----

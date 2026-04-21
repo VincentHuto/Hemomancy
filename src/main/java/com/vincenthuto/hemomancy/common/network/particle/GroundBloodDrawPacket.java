@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
 import org.joml.Vector3d;
 
 import com.vincenthuto.hemomancy.common.block.EngramBlock;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -46,7 +46,7 @@ public class GroundBloodDrawPacket {
 			if (!player.level().isClientSide) {
 				float pTic = message.parTick;
 				if (player.getMainHandItem().getItem() == ItemInit.living_staff.get()) {
-					IBloodVolume bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume bloodVol = HemoCapabilityAccess.getBloodVolume(player)
 							.orElseThrow(NullPointerException::new);
 					ServerLevel sLevel = (ServerLevel) player.level();
 					HitResult trace = player.pick(6, pTic, false);

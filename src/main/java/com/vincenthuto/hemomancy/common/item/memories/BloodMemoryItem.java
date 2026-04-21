@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.memories;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
@@ -62,7 +62,7 @@ public class BloodMemoryItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
-		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
 		LinkedHashMap<BloodManipulation, ManipLevel> knownList = known.getKnownManips();
 

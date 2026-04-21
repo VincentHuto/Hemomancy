@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -10,7 +11,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.google.common.collect.Lists;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -125,7 +125,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 				if (shooter.level().random.nextBoolean()) {
 					if (shooter instanceof Player) {
 						Player playerIn = (Player) shooter;
-						IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 								.orElseThrow(NullPointerException::new);
 						float damageMod = 50f;
 						if (playerVolume.getBloodVolume() > damageMod) {
@@ -263,7 +263,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 					itemstack1 = itemstack.copy();
 				} else {
 					Player playerIn = (Player) entityIn;
-					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume.getBloodVolume() >= 0) {
 						itemstack = new ItemStack(ItemInit.blood_bolt.get());
@@ -469,7 +469,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 			}
 			return InteractionResultHolder.consume(itemstack);
 		} else {
-			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 					.orElseThrow(NullPointerException::new);
 			double vol = volume.getBloodVolume();
 			if (vol >= 0) {

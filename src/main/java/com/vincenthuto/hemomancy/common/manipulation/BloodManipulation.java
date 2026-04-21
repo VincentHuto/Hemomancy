@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +14,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPuritySt
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -212,7 +212,7 @@ public class BloodManipulation  {
 	}
 
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);

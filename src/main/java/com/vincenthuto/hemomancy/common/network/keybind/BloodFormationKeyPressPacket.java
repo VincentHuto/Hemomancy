@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -37,7 +37,7 @@ public class BloodFormationKeyPressPacket {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 					.orElseThrow(NullPointerException::new);
 			ServerLevel sLevel = (ServerLevel) ctx.get().getSender().level();
 			if (player.getMainHandItem().getItem() instanceof SwordItem) {

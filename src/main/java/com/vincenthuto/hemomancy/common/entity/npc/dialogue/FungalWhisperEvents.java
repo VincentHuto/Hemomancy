@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -59,7 +59,7 @@ public class FungalWhisperEvents {
 		if (degree < 4) return;
 
 		// Ensure the player has active blood
-		boolean hasBlood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		boolean hasBlood = HemoCapabilityAccess.getBloodVolume(player)
 				.map(vol -> vol.isActive())
 				.orElse(false);
 		if (!hasBlood) return;

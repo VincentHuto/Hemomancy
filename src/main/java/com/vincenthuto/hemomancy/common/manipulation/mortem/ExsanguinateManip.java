@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +8,6 @@ import java.util.Optional;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -85,7 +85,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		target.hurt(world.damageSources().magic(), drainDamage);
 
 		// Restore blood to caster
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume != null && volume.isActive()) {
 			double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
 			volume.addBloodVolume(toRestore);

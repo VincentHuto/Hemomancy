@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -71,7 +72,7 @@ public class LivingSpearItem extends LivingToolItem {
 		 * if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
 		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.world.isRemote) {
 		 * Player playerIn = (Player) attacker; IBloodVolume playerVolume =
-		 * playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		 * HemoCapabilityAccess.getBloodVolume(playerIn)
 		 * .orElseThrow(NullPointerException::new); float damageMod =
 		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
 		 * { playerVolume.subtractBloodVolume(damageMod);
@@ -134,7 +135,7 @@ public class LivingSpearItem extends LivingToolItem {
 
 				/*
 				 * IBloodVolume playerVolume =
-				 * player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				 * HemoCapabilityAccess.getBloodVolume(player)
 				 * .orElseThrow(NullPointerException::new); if (playerVolume.getBloodVolume() >
 				 * 50f) { if (!worldIn.isRemote) { playerVolume.subtractBloodVolume(50f);
 				 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->

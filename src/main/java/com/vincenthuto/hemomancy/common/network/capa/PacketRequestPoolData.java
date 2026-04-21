@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -33,7 +33,7 @@ public class PacketRequestPoolData {
 			ServerPlayer player = ctx.get().getSender();
 			if (player == null) return;
 
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				Bloodline bloodline = volume.getBloodLine();
 				if (bloodline.isValid()) {
 					ServerLevel overworld = player.server.overworld();

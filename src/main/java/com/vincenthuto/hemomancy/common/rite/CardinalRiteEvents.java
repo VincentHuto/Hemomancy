@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,6 @@ import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSecti
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
@@ -132,7 +132,7 @@ public class CardinalRiteEvents {
 			// Only the caster takes damage and blood drain for leaving the rite bounds
 			if (!bounds.contains(caster.position())) {
 				caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
-				caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+				HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 					volume.drain(CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK);
 					BloodVolumeEvents.syncVolume(caster, volume);
 				});
@@ -493,7 +493,7 @@ public class CardinalRiteEvents {
 		if (recipe == null) return;
 
 		// Drain blood cost
-		caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 			volume.drain(recipe.getBloodCost());
 			BloodVolumeEvents.syncVolume(caster, volume);
 		});
@@ -1169,7 +1169,7 @@ public class CardinalRiteEvents {
 			return;
 		}
 
-		caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 			volume.addMaxBloodVolume(ETERNAL_COVENANT_BONUS);
 			BloodVolumeEvents.syncVolume(caster, volume);
 		});
@@ -1242,13 +1242,13 @@ public class CardinalRiteEvents {
 			if (member != null) {
 				// Return their share of the pool blood
 				if (bloodPerMember > 0) {
-					member.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+					HemoCapabilityAccess.getBloodVolume(member).ifPresent(volume -> {
 						volume.fill(bloodPerMember);
 						volume.setBloodLine(Bloodline.NOBLOODLINE);
 						BloodVolumeEvents.syncVolume(member, volume);
 					});
 				} else {
-					member.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+					HemoCapabilityAccess.getBloodVolume(member).ifPresent(volume -> {
 						volume.setBloodLine(Bloodline.NOBLOODLINE);
 						BloodVolumeEvents.syncVolume(member, volume);
 					});
@@ -1591,7 +1591,7 @@ public class CardinalRiteEvents {
 		savedData.registerBloodline(playerLine);
 
 		// Set the caster's bloodline capability
-		caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 			volume.setBloodLine(playerLine);
 			BloodVolumeEvents.syncVolume(caster, volume);
 		});
@@ -1749,7 +1749,7 @@ public class CardinalRiteEvents {
 
 		int[] affected = {0};
 		for (ServerPlayer target : nearbyPlayers) {
-			target.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(target).ifPresent(volume -> {
 				if (volume.isActive()) {
 					// Apply Hemolysis effect (amplifier 2, 30 seconds)
 					target.addEffect(new MobEffectInstance(

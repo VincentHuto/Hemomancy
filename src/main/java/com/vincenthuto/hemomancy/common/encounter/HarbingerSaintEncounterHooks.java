@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,7 @@ public final class HarbingerSaintEncounterHooks {
 
 	public static boolean spawnSaintBoss(ServerLevel level, BlockPos pos, Player sourcePlayer) {
 		// Reset blood debt at encounter start so pre-fight damage doesn't carry over.
-		sourcePlayer.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		HemoCapabilityAccess.getBloodVolume(sourcePlayer)
 				.ifPresent(v -> v.resetBloodDebt());
 
 		HollowVesselEntity boss = EntityInit.hollow_vessel.get().create(level);

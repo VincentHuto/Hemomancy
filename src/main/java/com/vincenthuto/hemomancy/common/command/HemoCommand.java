@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -22,7 +23,6 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -242,7 +242,7 @@ public class HemoCommand {
 	// ═══════════════════ Blood Volume ═══════════════════
 
 	private static int getBlood(CommandSourceStack source, ServerPlayer player) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
@@ -257,7 +257,7 @@ public class HemoCommand {
 	}
 
 	private static int setBlood(CommandSourceStack source, ServerPlayer player, double amount) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.setBloodVolume(Math.min(amount, blood.getMaxBloodVolume()));
 		BloodVolumeEvents.syncVolume(player, blood);
@@ -270,7 +270,7 @@ public class HemoCommand {
 	}
 
 	private static int setMaxBlood(CommandSourceStack source, ServerPlayer player, double amount) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.setMaxBloodVolume(amount);
 		if (blood.getBloodVolume() > amount) {
@@ -286,7 +286,7 @@ public class HemoCommand {
 	}
 
 	private static int fillBlood(CommandSourceStack source, ServerPlayer player) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.setBloodVolume(blood.getMaxBloodVolume());
 		BloodVolumeEvents.syncVolume(player, blood);
@@ -300,7 +300,7 @@ public class HemoCommand {
 	}
 
 	private static int activateBlood(CommandSourceStack source, ServerPlayer player) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.toggleActive();
 		BloodVolumeEvents.syncVolume(player, blood);

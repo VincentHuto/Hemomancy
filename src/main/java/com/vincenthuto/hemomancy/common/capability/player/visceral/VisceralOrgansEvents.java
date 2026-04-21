@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.visceral;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
 
@@ -94,7 +94,7 @@ public class VisceralOrgansEvents {
 			// Spleen — increased max blood volume per modification level
 			if (organs.isExtracted(EnumOrgan.SPLEEN)) {
 				int level = organs.getOrganLevel(EnumOrgan.SPLEEN);
-				player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 					double baseMax = 5000.0;
 					double bonus = level * 1000.0; // +1000 per modification level
 					double targetMax = baseMax + bonus;
@@ -151,7 +151,7 @@ public class VisceralOrgansEvents {
 						60, Math.min(level - 1, 1), true, false));
 
 				// Blood cost: sustaining circulation without a heart is taxing
-				player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 					double cost = 10.0 / level; // Higher level = less cost
 					vol.drain(cost);
 				});

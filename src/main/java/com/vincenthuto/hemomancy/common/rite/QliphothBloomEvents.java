@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
@@ -82,7 +82,7 @@ public class QliphothBloomEvents {
 						REGEN_DURATION, 0, true, false, true));
 
 				// Grant enhanced blood regeneration
-				player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 					if (volume.isActive()) {
 						double maxBlood = volume.getMaxBloodVolume();
 						if (volume.getBloodVolume() < maxBlood) {
