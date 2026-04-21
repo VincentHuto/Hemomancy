@@ -7,9 +7,10 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class CraftingTabController implements IProgressTab {
     private final CraftingTabState state = new CraftingTabState();
+    private final boolean unstained;
 
     /** Harbinger-flavoured controller (no-arg, existing behaviour preserved). */
-    public CraftingTabController() {}
+    public CraftingTabController() { this(false); }
 
     /**
      * Creates a crafting-tab controller with a path-specific theme.
@@ -20,6 +21,7 @@ public class CraftingTabController implements IProgressTab {
      *                  degree lock active).
      */
     public CraftingTabController(boolean unstained) {
+        this.unstained = unstained;
         if (unstained) {
             state.tabColor         = 0xFF80D0C0;
             state.separatorColor   = 0xFF203050;
@@ -34,7 +36,6 @@ public class CraftingTabController implements IProgressTab {
     @Override
     public void onInit(ProgressScreenContext ctx) {
         Minecraft mc = Minecraft.getInstance();
-        boolean unstained = !state.enableDegreeLock; // proxy flag
         state.craftingRecipes.clear();
         if (mc.player != null && mc.level != null)
             for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(mc.level))

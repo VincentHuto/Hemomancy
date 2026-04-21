@@ -10,9 +10,10 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class RitesTabController implements IProgressTab {
     private final RitesTabState state = new RitesTabState();
+    private final boolean unstained;
 
     /** Harbinger-flavoured controller (no-arg, existing behaviour preserved). */
-    public RitesTabController() {}
+    public RitesTabController() { this(false); }
 
     /**
      * Creates a rites-tab controller with a path-specific theme.
@@ -23,6 +24,7 @@ public class RitesTabController implements IProgressTab {
      *                  degree lock active, all tiers shown).
      */
     public RitesTabController(boolean unstained) {
+        this.unstained = unstained;
         if (unstained) {
             state.tabColor         = 0xFF8090BB;
             state.separatorColor   = 0xFF203050;
@@ -38,7 +40,6 @@ public class RitesTabController implements IProgressTab {
     @Override
     public void onInit(ProgressScreenContext ctx) {
         Minecraft mc = Minecraft.getInstance();
-        boolean unstained = !state.enableDegreeLock; // proxy flag
         state.riteRecipes.clear();
         if (mc.player != null && mc.level != null)
             for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(mc.level))
