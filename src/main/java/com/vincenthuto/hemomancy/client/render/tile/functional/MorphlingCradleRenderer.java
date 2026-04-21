@@ -62,7 +62,10 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 			double wallTX = 0.5 + facing.getStepX();
 			double wallTZ = 0.5 + facing.getStepZ();
 			poseStack.translate(wallTX, 0.5D, wallTZ);
-			poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+			// Negate yRot for wall case: the R_X(-90) tilt reverses the effective Y rotation
+			// needed to point the bowl outward. -yRot fixes all four directions while keeping
+			// NORTH(180→180) and SOUTH(0→0) correct and swapping EAST(270→90) and WEST(90→270).
+			poseStack.mulPose(Vector3.YP.rotationDegrees(-yRot).toMoj());
 			poseStack.mulPose(Vector3.XP.rotationDegrees(-90f).toMoj());
 		}
 
@@ -96,7 +99,7 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 				poseStack.translate(0.0F, bob, 0.0F);
 			}
 			poseStack.scale(0.55F, 0.55F, 0.55F);
-			this.itemRenderer.renderStatic(null, hosted, ItemDisplayContext.FIXED, true,
+			this.itemRenderer.renderStatic(null, hosted, ItemDisplayContext.GROUND, false,
 					poseStack, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
 			poseStack.popPose();
 		}
