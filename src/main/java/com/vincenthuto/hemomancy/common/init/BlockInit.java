@@ -351,6 +351,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new MorphlingIncubatorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
+	public static final RegistryObject<Block> morphling_cradle = MODELEDBLOCKS.register("morphling_cradle",
+			() -> new MorphlingCradleBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()

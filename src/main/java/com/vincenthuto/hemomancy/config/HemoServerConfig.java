@@ -50,6 +50,7 @@ public class HemoServerConfig {
 	public static ForgeConfigSpec.BooleanValue MORPHLING_PASSIVE_DRAIN_ENABLED;
 	public static ForgeConfigSpec.DoubleValue MORPHLING_DRAIN_RATE;
 	public static ForgeConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
+	public static ForgeConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
 
 	public static void registerServerConfig(Builder builder) {
 		// ───── Blood Volume ─────
@@ -202,6 +203,9 @@ public class HemoServerConfig {
 		MORPHLING_DRAIN_INTERVAL = builder
 				.comment("How many ticks between each morphling drain tick. 20 ticks = 1 second.")
 				.defineInRange("morphlingDrainInterval", 60, 1, 6000);
+		MORPHLING_CRADLE_LEECH_TARGET_PLAYERS = builder
+				.comment("Whether Leech Morphling Cradles can target non-owner players.")
+				.define("morphlingCradleLeechTargetPlayers", false);
 
 		builder.pop();
 	}
