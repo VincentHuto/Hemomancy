@@ -237,8 +237,7 @@ public class ItemInit {
             () -> new EnzymeItem(EnumBloodTendency.TENEBRIS, 10));
     public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
             () -> new RecycledEnzymeItem());
-//	public static final RegistryObject<Item> saint_enzyme = BASEITEMS.register("saint_enzyme",
-//			() -> new EnzymeItem(EnumBloodTendency.LUX, 20));
+
 
     // Hallowed Residuum — Saint-Enzymes (hybridized, extracted from Preserved Corpus)
     public static final RegistryObject<Item> hallowed_residuum_hemorath = BASEITEMS.register("hallowed_residuum_hemorath",
