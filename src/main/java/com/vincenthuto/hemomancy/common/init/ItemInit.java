@@ -112,6 +112,11 @@ public class ItemInit {
     public static final RegistryObject<Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
             () -> new UnsignedLedgerItem(new Item.Properties()));
 
+
+    public static final RegistryObject<Item> liber_immaculatus = SPECIALITEMS.register("liber_immaculatus",
+            () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
+                    Hemomancy.rloc("textures/entity/liber_immaculatus.png")));
+
     // Base Items
     public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
             () -> new Item(new Item.Properties()));
