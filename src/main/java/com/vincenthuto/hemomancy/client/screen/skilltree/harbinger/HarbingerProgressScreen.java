@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
@@ -47,7 +48,7 @@ public class HarbingerProgressScreen extends Screen {
     private final MaterialsTabController materials = new MaterialsTabController();
 
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
-    private final MilestoneDrawerState    milestoneState = new MilestoneDrawerState();
+    private final MilestoneDrawerState milestoneState = new MilestoneDrawerState();
 
     private int playerDegree = 0;
 

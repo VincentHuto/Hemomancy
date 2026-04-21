@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree.util;
+package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

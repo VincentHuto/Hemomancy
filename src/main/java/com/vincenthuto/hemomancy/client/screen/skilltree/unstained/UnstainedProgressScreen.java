@@ -2,11 +2,14 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;

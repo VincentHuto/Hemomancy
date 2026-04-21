@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree.util;
+package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.ArrayList;
 import java.util.Collections;

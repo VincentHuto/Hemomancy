@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree.util;
+package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;

@@ -1,8 +1,9 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree.util;
+package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class MaterialsTabController implements IProgressTab {

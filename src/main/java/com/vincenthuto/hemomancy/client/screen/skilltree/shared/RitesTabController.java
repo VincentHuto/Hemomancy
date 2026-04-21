@@ -1,7 +1,10 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree.util;
+package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.List;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.IProgressTab;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 
