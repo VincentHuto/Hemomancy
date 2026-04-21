@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
@@ -92,7 +92,7 @@ public class DarkArrowEntity extends AbstractArrow {
 		super.tick();
 		if (shooter instanceof Player) {
 			Player player = (Player) shooter;
-			IBloodTendency tend = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+			IBloodTendency tend = HemoCapabilityAccess.getBloodTendency(player)
 					.orElseThrow(NullPointerException::new);
 			ParticleColor color = ParticleColor.BLACK;
 			ServerLevel sLevel = (ServerLevel) level();

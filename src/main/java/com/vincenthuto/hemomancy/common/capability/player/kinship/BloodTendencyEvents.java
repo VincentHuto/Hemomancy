@@ -74,7 +74,7 @@ public class BloodTendencyEvents {
 		EnumBloodTendency tendency = determineTendencyFromKill(victim);
 		if (tendency == null) return;
 
-		player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
 			cap.addTendencyAlignment(tendency, amount);
 			syncTendency((ServerPlayer) player, cap);
 		});
@@ -133,7 +133,7 @@ public class BloodTendencyEvents {
 		float amount = HemoServerConfig.TENDENCY_SHIFT_ON_MANIP_USE.get().floatValue();
 		if (amount <= 0) return;
 
-		player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
 			cap.addTendencyAlignment(tendency, amount);
 			syncTendency(player, cap);
 		});
@@ -162,9 +162,9 @@ public class BloodTendencyEvents {
 		Player playernew = event.getEntity();
 		if (event.isWasDeath()) {
 			peorig.reviveCaps();
-			IBloodTendency bloodTendencyNew = playernew.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+			IBloodTendency bloodTendencyNew = HemoCapabilityAccess.getBloodTendency(playernew)
 					.orElseThrow(IllegalStateException::new);
-			bloodTendencyNew.setTendency(peorig.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+			bloodTendencyNew.setTendency(HemoCapabilityAccess.getBloodTendency(peorig)
 					.orElseThrow(IllegalArgumentException::new).getTendency());
 			peorig.invalidateCaps();
 		}
@@ -184,7 +184,7 @@ public class BloodTendencyEvents {
 		if (event.getEntity() instanceof Player) {
 			Player player = event.getEntity();
 			if (!player.getCommandSenderWorld().isClientSide) {
-				IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 						new BloodTendencyServerPacket(tendency.getTendency()));

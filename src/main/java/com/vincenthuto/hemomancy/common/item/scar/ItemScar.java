@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.scar;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
@@ -82,7 +82,7 @@ public class ItemScar extends Item implements IScar {
 	public void onEquipped(LivingEntity player) {
 		if (player instanceof Player) {
 			if (!player.getCommandSenderWorld().isClientSide) {
-				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				IBloodTendency coven = HemoCapabilityAccess.getBloodTendency(player)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
 					coven.setTendencyAlignment(getAssignedTendency(), getDeepenAmount());
@@ -111,7 +111,7 @@ public class ItemScar extends Item implements IScar {
 	public void onUnequipped(LivingEntity player) {
 		if (player instanceof Player) {
 			if (!player.getCommandSenderWorld().isClientSide) {
-				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				IBloodTendency coven = HemoCapabilityAccess.getBloodTendency(player)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
 					coven.setTendencyAlignment(getAssignedTendency(), -getDeepenAmount());

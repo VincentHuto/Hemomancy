@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +11,6 @@ import java.util.Set;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
@@ -277,7 +277,7 @@ public class ManipulationsTabController implements IProgressTab {
         if (screenX + starRadius < ctx.guiLeft() || screenX - starRadius > ctx.guiLeft() + ctx.guiWidth()
                 || screenY + starRadius < ctx.guiTop() || screenY - starRadius > ctx.guiTop() + ctx.guiHeight()) return;
 
-        mc.player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
+        HemoCapabilityAccess.getBloodTendency(mc.player).ifPresent(tendency -> {
             Map<EnumBloodTendency, Float> affs = tendency.getTendency();
             float rotAngle = -90f;
             int outerRadius = (int)(210 * panZoom.zoom);

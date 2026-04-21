@@ -15,7 +15,6 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryD
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
@@ -898,7 +897,7 @@ public class CardinalRiteEvents {
 	 * Resets all blood tendency alignment axes to zero.
 	 */
 	private static void completeSanguineAttunement(ServerPlayer caster) {
-		caster.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
+		HemoCapabilityAccess.getBloodTendency(caster).ifPresent(tendency -> {
 			for (EnumBloodTendency bt : EnumBloodTendency.values()) {
 				tendency.setTendencyAlignment(bt, 0f);
 			}

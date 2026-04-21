@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -74,7 +73,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	public NonNullList<ItemStack> contents = NonNullList.withSize(2, ItemStack.EMPTY);
 
 	IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
-	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA).orElseThrow(IllegalStateException::new);
+	IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(this).orElseThrow(IllegalStateException::new);
 
 	private MemoryWeavingRecipe curRecipe = null;
 	String recipePath = "";

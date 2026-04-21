@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
@@ -214,7 +213,7 @@ public class BloodManipulation  {
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
-		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {

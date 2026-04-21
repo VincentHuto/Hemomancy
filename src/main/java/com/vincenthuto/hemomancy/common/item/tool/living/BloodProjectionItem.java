@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
@@ -117,7 +116,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
-		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
 				.orElseThrow(NullPointerException::new);
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
