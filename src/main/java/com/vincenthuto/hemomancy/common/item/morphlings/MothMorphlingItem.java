@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.morphlings;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.network.chat.Component;
@@ -112,7 +112,7 @@ public class MothMorphlingItem extends MorphlingItem {
 			long lastCocoon = getLastAbilityTick(stack, "CocoonRebirth");
 			long now = player.level().getGameTime();
 			if (now - lastCocoon >= COCOON_REBIRTH_COOLDOWN) {
-				player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 					if (!volume.isActive()) return;
 					double bloodCost = 500.0;
 					if (volume.getBloodVolume() > bloodCost) {

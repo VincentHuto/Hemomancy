@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -10,7 +11,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -86,7 +86,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
 			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
 		if (ent instanceof Player player) {
-			player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manip -> {
+			HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manip -> {
 
 				if (manip.isAvatarActive()) {
 					float f = ent.tickCount + pPartialTicks;

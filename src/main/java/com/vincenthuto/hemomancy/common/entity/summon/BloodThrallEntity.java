@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -299,7 +299,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
 
             if (player.isShiftKeyDown()) {
                 // ── Shift+click: reabsorb thrall back into blood volume ──
-                IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
                 if (playerVol != null) {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
@@ -319,7 +319,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 return InteractionResult.SUCCESS;
             } else {
                 // ── Right-click: absorb thrall back into blood volume ──
-                IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
                 if (playerVol != null) {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
@@ -486,7 +486,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         private boolean tryAbsorb() {
             BlockEntity be = thrall.level().getBlockEntity(thrall.getSourcePos());
             if (be == null) return false;
-            IBloodVolume srcVol = be.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+            IBloodVolume srcVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (srcVol == null) return false;
 
             float space = MAX_CARRY - thrall.getCarriedBlood();
@@ -506,7 +506,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         private boolean tryDeposit() {
             BlockEntity be = thrall.level().getBlockEntity(thrall.getDestPos());
             if (be == null) return false;
-            IBloodVolume destVol = be.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+            IBloodVolume destVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (destVol == null) return false;
 
             float toTransfer = Math.min(TRANSFER_RATE, thrall.getCarriedBlood());

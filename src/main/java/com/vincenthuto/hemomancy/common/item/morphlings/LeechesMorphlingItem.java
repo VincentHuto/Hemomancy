@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.morphlings;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.network.chat.Component;
@@ -69,7 +69,7 @@ public class LeechesMorphlingItem extends MorphlingItem {
 				long lastTransfusion = getLastAbilityTick(stack, "BloodTransfusion");
 				long now = player.level().getGameTime();
 				if (now - lastTransfusion >= TRANSFUSION_COOLDOWN) {
-					player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+					HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 						if (!volume.isActive()) return;
 						double bloodCost = 200.0; // Spend blood to heal
 						if (volume.getBloodVolume() > bloodCost) {
@@ -119,7 +119,7 @@ public class LeechesMorphlingItem extends MorphlingItem {
 					// Heal player from the feeding frenzy
 					player.heal(4.0f);
 					// Recover blood volume
-					player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+					HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 						if (!volume.isActive()) return;
 						volume.fill(100.0);
 						BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);

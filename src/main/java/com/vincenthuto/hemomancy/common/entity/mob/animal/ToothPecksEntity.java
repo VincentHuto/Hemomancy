@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 
@@ -103,7 +103,7 @@ public class ToothPecksEntity extends PathfinderMob {
                 this.setDeltaMovement(Vec3.ZERO);
 
                 if (tickCount % 40 == 0) {
-                    player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(v -> v.addDamage(1.0));
+                    HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> v.addDamage(1.0));
                     player.addEffect(new MobEffectInstance(EffectInit.blood_loss.get(), 100, 0));
                     player.hurt(player.damageSources().mobAttack(this), 0.5f);
                     playSound(SoundInit.ENTITY_TOOTH_PECKS_AMBIENT.get(), 0.4F, 1.0F + random.nextFloat() * 0.2F);

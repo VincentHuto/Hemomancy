@@ -1,8 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.tool.living.IDispellable;
@@ -45,7 +44,7 @@ public class UseManipKeyPacket {
 
 				// Allow SummonThrallManip through cooldown when selecting a destination
 				boolean bypassCooldown = false;
-				IKnownManipulations knownCheck = player.getCapability(KnownManipulationProvider.MANIP_CAPA).orElse(null);
+				IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
 				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
 					BloodManipulation selManip = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
 					if (selManip instanceof SummonThrallManip && SummonThrallManip.hasPendingThrall(player.getUUID())) {
@@ -58,9 +57,9 @@ public class UseManipKeyPacket {
 							.withStyle(ChatFormatting.RED), true);
 					return;
 				}
-				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);
-				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 						.orElseThrow(NullPointerException::new);
 				if (volume.isActive()) {
 					if (known.getSelectedManip() != null) {

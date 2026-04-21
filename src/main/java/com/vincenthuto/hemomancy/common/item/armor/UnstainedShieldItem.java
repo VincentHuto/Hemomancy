@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.armor;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -58,7 +58,7 @@ public class UnstainedShieldItem extends Item {
 				if (player.isBlocking()) {
 					// Every 40 ticks (2 seconds) while blocking, grant a tiny purity bonus
 					if (player.tickCount % 40 == 0) {
-						player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+						HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
 							if (progress.hasBegunPurification() && !progress.isPurified()) {
 								progress.addPurity(0.1f);
 							}

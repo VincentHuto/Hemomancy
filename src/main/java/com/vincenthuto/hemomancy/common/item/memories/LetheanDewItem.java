@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.memories;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
@@ -47,7 +47,7 @@ public class LetheanDewItem extends Item {
 			CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) player, p_42984_);
 		}
 
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(NullPointerException::new);
 
 		if (known.getKnownManips().containsKey(known.getSelectedManip())) {

@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -105,7 +105,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 	@Nullable
 	private IBloodVolume resolveVolume() {
-		return getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		return HemoCapabilityAccess.getBloodVolume(this).orElse(null);
 	}
 
 	// ---- Ticking ----
@@ -195,7 +195,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 				}
 			}
 		} else if (bloodStack.getItem() instanceof BloodGourdItem) {
-			IBloodVolume gourdVolume = bloodStack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+			IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(bloodStack).orElse(null);
 			if (gourdVolume != null && gourdVolume.getBloodVolume() > 0) {
 				double transfer = Math.min(gourdVolume.getBloodVolume(), vol.getMaxBloodVolume() - vol.getBloodVolume());
 				transfer = Math.min(transfer, 10); // Transfer rate limit

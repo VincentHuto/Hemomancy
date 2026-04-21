@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
@@ -34,14 +35,14 @@ public class UnstainedProgressEvents {
     @SubscribeEvent
     public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress ->
+        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress ->
                 syncProgress(player, progress));
     }
 
     @SubscribeEvent
     public static void onDimensionChange(PlayerChangedDimensionEvent event) {
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress ->
+        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress ->
                 syncProgress(player, progress));
     }
 
@@ -49,7 +50,7 @@ public class UnstainedProgressEvents {
     public static void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getEntity();
         if (!player.level().isClientSide) {
-            player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress ->
+            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress ->
                     syncProgress((ServerPlayer) player, progress));
         }
     }
@@ -60,9 +61,9 @@ public class UnstainedProgressEvents {
             Player original = event.getOriginal();
             Player newPlayer = event.getEntity();
             original.reviveCaps();
-            IUnstainedProgress oldProgress = original.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+            IUnstainedProgress oldProgress = HemoCapabilityAccess.getUnstainedProgress(original)
                     .orElseThrow(IllegalStateException::new);
-            IUnstainedProgress newProgress = newPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+            IUnstainedProgress newProgress = HemoCapabilityAccess.getUnstainedProgress(newPlayer)
                     .orElseThrow(IllegalStateException::new);
             newProgress.setBegunPurification(oldProgress.hasBegunPurification());
             newProgress.setPurity(oldProgress.getPurity());

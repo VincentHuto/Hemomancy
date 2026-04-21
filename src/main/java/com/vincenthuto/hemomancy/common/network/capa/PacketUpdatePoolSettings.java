@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 
@@ -47,7 +47,7 @@ public class PacketUpdatePoolSettings {
 			ServerPlayer player = ctx.get().getSender();
 			if (player == null) return;
 
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				volume.setTrickleEnabled(msg.trickleEnabled);
 				volume.setTrickleRate(Math.max(0.01, Math.min(100.0, msg.trickleRate)));
 				volume.setAutoDrawEnabled(msg.autoDrawEnabled);

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +35,7 @@ public class PacketToggleUnstainedBonus {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
 
-            player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
                 switch (msg.bonusId) {
                     case 0 -> progress.setVerdigrisAuraEnabled(!progress.isVerdigrisAuraEnabled());
                     case 1 -> progress.setSilverWardEnabled(!progress.isSilverWardEnabled());

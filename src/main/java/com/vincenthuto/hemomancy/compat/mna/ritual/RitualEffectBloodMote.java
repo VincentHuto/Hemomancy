@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.compat.mna.ritual;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +14,6 @@ import com.mna.entities.utility.PresentItem;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.block.EngramBlock;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
@@ -50,7 +50,7 @@ public class RitualEffectBloodMote extends RitualEffect {
 	protected boolean applyRitualEffect(IRitualContext context) {
 
 		Player player = context.getCaster();
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		if (!volume.wouldOverstrain(1000)) {
 			volume.drain(1000);
@@ -60,7 +60,7 @@ public class RitualEffectBloodMote extends RitualEffect {
 		} else {
 			ItemStack offHandItem = player.getOffhandItem();
 			if (offHandItem.getItem() instanceof BloodGourdItem gourd) {
-				IBloodVolume itemstackCap = offHandItem.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume itemstackCap = HemoCapabilityAccess.getBloodVolume(offHandItem)
 						.orElseThrow(NullPointerException::new);
 				if (!itemstackCap.wouldOverstrain(1000)) {
 					itemstackCap.drain(1000);

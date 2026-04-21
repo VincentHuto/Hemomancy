@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.EnumSet;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
 
 import net.minecraft.ChatFormatting;
@@ -114,7 +114,7 @@ public class HematicCollapseGoal extends Goal {
 
 		double debt = 0.0;
 		if (target instanceof Player player) {
-			debt = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			debt = HemoCapabilityAccess.getBloodVolume(player)
 					.map(v -> v.consumeDebt())
 					.orElse(0.0);
 		}

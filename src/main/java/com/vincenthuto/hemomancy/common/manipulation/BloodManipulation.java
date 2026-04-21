@@ -1,19 +1,16 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -171,7 +168,7 @@ public class BloodManipulation  {
 					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier());
 
 			// ── ManipLevel — per-use mastery further reduces cooldown ──
-			double levelCooldownMultiplier = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			double levelCooldownMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
 					.map(k -> k.getManipLevel(this))
 					.map(ManipLevel::getCooldownMultiplier)
 					.orElse(1.0);
@@ -187,7 +184,7 @@ public class BloodManipulation  {
 	 * Sends the appropriate chat feedback to the player.
 	 */
 	private double getPurityCostMultiplier(Player player) {
-		var optUnstained = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA);
+		var optUnstained = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (!optUnstained.isPresent()) {
 			return 1.0;
 		}
@@ -212,9 +209,9 @@ public class BloodManipulation  {
 	}
 
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
-		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
@@ -240,7 +237,7 @@ public class BloodManipulation  {
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
 
 				// ── ManipLevel — per-use mastery reduces cost ──
-				double levelCostMultiplier = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				double levelCostMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
 						.map(k -> k.getManipLevel(this))
 						.map(ManipLevel::getCostMultiplier)
 						.orElse(1.0);

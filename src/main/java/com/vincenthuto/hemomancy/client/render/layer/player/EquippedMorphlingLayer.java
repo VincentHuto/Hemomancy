@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -32,7 +32,7 @@ public class EquippedMorphlingLayer<T extends LivingEntity, M extends HumanoidMo
 		if (!(entity instanceof Player player))
 			return;
 
-		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 			ItemStack morphling = cap.getEquippedMorphling();
 			if (morphling.isEmpty())
 				return;

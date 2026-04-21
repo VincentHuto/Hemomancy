@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +25,7 @@ public class VascularSystemClientPacket {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
 			if (sender != null) {
-				IVascularSystem BloodFlow = sender.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+				IVascularSystem BloodFlow = HemoCapabilityAccess.getVascularSystem(sender)
 						.orElseThrow(IllegalStateException::new);
 				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> sender),
 						new VascularSystemServerPacket(BloodFlow.getVascularSystem()));

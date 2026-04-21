@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 
@@ -40,7 +40,7 @@ public class PacketKickBloodlinePlayer {
 			ServerPlayer leader = ctx.get().getSender();
 			if (leader == null) return;
 
-			leader.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(leader).ifPresent(volume -> {
 				Bloodline localLine = volume.getBloodLine();
 				if (!localLine.isValid()) {
 					leader.displayClientMessage(
@@ -105,7 +105,7 @@ public class PacketKickBloodlinePlayer {
 
 	/** Clears the kicked player's bloodline, syncs them to client, and sends the removal notice. */
 	private static void notifyKickedPlayer(ServerPlayer kicked, ServerPlayer leader) {
-		kicked.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+		HemoCapabilityAccess.getBloodVolume(kicked).ifPresent(vol -> {
 			vol.setBloodLine(Bloodline.NOBLOODLINE);
 			BloodVolumeEvents.syncVolume(kicked, vol);
 			kicked.displayClientMessage(
@@ -118,7 +118,7 @@ public class PacketKickBloodlinePlayer {
 
 	/** Updates an ongoing bloodline member's local capability to the freshly updated bloodline. */
 	private static void syncMemberToUpdatedLine(ServerPlayer member, Bloodline updatedLine) {
-		member.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+		HemoCapabilityAccess.getBloodVolume(member).ifPresent(vol -> {
 			vol.setBloodLine(updatedLine);
 			BloodVolumeEvents.syncVolume(member, vol);
 		});

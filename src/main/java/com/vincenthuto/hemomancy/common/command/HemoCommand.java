@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -8,21 +9,17 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -242,7 +239,7 @@ public class HemoCommand {
 	// ═══════════════════ Blood Volume ═══════════════════
 
 	private static int getBlood(CommandSourceStack source, ServerPlayer player) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
@@ -257,7 +254,7 @@ public class HemoCommand {
 	}
 
 	private static int setBlood(CommandSourceStack source, ServerPlayer player, double amount) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.setBloodVolume(Math.min(amount, blood.getMaxBloodVolume()));
 		BloodVolumeEvents.syncVolume(player, blood);
@@ -270,7 +267,7 @@ public class HemoCommand {
 	}
 
 	private static int setMaxBlood(CommandSourceStack source, ServerPlayer player, double amount) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.setMaxBloodVolume(amount);
 		if (blood.getBloodVolume() > amount) {
@@ -286,7 +283,7 @@ public class HemoCommand {
 	}
 
 	private static int fillBlood(CommandSourceStack source, ServerPlayer player) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.setBloodVolume(blood.getMaxBloodVolume());
 		BloodVolumeEvents.syncVolume(player, blood);
@@ -300,7 +297,7 @@ public class HemoCommand {
 	}
 
 	private static int activateBlood(CommandSourceStack source, ServerPlayer player) {
-		IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(IllegalStateException::new);
 		blood.toggleActive();
 		BloodVolumeEvents.syncVolume(player, blood);
@@ -316,7 +313,7 @@ public class HemoCommand {
 	// ═══════════════════ Initiatory Degree ═══════════════════
 
 	private static int getDegree(CommandSourceStack source, ServerPlayer player) {
-		IInitiatoryDegree degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.orElseThrow(IllegalStateException::new);
 		int num = degree.getDegreeNumber();
 		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(num);
@@ -330,7 +327,7 @@ public class HemoCommand {
 	}
 
 	private static int setDegree(CommandSourceStack source, ServerPlayer player, int degreeNum) {
-		IInitiatoryDegree degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.orElseThrow(IllegalStateException::new);
 		degree.setDegreeNumber(degreeNum);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
@@ -396,7 +393,7 @@ public class HemoCommand {
 	// ═══════════════════ Unstained Progression ═══════════════════
 
 	private static int getUnstainedOverview(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		EnumPurityStage pStage = EnumPurityStage.byPurity(cap.getPurity());
 		EnumClarityStage cStage = EnumClarityStage.byClarity(cap.getClarity());
@@ -426,7 +423,7 @@ public class HemoCommand {
 	}
 
 	private static int toggleBegun(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(!cap.hasBegunPurification());
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -440,7 +437,7 @@ public class HemoCommand {
 	}
 
 	private static int getPurity(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		EnumPurityStage stage = EnumPurityStage.byPurity(cap.getPurity());
 		source.sendSuccess(() -> Component.literal("")
@@ -453,7 +450,7 @@ public class HemoCommand {
 	}
 
 	private static int setPurity(CommandSourceStack source, ServerPlayer player, float value) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setPurity(value);
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -468,7 +465,7 @@ public class HemoCommand {
 	}
 
 	private static int toggleClarityUnlock(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarityUnlocked(!cap.hasClarityUnlocked());
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -482,7 +479,7 @@ public class HemoCommand {
 	}
 
 	private static int getClarity(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
 		source.sendSuccess(() -> Component.literal("")
@@ -495,7 +492,7 @@ public class HemoCommand {
 	}
 
 	private static int setClarity(CommandSourceStack source, ServerPlayer player, float value) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarity(value);
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -510,7 +507,7 @@ public class HemoCommand {
 	}
 
 	private static int resetUnstained(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(false);
 		cap.setPurity(0);
@@ -525,7 +522,7 @@ public class HemoCommand {
 	}
 
 	private static int maxUnstained(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(true);
 		cap.setPurity(100);
@@ -596,7 +593,7 @@ public class HemoCommand {
 	// ═══════════════════ Manipulation Slots ═══════════════════
 
 	private static int getSlots(CommandSourceStack source, ServerPlayer player) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		java.util.List<String> equipped = known.getEquippedManipNames();
@@ -614,7 +611,7 @@ public class HemoCommand {
 	}
 
 	private static int equipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (known.equipManip(manipName, maxSlots)) {
@@ -631,7 +628,7 @@ public class HemoCommand {
 	}
 
 	private static int unequipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		if (known.unequipManip(manipName)) {
 			source.sendSuccess(() -> Component.literal("Unequipped ")

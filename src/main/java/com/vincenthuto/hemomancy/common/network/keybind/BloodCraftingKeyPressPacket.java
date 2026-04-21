@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -119,7 +119,7 @@ public class BloodCraftingKeyPressPacket {
 			// === Blood Structure Recipes (instant crafting) ===
 			for (BloodStructureRecipe pattern : BloodStructureRecipe.getAllRecipes(player.level())) {
 				if (player.getMainHandItem().getItem() == pattern.getHeldItem().getItem()) {
-					IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 							.orElseThrow(NullPointerException::new);
 					List<BloodStructureRecipe> matchedPatterns = getMatchingRecipes(message.heldStack, player.level());
 					if (matchedPatterns != null) {
@@ -285,7 +285,7 @@ public class BloodCraftingKeyPressPacket {
 			return;
 		}
 
-		IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 
 		HitResult rayTrace = player.pick(5, 0, false);

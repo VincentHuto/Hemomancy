@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
@@ -83,7 +83,7 @@ public class ConsecrationHandler {
 		if (targetBlock == null) return;
 
 		// Check purity requirement
-		boolean allowed = serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).map(progress -> {
+		boolean allowed = HemoCapabilityAccess.getUnstainedProgress(serverPlayer).map(progress -> {
 			if (!progress.hasBegunPurification()) return false;
 			EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
 			return stage.getLevel() >= EnumPurityStage.CLEANSING.getLevel();
@@ -104,7 +104,7 @@ public class ConsecrationHandler {
 		}
 
 		// Grant purity
-		serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
 			progress.addPurity(PURITY_PER_CONSECRATION);
 			com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents.syncProgress(serverPlayer, progress);
 		});

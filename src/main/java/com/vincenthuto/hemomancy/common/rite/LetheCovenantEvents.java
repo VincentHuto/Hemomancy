@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.core.BlockPos;
@@ -71,7 +71,7 @@ public class LetheCovenantEvents {
 
 			if (!data.isInDomain(pos, dimension, tick)) continue;
 
-			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
 				if (!progress.hasBegunPurification() || progress.isPurified()) return;
 				progress.addPurity(PURITY_PER_MINUTE);
 				UnstainedProgressEvents.syncProgress(player, progress);

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ZealotDialogueTrees;
@@ -75,7 +75,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
-            IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+            IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 
             // Read Unstained progress directly now that the capability is always present
             boolean hasBegunPurification = false;
@@ -83,9 +83,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
             boolean clarityUnlocked = false;
             boolean enlightened = false;
 
-            var unstainedOpt = player.getCapability(
-                    com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider.UNSTAINED_CAPA)
-                    .resolve();
+            var unstainedOpt = HemoCapabilityAccess.getUnstainedProgress(player);
             if (unstainedOpt.isPresent()) {
                 var progress = unstainedOpt.get();
                 hasBegunPurification = progress.hasBegunPurification();

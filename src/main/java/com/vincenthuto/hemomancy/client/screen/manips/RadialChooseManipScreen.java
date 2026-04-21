@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -10,9 +11,7 @@ import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
 import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
@@ -111,7 +110,7 @@ public class RadialChooseManipScreen extends Screen {
 		if (this.needsRecheckStacks) {
 			this.cachedMenuItems.clear();
 
-			IKnownManipulations manips = mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			IKnownManipulations manips = mc.HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
 
 			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary
@@ -149,9 +148,9 @@ public class RadialChooseManipScreen extends Screen {
 
 			MutableComponent textComponents = MutableComponent.create(ComponentContents.EMPTY);
 			if (inv != null) {
-				IBloodVolume bloodVolume = inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX)
-						.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(NullPointerException::new);
-				IBloodVolume volCap = mc.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX))
+						.orElseThrow(NullPointerException::new);
+				IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(mc.player)
 						.orElseThrow(NullPointerException::new);
 				textComponents.append(Component.literal("Self: " + volCap.getBloodVolume() + "ml"));
 				textComponents.append(Component.literal("Gourd: " + bloodVolume.getBloodVolume() + "ml"));

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
@@ -25,7 +25,7 @@ public class BloodTendencyClientPacket {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
 			if (sender != null) {
-				IBloodTendency bloodTendency = sender.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				IBloodTendency bloodTendency = HemoCapabilityAccess.getBloodTendency(sender)
 						.orElseThrow(IllegalStateException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> sender),
 						new BloodTendencyServerPacket(bloodTendency.getTendency()));

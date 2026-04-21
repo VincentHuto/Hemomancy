@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -177,7 +177,7 @@ public class VascularStatusScreen extends Screen {
 		int scaledModelSize = (int) (BASE_MODEL_SCALE * guiScale);
 
 		// Render 3D player model with vascular overlays
-		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			// Scissor clip to keep the model inside the GUI panel
 			graphics.enableScissor(guiLeft + 4, guiTop + 28, guiLeft + guiWidth - 4, guiTop + guiHeight - 18);
 			render3DPlayerWithOverlays(graphics, vascular, player, centerX, centerY + (int)(20 * guiScale), mouseX, mouseY, scaledModelSize);

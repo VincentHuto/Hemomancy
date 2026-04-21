@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -292,7 +292,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (bloodBuffer <= 0) return;
 		ServerPlayer owner = getOwnerPlayer();
 		if (owner != null) {
-			owner.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+			HemoCapabilityAccess.getBloodVolume(owner).ifPresent(vol -> {
 				if (vol.isActive() && !vol.isFull() && bloodBuffer > 0) {
 					double before = vol.getBloodVolume();
 					vol.fill(bloodBuffer);
@@ -317,7 +317,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (owner != null && owner.level() == level && owner.isAlive()
 				&& owner.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5)
 				<= OWNER_DRAIN_RANGE * OWNER_DRAIN_RANGE) {
-			var vol = owner.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+			var vol = HemoCapabilityAccess.getBloodVolume(owner).orElse(null);
 			if (vol != null && vol.isActive() && vol.getBloodVolume() >= remaining) {
 				return vol.drain(remaining);
 			}

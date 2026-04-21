@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
@@ -90,7 +91,6 @@ import com.vincenthuto.hemomancy.client.screen.overlay.UnstainedGaugeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
@@ -225,7 +225,7 @@ public class ClientEvents {
 		if (useManip.consumeClick()) {
 			Minecraft mc = Minecraft.getInstance();
 			if (mc.player != null) {
-				mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manip -> {
+				mc.HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manip -> {
 					if (manip.getSelectedManip() != null
 							&& manip.getSelectedManip().getName().equals("venous_travel")) {
 						mc.setScreen(new RadialChooseVeinScreen(manip));
@@ -297,7 +297,7 @@ public class ClientEvents {
 	public static void cameraView(EntityEvent.Size event) {
 		if (event.getEntity() instanceof Player player) {
 			if (player.isAddedToWorld()) {
-				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+				HemoCapabilityAccess.getKnownManipulations(player).ifPresent((manip) -> {
 					if (manip.isAvatarActive()) {
 						event.setNewEyeHeight(3.5f);
 						event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
@@ -353,7 +353,7 @@ public class ClientEvents {
 	@SubscribeEvent
 	public static void renderPlayerSize(RenderPlayerEvent event) {
 		if (event.getEntity().isAddedToWorld()) {
-			event.getEntity().getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+			HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent((manip) -> {
 				if (manip.isAvatarActive()) {
 					event.getPoseStack().translate(0, 2, 0);
 				}

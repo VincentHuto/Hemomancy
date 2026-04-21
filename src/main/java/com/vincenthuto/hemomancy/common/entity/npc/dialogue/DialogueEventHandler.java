@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -139,7 +139,7 @@ public class DialogueEventHandler {
 	 * single-player users to grow their pool without multiplayer partners.
 	 */
 	private static void handleRecruitHarbinger(ServerPlayer player, int entityId) {
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			Bloodline bloodline = volume.getBloodLine();
 
 			// Must have a bloodline first (signed the ledger)
@@ -214,7 +214,7 @@ public class DialogueEventHandler {
 	 * bloodline progenitor/leader may expel members.
 	 */
 	private static void handleExpelHarbinger(ServerPlayer player, int entityId) {
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			Bloodline bloodline = volume.getBloodLine();
 			if (!bloodline.isValid()) {
 				player.displayClientMessage(
@@ -254,7 +254,7 @@ public class DialogueEventHandler {
 			}
 
 			for (ServerPlayer online : player.server.getPlayerList().getPlayers()) {
-				online.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(memberVolume -> {
+				HemoCapabilityAccess.getBloodVolume(online).ifPresent(memberVolume -> {
 					if (updatedLine.hasMember(online.getUUID())) {
 						memberVolume.setBloodLine(updatedLine);
 						BloodVolumeEvents.syncVolume(online, memberVolume);

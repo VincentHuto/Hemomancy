@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.compat.mna.spell;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mna.api.affinity.Affinity;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.api.events.CalculatingManaCostEvent;
@@ -7,7 +8,6 @@ import com.mna.api.events.SpellCastEvent;
 import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
@@ -58,7 +58,7 @@ public class BloodTitheHandler {
 				if (spell.getAffinity() != null && spell.getAffinity().containsKey(Affinity.BLOOD)) {
 
 					// Check if player has blood volume capability
-					IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+					IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 					if (blood != null && blood.isActive()) {
 						float reduction = (float) (currentCost * HemoMnAConfig.BLOOD_TITHE_MANA_REDUCTION.get());
 						double bloodCost = reduction * HemoMnAConfig.BLOOD_TITHE_BLOOD_PER_MANA.get();
@@ -103,7 +103,7 @@ public class BloodTitheHandler {
 			if (progression != null && progression.getAlliedFaction() != null
 					&& progression.getAlliedFaction().is(HarbingerEventHandler.FACTION_HARBINGERS_ID)) {
 
-				IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+				IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 				if (blood != null && blood.isActive()) {
 					float originalManaCost = spell.getManaCost();
 					// Recalculate what the original cost would have been before our reduction

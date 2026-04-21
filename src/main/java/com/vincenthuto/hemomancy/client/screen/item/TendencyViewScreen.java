@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenu;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -252,7 +252,7 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
 
     private void drawCenter(GuiGraphics graphics, int centerX, int centerY) {
         LocalPlayer player = this.minecraft.player;
-        player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
+        HemoCapabilityAccess.getBloodTendency(player).ifPresent(tendency -> {
             Map<EnumBloodTendency, Float> affs = tendency.getTendency();
             float rotAngle = -90f;
             int iconDiameter = (int) (95 * guiScale);

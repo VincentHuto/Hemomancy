@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
@@ -25,7 +25,7 @@ public class BloodVolumeClientPacket {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
 			if (sender != null) {
-				IBloodVolume volume = sender.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						.orElseThrow(IllegalStateException::new);
 				// Send message back to the client to set the information
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),

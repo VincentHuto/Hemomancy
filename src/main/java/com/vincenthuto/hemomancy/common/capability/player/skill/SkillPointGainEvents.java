@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.skill;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
@@ -132,7 +132,7 @@ public class SkillPointGainEvents {
         if (victim.getType().getCategory() != MobCategory.MONSTER) return;
 
         // Only count when blood volume is active
-        boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+        boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
                 .map(vol -> vol.isActive() && vol.getBloodVolume() > 0)
                 .orElse(false);
         if (!bloodActive) return;

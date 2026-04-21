@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.puzzle;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ public class BloodPylonBlockEntity extends BlockEntity {
         AABB range = new AABB(pos).inflate(DRAIN_RADIUS);
         List<Player> players = level.getEntitiesOfClass(Player.class, range);
         for (Player player : players) {
-            player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+            HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
                 if (!volume.isEmpty() && volume.drain(DRAIN_AMOUNT)) {
                     if (player instanceof ServerPlayer sp) {
                         sp.displayClientMessage(

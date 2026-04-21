@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ public class SyncTrackingAvatarPacket {
 		ctx.get().enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
 			if (p instanceof Player) {
-				p.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(b -> {
+				HemoCapabilityAccess.getKnownManipulations(p).ifPresent(b -> {
 					b.setAvatarActive(isActive);
 				});
 			}

@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -112,7 +112,7 @@ public class VeinMinerHelper {
 					world.removeBlock(currentPos, false);
 					numMined = harvestVein(world, player, stack, currentPos, target, currentDrops, numMined);
 					if (numMined >= 250) {
-						player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+						HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
 							if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
 								manips.setLastVeinMineStart(BlockPos.ZERO);
 							}
@@ -123,7 +123,7 @@ public class VeinMinerHelper {
 				}
 			}
 		}
-		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
 			if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
 				manips.setLastVeinMineStart(BlockPos.ZERO);
 			}
@@ -181,7 +181,7 @@ public class VeinMinerHelper {
 		boolean hasAction = false;
 		List<ItemStack> drops = new ArrayList<>();
 		
-		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
 			if(manips.getLastVeinMineStart() == BlockPos.ZERO) {
 				manips.setLastVeinMineStart(pos);
 			}

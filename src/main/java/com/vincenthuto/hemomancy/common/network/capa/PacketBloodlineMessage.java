@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 
@@ -43,7 +43,7 @@ public class PacketBloodlineMessage {
 			String trimmed = msg.message.trim();
 			if (trimmed.isEmpty() || trimmed.length() > MAX_LENGTH) return;
 
-			sender.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			HemoCapabilityAccess.getBloodVolume(sender).ifPresent(volume -> {
 				Bloodline bloodline = volume.getBloodLine();
 				if (!bloodline.isValid()) {
 					sender.sendSystemMessage(

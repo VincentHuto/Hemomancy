@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.compat.mna.item;
 import com.mna.api.capabilities.IPlayerMagic;
 import com.mna.capabilities.playerdata.magic.PlayerMagicProvider;
 import com.mna.gui.containers.providers.NamedOcculus;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

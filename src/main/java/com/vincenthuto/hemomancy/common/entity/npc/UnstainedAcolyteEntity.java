@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AcolyteDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -96,7 +96,7 @@ public class UnstainedAcolyteEntity extends PathfinderMob {
      * task suggestions as the player advances.
      */
     private DialogueTree selectDialogue(ServerPlayer player) {
-        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).map(progress -> {
+        return HemoCapabilityAccess.getUnstainedProgress(player).map(progress -> {
             if (!progress.hasBegunPurification()) {
                 return AcolyteDialogueTrees.notOnPath(this.getId());
             }

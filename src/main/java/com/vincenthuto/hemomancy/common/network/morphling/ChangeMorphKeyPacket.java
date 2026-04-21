@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -7,7 +8,6 @@ import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
@@ -55,7 +55,7 @@ public class ChangeMorphKeyPacket {
 				ItemStack selectedStack = jarHandler.getStackInSlot(chosen);
 
 				// Equip to player capability
-				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 					cap.setEquippedMorphling(selectedStack.copy());
 				});
 

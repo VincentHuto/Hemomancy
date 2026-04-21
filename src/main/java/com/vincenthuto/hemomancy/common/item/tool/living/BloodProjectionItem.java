@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -81,7 +79,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
-		IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 
 		HitResult trace = player.pick(5.5,0, true);
@@ -89,9 +87,9 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 			BlockEntity be = worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x ,
 					(int) trace.getLocation().y, (int) trace.getLocation().z )));
 			if (be != null) {
-				if (be.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
+				if (HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
 
-					IBloodVolume tileVolume = be.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					IBloodVolume tileVolume = HemoCapabilityAccess.getBloodVolume(be)
 							.orElseThrow(IllegalStateException::new);
 					if(!tileVolume.isFull()) {
 						tileVolume.fillFromSource(playerVolume, 100f);
@@ -115,11 +113,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
 				.orElseThrow(NullPointerException::new);
-		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
 				.orElseThrow(NullPointerException::new);
-		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
 		if (volume.isActive()) {
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {

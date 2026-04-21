@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -60,7 +60,7 @@ public class CrimsonLodgeEvents {
 						STRENGTH_DURATION, 0, true, false, true));
 
 				// Grant enhanced blood regeneration (blood virility)
-				player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 					if (volume.isActive()) {
 						double maxBlood = volume.getMaxBloodVolume();
 						if (volume.getBloodVolume() < maxBlood) {

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 
 import net.minecraft.client.Minecraft;
@@ -42,7 +42,7 @@ public class BloodTendencyServerPacket {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer sender = ctx.get().getSender();
 
-			Minecraft.getInstance().player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+			HemoCapabilityAccess.getBloodTendency(Minecraft.getInstance().player)
 					.orElseThrow(IllegalStateException::new).setTendency(msg.Tendency);
 
 		});

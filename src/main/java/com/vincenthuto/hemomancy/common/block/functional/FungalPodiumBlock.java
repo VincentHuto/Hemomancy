@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalPodiumBlockEntity;
 
@@ -206,7 +206,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 	}
 
 	private boolean drainTravelBlood(ServerPlayer player) {
-		var opt = player.getCapability(BloodVolumeProvider.VOLUME_CAPA);
+		var opt = HemoCapabilityAccess.getBloodVolume(player);
 		if (!opt.isPresent()) return false;
 		var volume = opt.orElseThrow(IllegalStateException::new);
 		if (!volume.isActive() || volume.getBloodVolume() < TRAVEL_BLOOD_COST) return false;

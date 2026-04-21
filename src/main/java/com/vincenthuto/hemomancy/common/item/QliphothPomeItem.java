@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -199,7 +199,7 @@ public class QliphothPomeItem extends Item {
 
 	private static void applyNormalEffects(Player player, Level level, CompoundTag itemTag) {
 		// ── Blood burst ──
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (volume.isActive()) {
 				volume.fill(BLOOD_BURST);
 				BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);

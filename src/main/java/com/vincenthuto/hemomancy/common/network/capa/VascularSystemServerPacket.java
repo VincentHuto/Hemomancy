@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +42,7 @@ public class VascularSystemServerPacket {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer sender = ctx.get().getSender();
 
-			Minecraft.getInstance().player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+			Minecraft.getInstance().HemoCapabilityAccess.getVascularSystem(player)
 					.orElseThrow(IllegalStateException::new).setVascularSystem(msg.vascularSystem);
 
 		});

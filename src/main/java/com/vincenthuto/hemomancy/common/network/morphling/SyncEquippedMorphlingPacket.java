@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -42,7 +42,7 @@ public class SyncEquippedMorphlingPacket {
 			if (Minecraft.getInstance().level == null) return;
 			Player target = Minecraft.getInstance().level.getPlayerByUUID(msg.playerUUID);
 			if (target == null) return;
-			target.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA)
+			HemoCapabilityAccess.getEquippedMorphling(target)
 					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack));
 		});
 		ctx.get().setPacketHandled(true);

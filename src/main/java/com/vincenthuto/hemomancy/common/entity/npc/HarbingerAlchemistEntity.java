@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -110,14 +110,14 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
 
     /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */
     private static boolean hasClarityUnlocked(Player player) {
-        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+        return HemoCapabilityAccess.getUnstainedProgress(player)
                 .map(IUnstainedProgress::hasClarityUnlocked)
                 .orElse(false);
     }
 
     /** Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {
-        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+        return HemoCapabilityAccess.getUnstainedProgress(player)
                 .map(IUnstainedProgress::hasBegunPurification)
                 .orElse(false);
     }

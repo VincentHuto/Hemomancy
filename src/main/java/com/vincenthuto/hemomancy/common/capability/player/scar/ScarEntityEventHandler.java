@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -8,8 +9,7 @@ import java.util.UUID;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -314,7 +314,7 @@ public class ScarEntityEventHandler {
 	public static void onBlockBreak(BreakEvent event) {
 
 		event.getPlayer().getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
-			event.getPlayer().getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+			HemoCapabilityAccess.getKnownManipulations(event.getPlayer()).ifPresent(manips -> {
 
 				if (scars.getStackInSlot(0).getItem() == ItemInit.talaromyces_minus.get()
 						&& event.getPlayer().isShiftKeyDown()) {
@@ -332,7 +332,7 @@ public class ScarEntityEventHandler {
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
 
 		if (stack.getItem() instanceof BloodGourdItem gourd) {
-			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
 					.orElseThrow(NullPointerException::new);
 			PacketGourdScarSync pkt = new PacketGourdScarSync(player.getId(), slot, stack,
 					bloodVolume.getBloodVolume());

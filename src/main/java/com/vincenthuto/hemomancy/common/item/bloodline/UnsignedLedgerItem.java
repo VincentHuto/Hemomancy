@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.bloodline;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -66,7 +66,7 @@ public class UnsignedLedgerItem extends Item {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (stack.getItem() instanceof UnsignedLedgerItem) {
 			CompoundTag compound = stack.getOrCreateTag();
-			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 					.orElseThrow(NullPointerException::new);
 
 			if (!compound.getBoolean(TAG_STATE)) {

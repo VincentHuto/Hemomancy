@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -43,7 +43,7 @@ public class BloodyFlaskItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (!worldIn.isClientSide) {
-			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 					.orElseThrow(NullPointerException::new);
 
 			if (volume.isFull()) {

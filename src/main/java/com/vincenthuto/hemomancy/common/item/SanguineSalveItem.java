@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
@@ -79,14 +78,14 @@ public class SanguineSalveItem extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 
 		// Only usable when the blood system is active
-		boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) {
 			return InteractionResultHolder.fail(stack);
 		}
 
 		// Check if any section actually needs healing
-		boolean needsHeal = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+		boolean needsHeal = HemoCapabilityAccess.getVascularSystem(player)
 				.map(vasc -> {
 					for (EnumVeinSections s : EnumVeinSections.values()) {
 						if (vasc.getHealthBySection(s) < 100f) return true;
@@ -109,7 +108,7 @@ public class SanguineSalveItem extends Item {
 		if (!(entity instanceof Player player)) return stack;
 		if (level.isClientSide) return stack;
 
-		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			// Find the most damaged section
 			EnumVeinSections worst = findMostDamagedSection(vascular);
 			if (worst == null) return; // all at 100

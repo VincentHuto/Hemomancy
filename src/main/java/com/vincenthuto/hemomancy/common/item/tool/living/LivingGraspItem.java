@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import org.joml.Vector3d;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.TrackingBloodOrbEntity;
@@ -61,7 +61,7 @@ public class LivingGraspItem extends Item {
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
 		if (entityLiving instanceof Player) {
 			Player player = (Player) entityLiving;
-			IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 					.orElseThrow(NullPointerException::new);
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isClientSide) {

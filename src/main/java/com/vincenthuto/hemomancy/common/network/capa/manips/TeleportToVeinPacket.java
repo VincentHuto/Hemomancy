@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -40,9 +39,9 @@ public class TeleportToVeinPacket {
 					if (player == null)
 						return;
 					if (!player.level().isClientSide) {
-						IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+						IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 								.orElseThrow(NullPointerException::new);
-						IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 								.orElseThrow(NullPointerException::new);
 						ServerPlayer serverPlayer = (ServerPlayer) player;
 						VeinLocation selected = msg.selected;

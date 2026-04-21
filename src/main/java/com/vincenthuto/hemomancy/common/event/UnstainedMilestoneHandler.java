@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -68,7 +68,7 @@ public class UnstainedMilestoneHandler {
 		if (!(player instanceof ServerPlayer serverPlayer)) return;
 		if (player.tickCount % EFFECT_REFRESH_INTERVAL != 0) return;
 
-		serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
 			if (!progress.hasBegunPurification()) return;
 
 			EnumPurityStage purityStage = EnumPurityStage.byPurity(progress.getPurity());
@@ -196,7 +196,7 @@ public class UnstainedMilestoneHandler {
 		if (event.getSource().getEntity() instanceof Player attacker && !attacker.level().isClientSide()) {
 			LivingEntity target = event.getEntity();
 			if (target.getType().is(EntityInit.HEMOMANCY_MOB)) {
-				attacker.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+				HemoCapabilityAccess.getUnstainedProgress(attacker).ifPresent(progress -> {
 					if (progress.hasBegunPurification()) {
 						EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
 						if (stage.getLevel() >= EnumPurityStage.ABSOLVED.getLevel()) {

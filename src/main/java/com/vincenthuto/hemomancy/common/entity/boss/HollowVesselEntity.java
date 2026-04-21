@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.EmptyPulseGoal;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.HematicCollapseGoal;
@@ -242,7 +242,7 @@ public class HollowVesselEntity extends Monster {
 					Component.literal("The Vessel quiets. You carry the enzyme of Saint Hemorath.")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
-			player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			HemoCapabilityAccess.getBloodVolume(player)
 					.ifPresent(IBloodVolume::resetBloodDebt);
 		}
 		super.die(source);
@@ -278,7 +278,7 @@ public class HollowVesselEntity extends Monster {
 		for (HollowVesselEntity vessel : player.level().getEntitiesOfClass(
 				HollowVesselEntity.class, player.getBoundingBox().inflate(PHASE_2_DETECTION_RADIUS))) {
 			if (vessel.isAlive() && vessel.isInPhase2() && vessel.getTarget() == player) {
-				player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				HemoCapabilityAccess.getBloodVolume(player)
 						.ifPresent(v -> v.addDamage(amount * PHASE_2_BLOOD_SPEND_BONUS));
 				return;
 			}

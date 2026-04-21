@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -79,7 +79,7 @@ public class AbsolutionDaggerItem extends SwordItem {
 			}
 
 			// At CLEANSING+ purity: every 10th hit strips a random positive effect
-			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
 				if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
 						>= EnumPurityStage.CLEANSING.getLevel()) {
 					CompoundTag tag = stack.getOrCreateTag();

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenu;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -353,7 +353,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         int l = this.topPos;
 
         LocalPlayer player = this.minecraft.player;
-        player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascularSystem -> {
+        HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascularSystem -> {
             ItemStack stack = player.getMainHandItem();
             Item item = stack.getItem();
             Item renderItem = ItemInit.dried_leech.get();

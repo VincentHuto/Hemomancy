@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -52,7 +52,7 @@ public class UnstainedGaugeOverlay {
 		LocalPlayer player = mc.player;
 		if (player == null) return;
 
-		player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(cap -> {
+		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
 			if (!cap.hasBegunPurification()) return;
 			renderGauge(gfx, screenWidth, screenHeight, cap, partialTicks);
 		});

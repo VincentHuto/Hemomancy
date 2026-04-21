@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -26,7 +26,7 @@ public class DisplayKnownManipsPacket {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
 			player.displayClientMessage(Component.literal("Selected: " + known.getSelectedManip().getProperName()),
 					false);
