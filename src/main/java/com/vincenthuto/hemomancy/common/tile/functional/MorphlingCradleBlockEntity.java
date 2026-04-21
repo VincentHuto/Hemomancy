@@ -68,6 +68,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private static final double[] SPORE_RANGE = new double[] { 5.0, 7.0, 9.0 };
 	private static final int[] SPORE_DURATION = new int[] { 50, 80, 120 };
 	private static final int[] SPORE_AMPLIFIER = new int[] { 0, 0, 1 };
+	private static final int MIN_SPORE_WITHER_DURATION = 20;
 
 	private static final double[] ORB_RANGE = new double[] { 8.0, 11.0, 15.0 };
 	private static final float[] ORB_DAMAGE = new float[] { 3.0f, 5.0f, 7.0f };
@@ -238,7 +239,8 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			List<LivingEntity> targets = getTargets(range, false);
 			for (LivingEntity target : targets) {
 				target.addEffect(new MobEffectInstance(MobEffects.POISON, duration, amp, true, true, true));
-				target.addEffect(new MobEffectInstance(MobEffects.WITHER, Math.max(20, duration / 2), amp, true, true, true));
+				target.addEffect(new MobEffectInstance(MobEffects.WITHER,
+						Math.max(MIN_SPORE_WITHER_DURATION, duration / 2), amp, true, true, true));
 			}
 			return;
 		}
