@@ -22,8 +22,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class MorphlingIncubatorItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/morphling_incubator_model.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/morphling_incubator_model.png");
 
 	private MorphlingIncubatorModel model;
 

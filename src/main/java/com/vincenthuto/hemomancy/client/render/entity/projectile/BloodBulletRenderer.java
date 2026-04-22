@@ -10,8 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 
 public class BloodBulletRenderer extends EntityRenderer<BloodBulletEntity> {
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/wretched_will/modelwretchedwill.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/wretched_will/modelwretchedwill.png");
 
 	public BloodBulletRenderer(Context renderManagerIn) {
 		super(renderManagerIn);

@@ -29,7 +29,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	public static BloodStructureRecipe getStructureByLocation(Level world, ResourceLocation loc) {
-		// Example new ResourceLocation("hemomancy:blood_structure/living_staff_recipe")
+		// Example ResourceLocation.parse("hemomancy:blood_structure/living_staff_recipe")
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
 				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
 	}

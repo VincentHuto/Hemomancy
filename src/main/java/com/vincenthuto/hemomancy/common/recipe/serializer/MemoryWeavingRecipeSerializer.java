@@ -22,7 +22,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 	public static HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();
 
 	public static MemoryWeavingRecipe getRecipe(String path) {
-		return ALL_RECIPES.get(new ResourceLocation("hemomancy:memory_weaving/" + path));
+		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:memory_weaving/" + path));
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		else {
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
-			ResourceLocation resourcelocation = new ResourceLocation(s1);
+			ResourceLocation resourcelocation = ResourceLocation.parse(s1);
 			result = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation), c);
 
 		}

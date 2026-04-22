@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CrimsonDoeRenderer extends MobRenderer<CrimsonDoeEntity, CrimsonDoeModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/crimson_doe/model_crimson_doe.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/crimson_doe/model_crimson_doe.png");
 
 	public CrimsonDoeRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new CrimsonDoeModel(renderManagerIn.bakeLayer(CrimsonDoeModel.LAYER_LOCATION)), 0.5F);

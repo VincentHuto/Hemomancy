@@ -21,7 +21,7 @@ public class TrackingPestsRenderer extends EntityRenderer<TrackingPestsEntity> {
 	@Nonnull
 	@Override
 	public ResourceLocation getTextureLocation(@Nonnull TrackingPestsEntity entity) {
-		return new ResourceLocation(Hemomancy.MOD_ID + "textures/entity/tracker.png");
+		return Hemomancy.rloc("textures/entity/tracker.png");
 	}
 
 }

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class MyelinBorerRenderer extends MobRenderer<MyelinBorerEntity, MyelinBorerModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/myelin_borer/model_myelin_borer.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/myelin_borer/model_myelin_borer.png");
 
 	public MyelinBorerRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new MyelinBorerModel(renderManagerIn.bakeLayer(MyelinBorerModel.LAYER_LOCATION)), 0.3F);

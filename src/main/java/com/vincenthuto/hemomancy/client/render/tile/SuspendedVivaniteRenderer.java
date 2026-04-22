@@ -21,8 +21,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class SuspendedVivaniteRenderer implements BlockEntityRenderer<SuspendedVivianiteBlockEntity> {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/model_suspended_vivianite.png");
+    public static ResourceLocation texture = Hemomancy.rloc("textures/entity/model_suspended_vivianite.png");
     private final SuspendedVivianiteModel heart;
 
     public SuspendedVivaniteRenderer(BlockEntityRendererProvider.Context p_173636_) {

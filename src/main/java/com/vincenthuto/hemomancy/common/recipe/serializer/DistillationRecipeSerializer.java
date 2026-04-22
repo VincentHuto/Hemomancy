@@ -43,7 +43,7 @@ public class DistillationRecipeSerializer implements RecipeSerializer<Distillati
 		} else {
 			int count = GsonHelper.getAsInt(object, "count", 1);
 			String resultId = GsonHelper.getAsString(object, "result");
-			result = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(resultId)), count);
+			result = new ItemStack(ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(resultId)), count);
 		}
 
 		float experience = GsonHelper.getAsFloat(object, "experience", 0.0F);

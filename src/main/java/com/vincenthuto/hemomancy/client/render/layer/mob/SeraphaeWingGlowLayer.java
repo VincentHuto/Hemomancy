@@ -21,8 +21,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class SeraphaeWingGlowLayer<T extends SeraphaeEntity> extends RenderLayer<T, SeraphaeModel<T>> {
 
-	private static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/seraphae/seraphae_glow.png");
+	private static final ResourceLocation GLOW_TEXTURE = Hemomancy.rloc("textures/entity/seraphae/seraphae_glow.png");
 
 	private static final RenderType GLOW = RenderType.eyes(GLOW_TEXTURE);
 

@@ -26,8 +26,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static ResourceLocation living_spear = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_living_spear_hand.png");
+	public static ResourceLocation living_spear = Hemomancy.rloc("textures/entity/model_living_spear_hand.png");
 
 	public final LivingSpearModel spearModel;
 

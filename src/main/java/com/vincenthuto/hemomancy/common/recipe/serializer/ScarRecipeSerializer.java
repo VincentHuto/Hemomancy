@@ -23,16 +23,16 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 
 	public static ScarRecipe getRecipe(String path) {
 		// Current recipe IDs live under "hemomancy:scar/<path>".
-		ScarRecipe recipe = ALL_RECIPES.get(new ResourceLocation("hemomancy:scar/" + path));
+		ScarRecipe recipe = ALL_RECIPES.get(ResourceLocation.parse("hemomancy:scar/" + path));
 		if (recipe != null) {
 			return recipe;
 		}
 		// Legacy fallbacks kept for migrated worlds / old naming.
-		recipe = ALL_RECIPES.get(new ResourceLocation("hemomancy:chisel/" + path));
+		recipe = ALL_RECIPES.get(ResourceLocation.parse("hemomancy:chisel/" + path));
 		if (recipe != null) {
 			return recipe;
 		}
-		return ALL_RECIPES.get(new ResourceLocation("hemomancy:rune/" + path));
+		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:rune/" + path));
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 		else {
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
-			ResourceLocation resourcelocation = new ResourceLocation(s1);
+			ResourceLocation resourcelocation = ResourceLocation.parse(s1);
 			itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation), c);
 		}
 

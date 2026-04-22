@@ -35,8 +35,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 
 public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> {
 	/** Texture still used for scar grid button sprites. */
-	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/gui/scar_station.png");
+	private static final ResourceLocation GUI_Chisel = Hemomancy.rloc("textures/gui/scar_station.png");
 
 	// ── Hemomancy theme colors (matching GhastlyAlembicScreen) ──
 	private static final int SLOT_BG = 0xFF1A0808;

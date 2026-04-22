@@ -22,17 +22,17 @@ public class ScarBinderScreen extends AbstractContainerScreen<ScarBinderInventor
 
 		switch (container.slotcount) {
 		case 18:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/scar_binder.png");
+			GUI = Hemomancy.rloc("textures/gui/scar_binder.png");
 			imageWidth = 176;
 			imageHeight = 150;
 			break;
 		case 27:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/scar_binder_upgrade.png");
+			GUI = Hemomancy.rloc("textures/gui/scar_binder_upgrade.png");
 			imageWidth = 176;
 			imageHeight = 168;
 			break;
 		default:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/epic_gui.png");
+			GUI = Hemomancy.rloc("textures/gui/epic_gui.png");
 			imageWidth = 212;
 			imageHeight = 276;
 			break;

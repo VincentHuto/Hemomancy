@@ -20,7 +20,7 @@ public class UnstainedPodiumRenderer implements BlockEntityRenderer<UnstainedPod
 	@Override
 	public void render(UnstainedPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		ResourceLocation GLASSTEXTURE = new ResourceLocation(Hemomancy.MOD_ID, "textures/block/sanguine_tran_pane.png");
+		ResourceLocation GLASSTEXTURE = Hemomancy.rloc("textures/block/sanguine_tran_pane.png");
 
 //		matrixStackIn.pushPose();
 //		Level world = te.getLevel();

@@ -33,11 +33,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 public class MorphlingIncubatorRenderer implements BlockEntityRenderer<MorphlingIncubatorBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final ResourceLocation TEXTURE = new ResourceLocation("hemomancy",
-			"textures/entity/morphling_incubator_model.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/morphling_incubator_model.png");
 
 	private final MorphlingIncubatorModel model;
 	Minecraft mc;

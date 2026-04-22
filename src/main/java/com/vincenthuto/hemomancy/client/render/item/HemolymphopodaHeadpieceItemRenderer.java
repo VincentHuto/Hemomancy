@@ -20,8 +20,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/hemolymphopoda/model_hemolymphopoda.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemolymphopoda/model_hemolymphopoda.png");
 
 	// Dome pivot in the entity model is at (0, 23, -5.5) in pixel units.
 	// This translate (applied first to vertices) centres the dome at the origin

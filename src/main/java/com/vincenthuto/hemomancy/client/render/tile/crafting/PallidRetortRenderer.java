@@ -23,8 +23,7 @@ import org.joml.Matrix4f;
 public class PallidRetortRenderer implements BlockEntityRenderer<PallidRetortBlockEntity> {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_pallid_retort.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_pallid_retort.png");
 
 	private final PallidRetortModel model;
 

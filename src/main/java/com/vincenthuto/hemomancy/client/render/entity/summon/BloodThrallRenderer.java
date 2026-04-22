@@ -23,7 +23,7 @@ import net.minecraft.world.entity.player.Player;
 public class BloodThrallRenderer extends MobRenderer<BloodThrallEntity, BloodThrallModel> {
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/blood_thrall/blood_thrall.png");
+            Hemomancy.rloc("textures/entity/blood_thrall/blood_thrall.png");
 
     /** Number of segments in the venous leash line strip */
     private static final int LEASH_SEGMENTS = 24;

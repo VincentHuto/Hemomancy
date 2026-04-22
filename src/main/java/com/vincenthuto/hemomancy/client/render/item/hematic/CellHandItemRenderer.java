@@ -48,8 +48,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public BakedModel location;
 
-	public final ResourceLocation skinTexture = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
+	public final ResourceLocation skinTexture = Hemomancy.rloc("textures/entity/hardened_skin.png");
 
 	public CellHandItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);

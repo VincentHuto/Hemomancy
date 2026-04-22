@@ -48,8 +48,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 
 	@SuppressWarnings("rawtypes")
 	public static BloodArmModel model;
-	public final ResourceLocation skinTexture = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
+	public final ResourceLocation skinTexture = Hemomancy.rloc("textures/entity/hardened_skin.png");
 
 	public CellHandLayer(RenderLayerParent<T, M> rendererIn) {
 		super(rendererIn);

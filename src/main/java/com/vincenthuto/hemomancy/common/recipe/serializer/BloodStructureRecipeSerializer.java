@@ -36,7 +36,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	private static Block blockFromJson(JsonObject pItemObject) {
 		String s = GsonHelper.getAsString(pItemObject, "block");
-		Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+		Block block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(s));
 
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);
@@ -47,7 +47,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	private static Block blockFromString(String s) {
 
-		Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+		Block block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(s));
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);
 		} else {
@@ -97,7 +97,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	}
 
 	private static ItemStack getItemFromJson(String itemName) {
-		ResourceLocation itemKey = new ResourceLocation(itemName);
+		ResourceLocation itemKey = ResourceLocation.parse(itemName);
 		if (!ForgeRegistries.ITEMS.containsKey(itemKey))
 			throw new JsonSyntaxException("Unknown item '" + itemName + "'");
 		Item item = ForgeRegistries.ITEMS.getValue(itemKey);

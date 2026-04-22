@@ -25,13 +25,13 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class BloodMemoryItem extends Item {
 
-	RegistryObject<BloodManipulation> manip;
+	DeferredHolder<BloodManipulation, BloodManipulation> manip;
 
-	public BloodMemoryItem(Properties properties, RegistryObject<BloodManipulation> manip) {
+	public BloodMemoryItem(Properties properties, DeferredHolder<BloodManipulation, BloodManipulation> manip) {
 		super(properties.stacksTo(1));
 		this.manip = manip;
 	}

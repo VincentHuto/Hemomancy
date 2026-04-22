@@ -30,8 +30,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class FungalWhisperDialogueTrees {
 
-	private static final ResourceLocation MYSTERY_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/mystery_speaker.png");
+	private static final ResourceLocation MYSTERY_ICON = Hemomancy.rloc("textures/gui/mystery_speaker.png");
 	private static final String SPEAKER = "hemomancy.whisper.speaker_name";
 
 	private FungalWhisperDialogueTrees() {}

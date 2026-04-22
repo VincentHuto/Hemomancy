@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ThirsterRenderer extends MobRenderer<ThirsterEntity, ThirsterModel<ThirsterEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/thirster/model_thirster.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/thirster/model_thirster.png");
 
 	public ThirsterRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new ThirsterModel<ThirsterEntity>(renderManagerIn.bakeLayer(ThirsterModel.LAYER_LOCATION)), 0.5F);

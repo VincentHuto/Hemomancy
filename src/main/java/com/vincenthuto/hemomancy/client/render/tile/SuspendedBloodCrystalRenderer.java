@@ -22,8 +22,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class SuspendedBloodCrystalRenderer implements BlockEntityRenderer<SuspendedBloodCrystalBlockEntity> {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/model_suspended_blood_crystal.png");
+    public static ResourceLocation texture = Hemomancy.rloc("textures/entity/model_suspended_blood_crystal.png");
     private final SuspendedBloodCrystalModel heart;
 
     public SuspendedBloodCrystalRenderer(BlockEntityRendererProvider.Context p_173636_) {

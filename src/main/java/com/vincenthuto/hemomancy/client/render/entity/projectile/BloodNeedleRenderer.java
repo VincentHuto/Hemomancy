@@ -19,8 +19,7 @@ import net.minecraft.util.Mth;
 
 public class BloodNeedleRenderer extends EntityRenderer<BloodNeedleEntity> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/blood_needle/model_blood_needle.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/blood_needle/model_blood_needle.png");
 
 	public BloodNeedleRenderer(Context renderManagerIn) {
 		super(renderManagerIn);

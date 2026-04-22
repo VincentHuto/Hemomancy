@@ -21,13 +21,10 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RenderTypeInit extends RenderType {
 
-	private final static ResourceLocation laserBeam = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/misc/laser.png");
-	private final static ResourceLocation vine = new ResourceLocation(Hemomancy.MOD_ID + ":textures/misc/vine.png");
-	private final static ResourceLocation laserBeam2 = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/misc/laser2.png");
-	private final static ResourceLocation laserBeamGlow = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/misc/laser_glow.png");
+	private final static ResourceLocation laserBeam = Hemomancy.rloc("textures/misc/laser.png");
+	private final static ResourceLocation vine = Hemomancy.rloc("textures/misc/vine.png");
+	private final static ResourceLocation laserBeam2 = Hemomancy.rloc("textures/misc/laser2.png");
+	private final static ResourceLocation laserBeamGlow = Hemomancy.rloc("textures/misc/laser_glow.png");
 
 	public static final ParticleRenderType
 

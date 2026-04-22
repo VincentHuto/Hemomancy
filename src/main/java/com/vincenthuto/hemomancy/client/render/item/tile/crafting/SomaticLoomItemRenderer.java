@@ -22,8 +22,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SomaticLoomItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_somatic_loom.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_somatic_loom.png");
 
 	private SomaticLoomModel model;
 

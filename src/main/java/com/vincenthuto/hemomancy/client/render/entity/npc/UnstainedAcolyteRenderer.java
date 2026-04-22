@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class UnstainedAcolyteRenderer extends MobRenderer<UnstainedAcolyteEntity, UnstainedAcolyteModel<UnstainedAcolyteEntity>> {
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/unstained_acolyte/unstained_acolyte.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/unstained_acolyte/unstained_acolyte.png");
 
     public UnstainedAcolyteRenderer(Context context) {
         super(context, new UnstainedAcolyteModel<>(context.bakeLayer(UnstainedAcolyteModel.LAYER_LOCATION)), 0.5F);

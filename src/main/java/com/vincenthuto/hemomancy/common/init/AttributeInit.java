@@ -18,7 +18,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class AttributeInit {
@@ -30,7 +30,7 @@ public class AttributeInit {
 	public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES,
 			Hemomancy.MOD_ID);
 
-	private static final RegistryObject<Attribute> FALL_FLYING = ATTRIBUTES.register("fall_flying",
+	private static final DeferredHolder<Attribute, Attribute> FALL_FLYING = ATTRIBUTES.register("fall_flying",
 			() -> new RangedAttribute("hemomancy.fallFlying", 0.1d, 0.0d, 1.0d).setSyncable(true));
 	private static final AttributeModifier ELYTRA_MODIFIER = new AttributeModifier(
 			UUID.fromString("5b6c3728-9c24-42ae-83ac-70d61d8b8199"), "Elytra modifier", 1.0f,

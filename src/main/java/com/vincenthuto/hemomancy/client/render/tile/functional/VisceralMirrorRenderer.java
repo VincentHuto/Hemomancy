@@ -74,8 +74,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
      */
     private static final float RIPPLE_ALPHA_BOOST = 0.06f;
     // ── Stand model ──────────────────────────────────────────────────────
-    private static final ResourceLocation MODEL_TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/model_visceral_mirror.png");
+    private static final ResourceLocation MODEL_TEXTURE = Hemomancy.rloc("textures/entity/model_visceral_mirror.png");
     // ── Distance limits ──────────────────────────────────────────────────
     private static final float GLASS_G = 0.08f;
     private static final float GLASS_B = 0.12f;

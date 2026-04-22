@@ -14,8 +14,7 @@ import net.minecraft.util.Mth;
 public class ErythromyceliumEruptusRenderer
 		extends MobRenderer<ErythromyceliumEruptusEntity, ErythromyceliumEruptusModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/erythromycelium_eruptus/model_erythromycelium_eruptus.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/erythromycelium_eruptus/model_erythromycelium_eruptus.png");
 
 	public ErythromyceliumEruptusRenderer(Context renderManagerIn) {
 		super(renderManagerIn,

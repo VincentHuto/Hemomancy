@@ -20,10 +20,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/earthen_vein/model_earthen_vein.png");
-	public static ResourceLocation eyeTexture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/floating_eye/model_floating_eye.png");
+	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/earthen_vein/model_earthen_vein.png");
+	public static ResourceLocation eyeTexture = Hemomancy.rloc("textures/entity/floating_eye/model_floating_eye.png");
 
 	private final EarthenVeinModel vein;
 	private final FloatingEyeModel eye;

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class UnstainedZealotRenderer extends MobRenderer<UnstainedZealotEntity, UnstainedZealotModel<UnstainedZealotEntity>> {
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/unstained_zealot/unstained_zealot.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/unstained_zealot/unstained_zealot.png");
 
     public UnstainedZealotRenderer(Context context) {
         super(context, new UnstainedZealotModel<>(context.bakeLayer(UnstainedZealotModel.LAYER_LOCATION)), 0.5F);

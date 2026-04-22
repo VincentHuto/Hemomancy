@@ -4,6 +4,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 /**
  * Utility class for programmatically granting Hemomancy Unstained-path
@@ -18,27 +19,27 @@ public final class UnstainedAdvancementGranter {
 
 	// ── Purity stage advancements ──────────────────────────────────────────────
 	public static final ResourceLocation ADV_BLESSED_BY_ALTAR =
-			new ResourceLocation("hemomancy", "hemomancy/blessed_by_the_altar");
+			Hemomancy.rloc("hemomancy/blessed_by_the_altar");
 	public static final ResourceLocation ADV_TAINTED =
-			new ResourceLocation("hemomancy", "hemomancy/tainted");
+			Hemomancy.rloc("hemomancy/tainted");
 	public static final ResourceLocation ADV_CLEANSING =
-			new ResourceLocation("hemomancy", "hemomancy/cleansing");
+			Hemomancy.rloc("hemomancy/cleansing");
 	public static final ResourceLocation ADV_ABSOLVED =
-			new ResourceLocation("hemomancy", "hemomancy/absolved");
+			Hemomancy.rloc("hemomancy/absolved");
 	public static final ResourceLocation ADV_PURIFIED =
-			new ResourceLocation("hemomancy", "hemomancy/purified");
+			Hemomancy.rloc("hemomancy/purified");
 
 	// ── Clarity advancements ────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_CLARITY_AWAKENED =
-			new ResourceLocation("hemomancy", "hemomancy/clarity_awakened");
+			Hemomancy.rloc("hemomancy/clarity_awakened");
 	public static final ResourceLocation ADV_DISCERNING =
-			new ResourceLocation("hemomancy", "hemomancy/discerning");
+			Hemomancy.rloc("hemomancy/discerning");
 	public static final ResourceLocation ADV_VIGILANT =
-			new ResourceLocation("hemomancy", "hemomancy/vigilant");
+			Hemomancy.rloc("hemomancy/vigilant");
 	public static final ResourceLocation ADV_RESOLUTE_STAGE =
-			new ResourceLocation("hemomancy", "hemomancy/resolute_stage");
+			Hemomancy.rloc("hemomancy/resolute_stage");
 	public static final ResourceLocation ADV_ENLIGHTENED_SEEKER =
-			new ResourceLocation("hemomancy", "hemomancy/enlightened_seeker");
+			Hemomancy.rloc("hemomancy/enlightened_seeker");
 
 	private UnstainedAdvancementGranter() {}
 

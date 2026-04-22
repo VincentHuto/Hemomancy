@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class AbhorentThoughtRenderer extends MobRenderer<AbhorentThoughtEntity, AbhorentThoughtModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/abhorent_thought/model_abhorent_thought.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/abhorent_thought/model_abhorent_thought.png");
 
 	public AbhorentThoughtRenderer(Context renderManagerIn) {
 		super(renderManagerIn,

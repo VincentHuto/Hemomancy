@@ -81,7 +81,7 @@ public class ActiveCardinalRite {
 	public static ActiveCardinalRite deserialize(CompoundTag tag) {
 		UUID playerUUID = tag.getUUID("PlayerUUID");
 		BlockPos centerPos = BlockPos.of(tag.getLong("CenterPos"));
-		ResourceLocation recipeId = new ResourceLocation(tag.getString("RecipeId"));
+		ResourceLocation recipeId = ResourceLocation.parse(tag.getString("RecipeId"));
 		int totalTicks = tag.getInt("TotalTicks");
 		int riteSize = tag.getInt("RiteSize");
 		ActiveCardinalRite rite = new ActiveCardinalRite(playerUUID, centerPos, recipeId, totalTicks, riteSize);

@@ -29,9 +29,8 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 public class EnthralledDollRenderer
 		extends MobRenderer<EnthralledDollEntity, EnthralledDollModel<EnthralledDollEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/enthralled_doll/model_enthralled_doll.png");
-	private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/fishing_hook.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/enthralled_doll/model_enthralled_doll.png");
+	private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/fishing_hook.png");
 	private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE_LOCATION);
 	private static final double VIEW_BOBBING_SCALE = 960.0D;
 

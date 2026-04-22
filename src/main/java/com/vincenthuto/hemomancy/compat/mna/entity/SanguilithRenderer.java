@@ -11,8 +11,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class SanguilithRenderer extends MobRenderer<SanguilithEntity, SanguilithModel<SanguilithEntity>> {
-	private static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/iron_pillar/model_iron_pillar.png");
+	private static final ResourceLocation texture = Hemomancy.rloc("textures/entity/iron_pillar/model_iron_pillar.png");
 
 	public SanguilithRenderer(EntityRendererProvider.Context p_174447_) {
 		super(p_174447_, new SanguilithModel<SanguilithEntity>(p_174447_.bakeLayer(SanguilithModel.sanguilith)), 0.5F);

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.LanguageProvider;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class HemoLanguageProvider extends LanguageProvider {
 
@@ -43,62 +43,62 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 		add("fluid.hemomancy.blood", "Blood");
 
-		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
+		for (DeferredHolder<EntityType<?>, EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
 			addEntityType(e,
 					HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
 		}
-		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
-			addBlock(b,
-					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
-		}
-
-		for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
 
-		for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.SLABBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
 
-		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
+
+		for (DeferredHolder<Block, Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Block> b : BlockInit.POTTEDBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Block> b : BlockInit.OBJBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.POTTEDBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.OBJBLOCKS.getEntries()) {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Item> i : ItemInit.BASEITEMS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+			addBlock(b,
+					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
+		}
+		for (DeferredHolder<Item, Item> i : ItemInit.BASEITEMS.getEntries()) {
 			addItem(i,
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
-		for (RegistryObject<Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
+		for (DeferredHolder<Item, Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
 			addItem(i,
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
-		for (RegistryObject<Item> i : ItemInit.SPECIALITEMS.getEntries()) {
+		for (DeferredHolder<Item, Item> i : ItemInit.SPECIALITEMS.getEntries()) {
 			addItem(i,
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
-		for (RegistryObject<Item> i : ItemInit.SPAWNEGGS.getEntries()) {
+		for (DeferredHolder<Item, Item> i : ItemInit.SPAWNEGGS.getEntries()) {
 			addItem(i,
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
@@ -106,7 +106,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 		add("entity.minecraft.villager.hemomancy.hemopothecary", "Hemopothecary");
 
 
-		for (RegistryObject<MobEffect> i : EffectInit.EFFECTS.getEntries()) {
+		for (DeferredHolder<MobEffect, MobEffect> i : EffectInit.EFFECTS.getEntries()) {
 			add("item.minecraft.potion.effect.potion_of_" + i.getId().getPath(),
 					"Potion of " + HLTextUtils.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.splash_potion.effect.potion_of_" + i.getId().getPath(),

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class DessicantRenderer extends MobRenderer<DessicantEntity, DessicantModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/dessicant/model_dessicant.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/dessicant/model_dessicant.png");
 
 	public DessicantRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new DessicantModel(renderManagerIn.bakeLayer(DessicantModel.LAYER_LOCATION)), 0.5F);

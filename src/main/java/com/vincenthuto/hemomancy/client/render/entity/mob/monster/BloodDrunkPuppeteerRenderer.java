@@ -14,8 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 public class BloodDrunkPuppeteerRenderer
 		extends MobRenderer<BloodDrunkPuppeteerEntity, BloodDrunkPuppeteerModel<BloodDrunkPuppeteerEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png");
 
 	public BloodDrunkPuppeteerRenderer(Context renderManagerIn) {
 		super(renderManagerIn,

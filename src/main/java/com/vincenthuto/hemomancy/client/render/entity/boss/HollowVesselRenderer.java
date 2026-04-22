@@ -15,8 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class HollowVesselRenderer extends MobRenderer<HollowVesselEntity, HollowVesselModel<HollowVesselEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/hollow_vessel/hollow_vessel.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hollow_vessel/hollow_vessel.png");
 
 	public HollowVesselRenderer(Context context) {
 		super(context, new HollowVesselModel<>(context.bakeLayer(HollowVesselModel.LAYER_LOCATION)), 0.8F);

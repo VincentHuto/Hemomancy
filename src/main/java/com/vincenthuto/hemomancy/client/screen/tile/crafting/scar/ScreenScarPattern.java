@@ -21,12 +21,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ScreenScarPattern extends Screen {
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/scar_pattern.png");
-	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/gui/scar_station.png");
+	final ResourceLocation texture = Hemomancy.rloc("textures/gui/scar_pattern.png");
+	private static final ResourceLocation GUI_Chisel = Hemomancy.rloc("textures/gui/scar_station.png");
 	int guiWidth = 175;
 	int guiHeight = 228;
 	int left, top;
@@ -34,14 +33,14 @@ public class ScreenScarPattern extends Screen {
 	String text;
 
 	static Component titleComponent = Component.translatable("");
-	RegistryObject<Item> icon;
+	DeferredHolder<Item, Item> icon;
 	Minecraft mc = Minecraft.getInstance();
 	ScarRecipe recipe;
 	public HLButtonTextured[][] scarbuttonArray = new HLButtonTextured[8][8];
 	protected List<HLButtonTextured> buttonList = Lists.<HLButtonTextured>newArrayList();
 
 	@OnlyIn(Dist.CLIENT)
-	public ScreenScarPattern(RegistryObject<Item> iconIn, ScarRecipe recipeIn, String textIn) {
+	public ScreenScarPattern(DeferredHolder<Item, Item> iconIn, ScarRecipe recipeIn, String textIn) {
 		super(titleComponent);
 		this.icon = iconIn;
 		this.recipe = recipeIn;

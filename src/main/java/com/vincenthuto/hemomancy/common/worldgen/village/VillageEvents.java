@@ -114,15 +114,15 @@ public class VillageEvents {
 		Registry<StructureProcessorList> processorListRegistry = event.getServer().registryAccess()
 				.registry(Registries.PROCESSOR_LIST).orElseThrow();
 		addBuildingToPool(templatePoolRegistry, processorListRegistry,
-				new ResourceLocation("minecraft:village/plains/houses"), "hemomancy:plains_hemopothecary", 10);
+				ResourceLocation.parse("minecraft:village/plains/houses"), "hemomancy:plains_hemopothecary", 10);
 		addBuildingToPool(templatePoolRegistry, processorListRegistry,
-				new ResourceLocation("minecraft:village/snowy/houses"), "hemomancy:snowy_hemopothecary", 10);
+				ResourceLocation.parse("minecraft:village/snowy/houses"), "hemomancy:snowy_hemopothecary", 10);
 		addBuildingToPool(templatePoolRegistry, processorListRegistry,
-				new ResourceLocation("minecraft:village/savanna/houses"), "hemomancy:savanna_hemopothecary", 10);
+				ResourceLocation.parse("minecraft:village/savanna/houses"), "hemomancy:savanna_hemopothecary", 10);
 		addBuildingToPool(templatePoolRegistry, processorListRegistry,
-				new ResourceLocation("minecraft:village/taiga/houses"), "hemomancy:taiga_hemopothecary", 10);
+				ResourceLocation.parse("minecraft:village/taiga/houses"), "hemomancy:taiga_hemopothecary", 10);
 		addBuildingToPool(templatePoolRegistry, processorListRegistry,
-				new ResourceLocation("minecraft:village/desert/houses"), "hemomancy:desert_hemopothecary", 10);
+				ResourceLocation.parse("minecraft:village/desert/houses"), "hemomancy:desert_hemopothecary", 10);
 	}
 
 	private static final ResourceKey<StructureProcessorList> TAILOR_SHOP_PROCESSOR_LIST_KEY = ResourceKey

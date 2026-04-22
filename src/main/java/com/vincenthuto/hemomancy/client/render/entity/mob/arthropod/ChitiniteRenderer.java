@@ -12,8 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ChitiniteRenderer extends MobRenderer<ChitiniteEntity, ChitiniteModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/chitinite/model_chitinite.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/chitinite/model_chitinite.png");
 
 	public ChitiniteRenderer(Context renderManagerIn) {
 		super(renderManagerIn,

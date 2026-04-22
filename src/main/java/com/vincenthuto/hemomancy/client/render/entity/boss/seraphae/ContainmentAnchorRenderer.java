@@ -19,8 +19,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class ContainmentAnchorRenderer extends EntityRenderer<ContainmentAnchorEntity> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/containment_anchor/containment_anchor.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/containment_anchor/containment_anchor.png");
 
 	private final ContainmentAnchorModel model;
 

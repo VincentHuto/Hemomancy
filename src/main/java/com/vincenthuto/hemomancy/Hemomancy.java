@@ -183,7 +183,7 @@ public class Hemomancy {
 
     /**
      * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath() – the two-arg
-     * constructor new ResourceLocation(ns, path) is deprecated in 1.21.
+     * constructor ResourceLocation.parse(ns, path) is deprecated in 1.21.
      */
     public static ResourceLocation rloc(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);

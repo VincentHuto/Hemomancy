@@ -17,8 +17,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class WretchedWillRenderer extends MobRenderer<EntityWretchedWill, WretchedWillModel<EntityWretchedWill>> {
 
-	public static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/wretched_will/modelwretchedwill.png");
+	public static final ResourceLocation texture = Hemomancy.rloc("textures/entity/wretched_will/modelwretchedwill.png");
 
 	public WretchedWillRenderer(EntityRendererProvider.Context p_174447_) {
 		super(p_174447_, new WretchedWillModel<EntityWretchedWill>(p_174447_.bakeLayer(WretchedWillModel.wretched_will)),

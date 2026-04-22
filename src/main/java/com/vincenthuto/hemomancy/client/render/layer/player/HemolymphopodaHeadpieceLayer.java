@@ -19,8 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.util.Lazy;
 
 public class HemolymphopodaHeadpieceLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/hemolymphopoda/model_hemolymphopoda.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemolymphopoda/model_hemolymphopoda.png");
 	private static final Lazy<HemolymphopodaModel<?>> CACHED_MODEL = Lazy.of(
 			() -> new HemolymphopodaModel<>(
 					Minecraft.getInstance().getEntityModels().bakeLayer(HemolymphopodaModel.LAYER_LOCATION)));

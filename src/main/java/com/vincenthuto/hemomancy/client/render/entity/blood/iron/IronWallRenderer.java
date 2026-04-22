@@ -13,8 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class IronWallRenderer extends MobRenderer<EntityIronWall, IronWallModel<EntityIronWall>> {
-	private static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/iron_wall/model_iron_wall.png");
+	private static final ResourceLocation texture = Hemomancy.rloc("textures/entity/iron_wall/model_iron_wall.png");
 
 	public IronWallRenderer(EntityRendererProvider.Context p_174447_) {
 		super(p_174447_, new IronWallModel<EntityIronWall>(p_174447_.bakeLayer(IronWallModel.iron_wall)), 0.5F);

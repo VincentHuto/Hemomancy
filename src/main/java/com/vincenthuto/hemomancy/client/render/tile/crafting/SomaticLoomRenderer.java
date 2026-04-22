@@ -43,8 +43,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlockEntity> {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_somatic_loom.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_somatic_loom.png");
 
 	/** Fractal random — reseeded each tick for stable-per-tick crackle. */
 	private static final Random FRAC_RAND = new Random();

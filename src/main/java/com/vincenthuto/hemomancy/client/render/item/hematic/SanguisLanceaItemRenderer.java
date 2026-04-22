@@ -27,8 +27,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/sanguis_lancea/model_sanguis_lancea.png");
+	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/sanguis_lancea/model_sanguis_lancea.png");
 
 	public final SanguisLanceaModel spearModel;
 	private final SanguisLanceaAnimContext animCtx = new SanguisLanceaAnimContext(new AnimationState());

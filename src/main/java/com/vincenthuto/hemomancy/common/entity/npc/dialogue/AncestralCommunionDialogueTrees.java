@@ -16,8 +16,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class AncestralCommunionDialogueTrees {
 
-	private static final ResourceLocation MYSTERY_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/mystery_speaker.png");
+	private static final ResourceLocation MYSTERY_ICON = Hemomancy.rloc("textures/gui/mystery_speaker.png");
 	private static final String SPEAKER = "hemomancy.communion.speaker_name";
 
 	/** Number of unique communion dialogue variants. */
