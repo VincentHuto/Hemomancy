@@ -51,6 +51,8 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
 			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
+			ms.scale(0.5f, 0.5f, 0.5f);
+			ms.translate(-1, -1, 1);
 			model = stack.getTag().getBoolean("state") ? unleashed : tame;
 			if (model == unleashed) {
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());

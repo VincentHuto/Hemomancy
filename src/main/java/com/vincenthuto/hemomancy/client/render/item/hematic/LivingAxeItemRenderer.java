@@ -62,6 +62,7 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			}
 
 
-			ms.popPose();		}
+			ms.popPose();
+		}
 	}
 }

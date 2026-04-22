@@ -93,6 +93,7 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 			poseStack.translate(-5.75 / 16.0, -12.5722 / 16.0, -0.25 / 16.0);
 
 			VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.text(texture));
+			if (isCurvedHorn) {
 				if (isOpen) {
 					openCurvedHornModel.renderToBuffer(poseStack, vertexConsumer, combinedLight,
 							OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
