@@ -98,7 +98,7 @@ public class ScarEntityEventHandler {
 	private static SynergyBonus makeSynergy(EnumBloodTendency tendency, Attribute attribute,
 		double amount, AttributeModifier.Operation operation) {
 		net.minecraft.resources.ResourceLocation id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "synergy_" + tendency.name().toLowerCase());
-		return new SynergyBonus(attribute, uuid, "Scar Synergy " + tendency.name(), amount, operation);
+		return new SynergyBonus(attribute, id, amount, operation);
 	}
 
 	// --- Capability lifecycle ---
