@@ -11,7 +11,6 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
@@ -92,7 +91,7 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_HEMATIC_IRON = createKey("ore_hematic_iron");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
-		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(Hemomancy.MOD_ID, name));
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, Hemomancy.rloc(name));
 	}
 
 	public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {

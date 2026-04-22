@@ -126,6 +126,9 @@ public class Hemomancy {
         modEventBus.addListener(this::buildContents);
         forgeBus.register(this);
 
+        // RegisterPayloadsEvent fires on the mod bus – register here, not in commonSetup.
+        PacketHandler.registerChannels(modEventBus);
+
         ModList modList = ModList.get();
         if (modList.isLoaded("mna")) {
             LOGGER.info("MNA WAS LOADED");
@@ -226,7 +229,6 @@ public class Hemomancy {
         SkillPointInit.init();
         ManipulationTreeInit.init();
         initUnstainedStageIcons();
-        PacketHandler.registerChannels(NeoForge.EVENT_BUS);
     }
 
     private void initUnstainedStageIcons() {

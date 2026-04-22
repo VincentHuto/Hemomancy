@@ -75,8 +75,9 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven { url "https://www.cursemaven.com" }
-    maven { url = "https://maven.createmod.net" }    // Create, Ponder, Flywheel
+    maven { url = "https://maven.createmod.net" }    // Create, Ponder, Flywheel, TerraBlender
     maven { url = "https://maven.tterrag.com" }       // Registrate
+    maven { url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" } // GeckoLib
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven {
         name = "Progwml6 maven"
@@ -98,10 +99,10 @@ dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
 
     // ── TerraBlender – NeoForge 1.21.1 build ─────────────────────────────────────
-    //implementation "com.github.glitchfiend:TerraBlender-neoforge:.21.1-4.1.0.8"
+    //implementation "com.github.glitchfiend:TerraBlender-neoforge:${minecraft_version}-${terrablender_version}"
 
     // ── GeckoLib – NeoForge 1.21.1 build ─────────────────────────────────────────
-    //implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1-4.8.4"
+    implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
 
     // ── HutosLib – requires NeoForge 1.21 recompile; use local libs/ until published ──
     //implementation "com.vincenthuto:hutoslib:6.0.0"

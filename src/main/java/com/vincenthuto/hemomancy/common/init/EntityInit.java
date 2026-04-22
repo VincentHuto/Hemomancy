@@ -27,7 +27,6 @@ import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
 import com.vincenthuto.hemomancy.common.entity.item.EntityQliphothSeedItem;
 import com.vincenthuto.hemomancy.common.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -384,7 +383,7 @@ public class EntityInit {
 
     public static TagKey<EntityType<?>> createTag(String name) {
         return TagKey.create(Registries.ENTITY_TYPE,
-                ResourceLocation.parse(Hemomancy.MOD_ID, name));
+                Hemomancy.rloc(name));
     }
 
     @SubscribeEvent

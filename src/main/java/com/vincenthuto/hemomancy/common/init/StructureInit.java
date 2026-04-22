@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class StructureInit {
@@ -24,7 +24,7 @@ public class StructureInit {
 			.create(Registries.STRUCTURE_TYPE, Hemomancy.MOD_ID);
 
 	public static DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister
-			.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, Hemomancy.MOD_ID);
+			.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, Hemomancy.MOD_ID);
 
 	public static final DeferredHolder<StructureType<?>, StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
 			.register("blood_temple", () -> explicitStructureTypeTyping(BloodTempleStructure.CODEC));
