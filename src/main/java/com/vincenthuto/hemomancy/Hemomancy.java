@@ -9,20 +9,23 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
-import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
-import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
-import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
-import com.vincenthuto.hemomancy.compat.mna.block.MnAPluginBlockInit;
-import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
-import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
-import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
-import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
-import com.vincenthuto.hemomancy.compat.mna.spell.BloodTitheHandler;
-import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
-import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
-import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
+// ── Optional-dep compat imports (excluded from compilation when dep absent) ───
+// MnA compat: re-enable when NeoForge 1.21.1 MnA build is published and the
+// compat/mna/** source exclusion is removed from build.gradle.
+// import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
+// import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
+// import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
+// import com.vincenthuto.hemomancy.compat.mna.block.MnAPluginBlockInit;
+// import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
+// import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
+// import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
+// import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
+// import com.vincenthuto.hemomancy.compat.mna.spell.BloodTitheHandler;
+// import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
+// import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
+// import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
 import com.vincenthuto.hemomancy.config.HemoConfig;
-import com.vincenthuto.hemomancy.config.HemoMnAConfig;
+// import com.vincenthuto.hemomancy.config.HemoMnAConfig; // re-enable with MnA compat
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -33,15 +36,11 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 // ── NeoForge API imports (replaces net.minecraftforge.*) ─────────────────────
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -127,43 +126,46 @@ public class Hemomancy {
         PacketHandler.registerChannels(modEventBus);
 
         ModList modList = ModList.get();
-        if (modList.isLoaded("mna")) {
-            LOGGER.info("MNA WAS LOADED");
-            // Register MnA-specific config
-            ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HemoMnAConfig.register(), "hemomancy-mna-server.toml");
-            forgeBus.addListener(MnAPlugin::onRegisterGuidebooks);
-            MnAPluginItemInit.MNAITEMS.register(modEventBus);
-            MnAPluginBlockInit.MNABLOCKS.register(modEventBus);
-            MnAPluginBlockEntityInit.MNATILES.register(modEventBus);
-            MnAPluginManipulationInit.MNA_MANIPS.register(modEventBus);
-            modEventBus.addListener(MnAPluginItemInit::buildMnaCompatItemContents);
-            modEventBus.addListener(MnAPluginBlockInit::onRegisterItems);
-            modEventBus.addListener(MnAPluginBlockInit::buildMnaCompatBlockContents);
-            forgeBus.addListener(MnAPlugin::playerInteractAnvil);
-            forgeBus.addListener(MnAPlugin::onRunicAnvil);
-            modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
-            modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
-            MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
-            modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
-            forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
-            forgeBus.addListener(BloodTitheHandler::onSpellCast);
-            modEventBus.register(HarbingerEventHandler.class);
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
-                modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
-                modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
-                modEventBus.addListener(MnAPluginClientEvents::renderEntities);
-                modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
-                forgeBus.addListener(MnAPluginClientEvents::onClientTick);
-                modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
-                modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
-            }
-        }
-        if (modList.isLoaded("curios")) {
-            LOGGER.info("CURIOS WAS LOADED");
-            modEventBus.addListener(CuriosPlugin::initCuriosSlots);
-            modEventBus.addListener(CuriosPlugin::clientCurioSetup);
-        }
+        // TODO(MnA-compat): re-enable once Mana and Artifice publishes a NeoForge 1.21.1 build
+        // and the compat/mna/** source exclusion is removed from build.gradle.
+        // if (modList.isLoaded("mna")) {
+        //     LOGGER.info("MNA WAS LOADED");
+        //     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HemoMnAConfig.register(), "hemomancy-mna-server.toml");
+        //     forgeBus.addListener(MnAPlugin::onRegisterGuidebooks);
+        //     MnAPluginItemInit.MNAITEMS.register(modEventBus);
+        //     MnAPluginBlockInit.MNABLOCKS.register(modEventBus);
+        //     MnAPluginBlockEntityInit.MNATILES.register(modEventBus);
+        //     MnAPluginManipulationInit.MNA_MANIPS.register(modEventBus);
+        //     modEventBus.addListener(MnAPluginItemInit::buildMnaCompatItemContents);
+        //     modEventBus.addListener(MnAPluginBlockInit::onRegisterItems);
+        //     modEventBus.addListener(MnAPluginBlockInit::buildMnaCompatBlockContents);
+        //     forgeBus.addListener(MnAPlugin::playerInteractAnvil);
+        //     forgeBus.addListener(MnAPlugin::onRunicAnvil);
+        //     modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
+        //     modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
+        //     MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
+        //     modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
+        //     forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
+        //     forgeBus.addListener(BloodTitheHandler::onSpellCast);
+        //     modEventBus.register(HarbingerEventHandler.class);
+        //     if (FMLEnvironment.dist == Dist.CLIENT) {
+        //         modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
+        //         modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
+        //         modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
+        //         modEventBus.addListener(MnAPluginClientEvents::renderEntities);
+        //         modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
+        //         forgeBus.addListener(MnAPluginClientEvents::onClientTick);
+        //         modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
+        //         modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
+        //     }
+        // }
+        // TODO(Curios-compat): re-enable once Curios publishes a NeoForge 1.21.1 build
+        // and the compat/curios/** source exclusion is removed from build.gradle.
+        // if (modList.isLoaded("curios")) {
+        //     LOGGER.info("CURIOS WAS LOADED");
+        //     modEventBus.addListener(CuriosPlugin::initCuriosSlots);
+        //     modEventBus.addListener(CuriosPlugin::clientCurioSetup);
+        // }
     }
 
     // Combined a few methods into one more generic one

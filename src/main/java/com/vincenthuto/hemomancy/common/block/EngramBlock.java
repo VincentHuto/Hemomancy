@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.block;
 
-import com.mna.blocks.tileentities.ChalkRuneTile;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -167,8 +166,9 @@ public class EngramBlock extends WaterloggableBlock {
 	}
 
 	public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
-		BlockEntity te = worldIn.getBlockEntity(pos);
-		return te != null && te instanceof ChalkRuneTile && !((ChalkRuneTile) te).getDisplayedItem().isEmpty() ? 15 : 0;
+		// TODO(MnA-compat): when MnA NeoForge 1.21.1 ships, restore ChalkRuneTile comparator
+		// signal (return 15 if the BlockEntity is a non-empty ChalkRuneTile).
+		return 0;
 	}
 
 	public boolean canPlaceLiquid(BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
