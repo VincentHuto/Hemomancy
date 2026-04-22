@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.item.living;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -116,8 +117,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         // 1) Glow layer behind filled portion (wider, softer)
         if (fillRatio > 0f) {
@@ -140,7 +140,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
                     startAngle, filledEnd, FILLED_COLOR);
         }
 
-        tessellator.end();
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
         RenderSystem.disableBlend();
     }
 

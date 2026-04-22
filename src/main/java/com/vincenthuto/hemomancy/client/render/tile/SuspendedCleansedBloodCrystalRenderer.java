@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.tile;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
@@ -43,8 +42,6 @@ public class SuspendedCleansedBloodCrystalRenderer implements BlockEntityRendere
         matrixStackIn.mulPose(Vector3.YP.rotationDegrees((float) ticks / 2).toMoj());
         float scale = (float) Math.abs(Math.cos(currentTime * 0.045f) * 0.25f) + 0.4f;
         matrixStackIn.translate(0, (-scale * 0.7f - 0.2f + .5) * te.timeOffset, 0);
-        MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-                .immediate(Tesselator.getInstance().getBuilder());
         RenderType renderType = heart.renderType(texture);
         RenderType wrappedType = new RenderType(renderType.toString() + "_translucent", renderType.format(), renderType.mode(),
                 renderType.bufferSize(), renderType.affectsCrumbling(), true,
@@ -55,10 +52,9 @@ public class SuspendedCleansedBloodCrystalRenderer implements BlockEntityRendere
                 , () -> renderType.clearRenderState()) {
 
         };
-        VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(wrappedType);
+        VertexConsumer ivertexbuilder = bufferIn.getBuffer(wrappedType);
         heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
                 1.0F, 1.0F);
-        irendertypebuffer$impl.endBatch();
         matrixStackIn.popPose();
 
     }

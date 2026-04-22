@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -49,10 +48,7 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
-			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-					.immediate(Tesselator.getInstance().getBuilder());
-
-			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_spear));
+			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_spear));
 
 			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
 			InteractionHand activeHand = player.getUsedItemHand();
@@ -103,7 +99,6 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 				spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
 
-			irendertypebuffer$impl.endBatch();
 			ms.popPose();
 		}
 	}

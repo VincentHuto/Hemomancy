@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodGourdModel;
@@ -81,32 +80,26 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 					}
 
 					if (gourd == ItemInit.curved_horn.get()) {
-						MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-								.immediate(Tesselator.getInstance().getBuilder());
-						VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(text));
-						if (isOpen) {
-							modelOpenCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-						} else {
-							modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-						}
-						irendertypebuffer$impl.endBatch();
-
+					VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
+					if (isOpen) {
+						modelOpenCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 					} else {
-						MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-								.immediate(Tesselator.getInstance().getBuilder());
-						VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(text));
-						if (isOpen) {
-							modelOpenBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-						} else {
-							modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-						}
-						irendertypebuffer$impl.endBatch();
-
+						modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 					}
+
+				} else {
+					VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
+					if (isOpen) {
+						modelOpenBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+					} else {
+						modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+					}
+
+				}
 
 				}
 			});

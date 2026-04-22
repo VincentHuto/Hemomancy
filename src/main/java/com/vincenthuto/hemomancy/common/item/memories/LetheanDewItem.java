@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -82,7 +82,7 @@ public class LetheanDewItem extends Item {
 
 	@Override
 	public boolean isFoil(ItemStack p_42999_) {
-		return super.isFoil(p_42999_) || !PotionUtils.getMobEffects(p_42999_).isEmpty();
+		return super.isFoil(p_42999_) || p_42999_.has(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
 	}
 
 	@Override

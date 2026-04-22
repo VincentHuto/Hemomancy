@@ -1,5 +1,5 @@
 {
-  "type": "forge:add_features",
+  "type": "neoforge:add_features",
   "biomes": "#hemomancy:lethean_poppy_spawnlist",
   "features": "hemomancy:lethean_poppies",
   "step": "vegetal_decoration"

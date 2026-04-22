@@ -21,8 +21,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.ForgeHooksClient;
-import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 
 import java.awt.Point;
@@ -158,19 +156,14 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
         if (!collection.isEmpty() && j >= 32) {
             boolean flag = j >= 120;
-            ScreenEvent.RenderInventoryMobEffects event = ForgeHooksClient.onScreenPotionSize(this, j, !flag, i);
-            if (event.isCanceled()) {
-                return;
-            }
-
-            flag = !event.isCompact();
-            i = event.getHorizontalOffset();
             int k = 33;
             if (collection.size() > 5) {
                 k = 132 / (collection.size() - 1);
             }
 
-            Iterable<MobEffectInstance> iterable = collection.stream().filter(ForgeHooksClient::shouldRenderEffect).sorted().collect(Collectors.toList());
+            Iterable<MobEffectInstance> iterable = collection.stream()
+                .filter(effect -> net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(effect).isVisibleInInventory(effect))
+                .sorted().collect(Collectors.toList());
             this.renderBackgrounds(pGuiGraphics, i, k, iterable, flag);
             this.renderIcons(pGuiGraphics, i, k, iterable, flag);
             if (flag) {

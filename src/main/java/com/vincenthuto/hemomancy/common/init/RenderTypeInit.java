@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -29,7 +30,7 @@ public class RenderTypeInit extends RenderType {
 	public static final ParticleRenderType
 
 	ADDITIVE = new ParticleRenderType() {
-		public void begin(BufferBuilder bufferBuilder, TextureManager textureManager) {
+		public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
 			Minecraft mc = Minecraft.getInstance();
 			RenderSystem.depthMask(false);
 			mc.gameRenderer.lightTexture().turnOnLightLayer();
@@ -40,11 +41,11 @@ public class RenderTypeInit extends RenderType {
 			RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
 			AbstractTexture tex = textureManager.getTexture(TextureAtlas.LOCATION_PARTICLES);
 			tex.setBlurMipmap(true, false);
-			bufferBuilder.begin(Mode.QUADS, DefaultVertexFormat.PARTICLE);
+			return tesselator.begin(Mode.QUADS, DefaultVertexFormat.PARTICLE);
 		}
 
-		public void end(Tesselator tessellator) {
-			tessellator.end();
+		public void end(BufferBuilder bufferBuilder) {
+			BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
 			Minecraft mc = Minecraft.getInstance();
 			mc.textureManager.getTexture(TextureAtlas.LOCATION_PARTICLES).restoreLastBlurMipmap();
 			RenderSystem.disableBlend();

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.tile;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
@@ -51,8 +50,6 @@ public class SuspendedVivaniteRenderer implements BlockEntityRenderer<SuspendedV
         matrixStackIn.translate(0.0, 0.175 + 0 * 0.25, 0.0);
         float currentTime = te.getLevel().getGameTime() ;
 
-        MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-                .immediate(Tesselator.getInstance().getBuilder());
         RenderType renderType=heart.renderType(texture);
         RenderType wrappedType = new RenderType(renderType.toString() + "_translucent", renderType.format(), renderType.mode(),
                 renderType.bufferSize(), renderType.affectsCrumbling(), true,
@@ -63,10 +60,9 @@ public class SuspendedVivaniteRenderer implements BlockEntityRenderer<SuspendedV
                 , () -> renderType.clearRenderState()) {
 
         };
-        VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(wrappedType);
+        VertexConsumer ivertexbuilder = bufferIn.getBuffer(wrappedType);
         heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
                 1.0F, 1.0F);
-        irendertypebuffer$impl.endBatch();
         matrixStackIn.popPose();
 
     }

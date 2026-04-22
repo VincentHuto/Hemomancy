@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Axis;
@@ -37,10 +36,8 @@ public class SanguisLanceaRenderer extends EntityRenderer<SanguisLanceaEntity> {
         pPoseStack.pushPose();
         pPoseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
         pPoseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.xRotO, pEntity.getXRot()) + 90.0F));
-        MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-                .immediate(Tesselator.getInstance().getBuilder());
 
-        VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(texture));
+        VertexConsumer ivertexbuilder = pBuffer.getBuffer(RenderType.text(texture));
 
         VertexConsumer glint = pBuffer.getBuffer(RenderTypeInit.getCrimsonGlint());
         VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
@@ -49,7 +46,6 @@ public class SanguisLanceaRenderer extends EntityRenderer<SanguisLanceaEntity> {
         pPoseStack.scale(0.5f,0.5f,0.5f);
 
         this.model.renderToBuffer(pPoseStack, buffer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        irendertypebuffer$impl.endBatch();
         pPoseStack.popPose();
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }
