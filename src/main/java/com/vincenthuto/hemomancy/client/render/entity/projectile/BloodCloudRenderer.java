@@ -21,7 +21,7 @@ public class BloodCloudRenderer extends EntityRenderer<CloudEntityBlood> {
 	@Nonnull
 	@Override
 	public ResourceLocation getTextureLocation(@Nonnull CloudEntityBlood entity) {
-		return new ResourceLocation(Hemomancy.MOD_ID + "textures/entity/tracker.png");
+		return Hemomancy.rloc("textures/entity/tracker.png");
 	}
 
 }

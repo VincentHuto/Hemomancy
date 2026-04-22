@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class VeinLocation extends DimensionalPosition {
 
-	public static final VeinLocation BLANK = new VeinLocation("blankvein", new ResourceLocation("blankvein"),
+	public static final VeinLocation BLANK = new VeinLocation("blankvein", ResourceLocation.withDefaultNamespace("blankvein"),
 			new BlockPos(0, 0, 0));
 	static List<String> prefixes = Arrays.asList("Superior", "Inferior", "Major", "Minor", "Cranial", "Caudal",
 			"Anterior", "Ventral", "Posterior", "Dorsal", "Proximal", "Lateral", "Medial", "Distal", "Pulmonary",
@@ -44,7 +44,7 @@ public class VeinLocation extends DimensionalPosition {
 		if (nbt.contains("dim") && nbt.contains("pos") && nbt.contains("name") && nbt.contains("id")) {
 			name = nbt.getString("name");
 			uuid = nbt.getUUID("id");
-			dim = new ResourceLocation(nbt.getString("dim"));
+			dim = ResourceLocation.parse(nbt.getString("dim"));
 			bPos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
 			VeinLocation loc = new VeinLocation(uuid, name, dim, bPos);
 			return loc;

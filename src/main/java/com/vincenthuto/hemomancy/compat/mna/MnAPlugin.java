@@ -23,9 +23,9 @@ public class MnAPlugin {
 	// Events
 	public static void onRegisterGuidebooks(RegisterGuidebooksEvent event) {
 
-		event.getRegistry().addGuidebookPath(new ResourceLocation(Hemomancy.MOD_ID, "mna_guide"));
+		event.getRegistry().addGuidebookPath(Hemomancy.rloc("mna_guide"));
 		event.getRegistry().registerGuidebookCategory("Hemomancy",
-				new ResourceLocation(Hemomancy.MOD_ID, "charm_of_vascularium"));
+				Hemomancy.rloc("charm_of_vascularium"));
 	}
 
 	// Anvil

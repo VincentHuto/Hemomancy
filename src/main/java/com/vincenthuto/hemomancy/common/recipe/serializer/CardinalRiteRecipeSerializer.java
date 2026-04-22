@@ -35,7 +35,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 
 	private static Block blockFromJson(JsonObject pItemObject) {
 		String s = GsonHelper.getAsString(pItemObject, "block");
-		Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+		Block block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(s));
 
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);

@@ -38,10 +38,8 @@ import java.util.stream.Collectors;
 
 public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularViewMenu> {
 
-    public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/gui/vascular_view.png");
-    public static final ResourceLocation border = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/gui/vascular_border.png");
+    public static final ResourceLocation background = Hemomancy.rloc("textures/gui/vascular_view.png");
+    public static final ResourceLocation border = Hemomancy.rloc("textures/gui/vascular_border.png");
     public double dragLeftRight = 0.0;
     public double dragUpDown = 0.0;
     public int guiHeight = 254;

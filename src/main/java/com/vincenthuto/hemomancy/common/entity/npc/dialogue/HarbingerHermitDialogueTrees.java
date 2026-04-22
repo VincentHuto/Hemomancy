@@ -13,8 +13,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class HarbingerHermitDialogueTrees {
 
-	private static final ResourceLocation HERMIT_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/harbinger_hermit/harbinger_hermit.png");
+	private static final ResourceLocation HERMIT_ICON = Hemomancy.rloc("textures/entity/harbinger_hermit/harbinger_hermit.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_hermit";
 
 	private HarbingerHermitDialogueTrees() {}

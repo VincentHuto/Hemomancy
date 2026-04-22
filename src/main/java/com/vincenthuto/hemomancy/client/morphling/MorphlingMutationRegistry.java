@@ -30,7 +30,7 @@ public class MorphlingMutationRegistry {
 
     // Reuse the existing avatar_glow texture as the energySwirl base pattern
     private static final ResourceLocation SWIRL_TEX =
-            new ResourceLocation(Hemomancy.MOD_ID, "textures/models/armor/avatar_glow.png");
+            Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
     public static void init() {
         // Bat — HEAD attachment example

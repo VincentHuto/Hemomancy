@@ -92,7 +92,7 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_HEMATIC_IRON = createKey("ore_hematic_iron");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
-		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(Hemomancy.MOD_ID, name));
 	}
 
 	public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {

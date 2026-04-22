@@ -24,9 +24,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ScreenScarPattern extends Screen {
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/scar_pattern.png");
-	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/gui/scar_station.png");
+	final ResourceLocation texture = Hemomancy.rloc("textures/gui/scar_pattern.png");
+	private static final ResourceLocation GUI_Chisel = Hemomancy.rloc("textures/gui/scar_station.png");
 	int guiWidth = 175;
 	int guiHeight = 228;
 	int left, top;

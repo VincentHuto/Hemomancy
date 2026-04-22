@@ -21,10 +21,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class FungalImplantationPylonRenderer implements BlockEntityRenderer<FungalImplantationPylonBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
-	public static ResourceLocation eyeTexture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/floating_eye/model_floating_eye.png");
+	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
+	public static ResourceLocation eyeTexture = Hemomancy.rloc("textures/entity/floating_eye/model_floating_eye.png");
 
 	private final FungalImplantationPylonModel vein;
 	private final FloatingEyeModel eye;

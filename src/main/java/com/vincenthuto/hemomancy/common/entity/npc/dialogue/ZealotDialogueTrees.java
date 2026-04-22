@@ -12,8 +12,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class ZealotDialogueTrees {
 
-	private static final ResourceLocation ZEALOT_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/unstained_zealot/unstained_zealot.png");
+	private static final ResourceLocation ZEALOT_ICON = Hemomancy.rloc("textures/entity/unstained_zealot/unstained_zealot.png");
 	private static final String SPEAKER = "entity.hemomancy.unstained_zealot";
 
 	private ZealotDialogueTrees() {}

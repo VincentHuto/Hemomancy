@@ -11,9 +11,9 @@ public class FluidInit {
 	public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS,
 			Hemomancy.MOD_ID);
 
-//	public static final ResourceLocation WATER_STILL_RL = new ResourceLocation("block/water_still");
-//	public static final ResourceLocation WATER_FLOWING_RL = new ResourceLocation("block/water_flow");
-//	public static final ResourceLocation WATER_OVERLAY_RL = new ResourceLocation("block/water_overlay");
+//	public static final ResourceLocation WATER_STILL_RL = ResourceLocation.withDefaultNamespace("block/water_still");
+//	public static final ResourceLocation WATER_FLOWING_RL = ResourceLocation.withDefaultNamespace("block/water_flow");
+//	public static final ResourceLocation WATER_OVERLAY_RL = ResourceLocation.withDefaultNamespace("block/water_overlay");
 //
 //	public static final DeferredHolder<FlowingFluid, FlowingFluid> blood = FLUIDS.register("blood",
 //			() -> new ForgeFlowingFluid.Source(FluidInit.blood_prop));
@@ -54,11 +54,11 @@ public class FluidInit {
 //			Hemomancy.MOD_ID);
 //
 //	public static final DeferredHolder<FluidType, FluidType> BLOOD_TYPE = RegistryObject.createOptional(
-//			new ResourceLocation("blood"), ForgeRegistries.Keys.FLUID_TYPES.location(), Hemomancy.MOD_ID);
-//	public static final DeferredHolder<Fluid, Fluid> BLOOD = RegistryObject.create(new ResourceLocation("blood"),
+//			ResourceLocation.withDefaultNamespace("blood"), ForgeRegistries.Keys.FLUID_TYPES.location(), Hemomancy.MOD_ID);
+//	public static final DeferredHolder<Fluid, Fluid> BLOOD = RegistryObject.create(ResourceLocation.withDefaultNamespace("blood"),
 //			ForgeRegistries.FLUIDS);
 //	public static final DeferredHolder<Fluid, Fluid> FLOWING_BLOOD = RegistryObject
-//			.create(new ResourceLocation("flowing_blood"), ForgeRegistries.FLUIDS);
+//			.create(ResourceLocation.withDefaultNamespace("flowing_blood"), ForgeRegistries.FLUIDS);
 //
 //	public static final DeferredHolder<FlowingFluid, FlowingFluid> blood = FLUIDS.register("blood",
 //			() -> new ForgeFlowingFluid.Source(FluidInit.blood_prop));

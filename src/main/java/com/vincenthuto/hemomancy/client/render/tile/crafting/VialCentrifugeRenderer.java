@@ -22,11 +22,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifugeBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_centrifuge_arms.png");
+	public static ResourceLocation texture = Hemomancy.rloc("textures/entity/model_centrifuge_arms.png");
 
-	public static ResourceLocation stand_texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_centrifuge_stand.png");
+	public static ResourceLocation stand_texture = Hemomancy.rloc("textures/entity/model_centrifuge_stand.png");
 
 	private final CentrifugeArmsModel arms;
 	private final CentrifugeStandModel stand;

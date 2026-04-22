@@ -39,7 +39,7 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 
 	public void renderPortal(ScryingPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		ResourceLocation GLASSTEXTURE = new ResourceLocation(Hemomancy.MOD_ID, "textures/block/sanguine_tran_pane.png");
+		ResourceLocation GLASSTEXTURE = Hemomancy.rloc("textures/block/sanguine_tran_pane.png");
 
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5f, 1.0075f, 0.5f);

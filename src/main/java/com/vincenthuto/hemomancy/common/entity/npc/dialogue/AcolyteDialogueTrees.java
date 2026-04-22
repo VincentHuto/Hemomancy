@@ -13,8 +13,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class AcolyteDialogueTrees {
 
-	private static final ResourceLocation ACOLYTE_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/unstained_acolyte/unstained_acolyte.png");
+	private static final ResourceLocation ACOLYTE_ICON = Hemomancy.rloc("textures/entity/unstained_acolyte/unstained_acolyte.png");
 	private static final String SPEAKER = "entity.hemomancy.unstained_acolyte";
 
 	private AcolyteDialogueTrees() {}

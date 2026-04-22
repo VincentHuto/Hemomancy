@@ -963,17 +963,17 @@ public class ItemInit {
                     return 1.0F;
                 });
 
-        ItemProperties.register(barbed_shield.get(), new ResourceLocation("blocking"),
+        ItemProperties.register(barbed_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
                 });
 
-        ItemProperties.register(chitinite_shield.get(), new ResourceLocation("blocking"),
+        ItemProperties.register(chitinite_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
                 });
 
-        ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("pull"),
+        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("pull"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     if (ent == null) {
                         return 0.0F;
@@ -983,16 +983,16 @@ public class ItemInit {
                                 / (float) LivingCrossbowItem.getChargeTime(stack);
                     }
                 });
-        ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("pulling"),
+        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("pulling"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     return ent != null && ent.isUsingItem() && ent.getUseItem() == stack
                             && !LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
                 });
-        ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("charged"),
+        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("charged"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     return stack != null && LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
                 });
-        ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("firework"),
+        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("firework"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     return ent != null && LivingCrossbowItem.isCharged(stack)
                             && LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;

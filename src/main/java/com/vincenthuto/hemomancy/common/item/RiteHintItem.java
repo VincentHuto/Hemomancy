@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 /**
  * A generic rite hint item — a blood-stained parchment containing the
@@ -30,7 +31,7 @@ import net.minecraft.world.level.Level;
  * Usage:
  * <pre>
  *   ItemStack hint = RiteHintItem.createForRite(
- *       new ResourceLocation("hemomancy", "cardinal_rite/sanguine_initiation"));
+ *       Hemomancy.rloc("cardinal_rite/sanguine_initiation"));
  * </pre>
  */
 public class RiteHintItem extends Item {

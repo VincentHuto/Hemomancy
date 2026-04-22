@@ -20,8 +20,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class EarthenVeinItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/earthen_vein/model_earthen_vein.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/earthen_vein/model_earthen_vein.png");
 
 	private EarthenVeinModel model;
 	private final EarthenVeinAnimContext animCtx = new EarthenVeinAnimContext(new AnimationState());

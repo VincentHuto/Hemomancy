@@ -15,8 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class BarbedUrchinRenderer extends MobRenderer<BarbedUrchinEntity, EntityModel<BarbedUrchinEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/barbed_urchin/model_barbed_urchin.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/barbed_urchin/model_barbed_urchin.png");
 	private int puffStateO = 3;
 
 	private final EntityModel<BarbedUrchinEntity> small= this.getModel();

@@ -568,7 +568,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         this.cookingTotalTime = tag.getInt("CookTimeTotal");
         CompoundTag recipesTag = tag.getCompound("RecipesUsed");
         for (String s : recipesTag.getAllKeys()) {
-            this.recipesUsed.put(new ResourceLocation(s), recipesTag.getInt(s));
+            this.recipesUsed.put(ResourceLocation.parse(s), recipesTag.getInt(s));
         }
         IWhiteHumorVolume vol = resolveVolume();
         if (vol != null) {

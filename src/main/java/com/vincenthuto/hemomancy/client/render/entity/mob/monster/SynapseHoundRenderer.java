@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class SynapseHoundRenderer extends MobRenderer<SynapseHoundEntity, SynapseHoundModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/synapse_hound/model_synapse_hound.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/synapse_hound/model_synapse_hound.png");
 
 	public SynapseHoundRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new SynapseHoundModel(renderManagerIn.bakeLayer(SynapseHoundModel.LAYER_LOCATION)), 0.4F);

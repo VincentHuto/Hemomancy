@@ -48,7 +48,7 @@ public class VasculariumCharmItem extends Item implements IScar {
 	public static enum Commands {
 		FOLLOW, INTERACT, MOVE, STAY, DIAGNOSTICS, EAT, ATTACK;
 
-		private final ResourceLocation iconTexture = new ResourceLocation(Hemomancy.MOD_ID,
+		private final ResourceLocation iconTexture = Hemomancy.rloc(
 				"textures/gui/command_icons/" + this.toString().toLowerCase() + ".png");
 
 		public ResourceLocation getIcon() {

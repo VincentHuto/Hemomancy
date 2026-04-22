@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 /**
  * Defines a 3D model attachment rendered on the player while a morphling is
@@ -35,7 +36,7 @@ import net.neoforged.api.distmarker.OnlyIn;
  *             AttachmentPoint.BODY, 0f, 0f, 0f, 1f,
  *             Lazy.of(() -> new BatWingsModel(
  *                 Minecraft.getInstance().getEntityModels().bakeLayer(BatWingsModel.LAYER_LOCATION))),
- *             new ResourceLocation(Hemomancy.MOD_ID, "textures/models/morphling/bat_wings.png")))
+ *             Hemomancy.rloc("textures/models/morphling/bat_wings.png")))
  *         .build());
  * }</pre>
  */
@@ -123,7 +124,7 @@ public abstract class MorphlingModelAttachment {
      *     AttachmentPoint.BODY, 0f, -4f, 2f, 0.5f,
      *     Lazy.of(() -> new MyModel(Minecraft.getInstance()
      *         .getEntityModels().bakeLayer(MyModel.LAYER_LOCATION))),
-     *     new ResourceLocation(Hemomancy.MOD_ID, "textures/models/morphling/my_model.png"))
+     *     Hemomancy.rloc("textures/models/morphling/my_model.png"))
      * }</pre>
      */
     public static class SimpleBodyAttachment extends MorphlingModelAttachment {

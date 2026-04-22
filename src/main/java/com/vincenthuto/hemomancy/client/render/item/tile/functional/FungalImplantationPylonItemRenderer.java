@@ -22,8 +22,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
 
 	private FungalImplantationPylonModel model;
 	private final FungalImplantationPylonAnimContext animCtx = new FungalImplantationPylonAnimContext(new AnimationState());

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HemojellyRenderer extends MobRenderer<HemojellyEntity, HemojellyModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/hemojelly/model_hemojelly.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemojelly/model_hemojelly.png");
 
 	public HemojellyRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new HemojellyModel(renderManagerIn.bakeLayer(HemojellyModel.LAYER_LOCATION)), 0.4F);

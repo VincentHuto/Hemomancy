@@ -24,8 +24,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static ResourceLocation living_blade = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_living_axe_hand.png");
+	public static ResourceLocation living_blade = Hemomancy.rloc("textures/entity/model_living_axe_hand.png");
 
 	public final LivingAxeModel unleashed;
 

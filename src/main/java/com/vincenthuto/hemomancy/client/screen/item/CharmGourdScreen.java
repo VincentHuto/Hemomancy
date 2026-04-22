@@ -22,8 +22,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdMenu> {
 
-	public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/charm_slot.png");
+	public static final ResourceLocation background = Hemomancy.rloc("textures/gui/charm_slot.png");
 
 	private float oldMouseX;
 	private float oldMouseY;

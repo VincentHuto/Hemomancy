@@ -10,8 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 
 public class BloodShotRenderer extends EntityRenderer<BloodShotEntity> {
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/block/end_portal.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/block/end_portal.png");
 
 	public BloodShotRenderer(Context renderManagerIn) {
 		super(renderManagerIn);

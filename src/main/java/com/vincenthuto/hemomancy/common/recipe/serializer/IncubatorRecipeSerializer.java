@@ -35,7 +35,7 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 		} else {
 			String resultId = GsonHelper.getAsString(json, "result");
 			int count = GsonHelper.getAsInt(json, "count", 1);
-			ResourceLocation resultLoc = new ResourceLocation(resultId);
+			ResourceLocation resultLoc = ResourceLocation.parse(resultId);
 			result = new ItemStack(net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getValue(resultLoc), count);
 		}
 

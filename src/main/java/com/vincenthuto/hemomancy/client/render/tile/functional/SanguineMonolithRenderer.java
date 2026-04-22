@@ -32,8 +32,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
  */
 public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMonolithBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_sanguine_monolith.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_sanguine_monolith.png");
 
 	private final SanguineMonolithModel model;
 

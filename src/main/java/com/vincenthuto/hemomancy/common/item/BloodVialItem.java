@@ -32,7 +32,7 @@ public class BloodVialItem extends Item {
 		if (stack.hasTag()) {
 			if (stack.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
 				EntityType<?> type = ForgeRegistries.ENTITY_TYPES
-						.getValue(new ResourceLocation(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
+						.getValue(ResourceLocation.parse(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
 				return type;
 			}
 		}

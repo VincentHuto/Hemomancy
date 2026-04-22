@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class FrozenClotRenderer extends MobRenderer<FrozenClotEntity, FrozenClotModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/frozen_clot/model_frozen_clot.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/frozen_clot/model_frozen_clot.png");
 
 	public FrozenClotRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new FrozenClotModel(renderManagerIn.bakeLayer(FrozenClotModel.LAYER_LOCATION)), 0.6F);

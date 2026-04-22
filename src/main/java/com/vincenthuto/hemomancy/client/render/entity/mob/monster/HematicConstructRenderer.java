@@ -9,7 +9,7 @@ package com.vincenthuto.hemomancy.client.render.entity.mob.monster;
 
     public class HematicConstructRenderer extends MobRenderer<HematicConstructEntity, HumanoidModel<HematicConstructEntity>> {
 
-        private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/entity/zombie/zombie.png");
+        private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/zombie/zombie.png");
 
         public HematicConstructRenderer(EntityRendererProvider.Context ctx) {
             super(ctx, new HumanoidModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), 0.5f);

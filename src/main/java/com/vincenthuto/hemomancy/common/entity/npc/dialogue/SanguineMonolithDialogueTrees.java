@@ -13,8 +13,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class SanguineMonolithDialogueTrees {
 
-	private static final ResourceLocation MONOLITH_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_sanguine_monolith.png");
+	private static final ResourceLocation MONOLITH_ICON = Hemomancy.rloc("textures/entity/model_sanguine_monolith.png");
 	private static final String SPEAKER = "block.hemomancy.sanguine_monolith";
 
 	/** Sentinel used in place of an entity ID for this block-based speaker. */

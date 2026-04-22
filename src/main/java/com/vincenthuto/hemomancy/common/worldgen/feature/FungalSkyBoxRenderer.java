@@ -41,8 +41,8 @@ public class FungalSkyBoxRenderer {
 	private static final ResourceLocation EARTH_LOCATION = Hemomancy.rloc("textures/environment/earth.png");
 	private static final ResourceLocation MOON_LOCATION = Hemomancy.rloc("textures/environment/moon.png");
 
-	private static final ResourceLocation SUN_LOCATION = new ResourceLocation("textures/environment/sun.png");
-	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
+	private static final ResourceLocation SUN_LOCATION = ResourceLocation.withDefaultNamespace("textures/environment/sun.png");
+	private static final ResourceLocation CLOUDS_LOCATION = ResourceLocation.withDefaultNamespace("textures/environment/clouds.png");
 	private static final ResourceLocation END_SKY_LOCATION = Hemomancy.rloc("textures/environment/blood_fill_tiled.png");
 
 	public FungalSkyBoxRenderer() {

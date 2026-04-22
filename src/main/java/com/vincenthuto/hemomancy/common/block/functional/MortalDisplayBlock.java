@@ -110,7 +110,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 			// Grant the advancement programmatically
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
 				Advancement adv = serverPlayer.server.getAdvancements()
-						.getAdvancement(new ResourceLocation(Hemomancy.MOD_ID, "hemomancy/the_first_awakening"));
+						.getAdvancement(Hemomancy.rloc("hemomancy/the_first_awakening"));
 				if (adv != null) {
 					serverPlayer.getAdvancements().award(adv, "activate_temple");
 				}

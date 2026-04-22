@@ -22,7 +22,7 @@ import net.neoforged.neoforge.common.util.Lazy;
 
 public class MarrowCrownModel<T extends LivingEntity> extends HumanoidModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "marrow_crown"), "main");
+			Hemomancy.rloc("marrow_crown"), "main");
 	public static final Lazy<MarrowCrownModel<LivingEntity>> helmet = Lazy
 			.of(() -> new MarrowCrownModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(LAYER_LOCATION)));
 

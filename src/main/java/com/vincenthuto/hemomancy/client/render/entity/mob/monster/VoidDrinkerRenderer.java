@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class VoidDrinkerRenderer extends MobRenderer<VoidDrinkerEntity, VoidDrinkerModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/void_drinker/model_void_drinker.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/void_drinker/model_void_drinker.png");
 
 	public VoidDrinkerRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new VoidDrinkerModel(renderManagerIn.bakeLayer(VoidDrinkerModel.LAYER_LOCATION)), 0.5F);

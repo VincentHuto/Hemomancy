@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class LumpOfThoughtRenderer extends MobRenderer<LumpOfThoughtEntity, LumpOfThoughtModel<LumpOfThoughtEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/lump_of_thought/model_lump_of_thought.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/lump_of_thought/model_lump_of_thought.png");
 
 	public LumpOfThoughtRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new LumpOfThoughtModel<LumpOfThoughtEntity>(renderManagerIn.bakeLayer(LumpOfThoughtModel.LAYER_LOCATION)), 0.5F);

@@ -12,8 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 public class PuppteerGlowLayer<T extends LivingEntity> extends EyesLayer<T, BloodDrunkPuppeteerModel<T>> {
-	private static final RenderType GLOW = RenderType.eyes(new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer_glow.png"));
+	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer_glow.png"));
 
 	public PuppteerGlowLayer(RenderLayerParent<T, BloodDrunkPuppeteerModel<T>> p_116981_) {
 		super(p_116981_);

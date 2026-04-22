@@ -384,7 +384,7 @@ public class EntityInit {
 
     public static TagKey<EntityType<?>> createTag(String name) {
         return TagKey.create(Registries.ENTITY_TYPE,
-                new ResourceLocation(Hemomancy.MOD_ID, name));
+                ResourceLocation.parse(Hemomancy.MOD_ID, name));
     }
 
     @SubscribeEvent

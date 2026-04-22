@@ -20,8 +20,7 @@ import net.minecraft.util.Mth;
 
 public class MnemonicReliquaryRenderer implements BlockEntityRenderer<MnemonicReliquaryBlockEntity> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/model_mnemonic_reliquary.png");
+    public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_mnemonic_reliquary.png");
     /**
      * Default Y position of the brain part (from the model definition: offset 4.0F).
      */

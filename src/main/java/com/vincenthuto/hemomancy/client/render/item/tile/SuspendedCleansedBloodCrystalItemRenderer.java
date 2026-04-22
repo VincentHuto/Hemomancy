@@ -19,8 +19,7 @@ import net.minecraft.world.item.ItemStack;
 public class SuspendedCleansedBloodCrystalItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	// Using the same texture as the blood crystal for now - replace with final texture later
-	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_suspended_cleansed_blood_crystal.png");
+	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_suspended_cleansed_blood_crystal.png");
 
 	private SuspendedCleansedBloodCrystalModel model;
 

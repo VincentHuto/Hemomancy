@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, HarbingerHermitModel<HarbingerHermitEntity>> {
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/harbinger_hermit/harbinger_hermit.png");
+    protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/harbinger_hermit/harbinger_hermit.png");
 
     public HarbingerHermitRenderer(Context context) {
         super(context, new HarbingerHermitModel<>(context.bakeLayer(HarbingerHermitModel.LAYER_LOCATION)), 0.5F);

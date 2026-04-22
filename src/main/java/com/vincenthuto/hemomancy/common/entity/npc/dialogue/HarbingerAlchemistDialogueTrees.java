@@ -14,8 +14,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class HarbingerAlchemistDialogueTrees {
 
-	private static final ResourceLocation ALCHEMIST_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/harbinger_alchemist/harbinger_alchemist.png");
+	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/harbinger_alchemist/harbinger_alchemist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
 
 	private HarbingerAlchemistDialogueTrees() {}

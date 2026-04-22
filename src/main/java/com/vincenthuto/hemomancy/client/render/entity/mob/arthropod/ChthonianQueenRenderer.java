@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ChthonianQueenRenderer extends MobRenderer<ChthonianQueenEntity, ChthonianQueenModel<ChthonianQueenEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/chthonian_queen/model_chthonian_queen.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/chthonian_queen/model_chthonian_queen.png");
 
 	public ChthonianQueenRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new ChthonianQueenModel<ChthonianQueenEntity>(renderManagerIn.bakeLayer(ChthonianQueenModel.LAYER_LOCATION)), 0.5F);

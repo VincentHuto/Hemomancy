@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ToothPecksRenderer extends MobRenderer<ToothPecksEntity, ToothPecksModel<ToothPecksEntity>> {
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/tooth_pecks/model_tooth_pecks.png");
+            Hemomancy.rloc("textures/entity/tooth_pecks/model_tooth_pecks.png");
 
     public ToothPecksRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new ToothPecksModel<>(ctx.bakeLayer(ToothPecksModel.LAYER_LOCATION)), 0.25F);

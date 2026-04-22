@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class AbyssalSiphonRenderer extends MobRenderer<AbyssalSiphonEntity, AbyssalSiphonModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/abyssal_siphon/model_abyssal_siphon.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/abyssal_siphon/model_abyssal_siphon.png");
 
 	public AbyssalSiphonRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new AbyssalSiphonModel(renderManagerIn.bakeLayer(AbyssalSiphonModel.LAYER_LOCATION)), 0.5F);

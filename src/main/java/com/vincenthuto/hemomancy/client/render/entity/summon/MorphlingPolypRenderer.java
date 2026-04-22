@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class MorphlingPolypRenderer extends MobRenderer<MorphlingPolypEntity, MorphlingPolypModel<MorphlingPolypEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/morphling_polyp/model_morphling_polyp.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/morphling_polyp/model_morphling_polyp.png");
 
 	public MorphlingPolypRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new MorphlingPolypModel<MorphlingPolypEntity>(renderManagerIn.bakeLayer(MorphlingPolypModel.LAYER_LOCATION)), 0.5F);

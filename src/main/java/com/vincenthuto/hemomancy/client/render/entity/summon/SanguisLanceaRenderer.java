@@ -18,8 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class SanguisLanceaRenderer extends EntityRenderer<SanguisLanceaEntity> {
-    public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/entity/sanguis_lancea/model_sanguis_lancea.png");
+    public static ResourceLocation texture = Hemomancy.rloc("textures/entity/sanguis_lancea/model_sanguis_lancea.png");
     private final SanguisLanceaModel model;
 
 

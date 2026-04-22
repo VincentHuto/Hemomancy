@@ -18,8 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 public class SpectralCompanionRenderer extends HumanoidMobRenderer<SpectralCompanionEntity, HumanoidModel<SpectralCompanionEntity>> {
 
 	// TODO: Replace with a proper spectral companion texture when available
-	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/blank.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/blank.png");
 
 	public SpectralCompanionRenderer(Context context) {
 		super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);

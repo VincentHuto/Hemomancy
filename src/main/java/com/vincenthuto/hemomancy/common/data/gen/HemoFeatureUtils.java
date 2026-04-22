@@ -16,7 +16,7 @@ public class HemoFeatureUtils {
     }
     public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name)
     {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(Hemomancy.MOD_ID, name));
     }
 
 }

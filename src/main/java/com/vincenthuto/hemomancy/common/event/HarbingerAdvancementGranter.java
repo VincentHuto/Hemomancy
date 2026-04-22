@@ -4,6 +4,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 /**
  * Utility class for programmatically granting Hemomancy Harbinger-path
@@ -18,39 +19,39 @@ public final class HarbingerAdvancementGranter {
 
 	// ── Degree chain advancements ──────────────────────────────────────────────
 	public static final ResourceLocation ADV_DEGREE_1_NEOPHYTE =
-			new ResourceLocation("hemomancy", "hemomancy/degree_1_neophyte");
+			Hemomancy.rloc("hemomancy/degree_1_neophyte");
 	public static final ResourceLocation ADV_DEGREE_2_VOTARY =
-			new ResourceLocation("hemomancy", "hemomancy/degree_2_votary");
+			Hemomancy.rloc("hemomancy/degree_2_votary");
 	public static final ResourceLocation ADV_DEGREE_3_INITIATE =
-			new ResourceLocation("hemomancy", "hemomancy/degree_3_initiate");
+			Hemomancy.rloc("hemomancy/degree_3_initiate");
 	public static final ResourceLocation ADV_DEGREE_4_ADEPT =
-			new ResourceLocation("hemomancy", "hemomancy/degree_4_adept");
+			Hemomancy.rloc("hemomancy/degree_4_adept");
 	public static final ResourceLocation ADV_DEGREE_5_ILLUMINATUS =
-			new ResourceLocation("hemomancy", "hemomancy/degree_5_illuminatus");
+			Hemomancy.rloc("hemomancy/degree_5_illuminatus");
 	public static final ResourceLocation ADV_DEGREE_6_SANCTIFIED =
-			new ResourceLocation("hemomancy", "hemomancy/degree_6_sanctified");
+			Hemomancy.rloc("hemomancy/degree_6_sanctified");
 	public static final ResourceLocation ADV_DEGREE_7_ARCHON =
-			new ResourceLocation("hemomancy", "hemomancy/degree_7_archon");
+			Hemomancy.rloc("hemomancy/degree_7_archon");
 	public static final ResourceLocation ADV_DEGREE_8_APOTHEOS =
-			new ResourceLocation("hemomancy", "hemomancy/degree_8_apotheos");
+			Hemomancy.rloc("hemomancy/degree_8_apotheos");
 
 	// ── Order function milestones ──────────────────────────────────────────────
 	public static final ResourceLocation ADV_BLOOD_IS_BOUND =
-			new ResourceLocation("hemomancy", "hemomancy/blood_is_bound");
+			Hemomancy.rloc("hemomancy/blood_is_bound");
 	public static final ResourceLocation ADV_CRIMSON_LODGE_CONSECRATED =
-			new ResourceLocation("hemomancy", "hemomancy/crimson_lodge_consecrated");
+			Hemomancy.rloc("hemomancy/crimson_lodge_consecrated");
 	public static final ResourceLocation ADV_FOUNDING_SANCTUM_ESTABLISHED =
-			new ResourceLocation("hemomancy", "hemomancy/founding_sanctum_established");
+			Hemomancy.rloc("hemomancy/founding_sanctum_established");
 
 	// ── Endgame milestones ─────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_VOICES_IN_THE_VEIN =
-			new ResourceLocation("hemomancy", "hemomancy/voices_in_the_vein");
+			Hemomancy.rloc("hemomancy/voices_in_the_vein");
 	public static final ResourceLocation ADV_ETERNAL_COVENANT_SEALED =
-			new ResourceLocation("hemomancy", "hemomancy/eternal_covenant_sealed");
+			Hemomancy.rloc("hemomancy/eternal_covenant_sealed");
 
 	// ── Mastery side branches ──────────────────────────────────────────────────
 	public static final ResourceLocation ADV_SANGUINE_DOMAIN =
-			new ResourceLocation("hemomancy", "hemomancy/sanguine_domain");
+			Hemomancy.rloc("hemomancy/sanguine_domain");
 
 	/** Ordered array of degree advancements, index 0 = degree 1. */
 	private static final ResourceLocation[] DEGREE_ADVANCEMENTS = {

@@ -45,7 +45,7 @@ public class BiomeInit {
 	public static final ResourceKey<Biome> HEMORRHAGIC_PLATEAU = register("hemorrhagic_plateau");
 
 	private static ResourceKey<Biome> register(String name) {
-		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, new ResourceLocation(Hemomancy.MOD_ID, name));
+		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(Hemomancy.MOD_ID, name));
 		return key;
 	}
 

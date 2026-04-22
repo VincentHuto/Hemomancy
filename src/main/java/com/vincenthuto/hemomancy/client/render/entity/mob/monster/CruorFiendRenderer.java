@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CruorFiendRenderer extends MobRenderer<CruorFiendEntity, CruorFiendModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/cruor_fiend/model_cruor_fiend.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/cruor_fiend/model_cruor_fiend.png");
 
 	public CruorFiendRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new CruorFiendModel(renderManagerIn.bakeLayer(CruorFiendModel.LAYER_LOCATION)), 0.5F);

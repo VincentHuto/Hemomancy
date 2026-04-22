@@ -11,8 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public class HemolymphopodaRenderer
 		extends MobRenderer<HemolymphopodaEntity, HemolymphopodaModel<HemolymphopodaEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/hemolymphopoda/model_hemolymphopoda.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemolymphopoda/model_hemolymphopoda.png");
 
 	public HemolymphopodaRenderer(Context renderManagerIn) {
 		super(renderManagerIn,

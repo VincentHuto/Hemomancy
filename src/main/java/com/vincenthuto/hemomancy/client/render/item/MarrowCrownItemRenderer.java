@@ -30,8 +30,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public static ResourceLocation living_blade = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/models/armor/marrow_crown_layer_1.png");
+	public static ResourceLocation living_blade = Hemomancy.rloc("textures/models/armor/marrow_crown_layer_1.png");
 
 	public final MarrowCrownModel crownModel;
 

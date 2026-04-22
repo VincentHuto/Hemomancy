@@ -151,7 +151,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	 */
 	private String resolveBaseTextureName(String blockName, String suffix) {
 		String base = blockName.replace(suffix, "");
-		ResourceLocation pluralLoc = new ResourceLocation(Hemomancy.MOD_ID, base + "s");
+		ResourceLocation pluralLoc = ResourceLocation.parse(Hemomancy.MOD_ID, base + "s");
 		if (ForgeRegistries.BLOCKS.containsKey(pluralLoc)) {
 			return base + "s";
 		}

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class FunglingRenderer extends MobRenderer<FunglingEntity, FunglingModel<FunglingEntity>> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/fungling/model_fungling.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/fungling/model_fungling.png");
 
 	public FunglingRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new FunglingModel<FunglingEntity>(renderManagerIn.bakeLayer(FunglingModel.LAYER_LOCATION)), 0.5F);

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class VenousStriderRenderer extends MobRenderer<VenousStriderEntity, VenousStriderModel> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/venous_strider/model_venous_strider.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/venous_strider/model_venous_strider.png");
 
 	public VenousStriderRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new VenousStriderModel(renderManagerIn.bakeLayer(VenousStriderModel.LAYER_LOCATION)), 0.4F);

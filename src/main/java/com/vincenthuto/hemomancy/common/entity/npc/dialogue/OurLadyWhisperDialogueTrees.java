@@ -21,8 +21,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class OurLadyWhisperDialogueTrees {
 
-	private static final ResourceLocation LADY_ICON = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/mystery_speaker.png");
+	private static final ResourceLocation LADY_ICON = Hemomancy.rloc("textures/gui/mystery_speaker.png");
 	private static final String SPEAKER = "hemomancy.lady.speaker_name";
 
 	private OurLadyWhisperDialogueTrees() {}

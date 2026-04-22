@@ -20,7 +20,7 @@ public class FerventChitiniteCrystalLayer<T extends LivingEntity>
 		extends RenderLayer<FerventChitiniteEntity, FerventChitiniteModel> {
 
 	private static final RenderType GLOW = RenderType.entityTranslucent(
-			new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/fervent_chitinite/model_fervent_crystal.png"));
+			Hemomancy.rloc("textures/entity/fervent_chitinite/model_fervent_crystal.png"));
 
 	private final FerventChitiniteModel model;
 
@@ -42,8 +42,7 @@ public class FerventChitiniteCrystalLayer<T extends LivingEntity>
 			if (flag) {
 				vertexconsumer = pBuffer.getBuffer(RenderType.outline(this.getTextureLocation(pLivingEntity)));
 			} else {
-				vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucent(new ResourceLocation(Hemomancy.MOD_ID,
-						"textures/entity/fervent_chitinite/model_fervent_crystal.png")));
+				vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucent(Hemomancy.rloc("textures/entity/fervent_chitinite/model_fervent_crystal.png")));
 			}
 
 			this.getParentModel().copyPropertiesTo(this.model);
