@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -143,7 +142,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		}
 
 		// Check if already at max modification
-		IVisceralOrgans organs = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
+		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player)
 				.orElse(null);
 		if (organs != null && organs.getOrganLevel(organ) >= 3) {
 			sendStatusToPlayer(player, "This organ has already reached its maximum modification.");

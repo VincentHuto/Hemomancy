@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
-import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLocProvider;
-import com.vincenthuto.hemomancy.common.capability.block.vein.IEarthenVeinLoc;
+import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLoc;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 
@@ -43,10 +42,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 					if (te.getName() == "") {
 						te.setName(VeinLocation.getRandomName());
 					}
-					te.getCapability(EarthenVeinLocProvider.VEIN_CAPA).ifPresent((cap) -> {
-						cap.setVeinLoc(
-								new VeinLocation(te.getName(), te.getLevel().dimension().location(), te.getBlockPos()));
-					});
+					te.setLoc(new VeinLocation(te.getName(), te.getLevel().dimension().location(), te.getBlockPos()));
 				}
 				te.setHasTicked(true);
 				te.sendUpdates();
@@ -112,7 +108,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 
 	}
 
-	IEarthenVeinLoc locCap = getCapability(EarthenVeinLocProvider.VEIN_CAPA).orElseThrow(IllegalStateException::new);
+	private final EarthenVeinLoc locCap = new EarthenVeinLoc();
 	String name = "";
 
 	boolean hasTicked = false;

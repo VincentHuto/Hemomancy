@@ -44,13 +44,6 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -93,8 +86,6 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
     public NonNullList<ItemStack> items = NonNullList.withSize(NUM_SLOTS, ItemStack.EMPTY);
     int cookingProgress;
     int cookingTotalTime;
-    LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this,
-            Direction.UP, Direction.DOWN, Direction.NORTH);
     private boolean heated;
     protected final ContainerData dataAccess = new ContainerData() {
         @Override
@@ -517,34 +508,6 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
         return slot == SLOT_RESULT || slot == SLOT_FLASK_OUTPUT;
-    }
-
-    // ---- Capabilities ----
-
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-        if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER) {
-            return switch (facing) {
-                case UP -> handlers[0].cast();
-                case DOWN -> handlers[1].cast();
-                default -> handlers[2].cast();
-            };
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        for (LazyOptional<? extends IItemHandler> handler : handlers) {
-            handler.invalidate();
-        }
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        this.handlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     }
 
     // ---- Load / Save ----

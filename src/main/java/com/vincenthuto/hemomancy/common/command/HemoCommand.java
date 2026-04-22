@@ -18,7 +18,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -537,8 +536,7 @@ public class HemoCommand {
 	// ═══════════════════ Visceral Organs ═══════════════════
 
 	private static int getOrgans(CommandSourceStack source, ServerPlayer player) {
-		IVisceralOrgans organs = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
-				.orElseThrow(IllegalStateException::new);
+		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
 		source.sendSuccess(() -> {
 			MutableComponent msg = Component.literal(player.getName().getString())
 					.withStyle(ChatFormatting.GOLD)
@@ -566,8 +564,7 @@ public class HemoCommand {
 				return 0;
 			}
 		}
-		IVisceralOrgans organs = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
-				.orElseThrow(IllegalStateException::new);
+		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
 		organs.setOrganLevel(organ, level);
 		final String name = organ.getName();
 		source.sendSuccess(() -> Component.literal("Set ")
@@ -578,8 +575,7 @@ public class HemoCommand {
 	}
 
 	private static int resetOrgans(CommandSourceStack source, ServerPlayer player) {
-		IVisceralOrgans organs = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
-				.orElseThrow(IllegalStateException::new);
+		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
 		organs.resetAll();
 		source.sendSuccess(() -> Component.literal("Reset ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))

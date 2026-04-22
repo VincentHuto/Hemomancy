@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.tile.crafting;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
@@ -51,11 +50,6 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
 /**
  * Ghastly Alembic Block Entity — a blood distillery powered by fire below.
@@ -103,9 +97,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	int cookingTotalTime;
 
 	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-
-	LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this,
-			Direction.UP, Direction.DOWN, Direction.NORTH);
 
 	protected final ContainerData dataAccess = new ContainerData() {
 		@Override
@@ -537,34 +528,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
 		return slot == SLOT_RESULT || slot == SLOT_FLASK_OUTPUT;
-	}
-
-	// ---- Capabilities ----
-
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-		if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER) {
-			return switch (facing) {
-				case UP -> handlers[0].cast();
-				case DOWN -> handlers[1].cast();
-				default -> handlers[2].cast();
-			};
-		}
-		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public void invalidateCaps() {
-		super.invalidateCaps();
-		for (LazyOptional<? extends IItemHandler> handler : handlers) {
-			handler.invalidate();
-		}
-	}
-
-	@Override
-	public void reviveCaps() {
-		super.reviveCaps();
-		this.handlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
 	}
 
 	// ---- Load / Save ----

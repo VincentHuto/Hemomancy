@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile;
 
 import com.vincenthuto.hemomancy.common.block.BrazierBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
 
@@ -111,7 +111,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 		// Check and upgrade the organ on the player's capability
 		boolean[] success = { false };
-		player.getCapability(VisceralOrgansProvider.ORGANS_CAPA).ifPresent(organs -> {
+		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
 			int currentLevel = organs.getOrganLevel(organ);
 			if (currentLevel >= 3) {
 				msg(player, "This organ echo has already reached its maximum refinement.",
