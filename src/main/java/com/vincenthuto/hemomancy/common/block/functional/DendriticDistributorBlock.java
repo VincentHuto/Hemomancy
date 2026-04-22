@@ -105,8 +105,7 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 								 BlockHitResult result) {
 		// Opens the Skill Tree screen (client-only)
 		if (worldIn.isClientSide) {
-			net.neoforged.fml.DistExecutor.unsafeRunWhenOn(net.neoforged.api.distmarker.Dist.CLIENT,
-					() -> () -> HarbingerProgressScreen.openScreen());
+			HarbingerProgressScreen.openScreen();
 		}
 		return InteractionResult.SUCCESS;
 

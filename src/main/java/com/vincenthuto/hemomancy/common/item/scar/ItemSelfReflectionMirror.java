@@ -17,8 +17,7 @@ public class ItemSelfReflectionMirror extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (worldIn.isClientSide) {
-			net.neoforged.fml.DistExecutor.unsafeRunWhenOn(net.neoforged.api.distmarker.Dist.CLIENT,
-					() -> () -> UnstainedProgressScreen.openScreen());
+			UnstainedProgressScreen.openScreen();
 		}
 		return InteractionResultHolder.sidedSuccess(playerIn.getItemInHand(handIn), worldIn.isClientSide);
 	}
