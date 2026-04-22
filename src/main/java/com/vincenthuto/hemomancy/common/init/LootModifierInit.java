@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.loot.modifier.AddItemModifier;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class LootModifierInit {
