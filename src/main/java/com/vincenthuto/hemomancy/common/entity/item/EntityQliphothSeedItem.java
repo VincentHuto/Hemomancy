@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.item;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +18,4 @@ public class EntityQliphothSeedItem extends ItemEntity {
         this.setItem(stack);
         this.lifespan = stack.getItem() == null ? 6000 : stack.getEntityLifespan(world);
     }
-
-    @Nonnull
 }

@@ -96,10 +96,12 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLase
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
+import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.tool.StructureScannerItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseManipKeyPacket;
@@ -132,6 +134,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.ModelEvent.BakingCompleted;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
@@ -275,6 +278,18 @@ public class ClientEvents {
 		};
 		return isDown && keybind.getKeyConflictContext().isActive()
 				&& keybind.getKeyModifier().isActive(keybind.getKeyConflictContext());
+	}
+
+	@SubscribeEvent
+	public static void onItemTooltip(ItemTooltipEvent event) {
+		if (event.getItemStack().has(DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get())) {
+			event.getItemStack().addToTooltip(DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(), event.getContext(),
+					event.getToolTip()::add, event.getFlags());
+		}
+
+		if (event.getItemStack().getItem() instanceof StructureScannerItem scanner) {
+			scanner.addScannerStateTooltip(event.getItemStack(), event.getToolTip());
+		}
 	}
 
 	@SubscribeEvent

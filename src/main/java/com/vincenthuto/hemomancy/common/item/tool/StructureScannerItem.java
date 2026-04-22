@@ -11,17 +11,18 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -67,11 +68,13 @@ public class StructureScannerItem extends Item {
 		if (level.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
-		if (ctx.getPlayer() == null) {
+
+		Player player = ctx.getPlayer();
+		if (player == null) {
 			return InteractionResult.PASS;
 		}
-		if (!ctx.getPlayer().isCreative()) {
-			ctx.getPlayer().displayClientMessage(
+		if (!player.isCreative()) {
+			player.displayClientMessage(
 					Component.literal("Structure Scanner requires creative mode!")
 							.withStyle(ChatFormatting.RED),
 					true);
@@ -83,11 +86,11 @@ public class StructureScannerItem extends Item {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
 		// Sneak + click: clear stored corner
-		if (ctx.getPlayer().isShiftKeyDown()) {
+		if (player.isShiftKeyDown()) {
 			if (tag.getBoolean(TAG_HAS_POS1)) {
 				tag.putBoolean(TAG_HAS_POS1, false);
 				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-				ctx.getPlayer().displayClientMessage(
+				player.displayClientMessage(
 						Component.literal("Scanner reset.").withStyle(ChatFormatting.YELLOW), true);
 			}
 			return InteractionResult.SUCCESS;
@@ -101,7 +104,7 @@ public class StructureScannerItem extends Item {
 			tag.putBoolean(TAG_HAS_POS1, true);
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-			ctx.getPlayer().displayClientMessage(
+			player.displayClientMessage(
 					Component.literal("Corner 1 set: " + clickedPos.toShortString())
 							.withStyle(ChatFormatting.GREEN),
 					true);
@@ -110,18 +113,17 @@ public class StructureScannerItem extends Item {
 
 		// Second click – scan region
 		BlockPos pos1 = new BlockPos(tag.getInt(TAG_POS1_X), tag.getInt(TAG_POS1_Y), tag.getInt(TAG_POS1_Z));
-		BlockPos pos2 = clickedPos;
 		tag.putBoolean(TAG_HAS_POS1, false);
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-		return scanRegion(ctx, level, pos1, pos2);
+		return scanRegion(player, level, pos1, clickedPos);
 	}
 
 	/**
 	 * Scans all blocks in the axis-aligned bounding box between {@code pos1} and
 	 * {@code pos2}, builds the pattern, and writes recipe JSONs.
 	 */
-	private InteractionResult scanRegion(UseOnContext ctx, Level level, BlockPos pos1, BlockPos pos2) {
+	private InteractionResult scanRegion(Player player, Level level, BlockPos pos1, BlockPos pos2) {
 		int minX = Math.min(pos1.getX(), pos2.getX());
 		int minY = Math.min(pos1.getY(), pos2.getY());
 		int minZ = Math.min(pos1.getZ(), pos2.getZ());
@@ -134,7 +136,7 @@ public class StructureScannerItem extends Item {
 		int sizeZ = maxZ - minZ + 1;
 
 		if ((long) sizeX * sizeY * sizeZ > MAX_VOLUME) {
-			ctx.getPlayer().displayClientMessage(
+			player.displayClientMessage(
 					Component.literal("Region too large! Max " + MAX_VOLUME + " blocks.")
 							.withStyle(ChatFormatting.RED),
 					true);
@@ -154,7 +156,7 @@ public class StructureScannerItem extends Item {
 					}
 					if (!blockToChar.containsKey(block)) {
 						if (charIdx >= CHAR_POOL.length()) {
-							ctx.getPlayer().displayClientMessage(
+							player.displayClientMessage(
 									Component.literal(
 											"Too many unique block types (>" + CHAR_POOL.length() + ")!")
 											.withStyle(ChatFormatting.RED),
@@ -168,7 +170,7 @@ public class StructureScannerItem extends Item {
 		}
 
 		if (blockToChar.isEmpty()) {
-			ctx.getPlayer().displayClientMessage(
+			player.displayClientMessage(
 					Component.literal("No non-air blocks in the selected region!")
 							.withStyle(ChatFormatting.RED),
 					true);
@@ -207,9 +209,15 @@ public class StructureScannerItem extends Item {
 		// Write files
 		String stamp = String.valueOf(System.currentTimeMillis());
 		MinecraftServer server = level.getServer();
-		File baseDir = server != null ? server.getServerDirectory() : new File(".");
+		File baseDir = server != null ? server.getServerDirectory().toFile() : new File(".");
 		File outDir = new File(baseDir, "hemomancy_scans");
-		outDir.mkdirs();
+		if (!outDir.exists() && !outDir.mkdirs()) {
+			player.displayClientMessage(
+					Component.literal("Could not create hemomancy_scans output directory.")
+							.withStyle(ChatFormatting.RED),
+					false);
+			return InteractionResult.FAIL;
+		}
 
 		String bloodFile = "blood_structure_" + stamp + ".json";
 		String riteFile = "cardinal_rite_" + stamp + ".json";
@@ -218,28 +226,29 @@ public class StructureScannerItem extends Item {
 			writeJson(new File(outDir, bloodFile), bloodJson);
 			writeJson(new File(outDir, riteFile), riteJson);
 		} catch (IOException e) {
-			ctx.getPlayer().displayClientMessage(
+			player.displayClientMessage(
 					Component.literal("Error writing files: " + e.getMessage()).withStyle(ChatFormatting.RED), false);
 			return InteractionResult.FAIL;
 		}
 
 		// Feedback
-		ctx.getPlayer().displayClientMessage(
+		player.displayClientMessage(
 				Component.literal("Structure scanned! " + sizeX + "x" + sizeY + "x" + sizeZ + " ("
 						+ blockToChar.size() + " block types)").withStyle(ChatFormatting.GOLD),
 				false);
-		ctx.getPlayer().displayClientMessage(
+		player.displayClientMessage(
 				Component.literal("  Blood structure → hemomancy_scans/" + bloodFile)
 						.withStyle(ChatFormatting.GREEN),
 				false);
-		ctx.getPlayer().displayClientMessage(
+		player.displayClientMessage(
 				Component.literal("  Cardinal rite   → hemomancy_scans/" + riteFile)
 						.withStyle(ChatFormatting.GREEN),
 				false);
-		ctx.getPlayer().displayClientMessage(
+		player.displayClientMessage(
 				Component.literal("Block key:").withStyle(ChatFormatting.AQUA), false);
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
 			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
+			player.displayClientMessage(
 					Component.literal("  " + entry.getValue() + " = " + id).withStyle(ChatFormatting.GRAY), false);
 		}
 
@@ -255,7 +264,7 @@ public class StructureScannerItem extends Item {
 		json.addProperty("heldItem", "hemomancy:sanguine_formation");
 
 		ResourceLocation hitId = BuiltInRegistries.BLOCK.getKey(hitBlock);
-		json.addProperty("hitBlock", hitId != null ? hitId.toString() : "minecraft:stone");
+		json.addProperty("hitBlock", hitId.toString());
 
 		json.add("pattern", encodePattern(pattern));
 		json.add("key", encodeKey(blockToChar));
@@ -300,7 +309,7 @@ public class StructureScannerItem extends Item {
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
 			JsonObject blockObj = new JsonObject();
 			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
-			blockObj.addProperty("block", id != null ? id.toString() : "minecraft:stone");
+			blockObj.addProperty("block", id.toString());
 			key.add(entry.getValue(), blockObj);
 		}
 		return key;
@@ -316,27 +325,20 @@ public class StructureScannerItem extends Item {
 
 	// ========================= Tooltip / Visual =========================
 
-	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(Component.literal("Right-click two corners of a structure")
-				.withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("to export it as recipe JSON.")
-				.withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("Sneak+click to reset stored corner.")
-				.withStyle(ChatFormatting.DARK_GRAY));
-
+	public void addScannerStateTooltip(ItemStack stack, List<Component> tooltip) {
 		CustomData structureData = stack.get(DataComponents.CUSTOM_DATA);
-		if (structureData != null) {
-			CompoundTag tag = structureData.copyTag();
-			if (tag.getBoolean(TAG_HAS_POS1)) {
+		if (structureData == null) {
+			return;
+		}
+
+		CompoundTag tag = structureData.copyTag();
+		if (tag.getBoolean(TAG_HAS_POS1)) {
 			String pos = tag.getInt(TAG_POS1_X) + ", " + tag.getInt(TAG_POS1_Y) + ", " + tag.getInt(TAG_POS1_Z);
 			tooltip.add(Component.literal("Corner 1: " + pos).withStyle(ChatFormatting.GREEN));
 			tooltip.add(Component.literal("Click corner 2 to scan!").withStyle(ChatFormatting.YELLOW));
-			}
 		}
-
-		tooltip.add(Component.literal("Creative mode only!").withStyle(ChatFormatting.RED));
 	}
+
 
 	/** Shows enchantment glint while a corner is stored. */
 	@Override

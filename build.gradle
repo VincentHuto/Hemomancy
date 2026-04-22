@@ -130,8 +130,7 @@ configurations {
 }
 
 dependencies {
-    // ── Core: NeoForge (replaces ForgeGradle minecraft + forge dep) ──────────────
-    implementation "net.neoforged:neoforge:${neo_version}"
+    // NeoForge is provided by the moddev plugin via the neoForge { version = ... } block above.
 
     // ── TerraBlender – NeoForge 1.21.1 build ─────────────────────────────────────
    // implementation "com.github.glitchfiend:TerraBlender-neoforge:${minecraft_version}-${terrablender_version}"

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloo
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.item.*;
+import com.vincenthuto.hemomancy.common.item.component.StructureScannerTooltipComponent;
 import com.vincenthuto.hemomancy.common.item.armor.*;
 import com.vincenthuto.hemomancy.common.item.bloodline.BloodlinePoolMonitorItem;
 import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
@@ -30,12 +31,14 @@ import com.vincenthuto.hemomancy.common.item.tool.unstained.UnstainedWarhammerIt
 import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffects;
@@ -55,6 +58,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ItemInit {
@@ -102,7 +107,12 @@ public class ItemInit {
             () -> new DebugShowcaseItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final DeferredHolder<Item, Item> structure_scanner = SPECIALITEMS.register("structure_scanner",
-            () -> new StructureScannerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+            () -> new StructureScannerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)
+                    .component(DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(), new StructureScannerTooltipComponent(List.of(
+                            Component.literal("Right-click two corners of a structure").withStyle(ChatFormatting.GRAY),
+                            Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
+                            Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
+                            Component.literal("Creative mode only!").withStyle(ChatFormatting.RED)))));
 
     // Book
 
