@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
@@ -183,7 +182,7 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 		int[] organLevels = new int[organs.length];
 		boolean[] hasEcho = new boolean[organs.length];
 
-		IVisceralOrgans organsCap = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA).orElse(null);
+		IVisceralOrgans organsCap = HemoCapabilityAccess.getVisceralOrgans(player).orElse(null);
 		for (int i = 0; i < organs.length; i++) {
 			organLevels[i] = organsCap != null ? organsCap.getOrganLevel(organs[i]) : 0;
 			hasEcho[i] = playerHasEcho(player, organs[i]);
