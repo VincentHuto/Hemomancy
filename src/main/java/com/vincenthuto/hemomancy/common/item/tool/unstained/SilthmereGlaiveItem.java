@@ -38,8 +38,8 @@ import net.neoforged.neoforge.common.NeoForgeMod;
  */
 public class SilthmereGlaiveItem extends SwordItem {
 
-	/** UUID for the reach attribute modifier — must be unique across the mod. */
-	private static final UUID REACH_UUID = UUID.fromString("9a8cc52e-47d0-4b6c-8c3e-4f4e4a7d9c01");
+	/** ResourceLocation ID for the reach attribute modifier — must be unique across the mod. */
+	private static final net.minecraft.resources.ResourceLocation REACH_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "silthmere_glaive_reach");
 
 	/** Extra entity reach granted by this weapon (in blocks). */
 	public static final double REACH_BONUS = 1.5;
@@ -59,8 +59,8 @@ public class SilthmereGlaiveItem extends SwordItem {
 			builder.putAll(super.getDefaultAttributeModifiers(slot));
 			builder.put(
 					NeoForgeMod.ENTITY_REACH.get(),
-					new AttributeModifier(REACH_UUID, "Glaive reach bonus",
-							REACH_BONUS, AttributeModifier.Operation.ADDITION));
+					new AttributeModifier(REACH_ID,
+							REACH_BONUS, AttributeModifier.Operation.ADD_VALUE));
 			return builder.build();
 		}
 		return super.getDefaultAttributeModifiers(slot);

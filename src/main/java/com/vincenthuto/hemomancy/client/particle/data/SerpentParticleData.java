@@ -1,16 +1,16 @@
 package com.vincenthuto.hemomancy.client.particle.data;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 /**
  * Simplified verison of ElementalCraft
@@ -19,24 +19,16 @@ import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class SerpentParticleData implements ParticleOptions {
 
-	public static final Codec<SerpentParticleData> CODEC = RecordCodecBuilder.create(instance -> instance
+	public static final MapCodec<SerpentParticleData> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
 			.apply(instance, SerpentParticleData::new));
-	public static final Deserializer<SerpentParticleData> DESERIALIZER = new Deserializer<>() {
-		@Override
-		public SerpentParticleData fromCommand(ParticleType<SerpentParticleData> type, StringReader reader)
-				throws CommandSyntaxException {
-			reader.expect(' ');
-			return new SerpentParticleData(type, ParticleColor.deserialize(reader.readString()));
-		}
 
-		@Override
-		public SerpentParticleData fromNetwork(ParticleType<SerpentParticleData> type, FriendlyByteBuf buffer) {
-			return new SerpentParticleData(type, ParticleColor.deserialize(buffer.readUtf()));
-		}
-	};
+	public static final StreamCodec<RegistryFriendlyByteBuf, SerpentParticleData> STREAM_CODEC =
+			StreamCodec.composite(
+					ByteBufCodecs.STRING_UTF8, d -> d.color.serialize(),
+					s -> new SerpentParticleData(ParticleInit.serpent.get(), ParticleColor.deserialize(s)));
 
 	private ParticleType<SerpentParticleData> type;
 
@@ -55,15 +47,5 @@ public class SerpentParticleData implements ParticleOptions {
 	@Override
 	public ParticleType<SerpentParticleData> getType() {
 		return type;
-	}
-
-	@Override
-	public void writeToNetwork(FriendlyByteBuf packetBuffer) {
-		packetBuffer.writeUtf(color.serialize());
-	}
-
-	@Override
-	public String writeToString() {
-		return ForgeRegistries.PARTICLE_TYPES.getKey(type).toString() + " " + color.serialize();
 	}
 }

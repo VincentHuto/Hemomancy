@@ -12,7 +12,6 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,7 +24,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 
@@ -62,12 +60,6 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	@Override
 	protected boolean canHitEntity(Entity p_230298_1_) {
 		return super.canHitEntity(p_230298_1_) && !p_230298_1_.noPhysics;
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-
 	}
 
 	private float getHorizontalDistanceSqr(Vec3 vec3) {

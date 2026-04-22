@@ -14,7 +14,6 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -32,7 +31,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 public class TrackingSerpentEntity extends ThrowableProjectile {
 	public static EntityType<TrackingSerpentEntity> TYPE = EntityInit.tracking_snake.get();
@@ -107,10 +105,6 @@ public class TrackingSerpentEntity extends ThrowableProjectile {
 	}
 
 	@Nonnull
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
 
 	public LivingEntity getTargetEntity() {
 		int id = entityData.get(TARGET);

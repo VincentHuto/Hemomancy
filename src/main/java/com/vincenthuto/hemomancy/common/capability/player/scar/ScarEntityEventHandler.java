@@ -78,26 +78,26 @@ public class ScarEntityEventHandler {
 
 	static {
 		SYNERGY_BONUSES.put(EnumBloodTendency.ANIMUS, makeSynergy(EnumBloodTendency.ANIMUS,
-				Attributes.MAX_HEALTH, 2.0, AttributeModifier.Operation.ADDITION));
+				Attributes.MAX_HEALTH, 2.0, AttributeModifier.Operation.ADD_VALUE));
 		SYNERGY_BONUSES.put(EnumBloodTendency.FLAMMEUS, makeSynergy(EnumBloodTendency.FLAMMEUS,
-				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADDITION));
+				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADD_VALUE));
 		SYNERGY_BONUSES.put(EnumBloodTendency.MORTEM, makeSynergy(EnumBloodTendency.MORTEM,
-				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADDITION));
+				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADD_VALUE));
 		SYNERGY_BONUSES.put(EnumBloodTendency.CONGEATIO, makeSynergy(EnumBloodTendency.CONGEATIO,
-				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 		SYNERGY_BONUSES.put(EnumBloodTendency.DUCTILIS, makeSynergy(EnumBloodTendency.DUCTILIS,
-				Attributes.ATTACK_SPEED, 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				Attributes.ATTACK_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 		SYNERGY_BONUSES.put(EnumBloodTendency.LUX, makeSynergy(EnumBloodTendency.LUX,
-				Attributes.ARMOR_TOUGHNESS, 1.0, AttributeModifier.Operation.ADDITION));
+				Attributes.ARMOR_TOUGHNESS, 1.0, AttributeModifier.Operation.ADD_VALUE));
 		SYNERGY_BONUSES.put(EnumBloodTendency.FERRIC, makeSynergy(EnumBloodTendency.FERRIC,
-				Attributes.ARMOR, 1.0, AttributeModifier.Operation.ADDITION));
+				Attributes.ARMOR, 1.0, AttributeModifier.Operation.ADD_VALUE));
 		SYNERGY_BONUSES.put(EnumBloodTendency.TENEBRIS, makeSynergy(EnumBloodTendency.TENEBRIS,
-				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 	}
 
 	private static SynergyBonus makeSynergy(EnumBloodTendency tendency, Attribute attribute,
-			double amount, AttributeModifier.Operation operation) {
-		UUID uuid = UUID.nameUUIDFromBytes(("hemomancy:synergy:" + tendency.name().toLowerCase()).getBytes());
+		double amount, AttributeModifier.Operation operation) {
+		net.minecraft.resources.ResourceLocation id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "synergy_" + tendency.name().toLowerCase());
 		return new SynergyBonus(attribute, uuid, "Scar Synergy " + tendency.name(), amount, operation);
 	}
 
@@ -270,16 +270,16 @@ public class ScarEntityEventHandler {
 					continue;
 
 				boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
-				boolean hasModifier = attr.getModifier(bonus.uuid()) != null;
+				boolean hasModifier = attr.getModifier(bonus.id()) != null;
 				double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier();
 
 				if (hasSynergy) {
 					// Remove and re-add so Scar Affinity level changes take effect immediately
-					if (hasModifier) attr.removePermanentModifier(bonus.uuid());
+					if (hasModifier) attr.removePermanentModifier(bonus.id());
 					attr.addPermanentModifier(new AttributeModifier(
-							bonus.uuid(), bonus.name(), scaledAmount, bonus.operation()));
+							bonus.id(), scaledAmount, bonus.operation()));
 				} else if (hasModifier) {
-					attr.removePermanentModifier(bonus.uuid());
+					attr.removePermanentModifier(bonus.id());
 				}
 			}
 		});

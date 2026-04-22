@@ -540,7 +540,7 @@ public class ClientEvents {
 			// Wrap all Scar Pattern item models so the overlay layer is shrunk down
 			for (DeferredHolder<Item, Item> entry : ItemInit.BASEITEMS.getEntries()) {
 				if (entry.get() instanceof ItemScarPattern) {
-					ModelResourceLocation modelLoc = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(entry.get()), "inventory");
+					ModelResourceLocation modelLoc = ModelResourceLocation.inventory(ForgeRegistries.ITEMS.getKey(entry.get()));
 					BakedModel existing = evt.getModels().get(modelLoc);
 					if (existing != null) {
 						evt.getModels().put(modelLoc, new ScarPatternBakedModel(existing));

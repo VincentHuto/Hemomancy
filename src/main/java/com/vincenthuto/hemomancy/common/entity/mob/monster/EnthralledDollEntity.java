@@ -11,8 +11,6 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -107,12 +105,6 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 		this.entityData.define(DATA_FLAGS_ID, (byte) 0);
 		this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
 
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		Entity entity = this.getOwner();
-		return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());
 	}
 
 	@Override

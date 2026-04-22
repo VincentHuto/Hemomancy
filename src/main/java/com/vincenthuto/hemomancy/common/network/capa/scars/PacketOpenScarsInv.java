@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 public class PacketOpenScarsInv implements CustomPacketPayload {
 
@@ -38,7 +37,7 @@ public class PacketOpenScarsInv implements CustomPacketPayload {
 	public void handle(IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ctx.player().doCloseContainer();
-			NetworkHooks.openScreen(ctx.player(), new ScarMenuProvider());
+			ctx.player().openMenu( new ScarMenuProvider());
 		});
 	}
 

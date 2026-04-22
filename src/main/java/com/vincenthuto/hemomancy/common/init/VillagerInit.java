@@ -16,16 +16,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class VillagerInit {
 
 	public static final DeferredRegister<PoiType> POINTS_OF_INTEREST = DeferredRegister
-			.create(ForgeRegistries.POI_TYPES, Hemomancy.MOD_ID);
+			.create(Registries.POINT_OF_INTEREST_TYPE, Hemomancy.MOD_ID);
 
 	public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister
-			.create(ForgeRegistries.VILLAGER_PROFESSIONS, Hemomancy.MOD_ID);
+			.create(Registries.VILLAGER_PROFESSION, Hemomancy.MOD_ID);
 
 	public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSORS = DeferredRegister
 			.create(Registries.STRUCTURE_PROCESSOR, Hemomancy.MOD_ID);
