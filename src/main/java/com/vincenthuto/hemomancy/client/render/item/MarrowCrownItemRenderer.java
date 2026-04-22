@@ -53,9 +53,9 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
 			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
+			if (itemContext == ItemDisplayContext.GROUND) {
 				ms.translate(-0.6, -0.5, 0.25);
 				ms.scale(.5f, .5f, .5f);
-
 			}
 			ms.translate(-0.6, 0.5, 0.25);
 			ms.scale(1.25f, 1.25f, 1.25f);

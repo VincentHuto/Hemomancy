@@ -61,7 +61,6 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
 
-
 			ms.popPose();
 		}
 	}
