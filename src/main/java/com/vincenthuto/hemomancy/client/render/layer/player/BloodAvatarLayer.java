@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -18,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -55,30 +53,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	public void render(ItemStack pItemStack, VertexConsumer swirlConsumer, ItemDisplayContext pItemDisplayContext,
 			boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
 			int pCombinedOverlay, BakedModel pModel) {
-		if (!pItemStack.isEmpty()) {
-			pMatrixStack.pushPose();
-
-			pModel = net.neoforged.neoforge.client.ForgeHooksClient.handleCameraTransforms(pMatrixStack, pModel,
-					pItemDisplayContext, pLeftHand);
-			pMatrixStack.translate(-0.5D, -0.5D, -0.5D);
-			if (!pModel.isCustomRenderer()) {
-
-				VertexConsumer glint = pBuffer.getBuffer(RenderTypeInit.getCrimsonGlint());
-				MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-						.immediate(Tesselator.getInstance().getBuilder());
-				VertexConsumer item = irendertypebuffer$impl
-						.getBuffer(ItemBlockRenderTypes.getRenderType(pItemStack, false));
-				VertexConsumer buffer = VertexMultiConsumer.create(item, glint);
-				this.renderModelLists(pModel, pItemStack, pCombinedLight, pCombinedOverlay, pMatrixStack, buffer);
-				irendertypebuffer$impl.endBatch();
-
-			} else {
-				IClientItemExtensions.of(pItemStack).getCustomRenderer().renderByItem(
-						pItemStack, pItemDisplayContext, pMatrixStack, pBuffer, pCombinedLight, pCombinedOverlay);
-			}
-
-			pMatrixStack.popPose();
-		}
+		// TODO: implement with 1.21 rendering API
 	}
 
 	@SuppressWarnings("unused")

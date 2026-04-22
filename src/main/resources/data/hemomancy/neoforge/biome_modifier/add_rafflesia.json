@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:rafflesia_spawnlist",
+  "features": "hemomancy:rafflesia",
+  "step": "vegetal_decoration"
+}

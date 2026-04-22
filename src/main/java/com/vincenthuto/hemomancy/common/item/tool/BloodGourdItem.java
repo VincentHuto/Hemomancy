@@ -26,15 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
-import net.minecraft.core.Direction;
 
 public class BloodGourdItem extends Item implements IScar {
 
@@ -151,20 +142,6 @@ public class BloodGourdItem extends Item implements IScar {
 	@Override
 	public boolean willAutoSync(LivingEntity player) {
 		return true;
-	}
-
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		final IScar self = this;
-		return new ICapabilityProvider() {
-			private final LazyOptional<IScar> opt = LazyOptional.of(() -> self);
-
-			@Nonnull
-			@Override
-			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-				return ScarsCapabilities.ITEM_SCAR.orEmpty(cap, opt);
-			}
-		};
 	}
 
 }

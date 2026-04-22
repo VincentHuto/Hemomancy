@@ -3,7 +3,13 @@ package com.vincenthuto.hemomancy.common.capability;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
+import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.common.item.tool.living.LivingSyringeItem;
+import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
+import com.vincenthuto.hemomancy.common.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.entity.player.Player;
@@ -58,6 +64,40 @@ public final class HemoCapabilityRegistrar {
                     return handler;
                 },
                 ItemInit.morphling_jar.get());
+
+        // ── LivingStaff IItemHandler capability ──
+        event.registerItem(Capabilities.ItemHandler.ITEM,
+                (stack, ctx) -> {
+                    LivingStaffItemHandler handler = new LivingStaffItemHandler(stack, 1);
+                    handler.loadIfNotLoaded();
+                    return handler;
+                },
+                ItemInit.living_staff.get());
+
+        // ── ItemScarBinder IItemHandler capability ──
+        event.registerItem(Capabilities.ItemHandler.ITEM,
+                (stack, ctx) -> {
+                    ScarBinderItemHandler handler = new ScarBinderItemHandler(stack, 18);
+                    handler.loadIfNotLoaded();
+                    return handler;
+                },
+                ItemInit.scar_binder.get());
+        event.registerItem(Capabilities.ItemHandler.ITEM,
+                (stack, ctx) -> {
+                    ScarBinderItemHandler handler = new ScarBinderItemHandler(stack, 27);
+                    handler.loadIfNotLoaded();
+                    return handler;
+                },
+                ItemInit.scar_binder_upgraded.get());
+
+        // ── LivingSyringe IItemHandler capability ──
+        event.registerItem(Capabilities.ItemHandler.ITEM,
+                (stack, ctx) -> {
+                    LivingSyringeItemHandler handler = new LivingSyringeItemHandler(stack, 1);
+                    handler.loadIfNotLoaded();
+                    return handler;
+                },
+                ItemInit.living_syringe.get());
 
         // ── IItemHandler for WorldlyContainer block entities ──
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodGourdModel;
@@ -93,10 +92,7 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 			// Undo the body offset that the layer model has built-in, and center it
 			poseStack.translate(-5.75 / 16.0, -12.5722 / 16.0, -0.25 / 16.0);
 
-			MultiBufferSource.BufferSource immediateBuffer = MultiBufferSource
-					.immediate(Tesselator.getInstance().getBuilder());
-			VertexConsumer vertexConsumer = immediateBuffer.getBuffer(RenderType.text(texture));
-
+			VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.text(texture));
 			if (isCurvedHorn) {
 				if (isOpen) {
 					openCurvedHornModel.renderToBuffer(poseStack, vertexConsumer, combinedLight,
@@ -115,7 +111,6 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 				}
 			}
 
-			immediateBuffer.endBatch();
 			poseStack.popPose();
 		}
 	}

@@ -1,16 +1,16 @@
 package com.vincenthuto.hemomancy.client.particle.data;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 /**
  * Simplified verison of ElementalCraft
@@ -19,25 +19,16 @@ import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class BloodClawData implements ParticleOptions {
 
-	public static final Codec<BloodClawData> CODEC = RecordCodecBuilder
-			.create(instance -> instance
-					.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
-							Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
-							Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
-					.apply(instance, BloodClawData::new));
-	public static final Deserializer<BloodClawData> DESERIALIZER = new Deserializer<>() {
-		@Override
-		public BloodClawData fromCommand(ParticleType<BloodClawData> type, StringReader reader)
-				throws CommandSyntaxException {
-			reader.expect(' ');
-			return new BloodClawData(type, ParticleColor.deserialize(reader.readString()));
-		}
+	public static final MapCodec<BloodClawData> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance
+			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
+					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
+					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
+			.apply(instance, BloodClawData::new));
 
-		@Override
-		public BloodClawData fromNetwork(ParticleType<BloodClawData> type, FriendlyByteBuf buffer) {
-			return new BloodClawData(type, ParticleColor.deserialize(buffer.readUtf()));
-		}
-	};
+	public static final StreamCodec<RegistryFriendlyByteBuf, BloodClawData> STREAM_CODEC =
+			StreamCodec.composite(
+					ByteBufCodecs.STRING_UTF8, d -> d.color.serialize(),
+					s -> new BloodClawData(ParticleInit.blood_claw.get(), ParticleColor.deserialize(s)));
 
 	private ParticleType<BloodClawData> type;
 
@@ -56,15 +47,5 @@ public class BloodClawData implements ParticleOptions {
 	@Override
 	public ParticleType<BloodClawData> getType() {
 		return type;
-	}
-
-	@Override
-	public void writeToNetwork(FriendlyByteBuf packetBuffer) {
-		packetBuffer.writeUtf(color.serialize());
-	}
-
-	@Override
-	public String writeToString() {
-		return ForgeRegistries.PARTICLE_TYPES.getKey(type).toString() + " " + color.serialize();
 	}
 }

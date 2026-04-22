@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.block.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -130,7 +129,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 	}
 
 	private void handleUnstainedInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
-		int degreeNumber = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+		int degreeNumber = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (degreeNumber < EnumInitiatoryDegree.VOTARY.getNumber()) {
 			// Player hasn't reached the required degree yet
 			player.displayClientMessage(

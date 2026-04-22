@@ -91,7 +91,7 @@ import com.vincenthuto.hemomancy.client.screen.overlay.UnstainedGaugeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -246,7 +246,7 @@ public class ClientEvents {
 
 				while (openVascCharmMenu.consumeClick()) {
 					if (mc.screen == null) {
-						mc.player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
+						HemoCapabilityAccess.getScars(mc.player).ifPresent(inv -> {
 							if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 								mc.setScreen(new RadialChooseManipScreen(inv));
 							}
@@ -540,7 +540,7 @@ public class ClientEvents {
 			// Wrap all Scar Pattern item models so the overlay layer is shrunk down
 			for (DeferredHolder<Item, Item> entry : ItemInit.BASEITEMS.getEntries()) {
 				if (entry.get() instanceof ItemScarPattern) {
-					ModelResourceLocation modelLoc = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(entry.get()), "inventory");
+					ModelResourceLocation modelLoc = ModelResourceLocation.inventory(ForgeRegistries.ITEMS.getKey(entry.get()));
 					BakedModel existing = evt.getModels().get(modelLoc);
 					if (existing != null) {
 						evt.getModels().put(modelLoc, new ScarPatternBakedModel(existing));

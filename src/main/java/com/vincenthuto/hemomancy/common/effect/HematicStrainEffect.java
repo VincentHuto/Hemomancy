@@ -9,7 +9,7 @@ public class HematicStrainEffect extends MobEffect {
 
     public HematicStrainEffect(MobEffectCategory category, int color) {
         super(category, color);
-        addAttributeModifier(Attributes.MAX_HEALTH, "F3E2D1C0-B9A8-4765-3210-FEDCBA987654",
-                -0.40D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        addAttributeModifier(Attributes.MAX_HEALTH, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "hematic_strain_max_health"),
+                -0.40D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     }
 }

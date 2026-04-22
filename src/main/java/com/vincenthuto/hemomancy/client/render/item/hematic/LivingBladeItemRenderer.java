@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -51,10 +50,7 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
-			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-					.immediate(Tesselator.getInstance().getBuilder());
-
-			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_blade));
+			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
 			ms.scale(0.5f, 0.5f, 0.5f);
 			ms.translate(-1, -1, 1);
 			model = stack.getTag().getBoolean("state") ? unleashed : tame;
@@ -66,7 +62,6 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
 
-			irendertypebuffer$impl.endBatch();
 			ms.popPose();
 		}
 	}

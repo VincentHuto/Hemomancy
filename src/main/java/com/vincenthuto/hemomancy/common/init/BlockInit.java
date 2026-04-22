@@ -62,6 +62,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -557,7 +558,7 @@ public class BlockInit {
 
 	@SubscribeEvent
 	public static void onRegisterItems(final RegisterEvent event) {
-		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
+		if (event.getRegistryKey() != Registries.ITEM) {
 			return;
 		}
 
@@ -577,7 +578,7 @@ public class BlockInit {
 	}
 
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
-		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
+		event.register(Registries.ITEM, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
 
 

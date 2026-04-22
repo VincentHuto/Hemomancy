@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -45,8 +44,8 @@ import net.neoforged.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class ArmorSetBonusHandler {
 
-	private static final UUID CHITINITE_TOUGHNESS_UUID = UUID.fromString("7e4a5c8d-3f2b-4a1e-9d6c-8b7f0e3a2d1c");
-	private static final UUID MARROW_CROWN_DAMAGE_UUID = UUID.fromString("a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
+	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
+	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
 
 	private static final double HEMATIC_IRON_BLOOD_REGEN = 2.0;
 	private static final int HEMATIC_IRON_REGEN_INTERVAL = 20; // Every 20 ticks = 1 second
@@ -189,16 +188,15 @@ public class ArmorSetBonusHandler {
 		if (toughness == null) return;
 
 		boolean hasSet = hasFullSet(player, EnumModArmorTiers.CHITINITE);
-		AttributeModifier existing = toughness.getModifier(CHITINITE_TOUGHNESS_UUID);
+		AttributeModifier existing = toughness.getModifier(CHITINITE_TOUGHNESS_ID);
 
 		if (hasSet && existing == null) {
 			toughness.addTransientModifier(new AttributeModifier(
-					CHITINITE_TOUGHNESS_UUID,
-					"Chitinite Set Bonus",
+					CHITINITE_TOUGHNESS_ID,
 					CHITINITE_TOUGHNESS_BONUS,
-					AttributeModifier.Operation.ADDITION));
+					AttributeModifier.Operation.ADD_VALUE));
 		} else if (!hasSet && existing != null) {
-			toughness.removeModifier(CHITINITE_TOUGHNESS_UUID);
+			toughness.removeModifier(CHITINITE_TOUGHNESS_ID);
 		}
 	}
 
@@ -219,16 +217,15 @@ public class ArmorSetBonusHandler {
 		}
 
 		boolean shouldHaveBonus = hasCrown && hasBlood;
-		AttributeModifier existing = damage.getModifier(MARROW_CROWN_DAMAGE_UUID);
+		AttributeModifier existing = damage.getModifier(MARROW_CROWN_DAMAGE_ID);
 
 		if (shouldHaveBonus && existing == null) {
 			damage.addTransientModifier(new AttributeModifier(
-					MARROW_CROWN_DAMAGE_UUID,
-					"Marrow Crown Bonus",
+					MARROW_CROWN_DAMAGE_ID,
 					MARROW_CROWN_DAMAGE_BONUS,
-					AttributeModifier.Operation.MULTIPLY_TOTAL));
+					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 		} else if (!shouldHaveBonus && existing != null) {
-			damage.removeModifier(MARROW_CROWN_DAMAGE_UUID);
+			damage.removeModifier(MARROW_CROWN_DAMAGE_ID);
 		}
 	}
 

@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
@@ -18,9 +17,7 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -38,56 +35,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.CapabilityManager;
-import net.neoforged.neoforge.capabilities.CapabilityToken;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.ICapabilitySerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LivingStaffItem extends LivingItemItem {
-
-	@SuppressWarnings("rawtypes")
-	class LivingStaffInventoryCap implements ICapabilitySerializable {
-		@SuppressWarnings("unused")
-		private int size;
-
-		private ItemStack itemStack;
-		private LivingStaffItemHandler inventory;
-		private LazyOptional<IItemHandler> optional;
-		public LivingStaffInventoryCap(ItemStack stack, int size, CompoundTag nbtIn) {
-			itemStack = stack;
-			this.size = size;
-			inventory = new LivingStaffItemHandler(itemStack, size);
-			optional = LazyOptional.of(() -> inventory);
-		}
-
-		@Override
-		public void deserializeNBT(Tag nbt) {
-			inventory.load();
-		}
-
-		@Nonnull
-		@Override
-		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-			if (cap == ForgeCapabilities.ITEM_HANDLER) {
-				return optional.cast();
-			} else
-				return LazyOptional.empty();
-		}
-
-		@Override
-		public Tag serializeNBT() {
-			inventory.save();
-			return new CompoundTag();
-		}
-	}
-
-	public static Capability<IItemHandler> ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>() {
-	});
 
 	private static int getSlotFor(Inventory inv, ItemStack stack) {
 		if (inv.getSelected() == stack)
@@ -133,19 +85,12 @@ public class LivingStaffItem extends LivingItemItem {
 		return 72000 / 2;
 	}
 
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new LivingStaffInventoryCap(stack, 1, nbt);
-	}
-
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		CompoundTag staffnbt = stack.getOrCreateTag();
 		if (!staffnbt.contains("Inventory")) {
-			IItemHandler handler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER)
-					.orElseThrow(NullPointerException::new);
+			IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 			if (handler instanceof LivingStaffItemHandler) {
 				LivingStaffItemHandler staffHandler = (LivingStaffItemHandler) handler;
 				staffHandler.setDirty();

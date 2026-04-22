@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.CentrifugeArmsModel;
@@ -71,24 +70,18 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		arms.vial8Empty.visible = !te.inventory.get(9).isEmpty() && !te.inventory.get(9).hasTag();
 
 		// Render
-		MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-				.immediate(Tesselator.getInstance().getBuilder());
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(texture));
 		arms.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
 				1.0F);
-		irendertypebuffer$impl.endBatch();
 		matrixStackIn.popPose();
 
 
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5D, 1.5D, 0.5D);
 		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-		MultiBufferSource.BufferSource standirendertypebuffer$impl = MultiBufferSource
-				.immediate(Tesselator.getInstance().getBuilder());
-		VertexConsumer standivertexbuilder = standirendertypebuffer$impl.getBuffer(arms.renderType(texture));
+		VertexConsumer standivertexbuilder = bufferIn.getBuffer(arms.renderType(texture));
 		stand.renderToBuffer(matrixStackIn, standivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
 				1.0F);
-		standirendertypebuffer$impl.endBatch();
 		matrixStackIn.popPose();
 
 	}

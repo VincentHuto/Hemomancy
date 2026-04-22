@@ -46,7 +46,7 @@ public class RadialMenuScreen extends Screen {
 
 		this.stackEquipped = getter;
 		inventory = stackEquipped.getCount() > 0
-				? stackEquipped.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(null)
+				? stackEquipped.getCapability(Capabilities.ItemHandler.ITEM)
 				: null;
 		this.insertMenuItem = null;
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {

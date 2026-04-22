@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
 
@@ -36,15 +36,15 @@ public class ScarSlot extends SlotItemHandler {
 		if (stack.isEmpty())
 			return false;
 
-		IScar mindscar = stack.getCapability(ScarsCapabilities.ITEM_SCAR).orElseThrow(NullPointerException::new);
+		IScar mindscar = HemoCapabilityAccess.getScar(stack).orElseThrow(NullPointerException::new);
 		return mindscar.canUnequip(player);
 	}
 
 	@Override
 	public void onTake(Player playerIn, ItemStack stack) {
 		if (!hasItem() && !((IScarsItemHandler) getItemHandler()).isEventBlocked()
-				&& stack.getCapability(ScarsCapabilities.ITEM_SCAR).isPresent()) {
-			stack.getCapability(ScarsCapabilities.ITEM_SCAR, null)
+				&& HemoCapabilityAccess.getScar(stack).isPresent()) {
+			HemoCapabilityAccess.getScar(stack)
 					.ifPresent((iBauble) -> iBauble.onUnequipped(playerIn));
 		}
 		super.onTake(playerIn, stack);
@@ -54,8 +54,8 @@ public class ScarSlot extends SlotItemHandler {
 	public void set(ItemStack stack) {
 		if (hasItem() && !ItemStack.matches(stack, getItem())
 				&& !((IScarsItemHandler) getItemHandler()).isEventBlocked()
-				&& getItem().getCapability(ScarsCapabilities.ITEM_SCAR, null).isPresent()) {
-			getItem().getCapability(ScarsCapabilities.ITEM_SCAR, null)
+				&& HemoCapabilityAccess.getScar(getItem()).isPresent()) {
+			HemoCapabilityAccess.getScar(getItem())
 					.ifPresent((iBauble) -> iBauble.onUnequipped(player));
 		}
 
@@ -64,8 +64,8 @@ public class ScarSlot extends SlotItemHandler {
 
 		if (hasItem() && !ItemStack.matches(oldstack, getItem())
 				&& !((IScarsItemHandler) getItemHandler()).isEventBlocked()
-				&& getItem().getCapability(ScarsCapabilities.ITEM_SCAR, null).isPresent()) {
-			getItem().getCapability(ScarsCapabilities.ITEM_SCAR, null)
+				&& HemoCapabilityAccess.getScar(getItem()).isPresent()) {
+			HemoCapabilityAccess.getScar(getItem())
 					.ifPresent((iBauble) -> iBauble.onEquipped(player));
 		}
 	}

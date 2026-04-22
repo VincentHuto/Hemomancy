@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -133,7 +132,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 								ServerLevel sLevel = (ServerLevel) ctx.player().level();
 								if (player.getMainHandItem().getItem() == targetPattern.getHeldItem().getItem()) {
 									// ── Tier degree check ──
-									int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+									int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 									int requiredDegree = getRequiredDegreeForRecipe(targetPattern);
 									if (playerDegree < requiredDegree) {
 										String tierName = getTierNameForRecipe(targetPattern);
@@ -236,7 +235,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						BlockPattern.BlockPatternMatch match = recipe.getPattern().getBlockPattern().find(sLevel, hitPos);
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 							// Check degree first — if locked by tier, show tier message instead
-							int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+							int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 							int requiredDegree = getRequiredDegreeForRecipe(recipe);
 							if (playerDegree < requiredDegree) {
 								String tierName = getTierNameForRecipe(recipe);
@@ -301,7 +300,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			BlockPattern.BlockPatternMatch match = bp.find(sLevel, searchStart);
 			if (match != null) {
 				// ── Tier degree check ──
-				int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 				int requiredDegree = recipe.getRequiredDegree() >= 0
 						? recipe.getRequiredDegree()
 						: getRequiredDegreeForRite(recipe.getRiteType());

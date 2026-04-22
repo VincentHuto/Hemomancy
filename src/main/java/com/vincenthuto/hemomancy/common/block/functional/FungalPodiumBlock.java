@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalPodiumBlockEntity;
@@ -170,7 +169,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 			performReturnTravel(serverPlayer);
 		} else {
 			// ── Entry: Overworld → Fungal Gardens ──
-			int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			if (degree < MIN_DEGREE) {
 				serverPlayer.displayClientMessage(
 						Component.literal("The mycelium rejects you — you are not yet sworn.")

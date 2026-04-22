@@ -19,8 +19,8 @@ public class MarkedByCanonEffect extends MobEffect {
 	public MarkedByCanonEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
 		this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
-				"9F3C2A1B-D4E5-6F7A-8B9C-0D1E2F3A4B5C",
-				-0.05F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marked_by_canon_movement_speed"),
+				-0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 	}
 
 	@Override

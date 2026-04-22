@@ -11,9 +11,7 @@ import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -34,14 +32,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 
 public class VasculariumCharmItem extends Item implements IScar {
 
@@ -131,20 +121,6 @@ public class VasculariumCharmItem extends Item implements IScar {
 			return InteractionResultHolder.consume(itemstack);
 		}
 
-	}
-
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		final IScar self = this;
-		return new ICapabilityProvider() {
-			private final LazyOptional<IScar> opt = LazyOptional.of(() -> self);
-
-			@Nonnull
-			@Override
-			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-				return ScarsCapabilities.ITEM_SCAR.orEmpty(cap, opt);
-			}
-		};
 	}
 
 }

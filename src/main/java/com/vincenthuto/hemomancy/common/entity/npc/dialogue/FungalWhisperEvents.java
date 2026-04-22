@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -55,7 +54,7 @@ public class FungalWhisperEvents {
 		int stagger = player.getId() * 137;
 		if ((player.tickCount + stagger) % 200 != 0) return;
 
-		int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (degree < 4) return;
 
 		// Ensure the player has active blood

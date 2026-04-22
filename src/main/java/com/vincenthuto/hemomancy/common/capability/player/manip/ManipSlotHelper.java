@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +29,7 @@ public final class ManipSlotHelper {
 	 * Capped at {@link #MAX_SLOTS}.
 	 */
 	public static int getMaxSlots(Player player) {
-		int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		int skillBonus = 0;
 		if (SkillPointInit.skill_manip_slots != null) {
 			skillBonus = SkillPointInit.skill_manip_slots.getCurrentLevel();
@@ -44,7 +44,7 @@ public final class ManipSlotHelper {
 	 * Each wasted level should be converted into a skill point refund.
 	 */
 	public static int getExcessSkillLevels(Player player) {
-		int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		int baseAndDegree = BASE_SLOTS + (degree / 2);
 		int skillBonus = 0;
 		if (SkillPointInit.skill_manip_slots != null) {

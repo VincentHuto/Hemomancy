@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:stink_horn_spawnlist",
+  "features": "hemomancy:stink_horns",
+  "step": "vegetal_decoration"
+}

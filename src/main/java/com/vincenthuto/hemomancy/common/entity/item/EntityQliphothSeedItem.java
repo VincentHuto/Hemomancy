@@ -3,12 +3,10 @@ package com.vincenthuto.hemomancy.common.entity.item;
 import javax.annotation.Nonnull;
 
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 public class EntityQliphothSeedItem extends ItemEntity {
 
@@ -25,8 +23,4 @@ public class EntityQliphothSeedItem extends ItemEntity {
     }
 
     @Nonnull
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
 }

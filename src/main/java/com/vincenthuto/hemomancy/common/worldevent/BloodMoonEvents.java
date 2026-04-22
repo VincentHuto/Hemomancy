@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldevent;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
@@ -243,7 +243,7 @@ public class BloodMoonEvents {
 	 * Non-Harbingers: Weakness I (the blood tide unsettles the uninitiated).
 	 */
 	private static void applyBloodMoonEffects(ServerPlayer player) {
-		boolean isHarbinger = InitiatoryDegreeProvider.getPlayerDegreeNumber(player) > 0;
+		boolean isHarbinger = HemoCapabilityAccess.getPlayerDegreeNumber(player) > 0;
 		if (isHarbinger) {
 			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
 			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false, true));

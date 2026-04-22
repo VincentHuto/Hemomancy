@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
@@ -114,7 +113,7 @@ public class MnemonicReliquaryBlock extends Block implements EntityBlock {
 			}
 			// Use an inline MenuProvider that captures the block pos so the menu
 			// can find the block entity again when the player closes the screen.
-			NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+			((ServerPlayer) player).openMenu( new MenuProvider() {
 				@Override
 				public Component getDisplayName() {
 					return Component.translatable("container.hemomancy.mnemonic_reliquary");

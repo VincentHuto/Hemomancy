@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.scar;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -27,7 +27,7 @@ public class ItemMindSpike extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 
 		if (!level.isClientSide) {
-			player.getCapability(ScarsCapabilities.SCARS).ifPresent((IScarsItemHandler scars) -> {
+			HemoCapabilityAccess.getScars(player).ifPresent((IScarsItemHandler scars) -> {
 				boolean wasUnlocked = scars.isScarsUnlocked();
 				scars.setScarsUnlocked(!wasUnlocked);
 

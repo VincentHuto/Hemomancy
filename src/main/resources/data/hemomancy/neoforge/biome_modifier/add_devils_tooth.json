@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:devils_tooth_spawnlist",
+  "features": "hemomancy:devils_tooth",
+  "step": "vegetal_decoration"
+}

@@ -502,8 +502,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 		if (binderStack.isEmpty() || !(binderStack.getItem() instanceof ItemScarBinder)) return;
 
-		IItemHandler handler = binderStack.getCapability(ForgeCapabilities.ITEM_HANDLER)
-				.orElse(null);
+		IItemHandler handler = binderStack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (!(handler instanceof ScarBinderItemHandler rbHandler)) return;
 
 		rbHandler.load();

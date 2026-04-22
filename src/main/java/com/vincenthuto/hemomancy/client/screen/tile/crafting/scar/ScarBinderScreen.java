@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.tile.crafting.scar;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -57,15 +58,14 @@ public class ScarBinderScreen extends AbstractContainerScreen<ScarBinderInventor
 	private void drawTexturedQuad(int x, int y, int width, int height, float tx, float ty, float tw, float th,
 			float z) {
 		Tesselator tess = Tesselator.getInstance();
-		BufferBuilder buffer = tess.getBuilder();
+		BufferBuilder buffer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		buffer.vertex((double) x + 0, (double) y + height, z).uv(tx, ty + th).endVertex();
 		buffer.vertex((double) x + width, (double) y + height, z).uv(tx + tw, ty + th).endVertex();
 		buffer.vertex((double) x + width, (double) y + 0, z).uv(tx + tw, ty).endVertex();
 		buffer.vertex((double) x + 0, (double) y + 0, z).uv(tx, ty).endVertex();
 
-		tess.end();
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	@Override

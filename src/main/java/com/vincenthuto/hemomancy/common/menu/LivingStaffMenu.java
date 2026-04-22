@@ -49,7 +49,7 @@ public class LivingStaffMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
 
 		if (tmp instanceof LivingStaffItemHandler) {
 			handler = (LivingStaffItemHandler) tmp;

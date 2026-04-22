@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 public class PacketOpenSporeInv implements CustomPacketPayload {
 
@@ -38,7 +37,7 @@ public class PacketOpenSporeInv implements CustomPacketPayload {
 	public void handle(IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ctx.player().doCloseContainer();
-			NetworkHooks.openScreen(ctx.player(), new FungalImplantMenuProvider());
+			ctx.player().openMenu( new FungalImplantMenuProvider());
 		});
 	}
 

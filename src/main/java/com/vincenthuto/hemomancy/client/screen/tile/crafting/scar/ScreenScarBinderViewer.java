@@ -133,9 +133,8 @@ public class ScreenScarBinderViewer extends Screen {
 		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemScarBinder.class);
 		if (stack.isEmpty()) return;
 
-		if (!stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) return;
-		IItemHandler binderHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER)
-				.orElseThrow(NullPointerException::new);
+		if (stack.getCapability(Capabilities.ItemHandler.ITEM) == null) return;
+		IItemHandler binderHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (!(binderHandler instanceof ScarBinderItemHandler rbHandler)) return;
 
 		handler = rbHandler;

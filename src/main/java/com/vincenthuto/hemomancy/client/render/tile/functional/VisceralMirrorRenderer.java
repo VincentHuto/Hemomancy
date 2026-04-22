@@ -232,8 +232,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         Matrix4f mat = stack.last().pose();
 
         RenderSystem.setShader(GameRenderer::getPositionShader);
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 
         // Subdivide to match ripple mesh so reflection clips to the swimming surface
         float cellW = (LAYOUT.halfWidth() * 2f) / RIPPLE_COLS;
@@ -265,7 +264,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
             }
         }
 
-        Tesselator.getInstance().end();
+        BufferUploader.drawWithShader(builder.buildOrThrow());
 
         stack.popPose();
     }

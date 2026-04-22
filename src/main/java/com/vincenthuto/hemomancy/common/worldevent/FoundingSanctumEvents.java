@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.worldevent;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -36,7 +36,7 @@ public class FoundingSanctumEvents {
 		if (sanctums.isEmpty()) return;
 
 		for (ServerPlayer player : sLevel.getPlayers(p -> p.isAlive())) {
-			int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			if (degree < 1) continue;
 
 			for (BlockPos center : sanctums.values()) {

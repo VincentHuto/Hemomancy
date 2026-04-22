@@ -8,8 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.client.event.LayerEvents;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
 
 public class PacketCurvedHornAnimation implements CustomPacketPayload {
 
@@ -37,9 +35,7 @@ public class PacketCurvedHornAnimation implements CustomPacketPayload {
 	}
 
 	public void handle(IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> LayerEvents::playHornAnimation);
-		});
+		ctx.enqueueWork(LayerEvents::playHornAnimation);
 	}
 
 	@Override

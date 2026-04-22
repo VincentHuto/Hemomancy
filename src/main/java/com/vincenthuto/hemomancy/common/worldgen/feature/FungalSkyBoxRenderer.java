@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
@@ -62,7 +63,6 @@ public class FungalSkyBoxRenderer {
 	public static boolean renderSky(ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
 			Matrix4f projectionMatrix, Runnable setupFog) {
 		float f11 = 1.0F - level.getRainLevel(partialTicks);
-		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
 		FogRenderer.levelFogColor();
 		ShaderInstance shaderinstance = RenderSystem.getShader();
 		LevelRenderer levelRenderer = Minecraft.getInstance().levelRenderer;
@@ -94,7 +94,7 @@ public class FungalSkyBoxRenderer {
         float f15 = (float)(l + 1) / 4.0F;
         float f16 = (float)(i1 + 1) / 2.0F;
 
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         bufferbuilder.vertex(matrix4f1, -moondistance, -100.0F, moondistance).uv(f15, f16).endVertex();
         bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, moondistance).uv(f13, f16).endVertex();
         bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, -moondistance).uv(f13, f14).endVertex();
@@ -106,7 +106,7 @@ public class FungalSkyBoxRenderer {
 		 moondistance = 5.0F;
 	        RenderSystem.setShaderTexture(0, MOON_LOCATION);
 
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, moondistance+21).uv(f15, f16).endVertex();
         bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, moondistance+21).uv(f13, f16).endVertex();
         bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, -moondistance+21).uv(f13, f14).endVertex();
@@ -182,7 +182,7 @@ public class FungalSkyBoxRenderer {
 			float f5 = afloat[1];
 			float f6 = afloat[2];
 			Matrix4f matrix4f2 = stack.last().pose();
-			bufferbuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+			bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
 			bufferbuilder.vertex(matrix4f2, 0.0F, 100.0F, 0.0F).color(f4, f5, f6, afloat[3]).endVertex();
 
 			for (int j = 0; j <= 16; ++j) {
@@ -201,7 +201,6 @@ public class FungalSkyBoxRenderer {
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		Tesselator tesselator = Tesselator.getInstance();
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.setShaderTexture(0, END_SKY_LOCATION);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -229,12 +228,12 @@ public class FungalSkyBoxRenderer {
 			}
 
 			Matrix4f matrix4f = stack.last().pose();
-			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 			bufferbuilder.vertex(matrix4f, -100.0F, -100.0F, -100.0F).uv(0.0F, 0.0F).color(40, 40, 40, 255).endVertex();
 			bufferbuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).uv(0.0F, 16.0F).color(40, 40, 40, 255).endVertex();
 			bufferbuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).uv(16.0F, 16.0F).color(40, 40, 40, 255).endVertex();
 			bufferbuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).uv(16.0F, 0.0F).color(40, 40, 40, 255).endVertex();
-			tesselator.end();
+			BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 			stack.popPose();
 		}
 
@@ -254,24 +253,22 @@ public class FungalSkyBoxRenderer {
 	}
 
 	private static void createLightSky() {
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		if (skyBuffer != null) {
 			skyBuffer.close();
 		}
 
 		skyBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = buildSkyDisc(bufferbuilder, 16.0F);
+		MeshData bufferbuilder$renderedbuffer = buildSkyDisc(16.0F);
 		skyBuffer.bind();
 		skyBuffer.upload(bufferbuilder$renderedbuffer);
 		VertexBuffer.unbind();
 	}
 
-	private static BufferBuilder.RenderedBuffer buildSkyDisc(BufferBuilder pBuilder, float pY) {
+	private static MeshData buildSkyDisc(float pY) {
 		float f = Math.signum(pY) * 512.0F;
 		float f1 = 512.0F;
 		RenderSystem.setShader(GameRenderer::getPositionShader);
-		pBuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
+		BufferBuilder pBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
 		pBuilder.vertex(0.0D, (double) pY, 0.0D).endVertex();
 
 		for (int i = -180; i <= 180; i += 45) {
@@ -279,7 +276,7 @@ public class FungalSkyBoxRenderer {
 					(double) (512.0F * Mth.sin((float) i * ((float) Math.PI / 180F)))).endVertex();
 		}
 
-		return pBuilder.end();
+		return pBuilder.buildOrThrow();
 	}
 
 	// [VanillaCopy] LevelRenderer.createStars - split into multiple layers
@@ -287,9 +284,6 @@ public class FungalSkyBoxRenderer {
 		if (starsCreated && starBuffers != null) {
 			return;
 		}
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
 
 		if (starBuffers != null) {
 			for (VertexBuffer buf : starBuffers) {
@@ -303,7 +297,7 @@ public class FungalSkyBoxRenderer {
 
 		for (int layer = 0; layer < STAR_LAYER_COUNT; layer++) {
 			starBuffers[layer] = new VertexBuffer(VertexBuffer.Usage.STATIC);
-			BufferBuilder.RenderedBuffer renderedBuffer = drawStars(bufferbuilder, starsPerLayer, seeds[layer]);
+			MeshData renderedBuffer = drawStars(starsPerLayer, seeds[layer]);
 			starBuffers[layer].bind();
 			starBuffers[layer].upload(renderedBuffer);
 			VertexBuffer.unbind();
@@ -312,9 +306,9 @@ public class FungalSkyBoxRenderer {
 	}
 
 	// [VanillaCopy] of LevelRenderer.drawStars but with double the number of them
-	private static BufferBuilder.RenderedBuffer drawStars(BufferBuilder bufferBuilder, int starCount, long seed) {
+	private static MeshData drawStars(int starCount, long seed) {
 		RandomSource random = RandomSource.create(seed);
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+		BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 
 		for (int i = 0; i < starCount; ++i) {
 
@@ -356,6 +350,6 @@ public class FungalSkyBoxRenderer {
 			}
 		}
 
-		return bufferBuilder.end();
+		return bufferBuilder.buildOrThrow();
 	}
 }

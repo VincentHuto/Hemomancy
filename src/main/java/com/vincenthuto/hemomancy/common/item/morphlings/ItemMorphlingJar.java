@@ -2,19 +2,15 @@ package com.vincenthuto.hemomancy.common.item.morphlings;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -31,51 +27,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.Capability;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.ICapabilitySerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ItemMorphlingJar extends Item implements IScar {
-
-	@SuppressWarnings("rawtypes")
-	class MorphlingJarCaps implements ICapabilitySerializable {
-		private final ItemStack itemStack;
-		private final MorphlingJarItemHandler inventory;
-		private final LazyOptional<IItemHandler> optional;
-		private final LazyOptional<IScar> scarOptional = LazyOptional.of(() -> ItemMorphlingJar.this);
-
-		public MorphlingJarCaps(ItemStack stack, int size, CompoundTag nbtIn) {
-			itemStack = stack;
-			inventory = new MorphlingJarItemHandler(itemStack, size);
-			optional = LazyOptional.of(() -> inventory);
-		}
-
-		@Override
-		public void deserializeNBT(Tag nbt) {
-			inventory.load();
-		}
-
-		@Nonnull
-		@Override
-		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-			if (cap == ForgeCapabilities.ITEM_HANDLER)
-				return optional.cast();
-			if (cap == ScarsCapabilities.ITEM_SCAR)
-				return scarOptional.cast();
-			return LazyOptional.empty();
-		}
-
-		@Override
-		public Tag serializeNBT() {
-			inventory.save();
-			return new CompoundTag();
-		}
-	}
 
 	String name;
 	Integer size;
@@ -96,7 +52,7 @@ public class ItemMorphlingJar extends Item implements IScar {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		IItemHandler jarHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler jarHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (jarHandler instanceof MorphlingJarItemHandler mjh) {
 			mjh.load();
 			boolean hasAny = false;
@@ -115,12 +71,6 @@ public class ItemMorphlingJar extends Item implements IScar {
 	@Override
 	public Rarity getRarity(ItemStack stack) {
 		return rarity;
-	}
-
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new MorphlingJarCaps(stack, size, nbt);
 	}
 
 	@Override
@@ -146,7 +96,7 @@ public class ItemMorphlingJar extends Item implements IScar {
 		} else {
 			// Shift-click server-side → open the insertion menu
 			if (playerIn.isShiftKeyDown() && playerIn instanceof ServerPlayer sp) {
-				NetworkHooks.openScreen(sp, new MenuProvider() {
+				sp.openMenu(new MenuProvider() {
 					@Nullable
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player p) {

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -27,7 +27,7 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 	public void render(PoseStack matrixStack, MultiBufferSource buffer, int lightness, T ent, float limbSwing,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (ent instanceof Player player) {
-			player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
+			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
 				if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();
 					matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());

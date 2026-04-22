@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -294,13 +295,12 @@ public class GenericRadialMenu {
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 			Tesselator tessellator = Tesselator.getInstance();
-			BufferBuilder buffer = tessellator.getBuilder();
-			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			iterateVisible((item, s, e) -> {
 				int color = item.isHovered() ? backgroundColorHover : backgroundColor;
 				drawPieArc(buffer, x, y, z, radiusIn, radiusOut, s, e, color);
 			});
-			tessellator.end();
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
 			RenderSystem.disableBlend();
 		}
 	}

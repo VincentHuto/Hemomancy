@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:bog_body_spawnlist",
+  "features": "hemomancy:bog_body",
+  "step": "vegetal_decoration"
+}

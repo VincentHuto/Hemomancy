@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -92,9 +92,9 @@ public class ItemScar extends Item implements IScar {
 
 				for (ScarModifier mod : passiveModifiers) {
 					AttributeInstance attr = player.getAttribute(mod.attribute());
-					if (attr != null && attr.getModifier(mod.uuid()) == null) {
+					if (attr != null && attr.getModifier(mod.id()) == null) {
 						attr.addPermanentModifier(
-								new AttributeModifier(mod.uuid(), mod.name(), mod.amount(), mod.operation()));
+								new AttributeModifier(mod.id(), mod.amount(), mod.operation()));
 					}
 				}
 
@@ -120,7 +120,7 @@ public class ItemScar extends Item implements IScar {
 				for (ScarModifier mod : passiveModifiers) {
 					AttributeInstance attr = player.getAttribute(mod.attribute());
 					if (attr != null) {
-						attr.removePermanentModifier(mod.uuid());
+						attr.removePermanentModifier(mod.id());
 					}
 				}
 
@@ -134,7 +134,8 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	private boolean hasotherScarWithEffect(LivingEntity player, MobEffect effect) {
-		return player.getCapability(ScarsCapabilities.SCARS).map(scars -> {
+		if (!(player instanceof net.minecraft.world.entity.player.Player p)) return false;
+		return HemoCapabilityAccess.getScars(p).map(scars -> {
 			for (int i = 0; i < scars.getSlots(); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemScar otherScar) {
@@ -266,7 +267,7 @@ public class ItemScar extends Item implements IScar {
 		for (ScarModifier mod : passiveModifiers) {
 			String sign = mod.amount() > 0 ? "+" : "";
 			String valueStr;
-			if (mod.operation() == AttributeModifier.Operation.MULTIPLY_TOTAL) {
+			if (mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
 				valueStr = sign + String.format("%.0f%%", mod.amount() * 100);
 			} else {
 				valueStr = sign + String.format("%.0f", mod.amount());

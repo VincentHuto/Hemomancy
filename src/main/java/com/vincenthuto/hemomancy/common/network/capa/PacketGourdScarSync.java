@@ -7,7 +7,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
@@ -60,7 +59,7 @@ public class PacketGourdScarSync implements CustomPacketPayload {
 						.orElseThrow(NullPointerException::new);
 				Entity p = Minecraft.getInstance().level.getEntity(playerId);
 				if (p instanceof Player) {
-					p.getCapability(ScarsCapabilities.SCARS).ifPresent(b -> {
+					HemoCapabilityAccess.getScars(p).ifPresent(b -> {
 						bloodVolume.setBloodVolume(amount);
 						b.setStackInSlot(slot, mindscar);
 

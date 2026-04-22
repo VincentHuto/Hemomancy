@@ -81,14 +81,13 @@ public class BloodMoonVeinSkyRenderer {
 
 		float time   = (level.getGameTime() + partialTick) * 0.045F;
 		Matrix4f mat = poseStack.last().pose();
-		BufferBuilder buf = Tesselator.getInstance().getBuilder();
-		buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		BufferBuilder buf = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		for (int i = 0; i < TENDRIL_COUNT; i++) {
 			drawTendril(buf, mat, i, time, weatherFade);
 		}
 
-		BufferUploader.drawWithShader(buf.end());
+		BufferUploader.drawWithShader(buf.buildOrThrow());
 		// Restore the texture shader vanilla set before calling getMoonPhase() —
 		// without this the moon quad renders as a solid color square.
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);

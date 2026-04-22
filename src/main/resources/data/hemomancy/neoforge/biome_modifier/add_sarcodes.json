@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:sarcodes_spawnlist",
+  "features": "hemomancy:sarcodes",
+  "step": "vegetal_decoration"
+}

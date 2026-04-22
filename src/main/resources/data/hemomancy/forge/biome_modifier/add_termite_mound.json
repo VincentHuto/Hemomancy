@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#hemomancy:termite_mound_spawnlist",
-  "features": "hemomancy:termite_mound",
-  "step": "surface_structures"
-}

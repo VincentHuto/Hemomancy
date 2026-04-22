@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -129,7 +128,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 
 			// Equip the Charm of Vascularium into the player's VASC scar slot
 			if (!worldIn.isClientSide) {
-				player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
 					int vascSlot = 5; // ScarType.VASC slot
 					if (scars.getStackInSlot(vascSlot).isEmpty()) {

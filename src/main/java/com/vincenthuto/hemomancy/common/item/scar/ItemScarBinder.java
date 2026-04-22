@@ -2,19 +2,15 @@ package com.vincenthuto.hemomancy.common.item.scar;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScreenScarBinderViewer;
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
 import com.vincenthuto.hemomancy.common.menu.ScarBinderInventoryMenu;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -30,12 +26,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.ICapabilitySerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.items.IItemHandler;
 
 public class ItemScarBinder extends Item {
 
@@ -93,49 +83,6 @@ public class ItemScarBinder extends Item {
 		return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
 
 	}
-
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new ScarBinderCaps(stack, size, nbt);
-	}
-
-	@SuppressWarnings("rawtypes")
-	class ScarBinderCaps implements ICapabilitySerializable {
-		public ScarBinderCaps(ItemStack stack, int size, CompoundTag nbtIn) {
-			itemStack = stack;
-			this.size = size;
-			inventory = new ScarBinderItemHandler(itemStack, size);
-			optional = LazyOptional.of(() -> inventory);
-		}
-
-		@SuppressWarnings("unused")
-		private int size;
-		private ItemStack itemStack;
-		private ScarBinderItemHandler inventory;
-		private LazyOptional<IItemHandler> optional;
-
-		@Nonnull
-		@Override
-		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-			if (cap == ForgeCapabilities.ITEM_HANDLER) {
-				return optional.cast();
-			} else
-				return LazyOptional.empty();
-		}
-
-		@Override
-		public Tag serializeNBT() {
-			inventory.save();
-			return new CompoundTag();
-		}
-
-		@Override
-		public void deserializeNBT(Tag nbt) {
-			inventory.load();
-		}
-	}
-
 
 	public boolean filterItem(ItemStack item, ItemStack packItem) {
 		return item.getItem() instanceof ItemScarPattern ? true : false;

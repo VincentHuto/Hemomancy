@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -53,14 +52,10 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
-			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-					.immediate(Tesselator.getInstance().getBuilder());
-
-			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_blade));
+			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
 			if (itemContext == ItemDisplayContext.GROUND) {
 				ms.translate(-0.6, -0.5, 0.25);
 				ms.scale(.5f, .5f, .5f);
-
 			}
 			ms.translate(-0.6, 0.5, 0.25);
 			ms.scale(1.25f, 1.25f, 1.25f);
@@ -98,7 +93,6 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
 
-			irendertypebuffer$impl.endBatch();
 			ms.popPose();
 		}
 	}

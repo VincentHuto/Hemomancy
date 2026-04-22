@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 
@@ -41,7 +41,7 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 				if (player == null) return;
 
 				// ── Degree gate: Scar crafting requires Adept (degree 4) ──
-				int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 				if (playerDegree < REQUIRED_DEGREE) {
 					player.displayClientMessage(
 							Component.literal("The chisel resists your hand — ")
