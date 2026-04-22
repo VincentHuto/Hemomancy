@@ -47,7 +47,7 @@ public class SelectiveScarTypeSlot extends SlotItemHandler {
 	public void onTake(Player playerIn, ItemStack stack) {
 		if (!hasItem() && !((IScarsItemHandler) getItemHandler()).isEventBlocked()
 				&& HemoCapabilityAccess.getScar(stack).isPresent()) {
-			HemoCapabilityAccess.getScar(stack).ifPresent((IScar) -> IScar.onUnequipped(playerIn));
+			HemoCapabilityAccess.getScar(stack).ifPresent(scar -> scar.onUnequipped(playerIn));
 		}
 		super.onTake(playerIn, stack);
 	}
@@ -57,7 +57,7 @@ public class SelectiveScarTypeSlot extends SlotItemHandler {
 		if (hasItem() && !ItemStack.isSameItemSameTags(stack, getItem())
 				&& !((IScarsItemHandler) getItemHandler()).isEventBlocked()
 				&& HemoCapabilityAccess.getScar(getItem()).isPresent()) {
-			HemoCapabilityAccess.getScar(getItem()).ifPresent((IScar) -> IScar.onUnequipped(player));
+			HemoCapabilityAccess.getScar(getItem()).ifPresent(scar -> scar.onUnequipped(player));
 		}
 
 		ItemStack oldstack = getItem().copy();
@@ -66,7 +66,7 @@ public class SelectiveScarTypeSlot extends SlotItemHandler {
 		if (hasItem() && !ItemStack.isSameItemSameTags(oldstack, getItem())
 				&& !((IScarsItemHandler) getItemHandler()).isEventBlocked()
 				&& HemoCapabilityAccess.getScar(getItem()).isPresent()) {
-			HemoCapabilityAccess.getScar(getItem()).ifPresent((IScar) -> IScar.onEquipped(player));
+			HemoCapabilityAccess.getScar(getItem()).ifPresent(scar -> scar.onEquipped(player));
 		}
 	}
 }

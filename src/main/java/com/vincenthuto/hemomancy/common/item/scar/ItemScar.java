@@ -134,7 +134,8 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	private boolean hasotherScarWithEffect(LivingEntity player, MobEffect effect) {
-		return HemoCapabilityAccess.getScars((net.minecraft.world.entity.player.Player) player).map(scars -> {
+		if (!(player instanceof net.minecraft.world.entity.player.Player p)) return false;
+		return HemoCapabilityAccess.getScars(p).map(scars -> {
 			for (int i = 0; i < scars.getSlots(); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemScar otherScar) {
