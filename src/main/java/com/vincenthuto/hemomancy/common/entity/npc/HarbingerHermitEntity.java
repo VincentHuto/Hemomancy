@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
@@ -84,7 +83,7 @@ public class HarbingerHermitEntity extends PathfinderMob {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+            int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
             IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
             boolean hasActiveBlood = volume != null && volume.isActive();
 

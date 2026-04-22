@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
@@ -46,8 +45,7 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 				if (jarStack.isEmpty())
 					return;
 
-				MorphlingJarItemHandler jarHandler = (MorphlingJarItemHandler) jarStack.getCapability(ForgeCapabilities.ITEM_HANDLER)
-						.orElse(null);
+				MorphlingJarItemHandler jarHandler = (MorphlingJarItemHandler) jarStack.getCapability(Capabilities.ItemHandler.ITEM);
 				if (jarHandler == null)
 					return;
 				jarHandler.load();
@@ -81,7 +79,7 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 			if (!jar.isEmpty())
 				return jar;
 			// Scar equip slot 7
-			return player.getCapability(ScarsCapabilities.SCARS).map(r -> r.getStackInSlot(7))
+			return HemoCapabilityAccess.getScars(player).map(r -> r.getStackInSlot(7))
 					.filter(s -> s.getItem() instanceof ItemMorphlingJar).orElse(ItemStack.EMPTY);
 		}
 	}

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu;
 
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
@@ -55,7 +55,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
 
 		if (tmp instanceof MorphlingJarItemHandler mjh) {
 			handler = mjh;
@@ -168,7 +168,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 	public boolean stillValid(Player playerIn) {
 		// Equipped in scar slot
 		if (slotID == -200) {
-			return playerIn.getCapability(ScarsCapabilities.SCARS)
+			return HemoCapabilityAccess.getScars(playerIn)
 					.map(r -> r.getStackInSlot(7).getItem() instanceof ItemMorphlingJar)
 					.orElse(false);
 		}
@@ -214,7 +214,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			return playerEntity.getOffhandItem();
 		}
 		// 3. scar-equip slot (slot 7 in the SCARS capability)
-		ItemStack ScarSlotJar = playerEntity.getCapability(ScarsCapabilities.SCARS)
+		ItemStack ScarSlotJar = HemoCapabilityAccess.getScars(playerEntity)
 				.map(r -> r.getStackInSlot(7)).orElse(ItemStack.EMPTY);
 		if (ScarSlotJar.getItem() instanceof ItemMorphlingJar) {
 			slotID = -200;

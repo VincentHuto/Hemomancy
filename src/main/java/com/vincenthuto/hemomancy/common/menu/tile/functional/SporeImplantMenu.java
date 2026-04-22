@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
@@ -35,7 +35,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		super(ContainerInit.fungal_implantation.get(), windowId);
 		this.player = playerInventory.player;
 
-		this.scars = this.player.getCapability(ScarsCapabilities.SCARS).orElseThrow(NullPointerException::new);
+		this.scars = HemoCapabilityAccess.requireScars(this.player);
 
 		// Slot layout (scar/fungus slots only):
 		// 0        : fungal scar slot (scar cap slot 0) — center

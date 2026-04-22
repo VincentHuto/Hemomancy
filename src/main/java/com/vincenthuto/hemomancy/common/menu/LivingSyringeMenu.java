@@ -50,7 +50,7 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
 
 		if (tmp instanceof LivingSyringeItemHandler) {
 			handler = (LivingSyringeItemHandler) tmp;

@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -134,7 +134,7 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	private boolean hasotherScarWithEffect(LivingEntity player, MobEffect effect) {
-		return player.getCapability(ScarsCapabilities.SCARS).map(scars -> {
+		return HemoCapabilityAccess.getScars((net.minecraft.world.entity.player.Player) player).map(scars -> {
 			for (int i = 0; i < scars.getSlots(); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemScar otherScar) {

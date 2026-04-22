@@ -7,7 +7,6 @@ import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
@@ -190,12 +189,12 @@ public class MorphlingJarViewerScreen extends Screen {
 		// Find the jar (inventory first, then scar slot 7)
 		ItemStack jarStack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 		if (jarStack.isEmpty()) {
-			jarStack = player.getCapability(ScarsCapabilities.SCARS)
+			jarStack = HemoCapabilityAccess.getScars(player)
 					.map(r -> r.getStackInSlot(7))
 					.filter(s -> s.getItem() instanceof ItemMorphlingJar)
 					.orElse(ItemStack.EMPTY);
 		}
-		IItemHandler raw = jarStack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		IItemHandler raw = jarStack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (!(raw instanceof MorphlingJarItemHandler handler)) {
 			onClose();
 			return;

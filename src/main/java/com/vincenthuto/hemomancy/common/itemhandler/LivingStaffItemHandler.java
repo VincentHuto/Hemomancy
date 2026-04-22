@@ -52,7 +52,7 @@ public class LivingStaffItemHandler extends ItemStackHandler {
 				return stack;
 		}
 
-		if (stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent())
+		if (stack.getCapability(Capabilities.ItemHandler.ITEM) != null)
 			return stack;
 		dirty = true;
 		return super.insertItem(slot, stack, simulate);

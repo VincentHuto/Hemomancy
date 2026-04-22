@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
@@ -97,7 +96,7 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 // Purifying players are dismissed — the Alchemist has no time for them
                 tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
             } else {
-                int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+                int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId());
             }
 

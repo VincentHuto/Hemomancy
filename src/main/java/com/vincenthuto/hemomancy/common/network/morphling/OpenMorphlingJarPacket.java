@@ -7,7 +7,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
@@ -41,7 +41,7 @@ public class OpenMorphlingJarPacket implements CustomPacketPayload {
 			// Find jar in inventory first, then check scar slot 7
 			ItemStack jarStack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 			if (jarStack.isEmpty()) {
-				jarStack = player.getCapability(ScarsCapabilities.SCARS)
+				jarStack = HemoCapabilityAccess.getScars(player)
 						.map(r -> r.getStackInSlot(7))
 						.filter(s -> s.getItem() instanceof ItemMorphlingJar)
 						.orElse(ItemStack.EMPTY);

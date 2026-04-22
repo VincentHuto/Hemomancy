@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -56,7 +55,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 
 			// ── Degree gate: block if player hasn't reached the required initiation tier ──
 			if (skill.getRequiredDegree() > 0) {
-				int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 				if (playerDegree < skill.getRequiredDegree()) {
 					EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(skill.getRequiredDegree());
 					String degreeName = needed != null ? needed.getTitle() : ("Degree " + skill.getRequiredDegree());

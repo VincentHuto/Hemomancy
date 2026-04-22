@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
@@ -135,7 +134,7 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 return InteractionResult.sidedSuccess(false);
             }
 
-            int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+            int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
             DialogueTree tree;
 
             if (isPurifying(player)) {

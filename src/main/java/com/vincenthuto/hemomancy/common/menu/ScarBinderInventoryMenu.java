@@ -39,7 +39,7 @@ public class ScarBinderInventoryMenu extends AbstractContainerMenu {
 			return;
 		}
 
-		IItemHandler tmp = stack.getCapability(ForgeCapabilities.ITEM_HANDLER ).orElse(null);
+		IItemHandler tmp = stack.getCapability(Capabilities.ItemHandler.ITEM);
 
 		if (tmp instanceof ScarBinderItemHandler) {
 			handler = (ScarBinderItemHandler) tmp;

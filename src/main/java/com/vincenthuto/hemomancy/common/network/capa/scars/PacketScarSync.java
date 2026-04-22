@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,7 +50,7 @@ public class PacketScarSync implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
 			if (p instanceof Player) {
-				p.getCapability(ScarsCapabilities.SCARS).ifPresent(b -> {
+				HemoCapabilityAccess.getScars(p).ifPresent(b -> {
 					b.setStackInSlot(slot, mindscar);
 				});
 			}

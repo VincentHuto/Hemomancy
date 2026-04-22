@@ -38,7 +38,7 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 				if (!(jar.getItem() instanceof ItemMorphlingJar))
 					return;
 
-				IItemHandler rawHandler = jar.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+				IItemHandler rawHandler = jar.getCapability(Capabilities.ItemHandler.ITEM);
 				if (!(rawHandler instanceof MorphlingJarItemHandler jarHandler))
 					return;
 

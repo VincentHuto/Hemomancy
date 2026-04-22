@@ -91,7 +91,7 @@ import com.vincenthuto.hemomancy.client.screen.overlay.UnstainedGaugeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -246,7 +246,7 @@ public class ClientEvents {
 
 				while (openVascCharmMenu.consumeClick()) {
 					if (mc.screen == null) {
-						mc.player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
+						HemoCapabilityAccess.getScars(mc.player).ifPresent(inv -> {
 							if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 								mc.setScreen(new RadialChooseManipScreen(inv));
 							}
