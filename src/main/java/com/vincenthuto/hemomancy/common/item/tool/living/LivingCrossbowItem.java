@@ -19,8 +19,10 @@ import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -53,7 +55,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile) {
-		CompoundTag CompoundTag = crossbow.getOrCreateTag();
+		CompoundTag CompoundTag = crossbow.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		ListTag listnbt;
 		if (CompoundTag.contains("ChargedProjectiles", 9)) {
 			listnbt = CompoundTag.getList("ChargedProjectiles", 10);
@@ -65,14 +67,17 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 		projectile.save(CompoundTag1);
 		listnbt.add(CompoundTag1);
 		CompoundTag.put("ChargedProjectiles", listnbt);
+		crossbow.set(DataComponents.CUSTOM_DATA, CustomData.of(CompoundTag));
 	}
 
 	private static void clearProjectiles(ItemStack stack) {
-		CompoundTag CompoundTag = stack.getTag();
-		if (CompoundTag != null) {
+		net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+		if (customData != null) {
+			CompoundTag CompoundTag = customData.copyTag();
 			ListTag listnbt = CompoundTag.getList("ChargedProjectiles", 9);
 			listnbt.clear();
 			CompoundTag.put("ChargedProjectiles", listnbt);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(CompoundTag));
 		}
 
 	}
@@ -204,13 +209,16 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 
 	private static List<ItemStack> getChargedProjectiles(ItemStack stack) {
 		List<ItemStack> list = Lists.newArrayList();
-		CompoundTag CompoundTag = stack.getTag();
-		if (CompoundTag != null && CompoundTag.contains("ChargedProjectiles", 9)) {
-			ListTag listnbt = CompoundTag.getList("ChargedProjectiles", 10);
-			if (listnbt != null) {
-				for (int i = 0; i < listnbt.size(); ++i) {
-					CompoundTag CompoundTag1 = listnbt.getCompound(i);
-					list.add(ItemStack.of(CompoundTag1));
+		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+		if (customData != null) {
+			CompoundTag CompoundTag = customData.copyTag();
+			if (CompoundTag.contains("ChargedProjectiles", 9)) {
+				ListTag listnbt = CompoundTag.getList("ChargedProjectiles", 10);
+				if (listnbt != null) {
+					for (int i = 0; i < listnbt.size(); ++i) {
+						CompoundTag CompoundTag1 = listnbt.getCompound(i);
+						list.add(ItemStack.of(CompoundTag1));
+					}
 				}
 			}
 		}
@@ -284,8 +292,8 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	}
 
 	public static boolean isCharged(ItemStack stack) {
-		CompoundTag CompoundTag = stack.getTag();
-		return CompoundTag != null && CompoundTag.getBoolean("Charged");
+		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+		return customData != null && customData.copyTag().getBoolean("Charged");
 	}
 
 	private static boolean loadProjectile(LivingEntity p_220023_0_, ItemStack stack, ItemStack p_220023_2_,
@@ -309,8 +317,9 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	}
 
 	public static void setCharged(ItemStack stack, boolean chargedIn) {
-		CompoundTag CompoundTag = stack.getOrCreateTag();
+		CompoundTag CompoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		CompoundTag.putBoolean("Charged", chargedIn);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(CompoundTag));
 	}
 
 	private boolean isLoadingStart = false;

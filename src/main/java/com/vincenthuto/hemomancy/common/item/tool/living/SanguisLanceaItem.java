@@ -12,8 +12,10 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -43,8 +45,8 @@ public class SanguisLanceaItem extends LivingToolItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_STATE)) {
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
 			} else {
 				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
@@ -129,7 +131,7 @@ public class SanguisLanceaItem extends LivingToolItem {
 		playerIn.startUsingItem(handIn);
 
 		if (stack.getItem() instanceof SanguisLanceaItem) {
-			CompoundTag compound = stack.getOrCreateTag();
+			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (!compound.getBoolean(TAG_STATE)) {
 				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
@@ -137,7 +139,7 @@ public class SanguisLanceaItem extends LivingToolItem {
 				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
 			}
-			stack.setTag(compound);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		}
         return InteractionResultHolder.consume(stack);
 	}

@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.VialRackItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -18,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -117,9 +119,11 @@ public class LivingSyringeItem extends LivingItemItem {
 		}
 		NonNullList<ItemStack> vials = VialRackItem.getVials(rack);
 		ItemStack sampledVial = new ItemStack(ItemInit.bloody_vial.get());
-		sampledVial.getOrCreateTag().putString(BloodVialItem.TAG_ENTITY_TYPE,
+		CompoundTag vialTag = sampledVial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE,
 				ForgeRegistries.ENTITY_TYPES.getKey(target.getType()).toString());
-		sampledVial.getOrCreateTag().putBoolean(BloodVialItem.TAG_STATE, true);
+		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
+		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
 		vials.set(emptySlot, sampledVial);
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);
@@ -170,24 +174,28 @@ public class LivingSyringeItem extends LivingItemItem {
 	}
 
 	private boolean hasLoadedRack(ItemStack syringe) {
-		CompoundTag tag = syringe.getTag();
-		return tag != null && tag.contains(TAG_LOADED_RACK, Tag.TAG_COMPOUND);
+		CustomData customData = syringe.get(DataComponents.CUSTOM_DATA);
+		return customData != null && customData.copyTag().contains(TAG_LOADED_RACK, Tag.TAG_COMPOUND);
 	}
 
 	private ItemStack getLoadedRack(ItemStack syringe) {
 		if (!hasLoadedRack(syringe)) {
 			return ItemStack.EMPTY;
 		}
-		return ItemStack.of(syringe.getOrCreateTag().getCompound(TAG_LOADED_RACK));
+		return ItemStack.of(syringe.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(TAG_LOADED_RACK));
 	}
 
 	private void setLoadedRack(ItemStack syringe, ItemStack rack) {
-		syringe.getOrCreateTag().put(TAG_LOADED_RACK, rack.save(new CompoundTag()));
-		syringe.getOrCreateTag().putBoolean(TAG_STATE, true);
+		CompoundTag tag = syringe.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.put(TAG_LOADED_RACK, rack.save(new CompoundTag()));
+		tag.putBoolean(TAG_STATE, true);
+		syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
 	private void clearLoadedRack(ItemStack syringe) {
-		syringe.getOrCreateTag().remove(TAG_LOADED_RACK);
-		syringe.getOrCreateTag().putBoolean(TAG_STATE, false);
+		CompoundTag tag = syringe.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.remove(TAG_LOADED_RACK);
+		tag.putBoolean(TAG_STATE, false);
+		syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 }

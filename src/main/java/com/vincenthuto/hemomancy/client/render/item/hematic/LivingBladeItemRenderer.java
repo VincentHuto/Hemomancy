@@ -18,9 +18,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
@@ -53,7 +55,7 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
 			ms.scale(0.5f, 0.5f, 0.5f);
 			ms.translate(-1, -1, 1);
-			model = stack.getTag().getBoolean("state") ? unleashed : tame;
+			model = (stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean("state")) ? unleashed : tame;
 			if (model == unleashed) {
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 				VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);

@@ -8,8 +8,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +43,7 @@ public class ToggleGourdKeyPacket implements CustomPacketPayload {
 			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
 				ItemStack stack = inv.getStackInSlot(6);
 				if (stack.getItem() instanceof BloodGourdItem) {
-					CompoundTag compound = stack.getOrCreateTag();
+					CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 					boolean currentState = compound.getBoolean(BloodGourdItem.TAG_STATE);
 
 					// Toggle the state
@@ -52,7 +54,7 @@ public class ToggleGourdKeyPacket implements CustomPacketPayload {
 						player.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
 						compound.putBoolean(BloodGourdItem.TAG_STATE, false);
 					}
-					stack.setTag(compound);
+					stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 				}
 			});
 		});
