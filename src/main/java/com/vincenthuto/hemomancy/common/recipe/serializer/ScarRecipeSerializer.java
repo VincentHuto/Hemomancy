@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	public static HashMap<ResourceLocation, ScarRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ScarRecipe>();
@@ -70,7 +70,7 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
 			ResourceLocation resourcelocation = ResourceLocation.parse(s1);
-			itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation), c);
+			itemstack = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation), c);
 		}
 
 		ScarRecipe recipe = new ScarRecipe(pRecipeId, tier, scarType, ingredient1, ingredient2, pattern, itemstack);

@@ -17,6 +17,7 @@ import com.google.gson.JsonSyntaxException;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -29,14 +30,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStructureRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	private static Block blockFromJson(JsonObject pItemObject) {
 		String s = GsonHelper.getAsString(pItemObject, "block");
-		Block block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(s));
+		Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
 
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);
@@ -47,7 +47,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	private static Block blockFromString(String s) {
 
-		Block block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(s));
+		Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);
 		} else {
@@ -98,9 +98,9 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	private static ItemStack getItemFromJson(String itemName) {
 		ResourceLocation itemKey = ResourceLocation.parse(itemName);
-		if (!ForgeRegistries.ITEMS.containsKey(itemKey))
+		if (!BuiltInRegistries.ITEM.containsKey(itemKey))
 			throw new JsonSyntaxException("Unknown item '" + itemName + "'");
-		Item item = ForgeRegistries.ITEMS.getValue(itemKey);
+		Item item = BuiltInRegistries.ITEM.get(itemKey);
 		return new ItemStack(Objects.requireNonNull(item));
 	}
 
@@ -178,7 +178,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		for (int i = 0; i < symbolListLength; i++) {
 			String key = pBuffer.readUtf();
 			ResourceLocation blockLoc = pBuffer.readResourceLocation();
-			Block block = ForgeRegistries.BLOCKS.getValue(blockLoc);
+			Block block = BuiltInRegistries.BLOCK.get(blockLoc);
 
 			map.put(key, block);
 		}
@@ -210,7 +210,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		pBuffer.writeInt(pRecipe.getPattern().getSymbolList().size());
 		pRecipe.getPattern().getSymbolList().forEach((k, v) -> {
 			pBuffer.writeUtf(k);
-			pBuffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(v));
+			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v));
 		});
 		pBuffer.writeItem(pRecipe.getResult());
 		pBuffer.writeBoolean(pRecipe.isUnstained());

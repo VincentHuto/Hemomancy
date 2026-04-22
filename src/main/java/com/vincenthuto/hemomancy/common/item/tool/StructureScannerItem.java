@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.CustomData;
@@ -21,9 +22,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -241,8 +239,7 @@ public class StructureScannerItem extends Item {
 		ctx.getPlayer().displayClientMessage(
 				Component.literal("Block key:").withStyle(ChatFormatting.AQUA), false);
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
-			ResourceLocation id = ForgeRegistries.BLOCKS.getKey(entry.getKey());
-			ctx.getPlayer().displayClientMessage(
+			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
 					Component.literal("  " + entry.getValue() + " = " + id).withStyle(ChatFormatting.GRAY), false);
 		}
 
@@ -257,7 +254,7 @@ public class StructureScannerItem extends Item {
 		json.addProperty("bloodCost", 100);
 		json.addProperty("heldItem", "hemomancy:sanguine_formation");
 
-		ResourceLocation hitId = ForgeRegistries.BLOCKS.getKey(hitBlock);
+		ResourceLocation hitId = BuiltInRegistries.BLOCK.getKey(hitBlock);
 		json.addProperty("hitBlock", hitId != null ? hitId.toString() : "minecraft:stone");
 
 		json.add("pattern", encodePattern(pattern));
@@ -302,7 +299,7 @@ public class StructureScannerItem extends Item {
 		JsonObject key = new JsonObject();
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
 			JsonObject blockObj = new JsonObject();
-			ResourceLocation id = ForgeRegistries.BLOCKS.getKey(entry.getKey());
+			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
 			blockObj.addProperty("block", id != null ? id.toString() : "minecraft:stone");
 			key.add(entry.getValue(), blockObj);
 		}

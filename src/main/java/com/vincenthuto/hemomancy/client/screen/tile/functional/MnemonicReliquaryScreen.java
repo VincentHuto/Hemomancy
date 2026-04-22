@@ -15,11 +15,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.*;
 
@@ -80,7 +80,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void buildItemCache() {
 		manipItemCache.clear();
-		for (Item item : ForgeRegistries.ITEMS.getValues()) {
+		for (Item item : BuiltInRegistries.ITEM) {
 			if (item instanceof BloodMemoryItem memItem) {
 				BloodManipulation manip = memItem.getManip();
 				if (manip != null) {

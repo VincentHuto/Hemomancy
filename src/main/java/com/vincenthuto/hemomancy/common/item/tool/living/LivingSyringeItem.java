@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.VialRackItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +28,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class LivingSyringeItem extends LivingItemItem {
 	public static final String TAG_STATE = "state";
@@ -121,7 +121,7 @@ public class LivingSyringeItem extends LivingItemItem {
 		ItemStack sampledVial = new ItemStack(ItemInit.bloody_vial.get());
 		CompoundTag vialTag = sampledVial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(target.getType()).toString());
+				BuiltInRegistries.ENTITY_TYPE.getKey(target.getType()).toString());
 		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
 		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
 		vials.set(emptySlot, sampledVial);

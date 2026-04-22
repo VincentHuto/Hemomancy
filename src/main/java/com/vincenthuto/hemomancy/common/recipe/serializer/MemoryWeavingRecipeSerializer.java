@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWeavingRecipe> {
 	public static HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();
@@ -45,7 +45,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
 			ResourceLocation resourcelocation = ResourceLocation.parse(s1);
-			result = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation), c);
+			result = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation), c);
 
 		}
 

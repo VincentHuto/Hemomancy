@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class HemoItemModelProvider extends ItemModelProvider {
 	public HemoItemModelProvider(PackOutput generator, ExistingFileHelper existingFileHelper) {
@@ -53,14 +53,14 @@ public class HemoItemModelProvider extends ItemModelProvider {
 		}
 		for (DeferredHolder<Item, Item> item : ItemInit.BASEITEMS.getEntries()) {
 			if (item.get() instanceof ItemScarPattern patternItem) {
-				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
-				String scarPath = ForgeRegistries.ITEMS.getKey(patternItem.getSCAR().get()).getPath();
+				String itemPath = BuiltInRegistries.ITEM.getKey(item.get()).getPath();
+				String scarPath = BuiltInRegistries.ITEM.getKey(patternItem.getSCAR().get()).getPath();
 				getBuilder(itemPath)
 						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
 						.texture("layer0", modLoc("item/scar_pattern"))
 						.texture("layer1", modLoc("item/" + scarPath));
 			} else if (item.get() instanceof BloodMemoryItem) {
-				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
+				String itemPath = BuiltInRegistries.ITEM.getKey(item.get()).getPath();
 				getBuilder(itemPath)
 						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
 						.texture("layer0", modLoc("item/memories/memory_blank"))
@@ -81,17 +81,17 @@ public class HemoItemModelProvider extends ItemModelProvider {
 	}
 
 	private void registerBlockModel(Block block) {
-		String path = ForgeRegistries.BLOCKS.getKey(block).getPath();
+		String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
 		getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
 	}
 
 	private void registerHandheldItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
+		String path = BuiltInRegistries.ITEM.getKey(item).getPath();
 		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
 	}
 
 	private void registerSpawnEggItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
+		String path = BuiltInRegistries.ITEM.getKey(item).getPath();
 		withExistingParent(path, mcLoc("item/template_spawn_egg"));
 	}
 
