@@ -9,8 +9,15 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class KnownManipulations implements IKnownManipulations {
+public class KnownManipulations implements IKnownManipulations, INBTSerializable<ListTag> {
 
 	BlockPos lastVeinMineStart = BlockPos.ZERO;
 	BloodManipulation selectedManip = BloodManipulation.BLANK;
@@ -199,5 +206,104 @@ public class KnownManipulations implements IKnownManipulations {
 	@Override
 	public boolean unequipManip(String manipName) {
 		return equippedManipNames.remove(manipName);
+	}
+
+	@Override
+	public ListTag serializeNBT(HolderLookup.Provider provider) {
+		ListTag list = new ListTag();
+		CompoundTag selectedManip = new CompoundTag();
+		selectedManip.put("Selected", getSelectedManip().serialize());
+		selectedManip.put("SelectedVein", getSelectedVein().serializeNBT());
+		list.add(selectedManip);
+
+		for (int i = 0; i < getKnownManips().size(); i++) {
+			BloodManipulation manip = getManipList().get(i);
+			ManipLevel level = getLevelList().get(i);
+			if (manip != null && level != null) {
+				CompoundTag entry = new CompoundTag();
+				entry.put("Manip" + i, manip.serialize());
+				entry.put("Level" + i, level.serialize());
+				list.add(entry);
+			}
+		}
+
+		CompoundTag veinCount = new CompoundTag();
+		veinCount.putInt("veinCount", getVeinList().size());
+		list.add(veinCount);
+		for (int i = 0; i < getVeinList().size(); i++) {
+			VeinLocation loc = getVeinList().get(i);
+			if (loc != null) {
+				CompoundTag entry = new CompoundTag();
+				entry.put("Vein" + i, loc.serializeNBT());
+				list.add(entry);
+			}
+		}
+
+		CompoundTag avatarActive = new CompoundTag();
+		avatarActive.putBoolean("avatarActive", isAvatarActive());
+		avatarActive.put("lastVeinMineStart", NbtUtils.writeBlockPos(getLastVeinMineStart()));
+		list.add(avatarActive);
+
+		CompoundTag equippedEntry = new CompoundTag();
+		ListTag equippedTag = new ListTag();
+		for (String name : getEquippedManipNames()) {
+			equippedTag.add(StringTag.valueOf(name));
+		}
+		equippedEntry.put("equippedManips", equippedTag);
+		list.add(equippedEntry);
+
+		return list;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, ListTag listNbt) {
+		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
+		List<VeinLocation> veinList = new ArrayList<>();
+		int veinCount = 0;
+		for (int i = 0; i < listNbt.size(); i++) {
+			CompoundTag parsedNbt = (CompoundTag) listNbt.get(i);
+			if (parsedNbt != null && !parsedNbt.isEmpty()) {
+				if (parsedNbt.contains("Selected")) {
+					BloodManipulation selectedManip = BloodManipulation.deserialize(parsedNbt.getCompound("Selected"));
+					setSelectedManip(selectedManip);
+				}
+				if (parsedNbt.contains("SelectedVein")) {
+					VeinLocation selectedVein = VeinLocation.deserializeToLoc(parsedNbt.getCompound("SelectedVein"));
+					setSelectedVein(selectedVein);
+				}
+				if (parsedNbt.contains("Manip" + (i - 1))) {
+					CompoundTag manipNbt = parsedNbt.getCompound("Manip" + (i - 1));
+					CompoundTag levelNbt = parsedNbt.getCompound("Level" + (i - 1));
+					BloodManipulation bloodManip = BloodManipulation.deserialize(manipNbt);
+					ManipLevel level = ManipLevel.deserialize(levelNbt);
+					map.put(bloodManip, level);
+				}
+				if (parsedNbt.contains("veinCount")) {
+					veinCount = parsedNbt.getInt("veinCount");
+				}
+				for (int j = 0; j < veinCount; j++) {
+					if (parsedNbt.contains("Vein" + j)) {
+						VeinLocation vein = VeinLocation.deserializeToLoc(parsedNbt.getCompound("Vein" + j));
+						veinList.add(vein);
+					}
+				}
+				if (parsedNbt.contains("avatarActive")) {
+					setAvatarActive(parsedNbt.getBoolean("avatarActive"));
+				}
+				if (parsedNbt.contains("lastVeinMineStart")) {
+					setLastVeinMineStart(NbtUtils.readBlockPos(parsedNbt.getCompound("lastVeinMineStart")));
+				}
+				if (parsedNbt.contains("equippedManips")) {
+					ListTag equippedTag = parsedNbt.getList("equippedManips", Tag.TAG_STRING);
+					List<String> equipped = new ArrayList<>();
+					for (int j = 0; j < equippedTag.size(); j++) {
+						equipped.add(equippedTag.getString(j));
+					}
+					setEquippedManipNames(equipped);
+				}
+			}
+		}
+		setKnownManips(map);
+		setVeinList(veinList);
 	}
 }

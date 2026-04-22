@@ -1,6 +1,10 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
-public class UnstainedProgress implements IUnstainedProgress {
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+
+public class UnstainedProgress implements IUnstainedProgress, INBTSerializable<CompoundTag> {
 
     private boolean begunPurification = false;
     private float purity = 0.0f;
@@ -179,4 +183,58 @@ public class UnstainedProgress implements IUnstainedProgress {
 
     @Override public boolean hasUsedAltarOfCleansing() { return usedAltarOfCleansing; }
     @Override public void setUsedAltarOfCleansing(boolean value) { usedAltarOfCleansing = value; }
+
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("begunPurification", begunPurification);
+        tag.putFloat("purity", purity);
+        tag.putBoolean("clarityUnlocked", clarityUnlocked);
+        tag.putFloat("clarity", clarity);
+        tag.putLong("lastManipulationTick", lastManipulationTick);
+        tag.putInt("hemoMobKills", hemoMobKills);
+        tag.putInt("undeadKills", undeadKills);
+        tag.putInt("hostileKills", hostileKills);
+        tag.putInt("flawlessKills", flawlessKills);
+        tag.putInt("animalsBreed", animalsBreed);
+        tag.putInt("cropsPlanted", cropsPlanted);
+        tag.putInt("advancementsEarned", advancementsEarned);
+        tag.putInt("nightsSlept", nightsSlept);
+        tag.putInt("petsHealed", petsHealed);
+        tag.putBoolean("sleptWithHemolysis", sleptWithHemolysis);
+        tag.putBoolean("killedFirstHemoMob", killedFirstHemoMob);
+        tag.putBoolean("reachedAbstinence", reachedAbstinence);
+        tag.putBoolean("emptiedBlood", emptiedBlood);
+        tag.putBoolean("earnedAdvancement", earnedAdvancement);
+        tag.putBoolean("silverWardEnabled", silverWardEnabled);
+        tag.putBoolean("verdigrisAuraEnabled", verdigrisAuraEnabled);
+        tag.putBoolean("usedAltarOfCleansing", usedAltarOfCleansing);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        begunPurification = tag.getBoolean("begunPurification");
+        purity = tag.getFloat("purity");
+        clarityUnlocked = tag.getBoolean("clarityUnlocked");
+        clarity = tag.getFloat("clarity");
+        lastManipulationTick = tag.getLong("lastManipulationTick");
+        for (int i = 0; i < tag.getInt("hemoMobKills"); i++) addHemoMobKill();
+        for (int i = 0; i < tag.getInt("undeadKills"); i++) addUndeadKill();
+        for (int i = 0; i < tag.getInt("hostileKills"); i++) addHostileKill();
+        for (int i = 0; i < tag.getInt("flawlessKills"); i++) addFlawlessKill();
+        for (int i = 0; i < tag.getInt("animalsBreed"); i++) addAnimalBreed();
+        for (int i = 0; i < tag.getInt("cropsPlanted"); i++) addCropPlanted();
+        for (int i = 0; i < tag.getInt("advancementsEarned"); i++) addAdvancementEarned();
+        for (int i = 0; i < tag.getInt("nightsSlept"); i++) addNightSlept();
+        for (int i = 0; i < tag.getInt("petsHealed"); i++) addPetHealed();
+        sleptWithHemolysis = tag.getBoolean("sleptWithHemolysis");
+        killedFirstHemoMob = tag.getBoolean("killedFirstHemoMob");
+        reachedAbstinence = tag.getBoolean("reachedAbstinence");
+        emptiedBlood = tag.getBoolean("emptiedBlood");
+        earnedAdvancement = tag.getBoolean("earnedAdvancement");
+        silverWardEnabled = !tag.contains("silverWardEnabled") || tag.getBoolean("silverWardEnabled");
+        verdigrisAuraEnabled = !tag.contains("verdigrisAuraEnabled") || tag.getBoolean("verdigrisAuraEnabled");
+        usedAltarOfCleansing = tag.getBoolean("usedAltarOfCleansing");
+    }
 }

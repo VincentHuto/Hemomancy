@@ -1,0 +1,53 @@
+package com.vincenthuto.hemomancy.common.capability;
+
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumorVolume;
+import net.neoforged.neoforge.capabilities.EntityCapability;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+
+public final class HemoCapabilityKeys {
+    private HemoCapabilityKeys() {}
+
+    public static final EntityCapability<IBloodVolume, Void> BLOOD_VOLUME =
+            EntityCapability.createSimple(Hemomancy.rloc("blood_volume"), IBloodVolume.class);
+
+    public static final EntityCapability<IBloodTendency, Void> BLOOD_TENDENCY =
+            EntityCapability.createSimple(Hemomancy.rloc("blood_tendency"), IBloodTendency.class);
+
+    public static final EntityCapability<IVascularSystem, Void> VASCULAR_SYSTEM =
+            EntityCapability.createSimple(Hemomancy.rloc("vascular_system"), IVascularSystem.class);
+
+    public static final EntityCapability<IInitiatoryDegree, Void> INITIATORY_DEGREE =
+            EntityCapability.createSimple(Hemomancy.rloc("initiatory_degree"), IInitiatoryDegree.class);
+
+    public static final EntityCapability<IUnstainedProgress, Void> UNSTAINED_PROGRESS =
+            EntityCapability.createSimple(Hemomancy.rloc("unstained_progress"), IUnstainedProgress.class);
+
+    public static final EntityCapability<IEquippedMorphling, Void> EQUIPPED_MORPHLING =
+            EntityCapability.createSimple(Hemomancy.rloc("equipped_morphling"), IEquippedMorphling.class);
+
+    public static final EntityCapability<IKnownManipulations, Void> KNOWN_MANIPULATIONS =
+            EntityCapability.createSimple(Hemomancy.rloc("known_manipulations"), IKnownManipulations.class);
+
+    public static final EntityCapability<IWhiteHumorVolume, Void> WHITE_HUMOR_VOLUME =
+            EntityCapability.createSimple(Hemomancy.rloc("white_humor_volume"), IWhiteHumorVolume.class);
+
+    public static final EntityCapability<IVisceralOrgans, Void> VISCERAL_ORGANS =
+            EntityCapability.createSimple(Hemomancy.rloc("visceral_organs"), IVisceralOrgans.class);
+
+    public static final EntityCapability<IScarsItemHandler, Void> SCARS =
+            EntityCapability.createSimple(Hemomancy.rloc("scars"), IScarsItemHandler.class);
+
+    public static final ItemCapability<IScar, Void> ITEM_SCAR =
+            ItemCapability.createSimple(Hemomancy.rloc("item_scar"), IScar.class);
+}

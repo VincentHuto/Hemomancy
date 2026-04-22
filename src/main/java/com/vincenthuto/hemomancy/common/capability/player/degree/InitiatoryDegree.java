@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.degree;
 
 import javax.annotation.Nullable;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class InitiatoryDegree implements IInitiatoryDegree {
+public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<CompoundTag> {
 
 	/** 0 = uninitiated; 1–8 = an actual degree */
 	private int degreeNumber = 0;
@@ -38,5 +41,17 @@ public class InitiatoryDegree implements IInitiatoryDegree {
 		if (degreeNumber >= 8) return false;
 		degreeNumber++;
 		return true;
+	}
+
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag tag = new CompoundTag();
+		tag.putInt("degree", degreeNumber);
+		return tag;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		degreeNumber = nbt.getInt("degree");
 	}
 }

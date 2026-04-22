@@ -16,13 +16,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -37,21 +35,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class EquippedMorphlingEvents {
 
-	/**
-	 * Tracks temporary web blocks placed by morphling abilities (e.g. Silk Tether).
-	 * Key: a string encoding "dimension:x:y:z", Value: game time tick at which to remove.
-	 */
 	private static final Map<String, Long> TEMPORARY_WEBS = new ConcurrentHashMap<>();
-
-	/** How long temporary webs persist (2 seconds = 40 ticks). */
 	public static final int TEMP_WEB_DURATION = 40;
-
-	@SubscribeEvent
-	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			event.addCapability(Hemomancy.rloc("equipped_morphling"), new EquippedMorphlingProvider());
-		}
-	}
 
 	/**
 	 * While a morphling is equipped, it passively drains blood to sustain itself.
@@ -240,21 +225,6 @@ public class EquippedMorphlingEvents {
 		String key = level.dimension().location().toString() + "@"
 				+ pos.getX() + "," + pos.getY() + "," + pos.getZ();
 		TEMPORARY_WEBS.put(key, expiryTick);
-	}
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-		if (event.isWasDeath()) {
-			Player original = event.getOriginal();
-			Player newPlayer = event.getEntity();
-			original.reviveCaps();
-			HemoCapabilityAccess.getEquippedMorphling(original).ifPresent(oldCap -> {
-				HemoCapabilityAccess.getEquippedMorphling(newPlayer).ifPresent(newCap -> {
-					newCap.setEquippedMorphling(oldCap.getEquippedMorphling().copy());
-				});
-			});
-			original.invalidateCaps();
-		}
 	}
 
 	@SubscribeEvent

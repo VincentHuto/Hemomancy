@@ -20,11 +20,9 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TickEvent.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -35,15 +33,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
-public class KnownManipulationEvents {
-	@SubscribeEvent
-	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject().getType() == EntityType.PLAYER) {
-			event.addCapability(Hemomancy.rloc("knownmanipulations"), new KnownManipulationProvider());
-		}
-	}
-
-	@SubscribeEvent
+public class KnownManipulationEvents {	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
@@ -83,26 +73,6 @@ public class KnownManipulationEvents {
 		if (target instanceof ServerPlayer) {
 			syncAvatars((ServerPlayer) target, Collections.singletonList(event.getEntity()));
 		}
-	}
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-
-		if (event.getOriginal().level().isClientSide)
-			return;
-
-		Player peorig = event.getOriginal();
-		Player playernew = event.getEntity();
-		peorig.reviveCaps();
-
-		HemoCapabilityAccess.getKnownManipulations(peorig).ifPresent(oldCap -> {
-			HemoCapabilityAccess.getKnownManipulations(playernew).ifPresent(newCap -> {
-				newCap.setCapa(oldCap);
-			});
-		});
-
-		peorig.invalidateCaps();
-
 	}
 
 	@SubscribeEvent

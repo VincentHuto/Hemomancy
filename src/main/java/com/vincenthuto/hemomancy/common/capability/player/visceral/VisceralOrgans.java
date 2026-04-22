@@ -3,8 +3,11 @@ package com.vincenthuto.hemomancy.common.capability.player.visceral;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class VisceralOrgans implements IVisceralOrgans {
+public class VisceralOrgans implements IVisceralOrgans, INBTSerializable<CompoundTag> {
 
 	private final EnumMap<EnumOrgan, Integer> organLevels = new EnumMap<>(EnumOrgan.class);
 
@@ -43,6 +46,25 @@ public class VisceralOrgans implements IVisceralOrgans {
 	public void resetAll() {
 		for (EnumOrgan organ : EnumOrgan.values()) {
 			organLevels.put(organ, 0);
+		}
+	}
+
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag tag = new CompoundTag();
+		for (EnumOrgan organ : EnumOrgan.values()) {
+			tag.putInt(organ.name().toLowerCase(), getOrganLevel(organ));
+		}
+		return tag;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		for (EnumOrgan organ : EnumOrgan.values()) {
+			String key = organ.name().toLowerCase();
+			if (nbt.contains(key)) {
+				setOrganLevel(organ, nbt.getInt(key));
+			}
 		}
 	}
 }

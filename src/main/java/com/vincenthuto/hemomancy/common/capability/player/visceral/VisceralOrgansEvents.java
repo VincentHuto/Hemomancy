@@ -7,59 +7,17 @@ import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
-/**
- * Handles capability attachment, persistence across death, and per-tick
- * effects of organ echoes for the Visceral Mirror system.
- *
- * <p>Also enforces the rule that organ echo items dissolve when placed
- * into any non-player container (chest, barrel, hopper output, etc.).</p>
- */
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class VisceralOrgansEvents {
-
-	@SubscribeEvent
-	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			event.addCapability(Hemomancy.rloc("visceral_organs"), new VisceralOrgansProvider());
-		}
-	}
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-		if (event.isWasDeath()) {
-			Player original = event.getOriginal();
-			Player newPlayer = event.getEntity();
-			original.reviveCaps();
-			IVisceralOrgans oldOrgans = original.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
-					.orElseThrow(IllegalStateException::new);
-			IVisceralOrgans newOrgans = newPlayer.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
-					.orElseThrow(IllegalStateException::new);
-			for (EnumOrgan organ : EnumOrgan.values()) {
-				newOrgans.setOrganLevel(organ, oldOrgans.getOrganLevel(organ));
-			}
-			original.invalidateCaps();
-		}
-	}
-
-	// ========================== ECHO DISSOLVE ==========================
-
-	/**
-	 * When a player closes a container, scan every non-player slot for
-	 * organ echo items and dissolve them. This prevents echoes from
-	 * persisting in chests, barrels, or similar storage.
-	 */
 	@SubscribeEvent
 	public static void onContainerClose(PlayerContainerEvent.Close event) {
 		Player player = event.getEntity();
@@ -90,7 +48,7 @@ public class VisceralOrgansEvents {
 		if (player.level().isClientSide) return;
 		if (player.tickCount % 40 != 0) return;
 
-		player.getCapability(VisceralOrgansProvider.ORGANS_CAPA).ifPresent(organs -> {
+		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
 			// Spleen — increased max blood volume per modification level
 			if (organs.isExtracted(EnumOrgan.SPLEEN)) {
 				int level = organs.getOrganLevel(EnumOrgan.SPLEEN);

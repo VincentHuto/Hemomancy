@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityKeys;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -40,7 +41,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
+
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -102,31 +103,8 @@ public class ScarEntityEventHandler {
 
 	// --- Capability lifecycle ---
 
-	@SubscribeEvent
-	public static void attachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			event.addCapability(Hemomancy.rloc("scarcontainer"),
-					new ScarsContainerProvider((Player) event.getObject()));
-		}
-	}
-
-	@SubscribeEvent
-	public static void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
-		try {
-			event.getOriginal().getCapability(ScarsCapabilities.SCARS).ifPresent(bco -> {
-				CompoundTag nbt = ((ScarsContainer) bco).serializeNBT();
-				event.getOriginal().getCapability(ScarsCapabilities.SCARS).ifPresent(bcn -> {
-					((ScarsContainer) bcn).deserializeNBT(nbt);
-				});
-			});
-		} catch (Exception e) {
-			System.out.println(
-					"Could not clone player [" + event.getOriginal().getName() + "] scars when changing dimensions");
-		}
-	}
-
 	private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
-		player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 			for (int i = 0; i < scars.getSlots(); ++i) {
 				if (!scars.getStackInSlot(i).isEmpty()) {
 					ItemEntity ei = new ItemEntity(player.level(), player.getX(), player.getY() + player.getEyeHeight(),
@@ -160,7 +138,7 @@ public class ScarEntityEventHandler {
 
 		if (event.getEntity() instanceof Player player && !event.getEntity().level().isClientSide) {
 
-			player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 				// slot 5 is the special curved-horn slot, not a regular scar slot
 				ItemStack itemstack = scars.getStackInSlot(5);
 				if (itemstack.getItem() == ItemInit.curved_horn.get()) {
@@ -205,7 +183,7 @@ public class ScarEntityEventHandler {
 	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event) {
 		Player player = event.player;
-		player.getCapability(ScarsCapabilities.SCARS).ifPresent(IScarsItemHandler::tick);
+		HemoCapabilityAccess.getScars(player).ifPresent(IScarsItemHandler::tick);
 		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
 		if (attributeInstance != null) {
 			AttributeModifier elytraModifier = AttributeInit.getElytraModifier();
@@ -230,7 +208,7 @@ public class ScarEntityEventHandler {
 		// Player attacks another entity
 	if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity target = event.getEntity();
-			player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
@@ -243,7 +221,7 @@ public class ScarEntityEventHandler {
 		// Player is attacked by another entity
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
 			if (event.getSource().getEntity() instanceof LivingEntity attacker) {
-				player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 					for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 						ItemStack stack = scars.getStackInSlot(i);
 						if (stack.getItem() instanceof ItemScar scar) {
@@ -259,7 +237,7 @@ public class ScarEntityEventHandler {
 	public static void onEntityKilledByPlayer(LivingDeathEvent event) {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity killed = event.getEntity();
-			player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
@@ -273,7 +251,7 @@ public class ScarEntityEventHandler {
 	// --- Synergy logic ---
 
 	private static void checkScarSynergy(Player player) {
-		player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
 			for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
@@ -312,7 +290,7 @@ public class ScarEntityEventHandler {
 	@SubscribeEvent
 	public static void onBlockBreak(BreakEvent event) {
 
-		event.getPlayer().getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+		HemoCapabilityAccess.getScars(event.getPlayer()).ifPresent(scars -> {
 			HemoCapabilityAccess.getKnownManipulations(event.getPlayer()).ifPresent(manips -> {
 
 				if (scars.getStackInSlot(0).getItem() == ItemInit.talaromyces_minus.get()
@@ -348,7 +326,7 @@ public class ScarEntityEventHandler {
 	}
 
 	private static void syncSlots(Player player, Collection<? extends Player> receivers) {
-		player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
+		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 			for (byte i = 0; i < scars.getSlots(); i++) {
 				syncSlot(player, i, scars.getStackInSlot(i), receivers);
 			}

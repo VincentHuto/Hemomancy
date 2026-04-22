@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityKeys;
+
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,10 +16,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-public class ScarsContainer extends ItemStackHandler implements IScarsItemHandler {
+public class ScarsContainer extends ItemStackHandler implements IScarsItemHandler, INBTSerializable<CompoundTag> {
 
 	private final static int SCAR_SLOTS = 8;
 	private final ItemStack[] previous = new ItemStack[SCAR_SLOTS];
@@ -24,6 +27,12 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 	private boolean blockEvents = false;
 	private boolean ScarsUnlocked = false;
 	private LivingEntity holder;
+
+	public ScarsContainer() {
+		super(SCAR_SLOTS);
+		this.holder = null;
+		Arrays.fill(previous, ItemStack.EMPTY);
+	}
 
 	public ScarsContainer(LivingEntity player) {
 		super(SCAR_SLOTS);
@@ -49,12 +58,9 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		LazyOptional<IScar> opt = stack.getCapability(ScarsCapabilities.ITEM_SCAR);
-		if (stack.isEmpty() || !opt.isPresent())
+		IScar mindscar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+		if (stack.isEmpty() || mindscar == null)
 			return false;
-		IScar mindscar = opt.orElseThrow(NullPointerException::new);
-		// Only SCAR-type items (slots 1-4) require the mind spike unlock;
-		// other types (FUNGAL, VASC, GOURD, JAR) remain freely equippable.
 		if (mindscar.getScarType() == ScarType.SCAR && !ScarsUnlocked)
 			return false;
 		return mindscar.canEquip(holder) && mindscar.getScarType().hasSlot(slot);
@@ -82,15 +88,13 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 			ItemStack now = getStackInSlot(slot);
 
 			if (!ItemStack.isSameItemSameTags(prev, now)) {
-				// Unequip previous
 				if (!prev.isEmpty()) {
-					prev.getCapability(ScarsCapabilities.ITEM_SCAR, null)
-							.ifPresent(r -> r.onUnequipped(holder));
+					IScar prevScar = prev.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+					if (prevScar != null) prevScar.onUnequipped(holder);
 				}
-				// Equip new
 				if (!now.isEmpty()) {
-					now.getCapability(ScarsCapabilities.ITEM_SCAR, null)
-							.ifPresent(r -> r.onEquipped(holder));
+					IScar nowScar = now.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+					if (nowScar != null) nowScar.onEquipped(holder);
 				}
 			}
 		}
@@ -108,15 +112,15 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
-		CompoundTag nbt = super.serializeNBT();
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag nbt = super.serializeNBT(provider);
 		nbt.putBoolean("ScarsUnlocked", ScarsUnlocked);
 		return nbt;
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		super.deserializeNBT(nbt);
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		super.deserializeNBT(provider, nbt);
 		this.ScarsUnlocked = nbt.getBoolean("ScarsUnlocked");
 	}
 
@@ -136,8 +140,8 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 		List<Player> receivers = null;
 		for (byte i = 0; i < getSlots(); i++) {
 			ItemStack stack = getStackInSlot(i);
-			boolean autosync = stack.getCapability(ScarsCapabilities.ITEM_SCAR).map(b -> b.willAutoSync(holder))
-					.orElse(false);
+			IScar scar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+			boolean autosync = scar != null && scar.willAutoSync(holder);
 			if (changed[i] || autosync && !ItemStack.isSameItemSameTags(stack, previous[i])) {
 				if (receivers == null) {
 					receivers = new ArrayList<>(((ServerLevel) holder.level()).players());
@@ -155,7 +159,8 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 		for (int i = 0; i < getSlots(); i++) {
 			ItemStack stack = getStackInSlot(i);
 			if (stack.getItem() != Items.AIR) {
-				stack.getCapability(ScarsCapabilities.ITEM_SCAR).ifPresent(b -> b.onWornTick(holder));
+				IScar scar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+				if (scar != null) scar.onWornTick(holder);
 			}
 		}
 		sync();
