@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
@@ -113,6 +115,8 @@ public class Hemomancy {
         StructureInit.STRUCTURES.register(modEventBus);
         VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
         LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
+        HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
+        HemoCapabilityRegistrar.register(modEventBus);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             this.proxy = new ClientProxy();
@@ -125,6 +129,9 @@ public class Hemomancy {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::buildContents);
         forgeBus.register(this);
+
+        // RegisterPayloadsEvent fires on the mod bus – register here, not in commonSetup.
+        PacketHandler.registerChannels(modEventBus);
 
         ModList modList = ModList.get();
         if (modList.isLoaded("mna")) {
@@ -226,7 +233,6 @@ public class Hemomancy {
         SkillPointInit.init();
         ManipulationTreeInit.init();
         initUnstainedStageIcons();
-        PacketHandler.registerChannels(NeoForge.EVENT_BUS);
     }
 
     private void initUnstainedStageIcons() {

@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.init.ConfiguredFeatureInit;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 public class HemoFeatureUtils {
@@ -16,7 +15,7 @@ public class HemoFeatureUtils {
     }
     public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name)
     {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(Hemomancy.MOD_ID, name));
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, Hemomancy.rloc(name));
     }
 
 }

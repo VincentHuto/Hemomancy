@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.morphling;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class EquippedMorphling implements IEquippedMorphling {
+public class EquippedMorphling implements IEquippedMorphling, INBTSerializable<CompoundTag> {
 
 	private ItemStack equippedMorphling = ItemStack.EMPTY;
 
@@ -24,6 +27,24 @@ public class EquippedMorphling implements IEquippedMorphling {
 	@Override
 	public boolean hasMorphling() {
 		return !equippedMorphling.isEmpty();
+	}
+
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag tag = new CompoundTag();
+		if (!equippedMorphling.isEmpty()) {
+			tag.put("EquippedMorphling", equippedMorphling.save(new CompoundTag()));
+		}
+		return tag;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		if (nbt.contains("EquippedMorphling")) {
+			equippedMorphling = ItemStack.of(nbt.getCompound("EquippedMorphling"));
+		} else {
+			equippedMorphling = ItemStack.EMPTY;
+		}
 	}
 
 }

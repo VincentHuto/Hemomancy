@@ -12,9 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -25,16 +23,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
-public class VascularSystemEvents {
-
-	@SubscribeEvent
-	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			event.addCapability(Hemomancy.rloc("vascularsystem"), new VascularSystemProvider());
-		}
-	}
-
-	/**
+public class VascularSystemEvents {	/**
 	 * When the player takes damage, degrade a vascular section based on damage type.
 	 * <ul>
 	 *   <li>Fall damage → legs</li>
@@ -231,29 +220,15 @@ public class VascularSystemEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
-		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(BloodFlow));
-	}
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-		Player peorig = event.getOriginal();
-		Player playernew = event.getEntity();
-		if (event.isWasDeath()) {
-			peorig.reviveCaps();
-			IVascularSystem bloodVolumeNew = HemoCapabilityAccess.getVascularSystem(playernew)
-					.orElseThrow(IllegalStateException::new);
-			bloodVolumeNew.setVascularSystem(HemoCapabilityAccess.getVascularSystem(peorig)
-					.orElseThrow(IllegalArgumentException::new).getVascularSystem());
-			peorig.invalidateCaps();
-		}
+		Map<EnumVeinSections, Float> bloodFlow = HemoCapabilityAccess.getPlayerVascularSystem(player);
+		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(bloodFlow));
 	}
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
-		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(BloodFlow));
+		Map<EnumVeinSections, Float> bloodFlow = HemoCapabilityAccess.getPlayerVascularSystem(player);
+		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(bloodFlow));
 	}
 
 	@SubscribeEvent

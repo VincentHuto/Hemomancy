@@ -7,16 +7,12 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
-import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -26,23 +22,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
-public class BloodTendencyEvents {
-
-	@SubscribeEvent
-	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			event.addCapability(Hemomancy.rloc("bloodtendency"), new BloodTendencyProvider());
-		}
-	}
-
-	@SubscribeEvent
-	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof SomaticLoomBlockEntity) {
-			event.addCapability(Hemomancy.rloc("bloodtendency"), new BloodTendencyProvider());
-		}
-	}
-
-	/**
+public class BloodTendencyEvents {	/**
 	 * Killing entities shifts the player's blood tendency based on what they killed.
 	 * <ul>
 	 *   <li>Warm-blooded (animals, villagers) → ANIMUS (life/vitality)</li>
@@ -148,32 +128,17 @@ public class BloodTendencyEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
-		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(BloodTendency));
-	}
-
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-
-		Player peorig = event.getOriginal();
-		Player playernew = event.getEntity();
-		if (event.isWasDeath()) {
-			peorig.reviveCaps();
-			IBloodTendency bloodTendencyNew = HemoCapabilityAccess.getBloodTendency(playernew)
-					.orElseThrow(IllegalStateException::new);
-			bloodTendencyNew.setTendency(HemoCapabilityAccess.getBloodTendency(peorig)
-					.orElseThrow(IllegalArgumentException::new).getTendency());
-			peorig.invalidateCaps();
-		}
-
+		Map<EnumBloodTendency, Float> bloodTendency = HemoCapabilityAccess.getBloodTendency(player)
+				.map(IBloodTendency::getTendency).orElse(Map.of());
+		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(bloodTendency));
 	}
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
-		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(BloodTendency));
+		Map<EnumBloodTendency, Float> bloodTendency = HemoCapabilityAccess.getBloodTendency(player)
+				.map(IBloodTendency::getTendency).orElse(Map.of());
+		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(bloodTendency));
 	}
 
 	@SubscribeEvent

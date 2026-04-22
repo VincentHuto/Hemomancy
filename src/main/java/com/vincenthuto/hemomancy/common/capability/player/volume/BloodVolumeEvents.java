@@ -4,10 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
-import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.ChatFormatting;
@@ -18,9 +16,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -33,28 +28,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class BloodVolumeEvents {
-	@SubscribeEvent
-	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			BloodVolumeProvider provider = new BloodVolumeProvider();
-			event.addCapability(Hemomancy.rloc("bloodvolume"), provider);
-		}
-	}
-
-	@SubscribeEvent
-	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
-		if (event.getObject().getItem() instanceof BloodGourdItem) {
-			event.addCapability(Hemomancy.rloc("bloodvolume"), new BloodVolumeProvider());
-		}
-	}
-
-	@SubscribeEvent
-	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof IBloodTile) {
-			event.addCapability(Hemomancy.rloc("bloodvolume"), new BloodVolumeProvider());
-		}
-	}
-
 	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
@@ -280,30 +253,6 @@ public class BloodVolumeEvents {
 				Component.literal(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
-	}
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-		if (event.isWasDeath()) {
-			Player peorig = event.getOriginal();
-			peorig.revive();
-			IBloodVolume bloodVolumeOld = HemoCapabilityAccess.requireBloodVolume(peorig);
-
-			Player playernew = event.getEntity();
-			peorig.reviveCaps();
-
-			IBloodVolume bloodVolumeNew = HemoCapabilityAccess.requireBloodVolume(playernew);
-			bloodVolumeNew.setActive(bloodVolumeOld.isActive());
-			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume());
-			bloodVolumeNew.setMaxBloodVolume(bloodVolumeOld.getMaxBloodVolume());
-			bloodVolumeNew.setBloodLine(bloodVolumeOld.getBloodLine());
-			bloodVolumeNew.setTrickleEnabled(bloodVolumeOld.isTrickleEnabled());
-			bloodVolumeNew.setTrickleRate(bloodVolumeOld.getTrickleRate());
-			bloodVolumeNew.setAutoDrawEnabled(bloodVolumeOld.isAutoDrawEnabled());
-			bloodVolumeNew.setAutoDrawThreshold(bloodVolumeOld.getAutoDrawThreshold());
-			peorig.invalidateCaps();
-		}
-
 	}
 
 	@SubscribeEvent

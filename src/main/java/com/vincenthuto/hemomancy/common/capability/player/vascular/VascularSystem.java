@@ -2,8 +2,11 @@ package com.vincenthuto.hemomancy.common.capability.player.vascular;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class VascularSystem implements IVascularSystem {
+public class VascularSystem implements IVascularSystem, INBTSerializable<CompoundTag> {
 	@SuppressWarnings("serial")
 	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>() {
 		{
@@ -64,6 +67,23 @@ public class VascularSystem implements IVascularSystem {
 	@Override
 	public void setVascularSystem(Map<EnumVeinSections, Float> vascularSystem) {
 		this.vascularSystem = vascularSystem;
+	}
+
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag tag = new CompoundTag();
+		for (EnumVeinSections key : vascularSystem.keySet()) {
+			Float val = vascularSystem.get(key);
+			tag.putFloat(key.toString(), val != null ? val : 100f);
+		}
+		return tag;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		for (EnumVeinSections key : EnumVeinSections.values()) {
+			vascularSystem.put(key, nbt.getFloat(key.toString()));
+		}
 	}
 
 }

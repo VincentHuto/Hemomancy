@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.white_humor;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class WhiteHumorVolume implements IWhiteHumorVolume {
+public class WhiteHumorVolume implements IWhiteHumorVolume, INBTSerializable<CompoundTag> {
 	private boolean active = false;
 	private double whiteHumorVolume = 0.0;
 	private double maxWhiteHumorVolume = 5000.0;
@@ -190,6 +193,35 @@ public class WhiteHumorVolume implements IWhiteHumorVolume {
 	@Override
 	public void setAutoDrawThreshold(double threshold) {
 		this.autoDrawThreshold = threshold;
+	}
+
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag entry = new CompoundTag();
+		entry.putBoolean("Active", isActive());
+		entry.putDouble("Max", getMaxWhiteHumorVolume());
+		entry.putDouble("Volume", getWhiteHumorVolume());
+		entry.put("Bloodline", getWhiteHumorLine().serialize());
+		entry.putBoolean("TrickleEnabled", isTrickleEnabled());
+		entry.putDouble("TrickleRate", getTrickleRate());
+		entry.putBoolean("AutoDrawEnabled", isAutoDrawEnabled());
+		entry.putDouble("AutoDrawThreshold", getAutoDrawThreshold());
+		return entry;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag entry) {
+		if (entry.contains("Active") && entry.contains("Max") && entry.contains("Volume")
+				&& entry.contains("Bloodline")) {
+			setActive(entry.getBoolean("Active"));
+			setMaxWhiteHumorVolume(entry.getDouble("Max"));
+			setWhiteHumorVolume(entry.getDouble("Volume"));
+			setWhiteHumorLine(Bloodline.deserialize(entry.getCompound("Bloodline")));
+			setTrickleEnabled(entry.getBoolean("TrickleEnabled"));
+			setTrickleRate(entry.getDouble("TrickleRate"));
+			setAutoDrawEnabled(entry.getBoolean("AutoDrawEnabled"));
+			setAutoDrawThreshold(entry.getDouble("AutoDrawThreshold"));
+		}
 	}
 
 }

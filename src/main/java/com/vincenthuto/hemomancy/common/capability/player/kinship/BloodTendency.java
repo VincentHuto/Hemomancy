@@ -3,11 +3,14 @@ package com.vincenthuto.hemomancy.common.capability.player.kinship;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import java.util.Map;
 
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
-public class BloodTendency implements IBloodTendency {
+public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundTag> {
 	@SuppressWarnings("serial")
 	private Map<EnumBloodTendency, Float> tendency = new HashMap<>() {
 		{
@@ -115,6 +118,23 @@ public class BloodTendency implements IBloodTendency {
 				newDevo.put(tendencyIn, value);
 				setTendency(newDevo);
 			}
+		}
+	}
+
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag covenTag = new CompoundTag();
+		tendency.keySet().forEach(key -> {
+			Float val = tendency.get(key);
+			covenTag.putFloat(key.toString(), val != null ? val : 0f);
+		});
+		return covenTag;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		for (EnumBloodTendency coven : EnumBloodTendency.values()) {
+			tendency.put(coven, nbt.getFloat(coven.toString()));
 		}
 	}
 
