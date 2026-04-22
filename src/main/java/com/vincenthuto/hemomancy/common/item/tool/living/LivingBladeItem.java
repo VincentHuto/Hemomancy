@@ -12,8 +12,10 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -38,8 +40,8 @@ public class LivingBladeItem extends LivingToolItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_STATE)) {
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
 				tooltip.add(Component.literal("+20 Blood Damage").withStyle(ChatFormatting.RED));
 
@@ -54,7 +56,7 @@ public class LivingBladeItem extends LivingToolItem {
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
-		if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
+		if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
 			attacker.heal(this.getAttackDamage() / 2);
 			target.hurt(target.damageSources().generic(), 20);
 			if (!attacker.level().isClientSide) {
@@ -92,7 +94,7 @@ public class LivingBladeItem extends LivingToolItem {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();
 		if (stack.getItem() instanceof LivingBladeItem) {
-			CompoundTag compound = stack.getOrCreateTag();
+			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (!compound.getBoolean(TAG_STATE)) {
 				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
@@ -100,7 +102,7 @@ public class LivingBladeItem extends LivingToolItem {
 				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
 			}
-			stack.setTag(compound);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

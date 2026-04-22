@@ -5,11 +5,13 @@ import java.util.List;
 import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 /**
@@ -21,12 +23,15 @@ public class ConsecratedSyringeItem extends Item {
 	public static final String TAG_SAINT_TYPE = "saint_type";
 
 	public static EnumSaintType getSaintType(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		if (tag != null && tag.contains(TAG_SAINT_TYPE)) {
-			try {
-				return EnumSaintType.valueOf(tag.getString(TAG_SAINT_TYPE));
-			} catch (IllegalArgumentException e) {
-				return null;
+		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+		if (customData != null) {
+			CompoundTag tag = customData.copyTag();
+			if (tag.contains(TAG_SAINT_TYPE)) {
+				try {
+					return EnumSaintType.valueOf(tag.getString(TAG_SAINT_TYPE));
+				} catch (IllegalArgumentException e) {
+					return null;
+				}
 			}
 		}
 		return null;

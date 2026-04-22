@@ -71,7 +71,6 @@ public class Hemomancy {
 
     /**
      * NeoForge 1.21: the mod-event bus is injected into the constructor automatically.
-     * Remove any /* TODO: inject IEventBus via constructor – FMLJavaModLoadingContext removed */ calls.
      */
     public Hemomancy(IEventBus modEventBus) {
         forcesLoaded = ModList.get().isLoaded("forcesofreality");
@@ -125,6 +124,7 @@ public class Hemomancy {
         // RegisterPayloadsEvent fires on the mod bus – register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
 
+        @SuppressWarnings("unused")
         ModList modList = ModList.get();
         // TODO(MnA-compat): re-enable once Mana and Artifice publishes a NeoForge 1.21.1 build
         // and the compat/mna/** source exclusion is removed from build.gradle.

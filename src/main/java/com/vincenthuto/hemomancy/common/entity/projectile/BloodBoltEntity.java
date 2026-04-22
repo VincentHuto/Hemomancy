@@ -15,6 +15,7 @@ import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -33,6 +34,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -43,10 +45,10 @@ public class BloodBoltEntity extends AbstractArrow {
 			EntityDataSerializers.INT);
 
 	public static int getCustomColor(ItemStack p_191508_0_) {
-		CompoundTag CompoundTag = p_191508_0_.getTag();
-		return CompoundTag != null && CompoundTag.contains("CustomPotionColor", 99)
-				? CompoundTag.getInt("CustomPotionColor")
-				: -1;
+		CustomData customData = p_191508_0_.get(DataComponents.CUSTOM_DATA);
+		if (customData == null) return -1;
+		CompoundTag CompoundTag = customData.copyTag();
+		return CompoundTag.contains("CustomPotionColor", 99) ? CompoundTag.getInt("CustomPotionColor") : -1;
 	}
 
 	private Potion potion = Potions.EMPTY;
@@ -124,7 +126,9 @@ public class BloodBoltEntity extends AbstractArrow {
 			itemstack.set(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
 				new PotionContents(java.util.Optional.of(this.potion), java.util.Optional.empty(), new java.util.ArrayList<>(this.customPotionEffects)));
 			if (this.fixedColor) {
-				itemstack.getOrCreateTag().putInt("CustomPotionColor", this.getColor());
+				CompoundTag colorTag = itemstack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+				colorTag.putInt("CustomPotionColor", this.getColor());
+				itemstack.set(DataComponents.CUSTOM_DATA, CustomData.of(colorTag));
 			}
 
 			return itemstack;

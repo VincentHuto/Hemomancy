@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class DistillationRecipeSerializer implements RecipeSerializer<DistillationRecipe> {
 
@@ -43,7 +43,7 @@ public class DistillationRecipeSerializer implements RecipeSerializer<Distillati
 		} else {
 			int count = GsonHelper.getAsInt(object, "count", 1);
 			String resultId = GsonHelper.getAsString(object, "result");
-			result = new ItemStack(ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(resultId)), count);
+			result = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(resultId)), count);
 		}
 
 		float experience = GsonHelper.getAsFloat(object, "experience", 0.0F);

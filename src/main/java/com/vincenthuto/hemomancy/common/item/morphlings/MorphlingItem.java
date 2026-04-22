@@ -5,7 +5,9 @@ import java.util.List;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -61,8 +63,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	 * EnzymePower. Higher maturity enhances the morphling's granted effect.
 	 */
 	public static int getMaturityLevel(ItemStack stack) {
-		if (!stack.hasTag()) return 0;
-		float power = stack.getTag().getFloat("EnzymePower");
+		if (!stack.has(DataComponents.CUSTOM_DATA)) return 0;
+		float power = stack.get(DataComponents.CUSTOM_DATA).copyTag().getFloat("EnzymePower");
 		for (int i = MATURITY_THRESHOLDS.length - 1; i > 0; i--) {
 			if (power >= MATURITY_THRESHOLDS[i]) return i;
 		}
@@ -105,9 +107,10 @@ public class MorphlingItem extends Item implements IMorphling {
 		tooltip.add(Component.literal("Secondary: " + formatTendencyName(secondary))
 				.withStyle(ChatFormatting.DARK_AQUA));
 
-		if (stack.hasTag()) {
-			float power = stack.getTag().getFloat("EnzymePower");
-			int feedings = stack.getTag().getInt("EnzymeFeedings");
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			CompoundTag morphTag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+			float power = morphTag.getFloat("EnzymePower");
+			int feedings = morphTag.getInt("EnzymeFeedings");
 			if (feedings > 0) {
 				int maturity = getMaturityLevel(stack);
 				tooltip.add(Component.literal("Maturity: " + getMaturityName(maturity))
@@ -163,8 +166,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	 * the ability has never been triggered.
 	 */
 	public static long getLastAbilityTick(ItemStack stack, String abilityKey) {
-		if (!stack.hasTag()) return 0;
-		var tag = stack.getTag();
+		if (!stack.has(DataComponents.CUSTOM_DATA)) return 0;
+		var tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
 		if (!tag.contains("Cooldowns")) return 0;
 		return tag.getCompound("Cooldowns").getLong(abilityKey);
 	}
@@ -173,11 +176,12 @@ public class MorphlingItem extends Item implements IMorphling {
 	 * Stores the game time (tick) at which an ability was last triggered.
 	 */
 	public static void setLastAbilityTick(ItemStack stack, String abilityKey, long tick) {
-		var tag = stack.getOrCreateTag();
+		var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (!tag.contains("Cooldowns")) {
 			tag.put("Cooldowns", new net.minecraft.nbt.CompoundTag());
 		}
 		tag.getCompound("Cooldowns").putLong(abilityKey, tick);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
 }

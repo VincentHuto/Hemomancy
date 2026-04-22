@@ -18,9 +18,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.CustomData;
 
 public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
 	public static ResourceLocation white = getGourdTexture("white");
@@ -64,7 +66,7 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 					this.translateToBody(matrixStack);
 
 					// Check if the gourd is open
-					boolean isOpen = stack.hasTag() && stack.getTag().getBoolean(BloodGourdItem.TAG_STATE);
+					boolean isOpen = stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(BloodGourdItem.TAG_STATE);
 
 					ResourceLocation text;
 					if (gourd == ItemInit.curved_horn.get()) {

@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -28,7 +29,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
@@ -403,7 +403,7 @@ public class ScreenScarBinderViewer extends Screen {
 					player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 				}
 				String patternText = I18n.get(Hemomancy.MOD_ID + "."
-						+ ForgeRegistries.ITEMS.getKey(entry.scarRef().get()) + ".pattern.text");
+						+ BuiltInRegistries.ITEM.getKey(entry.scarRef().get()) + ".pattern.text");
 				Minecraft.getInstance().setScreen(
 						new ScreenScarPattern(entry.scarRef(), entry.recipe(), patternText));
 				return true;

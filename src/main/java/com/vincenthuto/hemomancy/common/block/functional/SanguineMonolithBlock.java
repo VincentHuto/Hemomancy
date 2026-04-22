@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEnt
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -224,7 +225,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 			PacketHandler.sendMonolithShatterBurst(
 					new net.minecraft.world.phys.Vec3(pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5),
 					SHATTER_PACKET_RADIUS,
-					level.dimension());
+					(ServerLevel) level);
 		}
 	}
 }

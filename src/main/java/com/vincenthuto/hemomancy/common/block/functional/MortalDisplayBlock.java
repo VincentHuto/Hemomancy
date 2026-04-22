@@ -15,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -120,7 +121,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 						worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
 						worldIn.random.nextDouble() - worldIn.random.nextDouble());
 				if (!worldIn.isClientSide) {
-					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, worldIn.dimension());
+					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, (ServerLevel) worldIn);
 					HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level().dimension(),
 							ParticleColor.RED, 2, 20, 9, 1.2f);
 				}

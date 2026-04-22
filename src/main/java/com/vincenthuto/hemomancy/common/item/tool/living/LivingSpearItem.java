@@ -13,8 +13,11 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -46,8 +49,8 @@ public class LivingSpearItem extends LivingToolItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_STATE)) {
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
 			} else {
 				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
@@ -129,7 +132,9 @@ public class LivingSpearItem extends LivingToolItem {
 				worldIn.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
 
 				Vec3 pos = player.position();
-				PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, player.level().dimension());
+				if (player.level() instanceof ServerLevel serverLevel) {
+					PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
+				}
 
 				/*
 				 * IBloodVolume playerVolume =
@@ -168,7 +173,7 @@ public class LivingSpearItem extends LivingToolItem {
 		playerIn.startUsingItem(handIn);
 
 		if (stack.getItem() instanceof LivingSpearItem) {
-			CompoundTag compound = stack.getOrCreateTag();
+			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (!compound.getBoolean(TAG_STATE)) {
 				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
@@ -176,7 +181,7 @@ public class LivingSpearItem extends LivingToolItem {
 				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
 			}
-			stack.setTag(compound);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

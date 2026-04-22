@@ -25,6 +25,7 @@ import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -40,6 +41,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -346,11 +348,12 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		ItemStack result = center.copy();
 
 		// Store enzyme power as NBT on the morphling
-		CompoundTag tag = result.getOrCreateTag();
+		CompoundTag tag = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		float existingPower = tag.getFloat("EnzymePower");
 		tag.putFloat("EnzymePower", existingPower + totalStrength);
 		int existingFeedings = tag.getInt("EnzymeFeedings");
 		tag.putInt("EnzymeFeedings", existingFeedings + enzymeCount);
+		result.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		// Move center to output
 		inventory.set(SLOT_CENTER, ItemStack.EMPTY);

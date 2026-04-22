@@ -27,7 +27,6 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class VeinMinerHelper {
@@ -159,8 +158,8 @@ public class VeinMinerHelper {
 	}
 
 	public static boolean isOre(Block b) {
-		return ForgeRegistries.BLOCKS.tags().getTag(BlockTags.STONE_ORE_REPLACEABLES).contains(b)
-				|| ForgeRegistries.BLOCKS.tags().getTag(BlockTags.DEEPSLATE_ORE_REPLACEABLES).contains(b);
+		return b.defaultBlockState().is(BlockTags.STONE_ORE_REPLACEABLES)
+				|| b.defaultBlockState().is(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
 	}
 
 	public static boolean isOre(BlockState state) {

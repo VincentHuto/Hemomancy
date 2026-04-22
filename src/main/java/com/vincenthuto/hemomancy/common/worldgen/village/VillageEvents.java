@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.worldgen.village;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -35,7 +34,6 @@ import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.GAME)
 
@@ -98,10 +96,11 @@ public class VillageEvents {
 		@org.jetbrains.annotations.Nullable
 		@Override
 		public MerchantOffer getOffer(Entity p_219693_, RandomSource rand) {
-			return Optional.ofNullable(ForgeRegistries.ITEMS.tags()).map(tags -> tags.getTag(tagSource))
+			return p_219693_.level().registryAccess().registryOrThrow(Registries.ITEM)
+					.getTag(tagSource)
 					.flatMap(tag -> tag.getRandomElement(rand))
-					.map(itemHolder -> new MerchantOffer(new ItemStack(Items.EMERALD, price),
-							new ItemStack(itemHolder, quantity), this.maxUses, this.xp, this.priceMultiplier))
+					.map(holder -> new MerchantOffer(new ItemStack(Items.EMERALD, price),
+							new ItemStack(holder.value(), quantity), this.maxUses, this.xp, this.priceMultiplier))
 					.orElse(null);
 		}
 	}

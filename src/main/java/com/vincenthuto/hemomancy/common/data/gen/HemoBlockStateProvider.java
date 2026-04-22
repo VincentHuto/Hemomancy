@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.StairBlock;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class HemoBlockStateProvider extends BlockStateProvider {
 	public HemoBlockStateProvider(PackOutput gen, ExistingFileHelper exFileHelper) {
@@ -140,7 +140,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private String getName(Block block) {
-		return ForgeRegistries.BLOCKS.getKey(block).getPath();
+		return BuiltInRegistries.BLOCK.getKey(block).getPath();
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	private String resolveBaseTextureName(String blockName, String suffix) {
 		String base = blockName.replace(suffix, "");
 		ResourceLocation pluralLoc = Hemomancy.rloc(base + "s");
-		if (ForgeRegistries.BLOCKS.containsKey(pluralLoc)) {
+		if (BuiltInRegistries.BLOCK.containsKey(pluralLoc)) {
 			return base + "s";
 		}
 		return base;

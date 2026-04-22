@@ -17,9 +17,11 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -88,7 +90,7 @@ public class LivingStaffItem extends LivingItemItem {
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		CompoundTag staffnbt = stack.getOrCreateTag();
+		CompoundTag staffnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (!staffnbt.contains("Inventory")) {
 			IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 			if (handler instanceof LivingStaffItemHandler) {

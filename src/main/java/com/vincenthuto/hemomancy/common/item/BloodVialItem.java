@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.arthropod.HemolymphopodaEntit
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,8 +22,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class BloodVialItem extends Item {
 
@@ -29,11 +31,12 @@ public class BloodVialItem extends Item {
 	public static String TAG_STATE = "state";
 
 	public static EntityType<?> getEntityType(ItemStack stack) {
-		if (stack.hasTag()) {
-			if (stack.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
-				EntityType<?> type = ForgeRegistries.ENTITY_TYPES
-						.getValue(ResourceLocation.parse(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
-				return type;
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+			if (tag.contains(TAG_ENTITY_TYPE)) {
+				return BuiltInRegistries.ENTITY_TYPE
+						.getOptional(ResourceLocation.parse(tag.getString(TAG_ENTITY_TYPE)))
+						.orElse(null);
 			}
 		}
 		return null;
@@ -46,8 +49,11 @@ public class BloodVialItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			tooltip.add(Component.literal(I18n.get(getEntityType(stack).getDescriptionId())).append(" Sample"));
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			EntityType<?> type = getEntityType(stack);
+			if (type != null) {
+				tooltip.add(Component.literal(I18n.get(type.getDescriptionId())).append(" Sample"));
+			}
 		}
 	}
 
@@ -59,7 +65,7 @@ public class BloodVialItem extends Item {
 
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (entity != null) {
 			if (entity instanceof LivingEntity living) {
 				// Special case: Hemolymphopoda produces Cleansing Hemolymph instead of a standard sample
@@ -72,12 +78,13 @@ public class BloodVialItem extends Item {
 					// Return true on both sides to cancel the attack; inventory syncs from server
 					return true;
 				}
-				tag.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString());
+				tag.putString(TAG_ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
 				tag.putBoolean(TAG_STATE, true);
 			}
 		} else {
 			tag.putBoolean(TAG_STATE, false);
 		}
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		return super.onLeftClickEntity(stack, player, entity);
 	}
 

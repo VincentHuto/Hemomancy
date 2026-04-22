@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -130,10 +131,9 @@ public class LivingAxeItem extends LivingToolItem {
 //						player.knockback(2F, Mth.sin(player.getXRot() * ((float) Math.PI / 180F)),
 //								(-Mth.cos(player.getXRot() * ((float) Math.PI / 180F))));
 						List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(3.0));
-						if (player.level().isClientSide) {
+						if (player.level() instanceof ServerLevel serverLevel) {
 							Vec3 pos = player.position();
-							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
-									player.level().dimension());
+							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
 						}
 						if (targets.size() > 0) {
 

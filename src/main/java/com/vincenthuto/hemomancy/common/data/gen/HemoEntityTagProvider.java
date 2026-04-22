@@ -6,13 +6,13 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 
@@ -28,37 +28,28 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 
 	@Override
 	protected void addTags(Provider p_256380_) {
-		tag(EntityInit.FUNGAL_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.FERRIC_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.NEUROTIC_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.UMBRAL_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.INCANDESCENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.FRIGID_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.FERVENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.RUINOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
-		tag(EntityInit.VIVACIOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
-				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
+		tag(EntityInit.FUNGAL_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.FERRIC_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.NEUROTIC_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.UMBRAL_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.INCANDESCENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.FRIGID_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.FERVENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.RUINOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.VIVACIOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 
 		// All hemomancy monster entities — used by PurityGainEvents for kill rewards
 		tag(EntityInit.HEMOMANCY_MOB)
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fargone.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.thirster.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.abhorent_thought.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.erythromycelium_eruptus.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.blood_drunk_puppeteer.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.enthralled_doll.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.lump_of_thought.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.morphling_polyp.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.chthonian.get())))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.chthonian_queen.get())));
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fargone.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.thirster.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.abhorent_thought.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.erythromycelium_eruptus.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.blood_drunk_puppeteer.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.enthralled_doll.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.lump_of_thought.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.morphling_polyp.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian_queen.getId()));
 	}
 
 }

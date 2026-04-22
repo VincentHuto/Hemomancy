@@ -6,12 +6,15 @@ import java.util.List;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 /**
  * Serpent morphling that grants increased reflexes by applying the
@@ -68,7 +71,7 @@ public class SerpentMorphlingItem extends MorphlingItem {
 
 		// Track sneak start time for Ambush Predator (Apex 4)
 		if (maturity >= 4 && !player.level().isClientSide) {
-			var tag = stack.getOrCreateTag();
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (player.isShiftKeyDown()) {
 				if (!tag.contains("SneakStart")) {
 					tag.putLong("SneakStart", player.level().getGameTime());
@@ -76,6 +79,7 @@ public class SerpentMorphlingItem extends MorphlingItem {
 			} else {
 				tag.remove("SneakStart");
 			}
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		}
 	}
 
@@ -94,7 +98,7 @@ public class SerpentMorphlingItem extends MorphlingItem {
 		// Mature (3+): Constrict — repeated hits on same target build stacks,
 		// at 3 stacks the target is rooted and takes burst Wither damage
 		if (maturity >= 3 && !player.level().isClientSide) {
-			var tag = stack.getOrCreateTag();
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			String targetId = target.getStringUUID();
 			long now = player.level().getGameTime();
 
@@ -123,11 +127,12 @@ public class SerpentMorphlingItem extends MorphlingItem {
 				// Reset stacks
 				tag.putInt("ConstrHits", 0);
 			}
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		}
 
 		// Apex (4): Ambush Predator — first hit from stealth deals triple venom + Darkness
 		if (maturity >= 4 && !player.level().isClientSide) {
-			var tag = stack.getOrCreateTag();
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (tag.contains("SneakStart")) {
 				long sneakStart = tag.getLong("SneakStart");
 				long now = player.level().getGameTime();
@@ -137,6 +142,7 @@ public class SerpentMorphlingItem extends MorphlingItem {
 						&& (now - lastAmbush) >= AMBUSH_COOLDOWN) {
 					setLastAbilityTick(stack, "AmbushPredator", now);
 					tag.remove("SneakStart");
+					stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 					// Triple venom: apply Poison II with extended duration
 					target.addEffect(new MobEffectInstance(MobEffects.POISON,

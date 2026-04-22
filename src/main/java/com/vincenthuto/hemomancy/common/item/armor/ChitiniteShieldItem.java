@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class ChitiniteShieldItem extends Item {
 	public static DyeColor getColor(ItemStack stack) {
@@ -93,7 +92,7 @@ public class ChitiniteShieldItem extends Item {
 	@Override
 	public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
 
-		return ForgeRegistries.ITEMS.tags().getTag(ItemTags.PLANKS).contains(repair.getItem())
+		return repair.is(ItemTags.PLANKS)
 				|| super.isValidRepairItem(toRepair, repair);
 	}
 	@Override

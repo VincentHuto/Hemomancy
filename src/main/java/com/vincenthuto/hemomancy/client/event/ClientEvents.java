@@ -118,6 +118,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -147,7 +148,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
@@ -540,7 +540,7 @@ public class ClientEvents {
 			// Wrap all Scar Pattern item models so the overlay layer is shrunk down
 			for (DeferredHolder<Item, Item> entry : ItemInit.BASEITEMS.getEntries()) {
 				if (entry.get() instanceof ItemScarPattern) {
-					ModelResourceLocation modelLoc = ModelResourceLocation.inventory(ForgeRegistries.ITEMS.getKey(entry.get()));
+					ModelResourceLocation modelLoc = ModelResourceLocation.inventory(BuiltInRegistries.ITEM.getKey(entry.get()));
 					BakedModel existing = evt.getModels().get(modelLoc);
 					if (existing != null) {
 						evt.getModels().put(modelLoc, new ScarPatternBakedModel(existing));

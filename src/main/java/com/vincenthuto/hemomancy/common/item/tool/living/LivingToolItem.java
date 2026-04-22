@@ -13,6 +13,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -91,8 +92,9 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 							p_220017_1_.broadcastBreakEvent(attacker.getUsedItemHand());
 						});
 						Vec3 pos = playerIn.position();
-						PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
-								attacker.level().dimension());
+						if (attacker.level() instanceof ServerLevel serverLevel) {
+							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
+						}
 					}
 
 				}

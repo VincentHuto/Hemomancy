@@ -7,8 +7,11 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
@@ -19,9 +22,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -80,12 +80,13 @@ public class StructureScannerItem extends Item {
 
 		ItemStack stack = ctx.getItemInHand();
 		BlockPos clickedPos = ctx.getClickedPos();
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
 		// Sneak + click: clear stored corner
 		if (ctx.getPlayer().isShiftKeyDown()) {
 			if (tag.getBoolean(TAG_HAS_POS1)) {
 				tag.putBoolean(TAG_HAS_POS1, false);
+				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 				ctx.getPlayer().displayClientMessage(
 						Component.literal("Scanner reset.").withStyle(ChatFormatting.YELLOW), true);
 			}
@@ -98,6 +99,7 @@ public class StructureScannerItem extends Item {
 			tag.putInt(TAG_POS1_Y, clickedPos.getY());
 			tag.putInt(TAG_POS1_Z, clickedPos.getZ());
 			tag.putBoolean(TAG_HAS_POS1, true);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 			ctx.getPlayer().displayClientMessage(
 					Component.literal("Corner 1 set: " + clickedPos.toShortString())
@@ -110,6 +112,7 @@ public class StructureScannerItem extends Item {
 		BlockPos pos1 = new BlockPos(tag.getInt(TAG_POS1_X), tag.getInt(TAG_POS1_Y), tag.getInt(TAG_POS1_Z));
 		BlockPos pos2 = clickedPos;
 		tag.putBoolean(TAG_HAS_POS1, false);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		return scanRegion(ctx, level, pos1, pos2);
 	}
@@ -236,8 +239,7 @@ public class StructureScannerItem extends Item {
 		ctx.getPlayer().displayClientMessage(
 				Component.literal("Block key:").withStyle(ChatFormatting.AQUA), false);
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
-			ResourceLocation id = ForgeRegistries.BLOCKS.getKey(entry.getKey());
-			ctx.getPlayer().displayClientMessage(
+			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
 					Component.literal("  " + entry.getValue() + " = " + id).withStyle(ChatFormatting.GRAY), false);
 		}
 
@@ -252,7 +254,7 @@ public class StructureScannerItem extends Item {
 		json.addProperty("bloodCost", 100);
 		json.addProperty("heldItem", "hemomancy:sanguine_formation");
 
-		ResourceLocation hitId = ForgeRegistries.BLOCKS.getKey(hitBlock);
+		ResourceLocation hitId = BuiltInRegistries.BLOCK.getKey(hitBlock);
 		json.addProperty("hitBlock", hitId != null ? hitId.toString() : "minecraft:stone");
 
 		json.add("pattern", encodePattern(pattern));
@@ -297,7 +299,7 @@ public class StructureScannerItem extends Item {
 		JsonObject key = new JsonObject();
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
 			JsonObject blockObj = new JsonObject();
-			ResourceLocation id = ForgeRegistries.BLOCKS.getKey(entry.getKey());
+			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
 			blockObj.addProperty("block", id != null ? id.toString() : "minecraft:stone");
 			key.add(entry.getValue(), blockObj);
 		}
@@ -323,11 +325,14 @@ public class StructureScannerItem extends Item {
 		tooltip.add(Component.literal("Sneak+click to reset stored corner.")
 				.withStyle(ChatFormatting.DARK_GRAY));
 
-		CompoundTag tag = stack.getTag();
-		if (tag != null && tag.getBoolean(TAG_HAS_POS1)) {
+		CustomData structureData = stack.get(DataComponents.CUSTOM_DATA);
+		if (structureData != null) {
+			CompoundTag tag = structureData.copyTag();
+			if (tag.getBoolean(TAG_HAS_POS1)) {
 			String pos = tag.getInt(TAG_POS1_X) + ", " + tag.getInt(TAG_POS1_Y) + ", " + tag.getInt(TAG_POS1_Z);
 			tooltip.add(Component.literal("Corner 1: " + pos).withStyle(ChatFormatting.GREEN));
 			tooltip.add(Component.literal("Click corner 2 to scan!").withStyle(ChatFormatting.YELLOW));
+			}
 		}
 
 		tooltip.add(Component.literal("Creative mode only!").withStyle(ChatFormatting.RED));
@@ -336,7 +341,7 @@ public class StructureScannerItem extends Item {
 	/** Shows enchantment glint while a corner is stored. */
 	@Override
 	public boolean isFoil(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		return tag != null && tag.getBoolean(TAG_HAS_POS1);
+		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+		return customData != null && customData.copyTag().getBoolean(TAG_HAS_POS1);
 	}
 }
