@@ -7,13 +7,13 @@ import com.vincenthuto.hemomancy.compat.mna.block.MnAPluginBlockInit;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class MnAPluginBlockEntityInit {
 	public static final DeferredRegister<BlockEntityType<?>> MNATILES = DeferredRegister
 			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Hemomancy.MOD_ID);
 
-	public static final RegistryObject<BlockEntityType<BrokenManaTrapazahedronBlockEntity>> broken_mana_trapazahedron = MNATILES
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrokenManaTrapazahedronBlockEntity>> broken_mana_trapazahedron = MNATILES
 			.register("broken_mana_trapazahedron", () -> BlockEntityType.Builder
 					.of(BrokenManaTrapazahedronBlockEntity::new, MnAPluginBlockInit.broken_mana_trapazahedron.get()).build(null));
 

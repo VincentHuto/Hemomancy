@@ -148,7 +148,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class ClientEvents {
@@ -538,7 +538,7 @@ public class ClientEvents {
 		@SubscribeEvent
 		public static void onModifyBakingResult(ModelEvent.ModifyBakingResult evt) {
 			// Wrap all Scar Pattern item models so the overlay layer is shrunk down
-			for (RegistryObject<Item> entry : ItemInit.BASEITEMS.getEntries()) {
+			for (DeferredHolder<Item, Item> entry : ItemInit.BASEITEMS.getEntries()) {
 				if (entry.get() instanceof ItemScarPattern) {
 					ModelResourceLocation modelLoc = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(entry.get()), "inventory");
 					BakedModel existing = evt.getModels().get(modelLoc);

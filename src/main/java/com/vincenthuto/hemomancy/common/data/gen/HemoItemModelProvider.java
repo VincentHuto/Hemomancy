@@ -13,7 +13,7 @@ import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class HemoItemModelProvider extends ItemModelProvider {
 	public HemoItemModelProvider(PackOutput generator, ExistingFileHelper existingFileHelper) {
@@ -22,19 +22,19 @@ public class HemoItemModelProvider extends ItemModelProvider {
 
 	@Override
 	protected void registerModels() {
-		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.SLABBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block != BlockInit.sanguine_pane.get()
 					&& block != BlockInit.cleansed_sanguine_pane.get()
@@ -48,10 +48,10 @@ public class HemoItemModelProvider extends ItemModelProvider {
 				registerBlockModel(block);
 			}
 		}
-		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
+		for (DeferredHolder<Item, Item> item : ItemInit.BASEITEMS.getEntries()) {
 			if (item.get() instanceof ItemScarPattern patternItem) {
 				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
 				String scarPath = ForgeRegistries.ITEMS.getKey(patternItem.getSCAR().get()).getPath();
@@ -72,10 +72,10 @@ public class HemoItemModelProvider extends ItemModelProvider {
 				basicItem(item.get());
 			}
 		}
-		for (RegistryObject<Item> item : ItemInit.SPAWNEGGS.getEntries()) {
+		for (DeferredHolder<Item, Item> item : ItemInit.SPAWNEGGS.getEntries()) {
 			registerSpawnEggItem(item.get());
 		}
-		for (RegistryObject<Item> item : ItemInit.HANDHELDITEMS.getEntries()) {
+		for (DeferredHolder<Item, Item> item : ItemInit.HANDHELDITEMS.getEntries()) {
 			registerHandheldItem(item.get());
 		}
 	}

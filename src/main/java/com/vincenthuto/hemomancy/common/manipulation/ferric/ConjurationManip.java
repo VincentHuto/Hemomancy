@@ -12,13 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ConjurationManip extends BloodManipulation {
 
-	RegistryObject<Item> item;
+	DeferredHolder<Item, Item> item;
 
-	public ConjurationManip(String name,RegistryObject<Item> item, double cost, double alignLevel, double xpCost,
+	public ConjurationManip(String name,DeferredHolder<Item, Item> item, double cost, double alignLevel, double xpCost,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, EnumManipulationType.QUICK, rank, tendency, section);
 		this.item = item;
@@ -31,7 +31,7 @@ public class ConjurationManip extends BloodManipulation {
 		}
 	}
 
-	public 	RegistryObject<Item> getItem() {
+	public 	DeferredHolder<Item, Item> getItem() {
 		return item;
 	}
 }

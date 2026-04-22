@@ -16,14 +16,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ItemScarPattern extends Item {
 
 	String path;
-	RegistryObject<Item> scar;
+	DeferredHolder<Item, Item> scar;
 
-	public ItemScarPattern(Properties prop, RegistryObject<Item> scar, String recipePath) {
+	public ItemScarPattern(Properties prop, DeferredHolder<Item, Item> scar, String recipePath) {
 		super(prop.stacksTo(1));
 		this.scar = scar;
 		this.path = recipePath;
@@ -38,11 +38,11 @@ public class ItemScarPattern extends Item {
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 	}
 	
-	public RegistryObject<Item> getSCAR() {
+	public DeferredHolder<Item, Item> getSCAR() {
 		return scar;
 	}
 	
-	public void setSCAR(RegistryObject<Item> scar) {
+	public void setSCAR(DeferredHolder<Item, Item> scar) {
 		this.scar = scar;
 	}
 

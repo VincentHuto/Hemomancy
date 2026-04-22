@@ -28,7 +28,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,18 +40,18 @@ public class MnAPluginBlockInit {
 			Hemomancy.MOD_ID);
 
 
-	public static final RegistryObject<Block> broken_mana_trapazahedron = MNABLOCKS.register("broken_mana_trapazahedron", BrokenManaTrapazahedronBlock::new);
+	public static final DeferredHolder<Block, Block> broken_mana_trapazahedron = MNABLOCKS.register("broken_mana_trapazahedron", BrokenManaTrapazahedronBlock::new);
 
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
-		MNABLOCKS.getEntries().stream().map(RegistryObject::get).forEach(blocks::add);
+		MNABLOCKS.getEntries().stream().map(e -> e.get()).forEach(blocks::add);
 
 		return blocks;
 	}
 
-	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
+	public static Stream<DeferredHolder<Block, Block>> getAllBlockEntriesAsStream() {
 
-		Stream<RegistryObject<Block>> combinedStream = Stream.of(MNABLOCKS.getEntries()).flatMap(Collection::stream);
+		Stream<DeferredHolder<Block, Block>> combinedStream = Stream.of(MNABLOCKS.getEntries()).flatMap(Collection::stream);
 
 		return combinedStream;
 	}

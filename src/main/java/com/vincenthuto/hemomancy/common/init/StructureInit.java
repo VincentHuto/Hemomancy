@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class StructureInit {
 	/**
@@ -26,16 +26,16 @@ public class StructureInit {
 	public static DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister
 			.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, Hemomancy.MOD_ID);
 
-	public static final RegistryObject<StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
+	public static final DeferredHolder<StructureType<?>, StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
 			.register("blood_temple", () -> explicitStructureTypeTyping(BloodTempleStructure.CODEC));
 
-	public static final RegistryObject<StructureType<UnstainedChurchStructure>> unstained_church = STRUCTURES
+	public static final DeferredHolder<StructureType<?>, StructureType<UnstainedChurchStructure>> unstained_church = STRUCTURES
 			.register("unstained_church", () -> explicitStructureTypeTyping(UnstainedChurchStructure.CODEC));
 
-	public static final RegistryObject<StructureType<HarbingerOutpostStructure>> harbinger_outpost = STRUCTURES
+	public static final DeferredHolder<StructureType<?>, StructureType<HarbingerOutpostStructure>> harbinger_outpost = STRUCTURES
 			.register("harbinger_outpost", () -> explicitStructureTypeTyping(HarbingerOutpostStructure.CODEC));
 
-	public static final RegistryObject<StructureType<MausoleumStructure>> mausoleum = STRUCTURES
+	public static final DeferredHolder<StructureType<?>, StructureType<MausoleumStructure>> mausoleum = STRUCTURES
 			.register("mausoleum", () -> explicitStructureTypeTyping(MausoleumStructure.CODEC));
 
 	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(Codec<T> structureCodec) {
