@@ -18,8 +18,7 @@ public class ItemSanguineConduit extends Item{
     public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
         // Opens the Skill Tree screen (client-only)
         if (lvl.isClientSide) {
-            net.neoforged.fml.DistExecutor.unsafeRunWhenOn(net.neoforged.api.distmarker.Dist.CLIENT,
-                    () -> HarbingerProgressScreen::openScreen);
+            HarbingerProgressScreen.openScreen();
         }
         return super.use(lvl, p_41433_, p_41434_);
     }

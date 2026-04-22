@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.common.effect;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -22,15 +20,40 @@ public class ElytraEffect extends MobEffect {
 		return true;
 	}
 
+	private static void setFlightEnabled(Player player, boolean enabled) {
+		if (player.getAbilities().mayfly == enabled) return;
+		if (enabled) {
+			player.getAbilities().mayfly = true;
+		} else {
+			boolean creative = player.isCreative() || player.isSpectator();
+			player.getAbilities().mayfly = creative;
+			if (!creative) {
+				player.getAbilities().flying = false;
+			} else {
+				player.getAbilities().setFlyingSpeed(0.05F);
+			}
+		}
+		if (player instanceof ServerPlayer serverPlayer) {
+			serverPlayer.onUpdateAbilities();
+		}
+	}
+
+	private static void setFlySpeed(Player player, float speed) {
+		player.getAbilities().setFlyingSpeed(speed);
+		if (player instanceof ServerPlayer serverPlayer) {
+			serverPlayer.onUpdateAbilities();
+		}
+	}
+
 	@Override
 	public void applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
 		// System.out.println("fef");
 		if (livingEntity instanceof Player player) {
-			Hemomancy.instance.proxy.setFlightEnabled(player, true);
+			setFlightEnabled(player, true);
 			if (!player.isCreative() && !player.isSpectator()) {
-				Hemomancy.instance.proxy.setFlySpeed(player, amplifier * 5 / 100f);
+				setFlySpeed(player, amplifier * 5 / 100f);
 			} else {
-				Hemomancy.instance.proxy.setFlySpeed(player, 0.05F);
+				setFlySpeed(player, 0.05F);
 			}
 
 			if (player.isFallFlying()) {
@@ -81,12 +104,10 @@ public class ElytraEffect extends MobEffect {
 	public void removeAttributeModifiers(@NotNull LivingEntity living, @NotNull AttributeMap attributemods,
 			int p_111187_3_) {
 		super.removeAttributeModifiers(living, attributemods, p_111187_3_);
-		if (living instanceof ServerPlayer) {
-			System.out.println(Hemomancy.instance.toString());
-
-			Hemomancy.instance.proxy.setFlightEnabled((ServerPlayer) living, false);
-		} else if (living instanceof Player && living.level().isClientSide) {
-			Hemomancy.instance.proxy.setFlySpeed((Player) living, 0.05F);
+		if (living instanceof ServerPlayer serverPlayer) {
+			setFlightEnabled(serverPlayer, false);
+		} else if (living instanceof Player player && living.level().isClientSide) {
+			setFlySpeed(player, 0.05F);
 		}
 	}
 }

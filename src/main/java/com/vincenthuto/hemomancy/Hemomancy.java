@@ -34,8 +34,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
@@ -67,7 +67,6 @@ public class Hemomancy {
                     .build());
     public static Hemomancy instance;
     public static boolean forcesLoaded = false;
-    public ISidedProxy proxy;
 
     /**
      * NeoForge 1.21: the mod-event bus is injected into the constructor automatically.
@@ -114,12 +113,6 @@ public class Hemomancy {
         VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
         LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            this.proxy = new ClientProxy();
-        });
-        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
-            this.proxy = new ServerProxy();
-        });
         GeckoLib.initialize();
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
@@ -148,7 +141,7 @@ public class Hemomancy {
             forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
             forgeBus.addListener(BloodTitheHandler::onSpellCast);
             modEventBus.register(HarbingerEventHandler.class);
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
                 modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
                 modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
                 modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
@@ -157,7 +150,7 @@ public class Hemomancy {
                 forgeBus.addListener(MnAPluginClientEvents::onClientTick);
                 modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
                 modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
-            });
+            }
         }
         if (modList.isLoaded("curios")) {
             LOGGER.info("CURIOS WAS LOADED");
