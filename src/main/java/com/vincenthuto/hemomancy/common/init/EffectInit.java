@@ -199,7 +199,6 @@ public class EffectInit {
 
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
-        // TODO: update to 1.21 BrewingRecipeRegistry API
     }
 
 }

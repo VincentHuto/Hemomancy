@@ -138,10 +138,11 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 			ItemDisplayContext pItemDisplayContext, boolean pLeftHand, PoseStack pMatrixStack,
 			MultiBufferSource pBuffer, int pCombinedLight) {
 		if (!pItemStack.isEmpty()) {
-			// renderStatic(pLivingEntity, swirlConsumer, pItemStack, pItemDisplayContext, pLeftHand, pMatrixStack, pBuffer,
-			// 		pLivingEntity.level(), pCombinedLight, OverlayTexture.NO_OVERLAY,
-			// 		pLivingEntity.getId() + pItemDisplayContext.ordinal());
-
+			Minecraft.getInstance().getItemRenderer().renderStatic(
+					pLivingEntity, pItemStack, pItemDisplayContext, pLeftHand,
+					pMatrixStack, pBuffer, pLivingEntity.level(),
+					pCombinedLight, OverlayTexture.NO_OVERLAY,
+					pLivingEntity.getId() + pItemDisplayContext.ordinal());
 		}
 	}
 
