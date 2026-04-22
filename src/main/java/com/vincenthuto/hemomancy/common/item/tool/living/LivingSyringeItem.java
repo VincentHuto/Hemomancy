@@ -14,6 +14,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -123,9 +124,11 @@ public class LivingSyringeItem extends LivingItemItem {
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);
 		player.playSound(SoundEvents.BOTTLE_FILL, 2.0F, 0.8F);
-		PacketHandler.sendLivingToolBreakParticles(target.position().add(0, target.getBbHeight() * 0.5, 0),
-				EntityParticleUtils.getColorFromPredicate(EntityParticleUtils.getEntityPredicate(target)),
-				16, player.level().dimension());
+		if (player.level() instanceof ServerLevel serverLevel) {
+			PacketHandler.sendLivingToolBreakParticles(target.position().add(0, target.getBbHeight() * 0.5, 0),
+					EntityParticleUtils.getColorFromPredicate(EntityParticleUtils.getEntityPredicate(target)),
+					16, serverLevel);
+		}
 		if (VialRackItem.countEmptyVials(rack) <= 0) {
 			ejectRack(player, syringe);
 		}

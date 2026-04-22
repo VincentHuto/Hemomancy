@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -113,7 +114,9 @@ public class SanguisLanceaItem extends LivingToolItem {
 						1.0F);
 
 				Vec3 pos = player.position();
-				PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, player.level().dimension());
+				if (player.level() instanceof ServerLevel serverLevel) {
+					PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
+				}
 			}
 
 			((Player) entityLiving).awardStat(Stats.ITEM_USED.get(this));

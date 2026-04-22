@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPa
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -58,8 +59,9 @@ public class KnownManipulationEvents {	@SubscribeEvent
 			if (known.isAvatarActive()) {
 				double dist = e.getEntity().distanceToSqr(player);
 				HitResult trace = e.getEntity().pick(dist, 0, false);
-				PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f,
-						e.getEntity().level().dimension());
+				if (e.getEntity().level() instanceof ServerLevel serverLevel) {
+					PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f, serverLevel);
+				}
 				e.setAmount(e.getAmount() * 0);
 
 			}

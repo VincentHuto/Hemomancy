@@ -56,9 +56,8 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticle
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
 
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 // ── NeoForge 1.21 networking API ─────────────────────────────────────────────
 // SimpleChannel / NetworkRegistry / PacketDistributor (old pattern) are REMOVED.
@@ -226,32 +225,32 @@ public class PacketHandler {
     // ─────────────────────────────────────────────────────────────────────────
 
     public static void sendAvatarHitParticles(Vec3 pos, ParticleColor color, double radius,
-            ResourceKey<Level> dimension) {
+            ServerLevel level) {
         // NeoForge 1.21: sendToPlayersNear replaces PacketDistributor.NEAR.with(TargetPoint)
-        PacketDistributor.sendToPlayersNear(null, null, pos.x, pos.y, pos.z, radius,
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnAvatarParticlesPacket(pos, color));
     }
 
     public static void sendBloodFlaskParticles(Vec3 pos, ParticleColor color, double radius,
-            ResourceKey<Level> dimension) {
-        PacketDistributor.sendToPlayersNear(null, null, pos.x, pos.y, pos.z, radius,
+            ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnFlaskParticlesPacket(pos, color));
     }
 
     public static void sendClawParticles(Vec3 pos, ParticleColor color, double radius,
-            ResourceKey<Level> dimension) {
-        PacketDistributor.sendToPlayersNear(null, null, pos.x, pos.y, pos.z, radius,
+            ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnBloodClawParticlesPacket(pos, color));
     }
 
     public static void sendLivingToolBreakParticles(Vec3 pos, ParticleColor color, double radius,
-            ResourceKey<Level> dimension) {
-        PacketDistributor.sendToPlayersNear(null, null, pos.x, pos.y, pos.z, radius,
+            ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnLivingToolParticlesPacket(pos, color));
     }
 
-    public static void sendMonolithShatterBurst(Vec3 pos, double radius, ResourceKey<Level> dimension) {
-        PacketDistributor.sendToPlayersNear(null, null, pos.x, pos.y, pos.z, radius,
+    public static void sendMonolithShatterBurst(Vec3 pos, double radius, ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnMonolithShatterBurstPacket(pos));
     }
 

@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -129,7 +130,9 @@ public class LivingSpearItem extends LivingToolItem {
 				worldIn.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
 
 				Vec3 pos = player.position();
-				PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, player.level().dimension());
+				if (player.level() instanceof ServerLevel serverLevel) {
+					PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
+				}
 
 				/*
 				 * IBloodVolume playerVolume =

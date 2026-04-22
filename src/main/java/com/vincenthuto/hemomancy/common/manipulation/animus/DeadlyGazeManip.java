@@ -16,6 +16,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -69,7 +70,9 @@ public class DeadlyGazeManip extends BloodManipulation {
 					Vec3 end = entVec.add(0, hitEntity.getBbHeight(), 0).add(rand.nextDouble() - rand.nextDouble(), 0,
 							rand.nextDouble() - rand.nextDouble());
 
-					PacketHandler.sendClawParticles(end, ParticleColor.BLOOD, 64f, world.dimension());
+					if (world instanceof ServerLevel serverLevel) {
+						PacketHandler.sendClawParticles(end, ParticleColor.BLOOD, 64f, serverLevel);
+					}
 
 
 					HutosLib.proxy.lightningFX(entVec, end, 64f, ParticleColor.BLOOD);
