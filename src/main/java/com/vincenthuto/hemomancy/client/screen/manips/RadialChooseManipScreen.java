@@ -26,19 +26,18 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.bus.api.SubscribeEvent;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
 	@SubscribeEvent
-	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
-		if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+		if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR))
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -109,9 +108,13 @@ public class RadialChooseManipScreen extends Screen {
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		if (this.needsRecheckStacks) {
 			this.cachedMenuItems.clear();
+			if (mc.player == null) {
+				this.menu.setCentralText(Component.empty());
+				return;
+			}
 
-			IKnownManipulations manips = mc.HemoCapabilityAccess.getKnownManipulations(player)
-					.orElseThrow(NullPointerException::new);
+			IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(mc.player)
+					.orElseThrow();
 
 			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary
 			List<BloodManipulation> allManips = manips.getManipList();
@@ -146,7 +149,7 @@ public class RadialChooseManipScreen extends Screen {
 			this.menu.setCentralText(Component.literal("No Memorized Manipulations"));
 		} else if (gourdEquipped != null) {
 
-			MutableComponent textComponents = MutableComponent.create(ComponentContents.EMPTY);
+			MutableComponent textComponents = Component.empty().copy();
 			if (inv != null) {
 				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX))
 						.orElseThrow(NullPointerException::new);

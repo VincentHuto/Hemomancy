@@ -88,9 +88,9 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 			if (model == crownModel) {
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 				VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-				model.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				model.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, -1);
 			} else {
-				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 			}
 
 			ms.popPose();

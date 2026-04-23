@@ -14,8 +14,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -23,8 +23,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialMenuScreen extends Screen {
 	@SubscribeEvent
-	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
-		if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+		if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR))
 			return;
 
 		if (Minecraft.getInstance().screen instanceof RadialMenuScreen) {

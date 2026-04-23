@@ -70,8 +70,7 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 		}
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
-				1.0F, 1.0F, 1.0F, 1.0F);
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		ItemStack hosted = te.getHostedMorphling();
@@ -105,3 +104,4 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 		}
 	}
 }
+

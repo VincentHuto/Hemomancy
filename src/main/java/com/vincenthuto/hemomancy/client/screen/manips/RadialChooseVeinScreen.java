@@ -27,8 +27,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.bus.api.SubscribeEvent;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -38,8 +38,8 @@ public class RadialChooseVeinScreen extends Screen {
 	final ResourceLocation teleportTexture = Hemomancy.rloc("textures/gui/vein_teleport.png");
 
 	@SubscribeEvent
-	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
-		if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+		if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR))
 			return;
 
 		Minecraft mc = Minecraft.getInstance();

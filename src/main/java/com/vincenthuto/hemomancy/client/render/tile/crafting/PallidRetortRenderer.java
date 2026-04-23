@@ -73,8 +73,7 @@ public class PallidRetortRenderer implements BlockEntityRenderer<PallidRetortBlo
 		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
-				1.0F, 1.0F, 1.0F, 1.0F);
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}
@@ -146,3 +145,4 @@ public class PallidRetortRenderer implements BlockEntityRenderer<PallidRetortBlo
 		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
 	}
 }
+

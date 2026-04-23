@@ -38,7 +38,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
     }
 
     public SanguisLanceaEntity(Level pLevel, LivingEntity pShooter, ItemStack pStack) {
-        super(EntityInit.sanguis_lancea.get(), pShooter, pLevel);
+        super(EntityInit.sanguis_lancea.get(), pShooter, pLevel, pStack.copy(), ItemStack.EMPTY);
         this.sanguisLanceaItem = pStack.copy();
         this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getLoyalty(pStack));
         this.entityData.set(ID_FOIL, pStack.hasFoil());
@@ -94,6 +94,11 @@ public class SanguisLanceaEntity extends AbstractArrow {
 
     @Override
     protected ItemStack getPickupItem() {
+        return this.sanguisLanceaItem.copy();
+    }
+
+    @Override
+    protected ItemStack getDefaultPickupItem() {
         return this.sanguisLanceaItem.copy();
     }
 

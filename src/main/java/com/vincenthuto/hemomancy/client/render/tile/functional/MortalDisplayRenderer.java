@@ -41,9 +41,9 @@ public class MortalDisplayRenderer implements BlockEntityRenderer<MortalDisplayB
 		matrixStackIn.scale(scale, scale, scale);
 		matrixStackIn.translate(0, -scale * 0.7f - 0.2f +.5, 0);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(heart.renderType(texture));
-		heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-				1.0F, 1.0F);
+		heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 		matrixStackIn.popPose();
 
 	}
 }
+

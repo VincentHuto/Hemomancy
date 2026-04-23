@@ -69,7 +69,7 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 		}
 
 		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		// Restore 3-D item lighting so subsequent renders are unaffected
@@ -78,4 +78,5 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 		}
 	}
 }
+
 

@@ -60,8 +60,9 @@ public class EarthenVeinItemRenderer extends BlockEntityWithoutLevelRenderer {
 		model.getRoot().getChild("stent").visible = false;
 
 		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 	}
 }
+
 

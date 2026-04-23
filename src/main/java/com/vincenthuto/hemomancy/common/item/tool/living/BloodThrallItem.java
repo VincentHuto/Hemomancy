@@ -72,7 +72,7 @@ public class BloodThrallItem extends Item {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             } else {
                 // Second bind → destination
-                BlockPos src = NbtUtils.readBlockPos(tag.getCompound(TAG_SOURCE));
+                BlockPos src = NbtUtils.readBlockPos(tag, TAG_SOURCE).orElse(BlockPos.ZERO);
                 if (src.equals(pos)) {
                     if (!level.isClientSide) {
                         player.displayClientMessage(
@@ -112,8 +112,8 @@ public class BloodThrallItem extends Item {
                 }
                 playerVol.drain(SPAWN_BLOOD_COST);
 
-                BlockPos src = NbtUtils.readBlockPos(tag.getCompound(TAG_SOURCE));
-                BlockPos dest = NbtUtils.readBlockPos(tag.getCompound(TAG_DEST));
+                BlockPos src = NbtUtils.readBlockPos(tag, TAG_SOURCE).orElse(BlockPos.ZERO);
+                BlockPos dest = NbtUtils.readBlockPos(tag, TAG_DEST).orElse(BlockPos.ZERO);
 
                 BloodThrallEntity thrall = new BloodThrallEntity(level, player, src, dest);
                 thrall.moveTo(pos.getX() + 0.5, pos.above().getY(), pos.getZ() + 0.5, player.getYRot(), 0);
@@ -151,12 +151,12 @@ public class BloodThrallItem extends Item {
 
         if (tag != null) {
             if (tag.contains(TAG_SOURCE)) {
-                BlockPos src = NbtUtils.readBlockPos(tag.getCompound(TAG_SOURCE));
+                BlockPos src = NbtUtils.readBlockPos(tag, TAG_SOURCE).orElse(BlockPos.ZERO);
                 tips.add(Component.literal("Source: " + src.toShortString())
                         .withStyle(ChatFormatting.RED));
             }
             if (tag.contains(TAG_DEST)) {
-                BlockPos dest = NbtUtils.readBlockPos(tag.getCompound(TAG_DEST));
+                BlockPos dest = NbtUtils.readBlockPos(tag, TAG_DEST).orElse(BlockPos.ZERO);
                 tips.add(Component.literal("Destination: " + dest.toShortString())
                         .withStyle(ChatFormatting.BLUE));
             }

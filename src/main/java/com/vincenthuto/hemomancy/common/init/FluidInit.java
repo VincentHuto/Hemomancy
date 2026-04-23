@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class FluidInit {
 
-	public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS,
+	public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID,
 			Hemomancy.MOD_ID);
 
 //	public static final ResourceLocation WATER_STILL_RL = ResourceLocation.withDefaultNamespace("block/water_still");

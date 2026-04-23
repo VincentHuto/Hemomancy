@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.event;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
@@ -116,7 +115,6 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -139,8 +137,9 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.ModelEvent.BakingCompleted;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -225,7 +224,7 @@ public class ClientEvents {
 		if (useManip.consumeClick()) {
 			Minecraft mc = Minecraft.getInstance();
 			if (mc.player != null) {
-				mc.HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manip -> {
+				HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(manip -> {
 					if (manip.getSelectedManip() != null
 							&& manip.getSelectedManip().getName().equals("venous_travel")) {
 						mc.setScreen(new RadialChooseVeinScreen(manip));
@@ -294,12 +293,13 @@ public class ClientEvents {
 	@SubscribeEvent
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), event.getPartialTick());
-			GourdVineRenderer.render(event.getPoseStack(), event.getPartialTick());
-			BloodCraftRingRenderer.render(event.getPoseStack(), event.getPartialTick());
-			QliphothBloomRenderer.render(event.getPoseStack(), event.getPartialTick());
-			BloodBallRenderer.render(event.getPoseStack(), event.getPartialTick());
-			SanguineMonolithShatterRenderer.render(event.getPoseStack(), event.getPartialTick());
+			float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
+			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
+			GourdVineRenderer.render(event.getPoseStack(), partialTick);
+			BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
+			QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
+			BloodBallRenderer.render(event.getPoseStack(), partialTick);
+			SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
 		}
 	}
 
@@ -307,24 +307,15 @@ public class ClientEvents {
 	@SubscribeEvent
 	public static void cameraView(EntityEvent.Size event) {
 		if (event.getEntity() instanceof Player player) {
-			if (player.isAddedToWorld()) {
-				HemoCapabilityAccess.getKnownManipulations(player).ifPresent((manip) -> {
-					if (manip.isAvatarActive()) {
-						event.setNewEyeHeight(3.5f);
-						event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
-					} else {
-						if (player.isCrouching()) {
-							event.setNewSize(player.getDimensions(Pose.CROUCHING));
-
-						} else {
-							event.setNewEyeHeight(Player.DEFAULT_EYE_HEIGHT);
-							event.setNewSize(player.getDimensions(Pose.STANDING));
-
-						}
-
-					}
-				});
-			}
+			HemoCapabilityAccess.getKnownManipulations(player).ifPresent((manip) -> {
+				if (manip.isAvatarActive()) {
+					event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
+				} else if (player.isCrouching()) {
+					event.setNewSize(player.getDimensions(Pose.CROUCHING));
+				} else {
+					event.setNewSize(player.getDimensions(Pose.STANDING));
+				}
+			});
 		}
 	}
 
@@ -344,7 +335,7 @@ public class ClientEvents {
 		pMatrixStack.mulPose(Vector3.YP.rotationDegrees(f * f6 * 70.0F).toMoj());
 		pMatrixStack.mulPose(Vector3.ZP.rotationDegrees(f * f5 * -20.0F).toMoj());
 		AbstractClientPlayer abstractclientplayer = minecraft.player;
-		RenderSystem.setShaderTexture(0, abstractclientplayer.getSkinTextureLocation());
+		RenderSystem.setShaderTexture(0, abstractclientplayer.getSkin().texture());
 		pMatrixStack.translate(f * -1.0F, 3.6F, 3.5D);
 		pMatrixStack.mulPose(Vector3.ZP.rotationDegrees(f * 120.0F).toMoj());
 		pMatrixStack.mulPose(Vector3.XP.rotationDegrees(200.0F).toMoj());
@@ -363,14 +354,11 @@ public class ClientEvents {
 
 	@SubscribeEvent
 	public static void renderPlayerSize(RenderPlayerEvent event) {
-		if (event.getEntity().isAddedToWorld()) {
-			HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent((manip) -> {
-				if (manip.isAvatarActive()) {
-					event.getPoseStack().translate(0, 2, 0);
-				}
-			});
-
-		}
+		HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent((manip) -> {
+			if (manip.isAvatarActive()) {
+				event.getPoseStack().translate(0, 2, 0);
+			}
+		});
 	}
 
 	@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
@@ -493,22 +481,25 @@ public class ClientEvents {
 					com.vincenthuto.hemomancy.client.render.tile.functional.AltarOfCleansingRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.sanguine_monolith.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineMonolithRenderer::new);
-			MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
-			MenuScreens.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
-			MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
-			MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
-			MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
-			MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
-			MenuScreens.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
-			MenuScreens.register(ContainerInit.pallid_retort.get(), PallidRetortScreen::new);
-			MenuScreens.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
-			MenuScreens.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
-			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
-			MenuScreens.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
-			MenuScreens.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
-			MenuScreens.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
-			MenuScreens.register(ContainerInit.mnemonic_reliquary.get(), MnemonicReliquaryScreen::new);
+		}
 
+		@SubscribeEvent
+		public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+			event.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
+			event.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
+			event.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
+			event.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
+			event.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
+			event.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
+			event.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
+			event.register(ContainerInit.pallid_retort.get(), PallidRetortScreen::new);
+			event.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
+			event.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
+			event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
+			event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
+			event.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
+			event.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
+			event.register(ContainerInit.mnemonic_reliquary.get(), MnemonicReliquaryScreen::new);
 		}
 
 		@SubscribeEvent
@@ -538,21 +529,23 @@ public class ClientEvents {
 
 		@SubscribeEvent
 		public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
-			event.register(Hemomancy.rloc("item/blood_absorption_texture"));
-			event.register(Hemomancy.rloc("item/blood_projection_texture"));
+			event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
+			event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
 
 		}
 
 		@SubscribeEvent
 		public static void onModelBake(BakingCompleted evt) {
-			bloodAbsorptionModel = evt.getModels().get(Hemomancy.rloc("item/blood_absorption_texture"));
-			bloodProjectionModel = evt.getModels().get(Hemomancy.rloc("item/blood_projection_texture"));
+			bloodAbsorptionModel = evt.getModels()
+					.get(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
+			bloodProjectionModel = evt.getModels()
+					.get(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
 		}
 
 		@SubscribeEvent
 		public static void onModifyBakingResult(ModelEvent.ModifyBakingResult evt) {
 			// Wrap all Scar Pattern item models so the overlay layer is shrunk down
-			for (DeferredHolder<Item, Item> entry : ItemInit.BASEITEMS.getEntries()) {
+			for (DeferredHolder<Item, ? extends Item> entry : ItemInit.BASEITEMS.getEntries()) {
 				if (entry.get() instanceof ItemScarPattern) {
 					ModelResourceLocation modelLoc = ModelResourceLocation.inventory(BuiltInRegistries.ITEM.getKey(entry.get()));
 					BakedModel existing = evt.getModels().get(modelLoc);
@@ -565,28 +558,36 @@ public class ClientEvents {
 
 		// Overlay
 		@SubscribeEvent
-		public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-			// event.registerAboveAll("bloodvolume", BloodVolumeOverlay.HUD_BLOODVOLUME);
-			event.registerAboveAll("bloodvolume", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-				gui.setupOverlayRenderState(true, false);
-				BloodVolumeOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
-				// BloodVolumeOverlay.HUD_BLOODVOLUME;
+		public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+			event.registerAboveAll(Hemomancy.rloc("bloodvolume"), (graphics, deltaTracker) -> {
+				if (BloodVolumeOverlay.instance != null) {
+					float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+					BloodVolumeOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+				}
 			});
-			event.registerAboveAll("equipped_morphling", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-				gui.setupOverlayRenderState(true, false);
-				EquippedMorphlingOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			event.registerAboveAll(Hemomancy.rloc("equipped_morphling"), (graphics, deltaTracker) -> {
+				if (EquippedMorphlingOverlay.instance != null) {
+					float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+					EquippedMorphlingOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+				}
 			});
-			event.registerAboveAll("manip_cooldown", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-				gui.setupOverlayRenderState(true, false);
-				ManipCooldownOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			event.registerAboveAll(Hemomancy.rloc("manip_cooldown"), (graphics, deltaTracker) -> {
+				if (ManipCooldownOverlay.instance != null) {
+					float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+					ManipCooldownOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+				}
 			});
-			event.registerAboveAll("unstained_gauge", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-				gui.setupOverlayRenderState(true, false);
-				UnstainedGaugeOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			event.registerAboveAll(Hemomancy.rloc("unstained_gauge"), (graphics, deltaTracker) -> {
+				if (UnstainedGaugeOverlay.instance != null) {
+					float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+					UnstainedGaugeOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+				}
 			});
-			event.registerAboveAll("fungal_whisper_vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-				gui.setupOverlayRenderState(true, false);
-				FungalWhisperVignetteOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			event.registerAboveAll(Hemomancy.rloc("fungal_whisper_vignette"), (graphics, deltaTracker) -> {
+				if (FungalWhisperVignetteOverlay.instance != null) {
+					float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+					FungalWhisperVignetteOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+				}
 			});
 		}
 	}

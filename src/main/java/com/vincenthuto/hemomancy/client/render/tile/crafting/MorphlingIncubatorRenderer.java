@@ -368,8 +368,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		model.setupAnim(ageInTicks);
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
-				1.0F, 1.0F, 1.0F, 1.0F);
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}
@@ -442,3 +441,4 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
 	}
 }
+

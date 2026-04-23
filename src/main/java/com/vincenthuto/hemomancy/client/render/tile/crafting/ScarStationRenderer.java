@@ -247,10 +247,10 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
-				1.0F, 1.0F, 1.0F, 1.0F);
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}
 
 }
+

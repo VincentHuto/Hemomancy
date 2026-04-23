@@ -176,8 +176,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         stack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
         VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(MODEL_TEXTURE));
-        standModel.renderToBuffer(stack, vc, light, OverlayTexture.NO_OVERLAY,
-                1.0F, 1.0F, 1.0F, 1.0F);
+        standModel.renderToBuffer(stack, vc, light, OverlayTexture.NO_OVERLAY, -1);
 
         stack.popPose();
     }
@@ -385,8 +384,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
                 bs.endBatch(); // flush prior batches so our GL state doesn't corrupt them
 
                 VertexConsumer vc = bs.getBuffer(RenderType.entityTranslucent(skin));
-                model.renderToBuffer(stack, vc, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,
-                        1.0f, 1.0f, 1.0f, 1.0f);
+                model.renderToBuffer(stack, vc, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, -1);
                 bs.endBatch();
 
                 // Restore layer visibility so the player's normal render isn't affected
@@ -601,3 +599,4 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         }
     }
 }
+

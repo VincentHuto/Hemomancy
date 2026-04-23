@@ -112,10 +112,9 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 					VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 					VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-					spearModel.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+					spearModel.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, -1);
 				} else {
-					spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
-							1.0F);
+					spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 				}
 			} else {
 				if (p_239207_2_ == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
@@ -133,7 +132,7 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 				}
 
-				spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 			}
 
 			ms.popPose();

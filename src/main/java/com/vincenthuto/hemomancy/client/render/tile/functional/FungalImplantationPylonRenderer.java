@@ -52,7 +52,7 @@ public class FungalImplantationPylonRenderer implements BlockEntityRenderer<Fung
 		int light = LevelRenderer.getLightColor(te.getLevel(), abovePos);
 
 		vein.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(texture)), light,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		pPoseStack.popPose();
 //
 //		pPoseStack.pushPose();
@@ -81,7 +81,7 @@ public class FungalImplantationPylonRenderer implements BlockEntityRenderer<Fung
 //		eye.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
 //
 //		eye.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(eyeTexture)), combinedLightIn,
-//				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+//				OverlayTexture.NO_OVERLAY, -1);
 //		pPoseStack.popPose();
 
 
@@ -91,3 +91,4 @@ public class FungalImplantationPylonRenderer implements BlockEntityRenderer<Fung
 	}
 
 }
+

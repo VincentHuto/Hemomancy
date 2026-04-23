@@ -85,20 +85,20 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 					VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
 					if (isOpen) {
 						modelOpenCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+								OverlayTexture.NO_OVERLAY, -1);
 					} else {
 						modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+								OverlayTexture.NO_OVERLAY, -1);
 					}
 
 				} else {
 					VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
 					if (isOpen) {
 						modelOpenBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+								OverlayTexture.NO_OVERLAY, -1);
 					} else {
 						modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+								OverlayTexture.NO_OVERLAY, -1);
 					}
 
 				}

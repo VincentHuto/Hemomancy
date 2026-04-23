@@ -98,9 +98,9 @@ public class MnemonicReliquaryRenderer implements BlockEntityRenderer<MnemonicRe
         poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 
         VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-        model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
-                1.0F, 1.0F, 1.0F, 1.0F);
+        model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 
         poseStack.popPose();
     }
 }
+

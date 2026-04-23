@@ -66,7 +66,7 @@ public class MorphlingCradleItemRenderer extends BlockEntityWithoutLevelRenderer
 		}
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		if (isGui) {
@@ -74,3 +74,4 @@ public class MorphlingCradleItemRenderer extends BlockEntityWithoutLevelRenderer
 		}
 	}
 }
+

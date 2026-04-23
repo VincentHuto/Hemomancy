@@ -45,7 +45,7 @@ public class VeinLocation extends DimensionalPosition {
 			name = nbt.getString("name");
 			uuid = nbt.getUUID("id");
 			dim = ResourceLocation.parse(nbt.getString("dim"));
-			bPos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
+			bPos = NbtUtils.readBlockPos(nbt, "pos").orElse(BlockPos.ZERO);
 			VeinLocation loc = new VeinLocation(uuid, name, dim, bPos);
 			return loc;
 		}

@@ -46,8 +46,9 @@ public class SuspendedBloodCrystalItemRenderer extends BlockEntityWithoutLevelRe
 		poseStack.translate(0.0, -0.5, 0.0);
 
 		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 	}
 }
+
 

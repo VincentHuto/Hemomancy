@@ -98,18 +98,18 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 			if (isCurvedHorn) {
 				if (isOpen) {
 					openCurvedHornModel.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-							OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+							OverlayTexture.NO_OVERLAY, -1);
 				} else {
 					curvedHornModel.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-							OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+							OverlayTexture.NO_OVERLAY, -1);
 				}
 			} else {
 				if (isOpen) {
 					openGourdModel.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-							OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+							OverlayTexture.NO_OVERLAY, -1);
 				} else {
 					gourdModel.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-							OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+							OverlayTexture.NO_OVERLAY, -1);
 				}
 			}
 
@@ -117,4 +117,5 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 	}
 }
+
 

@@ -45,8 +45,9 @@ public class SanguisLanceaRenderer extends EntityRenderer<SanguisLanceaEntity> {
 
         pPoseStack.scale(0.5f,0.5f,0.5f);
 
-        this.model.renderToBuffer(pPoseStack, buffer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(pPoseStack, buffer, pPackedLight, OverlayTexture.NO_OVERLAY, -1);
         pPoseStack.popPose();
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }
 }
+

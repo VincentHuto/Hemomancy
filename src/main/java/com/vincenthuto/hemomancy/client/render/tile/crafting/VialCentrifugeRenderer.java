@@ -71,8 +71,7 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 
 		// Render
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(texture));
-		arms.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
-				1.0F);
+		arms.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 		matrixStackIn.popPose();
 
 
@@ -80,8 +79,7 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		matrixStackIn.translate(0.5D, 1.5D, 0.5D);
 		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		VertexConsumer standivertexbuilder = bufferIn.getBuffer(arms.renderType(texture));
-		stand.renderToBuffer(matrixStackIn, standivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
-				1.0F);
+		stand.renderToBuffer(matrixStackIn, standivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 		matrixStackIn.popPose();
 
 	}
@@ -98,3 +96,4 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		return finalNumber;
 	}
 }
+

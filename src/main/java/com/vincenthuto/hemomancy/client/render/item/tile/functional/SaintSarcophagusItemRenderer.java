@@ -75,7 +75,7 @@ public class SaintSarcophagusItemRenderer extends BlockEntityWithoutLevelRendere
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 
@@ -84,3 +84,4 @@ public class SaintSarcophagusItemRenderer extends BlockEntityWithoutLevelRendere
 		}
 	}
 }
+

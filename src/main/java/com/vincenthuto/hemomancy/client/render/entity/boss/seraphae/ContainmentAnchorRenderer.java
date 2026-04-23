@@ -45,8 +45,9 @@ public class ContainmentAnchorRenderer extends EntityRenderer<ContainmentAnchorE
 
 		VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexconsumer, packedLight,
-				OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}
 }
+

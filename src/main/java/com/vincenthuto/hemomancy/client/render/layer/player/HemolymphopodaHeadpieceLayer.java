@@ -42,7 +42,8 @@ public class HemolymphopodaHeadpieceLayer<T extends LivingEntity, M extends Huma
 		poseStack.translate(0.0F, -1.1F, 0.0F);
 		poseStack.scale(0.4F, 0.4F, 0.4F);
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
-		CACHED_MODEL.get().renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+		CACHED_MODEL.get().renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 	}
 }
+

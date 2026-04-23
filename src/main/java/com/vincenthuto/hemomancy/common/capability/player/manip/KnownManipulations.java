@@ -291,7 +291,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 					setAvatarActive(parsedNbt.getBoolean("avatarActive"));
 				}
 				if (parsedNbt.contains("lastVeinMineStart")) {
-					setLastVeinMineStart(NbtUtils.readBlockPos(parsedNbt.getCompound("lastVeinMineStart")));
+					setLastVeinMineStart(NbtUtils.readBlockPos(parsedNbt, "lastVeinMineStart").orElse(BlockPos.ZERO));
 				}
 				if (parsedNbt.contains("equippedManips")) {
 					ListTag equippedTag = parsedNbt.getList("equippedManips", Tag.TAG_STRING);

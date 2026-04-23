@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.data.gen;
 
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -23,7 +22,7 @@ public class HemoRecipeProvider extends RecipeProvider {
 	}
 
 	@Override
-	protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+	protected void buildRecipes(RecipeOutput consumer) {
 
 		SimpleCookingRecipeBuilder
 				.smelting(Ingredient.of(ItemInit.swollen_leech.get()), RecipeCategory.MISC, ItemInit.dried_leech.get(), 1f, 200)

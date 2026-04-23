@@ -44,7 +44,7 @@ public class SanguilithModel<T extends Entity> extends EntityModel<SanguilithEnt
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
-		whole.render(poseStack, buffer, packedLight, packedOverlay);
+		whole.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 	}
 
 	@Override

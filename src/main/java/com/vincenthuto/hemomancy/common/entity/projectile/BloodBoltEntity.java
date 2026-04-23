@@ -61,11 +61,11 @@ public class BloodBoltEntity extends AbstractArrow {
 	}
 
 	public BloodBoltEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.blood_bolt.get(), x, y, z, worldIn);
+		super(EntityInit.blood_bolt.get(), x, y, z, worldIn, new ItemStack(ItemInit.blood_bolt.get()), ItemStack.EMPTY);
 	}
 
 	public BloodBoltEntity(Level worldIn, LivingEntity shooter) {
-		super(EntityInit.blood_bolt.get(), shooter, worldIn);
+		super(EntityInit.blood_bolt.get(), shooter, worldIn, new ItemStack(ItemInit.blood_bolt.get()), ItemStack.EMPTY);
 	}
 
 	@Override
@@ -133,6 +133,11 @@ public class BloodBoltEntity extends AbstractArrow {
 
 			return itemstack;
 		}
+	}
+
+	@Override
+	protected ItemStack getDefaultPickupItem() {
+		return new ItemStack(ItemInit.blood_bolt.get());
 	}
 
 	@Override

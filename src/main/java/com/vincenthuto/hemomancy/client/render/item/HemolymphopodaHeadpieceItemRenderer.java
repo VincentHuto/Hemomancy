@@ -67,9 +67,10 @@ public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevel
 		poseStack.translate(0.0f, DOME_CENTER_Y, DOME_CENTER_Z);
 
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
-		model.renderToBuffer(poseStack, consumer, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+		model.renderToBuffer(poseStack, consumer, light, OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}
 }
+
 

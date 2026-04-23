@@ -79,15 +79,18 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
 
     public BloodThrallEntity(EntityType<? extends BloodThrallEntity> type, Level level) {
         super(type, level);
-        this.setMaxUpStep(1.0f);
     }
 
     public BloodThrallEntity(Level level, Player owner, BlockPos source, BlockPos dest) {
         super(EntityInit.blood_thrall.get(), level);
-        this.setMaxUpStep(1.0f);
         setOwnerUUID(owner.getUUID());
         setSourcePos(source);
         setDestPos(dest);
+    }
+
+    @Override
+    public float maxUpStep() {
+        return 1.0f;
     }
 
     // ── Attributes ──
@@ -231,8 +234,8 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.hasUUID("Owner")) setOwnerUUID(tag.getUUID("Owner"));
-        if (tag.contains("SourcePos")) setSourcePos(NbtUtils.readBlockPos(tag.getCompound("SourcePos")));
-        if (tag.contains("DestPos")) setDestPos(NbtUtils.readBlockPos(tag.getCompound("DestPos")));
+        setSourcePos(NbtUtils.readBlockPos(tag, "SourcePos").orElse(null));
+        setDestPos(NbtUtils.readBlockPos(tag, "DestPos").orElse(null));
         setCarriedBlood(tag.getFloat("CarriedBlood"));
         int stOrd = tag.getInt("ThrallState");
         if (stOrd >= 0 && stOrd < ThrallState.values().length) {

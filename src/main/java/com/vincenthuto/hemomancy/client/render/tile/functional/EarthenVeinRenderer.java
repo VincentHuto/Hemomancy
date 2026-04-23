@@ -50,7 +50,7 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 		vein.getRoot().getChild("stent").getChild("nametag").visible =named;
 
 		vein.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(texture)), combinedLightIn,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		pPoseStack.popPose();
 //
 //		pPoseStack.pushPose();
@@ -79,7 +79,7 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 //		eye.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
 //
 //		eye.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(eyeTexture)), combinedLightIn,
-//				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+//				OverlayTexture.NO_OVERLAY, -1);
 //		pPoseStack.popPose();
 
 
@@ -89,3 +89,4 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 	}
 
 }
+

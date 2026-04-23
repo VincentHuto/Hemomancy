@@ -85,6 +85,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -263,8 +264,8 @@ public class LayerEvents {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
-		EntityRenderer<? extends Player> render = event.getSkin(skinName);
+	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, PlayerSkin.Model skinModel) {
+		EntityRenderer<? extends Player> render = event.getSkin(skinModel);
 		if (render instanceof LivingEntityRenderer livingRenderer) {
 			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
 			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
@@ -288,8 +289,8 @@ public class LayerEvents {
 		addLayerToEntity(event, EntityType.HUSK);
 		addLayerToEntity(event, EntityType.DROWNED);
 		addLayerToEntity(event, EntityType.STRAY);
-		addLayerToPlayerSkin(event, "default");
-		addLayerToPlayerSkin(event, "slim");
+		addLayerToPlayerSkin(event, PlayerSkin.Model.WIDE);
+		addLayerToPlayerSkin(event, PlayerSkin.Model.SLIM);
 
 	}
 

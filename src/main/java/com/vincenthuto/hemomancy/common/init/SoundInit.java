@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class SoundInit {
-	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,
+	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT,
 			Hemomancy.MOD_ID);
 
 	private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {

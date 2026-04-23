@@ -79,7 +79,7 @@ public class VisceralMirrorItemRenderer extends BlockEntityWithoutLevelRenderer 
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 
@@ -88,3 +88,4 @@ public class VisceralMirrorItemRenderer extends BlockEntityWithoutLevelRenderer 
 		}
 	}
 }
+

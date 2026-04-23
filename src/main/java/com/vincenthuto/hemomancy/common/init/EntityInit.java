@@ -43,7 +43,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class EntityInit {
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE,
             Hemomancy.MOD_ID);
 
     public static final TagKey<EntityType<?>> FUNGAL_TAG = createTag("fungal");

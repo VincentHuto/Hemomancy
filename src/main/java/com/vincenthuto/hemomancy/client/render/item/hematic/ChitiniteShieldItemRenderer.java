@@ -50,8 +50,7 @@ public class ChitiniteShieldItemRenderer extends BlockEntityWithoutLevelRenderer
 		Material rendermaterial = LOCATION_SHIELD;
 		VertexConsumer ivertexbuilder = rendermaterial.sprite().wrap(ItemRenderer.getFoilBufferDirect(buffers,
 				this.modelShield.renderType(rendermaterial.atlasLocation()), true, stack.hasFoil()));
-		this.modelShield.renderToBuffer(matrixStack, ivertexbuilder, combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F,
-				1.0F);
+		this.modelShield.renderToBuffer(matrixStack, ivertexbuilder, combinedLight, combinedOverlay, -1);
 		matrixStack.popPose();
 	}
 

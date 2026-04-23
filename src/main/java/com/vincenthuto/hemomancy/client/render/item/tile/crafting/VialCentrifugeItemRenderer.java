@@ -89,7 +89,7 @@ public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer 
 		poseStack.mulPose(Vector3.YP.rotationDegrees((float) ticks * 2.0f).toMoj());
 
 		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		// Render the stand (static, no spin)
@@ -99,7 +99,7 @@ public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer 
 		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
 		standModel.renderToBuffer(poseStack, buffer.getBuffer(standModel.renderType(TEXTURE)), combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		if (isGui) {
@@ -107,3 +107,4 @@ public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer 
 		}
 	}
 }
+

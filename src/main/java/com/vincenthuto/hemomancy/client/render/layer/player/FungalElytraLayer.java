@@ -47,7 +47,7 @@ public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>>
 							this.modelElytra.renderType(Hemomancy.rloc("textures/models/armor/pontiff_elytra.png")),
 							false, false);
 					this.modelElytra.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn,
-							OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+							OverlayTexture.NO_OVERLAY, -1);
 					matrixStackIn.popPose();
 				}
 
@@ -55,3 +55,4 @@ public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>>
 		}
 	}
 }
+

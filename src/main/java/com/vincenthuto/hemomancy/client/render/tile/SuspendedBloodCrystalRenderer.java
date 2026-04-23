@@ -52,10 +52,10 @@ public class SuspendedBloodCrystalRenderer implements BlockEntityRenderer<Suspen
 
         };
         VertexConsumer ivertexbuilder = bufferIn.getBuffer(wrappedType);
-        heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-                1.0F, 1.0F);
+        heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
         matrixStackIn.popPose();
 
     }
 
 }
+
