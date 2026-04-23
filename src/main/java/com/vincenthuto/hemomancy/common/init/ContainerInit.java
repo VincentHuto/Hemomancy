@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.*;
 
@@ -13,7 +12,6 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ContainerInit {
 	public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(Registries.MENU,
 			Hemomancy.MOD_ID);

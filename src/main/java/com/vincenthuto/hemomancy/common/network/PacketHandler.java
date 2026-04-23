@@ -54,7 +54,6 @@ import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtr
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -166,7 +165,8 @@ public class PacketHandler {
         net.playToClient(SpawnBloodClawParticlesPacket.TYPE, SpawnBloodClawParticlesPacket.STREAM_CODEC, SpawnBloodClawParticlesPacket::handle);
         net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
         net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
-        net.playToClient(PacketSpawnLightningParticle.TYPE, PacketSpawnLightningParticle.CODEC, PacketSpawnLightningParticle::handle);
+        // HutosLib registers this payload in HLPacketHandler; re-registering here causes
+        // "already registered" crashes for hutoslib:packet_spawn_lightning.
 
         // ── Skill tree ────────────────────────────────────────────────────────
         net.playToServer(PacketUnlockSkill.TYPE, PacketUnlockSkill.STREAM_CODEC, PacketUnlockSkill::handle);

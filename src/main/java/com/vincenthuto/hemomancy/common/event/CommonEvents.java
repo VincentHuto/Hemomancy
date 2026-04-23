@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.command.HemoCommand;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class CommonEvents {
@@ -16,9 +15,6 @@ public class CommonEvents {
 		HemoCommand.register(event.getDispatcher());
 	}
 
-	@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
-	public static class CommonModBusEvents {
-	}
 
 }
 

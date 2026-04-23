@@ -44,7 +44,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 	}
 
 	@SubscribeEvent
-	public static void onDimensionChange(PlayerTickEvent event) {
+	public static void onDimensionChange(PlayerTickEvent.Post event) {
 		event.getEntity().refreshDimensions();
 		syncPlayerEvent(event.getEntity());
 	}

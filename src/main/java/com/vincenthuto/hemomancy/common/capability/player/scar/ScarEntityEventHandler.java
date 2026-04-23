@@ -174,7 +174,7 @@ public class ScarEntityEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void onGlideTick(PlayerTickEvent event) {
+	public static void onGlideTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 		if (player.hasEffect(EffectInit.fungal_elytra)) {
 			AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
@@ -186,7 +186,7 @@ public class ScarEntityEventHandler {
 	
 
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent event) {
+	public static void playerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 		HemoCapabilityAccess.getScars(player).ifPresent(IScarsItemHandler::tick);
 		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());

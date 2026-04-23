@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -24,7 +23,6 @@ import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class RecipeInit {
 	public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister
 			.create(Registries.RECIPE_SERIALIZER, Hemomancy.MOD_ID);

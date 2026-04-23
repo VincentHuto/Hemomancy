@@ -130,18 +130,24 @@ public class ClientEvents {
 	private static boolean menuKey = false;
 
 	@SubscribeEvent
-	public static void onClientTick(ClientTickEvent event) {
+	public static void onClientTickPre(ClientTickEvent.Pre event) {
+		handleCommonClientTickInput();
+		handleRadialMenuTick();
+	}
 
-		if (event instanceof ClientTickEvent.Post) {
-			ManipCooldownOverlay.tick();
-			ActiveBloodCraftClientData.tick();
-			BloodBallClientData.tick();
-			SanguineMonolithShatterRenderer.tick();
-			if (FungalWhisperVignetteOverlay.instance != null) {
-				FungalWhisperVignetteOverlay.instance.tick();
-			}
+	@SubscribeEvent
+	public static void onClientTickPost(ClientTickEvent.Post event) {
+		ManipCooldownOverlay.tick();
+		ActiveBloodCraftClientData.tick();
+		BloodBallClientData.tick();
+		SanguineMonolithShatterRenderer.tick();
+		if (FungalWhisperVignetteOverlay.instance != null) {
+			FungalWhisperVignetteOverlay.instance.tick();
 		}
+		handleCommonClientTickInput();
+	}
 
+	private static void handleCommonClientTickInput() {
 		if (bloodFormation.consumeClick()) {
 			PacketHandler.sendToServer(new BloodFormationKeyPressPacket());
 		}
@@ -182,11 +188,9 @@ public class ClientEvents {
 				});
 			}
 		}
+	}
 
-		// Radial
-		if (!(event instanceof ClientTickEvent.Pre))
-			return;
-
+	private static void handleRadialMenuTick() {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.screen == null) {
 			boolean vascCharmKeyIsDown = openVascCharmMenu.isDown();
@@ -301,7 +305,7 @@ public class ClientEvents {
 	}
 
 	@SubscribeEvent
-	public static void renderPlayerSize(RenderPlayerEvent event) {
+	public static void renderPlayerSize(RenderPlayerEvent.Pre event) {
 		HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent((manip) -> {
 			if (manip.isAvatarActive()) {
 				event.getPoseStack().translate(0, 2, 0);
