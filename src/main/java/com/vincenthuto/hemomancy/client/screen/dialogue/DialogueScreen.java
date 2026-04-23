@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -207,6 +208,8 @@ public class DialogueScreen extends Screen {
 	@Override
 	public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
 		// Do NOT call renderBackground — we want the world visible behind the panel.
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
 
 		int panelX = PANEL_MARGIN;
 		int panelY = PANEL_MARGIN;
@@ -276,6 +279,7 @@ public class DialogueScreen extends Screen {
 		}
 
 		gfx.disableScissor();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		super.render(gfx, mouseX, mouseY, partialTick);
 	}
 
@@ -322,8 +326,12 @@ public class DialogueScreen extends Screen {
 
 	private void renderPortrait(GuiGraphics gfx, int x, int y) {
 		ResourceLocation icon = tree.speakerIcon();
+		AbstractTexture portraitTexture = Minecraft.getInstance().getTextureManager().getTexture(icon);
+		portraitTexture.setBlurMipmap(false, false);
+
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		gfx.fill(x - 1, y - 1, x + PORTRAIT_SIZE + 1, y + PORTRAIT_SIZE + 1, palette.borderOuter);
 		gfx.fill(x, y, x + PORTRAIT_SIZE, y + PORTRAIT_SIZE, palette.portraitBacking);
 
@@ -332,7 +340,9 @@ public class DialogueScreen extends Screen {
 				(float) TEXTURE_HEAD_U, (float) TEXTURE_HEAD_V,
 				TEXTURE_HEAD_SIZE, TEXTURE_HEAD_SIZE,
 				TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		portraitTexture.restoreLastBlurMipmap();
 		RenderSystem.disableBlend();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {

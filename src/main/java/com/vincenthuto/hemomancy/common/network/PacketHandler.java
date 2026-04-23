@@ -157,7 +157,7 @@ public class PacketHandler {
         net.playToServer(BloodCraftingKeyPressPacket.TYPE, BloodCraftingKeyPressPacket.STREAM_CODEC, BloodCraftingKeyPressPacket::handle);
 
         // ── Particles ─────────────────────────────────────────────────────────
-        net.playToClient(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
+        net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
         net.playToClient(EntityHitParticlePacket.TYPE, EntityHitParticlePacket.STREAM_CODEC, EntityHitParticlePacket::handle);
         net.playToClient(AirBloodDrawPacket.TYPE, AirBloodDrawPacket.STREAM_CODEC, AirBloodDrawPacket::handle);
         net.playToClient(SpawnFlaskParticlesPacket.TYPE, SpawnFlaskParticlesPacket.STREAM_CODEC, SpawnFlaskParticlesPacket::handle);

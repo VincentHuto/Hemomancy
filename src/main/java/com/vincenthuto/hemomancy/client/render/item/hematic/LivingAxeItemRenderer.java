@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingAxeModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -54,9 +53,9 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			}
 			model = unleashed;
 			if (model == unleashed) {
+				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-				VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-				model.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, -1);
+				model.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 			} else {
 				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 			}

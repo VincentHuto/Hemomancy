@@ -2,7 +2,7 @@
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -78,10 +78,13 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 		float hot2Y = (float) Math.cos(hot2El);
 		float hot2Z = (float) (Math.sin(hot2Az) * Math.sin(hot2El));
 
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-
+		// NeoForge/MC 1.21 buffer sources may reuse one fallback BufferBuilder for
+		// custom RenderTypes. Request/draw one type at a time so we never write to a
+		// consumer whose builder has already been switched.
+		VertexConsumer coreVC = buffer.getBuffer(HemoRenderTypes.QLIPHOTH_CORE);
 		drawDarkSphere(coreVC, mat, pulse);
+
+		VertexConsumer glowVC = buffer.getBuffer(HemoRenderTypes.QLIPHOTH_GLOW);
 		drawBloomSphere(glowVC, mat, pulse, hotX, hotY, hotZ, hot2X, hot2Y, hot2Z);
 
 		poseStack.popPose();

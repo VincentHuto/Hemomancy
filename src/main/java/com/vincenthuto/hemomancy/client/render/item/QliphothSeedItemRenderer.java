@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
@@ -127,18 +127,15 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
         // ── Root tendrils in entity-local space ──
         float time = (float) (System.currentTimeMillis() % 200000L) / 1000.0f;
         Matrix4f mat = poseStack.last().pose();
-        VertexConsumer coreVC = bufferIn.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-        VertexConsumer glowVC = bufferIn.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
         for (int i = 0; i < TENDRIL_COUNT; i++) {
-            drawTendril(coreVC, glowVC, mat, time, i);
+            drawTendril(bufferIn, mat, time, i);
         }
 
         super.render(entityIn, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
     }
 
-    private static void drawTendril(VertexConsumer coreVC, VertexConsumer glowVC,
-            Matrix4f mat, float time, int idx) {
+    private static void drawTendril(MultiBufferSource bufferIn, Matrix4f mat, float time, int idx) {
 
         float baseAngle = BASE_ANGLES[idx];
         float reach     = TENDRIL_REACH[idx];
@@ -176,6 +173,9 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
             pz[i] = sinA * radialDist + cosA * tangDist;
         }
 
+        // 1.21 buffer sources can invalidate a previously returned consumer when
+        // switching RenderTypes mid-draw. Keep tendril rendering on one type.
+            VertexConsumer coreVC = bufferIn.getBuffer(HemoRenderTypes.QLIPHOTH_CORE);
         for (int i = 0; i < TENDRIL_SEGMENTS; i++) {
             float t0 = (float) i / TENDRIL_SEGMENTS;
             float w0 = CORE_WIDTH * (1.0f - t0);
@@ -199,12 +199,12 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
             drawCrossQuad(coreVC, mat,
                     px[i], py[i], pz[i], px[i+1], py[i+1], pz[i+1],
                     c1x, c1y, c1z, c2x, c2y, c2z,
-                    w0, w1, 0.06f, 0.003f, 0.003f, coreAlpha);
+                    gw0, gw1, 0.52f, 0.02f, 0.02f, glowAlpha);
 
-            drawCrossQuad(glowVC, mat,
+            drawCrossQuad(coreVC, mat,
                     px[i], py[i], pz[i], px[i+1], py[i+1], pz[i+1],
                     c1x, c1y, c1z, c2x, c2y, c2z,
-                    gw0, gw1, 0.52f, 0.02f, 0.02f, glowAlpha);
+                    w0, w1, 0.06f, 0.003f, 0.003f, coreAlpha);
         }
     }
 

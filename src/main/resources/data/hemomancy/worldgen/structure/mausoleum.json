@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:jigsaw",
+  "type": "hemomancy:mausoleum",
   "start_pool": "hemomancy:mausoleum/top",
   "size": 7,
   "start_height": {

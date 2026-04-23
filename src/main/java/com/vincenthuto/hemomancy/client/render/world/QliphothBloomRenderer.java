@@ -122,17 +122,14 @@ public class QliphothBloomRenderer {
 		stack.translate(offsetX, offsetY, offsetZ);
 		Matrix4f mat = stack.last().pose();
 
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
-		drawTrunk(coreVC, glowVC, mat, time, pulse);
-		drawTrunkOrbs(coreVC, glowVC, mat, time, pulse);
-		drawRoots(coreVC, glowVC, mat, time, pulse);
-		drawBranches(coreVC, glowVC, mat, time, pulse);
-		drawCanopy(coreVC, glowVC, mat, time, pulse);
-		drawApexOrb(coreVC, glowVC, mat, time, pulse);
+		drawTrunk(buffer, mat, time, pulse);
+		drawTrunkOrbs(buffer, mat, time, pulse);
+		drawRoots(buffer, mat, time, pulse);
+		drawBranches(buffer, mat, time, pulse);
+		drawCanopy(buffer, mat, time, pulse);
+		drawApexOrb(buffer, mat, time, pulse);
 
 		stack.popPose();
 	}
@@ -162,9 +159,6 @@ public class QliphothBloomRenderer {
 	 */
 	private static void drawRingsInternal(PoseStack stack, MultiBufferSource buffer, float time) {
 		Matrix4f mat = stack.last().pose();
-
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
 		double pulse = (Math.sin(time * 0.08) + 1.0) * 0.5;
 
@@ -216,21 +210,21 @@ public class QliphothBloomRenderer {
 				float oGlow2 = r2 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
 
 				// Inner glow
-				emitQuad(glowVC, mat,
+				emitGlow(buffer, mat,
 						cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
 						cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
 						cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
 						cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
 
 				// Core
-				emitQuad(coreVC, mat,
+				emitCore(buffer, mat,
 						cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
 						cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
 						cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
 						cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
 
 				// Outer glow
-				emitQuad(glowVC, mat,
+				emitGlow(buffer, mat,
 						cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
 						cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
 						cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
@@ -255,18 +249,15 @@ public class QliphothBloomRenderer {
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
 		Matrix4f mat = stack.last().pose();
 
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-
 		// Global breathing pulse
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
-		drawTrunk(coreVC, glowVC, mat, time, pulse);
-		drawTrunkOrbs(coreVC, glowVC, mat, time, pulse);
-		drawRoots(coreVC, glowVC, mat, time, pulse);
-		drawBranches(coreVC, glowVC, mat, time, pulse);
-		drawCanopy(coreVC, glowVC, mat, time, pulse);
-		drawApexOrb(coreVC, glowVC, mat, time, pulse);
+		drawTrunk(buffer, mat, time, pulse);
+		drawTrunkOrbs(buffer, mat, time, pulse);
+		drawRoots(buffer, mat, time, pulse);
+		drawBranches(buffer, mat, time, pulse);
+		drawCanopy(buffer, mat, time, pulse);
+		drawApexOrb(buffer, mat, time, pulse);
 
 		stack.popPose();
 	}
@@ -276,7 +267,7 @@ public class QliphothBloomRenderer {
 	 * Tapers smoothly to a point at the top. The base flares outward with organic
 	 * buttress ridges that align with root positions, blending the trunk into the roots.
 	 */
-	private static void drawTrunk(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawTrunk(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse) {
 
 		// Precompute root base angles for buttress bulging
@@ -350,14 +341,14 @@ public class QliphothBloomRenderer {
 				float veinA = 0.15f * veinPulse;
 
 				// Core trunk quad
-				emitQuad(coreVC, mat,
+				emitCore(buffer, mat,
 						cos1 * r0_v1 + swayX0, y0, sin1 * r0_v1 + swayZ0, trunkR, trunkG, trunkB, trunkA,
 						cos2 * r0_v2 + swayX0, y0, sin2 * r0_v2 + swayZ0, trunkR, trunkG, trunkB, trunkA,
 						cos2 * r1_v2 + swayX1, y1, sin2 * r1_v2 + swayZ1, trunkR, trunkG, trunkB, trunkA,
 						cos1 * r1_v1 + swayX1, y1, sin1 * r1_v1 + swayZ1, trunkR, trunkG, trunkB, trunkA);
 
 				// Glow overlay for veins
-				emitQuad(glowVC, mat,
+				emitGlow(buffer, mat,
 						cos1 * (r0_v1 + 0.02f) + swayX0, y0, sin1 * (r0_v1 + 0.02f) + swayZ0, veinR, veinG, veinB, veinA,
 						cos2 * (r0_v2 + 0.02f) + swayX0, y0, sin2 * (r0_v2 + 0.02f) + swayZ0, veinR, veinG, veinB, veinA,
 						cos2 * (r1_v2 + 0.02f) + swayX1, y1, sin2 * (r1_v2 + 0.02f) + swayZ1, veinR, veinG, veinB, veinA,
@@ -406,7 +397,7 @@ public class QliphothBloomRenderer {
 	 * trunk surface. Each orb runs on its own time cycle — it fades in at a
 	 * random spot, holds briefly, fades out, then reappears at a new location.
 	 */
-	private static void drawTrunkOrbs(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawTrunkOrbs(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse) {
 
 		for (int i = 0; i < TRUNK_ORB_COUNT; i++) {
@@ -506,7 +497,7 @@ public class QliphothBloomRenderer {
 					float y11 = orbCenterY + cosT1 * currentRadius;
 					float z11 = orbZ + sinT1 * sinP1 * currentRadius;
 
-					emitQuad(coreVC, mat,
+					emitCore(buffer, mat,
 							x00, y00, z00, oR, oG, oB, oA,
 							x01, y01, z01, oR, oG, oB, oA,
 							x11, y11, z11, oR, oG, oB, oA,
@@ -529,7 +520,7 @@ public class QliphothBloomRenderer {
 			float glowCX = swayX + outX * (trunkR + 0.01f);
 			float glowCZ = swayZ + outZ * (trunkR + 0.01f);
 
-			emitQuad(glowVC, mat,
+			emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), mat,
 					glowCX - perpX * glowRadius, orbCenterY, glowCZ - perpZ * glowRadius, gR, 0.01f, 0.01f, 0f,
 					glowCX, orbCenterY + glowRadius, glowCZ, gR, 0.01f, 0.01f, gA,
 					glowCX + perpX * glowRadius, orbCenterY, glowCZ + perpZ * glowRadius, gR, 0.01f, 0.01f, 0f,
@@ -543,7 +534,7 @@ public class QliphothBloomRenderer {
 	 * writhe with time-based sinusoidal animation, and branch off into
 	 * smaller sub-roots to look like veins rather than tentacles.
 	 */
-	private static void drawRoots(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawRoots(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse) {
 
 		for (int i = 0; i < ROOT_COUNT; i++) {
@@ -558,7 +549,7 @@ public class QliphothBloomRenderer {
 
 			float mainStartDist = TRUNK_BASE_RADIUS * 0.85f;
 
-			drawSingleRoot(coreVC, glowVC, mat, time, pulse,
+			drawSingleRoot(buffer, mat, time, pulse,
 					baseAngle, rootLength, curvature,
 					mainStartDist, 0f, 0f, 0f, writheFreq, writhePhase,
 					0.10f, ROOT_SEGS, i);
@@ -602,7 +593,7 @@ public class QliphothBloomRenderer {
 				float subStartRadius = 0.06f * (1.0f - forkT * 0.5f);
 
 				// Draw sub-root starting from the actual fork point, growing outward from there
-				drawSingleRoot(coreVC, glowVC, mat, time, pulse,
+				drawSingleRoot(buffer, mat, time, pulse,
 						subAngle, subLength, curvature * 0.6,
 						0f, forkX, forkY, forkZ, subWritheFreq, subWrithePhase,
 						subStartRadius, ROOT_SUB_SEGS, i * 100 + sub);
@@ -621,7 +612,7 @@ public class QliphothBloomRenderer {
 	 * @param originY Y offset for the root origin (0 for main roots, fork point Y for sub-branches)
 	 * @param originZ Z offset for the root origin (0 for main roots, fork point Z for sub-branches)
 	 */
-	private static void drawSingleRoot(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawSingleRoot(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse,
 			double baseAngle, float rootLength, double curvature,
 			float startDist, float originX, float originY, float originZ, double writheFreq, double writhePhase,
@@ -705,7 +696,7 @@ public class QliphothBloomRenderer {
 				float z11 = ringCZ[s+1] + ringPerpZ[s+1] * fCos1 * ringW[s+1];
 
 				// Core root quad
-				emitQuad(coreVC, mat,
+				emitCore(buffer, mat,
 						x00, y00, z00, rootR, rootG, rootB, rootA,
 						x01, y01, z01, rootR, rootG, rootB, rootA,
 						x11, y11, z11, rootR, rootG, rootB, rootA * 0.9f,
@@ -713,7 +704,7 @@ public class QliphothBloomRenderer {
 
 				// Glow overlay for veining effect
 				float glowOff = 0.015f;
-				emitQuad(glowVC, mat,
+				emitGlow(buffer, mat,
 						x00 + ringPerpX[s] * glowOff, y00, z00 + ringPerpZ[s] * glowOff, glowR, 0.02f, 0.02f, glowA,
 						x01 + ringPerpX[s] * glowOff, y01, z01 + ringPerpZ[s] * glowOff, glowR, 0.02f, 0.02f, glowA,
 						x11 + ringPerpX[s+1] * glowOff, y11, z11 + ringPerpZ[s+1] * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f,
@@ -728,7 +719,7 @@ public class QliphothBloomRenderer {
 	 * Each segment bends from the previous one for a natural, non-linear shape.
 	 * Sub-branches fork off main branches for added complexity.
 	 */
-	private static void drawBranches(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawBranches(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse) {
 
 		for (int b = 0; b < BRANCH_COUNT; b++) {
@@ -833,7 +824,7 @@ public class QliphothBloomRenderer {
 					pz = (float) Math.cos(az0);
 				}
 
-				emitQuad(coreVC, mat,
+				emitCore(buffer, mat,
 						x0 - px * w0, y0, z0 - pz * w0, brR, brG, brB, brA,
 						x0 + px * w0, y0, z0 + pz * w0, brR, brG, brB, brA,
 						x1 + px * w1, y1, z1 + pz * w1, brR, brG, brB, brA * 0.9f,
@@ -844,7 +835,7 @@ public class QliphothBloomRenderer {
 				float gR = (float) (0.6 + 0.3 * glowPulse);
 				float gA = 0.12f * glowPulse * (1.0f - t0 * 0.5f);
 
-				emitQuad(glowVC, mat,
+				emitGlow(buffer, mat,
 						x0 - px * w0 * 2, y0, z0 - pz * w0 * 2, gR, 0.02f, 0.02f, gA,
 						x0 + px * w0 * 2, y0, z0 + pz * w0 * 2, gR, 0.02f, 0.02f, gA,
 						x1 + px * w1 * 2, y1, z1 + pz * w1 * 2, gR, 0.02f, 0.02f, gA * 0.7f,
@@ -940,7 +931,7 @@ public class QliphothBloomRenderer {
 						spz = (float) Math.cos(sAz0);
 					}
 
-					emitQuad(coreVC, mat,
+					emitCore(buffer, mat,
 							sx0 - spx * sw0, sy0, sz0 - spz * sw0, sbrR, sbrG, sbrB, sbrA,
 							sx0 + spx * sw0, sy0, sz0 + spz * sw0, sbrR, sbrG, sbrB, sbrA,
 							sx1 + spx * sw1, sy1, sz1 + spz * sw1, sbrR, sbrG, sbrB, sbrA * 0.9f,
@@ -951,7 +942,7 @@ public class QliphothBloomRenderer {
 					float sgR = (float) (0.55 + 0.3 * sGlowPulse);
 					float sgA = 0.10f * sGlowPulse * (1.0f - st0 * 0.5f);
 
-					emitQuad(glowVC, mat,
+					emitGlow(buffer, mat,
 							sx0 - spx * sw0 * 2, sy0, sz0 - spz * sw0 * 2, sgR, 0.02f, 0.02f, sgA,
 							sx0 + spx * sw0 * 2, sy0, sz0 + spz * sw0 * 2, sgR, 0.02f, 0.02f, sgA,
 							sx1 + spx * sw1 * 2, sy1, sz1 + spz * sw1 * 2, sgR, 0.02f, 0.02f, sgA * 0.7f,
@@ -966,7 +957,7 @@ public class QliphothBloomRenderer {
 	 * that twinkle and slowly wander around the tree crown, giving a living,
 	 * shimmering canopy effect rather than static fixed-position blooms.
 	 */
-	private static void drawCanopy(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawCanopy(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse) {
 
 		for (int i = 0; i < CANOPY_BLOOMS; i++) {
@@ -1023,14 +1014,14 @@ public class QliphothBloomRenderer {
 
 			// Draw diamond-shaped bloom (4 triangles as quads)
 			// Top
-			emitQuad(coreVC, mat,
+			emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), mat,
 					bx - bloomSize * 0.5f, by, bz, coreR, coreG, coreB, alpha * 0.7f,
 					bx, by + bloomSize, bz, coreR, coreG, coreB, alpha,
 					bx + bloomSize * 0.5f, by, bz, coreR, coreG, coreB, alpha * 0.7f,
 					bx, by, bz - bloomSize * 0.3f, coreR, coreG, coreB, alpha * 0.5f);
 
 			// Bottom
-			emitQuad(coreVC, mat,
+			emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), mat,
 					bx - bloomSize * 0.5f, by, bz, coreR, coreG, coreB, alpha * 0.7f,
 					bx, by - bloomSize * 0.6f, bz, coreR * 0.5f, coreG, coreB, alpha * 0.5f,
 					bx + bloomSize * 0.5f, by, bz, coreR, coreG, coreB, alpha * 0.7f,
@@ -1041,7 +1032,7 @@ public class QliphothBloomRenderer {
 			float gA = alpha * 0.25f * twinkle;
 			float gR = (float) (0.4 + 0.5 * twinkle);
 
-			emitQuad(glowVC, mat,
+			emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), mat,
 					bx - glowSize, by, bz, gR, 0.01f, 0.01f, 0f,
 					bx, by + glowSize, bz, gR, 0.01f, 0.01f, gA,
 					bx + glowSize, by, bz, gR, 0.01f, 0.01f, 0f,
@@ -1067,7 +1058,7 @@ public class QliphothBloomRenderer {
 	 * small black hole — an opaque near-black sphere surrounded by layers of
 	 * pulsing dark-red / crimson glow halos that slowly rotate.
 	 */
-	private static void drawApexOrb(VertexConsumer coreVC, VertexConsumer glowVC,
+	private static void drawApexOrb(MultiBufferSource buffer,
 			Matrix4f mat, float time, double pulse) {
 
 		// Orb center: at the very top of the trunk, matching sway
@@ -1121,7 +1112,7 @@ public class QliphothBloomRenderer {
 				float orbB = 0.005f;
 				float orbA = 0.95f;
 
-				emitQuad(coreVC, mat,
+				emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), mat,
 						x00, y00, z00, orbR, orbG, orbB, orbA,
 						x01, y01, z01, orbR, orbG, orbB, orbA,
 						x11, y11, z11, orbR, orbG, orbB, orbA,
@@ -1172,7 +1163,7 @@ public class QliphothBloomRenderer {
 				float oz1 = tiltAndRotateZ(outerR, a1, tiltAngle, rotAngle);
 
 				// Inner-to-outer strip quad with sway offset
-				emitQuad(glowVC, mat,
+				emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), mat,
 						ix0 + orbSwayX, iy0, iz0 + orbSwayZ, hR, hG, hB, hA * 0.3f,
 						ox0 + orbSwayX, oy0, oz0 + orbSwayZ, hR, hG, hB, hA,
 						ox1 + orbSwayX, oy1, oz1 + orbSwayZ, hR, hG, hB, hA,
@@ -1245,5 +1236,29 @@ public class QliphothBloomRenderer {
 		vc.addVertex(mat, x2, y2, z2).setColor(r2, g2, b2, a2);
 		vc.addVertex(mat, x3, y3, z3).setColor(r3, g3, b3, a3);
 		vc.addVertex(mat, x4, y4, z4).setColor(r4, g4, b4, a4);
+	}
+
+	private static void emitCore(MultiBufferSource buffer, Matrix4f mat,
+			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
+			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
+			float x3, float y3, float z3, float r3, float g3, float b3, float a3,
+			float x4, float y4, float z4, float r4, float g4, float b4, float a4) {
+		emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), mat,
+				x1, y1, z1, r1, g1, b1, a1,
+				x2, y2, z2, r2, g2, b2, a2,
+				x3, y3, z3, r3, g3, b3, a3,
+				x4, y4, z4, r4, g4, b4, a4);
+	}
+
+	private static void emitGlow(MultiBufferSource buffer, Matrix4f mat,
+			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
+			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
+			float x3, float y3, float z3, float r3, float g3, float b3, float a3,
+			float x4, float y4, float z4, float r4, float g4, float b4, float a4) {
+		emitQuad(buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), mat,
+				x1, y1, z1, r1, g1, b1, a1,
+				x2, y2, z2, r2, g2, b2, a2,
+				x3, y3, z3, r3, g3, b3, a3,
+				x4, y4, z4, r4, g4, b4, a4);
 	}
 }
