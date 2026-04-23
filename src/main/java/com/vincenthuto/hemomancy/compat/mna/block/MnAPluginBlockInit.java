@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
@@ -26,7 +27,6 @@ import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class MnAPluginBlockInit {
-	public static final DeferredRegister<Block> MNABLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> MNABLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
 
 
@@ -74,7 +74,7 @@ public class MnAPluginBlockInit {
 	}
 
 	public static void onRegisterItems(final RegisterEvent event) {
-		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
+		if (event.getRegistryKey() != Registries.ITEM) {
 			return;
 		}
 		var b = getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId()))
@@ -85,6 +85,6 @@ public class MnAPluginBlockInit {
 
 	}
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
-		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
+		event.register(Registries.ITEM, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
 }

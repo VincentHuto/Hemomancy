@@ -6,14 +6,14 @@ import com.vincenthuto.hemomancy.common.tile.*;
 import com.vincenthuto.hemomancy.common.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.tile.functional.*;
 import com.vincenthuto.hemomancy.common.tile.puzzle.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class BlockEntityInit {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
-			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Hemomancy.MOD_ID);
+			.create(Registries.BLOCK_ENTITY_TYPE, Hemomancy.MOD_ID);
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ScarStationBlockEntity>> scar_station = TILES
 			.register("scar_station", () -> BlockEntityType.Builder

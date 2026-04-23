@@ -1,22 +1,23 @@
 package com.vincenthuto.hemomancy.common.data.gen;
 
+import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.storage.loot.LootTable;
+
 import java.util.function.BiConsumer;
 
-import net.minecraft.data.loot.LootTableSubProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.LootTable.Builder;
-
-public class HemoEntityLootProvider implements  LootTableSubProvider  {
-
+public class HemoEntityLootProvider implements  LootTableSubProvider {
 	@Override
-	public void generate(BiConsumer<ResourceLocation, Builder> p_249643_) {
-	}
-
-
+	public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> biConsumer) {
 
 	}
 
-
+//	@Override
+//	public void generate(BiConsumer<ResourceLocation, Builder> p_249643_) {
+//	}
+//	}
+//
+}
 
 
 	// @Override
@@ -115,9 +116,7 @@ public class HemoEntityLootProvider implements  LootTableSubProvider  {
 
 	// 	@Override
 	// 	protected Iterable<EntityType<?>> getKnownEntities() {
-	// 		return ForgeRegistries.ENTITIES.getValues().stream()
-	// 				.filter(b -> b.getRegistryName().getNamespace().equals(Hemomancy.MOD_ID))
-	// 				.collect(Collectors.toList());
+	// 		return List.of();
 	// 	}
 	// }
 
@@ -131,9 +130,7 @@ public class HemoEntityLootProvider implements  LootTableSubProvider  {
 
 	// 	@Override
 	// 	protected Iterable<Block> getKnownBlocks() {
-	// 		return ForgeRegistries.BLOCKS.getValues().stream()
-	// 				.filter(b -> b.getRegistryName().getNamespace().equals(Hemomancy.MOD_ID))
-	// 				.collect(Collectors.toList());
+	// 		return List.of();
 	// 	}
 	// }
 

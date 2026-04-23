@@ -90,10 +90,10 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 		this.setLocationFromBoundingbox();
 	}
 
-	@Override
-	public boolean shouldCull() {
-		return false;
-	}
+//	@Override
+//	public boolean shouldCull() {
+//		return false;
+//	}
 
 	@Override
 	public void tick() {

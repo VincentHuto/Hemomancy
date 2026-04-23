@@ -20,17 +20,17 @@ import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSer
 
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class RecipeInit {
 	public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister
-			.create(ForgeRegistries.RECIPE_SERIALIZERS, Hemomancy.MOD_ID);
+			.create(Registries.RECIPE_SERIALIZER, Hemomancy.MOD_ID);
 
 	public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister
-			.create(ForgeRegistries.RECIPE_TYPES, Hemomancy.MOD_ID);
+			.create(Registries.RECIPE_TYPE, Hemomancy.MOD_ID);
 
 	// Types
 

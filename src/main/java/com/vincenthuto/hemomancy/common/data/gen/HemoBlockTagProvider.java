@@ -50,10 +50,10 @@ public class HemoBlockTagProvider extends BlockTagsProvider {
 //
 //		
 //		BlockInit.getAllBlockEntries().stream()
-//				.filter(b -> b.defaultBlockState().getMaterial() == Material.WOOD).map(b -> ResourceKey.create(Registries.BLOCK	, ForgeRegistries.BLOCKS.getKey(b))).forEach(axeTag::add);
+//				.filter(b -> b.defaultBlockState().getMaterial() == Material.WOOD).forEach(b -> {});
 //		BlockInit.getAllBlockEntries().stream()
-//				.filter(b -> b.defaultBlockState().getMaterial() == Material.STONE).map(b -> ResourceKey.create(Registries.BLOCK	, ForgeRegistries.BLOCKS.getKey(b))).forEach(pickTag::add);
+//				.filter(b -> b.defaultBlockState().getMaterial() == Material.STONE).forEach(b -> {});
 //		BlockInit.getAllBlockEntries().stream()
-//				.filter(b -> b.defaultBlockState().getMaterial() == Material.METAL).map(b -> ResourceKey.create(Registries.BLOCK	, ForgeRegistries.BLOCKS.getKey(b))).forEach(pickTag::add);	
+//				.filter(b -> b.defaultBlockState().getMaterial() == Material.METAL).forEach(b -> {});
 	}
 }
