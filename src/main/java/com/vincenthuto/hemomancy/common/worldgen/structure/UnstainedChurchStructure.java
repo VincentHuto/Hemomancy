@@ -22,10 +22,11 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
-import net.minecraft.world.level.levelgen.structure.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
+import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.StructureManager;
 
@@ -44,8 +45,7 @@ public class UnstainedChurchStructure extends Structure {
 							.forGetter(structure -> structure.projectStartToHeightmap),
 					Codec.intRange(1, 128).fieldOf("max_distance_from_center")
 							.forGetter(structure -> structure.maxDistanceFromCenter))
-					.apply(instance, UnstainedChurchStructure::new))
-			.codec();
+				.apply(instance, UnstainedChurchStructure::new));
 
 	private static boolean extraSpawningChecks(GenerationContext context) {
 		ChunkPos chunkpos = context.chunkPos();
@@ -86,8 +86,8 @@ public class UnstainedChurchStructure extends Structure {
 
 		Optional<GenerationStub> structurePiecesGenerator = JigsawPlacement.addPieces(context, this.startPool,
 				this.startJigsawName, this.size, blockPos, false, this.projectStartToHeightmap,
-				this.maxDistanceFromCenter, PoolAliasLookup.EMPTY, Structure.DEFAULT_DIMENSION_PADDING,
-				LiquidSettings.APPLY_WATERLOGGING);
+			this.maxDistanceFromCenter, PoolAliasLookup.EMPTY, JigsawStructure.DEFAULT_DIMENSION_PADDING,
+			LiquidSettings.APPLY_WATERLOGGING);
 		return structurePiecesGenerator;
 	}
 
@@ -198,7 +198,7 @@ public class UnstainedChurchStructure extends Structure {
 				level.getRandom().nextFloat() * 360.0f, 0.0f);
 		if (entity instanceof Mob mob) {
 			mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos),
-					MobSpawnType.STRUCTURE, null, null);
+					MobSpawnType.STRUCTURE, null);
 			mob.setPersistenceRequired();
 		}
 		level.addFreshEntityWithPassengers(entity);

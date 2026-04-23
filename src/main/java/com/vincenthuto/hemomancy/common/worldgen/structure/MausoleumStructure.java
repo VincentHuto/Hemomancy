@@ -13,10 +13,11 @@ import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
-import net.minecraft.world.level.levelgen.structure.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
+import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 
 import java.util.Optional;
 
@@ -62,7 +63,7 @@ public class MausoleumStructure extends Structure {
 		BlockPos blockPos = new BlockPos(chunkPos.getMinBlockX(), startY, chunkPos.getMinBlockZ());
 		return JigsawPlacement.addPieces(context, this.startPool, this.startJigsawName, this.size, blockPos, false,
 				this.projectStartToHeightmap, this.maxDistanceFromCenter,
-				PoolAliasLookup.EMPTY, Structure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
+				PoolAliasLookup.EMPTY, JigsawStructure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
 	}
 
 	@Override
