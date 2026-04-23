@@ -24,7 +24,7 @@ public class PacketSyncBloodMoon implements CustomPacketPayload {
 		this.active = active;
 	}
 
-	public static void encode(PacketSyncBloodMoon msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketSyncBloodMoon msg) {
 		buf.writeBoolean(msg.active);
 	}
 

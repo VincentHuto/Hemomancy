@@ -23,7 +23,7 @@ public class DisplayKnownManipsPacket implements CustomPacketPayload {
 		return new DisplayKnownManipsPacket();
 	}
 
-	public static void encode(final DisplayKnownManipsPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final DisplayKnownManipsPacket message) {
 		buffer.writeByte(0);
 	}
 

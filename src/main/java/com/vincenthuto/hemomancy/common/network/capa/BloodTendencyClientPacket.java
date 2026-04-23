@@ -23,7 +23,7 @@ public class BloodTendencyClientPacket implements CustomPacketPayload {
 		return new BloodTendencyClientPacket();
 	}
 
-	public static void encode(final BloodTendencyClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final BloodTendencyClientPacket msg) {
 
 	}
 

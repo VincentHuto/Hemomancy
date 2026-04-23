@@ -26,7 +26,7 @@ public class PacketSyncSkills implements CustomPacketPayload {
 		this.data = data;
 	}
 
-	public static void encode(PacketSyncSkills msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketSyncSkills msg) {
 		CompoundTag wrapper = new CompoundTag();
 		wrapper.put("skills", msg.data);
 		buf.writeNbt(wrapper);

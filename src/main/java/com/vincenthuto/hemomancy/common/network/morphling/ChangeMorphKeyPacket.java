@@ -26,6 +26,9 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 
 	public static final Type<ChangeMorphKeyPacket> TYPE = new Type<>(Hemomancy.rloc("change_morph_key_packet"));
 	public static final StreamCodec<FriendlyByteBuf, ChangeMorphKeyPacket> STREAM_CODEC = StreamCodec.of(ChangeMorphKeyPacket::encode, ChangeMorphKeyPacket::decode);
+	public static void handle(final ChangeMorphKeyPacket msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
+	}
 
 	public static class Handler {
 		public static void handle(final ChangeMorphKeyPacket msg, final IPayloadContext ctx) {
@@ -76,7 +79,7 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 		return new ChangeMorphKeyPacket();
 	}
 
-	public static void encode(ChangeMorphKeyPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, ChangeMorphKeyPacket msg) {
 	}
 
 	public ChangeMorphKeyPacket() {

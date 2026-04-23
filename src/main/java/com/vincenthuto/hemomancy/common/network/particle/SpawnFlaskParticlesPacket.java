@@ -29,7 +29,7 @@ public class SpawnFlaskParticlesPacket implements CustomPacketPayload {
 		}
 		return msg;
 	}
-	public static void encode(SpawnFlaskParticlesPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SpawnFlaskParticlesPacket msg) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
 		buf.writeDouble(msg.getPos().z);

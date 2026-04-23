@@ -132,7 +132,7 @@ public class TrackingSerpentEntity extends ThrowableProjectile {
 			if (!(pos instanceof BlockHitResult)) {
 				if (((EntityHitResult) pos).getEntity() == getTargetEntity())
 					((LivingEntity) ((EntityHitResult) pos).getEntity())
-							.addEffect(new MobEffectInstance(EffectInit.blood_binding.get(), 300));
+							.addEffect(new MobEffectInstance(EffectInit.blood_binding, 300));
 				this.remove(RemovalReason.KILLED);
 			}
 			break;

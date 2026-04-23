@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.effect.*;
 import net.minecraft.core.registries.Registries;
@@ -11,12 +12,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.alchemy.Potion;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class EffectInit {
     public static final DeferredRegister<Potion> POTION_TYPES = DeferredRegister.create(Registries.POTION,
             Hemomancy.MOD_ID);
@@ -185,15 +185,15 @@ public class EffectInit {
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "neural_overload_movement_speed"),
                             -0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
-    // Saintly Enzyme System — Marked by Canon (persistent debuff from failed extraction)
+    // Saintly Enzyme System â€” Marked by Canon (persistent debuff from failed extraction)
     public static final DeferredHolder<MobEffect, MobEffect> marked_by_canon = EFFECTS.register("marked_by_canon",
             () -> new MarkedByCanonEffect(MobEffectCategory.HARMFUL, 0x8B0000));
 
-    // Hollow Vessel — Hemophagy (healing reduction from Empty Pulse)
+    // Hollow Vessel â€” Hemophagy (healing reduction from Empty Pulse)
     public static final DeferredHolder<MobEffect, MobEffect> hemophagy = EFFECTS.register("hemophagy",
             () -> new HemophagyEffect(MobEffectCategory.HARMFUL, 0x4B0000));
 
-    // Inner Trial — Hematic Strain (40% max HP reduction while in trial chamber)
+    // Inner Trial â€” Hematic Strain (40% max HP reduction while in trial chamber)
     public static final DeferredHolder<MobEffect, MobEffect> hematic_strain = EFFECTS.register("hematic_strain",
             () -> new HematicStrainEffect(MobEffectCategory.HARMFUL, 0x660000));
 

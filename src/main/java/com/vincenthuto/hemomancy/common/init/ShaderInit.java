@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import java.io.IOException;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -13,9 +14,8 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 
 public class ShaderInit {
 

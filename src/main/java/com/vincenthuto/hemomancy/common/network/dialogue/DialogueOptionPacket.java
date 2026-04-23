@@ -29,7 +29,7 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 		this.entityId = entityId;
 	}
 
-	public static void encode(DialogueOptionPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, DialogueOptionPacket msg) {
 		buf.writeUtf(msg.eventId);
 		buf.writeInt(msg.entityId);
 	}

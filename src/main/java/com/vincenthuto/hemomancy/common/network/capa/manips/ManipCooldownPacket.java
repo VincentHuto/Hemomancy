@@ -24,7 +24,7 @@ public class ManipCooldownPacket implements CustomPacketPayload {
 		this.cooldownTicks = cooldownTicks;
 	}
 
-	public static void encode(final ManipCooldownPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final ManipCooldownPacket message) {
 		buffer.writeInt(message.cooldownTicks);
 	}
 

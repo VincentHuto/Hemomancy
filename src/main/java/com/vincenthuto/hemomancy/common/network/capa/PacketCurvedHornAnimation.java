@@ -10,31 +10,22 @@ import com.vincenthuto.hemomancy.client.event.LayerEvents;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class PacketCurvedHornAnimation implements CustomPacketPayload {
-
-	public static void encode(PacketCurvedHornAnimation msg, FriendlyByteBuf buf) {
-	}
-
-	public static PacketCurvedHornAnimation decode(FriendlyByteBuf buf) {
-		return new PacketCurvedHornAnimation(buf);
-	}
-
 	public static final Type<PacketCurvedHornAnimation> TYPE = new Type<>(Hemomancy.rloc("packet_curved_horn_animation"));
 	public static final StreamCodec<FriendlyByteBuf, PacketCurvedHornAnimation> STREAM_CODEC = StreamCodec.of(PacketCurvedHornAnimation::encode, PacketCurvedHornAnimation::decode);
 
 	public PacketCurvedHornAnimation() {
 	}
 
-	public PacketCurvedHornAnimation(FriendlyByteBuf buf) {
+	public static void encode(final FriendlyByteBuf buf, final PacketCurvedHornAnimation msg) {
+		buf.writeByte(0);
 	}
 
-	public void decode(FriendlyByteBuf buf) {
+	public static PacketCurvedHornAnimation decode(final FriendlyByteBuf buf) {
+		buf.readByte();
+		return new PacketCurvedHornAnimation();
 	}
 
-	public static void handle(PacketCurvedHornAnimation msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
-
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketCurvedHornAnimation msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(LayerEvents::playHornAnimation);
 	}
 

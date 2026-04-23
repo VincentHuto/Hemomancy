@@ -20,7 +20,7 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 		return new StartCentrifugeButtonPacket();
 	}
 
-	public static void encode(StartCentrifugeButtonPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, StartCentrifugeButtonPacket msg) {
 	}
 
 	public static void handle(final StartCentrifugeButtonPacket msg, final IPayloadContext ctx) {

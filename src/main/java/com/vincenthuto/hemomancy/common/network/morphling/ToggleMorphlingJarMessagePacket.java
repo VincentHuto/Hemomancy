@@ -19,7 +19,7 @@ public class ToggleMorphlingJarMessagePacket implements CustomPacketPayload {
 		return new ToggleMorphlingJarMessagePacket(en);
 	}
 
-	public static void encode(final ToggleMorphlingJarMessagePacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final ToggleMorphlingJarMessagePacket message) {
 		buffer.writeBoolean(message.enabled);
 	}
 

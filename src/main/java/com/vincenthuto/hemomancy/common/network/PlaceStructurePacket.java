@@ -38,7 +38,7 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 		this.type = type;
 	}
 
-	public static void encode(PlaceStructurePacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PlaceStructurePacket msg) {
 		buf.writeResourceLocation(msg.recipeId);
 		buf.writeEnum(msg.type);
 	}

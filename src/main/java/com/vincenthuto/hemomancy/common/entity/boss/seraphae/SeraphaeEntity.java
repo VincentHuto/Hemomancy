@@ -407,7 +407,7 @@ public class SeraphaeEntity extends Monster {
 					server.random.nextFloat() * 360.0F, 0.0F);
 			fragment.finalizeSpawn((ServerLevelAccessor) server,
 					server.getCurrentDifficultyAt(this.blockPosition()),
-					MobSpawnType.TRIGGERED, null, null);
+					MobSpawnType.TRIGGERED, null);
 			fragment.setParentId(this.getUUID());
 			fragment.setPersistenceRequired();
 

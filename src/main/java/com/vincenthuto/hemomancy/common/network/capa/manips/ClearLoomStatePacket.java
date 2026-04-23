@@ -27,7 +27,7 @@ public class ClearLoomStatePacket implements CustomPacketPayload {
 		return new ClearLoomStatePacket(buf.readBlockPos());
 	}
 
-	public static void encode(ClearLoomStatePacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, ClearLoomStatePacket msg) {
 		buf.writeBlockPos(msg.pos);
 	}
 

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.BlockPos;
@@ -10,9 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * receive Slowness I for 3 seconds.  Players are never affected.
  * Entries are cleaned up when their expiry tick passes.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PaleConsecrationEvents {
 
 	/** How often (in ticks) the effect is applied to mobs in the zone. */
@@ -39,12 +39,11 @@ public class PaleConsecrationEvents {
 	/** How often (in ticks) the cleanup pass runs. */
 	private static final int CLEANUP_INTERVAL = 100;
 
-	// ── Level tick ────────────────────────────────────────────────────────────
+	// â”€â”€ Level tick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 		if (sLevel != sLevel.getServer().overworld()) return;
 
 		long tick = sLevel.getGameTime();

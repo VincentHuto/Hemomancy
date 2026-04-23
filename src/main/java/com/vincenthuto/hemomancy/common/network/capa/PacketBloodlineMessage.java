@@ -33,7 +33,7 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 		this.message = message;
 	}
 
-	public static void encode(PacketBloodlineMessage msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketBloodlineMessage msg) {
 		buf.writeUtf(msg.message, MAX_LENGTH);
 	}
 

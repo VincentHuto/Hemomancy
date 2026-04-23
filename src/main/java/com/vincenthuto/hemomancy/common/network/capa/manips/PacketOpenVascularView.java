@@ -9,34 +9,25 @@ import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class PacketOpenVascularView implements CustomPacketPayload {
-
-	public static void encode(PacketOpenVascularView msg, FriendlyByteBuf buf) {
-	}
-
-	public static PacketOpenVascularView decode(FriendlyByteBuf buf) {
-		return new PacketOpenVascularView(buf);
-	}
-
 	public static final Type<PacketOpenVascularView> TYPE = new Type<>(Hemomancy.rloc("packet_open_vascular_view"));
 	public static final StreamCodec<FriendlyByteBuf, PacketOpenVascularView> STREAM_CODEC = StreamCodec.of(PacketOpenVascularView::encode, PacketOpenVascularView::decode);
 
 	public PacketOpenVascularView() {
 	}
 
-	public PacketOpenVascularView(FriendlyByteBuf buf) {
+	public static void encode(final FriendlyByteBuf buf, final PacketOpenVascularView msg) {
+		buf.writeByte(0);
 	}
 
-	public void decode(FriendlyByteBuf buf) {
+	public static PacketOpenVascularView decode(final FriendlyByteBuf buf) {
+		buf.readByte();
+		return new PacketOpenVascularView();
 	}
 
-	public static void handle(PacketOpenVascularView msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
-
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketOpenVascularView msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ctx.player().doCloseContainer();
-			ctx.player().openMenu( new VascularViewMenuProvider());
+			ctx.player().openMenu(new VascularViewMenuProvider());
 		});
 	}
 

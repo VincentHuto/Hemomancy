@@ -81,7 +81,7 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
         this.usedAltarOfCleansing = buf.readBoolean();
     }
 
-    public static void encode(PacketSyncUnstainedProgress msg, FriendlyByteBuf buf) {
+    public static void encode(FriendlyByteBuf buf, PacketSyncUnstainedProgress msg) {
         buf.writeBoolean(msg.begunPurification);
         buf.writeFloat(msg.purity);
         buf.writeBoolean(msg.clarityUnlocked);

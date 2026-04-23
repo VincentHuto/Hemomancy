@@ -35,7 +35,7 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 		this.equip = equip;
 	}
 
-	public static void encode(EquipManipulationPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, EquipManipulationPacket msg) {
 		buf.writeUtf(msg.manipName);
 		buf.writeBoolean(msg.equip);
 	}

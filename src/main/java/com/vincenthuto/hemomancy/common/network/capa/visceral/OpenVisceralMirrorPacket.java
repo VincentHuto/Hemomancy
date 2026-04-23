@@ -39,7 +39,7 @@ public class OpenVisceralMirrorPacket implements CustomPacketPayload {
 		this.degree = degree;
 	}
 
-	public static void encode(OpenVisceralMirrorPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, OpenVisceralMirrorPacket msg) {
 		buf.writeBlockPos(msg.pos);
 		EnumOrgan[] organs = EnumOrgan.values();
 		for (int i = 0; i < organs.length; i++) {

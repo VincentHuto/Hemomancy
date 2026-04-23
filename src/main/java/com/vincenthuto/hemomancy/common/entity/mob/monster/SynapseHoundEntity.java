@@ -78,17 +78,17 @@ public class SynapseHoundEntity extends Monster {
 		boolean flag = super.doHurtTarget(target);
 		if (flag && target instanceof LivingEntity living) {
 			// Stack neural_overload: if already present, bump amplifier
-			MobEffectInstance existing = living.getEffect(EffectInit.neural_overload.get());
+			MobEffectInstance existing = living.getEffect(EffectInit.neural_overload);
 			int newAmp = existing != null ? Math.min(existing.getAmplifier() + 1, 4) : 0;
-			living.addEffect(new MobEffectInstance(EffectInit.neural_overload.get(), 160, newAmp));
+			living.addEffect(new MobEffectInstance(EffectInit.neural_overload, 160, newAmp));
 		}
 		return flag;
 	}
 
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+			MobSpawnType pReason, SpawnGroupData pSpawnData) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class PacketSyncBloodlinePool implements CustomPacketPayload {
 		this.memberCount = memberCount;
 	}
 
-	public static void encode(PacketSyncBloodlinePool msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketSyncBloodlinePool msg) {
 		buf.writeFloat(msg.poolVolume);
 		buf.writeFloat(msg.poolMax);
 		buf.writeInt(msg.memberCount);

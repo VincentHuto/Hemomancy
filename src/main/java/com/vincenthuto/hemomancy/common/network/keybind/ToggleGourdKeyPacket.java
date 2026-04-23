@@ -29,7 +29,7 @@ public class ToggleGourdKeyPacket implements CustomPacketPayload {
 		return new ToggleGourdKeyPacket();
 	}
 
-	public static void encode(final ToggleGourdKeyPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final ToggleGourdKeyPacket message) {
 		buffer.writeByte(0);
 	}
 

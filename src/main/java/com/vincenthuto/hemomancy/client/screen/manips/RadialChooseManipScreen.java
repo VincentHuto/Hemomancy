@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
@@ -32,9 +33,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
 import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
 	@SubscribeEvent
 	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {

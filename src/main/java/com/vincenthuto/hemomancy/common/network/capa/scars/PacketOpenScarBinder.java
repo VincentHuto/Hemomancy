@@ -27,7 +27,7 @@ public class PacketOpenScarBinder implements CustomPacketPayload {
 		return new PacketOpenScarBinder();
 	}
 
-	public static void encode(final PacketOpenScarBinder message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final PacketOpenScarBinder message) {
 		buffer.writeByte(0);
 	}
 

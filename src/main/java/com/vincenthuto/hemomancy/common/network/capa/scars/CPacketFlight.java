@@ -18,7 +18,7 @@ public final class CPacketFlight implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, CPacketFlight> STREAM_CODEC = StreamCodec.of(CPacketFlight::encode,
 			CPacketFlight::decode);
 
-	public static void encode(CPacketFlight msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, CPacketFlight msg) {
 	}
 
 	public static CPacketFlight decode(FriendlyByteBuf buf) {

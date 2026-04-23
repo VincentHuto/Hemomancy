@@ -23,7 +23,7 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 		return new BloodVolumeClientPacket();
 	}
 
-	public static void encode(final BloodVolumeClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final BloodVolumeClientPacket msg) {
 
 	}
 

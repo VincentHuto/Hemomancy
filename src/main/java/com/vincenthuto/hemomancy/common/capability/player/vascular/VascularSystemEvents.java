@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.vascular;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
@@ -13,27 +14,26 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class VascularSystemEvents {	/**
 	 * When the player takes damage, degrade a vascular section based on damage type.
 	 * <ul>
-	 *   <li>Fall damage → legs</li>
-	 *   <li>Projectile (arrow, trident) → body/chest</li>
-	 *   <li>Explosion → random section</li>
-	 *   <li>Melee/generic → random section weighted toward body/arms</li>
+	 *   <li>Fall damage â†’ legs</li>
+	 *   <li>Projectile (arrow, trident) â†’ body/chest</li>
+	 *   <li>Explosion â†’ random section</li>
+	 *   <li>Melee/generic â†’ random section weighted toward body/arms</li>
 	 * </ul>
 	 */
 	@SubscribeEvent
-	public static void onPlayerDamaged(LivingDamageEvent event) {
+	public static void onPlayerDamaged(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED.get()) return;
@@ -43,7 +43,7 @@ public class VascularSystemEvents {	/**
 		if (!bloodActive) return;
 
 		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			float strain = (float) (event.getAmount() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue());
+			float strain = (float) (event.getNewDamage() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue());
 			EnumVeinSections section = determineSectionFromDamage(event, player);
 
 			// Negative value = damage to the section
@@ -63,7 +63,7 @@ public class VascularSystemEvents {	/**
 	/**
 	 * Determine which vein section is affected based on the damage source type.
 	 */
-	private static EnumVeinSections determineSectionFromDamage(LivingDamageEvent event, Player player) {
+	private static EnumVeinSections determineSectionFromDamage(LivingDamageEvent.Pre event, Player player) {
 		var source = event.getSource();
 
 		// Fall damage hits the legs
@@ -91,7 +91,7 @@ public class VascularSystemEvents {	/**
 			return EnumVeinSections.BODY;
 		}
 
-		// Melee/generic — weighted random favoring body and arms
+		// Melee/generic â€” weighted random favoring body and arms
 		EnumVeinSections[] meleePool = {
 				EnumVeinSections.BODY, EnumVeinSections.BODY,
 				EnumVeinSections.LEFTARM, EnumVeinSections.RIGHTARM,
@@ -131,17 +131,16 @@ public class VascularSystemEvents {	/**
 	 * <ul>
 	 *   <li>All sections slowly heal back toward 100 when the player is well-fed.</li>
 	 *   <li>Sections in CLOTTED or DEAD state apply debuffs:</li>
-	 *   <li>  HEAD (DEAD) → Blindness, (CLOTTED) → Nausea</li>
-	 *   <li>  HEART (DEAD) → Wither, (CLOTTED) → Weakness</li>
-	 *   <li>  BODY (DEAD) → Hunger, (CLOTTED) → Mining Fatigue</li>
-	 *   <li>  LEG sections (DEAD) → Slowness II, (CLOTTED) → Slowness I</li>
-	 *   <li>  ARM sections (DEAD) → Mining Fatigue II, (CLOTTED) → Weakness</li>
+	 *   <li>  HEAD (DEAD) â†’ Blindness, (CLOTTED) â†’ Nausea</li>
+	 *   <li>  HEART (DEAD) â†’ Wither, (CLOTTED) â†’ Weakness</li>
+	 *   <li>  BODY (DEAD) â†’ Hunger, (CLOTTED) â†’ Mining Fatigue</li>
+	 *   <li>  LEG sections (DEAD) â†’ Slowness II, (CLOTTED) â†’ Slowness I</li>
+	 *   <li>  ARM sections (DEAD) â†’ Mining Fatigue II, (CLOTTED) â†’ Weakness</li>
 	 * </ul>
 	 */
 	@SubscribeEvent
-	public static void playerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		Player player = event.player;
+	public static void playerTick(PlayerTickEvent.Post event) {
+		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
 
 		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
@@ -173,7 +172,7 @@ public class VascularSystemEvents {	/**
 				}
 			}
 
-			// Debuffs from damaged sections — check every 2 seconds
+			// Debuffs from damaged sections â€” check every 2 seconds
 			if (HemoServerConfig.VASCULAR_DEBUFFS_ENABLED.get() && player.tickCount % 40 == 0) {
 				applyVascularDebuffs(player, vascular);
 			}
@@ -211,7 +210,7 @@ public class VascularSystemEvents {	/**
 		}
 	}
 
-	// ───── Sync & Lifecycle ─────
+	// â”€â”€â”€â”€â”€ Sync & Lifecycle â”€â”€â”€â”€â”€
 
 	public static void syncVascular(ServerPlayer player, IVascularSystem vascular) {
 		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(vascular.getVascularSystem()));

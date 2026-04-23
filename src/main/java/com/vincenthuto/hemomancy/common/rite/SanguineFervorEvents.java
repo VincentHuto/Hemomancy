@@ -1,15 +1,15 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.MobSpawnType;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Handles tick-based cleanup and spawn-rate boosting for active Sanguine Fervor
@@ -19,18 +19,17 @@ import net.neoforged.fml.common.Mod;
  * mob that spawns within the zone's chunk radius, effectively increasing local
  * mob density for the duration of the rite.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SanguineFervorEvents {
 
 	/** How often (in ticks) the cleanup pass runs to remove expired entries. */
 	private static final int CLEANUP_INTERVAL_TICKS = 100;
 
-	// ── Level tick: clean up expired fervor zones ──────────────────────────────
+	// â”€â”€ Level tick: clean up expired fervor zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 		// Run cleanup only from the overworld to avoid duplicate passes
 		if (sLevel != sLevel.getServer().overworld()) return;
 		if (sLevel.getGameTime() % CLEANUP_INTERVAL_TICKS != 0) return;
@@ -39,11 +38,11 @@ public class SanguineFervorEvents {
 		data.removeExpired(sLevel.getGameTime());
 	}
 
-	// ── Spawn check: force-allow spawns inside active fervor zones ─────────────
+	// â”€â”€ Spawn check: force-allow spawns inside active fervor zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
 	public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
-		// Skip spawner-block spawns — only boost naturally-spawned mobs
+		// Skip spawner-block spawns â€” only boost naturally-spawned mobs
 		if (event.getSpawnType() == MobSpawnType.SPAWNER) return;
 
 		net.minecraft.world.level.ServerLevelAccessor levelAccessor = event.getLevel();

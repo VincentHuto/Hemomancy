@@ -17,7 +17,7 @@ import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -61,10 +61,8 @@ public class MnAPluginClientEvents {
 	 * Advances the animated bloody border on hemomancy spell icons each tick.
 	 * Must be registered on the FORGE bus (not MOD bus).
 	 */
-	public static void onClientTick(TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START) {
-			HemoSpellIconCompositor.tick();
-		}
+	public static void onClientTick(ClientTickEvent.Pre event) {
+		HemoSpellIconCompositor.tick();
 	}
 
 }

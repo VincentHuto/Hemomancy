@@ -10,34 +10,25 @@ import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuPr
 import net.minecraft.network.FriendlyByteBuf;
 
 public class PacketOpenSporeInv implements CustomPacketPayload {
-
-	public static void encode(PacketOpenSporeInv msg, FriendlyByteBuf buf) {
-	}
-
-	public static PacketOpenSporeInv decode(FriendlyByteBuf buf) {
-		return new PacketOpenSporeInv(buf);
-	}
-
 	public static final Type<PacketOpenSporeInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_spore_inv"));
 	public static final StreamCodec<FriendlyByteBuf, PacketOpenSporeInv> STREAM_CODEC = StreamCodec.of(PacketOpenSporeInv::encode, PacketOpenSporeInv::decode);
 
 	public PacketOpenSporeInv() {
 	}
 
-	public PacketOpenSporeInv(FriendlyByteBuf buf) {
+	public static void encode(final FriendlyByteBuf buf, final PacketOpenSporeInv msg) {
+		buf.writeByte(0);
 	}
 
-	public void decode(FriendlyByteBuf buf) {
+	public static PacketOpenSporeInv decode(final FriendlyByteBuf buf) {
+		buf.readByte();
+		return new PacketOpenSporeInv();
 	}
 
-	public static void handle(PacketOpenSporeInv msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
-
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketOpenSporeInv msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ctx.player().doCloseContainer();
-			ctx.player().openMenu( new FungalImplantMenuProvider());
+			ctx.player().openMenu(new FungalImplantMenuProvider());
 		});
 	}
 

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -42,22 +43,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerBossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
- * Hollow Vessel (Saint Hemorath) — a body drained of blood but still animate.
+ * Hollow Vessel (Saint Hemorath) â€” a body drained of blood but still animate.
  * <p>
  * The Vessel does not distinguish between wound and willful sacrifice: every
- * drop of blood lost by the player — whether to damage taken or to hemomantic
- * casting — accumulates on the player's blood_debt capability. Periodically,
+ * drop of blood lost by the player â€” whether to damage taken or to hemomantic
+ * casting â€” accumulates on the player's blood_debt capability. Periodically,
  * the Vessel discharges that accumulated debt as {@link HematicCollapseGoal}
  * damage, then zeroes it.
  * <p>
- * Phase 1 (100%→50%): slow attacks, standard debt accumulation.
- * Phase 2 (50%→0%): faster attacks, shorter Hematic Collapse cadence, and
- * bloodvolume spent is amplified by 1.25× via {@link #onPlayerBloodSpend}.
+ * Phase 1 (100%â†’50%): slow attacks, standard debt accumulation.
+ * Phase 2 (50%â†’0%): faster attacks, shorter Hematic Collapse cadence, and
+ * bloodvolume spent is amplified by 1.25Ã— via {@link #onPlayerBloodSpend}.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class HollowVesselEntity extends Monster {
 
 	private static final EntityDataAccessor<Boolean> DATA_COLLAPSE_CHARGING =
@@ -160,7 +160,7 @@ public class HollowVesselEntity extends Monster {
 			}
 			bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 
-			// Ambient soul-drain particles every 10 ticks — the vessel seeps residual life
+			// Ambient soul-drain particles every 10 ticks â€” the vessel seeps residual life
 			if (this.tickCount % 10 == 0 && this.level() instanceof ServerLevel server) {
 				server.sendParticles(ParticleTypes.SOUL,
 						this.getX(), this.getY() + 1.0, this.getZ(),
@@ -185,7 +185,7 @@ public class HollowVesselEntity extends Monster {
 					this.getX(), this.getY() + 1.0, this.getZ(),
 					30, 0.8, 0.8, 0.8, 0.04);
 		}
-		// Boss bar signals the phase shift — turns purple and renames
+		// Boss bar signals the phase shift â€” turns purple and renames
 		bossEvent.setColor(BossEvent.BossBarColor.PURPLE);
 		bossEvent.setName(Component.literal("Saint Hemorath - The Vessel Empties")
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
@@ -290,7 +290,7 @@ public class HollowVesselEntity extends Monster {
 	 */
 	@SubscribeEvent
 	public static void onLivingHeal(LivingHealEvent event) {
-		if (event.getEntity().hasEffect(EffectInit.hemophagy.get())) {
+		if (event.getEntity().hasEffect(EffectInit.hemophagy)) {
 			event.setAmount(event.getAmount() * HEMOPHAGY_HEAL_MULTIPLIER);
 		}
 	}

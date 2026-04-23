@@ -28,7 +28,7 @@ public class SpawnBloodClawParticlesPacket implements CustomPacketPayload {
 		}
 		return msg;
 	}
-	public static void encode(SpawnBloodClawParticlesPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SpawnBloodClawParticlesPacket msg) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
 		buf.writeDouble(msg.getPos().z);

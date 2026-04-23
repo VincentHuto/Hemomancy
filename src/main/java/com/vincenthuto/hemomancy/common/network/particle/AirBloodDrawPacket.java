@@ -17,7 +17,7 @@ public class AirBloodDrawPacket implements CustomPacketPayload {
 		return new AirBloodDrawPacket(buffer.readFloat());
 	}
 
-	public static void encode(final AirBloodDrawPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final AirBloodDrawPacket message) {
 		buffer.writeByte(0);
 		buffer.writeFloat(message.parTick);
 	}

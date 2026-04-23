@@ -28,7 +28,7 @@ public class PacketSyncQliphothBlooms implements CustomPacketPayload {
 		this.entries = entries;
 	}
 
-	public static void encode(PacketSyncQliphothBlooms msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketSyncQliphothBlooms msg) {
 		buf.writeInt(msg.entries.size());
 		for (QliphothBloomClientData.BloomEntry entry : msg.entries) {
 			buf.writeBlockPos(entry.getCenter());

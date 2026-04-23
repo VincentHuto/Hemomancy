@@ -22,6 +22,10 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 
 	public static final Type<UpdateCurrentManipPacket> TYPE = new Type<>(Hemomancy.rloc("update_current_manip_packet"));
 	public static final StreamCodec<FriendlyByteBuf, UpdateCurrentManipPacket> STREAM_CODEC = StreamCodec.of(UpdateCurrentManipPacket::encode, UpdateCurrentManipPacket::decode);
+	public static void handle(final UpdateCurrentManipPacket msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
+	}
+
 	public static class Handler {
 		public static void handle(final UpdateCurrentManipPacket msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
@@ -57,7 +61,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 		return new UpdateCurrentManipPacket(buf.readInt());
 	}
 
-	public static void encode(UpdateCurrentManipPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, UpdateCurrentManipPacket msg) {
 		buf.writeInt(msg.selected);
 	}
 

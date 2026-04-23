@@ -17,7 +17,7 @@ public class JarTogglePickupPacket implements CustomPacketPayload {
 		return new JarTogglePickupPacket();
 	}
 
-	public static void encode(final JarTogglePickupPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final JarTogglePickupPacket message) {
 		buffer.writeByte(0);
 	}
 

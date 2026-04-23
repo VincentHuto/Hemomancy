@@ -26,11 +26,15 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 	public PacketScarCraftingEvent() {
 	}
 
-	public static void encode(PacketScarCraftingEvent msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketScarCraftingEvent msg) {
 	}
 
 	public static PacketScarCraftingEvent decode(FriendlyByteBuf buf) {
 		return new PacketScarCraftingEvent();
+	}
+
+	public static void handle(final PacketScarCraftingEvent msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
 	}
 
 	public static class Handler {

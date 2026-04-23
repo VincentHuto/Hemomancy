@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -94,12 +95,12 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
-		return new BloodCraftingKeyPressPacket(buffer.readItem());
+		return new BloodCraftingKeyPressPacket(ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
 	}
 
-	public static void encode(final BloodCraftingKeyPressPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final BloodCraftingKeyPressPacket message) {
 		buffer.writeByte(0);
-		buffer.writeItem(message.heldStack);
+		ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, message.heldStack);
 	}
 
 	public static List<BloodStructureRecipe> getMatchingRecipes(ItemStack stack, Level level) {

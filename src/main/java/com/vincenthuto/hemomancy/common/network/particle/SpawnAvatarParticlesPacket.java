@@ -28,7 +28,7 @@ public class SpawnAvatarParticlesPacket implements CustomPacketPayload {
 		}
 		return msg;
 	}
-	public static void encode(SpawnAvatarParticlesPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SpawnAvatarParticlesPacket msg) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
 		buf.writeDouble(msg.getPos().z);

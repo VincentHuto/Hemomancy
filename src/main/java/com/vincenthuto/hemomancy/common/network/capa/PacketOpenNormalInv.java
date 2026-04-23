@@ -9,31 +9,22 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PacketOpenNormalInv implements CustomPacketPayload {
-
-	public static void encode(PacketOpenNormalInv msg, FriendlyByteBuf buf) {
-	}
-
-	public static PacketOpenNormalInv decode(FriendlyByteBuf buf) {
-		return new PacketOpenNormalInv(buf);
-	}
-
 	public static final Type<PacketOpenNormalInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_normal_inv"));
 	public static final StreamCodec<FriendlyByteBuf, PacketOpenNormalInv> STREAM_CODEC = StreamCodec.of(PacketOpenNormalInv::encode, PacketOpenNormalInv::decode);
 
 	public PacketOpenNormalInv() {
 	}
 
-	public PacketOpenNormalInv(FriendlyByteBuf buf) {
+	public static void encode(final FriendlyByteBuf buf, final PacketOpenNormalInv msg) {
+		buf.writeByte(0);
 	}
 
-	public void decode(FriendlyByteBuf buf) {
+	public static PacketOpenNormalInv decode(final FriendlyByteBuf buf) {
+		buf.readByte();
+		return new PacketOpenNormalInv();
 	}
 
-	public static void handle(PacketOpenNormalInv msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
-
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketOpenNormalInv msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ServerPlayer playerEntity = ctx.player();
 			if (playerEntity != null) {

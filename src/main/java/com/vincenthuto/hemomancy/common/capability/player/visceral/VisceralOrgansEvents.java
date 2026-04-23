@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.visceral;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -11,12 +12,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class VisceralOrgansEvents {
 	@SubscribeEvent
 	public static void onContainerClose(PlayerContainerEvent.Close event) {
@@ -42,14 +42,13 @@ public class VisceralOrgansEvents {
 	 * Only runs server-side every 40 ticks (2 seconds) to avoid spam.
 	 */
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		Player player = event.player;
+	public static void onPlayerTick(PlayerTickEvent.Post event) {
+		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
 		if (player.tickCount % 40 != 0) return;
 
 		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
-			// Spleen — increased max blood volume per modification level
+			// Spleen â€” increased max blood volume per modification level
 			if (organs.isExtracted(EnumOrgan.SPLEEN)) {
 				int level = organs.getOrganLevel(EnumOrgan.SPLEEN);
 				HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
@@ -62,7 +61,7 @@ public class VisceralOrgansEvents {
 				});
 			}
 
-			// Liver — poison/toxin resistance
+			// Liver â€” poison/toxin resistance
 			if (organs.isExtracted(EnumOrgan.LIVER)) {
 				int level = organs.getOrganLevel(EnumOrgan.LIVER);
 				// Remove poison effect and grant brief resistance
@@ -77,7 +76,7 @@ public class VisceralOrgansEvents {
 				}
 			}
 
-			// Lungs — enhanced underwater breathing
+			// Lungs â€” enhanced underwater breathing
 			if (organs.isExtracted(EnumOrgan.LUNGS)) {
 				int level = organs.getOrganLevel(EnumOrgan.LUNGS);
 				if (player.isUnderWater()) {
@@ -87,7 +86,7 @@ public class VisceralOrgansEvents {
 				}
 			}
 
-			// Kidneys — enhanced regeneration
+			// Kidneys â€” enhanced regeneration
 			if (organs.isExtracted(EnumOrgan.KIDNEYS)) {
 				int level = organs.getOrganLevel(EnumOrgan.KIDNEYS);
 				// Grant regeneration briefly at intervals
@@ -97,7 +96,7 @@ public class VisceralOrgansEvents {
 				}
 			}
 
-			// Heart — Cardiac Autonomy
+			// Heart â€” Cardiac Autonomy
 			// The player has removed their heart and sustains circulation through
 			// sheer force of will, rhythmically commanding their muscles to
 			// contract. This grants damage resistance but at the cost of occasional

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,19 +22,19 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.event.TickEvent.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class KnownManipulationEvents {	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
@@ -44,12 +45,12 @@ public class KnownManipulationEvents {	@SubscribeEvent
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerTickEvent event) {
-		event.player.refreshDimensions();
-		syncPlayerEvent(event.player);
+		event.getEntity().refreshDimensions();
+		syncPlayerEvent(event.getEntity());
 	}
 
 	@SubscribeEvent
-	public static void onPlayerDamage(LivingDamageEvent e) {
+	public static void onPlayerDamage(LivingDamageEvent.Pre e) {
 
 		// Radiant Protection
 		if (e.getEntity() instanceof Player) {
@@ -62,7 +63,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 				if (e.getEntity().level() instanceof ServerLevel serverLevel) {
 					PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f, serverLevel);
 				}
-				e.setAmount(e.getAmount() * 0);
+				e.setNewDamage(0);
 
 			}
 		}
@@ -152,7 +153,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		// 2. Tendency shift toward the manip's tendency
 		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend());
 
-		// 3. Skill: Vital Link — chance to heal when using a manipulation
+		// 3. Skill: Vital Link â€” chance to heal when using a manipulation
 		double vitalLinkChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getVitalLinkChance();
 		if (vitalLinkChance > 0 && player.level().random.nextDouble() < vitalLinkChance) {
 			player.heal(2.0f); // Heal 2.0 health (1 heart) on successful proc

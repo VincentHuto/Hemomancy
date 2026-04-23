@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.white_humor;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class WhiteHumorVolumeEvents {
 }

@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
-// ── Optional-dep compat imports (excluded from compilation when dep absent) ───
+// â”€â”€ Optional-dep compat imports (excluded from compilation when dep absent) â”€â”€â”€
 // MnA compat: re-enable when NeoForge 1.21.1 MnA build is published and the
 // compat/mna/** source exclusion is removed from build.gradle.
 // import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
@@ -35,12 +35,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-// ── NeoForge API imports (replaces net.minecraftforge.*) ─────────────────────
+// â”€â”€ NeoForge API imports (replaces net.minecraftforge.*) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -53,7 +52,6 @@ import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLib;
 
 @Mod(Hemomancy.MOD_ID)
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class Hemomancy {
 
     public static final Logger LOGGER = LogManager.getLogger();
@@ -122,7 +120,7 @@ public class Hemomancy {
         modEventBus.addListener(this::buildContents);
         forgeBus.register(this);
 
-        // RegisterPayloadsEvent fires on the mod bus – register here, not in commonSetup.
+        // RegisterPayloadsEvent fires on the mod bus â€“ register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
 
         @SuppressWarnings("unused")
@@ -185,7 +183,7 @@ public class Hemomancy {
     }
 
     /**
-     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath() – the two-arg
+     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath() â€“ the two-arg
      * constructor ResourceLocation.parse(ns, path) is deprecated in 1.21.
      */
     public static ResourceLocation rloc(String path) {
@@ -244,3 +242,4 @@ public class Hemomancy {
         EnumClarityStage.ENLIGHTENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pallid_icon.get()));
     }
 }
+

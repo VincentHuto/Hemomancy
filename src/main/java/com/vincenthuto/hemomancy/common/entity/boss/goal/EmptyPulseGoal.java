@@ -103,7 +103,7 @@ public class EmptyPulseGoal extends Goal {
 			Vec3 push = victim.position().subtract(origin).normalize().scale(KNOCKBACK_STRENGTH);
 			victim.push(push.x, 0.4, push.z);
 			victim.hurtMarked = true;
-			victim.addEffect(new MobEffectInstance(EffectInit.hemophagy.get(),
+			victim.addEffect(new MobEffectInstance(EffectInit.hemophagy,
 					HEMOPHAGY_DURATION_TICKS, 0, false, true));
 		}
 	}

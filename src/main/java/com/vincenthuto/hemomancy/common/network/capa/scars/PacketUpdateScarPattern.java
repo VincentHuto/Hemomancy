@@ -21,7 +21,7 @@ public class PacketUpdateScarPattern implements CustomPacketPayload {
 		this.pattern = patternIn;
 	}
 
-	public static void encode(PacketUpdateScarPattern msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketUpdateScarPattern msg) {
 		buf.writeInt(msg.pattern.length);
 		for (int i = 0; i < msg.pattern.length; ++i) {
 			buf.writeByteArray(msg.pattern[i]);
@@ -40,6 +40,10 @@ public class PacketUpdateScarPattern implements CustomPacketPayload {
 
 	public byte[][] getPattern() {
 		return pattern;
+	}
+
+	public static void handle(final PacketUpdateScarPattern msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
 	}
 
 	public static class Handler {

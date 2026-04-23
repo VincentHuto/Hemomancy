@@ -34,7 +34,7 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 		return new BloodFormationKeyPressPacket();
 	}
 
-	public static void encode(final BloodFormationKeyPressPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final BloodFormationKeyPressPacket message) {
 		buffer.writeByte(0);
 	}
 

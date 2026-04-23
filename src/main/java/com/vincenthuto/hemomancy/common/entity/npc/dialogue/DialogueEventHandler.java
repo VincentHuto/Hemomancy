@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -30,7 +30,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * executes gameplay-relevant side-effects such as starting a quest line or
  * changing NPC disposition.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class DialogueEventHandler {
 
 	@SubscribeEvent
@@ -72,14 +72,14 @@ public class DialogueEventHandler {
 				Entity entity = player.level().getEntity(event.getEntityId());
 				if (entity instanceof HarbingerHermitEntity hermit) {
 					Vec3 pos = hermit.position();
-					// Drop the rite hint item — configured for the Sanguine Initiation rite
+					// Drop the rite hint item â€” configured for the Sanguine Initiation rite
 					ItemStack riteHint = RiteHintItem.createForRite(
 							ItemInit.rite_hint.get(),
 							new net.minecraft.resources.ResourceLocation(Hemomancy.MOD_ID,
 									"cardinal_rite/sanguine_initiation"));
 					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, riteHint);
 					hermit.level().addFreshEntity(drop);
-					// Passing text passage — the mortal display was the hermit’s heart
+					// Passing text passage â€” the mortal display was the hermitâ€™s heart
 					player.displayClientMessage(
 							Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
 									.withStyle(ChatFormatting.DARK_RED),
@@ -117,7 +117,7 @@ public class DialogueEventHandler {
 				handleExpelHarbinger(player, event.getEntityId());
 			}
 			case "whisper_dismiss" -> {
-				// Player dismissed the whisper — no gameplay effect, just acknowledged
+				// Player dismissed the whisper â€” no gameplay effect, just acknowledged
 			}
 			case "whisper_truth_acknowledged" -> {
 				player.displayClientMessage(
@@ -126,7 +126,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			default -> {
-				// Unknown event — log for development
+				// Unknown event â€” log for development
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
@@ -134,7 +134,7 @@ public class DialogueEventHandler {
 
 	/**
 	 * Recruits a Harbinger NPC into the player's bloodline. The NPC's entity
-	 * UUID is added as a phantom member — it counts toward the shared blood
+	 * UUID is added as a phantom member â€” it counts toward the shared blood
 	 * pool capacity without needing to be an online player. This allows
 	 * single-player users to grow their pool without multiplayer partners.
 	 */

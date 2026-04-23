@@ -30,7 +30,7 @@ public class VisceralMirrorExtractPacket implements CustomPacketPayload {
 		this.organOrdinal = organOrdinal;
 	}
 
-	public static void encode(VisceralMirrorExtractPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, VisceralMirrorExtractPacket msg) {
 		buf.writeBlockPos(msg.pos);
 		buf.writeInt(msg.organOrdinal);
 	}

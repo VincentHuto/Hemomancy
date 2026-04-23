@@ -23,7 +23,7 @@ public class VascularSystemClientPacket implements CustomPacketPayload {
 		return new VascularSystemClientPacket();
 	}
 
-	public static void encode(final VascularSystemClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final VascularSystemClientPacket msg) {
 
 	}
 

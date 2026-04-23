@@ -27,7 +27,7 @@ public class SpawnMonolithShatterBurstPacket implements CustomPacketPayload {
 		return msg;
 	}
 
-	public static void encode(SpawnMonolithShatterBurstPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SpawnMonolithShatterBurstPacket msg) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
 		buf.writeDouble(msg.getPos().z);

@@ -27,7 +27,7 @@ public class PacketRequestPoolData implements CustomPacketPayload {
 	public PacketRequestPoolData() {
 	}
 
-	public static void encode(PacketRequestPoolData msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketRequestPoolData msg) {
 	}
 
 	public static PacketRequestPoolData decode(FriendlyByteBuf buf) {

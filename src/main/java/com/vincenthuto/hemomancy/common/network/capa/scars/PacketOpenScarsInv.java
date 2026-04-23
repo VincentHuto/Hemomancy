@@ -10,34 +10,25 @@ import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class PacketOpenScarsInv implements CustomPacketPayload {
-
-	public static void encode(PacketOpenScarsInv msg, FriendlyByteBuf buf) {
-	}
-
-	public static PacketOpenScarsInv decode(FriendlyByteBuf buf) {
-		return new PacketOpenScarsInv(buf);
-	}
-
 	public static final Type<PacketOpenScarsInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_scars_inv"));
 	public static final StreamCodec<FriendlyByteBuf, PacketOpenScarsInv> STREAM_CODEC = StreamCodec.of(PacketOpenScarsInv::encode, PacketOpenScarsInv::decode);
 
 	public PacketOpenScarsInv() {
 	}
 
-	public PacketOpenScarsInv(FriendlyByteBuf buf) {
+	public static void encode(final FriendlyByteBuf buf, final PacketOpenScarsInv msg) {
+		buf.writeByte(0);
 	}
 
-	public void decode(FriendlyByteBuf buf) {
+	public static PacketOpenScarsInv decode(final FriendlyByteBuf buf) {
+		buf.readByte();
+		return new PacketOpenScarsInv();
 	}
 
-	public static void handle(PacketOpenScarsInv msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
-
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketOpenScarsInv msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ctx.player().doCloseContainer();
-			ctx.player().openMenu( new ScarMenuProvider());
+			ctx.player().openMenu(new ScarMenuProvider());
 		});
 	}
 

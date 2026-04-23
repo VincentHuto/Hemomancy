@@ -9,13 +9,14 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class PacketScarSync implements CustomPacketPayload {
 
-	public static void encode(PacketScarSync msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketScarSync msg) {
 		msg.toBytes(buf);
 	}
 
@@ -33,7 +34,7 @@ public class PacketScarSync implements CustomPacketPayload {
 	public PacketScarSync(FriendlyByteBuf buf) {
 		this.playerId = buf.readInt();
 		this.slot = buf.readByte();
-		this.mindscar = buf.readItem();
+		this.mindscar = ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf);
 	}
 
 	public PacketScarSync(int playerId, byte slot, ItemStack mindscar) {
@@ -42,16 +43,13 @@ public class PacketScarSync implements CustomPacketPayload {
 		this.mindscar = mindscar;
 	}
 
-	public static void handle(PacketScarSync msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
 
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketScarSync msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Entity p = Minecraft.getInstance().level.getEntity(playerId);
+			Entity p = Minecraft.getInstance().level.getEntity(msg.playerId);
 			if (p instanceof Player) {
 				HemoCapabilityAccess.getScars(p).ifPresent(b -> {
-					b.setStackInSlot(slot, mindscar);
+					b.setStackInSlot(msg.slot, msg.mindscar);
 				});
 			}
 		});
@@ -60,7 +58,7 @@ public class PacketScarSync implements CustomPacketPayload {
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeInt(this.playerId);
 		buf.writeByte(this.slot);
-		buf.writeItem(this.mindscar);
+		ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf, this.mindscar);
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public class EntityHitParticlePacket implements CustomPacketPayload {
 		return new EntityHitParticlePacket(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 	}
 
-	public static void encode(final EntityHitParticlePacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final EntityHitParticlePacket message) {
 		buffer.writeDouble(message.x);
 		buffer.writeDouble(message.y);
 		buffer.writeDouble(message.z);

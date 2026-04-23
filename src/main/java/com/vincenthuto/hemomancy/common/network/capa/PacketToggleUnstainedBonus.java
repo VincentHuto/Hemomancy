@@ -28,7 +28,7 @@ public class PacketToggleUnstainedBonus implements CustomPacketPayload {
         this.bonusId = bonusId;
     }
 
-    public static void encode(PacketToggleUnstainedBonus msg, FriendlyByteBuf buf) {
+    public static void encode(FriendlyByteBuf buf, PacketToggleUnstainedBonus msg) {
         buf.writeVarInt(msg.bonusId);
     }
 

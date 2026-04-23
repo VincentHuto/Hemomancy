@@ -34,7 +34,7 @@ public class PacketLumpDonate implements CustomPacketPayload {
 		this.amount = amount;
 	}
 
-	public static void encode(PacketLumpDonate msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketLumpDonate msg) {
 		buf.writeDouble(msg.amount);
 	}
 

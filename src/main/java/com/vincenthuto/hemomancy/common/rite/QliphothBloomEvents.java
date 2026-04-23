@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -18,9 +19,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
  * Manipulation cost reduction is handled directly in
  * {@link com.vincenthuto.hemomancy.common.manipulation.BloodManipulation#performAction}.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class QliphothBloomEvents {
 
 	/** Interval in ticks between effect application (40 ticks = 2 seconds). */
@@ -48,7 +48,7 @@ public class QliphothBloomEvents {
 	/**
 	 * Chance (1 in N) per bloom per effect tick that a Qliphoth Pome drops
 	 * from the tree. At 40-tick intervals this averages ~1 pome every
-	 * 1 in 80 checks ≈ every 3 minutes.
+	 * 1 in 80 checks â‰ˆ every 3 minutes.
 	 */
 	private static final int POME_DROP_CHANCE = 80;
 	/** Maximum number of pome item entities allowed near a bloom before it stops dropping more. */
@@ -57,9 +57,8 @@ public class QliphothBloomEvents {
 	private static final double POME_SEARCH_RADIUS = 8.0;
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 
 		// Only process every EFFECT_INTERVAL ticks for performance
 		if (sLevel.getGameTime() % EFFECT_APPLICATION_INTERVAL_TICKS != 0) return;
@@ -93,7 +92,7 @@ public class QliphothBloomEvents {
 				});
 			}
 
-			// ── Rare Qliphoth Pome drop ──
+			// â”€â”€ Rare Qliphoth Pome drop â”€â”€
 			trySpawnPome(sLevel, bloom);
 		}
 	}
@@ -105,7 +104,7 @@ public class QliphothBloomEvents {
 	 * <p>
 	 * Each dropped pome is tagged with the bloom's center position
 	 * ({@code hemomancy:bloom_origin}) and the sequential husk index
-	 * ({@code hemomancy:husk_index}, 0–8) so players can track which of the
+	 * ({@code hemomancy:husk_index}, 0â€“8) so players can track which of the
 	 * nine Qliphoth husks they are consuming. Once all nine have dropped the
 	 * tree ceases production for this bloom's lifecycle.
 	 * <p>
@@ -157,7 +156,7 @@ public class QliphothBloomEvents {
 		pomeEntity.lifespan = Integer.MAX_VALUE;
 		level.addFreshEntity(pomeEntity);
 
-		// ── Notify the bloom owner via Fungal Whisper dialogue ──
+		// â”€â”€ Notify the bloom owner via Fungal Whisper dialogue â”€â”€
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(bloom.ownerUUID());
 		if (owner != null) {
 			PacketHandler.sendToPlayer(owner, new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped)));

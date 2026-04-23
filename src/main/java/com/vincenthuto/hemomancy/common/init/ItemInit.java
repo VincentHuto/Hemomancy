@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
@@ -49,27 +51,25 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ItemInit {
-    public static final DeferredRegister<Item> BASEITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
+    public static final DeferredRegister<Item> BASEITEMS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
     public static final DeferredRegister<BannerPattern> BANNERPATTERNS = DeferredRegister
             .create(Registries.BANNER_PATTERN, Hemomancy.MOD_ID);
-    public static final DeferredRegister<Item> HANDHELDITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
+    public static final DeferredRegister<Item> HANDHELDITEMS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
-    public static final DeferredRegister<Item> SPECIALITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
+    public static final DeferredRegister<Item> SPECIALITEMS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
-    public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
+    public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
 
     // public static final DamageSource bloodLoss = new DamageSource("bloodloss");
@@ -204,20 +204,20 @@ public class ItemInit {
     // Gourd Foods
     public static final DeferredHolder<Item, Item> gourd_slice = BASEITEMS.register("gourd_slice",
             () -> new Item(new Item.Properties()
-                    .food(new FoodProperties.Builder().nutrition(2).saturationMod(0.3F).fast().build())));
+                    .food(new FoodProperties.Builder().nutrition(2).BASEITEMS(0.3F).fast().build())));
     public static final DeferredHolder<Item, Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
             () -> new Item(new Item.Properties()
-                    .food(new FoodProperties.Builder().nutrition(1).saturationMod(0.2F).fast().build())));
+                    .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
     public static final DeferredHolder<Item, Item> gourd_stew = BASEITEMS.register("gourd_stew",
             () -> new BowlFoodItem(new Item.Properties().stacksTo(1)
-                    .food(new FoodProperties.Builder().nutrition(7).saturationMod(0.6F).build())));
+                    .food(new FoodProperties.Builder().nutrition(7).BASEITEMS(0.6F).build())));
 
     // Qliphoth Reagent
     public static final DeferredHolder<Item, Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
             () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
             () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
-                    .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.8F).alwaysEat().build())));
+                    .food(new FoodProperties.Builder().nutrition(4).BASEITEMS(0.8F).alwaysEat().build())));
 
     // Anti blood
     public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
@@ -249,7 +249,7 @@ public class ItemInit {
             () -> new RecycledEnzymeItem());
 
 
-    // Hallowed Residuum — Saint-Enzymes (hybridized, extracted from Preserved Corpus)
+    // Hallowed Residuum â€” Saint-Enzymes (hybridized, extracted from Preserved Corpus)
     public static final DeferredHolder<Item, Item> hallowed_residuum_hemorath = BASEITEMS.register("hallowed_residuum_hemorath",
             () -> new HallowedResiduumItem(EnumSaintType.HEMORATH, 20));
     public static final DeferredHolder<Item, Item> hallowed_residuum_seraphae = BASEITEMS.register("hallowed_residuum_seraphae",
@@ -259,7 +259,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> hallowed_residuum_velorum = BASEITEMS.register("hallowed_residuum_velorum",
             () -> new HallowedResiduumItem(EnumSaintType.VELORUM, 20));
 
-    // Consecrated Syringe — extraction tool for Saint Sarcophagus
+    // Consecrated Syringe â€” extraction tool for Saint Sarcophagus
     public static final DeferredHolder<Item, Item> consecrated_syringe = SPECIALITEMS.register("consecrated_syringe",
             () -> new ConsecratedSyringeItem(new Item.Properties().stacksTo(1)));
 
@@ -275,7 +275,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
             () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
 
-    // Unstained — Our Lady of Still Waters materials
+    // Unstained â€” Our Lady of Still Waters materials
     public static final DeferredHolder<Item, Item> lethean_dew = BASEITEMS.register("lethean_dew",
             () -> new LetheanDewItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> lethean_brew = BASEITEMS.register("lethean_brew",
@@ -367,7 +367,7 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_sight));
     public static final DeferredHolder<Item, Item> memory_vital_reservoir = BASEITEMS.register("memory_vital_reservoir",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_reservoir));
-    // ── Expanded tendency memories ──
+    // â”€â”€ Expanded tendency memories â”€â”€
     public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = BASEITEMS.register("memory_cryogenic_pulse",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cryogenic_pulse));
     public static final DeferredHolder<Item, Item> memory_glacial_bastion = BASEITEMS.register("memory_glacial_bastion",
@@ -384,7 +384,7 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
     public static final DeferredHolder<Item, Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
-    // Saint Canon Memories — imprinted from Sainted Mausoleums via Hallowed Residuum
+    // Saint Canon Memories â€” imprinted from Sainted Mausoleums via Hallowed Residuum
     public static final DeferredHolder<Item, Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
     public static final DeferredHolder<Item, Item> memory_unclosing_eye = BASEITEMS.register("memory_unclosing_eye",
@@ -420,7 +420,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> blood_bolt = BASEITEMS.register("blood_bolt",
             () -> new BloodBoltItem(new Item.Properties()));
 
-    // Blood Thrall — creature-based blood transport
+    // Blood Thrall â€” creature-based blood transport
     public static final DeferredHolder<Item, Item> blood_thrall_effigy = BASEITEMS.register("blood_thrall_effigy",
             () -> new BloodThrallItem(new Item.Properties().stacksTo(16)));
 
@@ -502,7 +502,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
             () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
-            () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F, new Item.Properties()));
+            () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_knapper = HANDHELDITEMS.register("hematic_iron_knapper",
             () -> new ItemKnapper(42f, 1, 0, EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
 
@@ -534,7 +534,7 @@ public class ItemInit {
 
     // Barbed/Barbed
     public static final DeferredHolder<Item, Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
-            () -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f, new Item.Properties().stacksTo(1)));
+            () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
             () -> new BarbedShieldItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> barbed_helm = BASEITEMS.register("barbed_helm",
@@ -548,7 +548,7 @@ public class ItemInit {
 
     // Chitinite
     public static final DeferredHolder<Item, Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
-            () -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f, new Item.Properties().stacksTo(1)));
+            () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
             () -> new ChitiniteShieldItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
@@ -861,98 +861,97 @@ public class ItemInit {
             () -> new ItemScarPattern(new Item.Properties(), scar_oblivion, "scar_oblivion"));
 
     // Spawn Eggs
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
             () -> new DeferredSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
             () -> new DeferredSpawnEggItem(EntityInit.fargone, 7352833, 7958646, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
             () -> new DeferredSpawnEggItem(EntityInit.thirster, 3093151, 9515521, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
             () -> new DeferredSpawnEggItem(EntityInit.fungling, 7798794, 15711418, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_eruptor = SPAWNEGGS.register("spawn_egg_eruptor",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_eruptor = SPAWNEGGS.register("spawn_egg_eruptor",
             () -> new DeferredSpawnEggItem(EntityInit.erythromycelium_eruptus, 7798794, 12235264, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_chitinite = SPAWNEGGS.register(
             "spawn_egg_chitinite",
             () -> new DeferredSpawnEggItem(EntityInit.chitinite, 3617335, 8553354, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_fervent_chitinite = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_fervent_chitinite = SPAWNEGGS.register(
             "spawn_egg_fervent_chitinite",
             () -> new DeferredSpawnEggItem(EntityInit.fervent_chitinite, 3617335, 12124160, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_chthonian = SPAWNEGGS.register(
             "spawn_egg_chthonian",
             () -> new DeferredSpawnEggItem(EntityInit.chthonian, 7488841, 2170666, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_chthonian_queen = SPAWNEGGS.register(
             "spawn_egg_chthonian_queen",
             () -> new DeferredSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_lump_of_thought = SPAWNEGGS.register(
             "spawn_egg_lump_of_thought",
             () -> new DeferredSpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_abhorent_thought = SPAWNEGGS.register(
             "spawn_egg_abhorent_thought",
             () -> new DeferredSpawnEggItem(EntityInit.abhorent_thought, 12124160, 4259840, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_barbed_urchin = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_barbed_urchin = SPAWNEGGS.register(
             "spawn_egg_barbed_urchin",
             () -> new DeferredSpawnEggItem(EntityInit.barbed_urchin, 12124160, 4259840, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_morphling_polyp = SPAWNEGGS.register(
             "spawn_egg_morphling_polyp",
             () -> new DeferredSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
             "spawn_egg_blood_drunk_puppeteer",
             () -> new DeferredSpawnEggItem(EntityInit.blood_drunk_puppeteer, 12124160, 12152064, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_enthralled_doll = SPAWNEGGS.register(
             "spawn_egg_enthralled_doll",
             () -> new DeferredSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_dessicant = SPAWNEGGS.register(
             "spawn_egg_dessicant",
             () -> new DeferredSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_cruor_fiend = SPAWNEGGS.register(
             "spawn_egg_cruor_fiend",
             () -> new DeferredSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_void_drinker = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_void_drinker = SPAWNEGGS.register(
             "spawn_egg_void_drinker",
             () -> new DeferredSpawnEggItem(EntityInit.void_drinker, 0x1A0033, 0x6A0DAD, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_frozen_clot = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_frozen_clot = SPAWNEGGS.register(
             "spawn_egg_frozen_clot",
             () -> new DeferredSpawnEggItem(EntityInit.frozen_clot, 0xA8D8EA, 0x5C0000, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_abyssal_siphon = SPAWNEGGS.register(
             "spawn_egg_abyssal_siphon",
             () -> new DeferredSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
             "spawn_egg_synapse_hound",
             () -> new DeferredSpawnEggItem(EntityInit.synapse_hound, 0x7DF9FF, 0x8B0000, new Item.Properties()));
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
             "spawn_egg_myelin_borer",
             () -> new DeferredSpawnEggItem(EntityInit.myelin_borer, 0xE8D8C0, 0x7DF9FF, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_crimson_doe = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_crimson_doe = SPAWNEGGS.register(
             "spawn_egg_crimson_doe",
             () -> new DeferredSpawnEggItem(EntityInit.crimson_doe, 0xFAE6E6, 0x8B0000, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_hemojelly = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_hemojelly = SPAWNEGGS.register(
             "spawn_egg_hemojelly",
             () -> new DeferredSpawnEggItem(EntityInit.hemojelly, 0xFF6B8A, 0xCC2244, new Item.Properties()));
 
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_venous_strider = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_venous_strider = SPAWNEGGS.register(
             "spawn_egg_venous_strider",
             () -> new DeferredSpawnEggItem(EntityInit.venous_strider, 0xF5DEB3, 0x8B4513, new Item.Properties()));
 
     // Cream body with blood-red spots
-    public static final DeferredHolder<DeferredSpawnEggItem, DeferredSpawnEggItem> spawn_egg_tooth_pecks = SPAWNEGGS.register(
+    public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_tooth_pecks = SPAWNEGGS.register(
             "spawn_egg_tooth_pecks",
             () -> new DeferredSpawnEggItem(EntityInit.tooth_pecks, 0xF0EAD6, 0x8B0000, new Item.Properties()));
 
     // Item Property Override
     @SuppressWarnings("deprecation")
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
     public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
 
         ItemProperties.register(unsigned_ancestral_ledger.get(), Hemomancy.rloc("unsigned"),

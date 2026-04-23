@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +18,9 @@ import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
 import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.items.IItemHandler;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RadialMenuScreen extends Screen {
 	@SubscribeEvent
 	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {

@@ -29,7 +29,7 @@ public class SpawnLivingToolParticlesPacket implements CustomPacketPayload {
 		}
 		return msg;
 	}
-	public static void encode(SpawnLivingToolParticlesPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SpawnLivingToolParticlesPacket msg) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
 		buf.writeDouble(msg.getPos().z);

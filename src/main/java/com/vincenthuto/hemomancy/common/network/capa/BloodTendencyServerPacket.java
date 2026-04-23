@@ -28,7 +28,7 @@ public class BloodTendencyServerPacket implements CustomPacketPayload {
 		return new BloodTendencyServerPacket(devo);
 	}
 
-	public static void encode(final BloodTendencyServerPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final BloodTendencyServerPacket msg) {
 		CompoundTag covenTag = new CompoundTag();
 		for (EnumBloodTendency key : EnumBloodTendency.values()) {
 			if (msg.Tendency.get(key) != null) {

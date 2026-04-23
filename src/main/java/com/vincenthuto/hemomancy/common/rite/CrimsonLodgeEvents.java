@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -9,9 +10,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
  *   <li>Enhanced blood regeneration (+5 blood/tick)</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class CrimsonLodgeEvents {
 
 	/** Interval in ticks between effect application (40 ticks = 2 seconds). */
@@ -35,9 +35,8 @@ public class CrimsonLodgeEvents {
 	private static final double BLOOD_REGEN_PER_TICK = 5.0;
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 
 		// Only process every EFFECT_APPLICATION_INTERVAL_TICKS ticks for performance
 		if (sLevel.getGameTime() % EFFECT_APPLICATION_INTERVAL_TICKS != 0) return;

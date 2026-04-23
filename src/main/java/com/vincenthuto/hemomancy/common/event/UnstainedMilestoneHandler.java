@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
@@ -12,11 +13,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Handles the tangible rewards and passive bonuses that unlock at each
@@ -41,19 +41,19 @@ import net.neoforged.fml.common.Mod;
  * <h3>Silver Ward Damage Reduction</h3>
  * Reduces incoming damage from hemomancy-tagged sources when Silver Ward is active.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class UnstainedMilestoneHandler {
 
 	/** How often to refresh the passive effects (every 5 seconds). */
 	private static final int EFFECT_REFRESH_INTERVAL = 100;
-	/** Duration of auto-applied effects (6 seconds — slightly longer than refresh). */
+	/** Duration of auto-applied effects (6 seconds â€” slightly longer than refresh). */
 	private static final int AUTO_EFFECT_DURATION = 130;
 	/** Extra damage dealt to hemomancy mobs at ABSOLVED+ stage. */
 	private static final float ABSOLVED_BONUS_DAMAGE = 2.0f;
 
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Passive Effect Application (Tick-Based)
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Periodically applies Silver Ward and Verdigris Aura effects based on
@@ -61,9 +61,8 @@ public class UnstainedMilestoneHandler {
 	 * stage-based advancements whenever a new threshold is crossed.
 	 */
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		Player player = event.player;
+	public static void onPlayerTick(PlayerTickEvent.Post event) {
+		Player player = event.getEntity();
 		if (player.level().isClientSide()) return;
 		if (!(player instanceof ServerPlayer serverPlayer)) return;
 		if (player.tickCount % EFFECT_REFRESH_INTERVAL != 0) return;
@@ -76,15 +75,15 @@ public class UnstainedMilestoneHandler {
 					? EnumClarityStage.byClarity(progress.getClarity())
 					: EnumClarityStage.AWAKENED;
 
-			// ── Grant purity stage advancements ──
+			// â”€â”€ Grant purity stage advancements â”€â”€
 			checkPurityStageAdvancements(serverPlayer, purityStage);
 
-			// ── Grant clarity stage advancements ──
+			// â”€â”€ Grant clarity stage advancements â”€â”€
 			if (progress.hasClarityUnlocked()) {
 				checkClarityStageAdvancements(serverPlayer, clarityStage);
 			}
 
-			// ── Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage ──
+			// â”€â”€ Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage â”€â”€
 			if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
 				int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
 				// Only refresh if no existing effect or existing effect is weaker
@@ -95,7 +94,7 @@ public class UnstainedMilestoneHandler {
 				}
 			}
 
-			// ── Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage ──
+			// â”€â”€ Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage â”€â”€
 			if (progress.isSilverWardEnabled() && progress.hasClarityUnlocked()
 					&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
 				int wardAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
@@ -106,7 +105,7 @@ public class UnstainedMilestoneHandler {
 				}
 			}
 
-			// ── Vigilant+ clarity: apply Glowing to nearby hemomancy mobs ──
+			// â”€â”€ Vigilant+ clarity: apply Glowing to nearby hemomancy mobs â”€â”€
 			if (progress.hasClarityUnlocked() && clarityStage.getLevel() >= EnumClarityStage.VIGILANT.getLevel()) {
 				double detectionRadius = 16.0 + clarityStage.getLevel() * 4.0;
 				serverPlayer.level().getEntitiesOfClass(LivingEntity.class,
@@ -120,9 +119,9 @@ public class UnstainedMilestoneHandler {
 		});
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  Advancement Granting — Purity & Clarity Stage Thresholds
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  Advancement Granting â€” Purity & Clarity Stage Thresholds
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Grants purity-stage advancements for any stage the player has already
@@ -165,9 +164,9 @@ public class UnstainedMilestoneHandler {
 		}
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  Damage Modification — Silver Ward Reduction & Absolved Bonus
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  Damage Modification â€” Silver Ward Reduction & Absolved Bonus
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Reduces incoming damage from hemomancy-tagged sources when the player
@@ -175,8 +174,8 @@ public class UnstainedMilestoneHandler {
 	 * at ABSOLVED+ purity.
 	 */
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public static void onLivingHurt(LivingHurtEvent event) {
-		// ── Silver Ward: reduce incoming blood damage ──
+	public static void onLivingHurt(LivingDamageEvent.Pre event) {
+		// — Silver Ward: reduce incoming blood damage —
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide()) {
 			MobEffectInstance ward = player.getEffect(EffectInit.silver_ward.get());
 			if (ward != null) {
@@ -187,12 +186,12 @@ public class UnstainedMilestoneHandler {
 				}
 				if (isBloodDamage) {
 					float reduction = SilverWardEffect.getBloodDamageReduction(ward.getAmplifier());
-					event.setAmount(event.getAmount() * (1.0f - reduction));
+					event.setNewDamage(event.getNewDamage() * (1.0f - reduction));
 				}
 			}
 		}
 
-		// ── Absolved+ bonus: extra damage to hemomancy mobs ──
+		// — Absolved+ bonus: extra damage to hemomancy mobs —
 		if (event.getSource().getEntity() instanceof Player attacker && !attacker.level().isClientSide()) {
 			LivingEntity target = event.getEntity();
 			if (target.getType().is(EntityInit.HEMOMANCY_MOB)) {
@@ -200,7 +199,7 @@ public class UnstainedMilestoneHandler {
 					if (progress.hasBegunPurification()) {
 						EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
 						if (stage.getLevel() >= EnumPurityStage.ABSOLVED.getLevel()) {
-							event.setAmount(event.getAmount() + ABSOLVED_BONUS_DAMAGE);
+							event.setNewDamage(event.getNewDamage() + ABSOLVED_BONUS_DAMAGE);
 						}
 					}
 				});

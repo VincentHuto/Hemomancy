@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -10,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.MobType;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
@@ -19,52 +20,51 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Forge event handlers that grant purity to players on the Unstained path
  * through diverse gameplay actions. All handlers are gated behind
  * {@code hasBegunPurification() && !isPurified()}.
  *
- * <h3>Combat — Kill Rewards</h3>
+ * <h3>Combat â€” Kill Rewards</h3>
  * <ul>
- *   <li>Hemomancy mob (tagged) → +2.0</li>
- *   <li>Undead (MobType.UNDEAD) → +0.5</li>
- *   <li>Other hostile (MobCategory.MONSTER) → +0.25</li>
- *   <li>Flawless kill bonus (kill without having taken damage recently) → +0.5 extra</li>
+ *   <li>Hemomancy mob (tagged) â†’ +2.0</li>
+ *   <li>Undead (MobType.UNDEAD) â†’ +0.5</li>
+ *   <li>Other hostile (MobCategory.MONSTER) â†’ +0.25</li>
+ *   <li>Flawless kill bonus (kill without having taken damage recently) â†’ +0.5 extra</li>
  * </ul>
  *
  * <h3>Survival &amp; Exploration</h3>
  * <ul>
- *   <li>XP orb pickup while Hemolysis active → +0.1</li>
- *   <li>Sleep through the night while Hemolysis active → +3.0</li>
- *   <li>Complete an advancement → +1.5</li>
- *   <li>Breed animals → +0.3</li>
- *   <li>Place crops / saplings / flowers → +0.05</li>
- *   <li>Heal self naturally with empty blood → +0.1</li>
+ *   <li>XP orb pickup while Hemolysis active â†’ +0.1</li>
+ *   <li>Sleep through the night while Hemolysis active â†’ +3.0</li>
+ *   <li>Complete an advancement â†’ +1.5</li>
+ *   <li>Breed animals â†’ +0.3</li>
+ *   <li>Place crops / saplings / flowers â†’ +0.05</li>
+ *   <li>Heal self naturally with empty blood â†’ +0.1</li>
  * </ul>
  *
  * <h3>Restraint &amp; Discipline</h3>
  * <ul>
- *   <li>Blood magic abstinence — every 5 minutes without using a manipulation → +0.5</li>
- *   <li>Blood volume empty/inactive → +0.15 per minute (renunciation)</li>
+ *   <li>Blood magic abstinence â€” every 5 minutes without using a manipulation â†’ +0.5</li>
+ *   <li>Blood volume empty/inactive â†’ +0.15 per minute (renunciation)</li>
  * </ul>
  *
  * <h3>Mercy</h3>
  * <ul>
- *   <li>Healing a tamed animal → +0.2</li>
+ *   <li>Healing a tamed animal â†’ +0.2</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PurityGainEvents {
 
-    // ── Kill rewards ──
+    // â”€â”€ Kill rewards â”€â”€
     private static final float PURITY_KILL_HEMOMANCY_MOB = 2.0f;
     private static final float PURITY_KILL_UNDEAD        = 0.5f;
     private static final float PURITY_KILL_HOSTILE       = 0.25f;
     private static final float PURITY_FLAWLESS_KILL      = 0.5f;
 
-    // ── Survival / exploration ──
+    // â”€â”€ Survival / exploration â”€â”€
     private static final float PURITY_XP_PICKUP          = 0.1f;
     private static final float PURITY_SLEEP              = 3.0f;
     private static final float PURITY_ADVANCEMENT        = 1.5f;
@@ -72,21 +72,21 @@ public class PurityGainEvents {
     private static final float PURITY_PLANT_CROP         = 0.05f;
     private static final float PURITY_HEAL               = 0.1f;
 
-    // ── Restraint / discipline ──
+    // â”€â”€ Restraint / discipline â”€â”€
     private static final float PURITY_ABSTINENCE         = 0.5f;
     private static final long  ABSTINENCE_INTERVAL_TICKS = 6000L;  // 5 minutes (5 * 60 * 20)
     private static final float PURITY_EMPTY_BLOOD        = 0.15f;
     private static final long  EMPTY_BLOOD_INTERVAL      = 1200L;  // 1 minute
 
-    // ── Mercy ──
+    // â”€â”€ Mercy â”€â”€
     private static final float PURITY_HEAL_TAMED         = 0.2f;
 
-    // ── Flawless kill — "recently" = damaged within last 5 seconds ──
+    // â”€â”€ Flawless kill â€” "recently" = damaged within last 5 seconds â”€â”€
     private static final int FLAWLESS_THRESHOLD_TICKS    = 100;
 
-    // ────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //  Helpers
-    // ────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Add purity if the player has begun purification and isn't yet fully purified. */
     private static void tryAddPurity(ServerPlayer player, float amount) {
@@ -108,15 +108,15 @@ public class PurityGainEvents {
         return progress.hasBegunPurification() && !progress.isPurified();
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  COMBAT — Kill Rewards
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  COMBAT â€” Kill Rewards
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Tiered purity for kills:
-     * 1. Hemomancy mob → +2.0
-     * 2. Undead → +0.5
-     * 3. Other hostile → +0.25
+     * 1. Hemomancy mob â†’ +2.0
+     * 2. Undead â†’ +0.5
+     * 3. Other hostile â†’ +0.25
      * Bonus: +0.5 if the player hasn't been hurt recently (flawless kill).
      */
     @SubscribeEvent
@@ -142,7 +142,7 @@ public class PurityGainEvents {
 
         if (reward <= 0f) return;
 
-        // Flawless kill bonus — player hasn't taken damage recently
+        // Flawless kill bonus â€” player hasn't taken damage recently
         boolean flawless = player.getLastDamageSource() == null
                 || (player.tickCount - player.getLastHurtByMobTimestamp()) > FLAWLESS_THRESHOLD_TICKS;
         if (flawless) {
@@ -166,9 +166,9 @@ public class PurityGainEvents {
         });
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  SURVIVAL — XP Pickup (requires Hemolysis)
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  SURVIVAL â€” XP Pickup (requires Hemolysis)
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     @SubscribeEvent
     public static void onXpPickup(PlayerXpEvent.PickupXp event) {
@@ -181,9 +181,9 @@ public class PurityGainEvents {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  SURVIVAL — Sleep (requires Hemolysis)
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  SURVIVAL â€” Sleep (requires Hemolysis)
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     @SubscribeEvent
     public static void onPlayerWake(PlayerWakeUpEvent event) {
@@ -203,12 +203,12 @@ public class PurityGainEvents {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  EXPLORATION — Advancement Completion
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  EXPLORATION â€” Advancement Completion
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
-     * Earning any advancement grants +1.5 purity — covers boss kills
+     * Earning any advancement grants +1.5 purity â€” covers boss kills
      * (dragon, wither, elder guardian), exploration milestones,
      * Nether entry, elytra, etc.
      */
@@ -227,11 +227,11 @@ public class PurityGainEvents {
         });
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  FARMING — Breeding Animals
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  FARMING â€” Breeding Animals
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-    /** Breeding animals — creating life rather than taking it — grants +0.3 purity. */
+    /** Breeding animals â€” creating life rather than taking it â€” grants +0.3 purity. */
     @SubscribeEvent
     public static void onBreedAnimal(BabyEntitySpawnEvent event) {
         Player causer = event.getCausedByPlayer();
@@ -247,9 +247,9 @@ public class PurityGainEvents {
         });
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  FARMING — Planting Crops / Saplings / Flowers
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  FARMING â€” Planting Crops / Saplings / Flowers
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /** Placing crops, saplings, or flowers grants a tiny +0.05 purity. */
     @SubscribeEvent
@@ -269,20 +269,20 @@ public class PurityGainEvents {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  MERCY — Healing Tamed Animals + Natural Self-Healing
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  MERCY â€” Healing Tamed Animals + Natural Self-Healing
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
-     * Healing a tamed animal → owner gets +0.2 purity (compassion).
-     * Healing yourself significantly (2+ hearts) with empty/inactive blood → +0.1 (restraint).
+     * Healing a tamed animal â†’ owner gets +0.2 purity (compassion).
+     * Healing yourself significantly (2+ hearts) with empty/inactive blood â†’ +0.1 (restraint).
      */
     @SubscribeEvent
     public static void onLivingHeal(LivingHealEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity.level().isClientSide) return;
 
-        // Case 1: tamed animal heals — reward the owner
+        // Case 1: tamed animal heals â€” reward the owner
         if (entity instanceof net.minecraft.world.entity.TamableAnimal tamed && tamed.isTame()) {
             LivingEntity owner = tamed.getOwner();
             if (owner instanceof ServerPlayer serverOwner) {
@@ -306,21 +306,20 @@ public class PurityGainEvents {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  RESTRAINT — Abstinence Timer & Empty Blood Renunciation
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  RESTRAINT â€” Abstinence Timer & Empty Blood Renunciation
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Per-tick check (throttled to once per second):
      * <ul>
-     *   <li>Abstinence: 5+ minutes since last blood manipulation → +0.5, resets timer</li>
-     *   <li>Empty blood: blood volume zero or inactive → +0.15 per minute</li>
+     *   <li>Abstinence: 5+ minutes since last blood manipulation â†’ +0.5, resets timer</li>
+     *   <li>Empty blood: blood volume zero or inactive â†’ +0.15 per minute</li>
      * </ul>
      */
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Player player = event.player;
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
@@ -333,7 +332,7 @@ public class PurityGainEvents {
             long currentTick = player.tickCount;
             boolean changed = false;
 
-            // ── Abstinence timer ──
+            // â”€â”€ Abstinence timer â”€â”€
             long lastManip = progress.getLastManipulationTick();
             if (lastManip > 0 && (currentTick - lastManip) >= ABSTINENCE_INTERVAL_TICKS) {
                 progress.addPurity(PURITY_ABSTINENCE);
@@ -345,7 +344,7 @@ public class PurityGainEvents {
                 progress.setLastManipulationTick(currentTick);
             }
 
-            // ── Empty blood renunciation ──
+            // â”€â”€ Empty blood renunciation â”€â”€
             if (currentTick % EMPTY_BLOOD_INTERVAL < 20) {
                 HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(blood -> {
                     if (!blood.isActive() || blood.getBloodVolume() <= 0) {
@@ -362,9 +361,9 @@ public class PurityGainEvents {
         });
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  PUBLIC API — Reset abstinence timer on blood magic use
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  PUBLIC API â€” Reset abstinence timer on blood magic use
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Call this from blood manipulation execution code whenever a player

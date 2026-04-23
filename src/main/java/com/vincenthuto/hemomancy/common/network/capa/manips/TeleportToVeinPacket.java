@@ -36,6 +36,9 @@ public class TeleportToVeinPacket implements CustomPacketPayload {
 
 	public static final Type<TeleportToVeinPacket> TYPE = new Type<>(Hemomancy.rloc("teleport_to_vein_packet"));
 	public static final StreamCodec<FriendlyByteBuf, TeleportToVeinPacket> STREAM_CODEC = StreamCodec.of(TeleportToVeinPacket::encode, TeleportToVeinPacket::decode);
+	public static void handle(final TeleportToVeinPacket msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
+	}
 
 	public static class Handler {
 		public static void handle(final TeleportToVeinPacket msg, final IPayloadContext ctx) {
@@ -115,7 +118,7 @@ public class TeleportToVeinPacket implements CustomPacketPayload {
 		return new TeleportToVeinPacket(VeinLocation.deserializeFromBuf(buf));
 	}
 
-	public static void encode(TeleportToVeinPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, TeleportToVeinPacket msg) {
 		msg.selected.serializeToBuf(buf);
 	}
 

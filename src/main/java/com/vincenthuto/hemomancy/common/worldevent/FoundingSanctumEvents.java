@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldevent;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 import java.util.UUID;
@@ -11,24 +12,22 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Applies passive buffs to Harbingers standing inside any active Founding Sanctum.
  * Sanctum locations are persisted in {@link FoundingSanctumSavedData}.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class FoundingSanctumEvents {
 
 	private static final int EFFECT_INTERVAL_TICKS = 40;
 	private static final int EFFECT_DURATION = 60;
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 		if (sLevel.getGameTime() % EFFECT_INTERVAL_TICKS != 0) return;
 
 		FoundingSanctumSavedData data = FoundingSanctumSavedData.get(sLevel);

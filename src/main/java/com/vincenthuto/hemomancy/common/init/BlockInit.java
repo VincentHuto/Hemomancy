@@ -58,8 +58,8 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.core.registries.Registries;
@@ -67,7 +67,7 @@ import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class BlockInit {
 	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
@@ -455,7 +455,7 @@ public class BlockInit {
 			() -> new VisceralMirrorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.noOcclusion().strength(2.0F, 8.0F).sound(SoundType.GLASS)));
 
-	// Puzzle / boss-room blocks — Hemorath encounter
+	// Puzzle / boss-room blocks â€” Hemorath encounter
 	public static final DeferredHolder<Block, Block> blood_basin = MODELEDBLOCKS.register("blood_basin",
 			() -> new BloodBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.0F, 6.0F).sound(SoundType.STONE)));
@@ -603,3 +603,4 @@ public class BlockInit {
 	}
 
 }
+

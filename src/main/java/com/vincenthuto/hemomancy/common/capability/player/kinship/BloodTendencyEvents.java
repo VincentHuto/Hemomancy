@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
@@ -18,21 +19,20 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class BloodTendencyEvents {	/**
 	 * Killing entities shifts the player's blood tendency based on what they killed.
 	 * <ul>
-	 *   <li>Warm-blooded (animals, villagers) → ANIMUS (life/vitality)</li>
-	 *   <li>Cold-blooded (drowned, water mobs, snow golem) → CONGEATIO (cold/ice)</li>
-	 *   <li>Undead (zombies, skeletons, wither) → MORTEM (death)</li>
-	 *   <li>Fire entities (blaze, magma cube, strider) → FLAMMEUS (fire)</li>
-	 *   <li>Ender entities (enderman, shulker, endermite) → TENEBRIS (darkness)</li>
-	 *   <li>Arthropods/vermin (spiders, silverfish) → DUCTILIS (flexible/nervous)</li>
-	 *   <li>Iron entities (iron golem) → FERRIC (iron)</li>
-	 *   <li>Glowing/phantom/light entities → LUX (light)</li>
+	 *   <li>Warm-blooded (animals, villagers) â†’ ANIMUS (life/vitality)</li>
+	 *   <li>Cold-blooded (drowned, water mobs, snow golem) â†’ CONGEATIO (cold/ice)</li>
+	 *   <li>Undead (zombies, skeletons, wither) â†’ MORTEM (death)</li>
+	 *   <li>Fire entities (blaze, magma cube, strider) â†’ FLAMMEUS (fire)</li>
+	 *   <li>Ender entities (enderman, shulker, endermite) â†’ TENEBRIS (darkness)</li>
+	 *   <li>Arthropods/vermin (spiders, silverfish) â†’ DUCTILIS (flexible/nervous)</li>
+	 *   <li>Iron entities (iron golem) â†’ FERRIC (iron)</li>
+	 *   <li>Glowing/phantom/light entities â†’ LUX (light)</li>
 	 * </ul>
 	 * Only applies when the blood system is active.
 	 */
@@ -70,32 +70,32 @@ public class BloodTendencyEvents {	/**
 			return null;
 		}
 
-		// Infernal / fire-aligned → FLAMMEUS
+		// Infernal / fire-aligned â†’ FLAMMEUS
 		if (HemoEntityPredicates.INFERNALBLOOD.test(entity)) {
 			return EnumBloodTendency.FLAMMEUS;
 		}
 
-		// Ender / dark-aligned → TENEBRIS
+		// Ender / dark-aligned â†’ TENEBRIS
 		if (HemoEntityPredicates.ENDERBLOOD.test(entity)) {
 			return EnumBloodTendency.TENEBRIS;
 		}
 
-		// Cold-blooded → CONGEATIO
+		// Cold-blooded â†’ CONGEATIO
 		if (HemoEntityPredicates.COLDBLOODED.test(entity)) {
 			return EnumBloodTendency.CONGEATIO;
 		}
 
-		// Plant-like / slime entities → DUCTILIS (flexible, nervous)
+		// Plant-like / slime entities â†’ DUCTILIS (flexible, nervous)
 		if (HemoEntityPredicates.PLANTBLOOD.test(entity)) {
 			return EnumBloodTendency.DUCTILIS;
 		}
 
-		// Undead → MORTEM
+		// Undead â†’ MORTEM
 		if (entity.isInvertedHealAndHarm() || HemoEntityPredicates.UNDEAD.test(entity)) {
 			return EnumBloodTendency.MORTEM;
 		}
 
-		// Warm-blooded (animals, villagers, players) → ANIMUS
+		// Warm-blooded (animals, villagers, players) â†’ ANIMUS
 		if (HemoEntityPredicates.WARMBLOODED.test(entity)) {
 			return EnumBloodTendency.ANIMUS;
 		}
@@ -119,7 +119,7 @@ public class BloodTendencyEvents {	/**
 		});
 	}
 
-	// ───── Sync & Lifecycle ─────
+	// â”€â”€â”€â”€â”€ Sync & Lifecycle â”€â”€â”€â”€â”€
 
 	public static void syncTendency(ServerPlayer player, IBloodTendency tendency) {
 		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency.getTendency()));

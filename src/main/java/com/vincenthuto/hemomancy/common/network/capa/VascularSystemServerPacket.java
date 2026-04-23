@@ -28,7 +28,7 @@ public class VascularSystemServerPacket implements CustomPacketPayload {
 		return new VascularSystemServerPacket(devo);
 	}
 
-	public static void encode(final VascularSystemServerPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final VascularSystemServerPacket msg) {
 		CompoundTag covenTag = new CompoundTag();
 		for (EnumVeinSections key : EnumVeinSections.values()) {
 			if (msg.vascularSystem.get(key) != null) {

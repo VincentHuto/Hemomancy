@@ -23,7 +23,7 @@ public class KnownManipulationClientPacket implements CustomPacketPayload {
 		return new KnownManipulationClientPacket();
 	}
 
-	public static void encode(final KnownManipulationClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final KnownManipulationClientPacket msg) {
 
 	}
 

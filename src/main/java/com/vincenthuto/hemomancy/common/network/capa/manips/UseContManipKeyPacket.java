@@ -27,7 +27,7 @@ public class UseContManipKeyPacket implements CustomPacketPayload {
 		return new UseContManipKeyPacket(buffer.readFloat());
 	}
 
-	public static void encode(final UseContManipKeyPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final UseContManipKeyPacket message) {
 		buffer.writeByte(0);
 		buffer.writeFloat(message.parTick);
 	}

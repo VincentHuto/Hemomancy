@@ -24,7 +24,7 @@ public class BloodVolumeServerPacket implements CustomPacketPayload {
 				packetBuffer.readBoolean(), packetBuffer.readDouble(),
 				packetBuffer.readBoolean(), packetBuffer.readDouble());
 	}
-	public static void encode(final BloodVolumeServerPacket msg, final FriendlyByteBuf packetBuffer) {
+	public static void encode(final FriendlyByteBuf packetBuffer, final BloodVolumeServerPacket msg) {
 		packetBuffer.writeBoolean(msg.active);
 		packetBuffer.writeDouble(msg.max);
 		packetBuffer.writeDouble(msg.volume);

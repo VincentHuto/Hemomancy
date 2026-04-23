@@ -31,7 +31,7 @@ public class PacketBloodCraftRing implements CustomPacketPayload {
 		this.durationTicks = durationTicks;
 	}
 
-	public static void encode(PacketBloodCraftRing msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketBloodCraftRing msg) {
 		buf.writeBlockPos(msg.center);
 		buf.writeFloat(msg.startRadius);
 		buf.writeFloat(msg.centerY);

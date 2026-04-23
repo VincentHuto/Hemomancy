@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityKeys;
 import java.util.Collection;
@@ -42,23 +43,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.neoforge.common.Tags;
 
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.network.NetworkDirection;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class ScarEntityEventHandler {
 
-	/** scar slots 1–4 hold regular (non-fungal) scars. */
+	/** scar slots 1â€“4 hold regular (non-fungal) scars. */
 	private static final int SCAR_SLOT_MIN = 1;
 	private static final int SCAR_SLOT_MAX = 4;
 
@@ -169,9 +167,9 @@ public class ScarEntityEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void onGlideTick(TickEvent.PlayerTickEvent event) {
-		if (event.player.hasEffect(EffectInit.fungal_elytra.get())) {
-			AttributeInstance attributeInstance = event.player
+	public static void onGlideTick(PlayerTickEvent event) {
+		if (event.getEntity().hasEffect(EffectInit.fungal_elytra.get())) {
+			AttributeInstance attributeInstance = event.getEntity()
 					.getAttribute(AttributeInit.getFlightAttribute());
 			if (attributeInstance != null
 					&& !attributeInstance.hasModifier(AttributeInit.getElytraModifier()))
@@ -181,8 +179,8 @@ public class ScarEntityEventHandler {
 	
 
 	@SubscribeEvent
-	public static void playerTick(TickEvent.PlayerTickEvent event) {
-		Player player = event.player;
+	public static void playerTick(PlayerTickEvent event) {
+		Player player = event.getEntity();
 		HemoCapabilityAccess.getScars(player).ifPresent(IScarsItemHandler::tick);
 		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
 		if (attributeInstance != null) {
@@ -204,7 +202,7 @@ public class ScarEntityEventHandler {
 	// --- Combat event handlers for scar effects ---
 
 	@SubscribeEvent
-	public static void onLivingHurt(LivingHurtEvent event) {
+	public static void onLivingHurt(LivingDamageEvent.Pre event) {
 		// Player attacks another entity
 	if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity target = event.getEntity();

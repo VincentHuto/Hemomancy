@@ -25,7 +25,7 @@ public class PacketToggleBinderMessage implements CustomPacketPayload {
 		return new PacketToggleBinderMessage(en);
 	}
 
-	public static void encode(final PacketToggleBinderMessage message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final PacketToggleBinderMessage message) {
 		buffer.writeBoolean(message.enabled);
 	}
 

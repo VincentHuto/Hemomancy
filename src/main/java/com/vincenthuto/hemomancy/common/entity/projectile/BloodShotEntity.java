@@ -46,7 +46,7 @@ public class BloodShotEntity extends AbstractArrow {
 		super.doPostHurtEffects(living);
 		Entity entity = living;
 		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss.get(), 1000, 2));
+			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 
 		}
 
@@ -64,7 +64,7 @@ public class BloodShotEntity extends AbstractArrow {
 		super.onHitEntity(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss.get(), 1000, 2));
+			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 
 		}
 

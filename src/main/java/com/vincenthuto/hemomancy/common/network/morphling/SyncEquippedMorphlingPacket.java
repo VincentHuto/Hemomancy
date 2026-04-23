@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -31,14 +32,14 @@ public class SyncEquippedMorphlingPacket implements CustomPacketPayload {
 		this.morphlingStack = stack == null ? ItemStack.EMPTY : stack;
 	}
 
-	public static void encode(SyncEquippedMorphlingPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SyncEquippedMorphlingPacket msg) {
 		buf.writeUUID(msg.playerUUID);
-		buf.writeItem(msg.morphlingStack);
+		ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf, msg.morphlingStack);
 	}
 
 	public static SyncEquippedMorphlingPacket decode(FriendlyByteBuf buf) {
 		UUID uuid = buf.readUUID();
-		ItemStack stack = buf.readItem();
+		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf);
 		return new SyncEquippedMorphlingPacket(uuid, stack);
 	}
 

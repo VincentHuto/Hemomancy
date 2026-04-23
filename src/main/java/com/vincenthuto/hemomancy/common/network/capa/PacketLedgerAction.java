@@ -51,7 +51,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 		this.action = action;
 	}
 
-	public static void encode(PacketLedgerAction msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketLedgerAction msg) {
 		buf.writeInt(msg.action);
 	}
 

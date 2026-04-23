@@ -31,7 +31,7 @@ public class UseQuickManipKeyPacket implements CustomPacketPayload {
 		return new UseQuickManipKeyPacket(buffer.readFloat());
 	}
 
-	public static void encode(final UseQuickManipKeyPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final UseQuickManipKeyPacket message) {
 		buffer.writeByte(0);
 		buffer.writeFloat(message.parTick);
 	}

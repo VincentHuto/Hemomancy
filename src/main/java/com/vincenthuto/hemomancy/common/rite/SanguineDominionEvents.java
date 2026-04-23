@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -10,9 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
  * Sanguine Dominion. Non-allied entities within the domain take slow bleed
  * damage every 2 seconds.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SanguineDominionEvents {
 
 	/** Damage dealt to non-allied entities every BLEED_INTERVAL ticks. */
@@ -30,9 +30,8 @@ public class SanguineDominionEvents {
 	private static final int BLEED_INTERVAL = 40;
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 
 		// Only process every BLEED_INTERVAL ticks for performance
 		if (sLevel.getGameTime() % BLEED_INTERVAL != 0) return;

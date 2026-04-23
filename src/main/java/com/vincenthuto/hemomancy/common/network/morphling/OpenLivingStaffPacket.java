@@ -27,7 +27,7 @@ public class OpenLivingStaffPacket implements CustomPacketPayload {
 		return new OpenLivingStaffPacket();
 	}
 
-	public static void encode(final OpenLivingStaffPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final OpenLivingStaffPacket message) {
 		buffer.writeByte(0);
 	}
 

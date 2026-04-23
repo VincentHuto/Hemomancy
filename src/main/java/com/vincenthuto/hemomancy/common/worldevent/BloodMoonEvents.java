@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldevent;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -18,10 +19,9 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
@@ -41,7 +41,7 @@ import java.util.List;
  * <p>State is persisted via {@link BloodMoonSavedData}; clients are notified
  * via {@link PacketSyncBloodMoon}.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class BloodMoonEvents {
 
 	/** Ticks per in-game day. */
@@ -50,12 +50,12 @@ public class BloodMoonEvents {
 	/** In-game tick at which night begins. */
 	private static final long NIGHT_START_TICK = 12542L;
 
-	/** Duration (ticks) of a blood moon — roughly one in-game night. */
+	/** Duration (ticks) of a blood moon â€” roughly one in-game night. */
 	private static final long BLOOD_MOON_DURATION = 11900L;
 
 	/**
 	 * Chance a blood moon triggers each night: 1 in BLOOD_MOON_CHANCE.
-	 * Lower values = more frequent. Default: 1-in-7 ≈ weekly at normal play speed.
+	 * Lower values = more frequent. Default: 1-in-7 â‰ˆ weekly at normal play speed.
 	 */
 	private static final int BLOOD_MOON_CHANCE = 7;
 
@@ -111,9 +111,8 @@ public class BloodMoonEvents {
 	// ---------------------------------------------------------------------------
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 		if (!sLevel.dimension().equals(Level.OVERWORLD)) return;
 
 		long gameTime = sLevel.getGameTime();
@@ -210,7 +209,7 @@ public class BloodMoonEvents {
 					net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 					playerPos.offset(dx, 0, dz));
 
-			// Only spawn in darkness (sky light ≤ 4 or night)
+			// Only spawn in darkness (sky light â‰¤ 4 or night)
 			if (sLevel.getBrightness(LightLayer.SKY, spawnPos) > 4) continue;
 			if (!sLevel.getBlockState(spawnPos).isAir()) continue;
 			if (!sLevel.getBlockState(spawnPos.below()).isSolidRender(sLevel, spawnPos.below())) continue;

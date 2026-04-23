@@ -144,16 +144,15 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ClientEvents {
 
 	public static final KeyMapping bloodFormation = new KeyMapping("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
@@ -186,7 +185,7 @@ public class ClientEvents {
 	@SubscribeEvent
 	public static void onClientTick(ClientTickEvent event) {
 
-		if (event.phase == TickEvent.Phase.END) {
+		if (event instanceof ClientTickEvent.Post) {
 			ManipCooldownOverlay.tick();
 			ActiveBloodCraftClientData.tick();
 			BloodBallClientData.tick();
@@ -238,7 +237,7 @@ public class ClientEvents {
 		}
 
 		// Radial
-		if (event.phase != TickEvent.Phase.START)
+		if (!(event instanceof ClientTickEvent.Pre))
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -374,7 +373,7 @@ public class ClientEvents {
 		}
 	}
 
-	@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
+	@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
 	public static class ClientModBusEvents {
 
 		@SubscribeEvent
@@ -592,3 +591,4 @@ public class ClientEvents {
 		}
 	}
 }
+

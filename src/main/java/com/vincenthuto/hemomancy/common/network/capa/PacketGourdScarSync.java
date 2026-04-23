@@ -12,13 +12,14 @@ import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class PacketGourdScarSync implements CustomPacketPayload {
 
-	public static void encode(PacketGourdScarSync msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketGourdScarSync msg) {
 		msg.toBytes(buf);
 	}
 
@@ -37,7 +38,7 @@ public class PacketGourdScarSync implements CustomPacketPayload {
 	public PacketGourdScarSync(FriendlyByteBuf buf) {
 		this.playerId = buf.readInt();
 		this.slot = buf.readByte();
-		this.mindscar = buf.readItem();
+		this.mindscar = ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf);
 		this.amount = buf.readDouble();
 	}
 
@@ -48,20 +49,17 @@ public class PacketGourdScarSync implements CustomPacketPayload {
 		this.amount = amount;
 	}
 
-	public static void handle(PacketGourdScarSync msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
 
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final PacketGourdScarSync msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (mindscar.getItem() instanceof BloodGourdItem gourd) {
-				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(mindscar)
+			if (msg.mindscar.getItem() instanceof BloodGourdItem gourd) {
+				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(msg.mindscar)
 						.orElseThrow(NullPointerException::new);
-				Entity p = Minecraft.getInstance().level.getEntity(playerId);
+				Entity p = Minecraft.getInstance().level.getEntity(msg.playerId);
 				if (p instanceof Player) {
 					HemoCapabilityAccess.getScars(p).ifPresent(b -> {
-						bloodVolume.setBloodVolume(amount);
-						b.setStackInSlot(slot, mindscar);
+						bloodVolume.setBloodVolume(msg.amount);
+						b.setStackInSlot(msg.slot, msg.mindscar);
 
 					});
 				}
@@ -72,7 +70,7 @@ public class PacketGourdScarSync implements CustomPacketPayload {
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeInt(this.playerId);
 		buf.writeByte(this.slot);
-		buf.writeItem(this.mindscar);
+		ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buf, this.mindscar);
 		buf.writeDouble(this.amount);
 	}
 

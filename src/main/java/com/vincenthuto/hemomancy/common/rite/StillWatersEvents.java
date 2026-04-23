@@ -1,15 +1,15 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Server-side event handler for active Still Waters zones established by the
@@ -18,7 +18,7 @@ import net.neoforged.fml.common.Mod;
  * Players inside a Still Waters zone take 30% less magic damage, partially
  * countering Sanguine Dominion's bleed and other blood-magic threats.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class StillWatersEvents {
 
 	/** How often (in ticks) the cleanup pass removes expired entries. */
@@ -27,22 +27,21 @@ public class StillWatersEvents {
 	/** Fraction of magic damage reduced for players inside a Still Waters zone. */
 	private static final float MAGIC_DAMAGE_REDUCTION = 0.30f;
 
-	// ── Level tick: clean up expired zones ───────────────────────────────────
+	// â”€â”€ Level tick: clean up expired zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 		if (sLevel != sLevel.getServer().overworld()) return;
 		if (sLevel.getGameTime() % CLEANUP_INTERVAL != 0) return;
 
 		StillWatersSavedData.get(sLevel).removeExpired(sLevel.getGameTime());
 	}
 
-	// ── Hurt event: reduce magic damage inside Still Waters zones ────────────
+	// â”€â”€ Hurt event: reduce magic damage inside Still Waters zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onLivingHurt(LivingHurtEvent event) {
+	public static void onLivingHurt(LivingDamageEvent.Pre event) {
 		// Only affect players
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
@@ -61,7 +60,7 @@ public class StillWatersEvents {
 		long tick = sLevel.getGameTime();
 
 		if (data.isInZone(pos, dimension, tick)) {
-			event.setAmount(event.getAmount() * (1.0f - MAGIC_DAMAGE_REDUCTION));
+			event.setNewDamage(event.getNewDamage() * (1.0f - MAGIC_DAMAGE_REDUCTION));
 		}
 	}
 }

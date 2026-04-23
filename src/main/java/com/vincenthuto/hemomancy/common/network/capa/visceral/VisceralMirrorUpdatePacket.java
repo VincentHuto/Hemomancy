@@ -39,7 +39,7 @@ public class VisceralMirrorUpdatePacket implements CustomPacketPayload {
 		this.statusMessage = statusMessage != null ? statusMessage : "";
 	}
 
-	public static void encode(VisceralMirrorUpdatePacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, VisceralMirrorUpdatePacket msg) {
 		buf.writeBlockPos(msg.pos);
 		buf.writeInt(msg.phaseOrdinal);
 		buf.writeInt(msg.ritualTicks);

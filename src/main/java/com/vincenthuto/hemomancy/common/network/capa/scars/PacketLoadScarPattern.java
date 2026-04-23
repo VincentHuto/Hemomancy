@@ -24,11 +24,15 @@ public class PacketLoadScarPattern implements CustomPacketPayload {
 	public PacketLoadScarPattern() {
 	}
 
-	public static void encode(PacketLoadScarPattern msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketLoadScarPattern msg) {
 	}
 
 	public static PacketLoadScarPattern decode(FriendlyByteBuf buf) {
 		return new PacketLoadScarPattern();
+	}
+
+	public static void handle(final PacketLoadScarPattern msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
 	}
 
 	public static class Handler {

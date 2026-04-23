@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.rite.CrimsonBeaconSavedData.BeaconEntry;
 
@@ -10,14 +11,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Handles Crimson Beacon death-teleport: when a player with an active beacon
  * takes fatal damage, their body is teleported to the beacon position before
  * the death is finalized. The beacon is consumed (one-time use).
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class CrimsonBeaconEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -36,7 +36,7 @@ public class CrimsonBeaconEvents {
 		// Check dimension matches
 		String currentDimension = player.level().dimension().location().toString();
 		if (!currentDimension.equals(beacon.dimension())) {
-			// Beacon is in a different dimension — still consume it but warn
+			// Beacon is in a different dimension â€” still consume it but warn
 			data.removeBeacon(player.getUUID());
 			player.displayClientMessage(
 					Component.literal("The Crimson Beacon was too distant to reach...")

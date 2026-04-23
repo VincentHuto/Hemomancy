@@ -29,7 +29,7 @@ public class OpenMorphlingJarPacket implements CustomPacketPayload {
 		return new OpenMorphlingJarPacket();
 	}
 
-	public static void encode(final OpenMorphlingJarPacket message, final FriendlyByteBuf buffer) {
+	public static void encode(final FriendlyByteBuf buffer, final OpenMorphlingJarPacket message) {
 		buffer.writeByte(0);
 	}
 

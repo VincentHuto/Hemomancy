@@ -33,7 +33,7 @@ public class PacketKickBloodlinePlayer implements CustomPacketPayload {
 		this.targetUUID = targetUUID;
 	}
 
-	public static void encode(PacketKickBloodlinePlayer msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketKickBloodlinePlayer msg) {
 		buf.writeUUID(msg.targetUUID);
 	}
 

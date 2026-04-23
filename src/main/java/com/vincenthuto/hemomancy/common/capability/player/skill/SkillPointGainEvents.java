@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.skill;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -40,7 +40,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * {@link #onMemoryWeavingCompleted}, and {@link #onBloodlineJoined}
  * from the relevant systems.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SkillPointGainEvents {
 
     /** Hemomancy advancement path prefix used to identify mod-specific advancements. */
@@ -55,18 +55,18 @@ public class SkillPointGainEvents {
             "root", "strange_seeds"
     );
 
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     //  SYNC HELPER
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /** Sends the current skill tree state (including milestones) to the given client. */
     private static void syncSkills(ServerPlayer player) {
         PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
     }
 
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     //  ADVANCEMENT-TRIGGERED MILESTONES
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * When a player earns a Hemomancy advancement, check whether a matching
@@ -112,9 +112,9 @@ public class SkillPointGainEvents {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  COMBAT — Kill Counter Milestones
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  COMBAT â€” Kill Counter Milestones
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Killing a hostile or hemomancy mob while the player's blood volume is
@@ -153,9 +153,9 @@ public class SkillPointGainEvents {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
-    //  PUBLIC API — Called by other systems
-    // ════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  PUBLIC API â€” Called by other systems
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
      * Called from {@code KnownManipulationEvents.onManipulationUsed} after a

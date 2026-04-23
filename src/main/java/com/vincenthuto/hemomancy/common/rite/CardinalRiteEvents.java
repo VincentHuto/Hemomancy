@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,10 +62,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -72,7 +72,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * Handles tick processing, particle spawning, boundary enforcement,
  * unwilling sacrifice processing, and player death during active rites.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class CardinalRiteEvents {
 
 	private static final float CASTER_BOUNDARY_DAMAGE_PER_TICK = 1.0f;
@@ -83,9 +83,8 @@ public class CardinalRiteEvents {
 	private static final int RITE_SYNC_INTERVAL = 10;
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 
 		// Tick pending blood structure crafts (delayed block breaking)
 		PendingBloodCraftManager.tick();
@@ -112,7 +111,7 @@ public class CardinalRiteEvents {
 			ServerPlayer caster = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
 
 			if (caster == null || !caster.level().equals(sLevel)) {
-				// Caster is offline or in a different dimension — stall the rite
+				// Caster is offline or in a different dimension â€” stall the rite
 				continue;
 			}
 
@@ -282,7 +281,7 @@ public class CardinalRiteEvents {
 	 * Searches for a block pattern match near a center position.
 	 * <p>
 	 * Vanilla {@link BlockPattern#find} scans a cube of only
-	 * {@code maxDim × maxDim × maxDim} starting positions, which is too
+	 * {@code maxDim Ã— maxDim Ã— maxDim} starting positions, which is too
 	 * small when the stored center sits in the middle of the structure.
 	 * Depending on which rotation matches, the pattern's
 	 * {@code frontTopLeft} anchor can be up to {@code (maxDim - 1)} blocks
@@ -342,7 +341,7 @@ public class CardinalRiteEvents {
 			int mismatches = 0;
 			for (var pair : blockPairs) {
 				Block expected = pair.getBlock();
-				// Null or air expected means this was a space (wildcard) — skip it
+				// Null or air expected means this was a space (wildcard) â€” skip it
 				if (expected == null || expected == Blocks.AIR) continue;
 				BlockPos relPos = pair.getPos();
 				BlockPos worldPos = center.offset(
@@ -407,7 +406,7 @@ public class CardinalRiteEvents {
 	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
 	private static final String SANGUINE_INITIATION_RITE = "cardinal_rite/sanguine_initiation";
 
-	// ── New utility rite paths ──
+	// â”€â”€ New utility rite paths â”€â”€
 	private static final String SANGUINE_ATTUNEMENT_RITE = "cardinal_rite/sanguine_attunement";
 	private static final String CRIMSON_BEACON_RITE = "cardinal_rite/crimson_beacon";
 	private static final String VASCULAR_MENDING_RITE = "cardinal_rite/vascular_mending";
@@ -426,13 +425,13 @@ public class CardinalRiteEvents {
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
 	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
-	// ── Gourd upgrade rite paths ──
+	// â”€â”€ Gourd upgrade rite paths â”€â”€
 	private static final String PALLID_VESSEL_RITE = "cardinal_rite/pallid_vessel_rite";
 	private static final String CRIMSON_VESSEL_RITE = "cardinal_rite/crimson_vessel_rite";
 	private static final String ASHEN_VESSEL_RITE = "cardinal_rite/ashen_vessel_rite";
 	private static final String HORN_OF_CULMINATION_RITE = "cardinal_rite/horn_of_culmination_rite";
 
-	// ── Unstained rite paths ──
+	// â”€â”€ Unstained rite paths â”€â”€
 	private static final String LETHEAN_BAPTISM_RITE = "cardinal_rite/lethean_baptism";
 	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";
 	private static final String CLARITY_ASCENSION_RITE = "cardinal_rite/clarity_ascension";
@@ -512,7 +511,7 @@ public class CardinalRiteEvents {
 					for (int i = 0; i < width; i++) {
 						if (i >= row.length()) continue;
 						char c = row.charAt(i);
-						// Space character is a wildcard — don't destroy whatever happens to be there
+						// Space character is a wildcard â€” don't destroy whatever happens to be there
 						if (c == ' ') continue;
 						Block expected = symbolList.get(String.valueOf(c));
 						if (expected == null || expected == Blocks.AIR) continue;
@@ -557,7 +556,7 @@ public class CardinalRiteEvents {
 					resultStack = ItemStack.EMPTY;
 				} else {
 					caster.displayClientMessage(
-							Component.literal("The pallid vessel flushes crimson — reborn in the deepest scarlet.")
+							Component.literal("The pallid vessel flushes crimson â€” reborn in the deepest scarlet.")
 									.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 							false);
 				}
@@ -572,7 +571,7 @@ public class CardinalRiteEvents {
 					resultStack = ItemStack.EMPTY;
 				} else {
 					caster.displayClientMessage(
-							Component.literal("Through fire and ash the vessel is reborn — blackened, hardened, and hungry.")
+							Component.literal("Through fire and ash the vessel is reborn â€” blackened, hardened, and hungry.")
 									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
 				}
@@ -587,7 +586,7 @@ public class CardinalRiteEvents {
 					resultStack = ItemStack.EMPTY;
 				} else {
 					caster.displayClientMessage(
-							Component.literal("The final vessel transcends flesh and gourd alike — the Curved Horn is born.")
+							Component.literal("The final vessel transcends flesh and gourd alike â€” the Curved Horn is born.")
 									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 							false);
 				}
@@ -602,7 +601,7 @@ public class CardinalRiteEvents {
 			// Bloodline recall rite: re-issue a ledger from the caster's existing bloodline
 			if (BLOODLINE_RECALL_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
 				if (!recallBloodlineLedger(sLevel, caster, resultStack)) {
-					// Caster has no bloodline — the rite still completes but the ledger stays unsigned
+					// Caster has no bloodline â€” the rite still completes but the ledger stays unsigned
 					caster.displayClientMessage(
 							Component.literal("The blood remembers nothing... You have no bloodline to recall.")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -613,7 +612,7 @@ public class CardinalRiteEvents {
 			// Exsanguination rite: verify a named sacrifice was killed during the rite
 			if (EXSANGUINATION_RITE.equals(ritePath)) {
 				// The sacrifice processing in the tick loop already damages entities.
-				// The quintessence result item is always produced — the rite IS the sacrifice.
+				// The quintessence result item is always produced â€” the rite IS the sacrifice.
 				caster.displayClientMessage(
 						Component.literal("The lifeblood crystallizes... Sanguine Quintessence is born.")
 								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
@@ -699,7 +698,7 @@ public class CardinalRiteEvents {
 			completeCrimsonLodge(sLevel, caster, center);
 		}
 
-		// ── Unstained rites ──
+		// â”€â”€ Unstained rites â”€â”€
 
 		// Rite of Lethean Baptism: begin the Unstained path
 		if (LETHEAN_BAPTISM_RITE.equals(ritePath)) {
@@ -845,9 +844,9 @@ public class CardinalRiteEvents {
 		}
 	}
 
-	// ══════════════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	// Gourd Upgrade Helpers
-	// ══════════════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Searches the player's main hand, off hand, and inventory for an item matching
@@ -881,9 +880,9 @@ public class CardinalRiteEvents {
 		return false;
 	}
 
-	// ══════════════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	// Utility Rite Completion Handlers
-	// ══════════════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Rite of Sanguine Attunement (Degree 2, Minor):
@@ -941,11 +940,11 @@ public class CardinalRiteEvents {
 	 * Rite of the Hungering Earth (Degree 3, Lesser):
 	 * Corrupts natural terrain in a radius around the rite center, converting:
 	 * <ul>
-	 *   <li>Stone → Venous Stone</li>
-	 *   <li>Cobblestone → Venous Stone</li>
-	 *   <li>Deepslate → Infested Venous Stone</li>
-	 *   <li>Dirt/Grass → Befouling Ash Trail (block below becomes venous stone)</li>
-	 *   <li>Sand/Gravel → Polished Venous Stone</li>
+	 *   <li>Stone â†’ Venous Stone</li>
+	 *   <li>Cobblestone â†’ Venous Stone</li>
+	 *   <li>Deepslate â†’ Infested Venous Stone</li>
+	 *   <li>Dirt/Grass â†’ Befouling Ash Trail (block below becomes venous stone)</li>
+	 *   <li>Sand/Gravel â†’ Polished Venous Stone</li>
 	 * </ul>
 	 */
 	private static void completeHungeringEarth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
@@ -1332,22 +1331,22 @@ public class CardinalRiteEvents {
 	}
 
 	/**
-	 * Bloom of the Qliphoth (Degree 7, Grand — Archon-tier summoning rite):
+	 * Bloom of the Qliphoth (Degree 7, Grand â€” Archon-tier summoning rite):
 	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
 	 * radius, all blood manipulations cost 25% less blood and players receive
 	 * passive health regeneration and enhanced blood regeneration.
 	 * <p>
-	 * Places a 1×1×8 multi-block (QliphothBloomBlock + 7 fillers) at the
+	 * Places a 1Ã—1Ã—8 multi-block (QliphothBloomBlock + 7 fillers) at the
 	 * ritual center and registers the bloom in world SavedData.
-	 * The tree produces exactly nine pomes over its lifecycle — one for each
-	 * husk of the Qliphoth — then ceases dropping fruit until re-summoned.
+	 * The tree produces exactly nine pomes over its lifecycle â€” one for each
+	 * husk of the Qliphoth â€” then ceases dropping fruit until re-summoned.
 	 */
 	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
 
-		// Check if a bloom already exists within the radius — only one bloom per 3-chunk area
+		// Check if a bloom already exists within the radius â€” only one bloom per 3-chunk area
 		QliphothBloomSavedData.BloomEntry overlapping = data.getOverlappingBloom(
 				center.above(2), dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS);
 		if (overlapping != null) {
@@ -1360,7 +1359,7 @@ public class CardinalRiteEvents {
 			return;
 		}
 
-		// Verify there is room for the 1×1×8 column
+		// Verify there is room for the 1Ã—1Ã—8 column
 		Block bloomBlock = BlockInit.qliphoth_bloom.get();
 		com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock =
 				(com.vincenthuto.hemomancy.common.block.IMultiBlock) bloomBlock;
@@ -1408,7 +1407,7 @@ public class CardinalRiteEvents {
 	 * <p>
 	 * If pomes remain in the tree's lifecycle, they are forcibly dropped as items.
 	 * A Harbinger pruner receives normal (live) pomes; an Unstained pruner receives
-	 * tainted pomes — the husks were severed before they were ready to ripen.
+	 * tainted pomes â€” the husks were severed before they were ready to ripen.
 	 */
 	private static void completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
@@ -1493,7 +1492,7 @@ public class CardinalRiteEvents {
 			double z = center.getZ() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
 			ItemEntity entity = new ItemEntity(sLevel, x, y, z, pomeStack);
 			entity.setPickUpDelay(10);
-			// Invulnerable and permanent — pomes must not be destroyed by the environment
+			// Invulnerable and permanent â€” pomes must not be destroyed by the environment
 			entity.setInvulnerable(true);
 			entity.lifespan = Integer.MAX_VALUE;
 			sLevel.addFreshEntity(entity);
@@ -1598,7 +1597,7 @@ public class CardinalRiteEvents {
 
 	/**
 	 * Recalls a lost bloodline ledger by looking up the caster's existing bloodline
-	 * from world data and writing it onto the result item. This is a penitent rite —
+	 * from world data and writing it onto the result item. This is a penitent rite â€”
 	 * the covenant does not forget, but it demands a price for carelessness.
 	 * Returns false if the caster has no bloodline to recall.
 	 */
@@ -1625,9 +1624,9 @@ public class CardinalRiteEvents {
 		return true;
 	}
 
-	// ────────────────────────────────────────────────────────────────────────
+	// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 	// Unstained Rite Completion Handlers
-	// ────────────────────────────────────────────────────────────────────────
+	// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	/**
 	 * Rite of Lethean Baptism (Minor, 0 blood):
@@ -1709,7 +1708,7 @@ public class CardinalRiteEvents {
 			UnstainedProgressEvents.syncProgress(caster, unstained);
 
 			caster.displayClientMessage(
-					Component.literal("The veil parts. True sight is yours — clarity has been unlocked.")
+					Component.literal("The veil parts. True sight is yours â€” clarity has been unlocked.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 					false);
 			caster.displayClientMessage(
@@ -1774,9 +1773,9 @@ public class CardinalRiteEvents {
 				100, LETHEAN_JUDGMENT_RADIUS * 0.5, 2.0, LETHEAN_JUDGMENT_RADIUS * 0.5, 0.01);
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  SILVER DAWN — Persistent Cleansed Zone
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  SILVER DAWN â€” Persistent Cleansed Zone
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Radius of the Silver Dawn cleansing zone in blocks. */
 	private static final int SILVER_DAWN_RADIUS = 8;
@@ -1788,7 +1787,7 @@ public class CardinalRiteEvents {
 	/**
 	 * Lazy block-conversion map for Silver Dawn / Consecration.
 	 * Maps blood-faction blocks to their cleansed equivalents.
-	 * Unstained rites have zero blood cost by design — they draw
+	 * Unstained rites have zero blood cost by design â€” they draw
 	 * from purity and clarity, not from the hemomancer's reservoir.
 	 */
 	private static Map<Block, Block> SILVER_DAWN_CONVERSIONS;
@@ -1866,9 +1865,9 @@ public class CardinalRiteEvents {
 				80, SILVER_DAWN_RADIUS * 0.4, 1.5, SILVER_DAWN_RADIUS * 0.4, 0.01);
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  STILL WATERS — 5-minute zone of reduced magic damage
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  STILL WATERS â€” 5-minute zone of reduced magic damage
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Radius of the Still Waters zone in blocks. */
 	private static final int STILL_WATERS_RADIUS = 16;
@@ -1902,9 +1901,9 @@ public class CardinalRiteEvents {
 				60, STILL_WATERS_RADIUS * 0.3, 1.5, STILL_WATERS_RADIUS * 0.3, 0.005);
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  PALE CONSECRATION — 10-minute zone of hostile mob denial
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  PALE CONSECRATION â€” 10-minute zone of hostile mob denial
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Radius of the Pale Consecration zone in blocks. */
 	private static final int PALE_CONSECRATION_RADIUS = 8;
@@ -1941,9 +1940,9 @@ public class CardinalRiteEvents {
 				40, PALE_CONSECRATION_RADIUS * 0.3, 0.5, PALE_CONSECRATION_RADIUS * 0.3, 0.005);
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  SILTHMERE'S REMEMBRANCE — one-time burst purity + Silver Ward
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  SILTHMERE'S REMEMBRANCE â€” one-time burst purity + Silver Ward
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Radius within which Unstained players receive the Remembrance burst. */
 	private static final int REMEMBRANCE_RADIUS = 32;
@@ -1994,9 +1993,9 @@ public class CardinalRiteEvents {
 				120, REMEMBRANCE_RADIUS * 0.3, 3.0, REMEMBRANCE_RADIUS * 0.3, 0.02);
 	}
 
-	// ════════════════════════════════════════════════════════════
-	//  LETHE COVENANT — grand 30-minute Unstained domain
-	// ════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	//  LETHE COVENANT â€” grand 30-minute Unstained domain
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Chunk radius of the Lethe Covenant domain. */
 	private static final int LETHE_COVENANT_CHUNK_RADIUS = 5;
@@ -2054,7 +2053,7 @@ public class CardinalRiteEvents {
 		}
 		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(true));
 		caster.displayClientMessage(
-				Component.literal("The ritual tears the veil — the Blood Moon rises!")
+				Component.literal("The ritual tears the veil â€” the Blood Moon rises!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
@@ -2068,7 +2067,7 @@ public class CardinalRiteEvents {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (!unstained.hasBegunPurification() || unstained.getPurity() < 50f) {
 				caster.displayClientMessage(
-						Component.literal("The tide will not answer — your purity is insufficient.")
+						Component.literal("The tide will not answer â€” your purity is insufficient.")
 								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 						false);
 				return;
@@ -2098,7 +2097,7 @@ public class CardinalRiteEvents {
 					caster.getX(), caster.getY() + 1.0, caster.getZ(),
 					120, 7.0, 5.0, 7.0, 0.04);
 			caster.displayClientMessage(
-					Component.literal("The Lethean Tide rises — the Blood Moon is washed from the sky.")
+					Component.literal("The Lethean Tide rises â€” the Blood Moon is washed from the sky.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					false);
 		});

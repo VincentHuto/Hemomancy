@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -13,10 +14,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Event handlers for the {@link SilthmereGlaiveItem}.
@@ -28,7 +28,7 @@ import net.neoforged.fml.common.Mod;
  *       grants +0.5 purity.</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SilthmereGlaiveEvents {
 
 	/** How often (in ticks) the Glowing suppression pass runs. */
@@ -37,12 +37,11 @@ public class SilthmereGlaiveEvents {
 	/** Purity rewarded on kill at ABSOLVED+ purity. */
 	private static final float KILL_PURITY_REWARD = 0.5f;
 
-	// ── Player tick: Glowing suppression ─────────────────────────────────────
+	// â”€â”€ Player tick: Glowing suppression â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		Player player = event.player;
+	public static void onPlayerTick(PlayerTickEvent.Post event) {
+		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
 		if (player.level().getGameTime() % GLOWING_CHECK_INTERVAL != 0) return;
 
@@ -54,7 +53,7 @@ public class SilthmereGlaiveEvents {
 		}
 	}
 
-	// ── Living death: purity reward on kill ──────────────────────────────────
+	// â”€â”€ Living death: purity reward on kill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
 	public static void onLivingDeath(LivingDeathEvent event) {
@@ -74,7 +73,7 @@ public class SilthmereGlaiveEvents {
 			progress.addPurity(KILL_PURITY_REWARD);
 			UnstainedProgressEvents.syncProgress(killer, progress);
 			killer.displayClientMessage(
-					Component.literal("Silthmere's memory stirs — purity grows.")
+					Component.literal("Silthmere's memory stirs â€” purity grows.")
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					true);
 		});

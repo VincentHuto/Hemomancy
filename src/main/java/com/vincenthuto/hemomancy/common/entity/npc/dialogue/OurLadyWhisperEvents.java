@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
@@ -9,9 +10,8 @@ import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -21,17 +21,17 @@ import net.neoforged.neoforge.network.PacketDistributor;
  *
  * <p>Whisper frequency increases with advancement along the path:
  * <ul>
- *   <li><b>TAINTED</b> (purity 25+): every ~45 min — barely perceptible, like water far away</li>
- *   <li><b>CLEANSING</b> (purity 50+): every ~30 min — more audible, gentle encouragement</li>
- *   <li><b>ABSOLVED</b> (purity 75+): every ~20 min — clear, personal, slightly urgent</li>
- *   <li><b>PURIFIED</b> (purity 100, pre-clarity): every ~15 min — direct, guides toward the Rite</li>
- *   <li><b>DISCERNING</b> (clarity 25+): every ~30 min — relief, warmth, early revelations</li>
- *   <li><b>VIGILANT</b> (clarity 50+): every ~20 min — deeper, hints about the world's true state</li>
- *   <li><b>RESOLUTE</b> (clarity 75+): every ~15 min — serious, begins to reveal her own limits</li>
- *   <li><b>ENLIGHTENED</b> (clarity 100): every ~10 min — final truths, she is ancient and cold</li>
+ *   <li><b>TAINTED</b> (purity 25+): every ~45 min â€” barely perceptible, like water far away</li>
+ *   <li><b>CLEANSING</b> (purity 50+): every ~30 min â€” more audible, gentle encouragement</li>
+ *   <li><b>ABSOLVED</b> (purity 75+): every ~20 min â€” clear, personal, slightly urgent</li>
+ *   <li><b>PURIFIED</b> (purity 100, pre-clarity): every ~15 min â€” direct, guides toward the Rite</li>
+ *   <li><b>DISCERNING</b> (clarity 25+): every ~30 min â€” relief, warmth, early revelations</li>
+ *   <li><b>VIGILANT</b> (clarity 50+): every ~20 min â€” deeper, hints about the world's true state</li>
+ *   <li><b>RESOLUTE</b> (clarity 75+): every ~15 min â€” serious, begins to reveal her own limits</li>
+ *   <li><b>ENLIGHTENED</b> (clarity 100): every ~10 min â€” final truths, she is ancient and cold</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class OurLadyWhisperEvents {
 
 	// Intervals in ticks between whisper opportunities
@@ -48,10 +48,9 @@ public class OurLadyWhisperEvents {
 	private static final int VARIANT_COUNT = 3;
 
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
+	public static void onPlayerTick(PlayerTickEvent.Post event) {
 
-		Player player = event.player;
+		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
 		if (!(player instanceof ServerPlayer serverPlayer)) return;
 
@@ -77,7 +76,7 @@ public class OurLadyWhisperEvents {
 				// Phase 2: clarity whispers
 				EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
 				if (clarityStage.getLevel() < EnumClarityStage.DISCERNING.getLevel()) {
-					// AWAKENED — clarity just unlocked, not yet discerning; no whispers yet
+					// AWAKENED â€” clarity just unlocked, not yet discerning; no whispers yet
 					return;
 				}
 				useClarity = true;
@@ -93,7 +92,7 @@ public class OurLadyWhisperEvents {
 				// Phase 1: purity whispers
 				EnumPurityStage purityStage = EnumPurityStage.byPurity(purity);
 				if (purityStage.getLevel() < EnumPurityStage.TAINTED.getLevel()) {
-					// CORRUPTED — too early for whispers
+					// CORRUPTED â€” too early for whispers
 					return;
 				}
 				useClarity = false;

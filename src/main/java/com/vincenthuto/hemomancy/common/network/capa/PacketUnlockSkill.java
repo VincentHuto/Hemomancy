@@ -37,7 +37,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 		this.skillId = skillId;
 	}
 
-	public static void encode(PacketUnlockSkill msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketUnlockSkill msg) {
 		buf.writeInt(msg.skillId);
 	}
 

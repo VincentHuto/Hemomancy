@@ -27,7 +27,7 @@ public class VisceralMirrorCancelPacket implements CustomPacketPayload {
 		this.pos = pos;
 	}
 
-	public static void encode(VisceralMirrorCancelPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, VisceralMirrorCancelPacket msg) {
 		buf.writeBlockPos(msg.pos);
 	}
 

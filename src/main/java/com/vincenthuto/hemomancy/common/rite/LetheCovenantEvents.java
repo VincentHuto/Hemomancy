@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
@@ -11,12 +12,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Server-side event handler for Lethe Covenant domains established by the
@@ -32,7 +32,7 @@ import net.neoforged.fml.common.Mod;
  *       gain +0.2 purity.</li>
  * </ol>
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class LetheCovenantEvents {
 
 	/** How often the cleanup and purity-tick run (in ticks). 1200 = 1 minute. */
@@ -44,12 +44,11 @@ public class LetheCovenantEvents {
 	/** How often (in ticks) the cleanup pass runs. */
 	private static final int CLEANUP_INTERVAL = 100;
 
-	// ── Level tick: cleanup + purity growth ──────────────────────────────────
+	// â”€â”€ Level tick: cleanup + purity growth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (!(event.level instanceof ServerLevel sLevel)) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
 		if (sLevel != sLevel.getServer().overworld()) return;
 
 		long tick = sLevel.getGameTime();
@@ -79,7 +78,7 @@ public class LetheCovenantEvents {
 		}
 	}
 
-	// ── Spawn check: 50% suppression inside covenant domains ─────────────────
+	// â”€â”€ Spawn check: 50% suppression inside covenant domains â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
 	public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
@@ -105,10 +104,10 @@ public class LetheCovenantEvents {
 		}
 	}
 
-	// ── Hurt event: bleed immunity for Silver Ward players in the domain ──────
+	// â”€â”€ Hurt event: bleed immunity for Silver Ward players in the domain â”€â”€â”€â”€â”€â”€
 
 	@SubscribeEvent
-	public static void onLivingHurt(LivingHurtEvent event) {
+	public static void onLivingHurt(LivingIncomingDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 		if (!event.getSource().is(DamageTypes.MAGIC)) return;
@@ -126,7 +125,7 @@ public class LetheCovenantEvents {
 		long tick = sLevel.getGameTime();
 
 		if (data.isInDomain(pos, dimension, tick)) {
-			// Cancel all magic (bleed) damage — Silver Ward is absolute inside the Covenant
+			// Cancel all magic (bleed) damage â€” Silver Ward is absolute inside the Covenant
 			event.setCanceled(true);
 		}
 	}

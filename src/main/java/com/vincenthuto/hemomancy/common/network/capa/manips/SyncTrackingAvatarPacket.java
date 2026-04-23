@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class SyncTrackingAvatarPacket implements CustomPacketPayload {
 
-	public static void encode(SyncTrackingAvatarPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, SyncTrackingAvatarPacket msg) {
 		msg.toBytes(buf);
 	}
 
@@ -39,16 +39,13 @@ public class SyncTrackingAvatarPacket implements CustomPacketPayload {
 		this.isActive = isActive;
 	}
 
-	public static void handle(SyncTrackingAvatarPacket msg, IPayloadContext ctx) {
-		msg.handle(ctx);
-	}
 
-	public void handle(IPayloadContext ctx) {
+	public static void handle(final SyncTrackingAvatarPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Entity p = Minecraft.getInstance().level.getEntity(playerId);
+			Entity p = Minecraft.getInstance().level.getEntity(msg.playerId);
 			if (p instanceof Player) {
 				HemoCapabilityAccess.getKnownManipulations(p).ifPresent(b -> {
-					b.setAvatarActive(isActive);
+					b.setAvatarActive(msg.isActive);
 				});
 			}
 		});

@@ -35,7 +35,7 @@ public class PacketUpdatePoolSettings implements CustomPacketPayload {
 		this.autoDrawThreshold = autoDrawThreshold;
 	}
 
-	public static void encode(PacketUpdatePoolSettings msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketUpdatePoolSettings msg) {
 		buf.writeBoolean(msg.trickleEnabled);
 		buf.writeDouble(msg.trickleRate);
 		buf.writeBoolean(msg.autoDrawEnabled);

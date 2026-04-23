@@ -29,7 +29,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 		this.entries = entries;
 	}
 
-	public static void encode(PacketSyncActiveRites msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketSyncActiveRites msg) {
 		buf.writeInt(msg.entries.size());
 		for (ActiveRiteClientData.RiteEntry entry : msg.entries) {
 			buf.writeBlockPos(entry.getCenter());

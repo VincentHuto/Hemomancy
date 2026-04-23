@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
@@ -24,7 +25,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Consecration mechanic: Unstained players at CLEANSING+ purity (50+) can
@@ -34,13 +34,13 @@ import net.neoforged.fml.common.Mod;
  *
  * <h3>Conversion Table</h3>
  * <ul>
- *   <li>Venous Stone → Cleansed Stone</li>
- *   <li>Sanguine Glass → Cleansed Sanguine Glass</li>
- *   <li>Infested Venous Stone → Cleansed Stone</li>
- *   <li>Hematic Iron Block → Pale Silver Block</li>
+ *   <li>Venous Stone â†’ Cleansed Stone</li>
+ *   <li>Sanguine Glass â†’ Cleansed Sanguine Glass</li>
+ *   <li>Infested Venous Stone â†’ Cleansed Stone</li>
+ *   <li>Hematic Iron Block â†’ Pale Silver Block</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ConsecrationHandler {
 
 	/** Purity threshold to use consecration (CLEANSING = 50). */
@@ -49,8 +49,8 @@ public class ConsecrationHandler {
 	private static final float PURITY_PER_CONSECRATION = 0.5f;
 
 	/**
-	 * Lazy conversion map — built on first use from BlockInit registries.
-	 * Maps blood-faction block → cleansed block.
+	 * Lazy conversion map â€” built on first use from BlockInit registries.
+	 * Maps blood-faction block â†’ cleansed block.
 	 */
 	private static Map<Block, Block> CONVERSIONS;
 

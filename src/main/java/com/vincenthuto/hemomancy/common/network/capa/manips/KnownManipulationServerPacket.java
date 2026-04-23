@@ -84,7 +84,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		}
 		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart, equippedManipNames);
 	}
-	public static void encode(final KnownManipulationServerPacket msg, final FriendlyByteBuf buf) {
+	public static void encode(final FriendlyByteBuf buf, final KnownManipulationServerPacket msg) {
 		if (msg.selected != null) {
 			buf.writeNbt(msg.selected.serialize());
 		}

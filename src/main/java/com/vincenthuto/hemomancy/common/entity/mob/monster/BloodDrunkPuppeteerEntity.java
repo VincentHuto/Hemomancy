@@ -56,8 +56,8 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+			MobSpawnType pReason, SpawnGroupData pSpawnData) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
 	}
 
 	@Override

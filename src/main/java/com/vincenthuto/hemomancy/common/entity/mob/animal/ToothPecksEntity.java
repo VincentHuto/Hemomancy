@@ -102,7 +102,7 @@ public class ToothPecksEntity extends PathfinderMob {
 
                 if (tickCount % 40 == 0) {
                     HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> v.addDamage(1.0));
-                    player.addEffect(new MobEffectInstance(EffectInit.blood_loss.get(), 100, 0));
+                    player.addEffect(new MobEffectInstance(EffectInit.blood_loss, 100, 0));
                     player.hurt(player.damageSources().mobAttack(this), 0.5f);
                     playSound(SoundInit.ENTITY_TOOTH_PECKS_AMBIENT.get(), 0.4F, 1.0F + random.nextFloat() * 0.2F);
                     // Grow redder and larger with each feed
@@ -130,8 +130,8 @@ public class ToothPecksEntity extends PathfinderMob {
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-            MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+            MobSpawnType pReason, SpawnGroupData pSpawnData) {
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     @Override

@@ -23,6 +23,9 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 
 	public static final Type<PacketUpdateLivingStaffMorph> TYPE = new Type<>(Hemomancy.rloc("packet_update_living_staff_morph"));
 	public static final StreamCodec<FriendlyByteBuf, PacketUpdateLivingStaffMorph> STREAM_CODEC = StreamCodec.of(PacketUpdateLivingStaffMorph::encode, PacketUpdateLivingStaffMorph::decode);
+	public static void handle(final PacketUpdateLivingStaffMorph msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
+	}
 
 	public static class Handler {
 		public static void handle(final PacketUpdateLivingStaffMorph msg, final IPayloadContext ctx) {
@@ -90,7 +93,7 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 		return new PacketUpdateLivingStaffMorph(buf.readInt());
 	}
 
-	public static void encode(PacketUpdateLivingStaffMorph msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketUpdateLivingStaffMorph msg) {
 		buf.writeInt(msg.selected);
 	}
 

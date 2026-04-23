@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -29,9 +30,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
 import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseVeinScreen extends Screen {
 
 	final ResourceLocation selectTexture = Hemomancy.rloc("textures/gui/vein_selection.png");

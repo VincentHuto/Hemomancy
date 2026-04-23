@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.morphling;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,7 +22,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
@@ -29,10 +31,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class EquippedMorphlingEvents {
 
 	private static final Map<String, Long> TEMPORARY_WEBS = new ConcurrentHashMap<>();
@@ -44,9 +45,8 @@ public class EquippedMorphlingEvents {
 	 * of blood, the morphling is forcefully unequipped.
 	 */
 	@SubscribeEvent
-	public static void playerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		Player player = event.player;
+	public static void playerTick(PlayerTickEvent.Post event) {
+		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get()) return;
 
@@ -73,7 +73,7 @@ public class EquippedMorphlingEvents {
 					volume.drain(drainRate);
 					BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
 				} else {
-					// Not enough blood — unequip the morphling
+					// Not enough blood â€” unequip the morphling
 					morphCap.clearMorphling();
 					syncToClient((ServerPlayer) player);
 					player.displayClientMessage(
@@ -95,7 +95,7 @@ public class EquippedMorphlingEvents {
 	 * web cocoons, spore clouds, etc.).
 	 */
 	@SubscribeEvent
-	public static void onPlayerHurt(LivingDamageEvent event) {
+	public static void onPlayerHurt(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 
@@ -103,7 +103,7 @@ public class EquippedMorphlingEvents {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedHurt(player, morphStack, event.getSource(), event.getAmount());
+				morphling.onEquippedHurt(player, morphStack, event.getSource(), event.getNewDamage());
 			}
 		});
 	}
@@ -114,7 +114,7 @@ public class EquippedMorphlingEvents {
 	 * venom strike, predator's mark, etc.).
 	 */
 	@SubscribeEvent
-	public static void onPlayerAttack(LivingDamageEvent event) {
+	public static void onPlayerAttack(LivingDamageEvent.Pre event) {
 		LivingEntity target = event.getEntity();
 		if (target.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
@@ -123,7 +123,7 @@ public class EquippedMorphlingEvents {
 			if (!morphCap.hasMorphling()) return;
 			ItemStack morphStack = morphCap.getEquippedMorphling();
 			if (morphStack.getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedAttack(player, morphStack, target, event.getAmount());
+				morphling.onEquippedAttack(player, morphStack, target, event.getNewDamage());
 			}
 		});
 	}
@@ -176,13 +176,12 @@ public class EquippedMorphlingEvents {
 	 * placed by morphling abilities (e.g. Spider's Silk Tether).
 	 */
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (event.level.isClientSide) return;
+	public static void onLevelTick(LevelTickEvent.Post event) {
+		if (event.getLevel().isClientSide) return;
 		if (TEMPORARY_WEBS.isEmpty()) return;
 
-		long now = event.level.getGameTime();
-		String dimKey = event.level.dimension().location().toString();
+		long now = event.getLevel().getGameTime();
+		String dimKey = event.getLevel().dimension().location().toString();
 
 		Iterator<Map.Entry<String, Long>> it = TEMPORARY_WEBS.entrySet().iterator();
 		while (it.hasNext()) {
@@ -200,8 +199,8 @@ public class EquippedMorphlingEvents {
 				BlockPos pos = new BlockPos(x, y, z);
 
 				// Only remove if it's still a cobweb (don't break blocks placed by the player)
-				if (event.level.getBlockState(pos).is(Blocks.COBWEB)) {
-					event.level.removeBlock(pos, false);
+				if (event.getLevel().getBlockState(pos).is(Blocks.COBWEB)) {
+					event.getLevel().removeBlock(pos, false);
 				}
 				it.remove();
 			}

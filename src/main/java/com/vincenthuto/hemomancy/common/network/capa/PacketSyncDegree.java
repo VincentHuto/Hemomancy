@@ -24,7 +24,7 @@ public class PacketSyncDegree implements CustomPacketPayload {
 		this.degreeNumber = degreeNumber;
 	}
 
-	public static void encode(PacketSyncDegree msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, PacketSyncDegree msg) {
 		buf.writeInt(msg.degreeNumber);
 	}
 

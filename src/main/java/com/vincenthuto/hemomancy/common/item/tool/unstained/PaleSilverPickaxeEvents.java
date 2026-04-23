@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.BlockPos;
@@ -9,16 +10,15 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 /**
  * Server-side event handler for the {@link PaleSilverPickaxeItem}.
  * <p>
  * While a player holds the pickaxe in their mainhand, mob spawns within a
- * 4-block radius are suppressed — the resonant purity of pale silver keeps
+ * 4-block radius are suppressed â€” the resonant purity of pale silver keeps
  * the blood at bay.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PaleSilverPickaxeEvents {
 
 	/** Radius (in blocks) around the pickaxe holder within which spawns are denied. */

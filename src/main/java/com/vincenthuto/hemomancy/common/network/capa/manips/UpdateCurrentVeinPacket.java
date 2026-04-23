@@ -19,6 +19,10 @@ public class UpdateCurrentVeinPacket implements CustomPacketPayload {
 
 	public static final Type<UpdateCurrentVeinPacket> TYPE = new Type<>(Hemomancy.rloc("update_current_vein_packet"));
 	public static final StreamCodec<FriendlyByteBuf, UpdateCurrentVeinPacket> STREAM_CODEC = StreamCodec.of(UpdateCurrentVeinPacket::encode, UpdateCurrentVeinPacket::decode);
+	public static void handle(final UpdateCurrentVeinPacket msg, final IPayloadContext ctx) {
+		Handler.handle(msg, ctx);
+	}
+
 	public static class Handler {
 		public static void handle(final UpdateCurrentVeinPacket msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
@@ -43,7 +47,7 @@ public class UpdateCurrentVeinPacket implements CustomPacketPayload {
 		return new UpdateCurrentVeinPacket(buf.readInt());
 	}
 
-	public static void encode(UpdateCurrentVeinPacket msg, FriendlyByteBuf buf) {
+	public static void encode(FriendlyByteBuf buf, UpdateCurrentVeinPacket msg) {
 		buf.writeInt(msg.selected);
 	}
 
