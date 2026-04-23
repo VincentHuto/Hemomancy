@@ -16,7 +16,7 @@
     },
     "additions_sound": {
       "sound": "minecraft:ambient.nether_wastes.additions",
-      "tick_probability": 0.0111
+      "tick_chance": 0.0111
     }
   },
   "spawners": {

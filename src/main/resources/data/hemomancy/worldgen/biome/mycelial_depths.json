@@ -8,7 +8,9 @@
     "water_color": 3033144,
     "water_fog_color": 854034,
     "particle": {
-      "type": "minecraft:warped_spore",
+      "options": {
+        "type": "minecraft:warped_spore"
+      },
       "probability": 0.005
     },
     "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
@@ -20,7 +22,7 @@
     },
     "additions_sound": {
       "sound": "minecraft:ambient.soul_sand_valley.additions",
-      "tick_probability": 0.0111
+      "tick_chance": 0.0111
     }
   },
   "spawners": {
