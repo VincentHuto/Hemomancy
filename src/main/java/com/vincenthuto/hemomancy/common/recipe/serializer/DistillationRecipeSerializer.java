@@ -1,81 +1,77 @@
 package com.vincenthuto.hemomancy.common.recipe.serializer;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class DistillationRecipeSerializer implements RecipeSerializer<DistillationRecipe> {
 
-	@Override
-	public DistillationRecipe fromJson(ResourceLocation location, JsonObject object) {
-		String group = GsonHelper.getAsString(object, "group", "");
+private static final Codec<Either<ItemStack, ResourceLocation>> RESULT_CODEC = Codec
+.either(ItemStack.STRICT_CODEC, ResourceLocation.CODEC);
 
-		// ---- ingredient ----
-		JsonElement ingredientEl = GsonHelper.isArrayNode(object, "ingredient")
-				? GsonHelper.getAsJsonArray(object, "ingredient")
-				: GsonHelper.getAsJsonObject(object, "ingredient");
-		Ingredient ingredient = Ingredient.fromJson(ingredientEl);
+public static final MapCodec<DistillationRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+ResourceLocation.CODEC.optionalFieldOf("id", Hemomancy.rloc("distillation/unknown")).forGetter(DistillationRecipe::getId),
+Codec.STRING.optionalFieldOf("group", "").forGetter(DistillationRecipe::getGroup),
+Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(DistillationRecipe::getIngredient),
+Ingredient.CODEC.optionalFieldOf("catalyst", Ingredient.EMPTY).forGetter(DistillationRecipe::getCatalyst),
+RESULT_CODEC.fieldOf("result").forGetter(recipe -> Either.left(recipe.getResultItem(null))),
+Codec.INT.optionalFieldOf("count", 1).forGetter(recipe -> recipe.getResultItem(null).getCount()),
+Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(DistillationRecipe::getExperience),
+Codec.INT.optionalFieldOf("cookingtime", 100).forGetter(DistillationRecipe::getCookingTime),
+Codec.BOOL.optionalFieldOf("pallid", false).forGetter(DistillationRecipe::isPallid)).apply(instance,
+(id, group, ingredient, catalyst, resultEither, count, experience, cookingTime, pallid) -> {
+ItemStack result = resultEither.map(ItemStack::copy,
+resultId -> new ItemStack(BuiltInRegistries.ITEM.get(resultId), count));
+return new DistillationRecipe(id, group, ingredient, catalyst, pallid, result, experience, cookingTime);
+}));
 
-		// ---- catalyst (optional) ----
-		Ingredient catalyst = Ingredient.EMPTY;
-		if (object.has("catalyst")) {
-			JsonElement catalystEl = GsonHelper.isArrayNode(object, "catalyst")
-					? GsonHelper.getAsJsonArray(object, "catalyst")
-					: GsonHelper.getAsJsonObject(object, "catalyst");
-			catalyst = Ingredient.fromJson(catalystEl);
-		}
+public static final StreamCodec<RegistryFriendlyByteBuf, DistillationRecipe> STREAM_CODEC = StreamCodec
+.of(DistillationRecipeSerializer::toNetwork, DistillationRecipeSerializer::fromNetwork);
 
-		// ---- result ----
-		if (!object.has("result"))
-			throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
-		ItemStack result;
-		if (object.get("result").isJsonObject()) {
-			result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(object, "result"));
-		} else {
-			int count = GsonHelper.getAsInt(object, "count", 1);
-			String resultId = GsonHelper.getAsString(object, "result");
-			result = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(resultId)), count);
-		}
+private static DistillationRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+ResourceLocation recipeId = buffer.readResourceLocation();
+String group = buffer.readUtf();
+Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
+boolean hasCatalyst = buffer.readBoolean();
+Ingredient catalyst = hasCatalyst ? Ingredient.CONTENTS_STREAM_CODEC.decode(buffer) : Ingredient.EMPTY;
+boolean pallid = buffer.readBoolean();
+ItemStack result = ItemStack.STREAM_CODEC.decode(buffer);
+float xp = buffer.readFloat();
+int time = buffer.readInt();
+return new DistillationRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
+}
 
-		float experience = GsonHelper.getAsFloat(object, "experience", 0.0F);
-		int cookingTime = GsonHelper.getAsInt(object, "cookingtime", 100);
-		boolean pallid = GsonHelper.getAsBoolean(object, "pallid", false);
+private static void toNetwork(RegistryFriendlyByteBuf buffer, DistillationRecipe recipe) {
+buffer.writeResourceLocation(recipe.getId());
+buffer.writeUtf(recipe.getGroup());
+Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getIngredient());
+boolean hasCatalyst = recipe.requiresCatalyst();
+buffer.writeBoolean(hasCatalyst);
+if (hasCatalyst) Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getCatalyst());
+buffer.writeBoolean(recipe.isPallid());
+ItemStack.STREAM_CODEC.encode(buffer, recipe.getResultItem(null));
+buffer.writeFloat(recipe.getExperience());
+buffer.writeInt(recipe.getCookingTime());
+}
 
-		return new DistillationRecipe(location, group, ingredient, catalyst, pallid, result, experience, cookingTime);
-	}
+@Override
+public MapCodec<DistillationRecipe> codec() {
+return CODEC;
+}
 
-	@Override
-	public DistillationRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-		String group = buffer.readUtf();
-		Ingredient ingredient = Ingredient.fromNetwork(buffer);
-		boolean hasCatalyst = buffer.readBoolean();
-		Ingredient catalyst = hasCatalyst ? Ingredient.fromNetwork(buffer) : Ingredient.EMPTY;
-		boolean pallid = buffer.readBoolean();
-		ItemStack result = buffer.readItem();
-		float xp = buffer.readFloat();
-		int time = buffer.readInt();
-		return new DistillationRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
-	}
-
-	@Override
-	public void toNetwork(FriendlyByteBuf buffer, DistillationRecipe recipe) {
-		buffer.writeUtf(recipe.getGroup());
-		recipe.getIngredient().toNetwork(buffer);
-		boolean hasCatalyst = recipe.requiresCatalyst();
-		buffer.writeBoolean(hasCatalyst);
-		if (hasCatalyst) recipe.getCatalyst().toNetwork(buffer);
-		buffer.writeBoolean(recipe.isPallid());
-		buffer.writeItem(recipe.getResultItem(null));
-		buffer.writeFloat(recipe.getExperience());
-		buffer.writeInt(recipe.getCookingTime());
-	}
+@Override
+public StreamCodec<RegistryFriendlyByteBuf, DistillationRecipe> streamCodec() {
+return STREAM_CODEC;
+}
 }

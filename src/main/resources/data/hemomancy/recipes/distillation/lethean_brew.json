@@ -7,5 +7,6 @@
   "count": 1,
   "experience": 1.0,
   "cookingtime": 200,
-  "pallid": true
+  "pallid": true,
+  "id": "hemomancy:distillation/lethean_brew"
 }

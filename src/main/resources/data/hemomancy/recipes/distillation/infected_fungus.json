@@ -6,5 +6,6 @@
   "result": "hemomancy:foul_paste",
   "count": 2,
   "experience": 0.3,
-  "cookingtime": 100
+  "cookingtime": 100,
+  "id": "hemomancy:distillation/infected_fungus"
 }

@@ -6,5 +6,6 @@
   "result": "hemomancy:dicentra_sap",
   "count": 2,
   "experience": 0.4,
-  "cookingtime": 120
+  "cookingtime": 120,
+  "id": "hemomancy:distillation/sarcodes"
 }

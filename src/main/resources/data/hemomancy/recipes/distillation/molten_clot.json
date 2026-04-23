@@ -6,5 +6,6 @@
   "result": "hemomancy:hematic_iron_powder",
   "count": 2,
   "experience": 0.6,
-  "cookingtime": 200
+  "cookingtime": 200,
+  "id": "hemomancy:distillation/molten_clot"
 }

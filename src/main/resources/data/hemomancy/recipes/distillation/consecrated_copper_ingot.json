@@ -10,5 +10,6 @@
   "count": 2,
   "experience": 0.75,
   "cookingtime": 200,
-  "pallid": true
+  "pallid": true,
+  "id": "hemomancy:distillation/consecrated_copper_ingot"
 }

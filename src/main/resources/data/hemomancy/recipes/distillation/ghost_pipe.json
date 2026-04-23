@@ -7,5 +7,6 @@
   "count": 1,
   "experience": 0.5,
   "cookingtime": 150,
-  "pallid": true
+  "pallid": true,
+  "id": "hemomancy:distillation/ghost_pipe"
 }
