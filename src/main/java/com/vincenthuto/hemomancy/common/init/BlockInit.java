@@ -51,6 +51,7 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
@@ -113,7 +114,7 @@ public class BlockInit {
 	// Blocks
 
 	public static final DeferredHolder<Block, Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
-			() -> new Block(
+			() -> new TransparentBlock(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> sanguine_pane = SPECIALBLOCKS.register("sanguine_pane",
@@ -121,7 +122,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> vivianite_glass = BASEBLOCKS.register("vivianite_glass",
-			() -> new Block(
+			() -> new TransparentBlock(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> vivianite_pane = SPECIALBLOCKS.register("vivianite_pane",
@@ -129,7 +130,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> cleansed_sanguine_glass = BASEBLOCKS.register("cleansed_sanguine_glass",
-			() -> new Block(
+			() -> new TransparentBlock(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> cleansed_sanguine_pane = SPECIALBLOCKS.register("cleansed_sanguine_pane",
