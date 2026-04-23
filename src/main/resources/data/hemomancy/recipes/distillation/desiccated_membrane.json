@@ -6,5 +6,6 @@
   "result": "hemomancy:dicentra_sap",
   "count": 2,
   "experience": 0.5,
-  "cookingtime": 150
+  "cookingtime": 150,
+  "id": "hemomancy:distillation/desiccated_membrane"
 }

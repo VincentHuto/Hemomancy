@@ -6,5 +6,6 @@
   "result": "hemomancy:sanguine_formation",
   "count": 2,
   "experience": 0.7,
-  "cookingtime": 200
+  "cookingtime": 200,
+  "id": "hemomancy:distillation/blood_stained_stone"
 }

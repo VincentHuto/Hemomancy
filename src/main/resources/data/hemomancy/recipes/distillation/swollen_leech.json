@@ -6,5 +6,6 @@
   "result": "hemomancy:bloody_vial",
   "count": 1,
   "experience": 0.5,
-  "cookingtime": 100
+  "cookingtime": 100,
+  "id": "hemomancy:distillation/swollen_leech"
 }

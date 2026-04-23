@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -13,12 +14,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
@@ -36,24 +45,15 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 	private static Block blockFromJson(JsonObject pItemObject) {
 		String s = GsonHelper.getAsString(pItemObject, "block");
 		Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
-
-		if (block == Blocks.AIR) {
-			throw new JsonSyntaxException("Invalid block: " + s);
-		} else {
-			return block;
-		}
+		if (block == Blocks.AIR) throw new JsonSyntaxException("Invalid block: " + s);
+		return block;
 	}
 
 	private static Predicate<BlockInWorld> blockPredFromHash(Map<String, Block> symbolList, String string) {
 		Block target = symbolList.get(string);
-		// Only match the block type, ignoring block state properties (facing, half, shape, etc.)
-		// BlockStatePredicate.forBlock() matches ALL properties against the default state,
-		// which causes blocks like stairs, gourds, and engrams to fail matching when placed
-		// in the world with non-default state values.
 		return BlockInWorld.hasState(state -> state.getBlock() == target);
 	}
 
-	// Structure Helpers
 	private static BlockPattern generateBlockPatternFromArray(Map<String, Block> symbolList, String[][] schematic) {
 		BlockPatternBuilder builder = BlockPatternBuilder.start();
 		for (String[] element : schematic) {
@@ -61,17 +61,12 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			for (String element3 : element) {
 				List<String> distinct = getDistinctChars(element3);
 				for (String element2 : distinct) {
-					// Skip the space character — leave it as the default "any block" wildcard.
-					// Without this, spaces are bound to Blocks.AIR which forces every empty
-					// position in the structure to be exactly minecraft:air. Blocks like
-					// cave_air, attached stems, grass, water, etc. would cause pattern failure.
 					if (" ".equals(element2)) continue;
 					builder.where(element2.toCharArray()[0], blockPredFromHash(symbolList, element2));
 				}
 			}
 		}
-		BlockPattern pattern = builder.build();
-		return pattern;
+		return builder.build();
 	}
 
 	private static List<String> getDistinctChars(String chars) {
@@ -87,14 +82,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 	private static Map<String, Block> keyFromJson(JsonObject pKeyEntry) {
 		Map<String, Block> map = Maps.newHashMap();
 		for (Entry<String, JsonElement> entry : pKeyEntry.entrySet()) {
-			if (entry.getKey().length() != 1) {
-				throw new JsonSyntaxException(
-						"Invalid key entry: '" + entry.getKey() + "' is an invalid symbol (must be 1 character only).");
-			}
-			if (" ".equals(entry.getKey())) {
+			if (entry.getKey().length() != 1)
+				throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey() + "' must be 1 character.");
+			if (" ".equals(entry.getKey()))
 				throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
-			}
-
 			map.put(entry.getKey(), blockFromJson(entry.getValue().getAsJsonObject()));
 		}
 		map.put(" ", Blocks.AIR);
@@ -107,16 +98,22 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			String[] row = GSON.fromJson(pPatternArray.get(i), String[].class);
 			pattern.add(row);
 		}
-		String[][] matrix = new String[pattern.size()][];
-		matrix = pattern.toArray(matrix);
-
-		return matrix;
+		return pattern.toArray(new String[0][]);
 	}
 
-	// Serialization
-	@Override
-	public CardinalRiteRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-		// Deserialization
+	// ---- JSON helpers ----
+
+	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
+		JsonObject json = new JsonObject();
+		input.entries().forEach(pair -> {
+			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
+			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
+			json.add(key, value);
+		});
+		return json;
+	}
+
+	private static CardinalRiteRecipe fromJsonObject(ResourceLocation pRecipeId, JsonObject pJson) {
 		double cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		String riteTypeName = GsonHelper.getAsString(pJson, "riteType");
 		CardinalRiteType riteType = CardinalRiteType.byName(riteTypeName);
@@ -128,84 +125,113 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		if (pJson.has("result")) {
 			result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
 		}
-		// Building
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
 		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
-		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
+		return new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained);
-
-		return recipe;
 	}
 
+	// ---- RecipeSerializer 1.21.1 API ----
+
+	private static final MapCodec<CardinalRiteRecipe> CODEC = new MapCodec<CardinalRiteRecipe>() {
+		@Override
+		public <T> Stream<T> keys(DynamicOps<T> ops) {
+			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
+					"result", "requiredDegree", "breakBlocksOnCreation", "unstained").map(ops::createString);
+		}
+
+		@Override
+		public <T> DataResult<CardinalRiteRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
+			try {
+				JsonObject json = toJsonObject(ops, input);
+				ResourceLocation id = json.has("id")
+						? ResourceLocation.parse(json.get("id").getAsString())
+						: Hemomancy.rloc("cardinal_rite/unknown");
+				return DataResult.success(fromJsonObject(id, json));
+			} catch (Exception e) {
+				return DataResult.error(() -> "Failed to decode CardinalRiteRecipe: " + e.getMessage());
+			}
+		}
+
+		@Override
+		public <T> RecordBuilder<T> encode(CardinalRiteRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+			prefix.add("id", ops.createString(recipe.getId().toString()));
+			prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
+			prefix.add("riteType", ops.createString(recipe.getRiteType().getSerializedName()));
+			prefix.add("riteName", ops.createString(recipe.getRiteName()));
+			prefix.add("riteDescription", ops.createString(recipe.getRiteDescription()));
+			// pattern / key are complex — handled via stream codec
+			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
+					.ifPresent(e -> prefix.add("result", ops.convertFrom(JsonOps.INSTANCE, e)));
+			prefix.add("requiredDegree", ops.createInt(recipe.getRequiredDegree()));
+			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
+			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
+			return prefix;
+		}
+	};
+
+	private static final StreamCodec<RegistryFriendlyByteBuf, CardinalRiteRecipe> STREAM_CODEC = StreamCodec.of(
+			CardinalRiteRecipeSerializer::toNetwork,
+			CardinalRiteRecipeSerializer::fromNetwork);
+
 	@Override
-	public CardinalRiteRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+	public MapCodec<CardinalRiteRecipe> codec() { return CODEC; }
+
+	@Override
+	public StreamCodec<RegistryFriendlyByteBuf, CardinalRiteRecipe> streamCodec() { return STREAM_CODEC; }
+
+	private static CardinalRiteRecipe fromNetwork(RegistryFriendlyByteBuf pBuffer) {
+		ResourceLocation id = pBuffer.readResourceLocation();
 		double cost = pBuffer.readDouble();
-		String riteTypeName = pBuffer.readUtf();
-		CardinalRiteType riteType = CardinalRiteType.byName(riteTypeName);
+		CardinalRiteType riteType = CardinalRiteType.byName(pBuffer.readUtf());
 		String riteName = pBuffer.readUtf();
 		String riteDescription = pBuffer.readUtf();
-		// Pattern reading
 		int length = pBuffer.readInt();
 		List<String[]> patternList = new ArrayList<>();
 		for (int i = 0; i < length; i++) {
-			List<String> row = new ArrayList<>();
 			int width = pBuffer.readInt();
-			for (int j = 0; j < width; j++) {
-				row.add(pBuffer.readUtf());
-			}
-			String[] rowArray = new String[row.size()];
-			rowArray = row.toArray(rowArray);
-			patternList.add(rowArray);
+			String[] row = new String[width];
+			for (int j = 0; j < width; j++) row[j] = pBuffer.readUtf();
+			patternList.add(row);
 		}
-		String[][] pattern = new String[patternList.size()][];
-		pattern = patternList.toArray(pattern);
-		// Reading symbol key
+		String[][] pattern = patternList.toArray(new String[0][]);
 		Map<String, Block> map = Maps.newHashMap();
 		int symbolListLength = pBuffer.readInt();
 		for (int i = 0; i < symbolListLength; i++) {
 			String key = pBuffer.readUtf();
-			ResourceLocation blockLoc = pBuffer.readResourceLocation();
-			Block block = BuiltInRegistries.BLOCK.get(blockLoc);
-
+			Block block = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
 			map.put(key, block);
 		}
 		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
-		ItemStack result = pBuffer.readItem();
+		ItemStack result = ItemStack.STREAM_CODEC.decode(pBuffer);
 		int requiredDegree = pBuffer.readInt();
 		boolean breakBlocksOnCreation = pBuffer.readBoolean();
 		boolean unstained = pBuffer.readBoolean();
-
-		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
+		return new CardinalRiteRecipe(id, cost, riteType, mbPattern, result, riteName,
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained);
-
-		return recipe;
 	}
 
-	@Override
-	public void toNetwork(FriendlyByteBuf pBuffer, CardinalRiteRecipe pRecipe) {
+	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, CardinalRiteRecipe pRecipe) {
+		pBuffer.writeResourceLocation(pRecipe.getId());
 		pBuffer.writeDouble(pRecipe.getBloodCost());
 		pBuffer.writeUtf(pRecipe.getRiteType().getSerializedName());
 		pBuffer.writeUtf(pRecipe.getRiteName());
 		pBuffer.writeUtf(pRecipe.getRiteDescription());
-		// Pattern writing
 		pBuffer.writeInt(pRecipe.getPattern().getPatternArray().length);
-		for (int i = 0; i < pRecipe.getPattern().getPatternArray().length; i++) {
-			pBuffer.writeInt(pRecipe.getPattern().getPatternArray()[i].length);
-			for (int j = 0; j < pRecipe.getPattern().getPatternArray()[i].length; j++) {
-				pBuffer.writeUtf(pRecipe.getPattern().getPatternArray()[i][j]);
-			}
+		for (String[] row : pRecipe.getPattern().getPatternArray()) {
+			pBuffer.writeInt(row.length);
+			for (String cell : row) pBuffer.writeUtf(cell);
 		}
-		// Writing symbol key
 		pBuffer.writeInt(pRecipe.getPattern().getSymbolList().size());
 		pRecipe.getPattern().getSymbolList().forEach((k, v) -> {
 			pBuffer.writeUtf(k);
 			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v));
 		});
-		pBuffer.writeItem(pRecipe.getResult());
+		ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResult());
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 		pBuffer.writeBoolean(pRecipe.isUnstained());

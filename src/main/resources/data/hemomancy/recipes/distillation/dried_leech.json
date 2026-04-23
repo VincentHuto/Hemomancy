@@ -6,5 +6,6 @@
   "result": "hemomancy:dicentra_sap",
   "count": 2,
   "experience": 0.3,
-  "cookingtime": 100
+  "cookingtime": 100,
+  "id": "hemomancy:distillation/dried_leech"
 }

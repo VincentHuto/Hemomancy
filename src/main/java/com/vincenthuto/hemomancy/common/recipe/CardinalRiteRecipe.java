@@ -1,18 +1,20 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -20,14 +22,16 @@ import net.minecraft.world.level.Level;
 public class CardinalRiteRecipe extends CustomRecipe {
 
 	public static List<CardinalRiteRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get());
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get())
+				.stream().map(RecipeHolder::value).collect(Collectors.toList());
 	}
 
 	public static CardinalRiteRecipe getRiteByLocation(Level world, ResourceLocation loc) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
-				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
+				.filter(h -> h.id().equals(loc)).map(RecipeHolder::value).findFirst().orElse(null);
 	}
 
+	private ResourceLocation id;
 	protected double bloodCost;
 	protected CardinalRiteType riteType;
 	protected MultiblockPattern pattern;
@@ -58,7 +62,8 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree, boolean breakBlocksOnCreation, boolean unstained) {
-		super(pId, CraftingBookCategory.MISC);
+		super(CraftingBookCategory.MISC);
+		this.id = pId;
 		this.bloodCost = bloodCost;
 		this.riteType = riteType;
 		this.pattern = pattern;
@@ -70,8 +75,10 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		this.unstained = unstained;
 	}
 
+	public ResourceLocation getId() { return id; }
+
 	@Override
-	public ItemStack assemble(CraftingContainer p_44001_, RegistryAccess p_267165_) {
+	public ItemStack assemble(CraftingInput p_44001_, HolderLookup.Provider p_267165_) {
 		return this.getResultItem(p_267165_).copy();
 	}
 
@@ -101,6 +108,11 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		return result;
 	}
 
+	@Override
+	public ItemStack getResultItem(HolderLookup.Provider a) {
+		return this.result;
+	}
+
 	public String getRiteName() {
 		return riteName;
 	}
@@ -120,7 +132,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingContainer pContainer, Level pLevel) {
+	public boolean matches(CraftingInput pContainer, Level pLevel) {
 		return true;
 	}
 
@@ -166,9 +178,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	/**
 	 * Returns whether the rite should break the multiblock structure blocks
-	 * upon completion. Defaults to {@code true}. Set to {@code false} to
-	 * preserve the built structure (e.g. the Qliphoth Bloom ritual keeps the
-	 * platform beneath the spawned tree).
+	 * upon completion.
 	 */
 	public boolean shouldBreakBlocksOnCreation() {
 		return breakBlocksOnCreation;
@@ -179,9 +189,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	}
 
 	/**
-	 * Returns whether this rite belongs to the Unstained path rather than
-	 * the blood faction. Unstained rites are displayed in the
-	 * UnstainedProgressScreen instead of the HarbingerProgressScreen.
+	 * Returns whether this rite belongs to the Unstained path.
 	 */
 	public boolean isUnstained() {
 		return unstained;

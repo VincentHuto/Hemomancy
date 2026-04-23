@@ -2,36 +2,43 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class IncubatorRecipe extends CustomRecipe {
 
+	private ResourceLocation id;
 	private final NonNullList<Ingredient> catalysts;
 	private final ItemStack result;
 
-	public IncubatorRecipe(ResourceLocation id, NonNullList<Ingredient> catalysts, ItemStack result) {
-		super(id, CraftingBookCategory.MISC);
+	public IncubatorRecipe(ResourceLocation recipeId, NonNullList<Ingredient> catalysts, ItemStack result) {
+		super(CraftingBookCategory.MISC);
+		this.id = recipeId;
 		this.catalysts = catalysts;
 		this.result = result;
 	}
 
+	public ResourceLocation getId() { return id; }
+
 	public static List<IncubatorRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get());
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get())
+				.stream().map(RecipeHolder::value).collect(Collectors.toList());
 	}
 
 	public NonNullList<Ingredient> getCatalysts() {
@@ -44,7 +51,7 @@ public class IncubatorRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
 		return result.copy();
 	}
 
@@ -85,12 +92,12 @@ public class IncubatorRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingContainer container, Level level) {
-		return false; // Not used in a crafting table
+	public boolean matches(CraftingInput container, Level level) {
+		return false;
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+	public ItemStack assemble(CraftingInput container, HolderLookup.Provider registryAccess) {
 		return result.copy();
 	}
 

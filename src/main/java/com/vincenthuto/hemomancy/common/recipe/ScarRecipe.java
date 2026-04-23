@@ -2,23 +2,27 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import java.lang.reflect.MalformedParametersException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class ScarRecipe extends CustomRecipe {
+	private ResourceLocation id;
 	protected ResourceLocation[] requiredItems = new ResourceLocation[0];
 	protected int tier = 1;
 	protected ScarType scarType = ScarType.OVERRIDE;
@@ -32,7 +36,8 @@ public class ScarRecipe extends CustomRecipe {
 
 	public ScarRecipe(ResourceLocation resourceLocation, int tier, ScarType type, Ingredient ingredient1,
 			Ingredient ingredient2, byte[][] pattern, ItemStack result) {
-		super(resourceLocation, null);
+		super(CraftingBookCategory.MISC);
+		this.id = resourceLocation;
 		this.ingredient1 = ingredient1;
 		this.ingredient2 = ingredient2;
 		this.tier = tier;
@@ -40,6 +45,8 @@ public class ScarRecipe extends CustomRecipe {
 		this.pattern = pattern;
 		this.outputItem = result;
 	}
+
+	public ResourceLocation getId() { return id; }
 
 	private void initializePattern() {
 		if (this.pattern.length == 0) {
@@ -71,7 +78,6 @@ public class ScarRecipe extends CustomRecipe {
 	}
 
 	public byte[][] getPattern() {
-
 		return pattern;
 	}
 
@@ -80,7 +86,7 @@ public class ScarRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingContainer pContainer, Level pLevel) {
+	public boolean matches(CraftingInput pContainer, Level pLevel) {
 		return true;
 	}
 
@@ -93,18 +99,17 @@ public class ScarRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer pContainer, RegistryAccess pRegistryAccess) {
+	public ItemStack assemble(CraftingInput pContainer, HolderLookup.Provider pRegistryAccess) {
 		return this.getResultItem(pRegistryAccess).copy();
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess a) {
+	public ItemStack getResultItem(HolderLookup.Provider a) {
 		return this.outputItem;
 	}
 
 	public ItemStack getResultItem() {
 		return this.outputItem;
-
 	}
 
 	@Override
@@ -123,7 +128,8 @@ public class ScarRecipe extends CustomRecipe {
 	}
 
 	public static List<ScarRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get());
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get())
+				.stream().map(RecipeHolder::value).collect(Collectors.toList());
 	}
 
 	public ScarType getScarType() {

@@ -1,16 +1,24 @@
 package com.vincenthuto.hemomancy.common.recipe.serializer;
 
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
@@ -35,13 +43,23 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:rune/" + path));
 	}
 
-	@Override
-	public ScarRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
+	// ---- JSON helpers (reused by codec) ----
 
+	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
+		JsonObject json = new JsonObject();
+		input.entries().forEach(pair -> {
+			String key = ops.getStringValue(pair.getFirst()).getOrThrow(IllegalStateException::new);
+			JsonElement value = ops.convertTo(JsonOps.INSTANCE, pair.getSecond());
+			json.add(key, value);
+		});
+		return json;
+	}
+
+	private static ScarRecipe fromJsonObject(ResourceLocation id, JsonObject pJson) {
 		int tier = 0;
 		ScarType scarType = ScarType.OVERRIDE;
-		Ingredient ingredient1 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient1"));
-		Ingredient ingredient2 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient2"));
+		Ingredient ingredient1 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient1"), false);
+		Ingredient ingredient2 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient2"), false);
 		byte[][] pattern;
 
 		if (pJson.has("tier")) {
@@ -73,17 +91,78 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			itemstack = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation), c);
 		}
 
-		ScarRecipe recipe = new ScarRecipe(pRecipeId, tier, scarType, ingredient1, ingredient2, pattern, itemstack);
-		ALL_RECIPES.put(pRecipeId, recipe);
-		return recipe;
+		return new ScarRecipe(id, tier, scarType, ingredient1, ingredient2, pattern, itemstack);
 	}
 
+	private static <T> void encodeToBuilder(ScarRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		prefix.add("id", ops.createString(recipe.getId().toString()));
+		// ingredient1/ingredient2
+		Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient1()).result()
+				.ifPresent(e -> prefix.add("ingredient1", ops.convertFrom(JsonOps.INSTANCE, e)));
+		Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient2()).result()
+				.ifPresent(e -> prefix.add("ingredient2", ops.convertFrom(JsonOps.INSTANCE, e)));
+		prefix.add("tier", ops.createInt(recipe.getTier()));
+		prefix.add("scartype", ops.createString(recipe.getScarType().toString()));
+		// pattern
+		byte[][] pat = recipe.getPattern();
+		com.google.gson.JsonArray patArr = new com.google.gson.JsonArray();
+		for (byte[] row : pat) {
+			com.google.gson.JsonArray rowArr = new com.google.gson.JsonArray();
+			for (byte b : row) rowArr.add(b);
+			patArr.add(rowArr);
+		}
+		prefix.add("pattern", ops.convertFrom(JsonOps.INSTANCE, patArr));
+		// result
+		ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem()).result()
+				.ifPresent(e -> prefix.add("result", ops.convertFrom(JsonOps.INSTANCE, e)));
+	}
+
+	// ---- RecipeSerializer 1.21.1 API ----
+
+	private static final MapCodec<ScarRecipe> CODEC = new MapCodec<ScarRecipe>() {
+		@Override
+		public <T> Stream<T> keys(DynamicOps<T> ops) {
+			return Stream.of("id", "ingredient1", "ingredient2", "tier", "scartype", "pattern", "result", "count")
+					.map(ops::createString);
+		}
+
+		@Override
+		public <T> DataResult<ScarRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
+			try {
+				JsonObject json = toJsonObject(ops, input);
+				ResourceLocation id = json.has("id")
+						? ResourceLocation.parse(json.get("id").getAsString())
+						: Hemomancy.rloc("scar/unknown");
+				ScarRecipe recipe = fromJsonObject(id, json);
+				ALL_RECIPES.put(id, recipe);
+				return DataResult.success(recipe);
+			} catch (Exception e) {
+				return DataResult.error(() -> "Failed to decode ScarRecipe: " + e.getMessage());
+			}
+		}
+
+		@Override
+		public <T> RecordBuilder<T> encode(ScarRecipe input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+			encodeToBuilder(input, ops, prefix);
+			return prefix;
+		}
+	};
+
+	private static final StreamCodec<RegistryFriendlyByteBuf, ScarRecipe> STREAM_CODEC = StreamCodec.of(
+			ScarRecipeSerializer::toNetwork,
+			ScarRecipeSerializer::fromNetwork);
+
 	@Override
-	public ScarRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+	public MapCodec<ScarRecipe> codec() { return CODEC; }
+
+	@Override
+	public StreamCodec<RegistryFriendlyByteBuf, ScarRecipe> streamCodec() { return STREAM_CODEC; }
+
+	private static ScarRecipe fromNetwork(RegistryFriendlyByteBuf pBuffer) {
 		try {
 			ResourceLocation id = pBuffer.readResourceLocation();
-			Ingredient input1 = Ingredient.of(pBuffer.readItem());
-			Ingredient input2 = Ingredient.of(pBuffer.readItem());
+			Ingredient input1 = Ingredient.of(ItemStack.STREAM_CODEC.decode(pBuffer));
+			Ingredient input2 = Ingredient.of(ItemStack.STREAM_CODEC.decode(pBuffer));
 			int tier = pBuffer.readInt();
 			ScarType scarType = ScarType.fromString(pBuffer.readUtf());
 			int len = pBuffer.readInt();
@@ -91,25 +170,24 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			for (int i = 0; i < len; ++i) {
 				pattern[i] = pBuffer.readByteArray();
 			}
-
-			ItemStack result = pBuffer.readItem();
+			ItemStack result = ItemStack.STREAM_CODEC.decode(pBuffer);
 			ScarRecipe recipe = new ScarRecipe(id, tier, scarType, input1, input2, pattern, result);
 			recipe.setPatternBytes(pattern);
-			ALL_RECIPES.put(pRecipeId, recipe);
+			ALL_RECIPES.put(id, recipe);
 			return recipe;
 		} catch (Exception e) {
-			Hemomancy.LOGGER.error("Error reading chisel pattern recipe from packet.", (Throwable) e);
+			Hemomancy.LOGGER.error("Error reading scar recipe from packet.", (Throwable) e);
 			throw e;
 		}
 	}
 
-	@Override
-	public void toNetwork(FriendlyByteBuf pBuffer, ScarRecipe pRecipe) {
+	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, ScarRecipe pRecipe) {
 		try {
-
 			pBuffer.writeResourceLocation(pRecipe.getId());
-			pBuffer.writeItem(pRecipe.getIngredient1().getItems()[0]);
-			pBuffer.writeItem(pRecipe.getIngredient2().getItems()[0]);
+			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getIngredient1().getItems().length > 0
+					? pRecipe.getIngredient1().getItems()[0] : ItemStack.EMPTY);
+			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getIngredient2().getItems().length > 0
+					? pRecipe.getIngredient2().getItems()[0] : ItemStack.EMPTY);
 			pBuffer.writeInt(pRecipe.getTier());
 			pBuffer.writeUtf(pRecipe.getScarType().toString());
 			byte[][] pattern = pRecipe.getPattern();
@@ -117,12 +195,10 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			for (int i = 0; i < pattern.length; ++i) {
 				pBuffer.writeByteArray(pattern[i]);
 			}
-			pBuffer.writeItem(pRecipe.getResultItem(null));
-
+			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResultItem());
 		} catch (Exception e) {
-			Hemomancy.LOGGER.error("Error writing chisel pattern recipe to packet.", (Throwable) e);
+			Hemomancy.LOGGER.error("Error writing scar recipe to packet.", (Throwable) e);
 			throw e;
 		}
 	}
-
 }

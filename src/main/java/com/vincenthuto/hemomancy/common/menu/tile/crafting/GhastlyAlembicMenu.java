@@ -20,7 +20,7 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -214,8 +214,10 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	public int getResultSlotIndex() { return RESULT_SLOT; }
 	public int getSize() { return SLOT_COUNT; }
 
-	public boolean recipeMatches(Recipe<? super GhastlyAlembicBlockEntity> recipe) {
-		return recipe.matches(this.container, this.level);
+	public boolean recipeMatches(DistillationRecipe recipe) {
+		return recipe.matchesItems(
+				this.container.getItem(GhastlyAlembicBlockEntity.SLOT_INPUT),
+				this.container.getItem(GhastlyAlembicBlockEntity.SLOT_CATALYST));
 	}
 
 	public boolean shouldMoveToInventory(int slotIndex) {

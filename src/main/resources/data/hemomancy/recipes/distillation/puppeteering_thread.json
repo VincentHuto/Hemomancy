@@ -6,5 +6,6 @@
   "result": "hemomancy:foul_paste",
   "count": 3,
   "experience": 0.6,
-  "cookingtime": 150
+  "cookingtime": 150,
+  "id": "hemomancy:distillation/puppeteering_thread"
 }

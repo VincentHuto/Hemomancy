@@ -42,7 +42,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -171,17 +171,18 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return level.getRecipeManager()
 				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(r -> !r.isPallid() && r.matches(te, level))
-				.mapToInt(DistillationRecipe::getCookingTime)
+				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT), te.items.get(SLOT_CATALYST)))
+				.mapToInt(h -> h.value().getCookingTime())
 				.findFirst()
 				.orElse(200);
 	}
 
-	private static DistillationRecipe findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
+	@Nullable
+	private static RecipeHolder<DistillationRecipe> findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
 		return level.getRecipeManager()
 				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(r -> !r.isPallid() && r.matches(te, level))
+				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT), te.items.get(SLOT_CATALYST)))
 				.findFirst()
 				.orElse(null);
 	}
@@ -205,7 +206,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 		if (vol.getBloodVolume() < vol.getMaxBloodVolume() - 99) {
 			if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
-				DistillationRecipe recipe = findMatchingRecipe(level, te);
+				RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, te);
 				int maxStack = te.getMaxStackSize();
 
 				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
@@ -252,10 +253,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	// ---- Recipe logic ----
 
-	private boolean canBurn(RegistryAccess registryAccess, @Nullable DistillationRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
-		if (inv.get(SLOT_INPUT).isEmpty() || recipe == null) return false;
+	private boolean canBurn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
+		if (inv.get(SLOT_INPUT).isEmpty() || recipeHolder == null) return false;
 
-		ItemStack result = recipe.assemble(this, registryAccess);
+		ItemStack result = recipeHolder.value().getResultItem(registryAccess).copy();
 		if (result.isEmpty()) return false;
 
 		ItemStack currentResult = inv.get(SLOT_RESULT);
@@ -265,11 +266,12 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return totalCount <= maxStack && totalCount <= currentResult.getMaxStackSize();
 	}
 
-	private boolean burn(RegistryAccess registryAccess, @Nullable DistillationRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
-		if (recipe == null || !canBurn(registryAccess, recipe, inv, maxStack)) return false;
+	private boolean burn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
+		if (recipeHolder == null || !canBurn(registryAccess, recipeHolder, inv, maxStack)) return false;
 
+		DistillationRecipe recipe = recipeHolder.value();
 		ItemStack input = inv.get(SLOT_INPUT);
-		ItemStack recipeResult = recipe.assemble(this, registryAccess);
+		ItemStack recipeResult = recipe.getResultItem(registryAccess).copy();
 		ItemStack flaskStack = inv.get(SLOT_FLASK);
 		ItemStack resultStack = inv.get(SLOT_RESULT);
 
@@ -417,34 +419,29 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	// ---- Experience / Recipe used ----
 
 	public void awardUsedRecipesAndPopExperience(ServerPlayer player) {
-		List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(player.serverLevel(), player.position());
-		player.awardRecipes(list);
-		this.recipesUsed.clear();
-	}
-
-	public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 pos) {
-		List<Recipe<?>> list = Lists.newArrayList();
+		List<RecipeHolder<?>> holders = Lists.newArrayList();
 		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
-			level.getRecipeManager().byKey(entry.getKey()).ifPresent(r -> {
-				list.add(r);
-				if (r instanceof DistillationRecipe gar) {
-					createExperience(level, pos, entry.getIntValue(), gar.getExperience());
+			player.serverLevel().getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+				holders.add(holder);
+				if (holder.value() instanceof DistillationRecipe gar) {
+					createExperience(player.serverLevel(), player.position(), entry.getIntValue(), gar.getExperience());
 				}
 			});
 		}
-		return list;
+		player.awardRecipes(holders);
+		this.recipesUsed.clear();
 	}
 
 	@Override
 	@Nullable
-	public Recipe<?> getRecipeUsed() {
+	public RecipeHolder<?> getRecipeUsed() {
 		return null;
 	}
 
 	@Override
-	public void setRecipeUsed(@Nullable Recipe<?> recipe) {
+	public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
 		if (recipe != null) {
-			this.recipesUsed.addTo(recipe.getId(), 1);
+			this.recipesUsed.addTo(recipe.id(), 1);
 		}
 	}
 

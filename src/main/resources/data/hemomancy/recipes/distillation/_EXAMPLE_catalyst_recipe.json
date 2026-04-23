@@ -10,5 +10,6 @@
   "result": "hemomancy:hematic_iron_powder",
   "count": 2,
   "experience": 1.0,
-  "cookingtime": 300
+  "cookingtime": 300,
+  "id": "hemomancy:distillation/_EXAMPLE_catalyst_recipe"
 }
