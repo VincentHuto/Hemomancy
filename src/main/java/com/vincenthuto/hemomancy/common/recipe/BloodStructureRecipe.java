@@ -1,18 +1,20 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -21,19 +23,16 @@ import net.minecraft.world.level.block.Block;
 public class BloodStructureRecipe extends CustomRecipe {
 
 	public static List<BloodStructureRecipe> getAllRecipes(Level world) {
-
-		List<BloodStructureRecipe> collection = world.getRecipeManager()
-				.getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get());
-
-		return collection;
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get())
+				.stream().map(RecipeHolder::value).collect(Collectors.toList());
 	}
 
 	public static BloodStructureRecipe getStructureByLocation(Level world, ResourceLocation loc) {
-		// Example ResourceLocation.parse("hemomancy:blood_structure/living_staff_recipe")
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
-				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
+				.filter(h -> h.id().equals(loc)).map(RecipeHolder::value).findFirst().orElse(null);
 	}
 
+	private ResourceLocation id;
 	protected double bloodCost;
 	protected ItemStack heldItem = null;
 	protected Block hitBlock = null;
@@ -51,7 +50,8 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result, boolean unstained) {
-		super(pId, CraftingBookCategory.MISC);
+		super(CraftingBookCategory.MISC);
+		this.id = pId;
 		this.bloodCost = bloodCost;
 		this.pattern = pattern;
 		this.heldItem = heldItem;
@@ -60,8 +60,10 @@ public class BloodStructureRecipe extends CustomRecipe {
 		this.unstained = unstained;
 	}
 
+	public ResourceLocation getId() { return id; }
+
 	@Override
-	public ItemStack assemble(CraftingContainer p_44001_, RegistryAccess p_267165_) {
+	public ItemStack assemble(CraftingInput p_44001_, HolderLookup.Provider p_267165_) {
 		return this.getResultItem(p_267165_).copy();
 	}
 
@@ -96,6 +98,10 @@ public class BloodStructureRecipe extends CustomRecipe {
 		return result;
 	}
 
+	@Override
+	public ItemStack getResultItem(HolderLookup.Provider a) {
+		return this.result;
+	}
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
@@ -108,7 +114,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingContainer pContainer, Level pLevel) {
+	public boolean matches(CraftingInput pContainer, Level pLevel) {
 		return true;
 	}
 
@@ -141,8 +147,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	/**
 	 * Returns whether this structure recipe belongs to the Unstained path.
-	 * Unstained recipes are displayed in the UnstainedProgressScreen instead
-	 * of the HarbingerProgressScreen.
 	 */
 	public boolean isUnstained() {
 		return unstained;

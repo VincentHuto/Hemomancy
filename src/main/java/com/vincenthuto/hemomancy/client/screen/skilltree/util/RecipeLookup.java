@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -72,8 +71,9 @@ public final class RecipeLookup {
 		var rm = level.getRecipeManager();
 		var ra = level.registryAccess();
 
-		// Ghastly Alembic recipes
-		for (DistillationRecipe r : rm.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())) {
+		// Ghastly Alembic / Pallid Retort recipes
+		for (var holder : rm.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())) {
+			DistillationRecipe r = holder.value();
 			ItemStack result = r.getResultItem(ra);
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.GHASTLY_ALEMBIC));
@@ -81,7 +81,8 @@ public final class RecipeLookup {
 		}
 
 		// Memory Weaving recipes
-		for (MemoryWeavingRecipe r : rm.getAllRecipesFor(RecipeInit.memory_weaving_type.get())) {
+		for (var holder : rm.getAllRecipesFor(RecipeInit.memory_weaving_type.get())) {
+			MemoryWeavingRecipe r = holder.value();
 			ItemStack result = r.getResultItem(ra);
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.MEMORY_WEAVING));
@@ -89,7 +90,8 @@ public final class RecipeLookup {
 		}
 
 		// Blood Structure recipes
-		for (BloodStructureRecipe r : rm.getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get())) {
+		for (var holder : rm.getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get())) {
+			BloodStructureRecipe r = holder.value();
 			ItemStack result = r.getResult();
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.BLOOD_STRUCTURE));
@@ -97,7 +99,8 @@ public final class RecipeLookup {
 		}
 
 		// Chisel recipes
-		for (ScarRecipe r : rm.getAllRecipesFor(RecipeInit.chisel_recipe.get())) {
+		for (var holder : rm.getAllRecipesFor(RecipeInit.chisel_recipe.get())) {
+			ScarRecipe r = holder.value();
 			ItemStack result = r.getResultItem();
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.CHISEL));
@@ -105,7 +108,8 @@ public final class RecipeLookup {
 		}
 
 		// Incubator recipes
-		for (IncubatorRecipe r : rm.getAllRecipesFor(RecipeInit.incubator_recipe_type.get())) {
+		for (var holder : rm.getAllRecipesFor(RecipeInit.incubator_recipe_type.get())) {
+			IncubatorRecipe r = holder.value();
 			ItemStack result = r.getResultItemStack();
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.INCUBATOR));
@@ -113,8 +117,8 @@ public final class RecipeLookup {
 		}
 
 		// Vanilla crafting recipes (last — mod-specific recipes take priority)
-		List<CraftingRecipe> craftingRecipes = rm.getAllRecipesFor(RecipeType.CRAFTING);
-		for (CraftingRecipe r : craftingRecipes) {
+		for (var holder : rm.getAllRecipesFor(RecipeType.CRAFTING)) {
+			CraftingRecipe r = holder.value();
 			try {
 				ItemStack result = r.getResultItem(ra);
 				if (!result.isEmpty()) {

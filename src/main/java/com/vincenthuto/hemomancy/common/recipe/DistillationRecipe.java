@@ -5,13 +5,17 @@ import java.util.List;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -23,7 +27,7 @@ import net.minecraft.world.level.Level;
  *   <li>Slot 3 — catalyst (optional — {@link Ingredient#EMPTY} means no catalyst needed)</li>
  * </ul>
  */
-public class DistillationRecipe implements Recipe<Container> {
+public class DistillationRecipe implements Recipe<RecipeInput> {
 
 	private final ResourceLocation id;
 	private final String group;
@@ -66,14 +70,14 @@ public class DistillationRecipe implements Recipe<Container> {
 	/** Slot index of the catalyst in the Ghastly Alembic container. Must match GhastlyAlembicBlockEntity.SLOT_CATALYST. */
 	public static final int SLOT_CATALYST_INDEX = 3;
 
-	// ---- Recipe<Container> ----
+	// ---- Recipe<RecipeInput> ----
 
 	/**
 	 * Matches the container against this recipe.
 	 * Slot 0 = ingredient, slot 3 = catalyst (optional).
 	 */
 	@Override
-	public boolean matches(Container container, Level level) {
+	public boolean matches(RecipeInput container, Level level) {
 		ItemStack inputStack = container.getItem(0); // SLOT_INPUT = 0
 		if (!ingredient.test(inputStack)) return false;
 
@@ -85,8 +89,15 @@ public class DistillationRecipe implements Recipe<Container> {
 		return true;
 	}
 
+	/** Convenience match that works directly from ItemStacks without a RecipeInput wrapper. */
+	public boolean matchesItems(ItemStack input, ItemStack catalystStack) {
+		if (!ingredient.test(input)) return false;
+		if (requiresCatalyst()) return catalyst.test(catalystStack);
+		return true;
+	}
+
 	@Override
-	public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+	public ItemStack assemble(RecipeInput container, HolderLookup.Provider registryAccess) {
 		return result.copy();
 	}
 
@@ -94,7 +105,7 @@ public class DistillationRecipe implements Recipe<Container> {
 	public boolean canCraftInDimensions(int w, int h) { return true; }
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) { return result; }
+	public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return result; }
 
 	@Override
 	public NonNullList<Ingredient> getIngredients() {
@@ -104,7 +115,7 @@ public class DistillationRecipe implements Recipe<Container> {
 		return list;
 	}
 
-	@Override
+	/** Returns this recipe's ResourceLocation id (stored in the recipe, not from Recipe interface). */
 	public ResourceLocation getId() { return id; }
 
 	@Override
@@ -128,6 +139,7 @@ public class DistillationRecipe implements Recipe<Container> {
 	// ---- Helpers ----
 
 	public static List<DistillationRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.distillation_recipe_type.get());
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
+				.stream().map(RecipeHolder::value).collect(Collectors.toList());
 	}
 }
