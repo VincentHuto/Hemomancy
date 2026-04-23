@@ -26,6 +26,11 @@ sourceSets.main.resources {
     exclude("src/generated/**/.cache") // datagen cache files
 }
 
+tasks.named('processResources', ProcessResources).configure {
+    // Keep src/main/resources as the authoritative copy when datagen outputs overlap.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 // ── Optional-dependency compat source exclusions ─────────────────────────────
 // MnA (Mana and Artifice) has no NeoForge 1.21.1 build yet.
 // JEI and Curios NeoForge 1.21.1 builds are pending.
