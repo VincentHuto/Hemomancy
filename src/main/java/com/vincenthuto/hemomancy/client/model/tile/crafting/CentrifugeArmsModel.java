@@ -215,28 +215,27 @@ public class CentrifugeArmsModel extends Model {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-			float red, float green, float blue, float alpha) {
-		crossBrace2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		crossBrace.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		center.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		nonCardinalArms.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		cardinalArms.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial1Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial2Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial3Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial4.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial4Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial5.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial5Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial6.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial6Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial7.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial7Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial8.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		vial8Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+		crossBrace2.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		crossBrace.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		center.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		nonCardinalArms.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		cardinalArms.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial1.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial1Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial2.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial2Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial3.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial3Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial4.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial4Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial5.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial5Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial6.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial6Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial7.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial7Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial8.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		vial8Empty.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 	}
 }

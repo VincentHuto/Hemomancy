@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -52,8 +53,8 @@ public class AbhorentThoughtEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 	}
 

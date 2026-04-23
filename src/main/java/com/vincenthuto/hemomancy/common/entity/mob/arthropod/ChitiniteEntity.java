@@ -110,9 +110,9 @@ public class ChitiniteEntity extends PathfinderMob {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(ROLLED_UP, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(ROLLED_UP, false);
 	}
 
 	@Override

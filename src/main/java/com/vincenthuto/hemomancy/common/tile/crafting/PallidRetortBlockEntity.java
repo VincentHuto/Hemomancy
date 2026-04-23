@@ -33,7 +33,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -60,7 +60,7 @@ import java.util.List;
  * lit soul campfire, lava, magma, or crimson flames.
  */
 public class PallidRetortBlockEntity extends BaseContainerBlockEntity
-        implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, IWhiteHumorTile {
+        implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IWhiteHumorTile {
 
     // Slot indices
     public static final int SLOT_INPUT = 0;

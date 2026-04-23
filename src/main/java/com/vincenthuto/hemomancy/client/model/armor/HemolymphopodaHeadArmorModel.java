@@ -45,8 +45,7 @@ public class HemolymphopodaHeadArmorModel<T extends LivingEntity> extends Humano
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-			float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		// Intentionally empty – HemolymphopodaHeadpieceLayer handles all rendering.
 	}
 }

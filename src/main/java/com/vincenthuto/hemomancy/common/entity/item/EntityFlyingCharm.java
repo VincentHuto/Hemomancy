@@ -61,7 +61,7 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 	}
 
 	@Override
-	protected void defineSynchedData() {
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		this.getEntityData().define(DATA_ITEM_STACK, ItemStack.EMPTY);
 	}
 

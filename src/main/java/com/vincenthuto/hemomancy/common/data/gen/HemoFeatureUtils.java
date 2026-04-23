@@ -4,12 +4,12 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ConfiguredFeatureInit;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 public class HemoFeatureUtils {
-    public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context)
+    public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context)
     {
     	ConfiguredFeatureInit.bootstrap(context);
     }

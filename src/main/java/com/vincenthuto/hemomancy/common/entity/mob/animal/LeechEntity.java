@@ -73,9 +73,9 @@ public class LeechEntity extends Animal {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(SLUG_TYPE, random.nextInt(3));
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(SLUG_TYPE, random.nextInt(3));
 	}
 
 	@Override

@@ -283,9 +283,9 @@ public class SanguilithEntity extends Monster implements OwnableEntity {
 	public void setDeltaMovement(Vec3 pDeltaMovement) {
 	}
 
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(SWING_DIRECTION, Direction.UP);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(SWING_DIRECTION, Direction.UP);
 	}
 
 	public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {

@@ -32,7 +32,7 @@ public class CentrifugeStandModel extends Model {
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		stand.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+		stand.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 	}
 }

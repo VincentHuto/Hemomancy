@@ -67,7 +67,7 @@ public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		Head.render(poseStack, buffer, packedLight, packedOverlay);
 		Body.render(poseStack, buffer, packedLight, packedOverlay);
 		RightArm.render(poseStack, buffer, packedLight, packedOverlay);

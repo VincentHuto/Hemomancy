@@ -70,7 +70,7 @@ public class GhastlyAlembicModel extends Model {
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        GhastlyAlembic.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        GhastlyAlembic.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

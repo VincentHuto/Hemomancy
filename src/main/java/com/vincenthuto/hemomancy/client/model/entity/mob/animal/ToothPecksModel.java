@@ -171,8 +171,7 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
     }
 
     @Override
-    public void renderToBuffer(PoseStack pose, VertexConsumer buffer, int packedLight, int packedOverlay,
-            float red, float green, float blue, float alpha) {
-        root.getChild("full").render(pose, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack pose, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
+        root.getChild("full").render(pose, buffer, packedLight, packedOverlay, packedColor);
     }
 }

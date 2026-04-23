@@ -69,7 +69,7 @@ public class MorphlingAttachmentExampleModel extends EntityModel<LivingEntity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-            int packedOverlay, float red, float green, float blue, float alpha) {
-        root.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            int packedOverlay, int packedColor) {
+        root.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
     }
 }

@@ -103,7 +103,7 @@ public class RougeDrudgeModel<T extends Entity> extends EntityModel<T> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		tent.render(poseStack, buffer, packedLight, packedOverlay);
 		tent2.render(poseStack, buffer, packedLight, packedOverlay);
 		tent3.render(poseStack, buffer, packedLight, packedOverlay);

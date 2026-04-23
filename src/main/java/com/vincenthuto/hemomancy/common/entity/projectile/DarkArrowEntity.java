@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nonnull;
 
@@ -45,8 +46,8 @@ public class DarkArrowEntity extends AbstractArrow {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 	}
 
 	@Override

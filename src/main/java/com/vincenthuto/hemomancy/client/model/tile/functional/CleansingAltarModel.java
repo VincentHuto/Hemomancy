@@ -113,14 +113,14 @@ public class CleansingAltarModel extends Model {
 
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        steps.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        basin.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        pale_lady.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        gothic_arch.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        curtains.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        urn_left.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        urn_right.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        cloth_drapes.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        steps.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        basin.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        pale_lady.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        gothic_arch.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        curtains.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        urn_left.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        urn_right.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        cloth_drapes.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

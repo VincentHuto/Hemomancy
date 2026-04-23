@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.core.BlockPos;
@@ -65,8 +66,8 @@ public class MyelinBorerEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 	}
 
 	@Override

@@ -61,12 +61,11 @@ public class MnemonicReliquaryModel extends Model {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-			float red, float green, float blue, float alpha) {
-		base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		lid.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		brain.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		pillow.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+		base.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		lid.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		brain.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		pillow.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 	}
 
 	public ModelPart getLid() {

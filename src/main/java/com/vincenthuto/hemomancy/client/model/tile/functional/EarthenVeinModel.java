@@ -97,7 +97,7 @@ public class EarthenVeinModel extends Model implements IAnimatedModel<EarthenVei
 	@Override
 	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay,
 			float pRed, float pGreen, float pBlue, float pAlpha) {
-		root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+		root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, packedColor);
 	}
 
 	public static final AnimationDefinition EARTHENVEINMODEL_WIGGLE = AnimationDefinition.Builder.withLength(2.25f)

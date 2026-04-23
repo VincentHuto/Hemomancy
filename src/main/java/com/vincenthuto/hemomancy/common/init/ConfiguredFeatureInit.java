@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
@@ -94,7 +94,7 @@ public class ConfiguredFeatureInit {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, Hemomancy.rloc(name));
 	}
 
-	public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+	public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		context.register(MYCELIUM_BLOB,
@@ -253,7 +253,7 @@ public class ConfiguredFeatureInit {
 	}
 
 	private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(
-			BootstapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> configuredFeatureKey,
+			BootstrapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> configuredFeatureKey,
 			F feature, FC configuration) {
 		context.register(configuredFeatureKey, new ConfiguredFeature<>(feature, configuration));
 	}

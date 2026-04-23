@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -202,8 +203,8 @@ public class ChthonianEntity extends Spider {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 	}
 

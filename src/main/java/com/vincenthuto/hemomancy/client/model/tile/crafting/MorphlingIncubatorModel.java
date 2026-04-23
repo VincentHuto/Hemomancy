@@ -78,7 +78,7 @@ public class MorphlingIncubatorModel extends Model {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        morphling_incubator.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        morphling_incubator.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

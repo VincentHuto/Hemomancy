@@ -70,7 +70,7 @@ public class PallidRetortModel extends Model {
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        PallidRetort.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        PallidRetort.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

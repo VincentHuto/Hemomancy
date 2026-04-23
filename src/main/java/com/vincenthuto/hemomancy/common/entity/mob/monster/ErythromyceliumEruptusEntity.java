@@ -78,11 +78,11 @@ public class ErythromyceliumEruptusEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(DATA_SWELL_DIR, -1);
-		this.entityData.define(DATA_IS_IGNITED, false);
-		this.entityData.define(DATA_IS_ERUPTED, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_SWELL_DIR, -1);
+		builder.define(DATA_IS_IGNITED, false);
+		builder.define(DATA_IS_ERUPTED, false);
 
 	}
 

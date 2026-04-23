@@ -74,7 +74,7 @@ public class MyelinBorerModel extends EntityModel<MyelinBorerEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		head.render(poseStack, buffer, packedLight, packedOverlay);
 		segment1.render(poseStack, buffer, packedLight, packedOverlay);
 		segment2.render(poseStack, buffer, packedLight, packedOverlay);

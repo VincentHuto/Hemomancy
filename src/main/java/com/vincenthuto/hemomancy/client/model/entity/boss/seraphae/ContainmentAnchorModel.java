@@ -73,9 +73,9 @@ public class ContainmentAnchorModel extends EntityModel<ContainmentAnchorEntity>
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-							   int packedOverlay, float red, float green, float blue, float alpha) {
-		base.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-		pillar.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-		crown.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+							   int packedOverlay, int packedColor) {
+		base.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		pillar.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		crown.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 	}
 }

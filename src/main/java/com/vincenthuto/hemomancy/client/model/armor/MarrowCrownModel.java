@@ -61,8 +61,7 @@ public class MarrowCrownModel<T extends LivingEntity> extends HumanoidModel<T> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-			float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		head.render(poseStack, buffer, packedLight, packedOverlay);
 
 	}

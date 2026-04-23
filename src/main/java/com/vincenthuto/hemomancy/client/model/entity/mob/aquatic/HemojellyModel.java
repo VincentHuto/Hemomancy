@@ -94,7 +94,7 @@ public class HemojellyModel extends EntityModel<HemojellyEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		bell.render(poseStack, buffer, packedLight, packedOverlay);
 		innerBell.render(poseStack, buffer, packedLight, packedOverlay);
 		tentacle1.render(poseStack, buffer, packedLight, packedOverlay);

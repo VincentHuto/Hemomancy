@@ -59,7 +59,7 @@ public class SeraphaeFragmentModel<T extends SeraphaeFragmentEntity> extends Ent
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-							   int packedOverlay, float red, float green, float blue, float alpha) {
-		core.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+							   int packedOverlay, int packedColor) {
+		core.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 	}
 }

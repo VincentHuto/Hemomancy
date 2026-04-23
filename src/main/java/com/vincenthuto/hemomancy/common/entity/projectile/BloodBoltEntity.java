@@ -95,9 +95,9 @@ public class BloodBoltEntity extends AbstractArrow {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(COLOR, -1);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(COLOR, -1);
 	}
 
 	@Override

@@ -149,7 +149,7 @@ public class SanguisLanceaModel extends Model
 	@Override
 	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay,
 			float pRed, float pGreen, float pBlue, float pAlpha) {
-		root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+		root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, packedColor);
 	}
 
 	public static final AnimationDefinition SANGUISLANCEAMODEL_NEW = AnimationDefinition.Builder.withLength(1f)

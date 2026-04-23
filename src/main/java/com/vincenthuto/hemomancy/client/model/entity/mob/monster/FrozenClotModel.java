@@ -64,7 +64,7 @@ public class FrozenClotModel extends EntityModel<FrozenClotEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		body.render(poseStack, buffer, packedLight, packedOverlay);
 		crystal1.render(poseStack, buffer, packedLight, packedOverlay);
 		crystal2.render(poseStack, buffer, packedLight, packedOverlay);

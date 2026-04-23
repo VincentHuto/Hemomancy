@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -207,8 +208,8 @@ public class FunglingEntity extends PathfinderMob {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 	}
 

@@ -49,9 +49,9 @@ public class VisceralMirrorModel extends Model {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        frame.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        support.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        base.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        frame.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        support.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

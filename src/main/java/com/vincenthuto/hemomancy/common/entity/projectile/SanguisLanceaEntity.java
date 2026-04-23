@@ -45,10 +45,10 @@ public class SanguisLanceaEntity extends AbstractArrow {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ID_LOYALTY, (byte)0);
-        this.entityData.define(ID_FOIL, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ID_LOYALTY, (byte)0);
+        builder.define(ID_FOIL, false);
     }
 
     @Override

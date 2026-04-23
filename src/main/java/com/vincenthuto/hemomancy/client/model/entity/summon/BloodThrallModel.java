@@ -95,10 +95,10 @@ public class BloodThrallModel extends EntityModel<BloodThrallEntity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-                               int packedOverlay, float red, float green, float blue, float alpha) {
-        body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        top.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        leftLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        rightLeg.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                               int packedOverlay, int packedColor) {
+        body.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+        top.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+        leftLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+        rightLeg.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
     }
 }

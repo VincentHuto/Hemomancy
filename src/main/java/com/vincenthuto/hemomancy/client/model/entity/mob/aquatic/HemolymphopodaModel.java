@@ -101,10 +101,10 @@ public class HemolymphopodaModel<T extends Entity> extends EntityModel<T> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		Dome.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		LeftLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		Rlegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+		Dome.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		LeftLegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+		Rlegs.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 	}
 
 	@Override

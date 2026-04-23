@@ -50,8 +50,8 @@ public class ContainmentAnchorEntity extends Entity {
 	/* ---- sync data ---- */
 
 	@Override
-	protected void defineSynchedData() {
-		this.entityData.define(DATA_ACTIVE, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(DATA_ACTIVE, false);
 	}
 
 	public boolean isActive() {

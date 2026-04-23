@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -42,7 +43,7 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 	}
 
 	@Nonnull

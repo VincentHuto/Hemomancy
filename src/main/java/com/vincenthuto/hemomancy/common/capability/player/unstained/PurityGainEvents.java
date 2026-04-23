@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.monster.MobType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;

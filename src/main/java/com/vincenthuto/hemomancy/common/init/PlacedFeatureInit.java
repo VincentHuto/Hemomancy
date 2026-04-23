@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.valueproviders.ClampedInt;
@@ -73,7 +73,7 @@ public class PlacedFeatureInit {
 	// Sporite Crystal cluster patches (for Mycelial Depths)
 	public static final ResourceKey<PlacedFeature> SPORITE_CRYSTAL_CLUSTER = createKey("sporite_crystal_cluster");
 
-	public static void bootstrap(BootstapContext<PlacedFeature> context) {
+	public static void bootstrap(BootstrapContext<PlacedFeature> context) {
 
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
@@ -225,7 +225,7 @@ public class PlacedFeatureInit {
 	}
 
 	public static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(
-			BootstapContext<ConfiguredFeature<?, ?>> pContext, ResourceKey<ConfiguredFeature<?, ?>> pKey, F pFeature,
+			BootstrapContext<ConfiguredFeature<?, ?>> pContext, ResourceKey<ConfiguredFeature<?, ?>> pKey, F pFeature,
 			FC pConfig) {
 		pContext.register(pKey, new ConfiguredFeature(pFeature, pConfig));
 	}
@@ -235,12 +235,12 @@ public class PlacedFeatureInit {
 				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
 	}
 
-	protected static void register(BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> placedFeatureKey,
+	protected static void register(BootstrapContext<PlacedFeature> context, ResourceKey<PlacedFeature> placedFeatureKey,
 			Holder<ConfiguredFeature<?, ?>> configuredFeature, PlacementModifier... modifiers) {
 		register(context, placedFeatureKey, configuredFeature, List.of(modifiers));
 	}
 
-	protected static void register(BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> placedFeatureKey,
+	protected static void register(BootstrapContext<PlacedFeature> context, ResourceKey<PlacedFeature> placedFeatureKey,
 			Holder<ConfiguredFeature<?, ?>> configuredFeature, List<PlacementModifier> modifiers) {
 		context.register(placedFeatureKey, new PlacedFeature(configuredFeature, modifiers));
 	}

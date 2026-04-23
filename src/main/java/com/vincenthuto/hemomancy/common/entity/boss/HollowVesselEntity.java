@@ -110,10 +110,10 @@ public class HollowVesselEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(DATA_COLLAPSE_CHARGING, false);
-		this.entityData.define(DATA_PHASE, 1);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_COLLAPSE_CHARGING, false);
+		builder.define(DATA_PHASE, 1);
 	}
 
 	public boolean isCollapseCharging() {

@@ -62,7 +62,7 @@ public class TrackingPestsEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		entityData.define(EVIL, false);
 		entityData.define(TARGET, 0);
 	}

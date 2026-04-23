@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestSurfaceRuleDat
 
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.Carvers;
 import net.minecraft.data.worldgen.placement.NetherPlacements;
 import net.minecraft.resources.ResourceKey;
@@ -48,11 +48,11 @@ public class BiomeInit {
 		return key;
 	}
 
-	private static void register(BootstapContext<Biome> context, ResourceKey<Biome> key, Biome biome) {
+	private static void register(BootstrapContext<Biome> context, ResourceKey<Biome> key, Biome biome) {
 		context.register(key, biome);
 	}
 
-	public static void bootstrapBiomes(BootstapContext<Biome> context) {
+	public static void bootstrapBiomes(BootstrapContext<Biome> context) {
 		HolderGetter<ConfiguredWorldCarver<?>> carverGetter = context.lookup(Registries.CONFIGURED_CARVER);
 		HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
 		register(context, FUNGAL_GARDENS, fungalGardens(placedFeatureGetter, carverGetter));

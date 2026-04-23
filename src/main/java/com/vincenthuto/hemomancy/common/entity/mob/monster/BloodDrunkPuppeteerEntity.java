@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import java.util.List;
 
 import net.minecraft.nbt.CompoundTag;
@@ -43,8 +44,8 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 	}
 

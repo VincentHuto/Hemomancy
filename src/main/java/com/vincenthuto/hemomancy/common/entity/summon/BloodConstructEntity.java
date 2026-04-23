@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -40,8 +41,8 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 	}
 

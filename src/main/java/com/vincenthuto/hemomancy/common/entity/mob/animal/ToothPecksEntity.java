@@ -58,10 +58,10 @@ public class ToothPecksEntity extends PathfinderMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(LATCHED, false);
-        this.entityData.define(FEED_COUNT, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(LATCHED, false);
+        builder.define(FEED_COUNT, 0);
     }
 
     public boolean isLatched() {

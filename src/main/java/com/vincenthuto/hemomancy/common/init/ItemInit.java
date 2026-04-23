@@ -53,10 +53,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
@@ -107,12 +105,14 @@ public class ItemInit {
             () -> new DebugShowcaseItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final DeferredHolder<Item, Item> structure_scanner = SPECIALITEMS.register("structure_scanner",
-            () -> new StructureScannerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)
-                    .component(DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(), new StructureScannerTooltipComponent(List.of(
-                            Component.literal("Right-click two corners of a structure").withStyle(ChatFormatting.GRAY),
-                            Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
-                            Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
-                            Component.literal("Creative mode only!").withStyle(ChatFormatting.RED)))));
+            () -> new StructureScannerItem(
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).component(
+                            DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(),
+                            new StructureScannerTooltipComponent(List.of(
+                                    Component.literal("Right-click two corners of a structure").withStyle(ChatFormatting.GRAY),
+                                    Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
+                                    Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
+                                    Component.literal("Creative mode only!").withStyle(ChatFormatting.RED))))));
 
     // Book
 

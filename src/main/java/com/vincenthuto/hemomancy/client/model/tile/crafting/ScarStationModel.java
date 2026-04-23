@@ -81,7 +81,7 @@ public class ScarStationModel extends Model {
 
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        ChiselStation.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        ChiselStation.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

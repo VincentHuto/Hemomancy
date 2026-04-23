@@ -151,10 +151,10 @@ public class SeraphaeEntity extends Monster {
 	// ── synched data ──────────────────────────────────────────────────
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(DATA_STATE, SeraphaeState.STABLE.ordinal());
-		this.entityData.define(DATA_INTEGRITY, INITIAL_INTEGRITY);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_STATE, SeraphaeState.STABLE.ordinal());
+		builder.define(DATA_INTEGRITY, INITIAL_INTEGRITY);
 	}
 
 	public SeraphaeState getSeraphaeState() {

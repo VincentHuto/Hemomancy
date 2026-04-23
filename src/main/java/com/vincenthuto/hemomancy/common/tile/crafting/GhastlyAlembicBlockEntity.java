@@ -39,7 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -64,7 +64,7 @@ import net.minecraft.world.phys.Vec3;
  * lit soul campfire, lava, magma, or crimson flames.
  */
 public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
-		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, IBloodTile {
+		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodTile {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 

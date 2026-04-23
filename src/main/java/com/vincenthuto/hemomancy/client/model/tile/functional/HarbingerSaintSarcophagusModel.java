@@ -86,9 +86,9 @@ public class HarbingerSaintSarcophagusModel extends Model {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        sarcophagus_base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        braziers.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        tendrils.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int packedColor) {
+        sarcophagus_base.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        braziers.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        tendrils.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

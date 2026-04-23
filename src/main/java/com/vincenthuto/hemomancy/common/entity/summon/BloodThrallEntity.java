@@ -111,13 +111,13 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     // ── Synched data setup ──
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_OWNER_UUID, Optional.empty());
-        this.entityData.define(DATA_SOURCE_POS, Optional.empty());
-        this.entityData.define(DATA_DEST_POS, Optional.empty());
-        this.entityData.define(DATA_CARRIED_BLOOD, 0f);
-        this.entityData.define(DATA_AWAITING_TARGET, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_OWNER_UUID, Optional.empty());
+        builder.define(DATA_SOURCE_POS, Optional.empty());
+        builder.define(DATA_DEST_POS, Optional.empty());
+        builder.define(DATA_CARRIED_BLOOD, 0f);
+        builder.define(DATA_AWAITING_TARGET, false);
     }
 
     // ── Getters / Setters ──

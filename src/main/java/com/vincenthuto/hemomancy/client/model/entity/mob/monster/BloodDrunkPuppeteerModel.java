@@ -156,8 +156,7 @@ public class BloodDrunkPuppeteerModel<T extends LivingEntity> extends HumanoidMo
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-			float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
 		head.render(poseStack, buffer, packedLight, packedOverlay);
 		body.render(poseStack, buffer, packedLight, packedOverlay);
 		right_arm.render(poseStack, buffer, packedLight, packedOverlay);
