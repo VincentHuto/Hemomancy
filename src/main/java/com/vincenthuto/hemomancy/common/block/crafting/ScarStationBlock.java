@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -54,9 +55,7 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock 
 		return FILLER_OFFSETS;
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player) {
 		if (!worldIn.isClientSide) {
 			BlockEntity tile = worldIn.getBlockEntity(pos);
 
@@ -71,8 +70,23 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock 
 			} else {
 				return InteractionResult.PASS;
 			}
+			return InteractionResult.PASS;
 		}
-		return InteractionResult.FAIL;
+		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		return handleInteraction(worldIn, pos, player) == InteractionResult.PASS
+				? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 
 	@Override

@@ -52,14 +52,13 @@ public class VasculariumCharmItem extends Item implements IScar {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		// super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		tooltip.add(Component.literal(ChatFormatting.RED + "So you've chosen the path of blood."));
 		tooltip.add(Component.literal(ChatFormatting.RED + "Representative of your resolve."));
 		tooltip.add(Component.literal(ChatFormatting.RED + "Leads you to a place of solace."));
 	}
 
-	@Override
 	public Rarity getRarity(ItemStack stack) {
 		return Rarity.RARE;
 	}

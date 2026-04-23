@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +39,14 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
     // Apex is the anchor — the mutation's design alpha is applied at full
     // strength only at Apex, lower maturities render proportionally dimmer.
     private static final float[] MATURITY_ALPHA_SCALE = { 0.45f, 0.58f, 0.72f, 0.86f, 1.00f };
+
+    private static int packColor(float red, float green, float blue, float alpha) {
+        int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
+        int r = Mth.clamp((int) (red * 255.0F), 0, 255);
+        int g = Mth.clamp((int) (green * 255.0F), 0, 255);
+        int b = Mth.clamp((int) (blue * 255.0F), 0, 255);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
 
     public MorphlingMutationLayer(LivingEntityRenderer<T, M> renderer) {
         super(renderer);
@@ -86,7 +95,7 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
             }
 
             model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY,
-                    mutation.r, mutation.g, mutation.b, finalAlpha);
+                    packColor(mutation.r, mutation.g, mutation.b, finalAlpha));
 
             poseStack.popPose();
 
@@ -106,8 +115,8 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
 
     private static ResourceLocation getSkinTexture(Player player) {
         if (player instanceof AbstractClientPlayer acp) {
-            return acp.getSkinTextureLocation();
+            return acp.getSkin().texture();
         }
-        return DefaultPlayerSkin.getDefaultSkin(player.getUUID());
+        return DefaultPlayerSkin.get(player.getUUID()).texture();
     }
 }

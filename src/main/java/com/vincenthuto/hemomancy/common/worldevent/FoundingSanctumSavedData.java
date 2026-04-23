@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -21,6 +22,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class FoundingSanctumSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_founding_sanctums";
+	private static final SavedData.Factory<FoundingSanctumSavedData> FACTORY =
+			new SavedData.Factory<>(FoundingSanctumSavedData::new, FoundingSanctumSavedData::load, null);
 
 	/** Block radius of the sanctum's effect — approximately a 5-chunk diameter. */
 	public static final double SANCTUM_RADIUS = 40.0;
@@ -31,11 +34,10 @@ public class FoundingSanctumSavedData extends SavedData {
 	public FoundingSanctumSavedData() {}
 
 	public static FoundingSanctumSavedData get(ServerLevel level) {
-		return level.getDataStorage().computeIfAbsent(
-				FoundingSanctumSavedData::load, FoundingSanctumSavedData::new, DATA_NAME);
+		return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static FoundingSanctumSavedData load(CompoundTag tag) {
+	public static FoundingSanctumSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		FoundingSanctumSavedData data = new FoundingSanctumSavedData();
 		ListTag list = tag.getList("sanctums", Tag.TAG_COMPOUND);
 		for (int i = 0; i < list.size(); i++) {
@@ -49,7 +51,7 @@ public class FoundingSanctumSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (Map.Entry<UUID, BlockPos> entry : sanctums.entrySet()) {
 			CompoundTag e = new CompoundTag();

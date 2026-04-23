@@ -181,7 +181,7 @@ public class UnstainedProgressScreen extends Screen {
 
 	private void cachePlayerData() {
 		if (Minecraft.getInstance().player != null) {
-			Minecraft.getInstance().HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
+			HemoCapabilityAccess.getUnstainedProgress(Minecraft.getInstance().player).ifPresent(cap -> {
 				begunPurification    = cap.hasBegunPurification();
 				purity               = cap.getPurity();
 				clarityUnlocked      = cap.hasClarityUnlocked();
@@ -366,13 +366,13 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mx, double my, double delta) {
-		if (!insideGui(mx, my)) return super.mouseScrolled(mx, my, delta);
+	public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+		if (!insideGui(mx, my)) return super.mouseScrolled(mx, my, scrollX, scrollY);
 
-		if (activeTab == UTab.RITES) return ritesTab.mouseScrolled(makeContext(), mx, my, delta);
-		if (activeTab == UTab.CRAFTING) return craftingTab.mouseScrolled(makeContext(), mx, my, delta);
+		if (activeTab == UTab.RITES) return ritesTab.mouseScrolled(makeContext(), mx, my, scrollY);
+		if (activeTab == UTab.CRAFTING) return craftingTab.mouseScrolled(makeContext(), mx, my, scrollY);
 
-		view.applyScroll(guiLeft, guiTop, mx, my, delta);
+		view.applyScroll(guiLeft, guiTop, mx, my, scrollY);
 		saveTabPan();
 		return true;
 	}
@@ -383,7 +383,7 @@ public class UnstainedProgressScreen extends Screen {
 
 	@Override
 	public void render(@Nonnull GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		renderBackground(gfx);
+		renderBackground(gfx, mouseX, mouseY, partial);
 
 		cachePlayerData();
 		buildContentBounds();

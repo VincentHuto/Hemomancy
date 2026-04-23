@@ -58,8 +58,8 @@ public class MoleMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Burrower's Instinct (mining speed + underground regen)
-		if (!player.hasEffect(EffectInit.burrowers_instinct.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.burrowers_instinct.get(),
+		if (!player.hasEffect(EffectInit.burrowers_instinct)) {
+			player.addEffect(new MobEffectInstance(EffectInit.burrowers_instinct,
 					100, maturity, false, true, true));
 		}
 

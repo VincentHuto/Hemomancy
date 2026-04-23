@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.crafting;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
@@ -18,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -48,6 +50,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock, IMultiBlock {
+	public static final MapCodec<GhastlyAlembicBlock> CODEC = simpleCodec(GhastlyAlembicBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
@@ -130,7 +133,6 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
 	}
 
-	@Override
 	public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
 		return state.getValue(LIT) ? 8 : 0;
 	}
@@ -224,18 +226,25 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		if (!level.isClientSide) {
 			placeFillers(level, pos, state);
 		}
-		if (stack.hasCustomHoverName()) {
-			BlockEntity be = level.getBlockEntity(pos);
-			if (be instanceof GhastlyAlembicBlockEntity alembic) {
-				alembic.setCustomName(stack.getHoverName());
-			}
-		}
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-			InteractionHand hand, BlockHitResult hit) {
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
 		this.openContainer(level, pos, player);
 		return InteractionResult.CONSUME;
 	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand hand, BlockHitResult hit) {
+		this.openContainer(level, pos, player);
+		return ItemInteractionResult.SUCCESS;
+	}
 }
+

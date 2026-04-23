@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -181,22 +182,11 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 	 * <p><b>Empty hand (crouching):</b> during a ritual, cancels it.
 	 * Otherwise, removes items from the block (catalyst first, then memory).</p>
 	 */
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player,
-			InteractionHand handIn, BlockHitResult result) {
+	private InteractionResult handleEmptyHandUse(Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
-
-		ItemStack stack = player.getItemInHand(handIn);
-
-		// ---- Holding an item ----
-		if (!stack.isEmpty()) {
-			// Block item interactions during an active ritual
-			if (te.isCrafting()) return InteractionResult.PASS;
-			return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.PASS;
-		}
 
 		// ---- Empty hand + crouching ----
 		if (player.isCrouching()) {
@@ -226,6 +216,29 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 
 		te.provideTendencyFeedback(player);
 		return InteractionResult.SUCCESS;
+	}
+
+	private InteractionResult handleItemUse(Level worldIn, BlockPos pos, Player player, ItemStack stack,
+			InteractionHand handIn) {
+		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
+		BlockEntity tile = worldIn.getBlockEntity(pos);
+		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
+		if (te.isCrafting()) return InteractionResult.PASS;
+		return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleEmptyHandUse(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		return handleItemUse(worldIn, pos, player, stack, handIn) == InteractionResult.PASS
+				? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 
 }

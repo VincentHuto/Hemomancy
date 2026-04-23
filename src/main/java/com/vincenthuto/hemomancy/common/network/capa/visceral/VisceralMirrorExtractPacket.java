@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntit
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
@@ -41,8 +42,8 @@ public class VisceralMirrorExtractPacket implements CustomPacketPayload {
 
 	public static void handle(final VisceralMirrorExtractPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player();
-			if (sender == null) return;
+			Player player = ctx.player();
+			if (!(player instanceof ServerPlayer sender)) return;
 
 			// Validate range
 			if (sender.distanceToSqr(msg.pos.getX() + 0.5, msg.pos.getY() + 0.5,

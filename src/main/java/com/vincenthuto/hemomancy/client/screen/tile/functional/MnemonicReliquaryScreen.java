@@ -522,7 +522,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	@Override
 	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		super.renderBackground(guiGraphics);
+		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 	}
 
 	@Override

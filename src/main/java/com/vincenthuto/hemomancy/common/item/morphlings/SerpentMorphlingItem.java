@@ -64,9 +64,9 @@ public class SerpentMorphlingItem extends MorphlingItem {
 
 		// Base effect: Serpentine Guile (move/attack speed, amplifier capped at 2)
 		int amplifier = Math.min(maturity, 2);
-		if (!player.hasEffect(EffectInit.serpentine_guile.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.serpentine_guile.get(),
-					100, amplifier, false, true, true));
+		if (!player.hasEffect(EffectInit.serpentine_guile)) {
+			player.addEffect(new MobEffectInstance(EffectInit.serpentine_guile,
+					100, maturity, false, true, true));
 		}
 
 		// Track sneak start time for Ambush Predator (Apex 4)

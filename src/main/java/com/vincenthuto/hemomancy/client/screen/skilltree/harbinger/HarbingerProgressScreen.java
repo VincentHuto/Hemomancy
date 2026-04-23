@@ -187,18 +187,18 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mx, double my, double delta) {
+      public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
         ProgressScreenContext ctx = makeContext();
 
-        if (activeTab == Tab.SKILLS && milestoneState.open && MilestoneDrawerView.isOverDrawer(ctx, milestoneState, mx, my)) {
-            milestoneState.scrollOffset = Math.max(0, milestoneState.scrollOffset - (int)(delta * 12));
+            if (activeTab == Tab.SKILLS && milestoneState.open && MilestoneDrawerView.isOverDrawer(ctx, milestoneState, mx, my)) {
+              milestoneState.scrollOffset = Math.max(0, milestoneState.scrollOffset - (int)(scrollY * 12));
             return true;
         }
 
-        if (activeController().mouseScrolled(ctx, mx, my, delta)) return true;
+            if (activeController().mouseScrolled(ctx, mx, my, scrollY)) return true;
 
         if (view != null) {
-            view.applyScroll(guiLeft, guiTop, mx, my, delta);
+                  view.applyScroll(guiLeft, guiTop, mx, my, scrollY);
             view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
         }
         return true;
@@ -206,7 +206,7 @@ public class HarbingerProgressScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-        renderBackground(gfx);
+            renderBackground(gfx, mouseX, mouseY, partial);
         veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight);
         ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, 0xFF330808, 0xFF220606);
 

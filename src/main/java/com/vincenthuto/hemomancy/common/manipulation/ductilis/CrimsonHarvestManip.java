@@ -53,7 +53,7 @@ public class CrimsonHarvestManip extends BloodManipulation {
 					BlockState state = world.getBlockState(target);
 
 					if (state.getBlock() instanceof BonemealableBlock growable) {
-						if (growable.isValidBonemealTarget(world, target, state, false)) {
+						if (growable.isValidBonemealTarget(world, target, state)) {
 							if (growable.isBonemealSuccess(world, random, target, state)) {
 								growable.performBonemeal(sLevel, random, target, state);
 								grownCount++;

@@ -1,68 +1,64 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonObject;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.mojang.serialization.MapCodec;
 
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.Level;
 
-public class CopyMorphlingJarRecipe extends ShapedRecipe {
+public class CopyMorphlingJarRecipe extends net.minecraft.world.item.crafting.CustomRecipe {
 	public static class Serializer implements RecipeSerializer<CopyMorphlingJarRecipe> {
-		@Override
-		public CopyMorphlingJarRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-			try {
-				return new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
-			} catch (Exception exception) {
-				Hemomancy.LOGGER.info("Error reading CopyJar Recipe from packet: ", exception);
-				throw exception;
-			}
-		}
+		private static final MapCodec<CopyMorphlingJarRecipe> CODEC = RecipeSerializer.SHAPED_RECIPE.codec()
+				.xmap(CopyMorphlingJarRecipe::new, CopyMorphlingJarRecipe::baseRecipe);
 
-		@Nullable
+		private static final StreamCodec<RegistryFriendlyByteBuf, CopyMorphlingJarRecipe> STREAM_CODEC = StreamCodec.of(
+				(buffer, recipe) -> RecipeSerializer.SHAPED_RECIPE.streamCodec().encode(buffer, recipe.baseRecipe()),
+				buffer -> new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.streamCodec().decode(buffer)));
+
 		@Override
-		public CopyMorphlingJarRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-			return new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
+		public MapCodec<CopyMorphlingJarRecipe> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf buffer, CopyMorphlingJarRecipe recipe) {
-			try {
-				RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
-			} catch (Exception exception) {
-				Hemomancy.LOGGER.info("Error writing CopyJar Recipe to packet: ", exception);
-				throw exception;
-			}
+		public StreamCodec<RegistryFriendlyByteBuf, CopyMorphlingJarRecipe> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 
-	public CopyMorphlingJarRecipe(final ResourceLocation id, final String group, final int recipeWidth,
-			final int recipeHeight, final NonNullList<Ingredient> ingredients, final ItemStack recipeOutput) {
-		super(id, group, null, recipeWidth, recipeHeight, ingredients, recipeOutput);
-	}
+    private final ShapedRecipe baseRecipe;
 
 	public CopyMorphlingJarRecipe(ShapedRecipe shapedRecipe) {
-		super(shapedRecipe.getId(), shapedRecipe.getGroup(), CraftingBookCategory.MISC, shapedRecipe.getRecipeWidth(),
-				shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem(null));
-	}  
+		super(CraftingBookCategory.MISC);
+		this.baseRecipe = shapedRecipe;
+	}
+
+	public ShapedRecipe baseRecipe() {
+		return baseRecipe;
+	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer inv, RegistryAccess p_266725_) {
-		final ItemStack craftingResult = super.assemble(inv, p_266725_);
+	public boolean matches(CraftingInput input, Level level) {
+		return baseRecipe.matches(input, level);
+	}
+
+	@Override
+	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
+		final ItemStack craftingResult = baseRecipe.assemble(inv, registryAccess);
 		ItemStack dataSource = ItemStack.EMPTY;
 		
 		if (!craftingResult.isEmpty()) {
-			for (int i = 0; i < inv.getContainerSize(); i++) {
+			for (int i = 0; i < inv.size(); i++) {
 				final ItemStack item = inv.getItem(i);
 				if (!item.isEmpty() && item.getItem() instanceof ItemMorphlingJar) {
 					dataSource = item;
@@ -70,12 +66,33 @@ public class CopyMorphlingJarRecipe extends ShapedRecipe {
 				}
 			}
 
-			if (!dataSource.isEmpty() && dataSource.hasTag()) {
-				craftingResult.setTag(dataSource.getTag().copy());
+			if (!dataSource.isEmpty() && dataSource.has(DataComponents.CUSTOM_DATA)) {
+				craftingResult.set(DataComponents.CUSTOM_DATA,
+						CustomData.of(dataSource.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()));
 			}
 		}
 
 		return craftingResult;
+	}
+
+	@Override
+	public boolean canCraftInDimensions(int width, int height) {
+		return baseRecipe.canCraftInDimensions(width, height);
+	}
+
+	@Override
+	public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+		return baseRecipe.getResultItem(registryAccess);
+	}
+
+	@Override
+	public net.minecraft.core.NonNullList<net.minecraft.world.item.crafting.Ingredient> getIngredients() {
+		return baseRecipe.getIngredients();
+	}
+
+	@Override
+	public RecipeSerializer<?> getSerializer() {
+		return RecipeInit.morphling_jar_upgrade_serializer.get();
 	}
 
 }

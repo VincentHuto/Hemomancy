@@ -12,9 +12,11 @@ import com.vincenthuto.hemomancy.common.tile.functional.EarthenVeinBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -131,13 +133,11 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 		return super.updateShape(p_53323_, p_53324_, p_53325_, p_53326_, p_53327_, p_53328_);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
+			ItemStack stack) {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(NullPointerException::new);
 		if (worldIn.getBlockEntity(pos)instanceof EarthenVeinBlockEntity te) {
-			ItemStack stack = player.getItemInHand(handIn);
 			if (!state.getValue(STENTED)) {
 				if (stack.getItem() == Blocks.IRON_BARS.asItem()) {
 					//System.out.println(known.getVeinList());
@@ -171,7 +171,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 				if (known.getVeinBlockList().contains(te.getLoc().getPosition())) {
 					if (state.getValue(STENTED)) {
 						te.getLoc().setName(stack.getHoverName().getString());
-						if (stack.hasCustomHoverName()) {
+						if (stack.has(DataComponents.CUSTOM_NAME)) {
 							te.setName(stack.getHoverName().getString());
 							stack.shrink(1);
 							BlockState newState = state.setValue(NAMED, true);
@@ -194,6 +194,19 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 		}
 		return InteractionResult.SUCCESS;
 
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(state, worldIn, pos, player, ItemStack.EMPTY);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(state, worldIn, pos, player, stack);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 }

@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,6 +26,14 @@ public class SanguineMonolithItemRenderer extends BlockEntityWithoutLevelRendere
 	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_sanguine_monolith.png");
 
 	private SanguineMonolithModel model;
+
+	private static int packColor(float red, float green, float blue, float alpha) {
+		int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
+		int r = Mth.clamp((int) (red * 255.0F), 0, 255);
+		int g = Mth.clamp((int) (green * 255.0F), 0, 255);
+		int b = Mth.clamp((int) (blue * 255.0F), 0, 255);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
 
 	public SanguineMonolithItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
@@ -76,7 +85,7 @@ public class SanguineMonolithItemRenderer extends BlockEntityWithoutLevelRendere
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
 		// Render in black tint to match the placed block
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-				OverlayTexture.NO_OVERLAY, 0.05F, 0.02F, 0.02F, 1F);
+				OverlayTexture.NO_OVERLAY, packColor(0.05F, 0.02F, 0.02F, 1F));
 
 		poseStack.popPose();
 

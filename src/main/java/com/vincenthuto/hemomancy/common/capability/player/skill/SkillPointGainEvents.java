@@ -79,7 +79,7 @@ public class SkillPointGainEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-        ResourceLocation advId = event.getAdvancement().getId();
+        ResourceLocation advId = event.getAdvancement().id();
         String fullId = advId.toString(); // e.g. "hemomancy:hemomancy/iron_in_the_blood"
 
         if (!fullId.startsWith(HEMO_ADV_PREFIX)) return;

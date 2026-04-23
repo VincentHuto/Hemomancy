@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLocProvider;
 import com.vincenthuto.hemomancy.common.capability.block.vein.IEarthenVeinLoc;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;

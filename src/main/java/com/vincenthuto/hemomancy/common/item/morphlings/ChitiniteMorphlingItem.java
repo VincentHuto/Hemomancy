@@ -58,9 +58,9 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 
 		// Base effect: Chitinous Bulwark (armor toughness, amplifier capped at 2)
 		int amplifier = Math.min(maturity, 2);
-		if (!player.hasEffect(EffectInit.chitinous_bulwark.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.chitinous_bulwark.get(),
-					100, amplifier, false, true, true));
+		if (!player.hasEffect(EffectInit.chitinous_bulwark)) {
+			player.addEffect(new MobEffectInstance(EffectInit.chitinous_bulwark,
+					100, maturity, false, true, true));
 		}
 
 		// Mature (3+): Ablative Plating — periodically grant Absorption hearts

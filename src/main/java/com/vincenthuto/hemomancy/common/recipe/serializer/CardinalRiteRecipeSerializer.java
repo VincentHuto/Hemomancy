@@ -14,6 +14,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -32,7 +33,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -123,7 +123,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		ItemStack result = ItemStack.EMPTY;
 		if (pJson.has("result")) {
-			result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
+			result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
+					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
+					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
 		}
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
@@ -165,7 +167,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("riteDescription", ops.createString(recipe.getRiteDescription()));
 			// pattern / key are complex — handled via stream codec
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
-					.ifPresent(e -> prefix.add("result", ops.convertFrom(JsonOps.INSTANCE, e)));
+					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("requiredDegree", ops.createInt(recipe.getRequiredDegree()));
 			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));

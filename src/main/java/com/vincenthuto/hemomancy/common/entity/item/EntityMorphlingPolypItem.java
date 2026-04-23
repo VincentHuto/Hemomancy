@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -63,13 +64,15 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 			return;
 		}
 
-		List<IncubatorRecipe> recipes = level().getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get());
+		List<RecipeHolder<IncubatorRecipe>> recipes = level().getRecipeManager()
+				.getAllRecipesFor(RecipeInit.incubator_recipe_type.get());
 
 		// Machina Spark
 		for (int i = 0; i < entList.size(); i++) {
 			if (entList.get(i) instanceof ItemEntity) {
 				ItemEntity itemEnt = (ItemEntity) entList.get(i);
-				for (IncubatorRecipe rec : recipes) {
+				for (RecipeHolder<IncubatorRecipe> recHolder : recipes) {
+					IncubatorRecipe rec = recHolder.value();
 					if (rec.isValidCatalyst(itemEnt.getItem())) {
 						if (!itemList.contains(itemEnt.getItem().getItem())) {
 							itemList.add(itemEnt.getItem().getItem());

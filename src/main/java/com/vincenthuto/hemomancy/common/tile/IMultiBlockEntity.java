@@ -48,7 +48,7 @@ public interface IMultiBlockEntity {
                     pos.getX() + maxX, pos.getY() + maxY, pos.getZ() + maxZ
             );
         }
-        return BlockEntity.INFINITE_EXTENT_AABB;
+        return AABB.INFINITE;
     }
 }
 

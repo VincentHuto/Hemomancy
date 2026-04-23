@@ -1,22 +1,18 @@
 package com.vincenthuto.hemomancy.client.render.shader;
 
+import com.mojang.blaze3d.shaders.Uniform;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceProvider;
+
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mojang.blaze3d.shaders.Uniform;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
-import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.ChainedJsonException;
-import net.minecraft.server.packs.resources.ResourceProvider;
-import net.minecraft.util.GsonHelper;
 
 public abstract class ExtendedShaderInstance extends ShaderInstance {
 
@@ -24,13 +20,15 @@ public abstract class ExtendedShaderInstance extends ShaderInstance {
 
     public ExtendedShaderInstance(ResourceProvider pResourceProvider, ResourceLocation location, VertexFormat pVertexFormat) throws IOException {
         super(pResourceProvider, location, pVertexFormat);
+        cacheDefaultUniformData();
     }
 
     public void setUniformDefaults() {
         for (Map.Entry<String, Consumer<Uniform>> defaultDataEntry : getDefaultUniformData().entrySet()) {
-            final Uniform t = uniformMap.get(defaultDataEntry.getKey());
-            defaultDataEntry.getValue().accept(t);
-            float f = 0;
+            Uniform uniform = getUniform(defaultDataEntry.getKey());
+            if (uniform != null) {
+                defaultDataEntry.getValue().accept(uniform);
+            }
         }
     }
 
@@ -43,38 +41,42 @@ public abstract class ExtendedShaderInstance extends ShaderInstance {
         return defaultUniformData;
     }
 
-    @Override
-    public void parseUniformNode(JsonElement pJson) throws ChainedJsonException {
-        super.parseUniformNode(pJson);
-
-        JsonObject jsonobject = GsonHelper.convertToJsonObject(pJson, "uniform");
-        String uniformName = GsonHelper.getAsString(jsonobject, "name");
-        if (getShaderHolder().uniformsToCache.contains(uniformName)) {
-            Uniform uniform = uniforms.get(uniforms.size() - 1);
+    private void cacheDefaultUniformData() {
+        for (String uniformName : getShaderHolder().uniformsToCache) {
+            Uniform uniform = getUniform(uniformName);
+            if (uniform == null) {
+                continue;
+            }
 
             Consumer<Uniform> consumer;
             if (uniform.getType() <= 3) {
-                final IntBuffer buffer = uniform.getIntBuffer();
-                buffer.position(0);
-                int[] array = new int[uniform.getCount()];
+                IntBuffer buffer = uniform.getIntBuffer();
+                int[] defaults = new int[uniform.getCount()];
                 for (int i = 0; i < uniform.getCount(); i++) {
-                    array[i] = buffer.get(i);
+                    defaults[i] = buffer.get(i);
                 }
-                consumer = u -> {
-                    buffer.position(0);
-                    buffer.put(array);
-                };
+                consumer = u -> u.setSafe(
+                        defaults.length > 0 ? defaults[0] : 0,
+                        defaults.length > 1 ? defaults[1] : 0,
+                        defaults.length > 2 ? defaults[2] : 0,
+                        defaults.length > 3 ? defaults[3] : 0
+                );
             } else {
-                final FloatBuffer buffer = uniform.getFloatBuffer();
-                buffer.position(0);
-                float[] array = new float[uniform.getCount()];
+                FloatBuffer buffer = uniform.getFloatBuffer();
+                float[] defaults = new float[uniform.getCount()];
                 for (int i = 0; i < uniform.getCount(); i++) {
-                    array[i] = buffer.get(i);
+                    defaults[i] = buffer.get(i);
                 }
-                consumer = u -> {
-                    buffer.position(0);
-                    buffer.put(array);
-                };
+                if (uniform.getType() <= 7) {
+                    consumer = u -> u.setSafe(
+                            defaults.length > 0 ? defaults[0] : 0,
+                            defaults.length > 1 ? defaults[1] : 0,
+                            defaults.length > 2 ? defaults[2] : 0,
+                            defaults.length > 3 ? defaults[3] : 0
+                    );
+                } else {
+                    consumer = u -> u.set(Arrays.copyOf(defaults, defaults.length));
+                }
             }
 
             getDefaultUniformData().put(uniformName, consumer);

@@ -64,7 +64,7 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 
 		// Drive the wiggle animation using the client level's game time
 		if (Minecraft.getInstance().level != null) {
-			float partialTicks = Minecraft.getInstance().getPartialTick();
+			float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
 			model.setupAnimation(Minecraft.getInstance().level, partialTicks, animCtx);
 		}
 

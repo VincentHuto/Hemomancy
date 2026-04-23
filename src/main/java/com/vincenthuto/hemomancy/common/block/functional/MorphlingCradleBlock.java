@@ -1,13 +1,16 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.MorphlingCradleBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -35,6 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class MorphlingCradleBlock extends BaseEntityBlock {
+	public static final MapCodec<MorphlingCradleBlock> CODEC = simpleCodec(MorphlingCradleBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
 
@@ -43,6 +47,11 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
 				.setValue(FACE, AttachFace.FLOOR));
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override
@@ -139,15 +148,27 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 		return createTickerHelper(type, BlockEntityInit.morphling_cradle.get(), MorphlingCradleBlockEntity::serverTick);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-			BlockHitResult hit) {
+	private InteractionResult handleUse(Level level, BlockPos pos, Player player, InteractionHand hand) {
 		if (level.isClientSide) return InteractionResult.SUCCESS;
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be instanceof MorphlingCradleBlockEntity cradle) {
 			return cradle.handleInteraction(player, hand);
 		}
 		return InteractionResult.PASS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return handleUse(level, pos, player, InteractionHand.MAIN_HAND);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand hand, BlockHitResult hit) {
+		InteractionResult result = handleUse(level, pos, player, hand);
+		return result == InteractionResult.PASS ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 
 	@Override

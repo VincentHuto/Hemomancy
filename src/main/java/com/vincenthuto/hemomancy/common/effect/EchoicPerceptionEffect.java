@@ -25,8 +25,8 @@ public class EchoicPerceptionEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null || entity.level().isClientSide) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null || entity.level().isClientSide) return true;
 
 		Level level = entity.level();
 		double radius = 16.0 + amplifier * 4.0;
@@ -41,6 +41,7 @@ public class EchoicPerceptionEffect extends MobEffect {
 						45, 0, true, false, false));
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -60,8 +61,9 @@ public class EchoicPerceptionEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 40 == 0;
 	}
 
 }
+

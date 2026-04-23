@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -182,23 +183,23 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	// ========================== NBT ==========================
 
 	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.saveAdditional(tag, provider);
 		tag.putInt("ReagentsAccepted", reagentsAccepted);
 		tag.putInt("SanguineTicks", sanguineTicks);
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.loadAdditional(tag, provider);
 		reagentsAccepted = tag.getInt("ReagentsAccepted");
 		sanguineTicks = tag.getInt("SanguineTicks");
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
-		saveAdditional(tag);
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		CompoundTag tag = super.getUpdateTag(provider);
+		saveAdditional(tag, provider);
 		return tag;
 	}
 

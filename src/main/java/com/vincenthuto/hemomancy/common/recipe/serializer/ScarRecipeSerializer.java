@@ -6,12 +6,9 @@ import java.util.stream.Stream;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
+import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.*;
 import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.MapLike;
-import com.mojang.serialization.RecordBuilder;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
@@ -24,7 +21,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	public static HashMap<ResourceLocation, ScarRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ScarRecipe>();
@@ -58,8 +54,12 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	private static ScarRecipe fromJsonObject(ResourceLocation id, JsonObject pJson) {
 		int tier = 0;
 		ScarType scarType = ScarType.OVERRIDE;
-		Ingredient ingredient1 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient1"), false);
-		Ingredient ingredient2 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient2"), false);
+		Ingredient ingredient1 = Ingredient.CODEC_NONEMPTY
+				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "ingredient1"))
+				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient1: " + err));
+		Ingredient ingredient2 = Ingredient.CODEC_NONEMPTY
+				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "ingredient2"))
+				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient2: " + err));
 		byte[][] pattern;
 
 		if (pJson.has("tier")) {
@@ -83,7 +83,9 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 
 		ItemStack itemstack;
 		if (pJson.get("result").isJsonObject())
-			itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
+			itemstack = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
+					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
+					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
 		else {
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
@@ -98,9 +100,9 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 		prefix.add("id", ops.createString(recipe.getId().toString()));
 		// ingredient1/ingredient2
 		Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient1()).result()
-				.ifPresent(e -> prefix.add("ingredient1", ops.convertFrom(JsonOps.INSTANCE, e)));
+				.ifPresent(e -> prefix.add("ingredient1", JsonOps.INSTANCE.convertTo(ops, e)));
 		Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient2()).result()
-				.ifPresent(e -> prefix.add("ingredient2", ops.convertFrom(JsonOps.INSTANCE, e)));
+				.ifPresent(e -> prefix.add("ingredient2", JsonOps.INSTANCE.convertTo(ops, e)));
 		prefix.add("tier", ops.createInt(recipe.getTier()));
 		prefix.add("scartype", ops.createString(recipe.getScarType().toString()));
 		// pattern
@@ -111,10 +113,10 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			for (byte b : row) rowArr.add(b);
 			patArr.add(rowArr);
 		}
-		prefix.add("pattern", ops.convertFrom(JsonOps.INSTANCE, patArr));
+		prefix.add("pattern", JsonOps.INSTANCE.convertTo(ops, patArr));
 		// result
 		ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem()).result()
-				.ifPresent(e -> prefix.add("result", ops.convertFrom(JsonOps.INSTANCE, e)));
+				.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----

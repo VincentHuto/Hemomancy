@@ -28,13 +28,13 @@ public class ManipComboHelper {
 		// Grant Sanguine Clarity — reduces the mana cost of the next MnA spell
 		int clarityDuration = HemoMnAConfig.SANGUINE_CLARITY_DURATION.get();
 		player.addEffect(new MobEffectInstance(
-				EffectInit.sanguine_clarity.get(),
+				EffectInit.sanguine_clarity,
 				clarityDuration, 0, false, true));
 
 		// Consume Arcane Resonance if active (the cost reduction was already applied
 		// in BloodManipulation.performAction via the effectiveCost calculation)
-		if (player.hasEffect(EffectInit.arcane_resonance.get())) {
-			player.removeEffect(EffectInit.arcane_resonance.get());
+		if (player.hasEffect(EffectInit.arcane_resonance)) {
+			player.removeEffect(EffectInit.arcane_resonance);
 		}
 	}
 }

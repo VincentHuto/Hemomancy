@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.InteractionHand;
@@ -96,8 +97,8 @@ public class MorphlingItem extends Item implements IMorphling {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 
 		// Show preferred enzyme info
 		EnumBloodTendency preferred = this.getPreferredTendency();

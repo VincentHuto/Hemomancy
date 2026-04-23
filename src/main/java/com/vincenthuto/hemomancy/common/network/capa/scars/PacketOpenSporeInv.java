@@ -8,6 +8,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PacketOpenSporeInv implements CustomPacketPayload {
 	public static final Type<PacketOpenSporeInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_spore_inv"));
@@ -27,8 +28,10 @@ public class PacketOpenSporeInv implements CustomPacketPayload {
 
 	public static void handle(final PacketOpenSporeInv msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ctx.player().doCloseContainer();
-			ctx.player().openMenu(new FungalImplantMenuProvider());
+			if (ctx.player() instanceof ServerPlayer player) {
+				player.closeContainer();
+				player.openMenu(new FungalImplantMenuProvider());
+			}
 		});
 	}
 

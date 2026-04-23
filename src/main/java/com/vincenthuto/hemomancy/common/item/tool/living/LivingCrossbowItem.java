@@ -19,11 +19,16 @@ import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -32,6 +37,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -45,16 +51,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
-	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile) {
+	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile, HolderLookup.Provider registryAccess) {
 		CompoundTag CompoundTag = crossbow.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		ListTag listnbt;
 		if (CompoundTag.contains("ChargedProjectiles", 9)) {
@@ -63,9 +69,10 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 			listnbt = new ListTag();
 		}
 
-		CompoundTag CompoundTag1 = new CompoundTag();
-		projectile.save(CompoundTag1);
-		listnbt.add(CompoundTag1);
+		Tag projectileTag = projectile.save(registryAccess);
+		if (projectileTag instanceof CompoundTag compoundTag1) {
+			listnbt.add(compoundTag1);
+		}
 		CompoundTag.put("ChargedProjectiles", listnbt);
 		crossbow.set(DataComponents.CUSTOM_DATA, CustomData.of(CompoundTag));
 	}
@@ -74,27 +81,20 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 		net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
 		if (customData != null) {
 			CompoundTag CompoundTag = customData.copyTag();
-			ListTag listnbt = CompoundTag.getList("ChargedProjectiles", 9);
-			listnbt.clear();
-			CompoundTag.put("ChargedProjectiles", listnbt);
-			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(CompoundTag));
+			CompoundTag.put("ChargedProjectiles", new ListTag());
+			CustomData.set(DataComponents.CUSTOM_DATA, stack, CompoundTag);
 		}
 
 	}
 
-	private static AbstractArrow createArrow(Level worldIn, LivingEntity shooter, ItemStack crossbow, ItemStack ammo) {
+	private static AbstractArrow createArrow(Level worldIn, LivingEntity shooter, ItemStack ammo, ItemStack weaponStack) {
 		ArrowItem arrowitem = (ArrowItem) (ammo.getItem() instanceof ArrowItem ? ammo.getItem() : Items.ARROW);
-		AbstractArrow AbstractArrow = arrowitem.createArrow(worldIn, ammo, shooter);
+		AbstractArrow AbstractArrow = arrowitem.createArrow(worldIn, ammo, shooter, weaponStack);
 		if (shooter instanceof Player) {
 			AbstractArrow.setCritArrow(true);
 		}
 
 		AbstractArrow.setSoundEvent(SoundEvents.CROSSBOW_HIT);
-		AbstractArrow.setShotFromCrossbow(true);
-		int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, crossbow);
-		if (i > 0) {
-			AbstractArrow.setPierceLevel((byte) i);
-		}
 
 		return AbstractArrow;
 	}
@@ -109,22 +109,21 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 				Projectile = new FireworkRocketEntity(worldIn, projectile, shooter, shooter.getX(),
 						shooter.getEyeY() - 0.15F, shooter.getZ(), true);
 			} else {
-				Projectile = createArrow(worldIn, shooter, crossbow, projectile);
+				Projectile = createArrow(worldIn, shooter, projectile, crossbow);
 				if (isCreativeMode || projectileAngle != 0.0F) {
 					((AbstractArrow) Projectile).pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 				}
 			}
 
-			if (shooter instanceof CrossbowAttackMob) {
-				CrossbowAttackMob CrossbowAttackMob = (CrossbowAttackMob) shooter;
-				CrossbowAttackMob.shootCrossbowProjectile(CrossbowAttackMob.getTarget(), crossbow, Projectile,
-						projectileAngle);
-			} else {
+			if (!(shooter instanceof CrossbowAttackMob)) {
 				Vec3 vec31 = shooter.getUpVector(1.0F);
 	            Quaternionf quaternionf = (new Quaternionf()).setAngleAxis((double)(projectileAngle * ((float)Math.PI / 180F)), vec31.x, vec31.y, vec31.z);
 	            Vec3 vec3 = shooter.getViewVector(1.0F);
 	            Vector3f vector3f = vec3.toVector3f().rotate(quaternionf);
 				Projectile.shoot(vector3f.x(), vector3f.y(), vector3f.z(), velocity, inaccuracy);
+			} else {
+				Projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + projectileAngle, 0.0F,
+						velocity, inaccuracy);
 			}
 			if (projectile.getItem() == ItemInit.blood_bolt.get()) {
 				if (shooter.level().random.nextBoolean()) {
@@ -138,17 +137,15 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 						} else {
 							playerVolume.drain(damageMod);
-							crossbow.hurtAndBreak(2050, shooter, (p_220017_1_) -> {
-								p_220017_1_.broadcastBreakEvent(shooter.getUsedItemHand());
-							});
+							crossbow.hurtAndBreak(2050, shooter,
+									handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 						}
 
 					}
 				}
 			}
-			crossbow.hurtAndBreak(flag ? 3 : 1, shooter, (p_220017_1_) -> {
-				p_220017_1_.broadcastBreakEvent(handIn);
-			});
+			crossbow.hurtAndBreak(flag ? 3 : 1, shooter,
+					handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 			worldIn.addFreshEntity(Projectile);
 			worldIn.playSound((Player) null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.CROSSBOW_SHOOT,
 					SoundSource.PLAYERS, 1.0F, soundPitch);
@@ -157,7 +154,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 
 	public static void fireProjectiles(Level worldIn, LivingEntity shooter, InteractionHand handIn, ItemStack stack,
 			float velocityIn, float inaccuracyIn) {
-		List<ItemStack> list = getChargedProjectiles(stack);
+		List<ItemStack> list = getChargedProjectiles(stack, worldIn.registryAccess());
 		float[] afloat = getRandomSoundPitches(shooter.getRandom());
 
 		for (int i = 0; i < list.size(); ++i) {
@@ -207,7 +204,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 		return f;
 	}
 
-	private static List<ItemStack> getChargedProjectiles(ItemStack stack) {
+	private static List<ItemStack> getChargedProjectiles(ItemStack stack, HolderLookup.Provider registryAccess) {
 		List<ItemStack> list = Lists.newArrayList();
 		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
 		if (customData != null) {
@@ -217,7 +214,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 				if (listnbt != null) {
 					for (int i = 0; i < listnbt.size(); ++i) {
 						CompoundTag CompoundTag1 = listnbt.getCompound(i);
-						list.add(ItemStack.of(CompoundTag1));
+						list.add(ItemStack.parseOptional(registryAccess, CompoundTag1));
 					}
 				}
 			}
@@ -231,8 +228,20 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	 */
 
 	public static int getChargeTime(ItemStack stack) {
-		int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
+		return 25;
+	}
+
+	public static int getChargeTime(ItemStack stack, HolderLookup.Provider registryAccess) {
+		int i = getItemEnchantmentLevel(registryAccess, Enchantments.QUICK_CHARGE, stack);
 		return i == 0 ? 25 : 25 - 5 * i;
+	}
+
+	private static int getItemEnchantmentLevel(HolderLookup.Provider registryAccess, ResourceKey<Enchantment> enchantmentKey,
+			ItemStack stack) {
+		return registryAccess.lookupOrThrow(Registries.ENCHANTMENT)
+				.get(enchantmentKey)
+				.map(holder -> EnchantmentHelper.getItemEnchantmentLevel(holder, stack))
+				.orElse(0);
 	}
 
 	private static float getRandomSoundPitch(boolean flagIn) {
@@ -253,7 +262,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	}
 
 	private static boolean hasAmmo(LivingEntity entityIn, ItemStack stack) {
-		int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack);
+		int i = getItemEnchantmentLevel(entityIn.level().registryAccess(), Enchantments.MULTISHOT, stack);
 		int j = i == 0 ? 1 : 3;
 		boolean flag = entityIn instanceof Player && ((Player) entityIn).getAbilities().instabuild;
 		ItemStack itemstack = entityIn.getProjectile(stack);
@@ -286,9 +295,22 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	}
 
 	public static boolean hasChargedProjectile(ItemStack stack, Item ammoItem) {
-		return getChargedProjectiles(stack).stream().anyMatch((p_220010_1_) -> {
-			return p_220010_1_.getItem() == ammoItem;
-		});
+		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+		if (customData == null) {
+			return false;
+		}
+		CompoundTag tag = customData.copyTag();
+		if (!tag.contains("ChargedProjectiles", 9)) {
+			return false;
+		}
+		String itemId = BuiltInRegistries.ITEM.getKey(ammoItem).toString();
+		ListTag listnbt = tag.getList("ChargedProjectiles", 10);
+		for (int i = 0; i < listnbt.size(); ++i) {
+			if (itemId.equals(listnbt.getCompound(i).getString("id"))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean isCharged(ItemStack stack) {
@@ -311,7 +333,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 			} else {
 				itemstack = p_220023_2_.copy();
 			}
-			addChargedProjectile(stack, itemstack);
+			addChargedProjectile(stack, itemstack, p_220023_0_.level().registryAccess());
 			return true;
 		}
 	}
@@ -335,15 +357,15 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	 */
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		List<ItemStack> list = getChargedProjectiles(stack);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		List<ItemStack> list = getChargedProjectiles(stack, context.registries());
 		if (isCharged(stack) && !list.isEmpty()) {
 			ItemStack itemstack = list.get(0);
 			tooltip.add((Component.literal("item.minecraft.crossbow.projectile")).append(" ")
 					.append(itemstack.getDisplayName()));
 			if (flagIn.isAdvanced() && itemstack.getItem() == Items.FIREWORK_ROCKET) {
 				List<Component> list1 = Lists.newArrayList();
-				Items.FIREWORK_ROCKET.appendHoverText(itemstack, worldIn, list1, flagIn);
+				Items.FIREWORK_ROCKET.appendHoverText(itemstack, context, list1, flagIn);
 				if (!list1.isEmpty()) {
 					for (int i = 0; i < list1.size(); ++i) {
 						list1.set(i, (Component.literal("  ")).append(list1.get(i)).withStyle(ChatFormatting.GRAY));
@@ -383,13 +405,13 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	private SoundEvent getSoundEvent(int enchantmentLevel) {
 		switch (enchantmentLevel) {
 		case 1:
-			return SoundEvents.CROSSBOW_QUICK_CHARGE_1;
+			return SoundEvents.CROSSBOW_QUICK_CHARGE_1.value();
 		case 2:
-			return SoundEvents.CROSSBOW_QUICK_CHARGE_2;
+			return SoundEvents.CROSSBOW_QUICK_CHARGE_2.value();
 		case 3:
-			return SoundEvents.CROSSBOW_QUICK_CHARGE_3;
+			return SoundEvents.CROSSBOW_QUICK_CHARGE_3.value();
 		default:
-			return SoundEvents.CROSSBOW_LOADING_START;
+			return SoundEvents.CROSSBOW_LOADING_START.value();
 		}
 	}
 
@@ -411,8 +433,8 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	 * How long it takes to use or consume an item
 	 */
 	@Override
-	public int getUseDuration(ItemStack stack) {
-		return getChargeTime(stack) + 3;
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
+		return getChargeTime(stack, entity.level().registryAccess()) + 3;
 	}
 
 	/**
@@ -421,10 +443,11 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity livingEntityIn, ItemStack stack, int count) {
 		if (!worldIn.isClientSide) {
-			int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
+			int i = getItemEnchantmentLevel(worldIn.registryAccess(), Enchantments.QUICK_CHARGE, stack);
 			SoundEvent soundevent = this.getSoundEvent(i);
-			SoundEvent soundevent1 = i == 0 ? SoundEvents.CROSSBOW_LOADING_MIDDLE : null;
-			float f = (float) (stack.getUseDuration() - count) / (float) getChargeTime(stack);
+			SoundEvent soundevent1 = i == 0 ? SoundEvents.CROSSBOW_LOADING_MIDDLE.value() : null;
+			float f = (float) (this.getUseDuration(stack, livingEntityIn) - count)
+					/ (float) getChargeTime(stack, worldIn.registryAccess());
 			if (f < 0.2F) {
 				this.isLoadingStart = false;
 				this.isLoadingMiddle = false;
@@ -447,18 +470,27 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		int i = this.getUseDuration(stack) - timeLeft;
-		float f = getCharge(i, stack);
+		int i = this.getUseDuration(stack, entityLiving) - timeLeft;
+		float f = getCharge(i, stack, entityLiving.level().registryAccess());
 
 		if (f >= 1.0F && !isCharged(stack) && hasAmmo(entityLiving, stack)) {
 
 			setCharged(stack, true);
 			SoundSource soundcategory = entityLiving instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
 			worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(),
-					SoundEvents.CROSSBOW_LOADING_END, soundcategory, 1.0F,
+					SoundEvents.CROSSBOW_LOADING_END.value(), soundcategory, 1.0F,
 					1.0F / (worldIn.random.nextFloat() * 0.5F + 1.0F) + 0.2F);
 		}
 
+	}
+
+	private static float getCharge(int useTime, ItemStack stack, HolderLookup.Provider registryAccess) {
+		float f = (float) useTime / (float) getChargeTime(stack, registryAccess);
+		if (f > 1.0F) {
+			f = 1.0F;
+		}
+
+		return f;
 	}
 
 	@Override

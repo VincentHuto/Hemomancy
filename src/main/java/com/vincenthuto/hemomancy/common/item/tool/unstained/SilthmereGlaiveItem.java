@@ -1,28 +1,17 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.NeoForgeMod;
 
 /**
  * Silthmere Glaive — a reach weapon for the Unstained path.
@@ -38,9 +27,6 @@ import net.neoforged.neoforge.common.NeoForgeMod;
  */
 public class SilthmereGlaiveItem extends SwordItem {
 
-	/** ResourceLocation ID for the reach attribute modifier — must be unique across the mod. */
-	private static final net.minecraft.resources.ResourceLocation REACH_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "silthmere_glaive_reach");
-
 	/** Extra entity reach granted by this weapon (in blocks). */
 	public static final double REACH_BONUS = 1.5;
 	private static final int MAX_HIT_TARGETS = 3;
@@ -49,26 +35,12 @@ public class SilthmereGlaiveItem extends SwordItem {
 	private static final double CLEAVE_ARC_DOT_THRESHOLD = 0.5D; // 120-degree cone
 
 	public SilthmereGlaiveItem(int attackDamage, float attackSpeed, Tier tier, Properties properties) {
-		super(tier, attackDamage, attackSpeed, properties);
+		super(tier, properties.attributes(SwordItem.createAttributes(tier, attackDamage, attackSpeed)));
 	}
 
 	@Override
-	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-		if (slot == EquipmentSlot.MAINHAND) {
-			ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-			builder.putAll(super.getDefaultAttributeModifiers(slot));
-			builder.put(
-					NeoForgeMod.ENTITY_REACH.get(),
-					new AttributeModifier(REACH_ID,
-							REACH_BONUS, AttributeModifier.Operation.ADD_VALUE));
-			return builder.build();
-		}
-		return super.getDefaultAttributeModifiers(slot);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal(
 				"A pale silver glaive forged in Silthmere's memory. Its reach keeps corruption at arm's length.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,17 +20,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class CardinalRiteSavedData extends SavedData {
 
 	private static final String DATA_NAME = Hemomancy.MOD_ID + "_cardinal_rites";
+	private static final SavedData.Factory<CardinalRiteSavedData> FACTORY =
+			new SavedData.Factory<>(CardinalRiteSavedData::new, CardinalRiteSavedData::load, null);
 	private final Map<UUID, ActiveCardinalRite> activeRites = new HashMap<>();
 
 	public CardinalRiteSavedData() {
 	}
 
 	public static CardinalRiteSavedData get(ServerLevel level) {
-		return level.getDataStorage().computeIfAbsent(CardinalRiteSavedData::load, CardinalRiteSavedData::new,
-				DATA_NAME);
+		return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static CardinalRiteSavedData load(CompoundTag tag) {
+	public static CardinalRiteSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		CardinalRiteSavedData data = new CardinalRiteSavedData();
 		ListTag list = tag.getList("ActiveRites", Tag.TAG_COMPOUND);
 		for (int i = 0; i < list.size(); i++) {
@@ -40,7 +42,7 @@ public class CardinalRiteSavedData extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag tag) {
+	public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (ActiveCardinalRite rite : activeRites.values()) {
 			list.add(rite.serialize());

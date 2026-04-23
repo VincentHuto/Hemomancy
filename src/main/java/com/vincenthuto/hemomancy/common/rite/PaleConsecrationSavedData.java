@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -25,17 +26,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class PaleConsecrationSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_pale_consecration";
+	private static final SavedData.Factory<PaleConsecrationSavedData> FACTORY =
+			new SavedData.Factory<>(PaleConsecrationSavedData::new, PaleConsecrationSavedData::load, null);
 
 	private final List<ConsecrationEntry> entries = new ArrayList<>();
 
 	public PaleConsecrationSavedData() {}
 
 	public static PaleConsecrationSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				PaleConsecrationSavedData::load, PaleConsecrationSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static PaleConsecrationSavedData load(CompoundTag tag) {
+	public static PaleConsecrationSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		PaleConsecrationSavedData data = new PaleConsecrationSavedData();
 		if (tag.contains("entries", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("entries", Tag.TAG_COMPOUND);
@@ -54,7 +56,7 @@ public class PaleConsecrationSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (ConsecrationEntry entry : entries) {
 			CompoundTag entryTag = new CompoundTag();

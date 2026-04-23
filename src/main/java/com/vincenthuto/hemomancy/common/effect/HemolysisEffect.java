@@ -17,7 +17,7 @@ public class HemolysisEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		if (entity instanceof Player player) {
 			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
 				if (unstained.hasBegunPurification() && !unstained.isPurified()) {
@@ -41,6 +41,7 @@ public class HemolysisEffect extends MobEffect {
 				}
 			});
 		}
+		return true;
 	}
 
 	@Override
@@ -60,8 +61,9 @@ public class HemolysisEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 
 }
+

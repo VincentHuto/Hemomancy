@@ -7,16 +7,19 @@ import java.util.stream.Collectors;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 /**
@@ -42,12 +45,12 @@ public class AbsolutionDaggerItem extends SwordItem {
 	private static final float MAX_EXECUTION_BONUS_DAMAGE = 5.0F;
 
 	public AbsolutionDaggerItem(Tier tier, int attackDamageIn, float attackSpeedIn, Properties properties) {
-		super(tier, attackDamageIn, attackSpeedIn, properties);
+		super(tier, properties.attributes(SwordItem.createAttributes(tier, attackDamageIn, attackSpeedIn)));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal(
 				"Coated in a hyper coagulant that seems to halt any blood from being spilled.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
@@ -82,12 +85,12 @@ public class AbsolutionDaggerItem extends SwordItem {
 			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
 				if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
 						>= EnumPurityStage.CLEANSING.getLevel()) {
-					CompoundTag tag = stack.getOrCreateTag();
+					CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 					int hits = tag.getInt(TAG_HIT_COUNT) + 1;
 					if (hits >= CLEANSE_HIT_THRESHOLD) {
 						hits = 0;
 						List<MobEffectInstance> beneficial = target.getActiveEffects().stream()
-								.filter(e -> e.getEffect().isBeneficial())
+								.filter(e -> e.getEffect().value().isBeneficial())
 								.collect(Collectors.toList());
 						if (!beneficial.isEmpty()) {
 							MobEffectInstance toRemove = beneficial.get(
@@ -100,6 +103,7 @@ public class AbsolutionDaggerItem extends SwordItem {
 						}
 					}
 					tag.putInt(TAG_HIT_COUNT, hits);
+					stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 				}
 			});
 		}

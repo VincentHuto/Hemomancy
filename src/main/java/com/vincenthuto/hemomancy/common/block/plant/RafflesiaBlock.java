@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.common.util.TriState;
 
 import java.util.List;
 
@@ -26,7 +28,7 @@ import java.util.List;
 public class RafflesiaBlock extends FlowerBlock {
 
 	public RafflesiaBlock(MobEffect effect, int effectDuration, Properties properties) {
-		super(effect, effectDuration, properties);
+		super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
 	}
 
 	@Override
@@ -34,7 +36,9 @@ public class RafflesiaBlock extends FlowerBlock {
 		BlockPos below = pos.below();
 		BlockState belowState = level.getBlockState(below);
 		if (state.getBlock() == this) {
-			return belowState.canSustainPlant(level, below, Direction.UP, this)
+			boolean supportsPlant = belowState.canSustainPlant(level, below, Direction.UP,
+					this.defaultBlockState()) == TriState.TRUE;
+			return supportsPlant
 					|| belowState.getBlock() == BlockInit.erythrocytic_mycelium.get()
 					|| belowState.getBlock() == BlockInit.infested_wood.get()
 					|| belowState.is(Blocks.MYCELIUM)

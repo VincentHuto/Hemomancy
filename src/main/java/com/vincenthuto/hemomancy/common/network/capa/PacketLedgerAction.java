@@ -25,6 +25,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Client → Server: The ledger GUI sends an action request.
@@ -61,8 +62,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 
 	public static void handle(final PacketLedgerAction msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer player = ctx.player();
-			if (player == null) return;
+			Player packetPlayer = ctx.player();
+			if (!(packetPlayer instanceof ServerPlayer player)) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				switch (msg.action) {

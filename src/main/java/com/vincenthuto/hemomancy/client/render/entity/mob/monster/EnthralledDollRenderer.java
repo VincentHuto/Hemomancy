@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.client.render.entity.mob.monster;
 import java.util.List;
 import java.util.Optional;
 
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,7 +18,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -50,16 +47,8 @@ public class EnthralledDollRenderer
 		f3 /= f6;
 		f4 /= f6;
 		f5 /= f6;
-		p_174122_.vertex(p_174123_.pose(), f, f1, f2).color(alpha, 0, 0, 100).normal(p_174123_.normal(), f3, f4, f5)
-				.endVertex();
-	}
-
-	private static void vertex(VertexConsumer p_114712_, Matrix4f p_114713_, Matrix3f p_114714_, int p_114715_,
-			float p_114716_, int p_114717_, int p_114718_, int p_114719_) {
-
-		p_114712_.vertex(p_114713_, p_114716_ - 0.5F, p_114717_ - 0.5F, 0.0F).color(255, 255, 255, 255)
-				.uv(p_114718_, p_114719_).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(p_114715_)
-				.normal(p_114714_, 0.0F, 1.0F, 0.0F).endVertex();
+		p_174122_.addVertex(p_174123_.pose(), f, f1, f2).setColor(alpha, 0, 0, 100)
+				.setNormal(p_174123_, f3, f4, f5);
 	}
 
 	public EnthralledDollRenderer(Context renderManagerIn) {

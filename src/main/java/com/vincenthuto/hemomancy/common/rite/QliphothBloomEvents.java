@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -18,6 +20,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -129,9 +132,10 @@ public class QliphothBloomEvents {
 
 		// Build the tagged pome stack
 		ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
-		net.minecraft.nbt.CompoundTag tag = pomeStack.getOrCreateTag();
+		CompoundTag tag = pomeStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putLong(QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
 		tag.putInt(QliphothPomeItem.HUSK_INDEX_KEY, alreadyDropped);
+		pomeStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		// Register the drop in SavedData before spawning (so we don't double-count)
 		data.incrementPomesDropped(center);

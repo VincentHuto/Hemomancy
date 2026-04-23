@@ -9,7 +9,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -88,9 +90,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos) {
 
 		BlockState newState = state.setValue(ACTIVE, !state.getValue(ACTIVE));
 		worldIn.setBlock(pos, newState, 10);
@@ -106,5 +106,18 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 
 		return InteractionResult.SUCCESS;
 
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(state, worldIn, pos);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(state, worldIn, pos);
+		return ItemInteractionResult.SUCCESS;
 	}
 }

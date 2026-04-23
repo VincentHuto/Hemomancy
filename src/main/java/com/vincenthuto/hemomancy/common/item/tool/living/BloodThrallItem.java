@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -58,7 +60,7 @@ public class BloodThrallItem extends Item {
         // ── Shift+click on an IBloodTile → bind source/dest ──
         if (player.isShiftKeyDown() && be != null
                 && HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
             if (!tag.contains(TAG_SOURCE)) {
                 // First bind → source
@@ -69,6 +71,7 @@ public class BloodThrallItem extends Item {
                             Component.literal("§4Source bound: §c" + pos.toShortString()), true);
                     level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 0.8f);
                 }
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                 return InteractionResult.sidedSuccess(level.isClientSide);
             } else {
                 // Second bind → destination
@@ -87,13 +90,14 @@ public class BloodThrallItem extends Item {
                                     + " §7(Right-click ground to deploy)"), true);
                     level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f);
                 }
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
 
         // ── Normal click on ground → spawn thrall ──
         if (!player.isShiftKeyDown()) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
             if (!tag.contains(TAG_SOURCE) || !tag.contains(TAG_DEST)) {
                 if (!level.isClientSide) {
                     player.displayClientMessage(
@@ -134,9 +138,9 @@ public class BloodThrallItem extends Item {
     // ── Tooltips ──
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tips, TooltipFlag flag) {
-        super.appendHoverText(stack, level, tips, flag);
-        CompoundTag tag = stack.getTag();
+      public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tips, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tips, flag);
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
         tips.add(Component.literal("A living clot, animated by blood magic.")
                 .withStyle(ChatFormatting.DARK_RED));
@@ -165,7 +169,7 @@ public class BloodThrallItem extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains(TAG_SOURCE) && tag.contains(TAG_DEST);
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return tag.contains(TAG_SOURCE) && tag.contains(TAG_DEST);
     }
 }

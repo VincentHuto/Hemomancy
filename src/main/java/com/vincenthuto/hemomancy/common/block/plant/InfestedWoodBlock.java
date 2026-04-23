@@ -9,8 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.IPlantable;
-import net.neoforged.neoforge.common.PlantType;
+import net.neoforged.neoforge.common.util.TriState;
 
 public class InfestedWoodBlock extends Block {
 
@@ -19,18 +18,14 @@ public class InfestedWoodBlock extends Block {
 	}
 
 	@Override
-	public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing,
-			IPlantable plantable) {
-		PlantType plantType = plantable.getPlantType(world, pos.relative(facing));
-		if (plantType == PlantType.CAVE) {
-			return true;
-		}
-		Block plant = plantable.getPlant(world, pos.relative(facing)).getBlock();
+	public TriState canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing,
+			BlockState plantState) {
+		Block plant = plantState.getBlock();
 		if (plant instanceof InfectedFungusBlock || plant instanceof GhostPipeBlock
 				|| plant instanceof SarcodesBlock) {
-			return true;
+			return TriState.TRUE;
 		}
-		return super.canSustainPlant(state, world, pos, facing, plantable);
+		return super.canSustainPlant(state, world, pos, facing, plantState);
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -234,9 +235,9 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 			return null;
 		}
 		if (level == null) return null;
-		for (IncubatorRecipe recipe : level.getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get())) {
-			if (recipe.matchesCatalysts(catalysts)) {
-				return recipe;
+		for (var recipeHolder : level.getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get())) {
+			if (recipeHolder.value().matchesCatalysts(catalysts)) {
+				return recipeHolder.value();
 			}
 		}
 		return null;
@@ -403,7 +404,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	@Override
 	public void setItem(int slot, ItemStack stack) {
 		ItemStack oldStack = inventory.get(slot);
-		boolean isSameItem = !stack.isEmpty() && ItemStack.isSameItemSameTags(stack, oldStack);
+		boolean isSameItem = !stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, oldStack);
 		inventory.set(slot, stack);
 		if (stack.getCount() > getMaxStackSize()) {
 			stack.setCount(getMaxStackSize());
@@ -433,6 +434,16 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Override
+	protected NonNullList<ItemStack> getItems() {
+		return this.inventory;
+	}
+
+	@Override
+	protected void setItems(NonNullList<ItemStack> items) {
+		this.inventory = items;
+	}
+
+	@Override
 	protected AbstractContainerMenu createMenu(int containerId, Inventory playerInventory) {
 		return new MorphlingIncubatorMenu(containerId, playerInventory, this, this.dataAccess);
 	}
@@ -445,10 +456,10 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	// ---- Serialization ----
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 		this.inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.inventory);
+		ContainerHelper.loadAllItems(tag, this.inventory, registries);
 		this.craftingProgress = tag.getInt("CraftProgress");
 		this.craftingTotalTime = tag.getInt("CraftTotalTime");
 		this.mode = tag.getInt("Mode");
@@ -459,9 +470,9 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		ContainerHelper.saveAllItems(tag, this.inventory);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
+		ContainerHelper.saveAllItems(tag, this.inventory, registries);
 		tag.putInt("CraftProgress", this.craftingProgress);
 		tag.putInt("CraftTotalTime", this.craftingTotalTime);
 		tag.putInt("Mode", this.mode);
@@ -472,9 +483,9 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		ContainerHelper.saveAllItems(tag, this.inventory);
+		ContainerHelper.saveAllItems(tag, this.inventory, registries);
 		tag.putInt("CraftProgress", this.craftingProgress);
 		tag.putInt("CraftTotalTime", this.craftingTotalTime);
 		tag.putInt("Mode", this.mode);
@@ -486,10 +497,10 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		super.handleUpdateTag(tag, registries);
 		this.inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.inventory);
+		ContainerHelper.loadAllItems(tag, this.inventory, registries);
 		this.craftingProgress = tag.getInt("CraftProgress");
 		this.craftingTotalTime = tag.getInt("CraftTotalTime");
 		this.mode = tag.getInt("Mode");
@@ -502,8 +513,8 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+		super.onDataPacket(net, pkt, registries);
 		if (pkt.getTag() != null) {
 			CompoundTag tag = pkt.getTag();
 			IBloodVolume vol = resolveVolume();

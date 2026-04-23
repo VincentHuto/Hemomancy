@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -99,7 +100,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			return InteractionResult.CONSUME;
 		}
 
-		if (holdingMorphling && !ItemStack.isSameItemSameTags(held, morphlingItem)) {
+		if (holdingMorphling && !ItemStack.isSameItemSameComponents(held, morphlingItem)) {
 			return swapMorphling(player, hand);
 		}
 
@@ -371,8 +372,8 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override
@@ -381,10 +382,10 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 		if (tag.contains("MorphlingItem")) {
-			morphlingItem = ItemStack.of(tag.getCompound("MorphlingItem"));
+			morphlingItem = ItemStack.parseOptional(registries, tag.getCompound("MorphlingItem"));
 		} else {
 			morphlingItem = ItemStack.EMPTY;
 		}
@@ -404,10 +405,10 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 		if (!morphlingItem.isEmpty()) {
-			tag.put("MorphlingItem", morphlingItem.save(new CompoundTag()));
+			tag.put("MorphlingItem", morphlingItem.save(registries));
 		}
 		if (ownerUUID != null) {
 			tag.putUUID("OwnerUUID", ownerUUID);

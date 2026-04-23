@@ -19,8 +19,10 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,9 +30,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -50,7 +54,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Saint Sarcophagus — the centerpiece of a Sainted Mausoleum.
@@ -345,9 +348,8 @@ private static void spawnBrazierFlames(ServerLevel level, BlockPos pos, Directio
 	}
 }
 
-@Override
-public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player,
-InteractionHand handIn, BlockHitResult result) {
+private InteractionResult handleUse(BlockState state, Level worldIn, BlockPos pos, Player player,
+		@Nullable InteractionHand handIn, ItemStack heldStack, BlockHitResult result) {
 if (worldIn.isClientSide) {
 return InteractionResult.sidedSuccess(true);
 }
@@ -464,7 +466,7 @@ true);
 return InteractionResult.CONSUME;
 }
 
-ItemStack stack = player.getItemInHand(handIn);
+ItemStack stack = heldStack;
 
 // Empty-hand interaction: inspect the sarcophagus
 if (stack.isEmpty()) {
@@ -483,12 +485,30 @@ return InteractionResult.CONSUME;
 
 // Blood Vial interaction: draw blood from the corpus into an empty vial
 if (stack.getItem() instanceof BloodVialItem
-&& (!stack.hasTag() || !stack.getOrCreateTag().getBoolean(BloodVialItem.TAG_STATE))) {
+&& (!stack.has(DataComponents.CUSTOM_DATA)
+|| !stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(BloodVialItem.TAG_STATE))) {
+	if (handIn == null) {
+		return InteractionResult.PASS;
+	}
 consecrateVial(worldIn, pos, player, handIn, stack, sarcophagus);
 return InteractionResult.CONSUME;
 }
 
 return InteractionResult.PASS;
+}
+
+@Override
+protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+		BlockHitResult result) {
+	return handleUse(state, worldIn, pos, player, null, ItemStack.EMPTY, result);
+}
+
+@Override
+protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+		Player player, InteractionHand handIn, BlockHitResult result) {
+	InteractionResult interactionResult = handleUse(state, worldIn, pos, player, handIn, stack, result);
+	return interactionResult == InteractionResult.PASS ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+			: ItemInteractionResult.SUCCESS;
 }
 
 private void showSarcophagusInfo(Player player, SaintSarcophagusBlockEntity sarcophagus) {
@@ -546,8 +566,10 @@ player.setItemInHand(hand, ItemStack.EMPTY);
 
 // Give the player a Consecrated Syringe tagged with the saint type
 ItemStack syringe = new ItemStack(ItemInit.consecrated_syringe.get());
-syringe.getOrCreateTag().putString(ConsecratedSyringeItem.TAG_SAINT_TYPE,
+CompoundTag syringeTag = syringe.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+syringeTag.putString(ConsecratedSyringeItem.TAG_SAINT_TYPE,
 sarcophagus.getSaintType().name());
+syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(syringeTag));
 if (!player.getInventory().add(syringe)) {
 player.drop(syringe, false);
 }

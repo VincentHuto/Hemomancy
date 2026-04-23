@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingBladeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -22,14 +23,15 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-public class LivingBladeItem extends LivingToolItem {
+public class LivingBladeItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
 
 	public static String TAG_STATE = "state";
 
@@ -38,8 +40,8 @@ public class LivingBladeItem extends LivingToolItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
@@ -57,22 +59,20 @@ public class LivingBladeItem extends LivingToolItem {
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
 		if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
-			attacker.heal(this.getAttackDamage() / 2);
+			attacker.heal(this.getLivingAttackDamage() / 2);
 			target.hurt(target.damageSources().generic(), 20);
 			if (!attacker.level().isClientSide) {
 				Player playerIn = (Player) attacker;
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						.orElseThrow(NullPointerException::new);
-				float damageMod = this.getAttackDamage() * 75f;
+				float damageMod = this.getLivingAttackDamage() * 75f;
 				if (playerVolume.getBloodVolume() > damageMod) {
 					playerVolume.drain(damageMod);
 					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 				} else {
 					playerVolume.drain(damageMod);
 					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
-					stack.hurtAndBreak(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
-						p_220017_1_.broadcastBreakEvent(attacker.getUsedItemHand());
-					});
+					stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
 				}
 
 			}
@@ -84,10 +84,8 @@ public class LivingBladeItem extends LivingToolItem {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropLivingBlade.INSTANCE);
-
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return RenderPropLivingBlade.INSTANCE;
 	}
 
 	@Override

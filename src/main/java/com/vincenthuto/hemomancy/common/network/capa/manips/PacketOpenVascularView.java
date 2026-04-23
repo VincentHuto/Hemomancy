@@ -7,6 +7,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PacketOpenVascularView implements CustomPacketPayload {
 	public static final Type<PacketOpenVascularView> TYPE = new Type<>(Hemomancy.rloc("packet_open_vascular_view"));
@@ -26,8 +27,10 @@ public class PacketOpenVascularView implements CustomPacketPayload {
 
 	public static void handle(final PacketOpenVascularView msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ctx.player().doCloseContainer();
-			ctx.player().openMenu(new VascularViewMenuProvider());
+			if (ctx.player() instanceof ServerPlayer player) {
+				player.closeContainer();
+				player.openMenu(new VascularViewMenuProvider());
+			}
 		});
 	}
 

@@ -96,7 +96,7 @@ public class EarthenVeinModel extends Model implements IAnimatedModel<EarthenVei
 
 	@Override
 	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay,
-			float pRed, float pGreen, float pBlue, float pAlpha) {
+			int packedColor) {
 		root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, packedColor);
 	}
 

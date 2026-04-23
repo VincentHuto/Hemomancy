@@ -142,9 +142,9 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		int maxScroll = Math.max(0, displayRows.size() - 1);
-		scrollOffset = (int) Math.max(0, Math.min(scrollOffset - delta, maxScroll));
+		scrollOffset = (int) Math.max(0, Math.min(scrollOffset - scrollY, maxScroll));
 		rebuildButtons();
 		return true;
 	}
@@ -210,7 +210,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, mouseX, mouseY, partialTick);
 		super.render(graphics, mouseX, mouseY, partialTick);
 		this.renderTooltip(graphics, mouseX, mouseY);
 	}

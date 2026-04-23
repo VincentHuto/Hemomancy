@@ -158,7 +158,7 @@ public class ScreenScarBinderViewer extends Screen {
 	// ── Rendering ───────────────────────────────────────────────────────
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 
 		// ── Book-like parchment background ──────────────────────────────
 		renderBookBackground(graphics, left, top, GUI_WIDTH, GUI_HEIGHT);
@@ -433,9 +433,9 @@ public class ScreenScarBinderViewer extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		int maxScroll = Math.max(0, entries.size() - VISIBLE_ENTRIES);
-		scrollOffset = Mth.clamp(scrollOffset - (int) Math.signum(delta), 0, maxScroll);
+		scrollOffset = Mth.clamp(scrollOffset - (int) Math.signum(scrollY), 0, maxScroll);
 		return true;
 	}
 

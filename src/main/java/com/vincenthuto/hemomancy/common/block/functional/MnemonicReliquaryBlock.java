@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -103,9 +104,7 @@ public class MnemonicReliquaryBlock extends Block implements EntityBlock {
 		}
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-			InteractionHand hand, BlockHitResult hit) {
+	private InteractionResult handleInteraction(Level level, BlockPos pos, Player player) {
 		if (!level.isClientSide) {
 			BlockEntity be = level.getBlockEntity(pos);
 			if (be instanceof MnemonicReliquaryBlockEntity reliquary) {
@@ -127,5 +126,18 @@ public class MnemonicReliquaryBlock extends Block implements EntityBlock {
 			}, pos);
 		}
 		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return handleInteraction(level, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level level,
+			BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		handleInteraction(level, pos, player);
+		return ItemInteractionResult.SUCCESS;
 	}
 }

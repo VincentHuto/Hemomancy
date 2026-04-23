@@ -27,8 +27,8 @@ public class NeuralOverloadEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null) return true;
 
 		// Escalating secondary effects based on amplifier (stack level)
 		if (amplifier >= 1) {
@@ -53,6 +53,7 @@ public class NeuralOverloadEffect extends MobEffect {
 			serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, y, z,
 					particleCount, 0.3, 0.4, 0.3, 0.02);
 		}
+		return true;
 	}
 
 	@Override
@@ -72,9 +73,10 @@ public class NeuralOverloadEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		// Tick every 20 ticks (1 second)
 		return duration % 20 == 0;
 	}
 
 }
+

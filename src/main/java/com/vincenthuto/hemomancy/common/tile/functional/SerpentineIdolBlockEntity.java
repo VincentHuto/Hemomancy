@@ -37,7 +37,7 @@ public class SerpentineIdolBlockEntity extends BlockEntity {
 						// e.setDeltaMovement(-r.x / 10.2D / distance * 1.3, -r.y / 10.2D / distance,
 						// -r.z / 10.2D / distance * 1.3);
 
-						e.addEffect(new MobEffectInstance(EffectInit.blood_binding.get(), 5));
+						e.addEffect(new MobEffectInstance(EffectInit.blood_binding, 5));
 					}
 					// System.out.println(e);
 

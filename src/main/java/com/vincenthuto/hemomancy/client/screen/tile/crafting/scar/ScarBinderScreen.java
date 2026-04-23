@@ -60,10 +60,10 @@ public class ScarBinderScreen extends AbstractContainerScreen<ScarBinderInventor
 		Tesselator tess = Tesselator.getInstance();
 		BufferBuilder buffer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-		buffer.vertex((double) x + 0, (double) y + height, z).uv(tx, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + height, z).uv(tx + tw, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + 0, z).uv(tx + tw, ty).endVertex();
-		buffer.vertex((double) x + 0, (double) y + 0, z).uv(tx, ty).endVertex();
+		buffer.addVertex((float) x, (float) y + height, z).setUv(tx, ty + th);
+		buffer.addVertex((float) x + width, (float) y + height, z).setUv(tx + tw, ty + th);
+		buffer.addVertex((float) x + width, (float) y, z).setUv(tx + tw, ty);
+		buffer.addVertex((float) x, (float) y, z).setUv(tx, ty);
 
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
@@ -75,7 +75,7 @@ public class ScarBinderScreen extends AbstractContainerScreen<ScarBinderInventor
 
 	@Override
 	public void render(GuiGraphics graphics, int p_render_1_, int p_render_2_, float p_render_3_) {
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, p_render_1_, p_render_2_, p_render_3_);
 		super.render(graphics, p_render_1_, p_render_2_, p_render_3_);
 		this.renderTooltip(graphics, p_render_1_, p_render_2_);
 	}

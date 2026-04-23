@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -137,14 +138,13 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		}
 	}
 
-	@Override
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		CompoundTag tag = super.getUpdateTag(provider);
 		tag.putBoolean("IsOpen", isOpen);
 		tag.putBoolean("IsConsecrated", isConsecrated);
 		tag.putString("SaintType", saintType.name());
@@ -158,8 +158,8 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.saveAdditional(tag, provider);
 		tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
 		tag.putInt("ExtractionAttempts", extractionAttempts);
@@ -170,8 +170,8 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.loadAdditional(tag, provider);
 		if (tag.contains("SaintType")) {
 			try {
 				saintType = EnumSaintType.valueOf(tag.getString("SaintType"));

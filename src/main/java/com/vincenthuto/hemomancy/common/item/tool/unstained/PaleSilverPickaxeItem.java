@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.Tier;
@@ -23,12 +24,12 @@ import net.minecraft.world.level.Level;
 public class PaleSilverPickaxeItem extends PickaxeItem {
 
 	public PaleSilverPickaxeItem(Tier tier, int attackDamageIn, float attackSpeedIn, Properties properties) {
-		super(tier, attackDamageIn, attackSpeedIn, properties);
+		super(tier, properties.attributes(PickaxeItem.createAttributes(tier, attackDamageIn, attackSpeedIn)));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal(
 				"Pale silver, refined of all hematic taint. The cleansed do not disturb the blood.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));

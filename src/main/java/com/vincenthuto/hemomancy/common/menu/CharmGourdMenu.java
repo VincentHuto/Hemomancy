@@ -26,6 +26,9 @@ import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class CharmGourdMenu extends AbstractContainerMenu {
@@ -245,7 +248,22 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 	@Override
 	public void slotsChanged(Container par1IInventory) {
 		super.slotsChanged(par1IInventory);
-		CraftingMenu.slotChangedCraftingGrid(this, player.level(), player, craftMatrix, craftResult);
+		if (!player.level().isClientSide) {
+			ItemStack result = ItemStack.EMPTY;
+			Level level = player.level();
+			java.util.Optional<RecipeHolder<CraftingRecipe>> recipe = level.getServer().getRecipeManager()
+					.getRecipeFor(RecipeType.CRAFTING, this.craftMatrix.asCraftInput(), level);
+			if (recipe.isPresent()) {
+				RecipeHolder<CraftingRecipe> holder = recipe.get();
+				this.craftResult.setRecipeUsed(holder);
+				result = holder.value().assemble(this.craftMatrix.asCraftInput(), level.registryAccess());
+				if (!result.isItemEnabled(level.enabledFeatures())) {
+					result = ItemStack.EMPTY;
+				}
+			}
+			this.craftResult.setItem(0, result);
+			this.setRemoteSlot(0, result);
+		}
 	}
 
 	@Override

@@ -1,18 +1,16 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingSyringeItem;
 import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -27,26 +25,32 @@ public final class HemoCapabilityRegistrar {
 
     private static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         // ── Player capabilities via attachment types ──
-        event.registerEntity(HemoCapabilityKeys.BLOOD_VOLUME, Player.class,
+        event.registerEntity(HemoCapabilityKeys.BLOOD_VOLUME, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.BLOOD_VOLUME));
-        event.registerEntity(HemoCapabilityKeys.BLOOD_TENDENCY, Player.class,
+        event.registerEntity(HemoCapabilityKeys.BLOOD_TENDENCY, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.BLOOD_TENDENCY));
-        event.registerEntity(HemoCapabilityKeys.VASCULAR_SYSTEM, Player.class,
+        event.registerEntity(HemoCapabilityKeys.VASCULAR_SYSTEM, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM));
-        event.registerEntity(HemoCapabilityKeys.INITIATORY_DEGREE, Player.class,
+        event.registerEntity(HemoCapabilityKeys.INITIATORY_DEGREE, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.INITIATORY_DEGREE));
-        event.registerEntity(HemoCapabilityKeys.UNSTAINED_PROGRESS, Player.class,
+        event.registerEntity(HemoCapabilityKeys.UNSTAINED_PROGRESS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.UNSTAINED_PROGRESS));
-        event.registerEntity(HemoCapabilityKeys.EQUIPPED_MORPHLING, Player.class,
+        event.registerEntity(HemoCapabilityKeys.EQUIPPED_MORPHLING, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.EQUIPPED_MORPHLING));
-        event.registerEntity(HemoCapabilityKeys.KNOWN_MANIPULATIONS, Player.class,
+        event.registerEntity(HemoCapabilityKeys.KNOWN_MANIPULATIONS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.KNOWN_MANIPULATIONS));
-        event.registerEntity(HemoCapabilityKeys.WHITE_HUMOR_VOLUME, Player.class,
+        event.registerEntity(HemoCapabilityKeys.WHITE_HUMOR_VOLUME, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.WHITE_HUMOR_VOLUME));
-        event.registerEntity(HemoCapabilityKeys.VISCERAL_ORGANS, Player.class,
+        event.registerEntity(HemoCapabilityKeys.VISCERAL_ORGANS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.VISCERAL_ORGANS));
-        event.registerEntity(HemoCapabilityKeys.SCARS, Player.class,
+        event.registerEntity(HemoCapabilityKeys.SCARS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.SCARS));
+
+        event.registerItem(HemoCapabilityKeys.ITEM_BLOOD_VOLUME,
+                (stack, ctx) -> new BloodVolume(),
+                ItemInit.blood_gourd_white.get(),
+                ItemInit.blood_gourd_red.get(),
+                ItemInit.blood_gourd_black.get());
 
         // ── IScar item capabilities — register each item that implements IScar ──
         for (Item item : BuiltInRegistries.ITEM) {

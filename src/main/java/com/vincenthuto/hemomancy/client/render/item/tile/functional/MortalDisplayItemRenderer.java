@@ -57,7 +57,7 @@ public class MortalDisplayItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 		// Gentle bob animation for item form
 		if (Minecraft.getInstance().level != null) {
-			float time = Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getPartialTick();
+			float time = Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
 			float bob = (float) (Math.sin(Math.PI * time / 32.0) * 0.05);
 			poseStack.translate(0, bob, 0);
 		}

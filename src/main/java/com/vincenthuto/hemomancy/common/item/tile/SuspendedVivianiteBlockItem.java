@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.tile;
 
-import java.util.function.Consumer;
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 
 import com.vincenthuto.hemomancy.client.render.item.tile.SuspendedVivianiteItemRenderer;
 
@@ -9,22 +10,22 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class SuspendedVivianiteBlockItem extends BlockItem {
+public class SuspendedVivianiteBlockItem extends BlockItem implements HemoClientItemExtensionsProvider {
 
 	public SuspendedVivianiteBlockItem(Block block, Properties properties) {
 		super(block, properties);
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
 			private final BlockEntityWithoutLevelRenderer renderer = new SuspendedVivianiteItemRenderer(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				return renderer;
 			}
-		});
+		};
 	}
 }
 

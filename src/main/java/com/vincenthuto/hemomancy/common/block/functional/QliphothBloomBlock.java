@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
@@ -29,6 +30,7 @@ import javax.annotation.Nullable;
  * world render). Breaking the block (or any filler) removes the bloom.
  */
 public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
+	public static final MapCodec<QliphothBloomBlock> CODEC = simpleCodec(QliphothBloomBlock::new);
 
 	/** Filler offsets: Y+1 through Y+7, giving a total height of 8 blocks. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -46,6 +48,11 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 
 	public QliphothBloomBlock(Properties properties) {
 		super(properties);
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override

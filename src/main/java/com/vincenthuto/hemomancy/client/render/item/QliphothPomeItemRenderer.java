@@ -8,6 +8,7 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -27,6 +28,10 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 	private static final float ORB_RADIUS = 0.1f;
 	/** Radius of the glow shell (slightly larger than the orb). */
 	private static final float GLOW_RADIUS = ORB_RADIUS * 1.15f;
+
+	private static int toByte(float component) {
+		return Mth.clamp((int) (component * 255.0f), 0, 255);
+	}
 
 	public QliphothPomeItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
@@ -90,6 +95,10 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 		float oG = 0.004f;
 		float oB = 0.004f;
 		float oA = 0.95f;
+		int oRi = toByte(oR);
+		int oGi = toByte(oG);
+		int oBi = toByte(oB);
+		int oAi = toByte(oA);
 
 		for (int lat = 0; lat < LAT; lat++) {
 			double theta0 = Math.PI * lat / LAT;
@@ -105,10 +114,10 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 				float cosP0 = (float) Math.cos(phi0), sinP0 = (float) Math.sin(phi0);
 				float cosP1 = (float) Math.cos(phi1), sinP1 = (float) Math.sin(phi1);
 
-				vc.vertex(mat, sinT0*cosP0*ORB_RADIUS, cosT0*ORB_RADIUS, sinT0*sinP0*ORB_RADIUS).color(oR,oG,oB,oA).endVertex();
-				vc.vertex(mat, sinT0*cosP1*ORB_RADIUS, cosT0*ORB_RADIUS, sinT0*sinP1*ORB_RADIUS).color(oR,oG,oB,oA).endVertex();
-				vc.vertex(mat, sinT1*cosP1*ORB_RADIUS, cosT1*ORB_RADIUS, sinT1*sinP1*ORB_RADIUS).color(oR,oG,oB,oA).endVertex();
-				vc.vertex(mat, sinT1*cosP0*ORB_RADIUS, cosT1*ORB_RADIUS, sinT1*sinP0*ORB_RADIUS).color(oR,oG,oB,oA).endVertex();
+				vc.addVertex(mat, sinT0*cosP0*ORB_RADIUS, cosT0*ORB_RADIUS, sinT0*sinP0*ORB_RADIUS).setColor(oRi, oGi, oBi, oAi);
+				vc.addVertex(mat, sinT0*cosP1*ORB_RADIUS, cosT0*ORB_RADIUS, sinT0*sinP1*ORB_RADIUS).setColor(oRi, oGi, oBi, oAi);
+				vc.addVertex(mat, sinT1*cosP1*ORB_RADIUS, cosT1*ORB_RADIUS, sinT1*sinP1*ORB_RADIUS).setColor(oRi, oGi, oBi, oAi);
+				vc.addVertex(mat, sinT1*cosP0*ORB_RADIUS, cosT1*ORB_RADIUS, sinT1*sinP0*ORB_RADIUS).setColor(oRi, oGi, oBi, oAi);
 			}
 		}
 	}
@@ -165,11 +174,15 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 				float gG = 0.02f + 0.03f * bloom;
 				float gB = 0.02f;
 				float gA = bloom * (0.30f + 0.20f * pulse);
+				int gRi = toByte(gR);
+				int gGi = toByte(gG);
+				int gBi = toByte(gB);
+				int gAi = toByte(gA);
 
-				vc.vertex(mat, sinT0*cosP0*GLOW_RADIUS, cosT0*GLOW_RADIUS, sinT0*sinP0*GLOW_RADIUS).color(gR,gG,gB,gA).endVertex();
-				vc.vertex(mat, sinT0*cosP1*GLOW_RADIUS, cosT0*GLOW_RADIUS, sinT0*sinP1*GLOW_RADIUS).color(gR,gG,gB,gA).endVertex();
-				vc.vertex(mat, sinT1*cosP1*GLOW_RADIUS, cosT1*GLOW_RADIUS, sinT1*sinP1*GLOW_RADIUS).color(gR,gG,gB,gA).endVertex();
-				vc.vertex(mat, sinT1*cosP0*GLOW_RADIUS, cosT1*GLOW_RADIUS, sinT1*sinP0*GLOW_RADIUS).color(gR,gG,gB,gA).endVertex();
+				vc.addVertex(mat, sinT0*cosP0*GLOW_RADIUS, cosT0*GLOW_RADIUS, sinT0*sinP0*GLOW_RADIUS).setColor(gRi, gGi, gBi, gAi);
+				vc.addVertex(mat, sinT0*cosP1*GLOW_RADIUS, cosT0*GLOW_RADIUS, sinT0*sinP1*GLOW_RADIUS).setColor(gRi, gGi, gBi, gAi);
+				vc.addVertex(mat, sinT1*cosP1*GLOW_RADIUS, cosT1*GLOW_RADIUS, sinT1*sinP1*GLOW_RADIUS).setColor(gRi, gGi, gBi, gAi);
+				vc.addVertex(mat, sinT1*cosP0*GLOW_RADIUS, cosT1*GLOW_RADIUS, sinT1*sinP0*GLOW_RADIUS).setColor(gRi, gGi, gBi, gAi);
 			}
 		}
 	}

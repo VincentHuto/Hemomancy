@@ -50,7 +50,6 @@ public class FungalImplantationPylonBlockEntity extends BlockEntity implements I
 		super(BlockEntityInit.fungal_implantation_pylon.get(), pos, state);
 	}
 
-	@Override
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}

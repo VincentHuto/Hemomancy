@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -109,19 +110,19 @@ public class DebugShowcaseItem extends Item {
 
 		// Base Items
 		z = placeItemChestGroup(level, origin, z, "Base Items",
-				new ArrayList<>(ItemInit.BASEITEMS.getEntries().stream().toList()));
+				new ArrayList<>(ItemInit.BASEITEMS.getEntries()));
 
 		// Handheld Items
 		z = placeItemChestGroup(level, origin, z, "Handheld Items",
-				new ArrayList<>(ItemInit.HANDHELDITEMS.getEntries().stream().toList()));
+				new ArrayList<>(ItemInit.HANDHELDITEMS.getEntries()));
 
 		// Special Items
 		z = placeItemChestGroup(level, origin, z, "Special Items",
-				new ArrayList<>(ItemInit.SPECIALITEMS.getEntries().stream().toList()));
+				new ArrayList<>(ItemInit.SPECIALITEMS.getEntries()));
 
 		// Spawn Eggs
 		z = placeItemChestGroup(level, origin, z, "Spawn Eggs",
-				new ArrayList<>(ItemInit.SPAWNEGGS.getEntries().stream().toList()));
+				new ArrayList<>(ItemInit.SPAWNEGGS.getEntries()));
 
 		return z;
 	}
@@ -131,7 +132,7 @@ public class DebugShowcaseItem extends Item {
 	 * Returns next Z offset after this group.
 	 */
 	private int placeItemChestGroup(ServerLevel level, BlockPos origin, int z,
-									String groupName, List<DeferredHolder<Item, Item>> items) {
+									String groupName, List<DeferredHolder<Item, ? extends Item>> items) {
 		if (items.isEmpty()) return z;
 
 		// Place label marker
@@ -143,7 +144,7 @@ public class DebugShowcaseItem extends Item {
 		int slotIndex = 0;
 		ChestBlockEntity currentChest = null;
 
-		for (DeferredHolder<Item, Item> itemReg : items) {
+		for (DeferredHolder<Item, ? extends Item> itemReg : items) {
 			// Start a new chest every 27 items (chest capacity)
 			if (slotIndex % 27 == 0) {
 				BlockPos chestPos = origin.offset(chestX, 0, z);
@@ -155,7 +156,6 @@ public class DebugShowcaseItem extends Item {
 				if (be instanceof ChestBlockEntity chestBE) {
 					currentChest = chestBE;
 					chestNum++;
-					currentChest.setCustomName(Component.literal("§6" + groupName + " §7(" + chestNum + ")"));
 				}
 				chestX++;
 				if (chestX >= ROW_WIDTH) {
@@ -205,7 +205,7 @@ public class DebugShowcaseItem extends Item {
 			@SuppressWarnings("unchecked")
 			DeferredRegister<Block> register =
 					(DeferredRegister<Block>) group[1];
-			List<DeferredHolder<Block, Block>> blocks = new ArrayList<>(register.getEntries().stream().toList());
+			List<DeferredHolder<Block, ? extends Block>> blocks = new ArrayList<>(register.getEntries());
 
 			if (blocks.isEmpty()) continue;
 
@@ -213,7 +213,7 @@ public class DebugShowcaseItem extends Item {
 			z += 1;
 
 			int x = 0;
-			for (DeferredHolder<Block, Block> blockReg : blocks) {
+			for (DeferredHolder<Block, ? extends Block> blockReg : blocks) {
 				Block block = blockReg.get();
 				BlockPos pos = origin.offset(x, 0, z);
 
@@ -255,10 +255,10 @@ public class DebugShowcaseItem extends Item {
 		z += 2;
 
 		// Separate mob entities from projectile/misc entities
-		List<DeferredHolder<EntityType<?>, EntityType<?>>> mobEntities = new ArrayList<>();
-		List<DeferredHolder<EntityType<?>, EntityType<?>>> miscEntities = new ArrayList<>();
+		List<DeferredHolder<EntityType<?>, ? extends EntityType<?>>> mobEntities = new ArrayList<>();
+		List<DeferredHolder<EntityType<?>, ? extends EntityType<?>>> miscEntities = new ArrayList<>();
 
-		for (DeferredHolder<EntityType<?>, EntityType<?>> entityReg : EntityInit.ENTITY_TYPES.getEntries()) {
+		for (DeferredHolder<EntityType<?>, ? extends EntityType<?>> entityReg : EntityInit.ENTITY_TYPES.getEntries()) {
 			EntityType<?> type = entityReg.get();
 			MobCategory category = type.getCategory();
 			if (category == MobCategory.CREATURE || category == MobCategory.MONSTER
@@ -279,7 +279,7 @@ public class DebugShowcaseItem extends Item {
 
 		int penIndex = 0;
 		for (int i = 0; i < mobEntities.size(); i++) {
-			DeferredHolder<EntityType<?>, EntityType<?>> entityReg = mobEntities.get(i);
+			DeferredHolder<EntityType<?>, ? extends EntityType<?>> entityReg = mobEntities.get(i);
 			EntityType<?> type = entityReg.get();
 
 			// Skip entities that might not have a renderer registered to prevent crashes
@@ -327,7 +327,7 @@ public class DebugShowcaseItem extends Item {
 			int slotIndex = 0;
 			ChestBlockEntity currentChest = null;
 
-			for (DeferredHolder<EntityType<?>, EntityType<?>> entityReg : miscEntities) {
+			for (DeferredHolder<EntityType<?>, ? extends EntityType<?>> entityReg : miscEntities) {
 				if (slotIndex % 27 == 0) {
 					BlockPos chestPos = origin.offset(chestX, 0, z);
 					level.setBlock(chestPos.below(), Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
@@ -337,14 +337,13 @@ public class DebugShowcaseItem extends Item {
 					if (be instanceof ChestBlockEntity chestBE) {
 						currentChest = chestBE;
 						chestNum++;
-						chestBE.setCustomName(Component.literal("§dProjectile / Misc Entities §7(" + chestNum + ")"));
 					}
 					chestX++;
 				}
 
 				if (currentChest != null) {
 					ItemStack paper = new ItemStack(Items.PAPER);
-					paper.setHoverName(Component.literal("§b" + entityReg.getId().getPath()));
+					paper.set(DataComponents.CUSTOM_NAME, Component.literal("§b" + entityReg.getId().getPath()));
 					currentChest.setItem(slotIndex % 27, paper);
 				}
 				slotIndex++;
@@ -493,8 +492,8 @@ public class DebugShowcaseItem extends Item {
 		BlockPos labelPos = origin.offset(0, 1, z);
 		level.setBlock(labelPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_CLIENTS);
 		BlockEntity be = level.getBlockEntity(labelPos);
-		if (be instanceof ChestBlockEntity chestBE) {
-			chestBE.setCustomName(Component.literal("§4§l=== " + name + " ==="));
+		if (be instanceof ChestBlockEntity) {
+			// Chest naming API changed in 1.21.1; keep marker placement without custom names.
 		}
 	}
 
@@ -505,13 +504,13 @@ public class DebugShowcaseItem extends Item {
 		BlockPos pos = origin.offset(-1, 0, z);
 		level.setBlock(pos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_CLIENTS);
 		BlockEntity be = level.getBlockEntity(pos);
-		if (be instanceof ChestBlockEntity chestBE) {
-			chestBE.setCustomName(Component.literal("§e" + name));
+		if (be instanceof ChestBlockEntity) {
+			// Chest naming API changed in 1.21.1; keep marker placement without custom names.
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(Component.literal("§7Right-click to spawn a showcase of"));
 		tooltip.add(Component.literal("§7every Hemomancy feature in organized groups."));
 		tooltip.add(Component.literal("§cCreative mode only!"));

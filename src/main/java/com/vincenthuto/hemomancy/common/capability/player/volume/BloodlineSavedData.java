@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -20,6 +21,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class BloodlineSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_bloodlines";
+	private static final SavedData.Factory<BloodlineSavedData> FACTORY =
+			new SavedData.Factory<>(BloodlineSavedData::new, BloodlineSavedData::load, null);
 
 	private final Map<UUID, Bloodline> bloodlines = new HashMap<>();
 
@@ -27,10 +30,10 @@ public class BloodlineSavedData extends SavedData {
 	}
 
 	public static BloodlineSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(BloodlineSavedData::load, BloodlineSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static BloodlineSavedData load(CompoundTag tag) {
+	public static BloodlineSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		BloodlineSavedData data = new BloodlineSavedData();
 		if (tag.contains("bloodlines", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("bloodlines", Tag.TAG_COMPOUND);
@@ -47,7 +50,7 @@ public class BloodlineSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (Bloodline line : bloodlines.values()) {
 			list.add(line.serialize());

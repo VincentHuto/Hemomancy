@@ -19,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -61,10 +60,10 @@ public class ArmorSetBonusHandler {
 	/**
 	 * Count how many armor pieces of a given material the player is wearing.
 	 */
-	private static int countArmorPieces(Player player, ArmorMaterial material) {
+	private static int countArmorPieces(Player player, EnumModArmorTiers tier) {
 		int count = 0;
 		for (ItemStack stack : player.getArmorSlots()) {
-			if (stack.getItem() instanceof ArmorItem armor && armor.getMaterial().value() == material) {
+			if (stack.getItem() instanceof ArmorItem armor && armor.getMaterial().value() == tier.holder().value()) {
 				count++;
 			}
 		}
@@ -74,8 +73,8 @@ public class ArmorSetBonusHandler {
 	/**
 	 * Check if the player is wearing a full set (4 pieces) of a given material.
 	 */
-	private static boolean hasFullSet(Player player, ArmorMaterial material) {
-		return countArmorPieces(player, material) >= 4;
+	private static boolean hasFullSet(Player player, EnumModArmorTiers tier) {
+		return countArmorPieces(player, tier) >= 4;
 	}
 
 	// â”€â”€â”€â”€â”€ Equipment Change: Attribute Modifiers â”€â”€â”€â”€â”€

@@ -20,7 +20,6 @@ public class ItemFungalScar extends ItemScar implements IRenderScar {
 		super(properties, tendencyIn, deepenAmountIn);
 	}
 
-	@Override
 	public Rarity getRarity(ItemStack stack) {
 		return Rarity.RARE;
 	}

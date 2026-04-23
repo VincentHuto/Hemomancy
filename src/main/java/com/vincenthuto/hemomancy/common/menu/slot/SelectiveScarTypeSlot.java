@@ -54,7 +54,7 @@ public class SelectiveScarTypeSlot extends SlotItemHandler {
 
 	@Override
 	public void set(ItemStack stack) {
-		if (hasItem() && !ItemStack.isSameItemSameTags(stack, getItem())
+		if (hasItem() && !ItemStack.isSameItemSameComponents(stack, getItem())
 				&& !((IScarsItemHandler) getItemHandler()).isEventBlocked()
 				&& HemoCapabilityAccess.getScar(getItem()).isPresent()) {
 			HemoCapabilityAccess.getScar(getItem()).ifPresent(scar -> scar.onUnequipped(player));
@@ -63,7 +63,7 @@ public class SelectiveScarTypeSlot extends SlotItemHandler {
 		ItemStack oldstack = getItem().copy();
 		super.set(stack);
 
-		if (hasItem() && !ItemStack.isSameItemSameTags(oldstack, getItem())
+		if (hasItem() && !ItemStack.isSameItemSameComponents(oldstack, getItem())
 				&& !((IScarsItemHandler) getItemHandler()).isEventBlocked()
 				&& HemoCapabilityAccess.getScar(getItem()).isPresent()) {
 			HemoCapabilityAccess.getScar(getItem()).ifPresent(scar -> scar.onEquipped(player));

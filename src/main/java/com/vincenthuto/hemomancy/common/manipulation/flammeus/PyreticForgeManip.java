@@ -16,10 +16,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.SimpleContainer;
 
 import java.util.Optional;
 
@@ -54,14 +55,14 @@ public class PyreticForgeManip extends BloodManipulation {
 		}
 
 		// Look up smelting recipe for the held item
-		Optional<SmeltingRecipe> recipe = world.getRecipeManager()
-				.getRecipeFor(RecipeType.SMELTING, new SimpleContainer(heldItemMainhand), world);
+		Optional<RecipeHolder<SmeltingRecipe>> recipe = world.getRecipeManager()
+				.getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(heldItemMainhand), world);
 
 		if (recipe.isEmpty()) {
 			return;
 		}
 
-		ItemStack result = recipe.get().getResultItem(world.registryAccess());
+		ItemStack result = recipe.get().value().getResultItem(world.registryAccess());
 		if (result.isEmpty()) {
 			return;
 		}

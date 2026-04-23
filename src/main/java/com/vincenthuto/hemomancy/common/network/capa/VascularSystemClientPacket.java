@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class VascularSystemClientPacket implements CustomPacketPayload {
@@ -29,8 +30,8 @@ public class VascularSystemClientPacket implements CustomPacketPayload {
 
 	public static void handle(final VascularSystemClientPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player(); // the client that sent this packet
-			if (sender != null) {
+			Player player = ctx.player();
+			if (player instanceof ServerPlayer sender) {
 				IVascularSystem BloodFlow = HemoCapabilityAccess.getVascularSystem(sender)
 						.orElseThrow(IllegalStateException::new);
 				PacketHandler.sendToPlayer(sender, new VascularSystemServerPacket(BloodFlow.getVascularSystem()));

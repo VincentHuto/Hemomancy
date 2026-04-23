@@ -35,8 +35,7 @@ public class OpenMorphlingJarPacket implements CustomPacketPayload {
 
 	public static void handle(final OpenMorphlingJarPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer player = ctx.player();
-			if (player == null) return;
+			if (!(ctx.player() instanceof ServerPlayer player)) return;
 
 			// Find jar in inventory first, then check scar slot 7
 			ItemStack jarStack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);

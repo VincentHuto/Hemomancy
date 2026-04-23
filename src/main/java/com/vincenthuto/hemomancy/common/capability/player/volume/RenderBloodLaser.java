@@ -47,14 +47,14 @@ public class RenderBloodLaser {
 		p3.add(adjustedVec);
 		Vector3 p4 = to.copy();
 		p4.subtract(adjustedVec);
-		builder.vertex(positionMatrix, p1.x, p1.y, p1.z).color(r, g, b, alpha).uv(1, (float) v1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p3.x, p3.y, p3.z).color(r, g, b, alpha).uv(1, (float) v2)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p4.x, p4.y, p4.z).color(r, g, b, alpha).uv(0, (float) v2)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p2.x, p2.y, p2.z).color(r, g, b, alpha).uv(0, (float) v1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
+		builder.addVertex(positionMatrix, p1.x, p1.y, p1.z).setColor(r, g, b, alpha).setUv(1, (float) v1)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+		builder.addVertex(positionMatrix, p3.x, p3.y, p3.z).setColor(r, g, b, alpha).setUv(1, (float) v2)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+		builder.addVertex(positionMatrix, p4.x, p4.y, p4.z).setColor(r, g, b, alpha).setUv(0, (float) v2)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+		builder.addVertex(positionMatrix, p2.x, p2.y, p2.z).setColor(r, g, b, alpha).setUv(0, (float) v1)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
 	}
 
 	public static void drawLasers(PoseStack matrixStackIn, Vector3d to, Vector3d from, float r, float g, float b) {
@@ -83,7 +83,7 @@ public class RenderBloodLaser {
 		buffer.endBatch(RenderTypeInit.LASER_MAIN_ADDITIVE);
 	}
 
-	public static void renderLaser(RenderLevelStageEvent event, Player player, float ticks) {
+	public static void renderLaser(RenderLevelStageEvent event, Player player) {
 		Vector3 centerVec = Vector3.fromEntityCenter(player);
 //		if (player.getEffect(PotionInit.blood_binding.get()) != null) {
 //			if (player.level().isClientSide) {

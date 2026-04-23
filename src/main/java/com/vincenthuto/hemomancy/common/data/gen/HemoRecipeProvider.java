@@ -4,7 +4,9 @@ package com.vincenthuto.hemomancy.common.data.gen;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import java.util.concurrent.CompletableFuture;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -17,8 +19,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class HemoRecipeProvider extends RecipeProvider {
-	public HemoRecipeProvider(PackOutput generator, ExistingFileHelper helper) {
-		super(generator);
+	public HemoRecipeProvider(PackOutput generator, CompletableFuture<HolderLookup.Provider> lookupProvider,
+			ExistingFileHelper helper) {
+		super(generator, lookupProvider);
 	}
 
 	@Override

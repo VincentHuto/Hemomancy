@@ -56,8 +56,8 @@ public class PestsMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Verminous Aura (AoE damage, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.verminous_aura.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.verminous_aura.get(),
+		if (!player.hasEffect(EffectInit.verminous_aura)) {
+			player.addEffect(new MobEffectInstance(EffectInit.verminous_aura,
 					100, maturity, false, true, true));
 		}
 

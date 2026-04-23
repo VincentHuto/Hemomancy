@@ -1,13 +1,15 @@
 package com.vincenthuto.hemomancy.common.item.armor;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.model.armor.BarbedArmorModel;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,20 +21,20 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class BarbedArmorItem extends ArmorItem {
+public class BarbedArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 
-	public BarbedArmorItem(ArmorMaterial materialIn, ArmorItem.Type slot) {
+	public BarbedArmorItem(Holder<ArmorMaterial> materialIn, ArmorItem.Type slot) {
 		super(materialIn, slot, new Item.Properties().fireResistant());
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		tooltip.add(Component.translatable("tooltip.hemomancy.barbed_set_bonus").withStyle(ChatFormatting.DARK_RED));
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 
@@ -48,6 +50,6 @@ public class BarbedArmorItem extends ArmorItem {
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
 			}
-		});
+		};
 	}
 }

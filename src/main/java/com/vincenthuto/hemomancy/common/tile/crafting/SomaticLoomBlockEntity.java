@@ -23,6 +23,7 @@ import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -605,7 +606,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
 	}
 
-	@Override
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
@@ -626,9 +626,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	// ========================== NBT ==========================
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		ContainerHelper.saveAllItems(tag, this.contents);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
+		ContainerHelper.saveAllItems(tag, this.contents, registries);
 		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		tag.putString(TAG_RECIPE, recipePath);
 		tag.putInt(TAG_CRAFT_PROGRESS, craftingProgress);
@@ -645,10 +645,10 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 		this.contents = NonNullList.withSize(2, ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.contents);
+		ContainerHelper.loadAllItems(tag, this.contents, registries);
 		recipePath = tag.getString(TAG_RECIPE);
 		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
@@ -671,9 +671,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	}
 
 	@Override
-	public final CompoundTag getUpdateTag() {
+	public final CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		ContainerHelper.saveAllItems(tag, this.contents);
+		ContainerHelper.saveAllItems(tag, this.contents, registries);
 		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		tag.putString(TAG_RECIPE, recipePath);
 		tag.putInt(TAG_CRAFT_PROGRESS, craftingProgress);
@@ -687,8 +687,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		super.handleUpdateTag(tag, registries);
 		if (tag == null) return;
 		recipePath = tag.getString(TAG_RECIPE);
 		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
@@ -701,8 +701,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+		super.onDataPacket(net, pkt, registries);
 		if (pkt.getTag() == null) return;
 		CompoundTag tag = pkt.getTag();
 		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));

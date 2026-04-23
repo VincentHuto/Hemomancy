@@ -37,6 +37,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -49,6 +52,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
@@ -75,11 +79,11 @@ public class ItemInit {
     // public static final DamageSource bloodLoss = new DamageSource("bloodloss");
 
     public static final DeferredHolder<Item, Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
-            () -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE,
+            () -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE.holder(),
                     Hemomancy.rloc("textures/entity/arm_banner/chitinite_arm_banner.png")));
 
     public static final DeferredHolder<BannerPattern, BannerPattern> heart = BANNERPATTERNS.register("hemomancy_heart",
-            () -> new BannerPattern("hemomancy_heart"));
+      () -> new BannerPattern(Hemomancy.rloc("hemomancy_heart"), "hemomancy_heart"));
 
     public static final DeferredHolder<Item, Item> heart_pattern = BASEITEMS.register("heart_pattern",
             () -> new BannerPatternItem(
@@ -87,7 +91,7 @@ public class ItemInit {
                     new Item.Properties()));
 
     public static final DeferredHolder<BannerPattern, BannerPattern> veins = BANNERPATTERNS.register("hemomancy_veins",
-            () -> new BannerPattern("hemomancy_veins"));
+      () -> new BannerPattern(Hemomancy.rloc("hemomancy_veins"), "hemomancy_veins"));
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),
@@ -209,8 +213,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties()
                     .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
     public static final DeferredHolder<Item, Item> gourd_stew = BASEITEMS.register("gourd_stew",
-            () -> new BowlFoodItem(new Item.Properties().stacksTo(1)
-                    .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build())));
+      () -> new Item(new Item.Properties().stacksTo(1).craftRemainder(Items.BOWL)
+          .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build())));
 
     // Qliphoth Reagent
     public static final DeferredHolder<Item, Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
@@ -487,20 +491,20 @@ public class ItemInit {
 
     // Artifacts
     public static final DeferredHolder<Item, Item> marrow_crown = BASEITEMS.register("marrow_crown",
-            () -> new MarrowCrownArmorItem(EnumModArmorTiers.MARROW_CROWN, ArmorItem.Type.HELMET)
+            () -> new MarrowCrownArmorItem(EnumModArmorTiers.MARROW_CROWN.holder(), ArmorItem.Type.HELMET)
     );
     public static final DeferredHolder<Item, Item> hemolymphopoda_headpiece = BASEITEMS.register("hemolymphopoda_headpiece",
-            () -> new HemolymphopodaHeadpieceArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.HELMET));
+            () -> new HemolymphopodaHeadpieceArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.HELMET));
 
     // Hematic
     public static final DeferredHolder<Item, Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
-            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.HELMET));
+            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> hematic_iron_chestplate = BASEITEMS.register("hematic_iron_chestplate",
-            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.CHESTPLATE));
+            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> hematic_iron_leggings = BASEITEMS.register("hematic_iron_leggings",
-            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.LEGGINGS));
+            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
-            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.BOOTS));
+            () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
             () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_knapper = HANDHELDITEMS.register("hematic_iron_knapper",
@@ -514,22 +518,22 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
 
     public static final DeferredHolder<Item, Item> blood_lust_helm = BASEITEMS.register("blood_lust_helm",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.HELMET,
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     EnumBloodLustMaskTypes.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_helm_tengu = BASEITEMS.register("blood_lust_helm_tengu",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.HELMET,
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     EnumBloodLustMaskTypes.TENGU));
     public static final DeferredHolder<Item, Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.HELMET,
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     EnumBloodLustMaskTypes.HORNED));
     public static final DeferredHolder<Item, Item> blood_lust_chest = BASEITEMS.register("blood_lust_chest",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.CHESTPLATE,
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
                     EnumBloodLustMaskTypes.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_legs = BASEITEMS.register("blood_lust_legs",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.LEGGINGS,
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
                     EnumBloodLustMaskTypes.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
-            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.BOOTS,
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
                     EnumBloodLustMaskTypes.NONE));
 
     // Barbed/Barbed
@@ -538,13 +542,13 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
             () -> new BarbedShieldItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> barbed_helm = BASEITEMS.register("barbed_helm",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.HELMET));
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.CHESTPLATE));
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.LEGGINGS));
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> barbed_boots = BASEITEMS.register("barbed_boots",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.BOOTS));
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.BOOTS));
 
     // Chitinite
     public static final DeferredHolder<Item, Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
@@ -552,23 +556,23 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
             () -> new ChitiniteShieldItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.HELMET));
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.CHESTPLATE));
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.LEGGINGS));
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.BOOTS));
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.BOOTS));
 
     // Unstained
     public static final DeferredHolder<Item, Item> unstained_helm = BASEITEMS.register("unstained_helm",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.HELMET));
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.CHESTPLATE));
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.LEGGINGS));
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> unstained_boots = BASEITEMS.register("unstained_boots",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.BOOTS));
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
             () -> new UnstainedWarhammerItem(8f, -3.0f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));
@@ -644,7 +648,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_transcendence = BASEITEMS.register("scar_transcendence",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1, 1)
-                    .withModifier(Attributes.KNOCKBACK_RESISTANCE.value(), "scar_transcendence_kb", 0.1,
+                    .withModifier(Attributes.KNOCKBACK_RESISTANCE, "scar_transcendence_kb", 0.1,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_transcendence = BASEITEMS.register(
@@ -653,14 +657,14 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_sol = BASEITEMS.register("scar_sol",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1, 1)
-                    .withEffect(MobEffects.FIRE_RESISTANCE.value(), 0));
+                    .withEffect(MobEffects.FIRE_RESISTANCE, 0));
 
     public static final DeferredHolder<Item, Item> scar_pattern_sol = BASEITEMS.register("scar_pattern_sol",
             () -> new ItemScarPattern(new Item.Properties(), scar_sol, "scar_sol"));
 
     public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
-                    .withModifier(Attributes.MAX_HEALTH.value(), "scar_heart_hp", 2.0,
+                    .withModifier(Attributes.MAX_HEALTH, "scar_heart_hp", 2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_heart = BASEITEMS.register("scar_pattern_heart",
@@ -668,7 +672,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_descendence = BASEITEMS.register("scar_descendence",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1, 1)
-                    .withModifier(Attributes.ATTACK_DAMAGE.value(), "scar_descendence_ad", 1.0,
+                    .withModifier(Attributes.ATTACK_DAMAGE, "scar_descendence_ad", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_descendence = BASEITEMS.register("scar_pattern_descendence",
@@ -676,7 +680,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_moon = BASEITEMS.register("scar_moon",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1, 1)
-                    .withModifier(Attributes.MOVEMENT_SPEED.value(), "scar_moon_ms", 0.05,
+                    .withModifier(Attributes.MOVEMENT_SPEED, "scar_moon_ms", 0.05,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_moon = BASEITEMS.register("scar_pattern_moon",
@@ -684,7 +688,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_eye = BASEITEMS.register("scar_eye",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
-                    .withModifier(Attributes.LUCK.value(), "scar_eye_luck", 1.0,
+                    .withModifier(Attributes.LUCK, "scar_eye_luck", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_eye = BASEITEMS.register("scar_pattern_eye",
@@ -692,7 +696,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_feral = BASEITEMS.register("scar_feral",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
-                    .withModifier(Attributes.ATTACK_SPEED.value(), "scar_feral_as", 0.05,
+                    .withModifier(Attributes.ATTACK_SPEED, "scar_feral_as", 0.05,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_feral = BASEITEMS.register("scar_pattern_feral",
@@ -702,7 +706,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_thorn = BASEITEMS.register("scar_thorn",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1, 1)
-                    .withModifier(Attributes.ARMOR.value(), "scar_thorn_armor", 1.0,
+                    .withModifier(Attributes.ARMOR, "scar_thorn_armor", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_thorn = BASEITEMS.register("scar_pattern_thorn",
@@ -710,7 +714,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_shade = BASEITEMS.register("scar_shade",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1, 1)
-                    .withModifier(Attributes.MOVEMENT_SPEED.value(), "scar_shade_ms", 0.05,
+                    .withModifier(Attributes.MOVEMENT_SPEED, "scar_shade_ms", 0.05,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_shade = BASEITEMS.register("scar_pattern_shade",
@@ -720,8 +724,8 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_pyre = BASEITEMS.register("scar_pyre",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 2, 2)
-                    .withEffect(MobEffects.FIRE_RESISTANCE.value(), 0)
-                    .withModifier(Attributes.ATTACK_DAMAGE.value(), "scar_pyre_ad", 1.0,
+                    .withEffect(MobEffects.FIRE_RESISTANCE, 0)
+                    .withModifier(Attributes.ATTACK_DAMAGE, "scar_pyre_ad", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_pyre = BASEITEMS.register("scar_pattern_pyre",
@@ -729,7 +733,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_marrow = BASEITEMS.register("scar_marrow",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2, 2)
-                    .withModifier(Attributes.MAX_HEALTH.value(), "scar_marrow_hp", 4.0,
+                    .withModifier(Attributes.MAX_HEALTH, "scar_marrow_hp", 4.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_marrow = BASEITEMS.register("scar_pattern_marrow",
@@ -737,7 +741,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_blight = BASEITEMS.register("scar_blight",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 2, 2)
-                    .withModifier(Attributes.ATTACK_DAMAGE.value(), "scar_blight_ad", 2.0,
+                    .withModifier(Attributes.ATTACK_DAMAGE, "scar_blight_ad", 2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_blight = BASEITEMS.register("scar_pattern_blight",
@@ -745,7 +749,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_rime = BASEITEMS.register("scar_rime",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 2, 2)
-                    .withModifier(Attributes.MOVEMENT_SPEED.value(), "scar_rime_ms", 0.10,
+                    .withModifier(Attributes.MOVEMENT_SPEED, "scar_rime_ms", 0.10,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_rime = BASEITEMS.register("scar_pattern_rime",
@@ -753,7 +757,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_flux = BASEITEMS.register("scar_flux",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 2, 2)
-                    .withModifier(Attributes.ATTACK_SPEED.value(), "scar_flux_as", 0.10,
+                    .withModifier(Attributes.ATTACK_SPEED, "scar_flux_as", 0.10,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_flux = BASEITEMS.register("scar_pattern_flux",
@@ -761,9 +765,9 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_halo = BASEITEMS.register("scar_halo",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 2, 2)
-                    .withModifier(Attributes.KNOCKBACK_RESISTANCE.value(), "scar_halo_kb", 0.2,
+                    .withModifier(Attributes.KNOCKBACK_RESISTANCE, "scar_halo_kb", 0.2,
                             AttributeModifier.Operation.ADD_VALUE)
-                    .withModifier(Attributes.ARMOR_TOUGHNESS.value(), "scar_halo_at", 1.0,
+                    .withModifier(Attributes.ARMOR_TOUGHNESS, "scar_halo_at", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_halo = BASEITEMS.register("scar_pattern_halo",
@@ -771,9 +775,9 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_anvil = BASEITEMS.register("scar_anvil",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 2, 2)
-                    .withModifier(Attributes.ARMOR.value(), "scar_anvil_armor", 2.0,
+                    .withModifier(Attributes.ARMOR, "scar_anvil_armor", 2.0,
                             AttributeModifier.Operation.ADD_VALUE)
-                    .withModifier(Attributes.ARMOR_TOUGHNESS.value(), "scar_anvil_at", 1.0,
+                    .withModifier(Attributes.ARMOR_TOUGHNESS, "scar_anvil_at", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_anvil = BASEITEMS.register("scar_pattern_anvil",
@@ -781,7 +785,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_veil = BASEITEMS.register("scar_veil",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 2, 2)
-                    .withModifier(Attributes.MOVEMENT_SPEED.value(), "scar_veil_ms", 0.10,
+                    .withModifier(Attributes.MOVEMENT_SPEED, "scar_veil_ms", 0.10,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_veil = BASEITEMS.register("scar_pattern_veil",
@@ -791,8 +795,8 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_phoenix = BASEITEMS.register("scar_phoenix",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 3, 3)
-                    .withEffect(MobEffects.FIRE_RESISTANCE.value(), 0)
-                    .withModifier(Attributes.ATTACK_DAMAGE.value(), "scar_phoenix_ad", 2.0,
+                    .withEffect(MobEffects.FIRE_RESISTANCE, 0)
+                    .withModifier(Attributes.ATTACK_DAMAGE, "scar_phoenix_ad", 2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_phoenix = BASEITEMS.register("scar_pattern_phoenix",
@@ -800,7 +804,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_ichor = BASEITEMS.register("scar_ichor",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 3, 3)
-                    .withModifier(Attributes.MAX_HEALTH.value(), "scar_ichor_hp", 6.0,
+                    .withModifier(Attributes.MAX_HEALTH, "scar_ichor_hp", 6.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_ichor = BASEITEMS.register("scar_pattern_ichor",
@@ -808,7 +812,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_wither = BASEITEMS.register("scar_wither",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 3, 3)
-                    .withModifier(Attributes.ATTACK_DAMAGE.value(), "scar_wither_ad", 3.0,
+                    .withModifier(Attributes.ATTACK_DAMAGE, "scar_wither_ad", 3.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_wither = BASEITEMS.register("scar_pattern_wither",
@@ -816,7 +820,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_glacier = BASEITEMS.register("scar_glacier",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 3, 3)
-                    .withModifier(Attributes.MOVEMENT_SPEED.value(), "scar_glacier_ms", 0.15,
+                    .withModifier(Attributes.MOVEMENT_SPEED, "scar_glacier_ms", 0.15,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_glacier = BASEITEMS.register("scar_pattern_glacier",
@@ -824,9 +828,9 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_chimera = BASEITEMS.register("scar_chimera",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 3, 3)
-                    .withModifier(Attributes.ATTACK_SPEED.value(), "scar_chimera_as", 0.15,
+                    .withModifier(Attributes.ATTACK_SPEED, "scar_chimera_as", 0.15,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-                    .withModifier(Attributes.LUCK.value(), "scar_chimera_luck", 1.0,
+                    .withModifier(Attributes.LUCK, "scar_chimera_luck", 1.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_chimera = BASEITEMS.register("scar_pattern_chimera",
@@ -834,9 +838,9 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_corona = BASEITEMS.register("scar_corona",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 3, 3)
-                    .withModifier(Attributes.KNOCKBACK_RESISTANCE.value(), "scar_corona_kb", 0.3,
+                    .withModifier(Attributes.KNOCKBACK_RESISTANCE, "scar_corona_kb", 0.3,
                             AttributeModifier.Operation.ADD_VALUE)
-                    .withModifier(Attributes.ARMOR_TOUGHNESS.value(), "scar_corona_at", 2.0,
+                    .withModifier(Attributes.ARMOR_TOUGHNESS, "scar_corona_at", 2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_corona = BASEITEMS.register("scar_pattern_corona",
@@ -844,9 +848,9 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_crucible = BASEITEMS.register("scar_crucible",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 3, 3)
-                    .withModifier(Attributes.ARMOR.value(), "scar_crucible_armor", 3.0,
+                    .withModifier(Attributes.ARMOR, "scar_crucible_armor", 3.0,
                             AttributeModifier.Operation.ADD_VALUE)
-                    .withModifier(Attributes.ARMOR_TOUGHNESS.value(), "scar_crucible_at", 2.0,
+                    .withModifier(Attributes.ARMOR_TOUGHNESS, "scar_crucible_at", 2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<Item, Item> scar_pattern_crucible = BASEITEMS.register("scar_pattern_crucible",
@@ -854,7 +858,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scar_oblivion = BASEITEMS.register("scar_oblivion",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 3, 3)
-                    .withModifier(Attributes.MOVEMENT_SPEED.value(), "scar_oblivion_ms", 0.15,
+                    .withModifier(Attributes.MOVEMENT_SPEED, "scar_oblivion_ms", 0.15,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     public static final DeferredHolder<Item, Item> scar_pattern_oblivion = BASEITEMS.register("scar_pattern_oblivion",
@@ -988,7 +992,7 @@ public class ItemInit {
                         return 0.0F;
                     } else {
                         return LivingCrossbowItem.isCharged(stack) ? 0.0F
-                                : (float) (stack.getUseDuration() - ent.getUseItemRemainingTicks())
+                                    : (float) (stack.getUseDuration(ent) - ent.getUseItemRemainingTicks())
                                 / (float) LivingCrossbowItem.getChargeTime(stack);
                     }
                 });
@@ -1029,13 +1033,13 @@ public class ItemInit {
 
             @Override
             public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-                if (stack.hasTag()) {
-                    CompoundTag CompoundTag = stack.getOrCreateTag();
+                if (stack.has(DataComponents.CUSTOM_DATA)) {
+                    CompoundTag CompoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
                     CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
                     if (items != null) {
                         if (items.contains("Items", 9)) {
                             @SuppressWarnings("static-access")
-                            ItemStack selectedStack = ItemStack.of(((ListTag) items.get("Items")).getCompound(0));
+                            ItemStack selectedStack = ItemStack.parseOptional(world != null ? world.registryAccess() : RegistryAccess.EMPTY, ((ListTag) items.get("Items")).getCompound(0));
                             if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
                                 return 1;
                             } else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {

@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -22,17 +23,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class CrimsonBeaconSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_crimson_beacons";
+	private static final SavedData.Factory<CrimsonBeaconSavedData> FACTORY =
+			new SavedData.Factory<>(CrimsonBeaconSavedData::new, CrimsonBeaconSavedData::load, null);
 
 	private final Map<UUID, BeaconEntry> beacons = new HashMap<>();
 
 	public CrimsonBeaconSavedData() {}
 
 	public static CrimsonBeaconSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				CrimsonBeaconSavedData::load, CrimsonBeaconSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static CrimsonBeaconSavedData load(CompoundTag tag) {
+	public static CrimsonBeaconSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		CrimsonBeaconSavedData data = new CrimsonBeaconSavedData();
 		if (tag.contains("beacons", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("beacons", Tag.TAG_COMPOUND);
@@ -49,7 +51,7 @@ public class CrimsonBeaconSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (Map.Entry<UUID, BeaconEntry> entry : beacons.entrySet()) {
 			CompoundTag beaconTag = new CompoundTag();

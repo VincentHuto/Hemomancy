@@ -18,6 +18,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -44,8 +45,8 @@ public class PacketLumpDonate implements CustomPacketPayload {
 
 	public static void handle(final PacketLumpDonate msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer player = ctx.player();
-			if (player == null) return;
+			Player packetPlayer = ctx.player();
+			if (!(packetPlayer instanceof ServerPlayer player)) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				if (!volume.isActive()) return;

@@ -23,14 +23,15 @@ public class BurrowersInstinctEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null || entity.level().isClientSide) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null || entity.level().isClientSide) return true;
 
 		// Bonus healing when underground (below Y=50)
 		if (entity.getY() < UNDERGROUND_THRESHOLD && entity.getHealth() < entity.getMaxHealth()) {
 			float healAmount = 0.5f + amplifier * 0.25f;
 			entity.heal(healAmount);
 		}
+		return true;
 	}
 
 	@Override
@@ -50,8 +51,9 @@ public class BurrowersInstinctEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 40 == 0;
 	}
 
 }
+

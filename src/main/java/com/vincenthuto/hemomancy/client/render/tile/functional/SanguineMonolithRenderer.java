@@ -97,8 +97,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
 		// Render entirely black (RGB = 0.05, 0.02, 0.02 for a very dark slab)
-		model.renderToBuffer(ms, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
-				0.05F, 0.02F, 0.02F, 1.0F);
+		model.renderToBuffer(ms, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, 0xFF0D0505);
 		ms.popPose();
 
 		// ── Pass 2: Animated vein overlay + eye (bottom third + top half front face) ──
@@ -193,10 +192,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				float z = faceZ;
 
 				// Render a small quad for each vein step
-				vc.vertex(mat, px - size, py - size, z).color(r, g, b, alpha).endVertex();
-				vc.vertex(mat, px - size, py + size, z).color(r, g, b, alpha).endVertex();
-				vc.vertex(mat, px + size, py + size, z).color(r, g, b, alpha).endVertex();
-				vc.vertex(mat, px + size, py - size, z).color(r, g, b, alpha).endVertex();
+				vc.addVertex(mat, px - size, py - size, z).setColor(r, g, b, alpha);
+				vc.addVertex(mat, px - size, py + size, z).setColor(r, g, b, alpha);
+				vc.addVertex(mat, px + size, py + size, z).setColor(r, g, b, alpha);
+				vc.addVertex(mat, px + size, py - size, z).setColor(r, g, b, alpha);
 			}
 		}
 
@@ -206,10 +205,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		float hw = faceWidth * 0.5f;
 		float z = faceZ + (flipNormal ? -0.001f : 0.001f);
 
-		vc.vertex(mat, -hw, 0f, z).color(80, 5, 5, glowAlpha).endVertex();
-		vc.vertex(mat, -hw, state.zoneHeight * 0.8f, z).color(40, 2, 2, 0).endVertex();
-		vc.vertex(mat,  hw, state.zoneHeight * 0.8f, z).color(40, 2, 2, 0).endVertex();
-		vc.vertex(mat,  hw, 0f, z).color(80, 5, 5, glowAlpha).endVertex();
+		vc.addVertex(mat, -hw, 0f, z).setColor(80, 5, 5, glowAlpha);
+		vc.addVertex(mat, -hw, state.zoneHeight * 0.8f, z).setColor(40, 2, 2, 0);
+		vc.addVertex(mat,  hw, state.zoneHeight * 0.8f, z).setColor(40, 2, 2, 0);
+		vc.addVertex(mat,  hw, 0f, z).setColor(80, 5, 5, glowAlpha);
 	}
 
 	private void renderSideVeins(PoseStack ms, VertexConsumer vc, float time,
@@ -267,10 +266,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				float size = 0.012f;
 				float x = sideX;
 
-				vc.vertex(mat, x, py - size, pz - size).color(r, g, b, alpha).endVertex();
-				vc.vertex(mat, x, py + size, pz - size).color(r, g, b, alpha).endVertex();
-				vc.vertex(mat, x, py + size, pz + size).color(r, g, b, alpha).endVertex();
-				vc.vertex(mat, x, py - size, pz + size).color(r, g, b, alpha).endVertex();
+				vc.addVertex(mat, x, py - size, pz - size).setColor(r, g, b, alpha);
+				vc.addVertex(mat, x, py + size, pz - size).setColor(r, g, b, alpha);
+				vc.addVertex(mat, x, py + size, pz + size).setColor(r, g, b, alpha);
+				vc.addVertex(mat, x, py - size, pz + size).setColor(r, g, b, alpha);
 			}
 		}
 	}
@@ -294,7 +293,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		if (mc.player == null) {
 			return 0;
 		}
-		return mc.HemoCapabilityAccess.getInitiatoryDegree(player)
+		return HemoCapabilityAccess.getInitiatoryDegree(mc.player)
 				.map(IInitiatoryDegree::getDegreeNumber)
 				.orElse(0);
 	}
@@ -390,10 +389,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			float len = Mth.sqrt(dx * dx + dy * dy);
 			if (len < 1e-6f) continue;
 			float nx = -dy / len * spkHW, ny = dx / len * spkHW;
-			vc.vertex(mat, ix + nx, iy + ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
-			vc.vertex(mat, ix - nx, iy - ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
-			vc.vertex(mat, ox - nx, oy - ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
-			vc.vertex(mat, ox + nx, oy + ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
+			vc.addVertex(mat, ix + nx, iy + ny, cz + 0.003f).setColor(spkR, spkG, spkB, spkA);
+			vc.addVertex(mat, ix - nx, iy - ny, cz + 0.003f).setColor(spkR, spkG, spkB, spkA);
+			vc.addVertex(mat, ox - nx, oy - ny, cz + 0.003f).setColor(spkR, spkG, spkB, spkA);
+			vc.addVertex(mat, ox + nx, oy + ny, cz + 0.003f).setColor(spkR, spkG, spkB, spkA);
 		}
 
 		// ── 5. Dark pupil ──
@@ -472,10 +471,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		if (len < 1e-6f) return;
 		float px = -dy / len * halfW;
 		float py =  dx / len * halfW;
-		vc.vertex(mat, x1 + px, y1 + py, z).color(r, g, b, alpha).endVertex();
-		vc.vertex(mat, x1 - px, y1 - py, z).color(r, g, b, alpha).endVertex();
-		vc.vertex(mat, x2 - px, y2 - py, z).color(r, g, b, alpha).endVertex();
-		vc.vertex(mat, x2 + px, y2 + py, z).color(r, g, b, alpha).endVertex();
+		vc.addVertex(mat, x1 + px, y1 + py, z).setColor(r, g, b, alpha);
+		vc.addVertex(mat, x1 - px, y1 - py, z).setColor(r, g, b, alpha);
+		vc.addVertex(mat, x2 - px, y2 - py, z).setColor(r, g, b, alpha);
+		vc.addVertex(mat, x2 + px, y2 + py, z).setColor(r, g, b, alpha);
 	}
 
 	// ── Geometry helpers ─────────────────────────────────────────────────────────
@@ -495,10 +494,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			float x2 = cx + (float)(Math.cos(a2) * semiX);
 			float y2 = cy + (float)(Math.sin(a2) * semiY);
 			// Degenerate quad → triangle (center, center, edge1, edge2)
-			vc.vertex(mat, cx, cy, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, cx, cy, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, x1, y1, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, x2, y2, cz).color(r, g, b, alpha).endVertex();
+			vc.addVertex(mat, cx, cy, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, cx, cy, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, x1, y1, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, x2, y2, cz).setColor(r, g, b, alpha);
 		}
 	}
 
@@ -522,10 +521,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			float ox2 = cx + (float)(Math.cos(a2) * outerSX);
 			float oy2 = cy + (float)(Math.sin(a2) * outerSY);
 
-			vc.vertex(mat, ix1, iy1, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, ox1, oy1, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, ox2, oy2, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, ix2, iy2, cz).color(r, g, b, alpha).endVertex();
+			vc.addVertex(mat, ix1, iy1, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, ox1, oy1, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, ox2, oy2, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, ix2, iy2, cz).setColor(r, g, b, alpha);
 		}
 	}
 
@@ -555,10 +554,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			float nx = -dy / len * halfW;
 			float ny =  dx / len * halfW;
 
-			vc.vertex(mat, x1 + nx, y1 + ny, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, x1 - nx, y1 - ny, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, x2 - nx, y2 - ny, cz).color(r, g, b, alpha).endVertex();
-			vc.vertex(mat, x2 + nx, y2 + ny, cz).color(r, g, b, alpha).endVertex();
+			vc.addVertex(mat, x1 + nx, y1 + ny, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, x1 - nx, y1 - ny, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, x2 - nx, y2 - ny, cz).setColor(r, g, b, alpha);
+			vc.addVertex(mat, x2 + nx, y2 + ny, cz).setColor(r, g, b, alpha);
 		}
 	}
 }

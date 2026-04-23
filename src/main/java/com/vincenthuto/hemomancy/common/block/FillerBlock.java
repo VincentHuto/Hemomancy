@@ -1,12 +1,15 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -26,10 +29,16 @@ import javax.annotation.Nullable;
  * main block position via its block entity and delegates interactions to the main block.
  */
 public class FillerBlock extends BaseEntityBlock {
+  public static final MapCodec<FillerBlock> CODEC = simpleCodec(FillerBlock::new);
 
     public FillerBlock(Properties properties) {
         super(properties);
     }
+
+  @Override
+  protected MapCodec<? extends BaseEntityBlock> codec() {
+    return CODEC;
+  }
 
     @Nullable
     @Override
@@ -63,30 +72,22 @@ public class FillerBlock extends BaseEntityBlock {
         return 1.0F;
     }
 
-    /**
-     * Delegate right-click interactions to the main block.
-     */
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
-        BlockPos mainPos = getMainBlockPos(level, pos);
-        if (mainPos != null) {
-            BlockState mainState = level.getBlockState(mainPos);
-            return mainState.getBlock().use(mainState, level, mainPos, player, hand, hit);
-        }
-        return InteractionResult.PASS;
+        return getMainBlockPos(level, pos) != null ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
-    /**
-     * Delegate left-click / attack to the main block.
-     */
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        return getMainBlockPos(level, pos) != null ? ItemInteractionResult.SUCCESS
+                : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
     @Override
     public void attack(BlockState state, Level level, BlockPos pos, Player player) {
-        BlockPos mainPos = getMainBlockPos(level, pos);
-        if (mainPos != null) {
-            BlockState mainState = level.getBlockState(mainPos);
-            mainState.getBlock().attack(mainState, level, mainPos, player);
-        }
+        destroyMainBlock(level, pos, !player.isCreative());
     }
 
     /**
@@ -107,19 +108,20 @@ public class FillerBlock extends BaseEntityBlock {
         super.onRemove(state, level, pos, newState, isMoving);
     }
 
-    /**
-     * Fillers should not drop anything themselves — the main block handles drops.
-     */
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        destroyMainBlock(level, pos, !player.isCreative());
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    private void destroyMainBlock(Level level, BlockPos pos, boolean dropBlock) {
         BlockPos mainPos = getMainBlockPos(level, pos);
         if (mainPos != null && !level.isClientSide) {
             BlockState mainState = level.getBlockState(mainPos);
             if (mainState.getBlock() instanceof IMultiBlock) {
-                level.destroyBlock(mainPos, !player.isCreative());
+                level.destroyBlock(mainPos, dropBlock);
             }
         }
-        // Don't call super to prevent double-breaking issues
     }
 
     @Nullable

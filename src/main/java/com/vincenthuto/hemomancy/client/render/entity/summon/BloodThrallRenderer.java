@@ -163,10 +163,9 @@ public class BloodThrallRenderer extends MobRenderer<BloodThrallEntity, BloodThr
             int b = (int) (120 + pulse * 80);  // 120..200
             int a = (int) (180 + 40 * (float) Math.sin(t * Math.PI)); // brighter in middle
 
-            lineConsumer.vertex(pose.pose(), px, py, pz)
-                    .color(r, g, b, a)
-                    .normal(pose.normal(), nx, ny, nz)
-                    .endVertex();
+                  lineConsumer.addVertex(pose.pose(), px, py, pz)
+                      .setColor(r, g, b, a)
+                                  .setNormal(pose, nx, ny, nz);
         }
 
         poseStack.popPose();
@@ -205,14 +204,12 @@ public class BloodThrallRenderer extends MobRenderer<BloodThrallEntity, BloodThr
             int cb = (int) (140 + colPulse * 60);
 
             // Each line segment needs two vertices
-            consumer.vertex(pose.pose(), x0, 0, z0)
-                    .color(cr, cg, cb, 220)
-                    .normal(pose.normal(), nx, 0, nz)
-                    .endVertex();
-            consumer.vertex(pose.pose(), x1, 0, z1)
-                    .color(cr, cg, cb, 220)
-                    .normal(pose.normal(), nx, 0, nz)
-                    .endVertex();
+                  consumer.addVertex(pose.pose(), x0, 0, z0)
+                      .setColor(cr, cg, cb, 220)
+                                  .setNormal(pose, nx, 0, nz);
+                  consumer.addVertex(pose.pose(), x1, 0, z1)
+                      .setColor(cr, cg, cb, 220)
+                                  .setNormal(pose, nx, 0, nz);
         }
     }
 }

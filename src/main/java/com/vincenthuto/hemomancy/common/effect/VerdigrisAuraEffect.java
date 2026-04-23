@@ -41,9 +41,9 @@ public class VerdigrisAuraEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity.level().isClientSide) return;
-		if (entity.tickCount % PULSE_INTERVAL != 0) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity.level().isClientSide) return true;
+		if (entity.tickCount % PULSE_INTERVAL != 0) return true;
 
 		double radius = BASE_RADIUS + amplifier * RADIUS_PER_AMP;
 		ServerLevel serverLevel = (ServerLevel) entity.level();
@@ -74,6 +74,7 @@ public class VerdigrisAuraEffect extends MobEffect {
 			// Weakness I — blood magic disrupted
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, DEBUFF_DURATION, 0, false, true, false));
 		}
+		return true;
 	}
 
 	@Override
@@ -93,7 +94,8 @@ public class VerdigrisAuraEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 }
+

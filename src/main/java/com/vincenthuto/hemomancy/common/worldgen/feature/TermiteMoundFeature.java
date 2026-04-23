@@ -70,7 +70,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 			ChunkPos cp = region.getCenter();
 			centerCX = cp.x;
 			centerCZ = cp.z;
-			writeRadiusCutoff = region.writeRadiusCutoff;
 		}
 
 		// Randomize mound dimensions
@@ -436,7 +435,7 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		if (entity == null) return;
 		entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.getRandom().nextFloat() * 360.0f, 0.0f);
 		if (entity instanceof Mob mob) {
-			mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+			mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
 			mob.setPersistenceRequired();
 		}
 		level.addFreshEntityWithPassengers(entity);

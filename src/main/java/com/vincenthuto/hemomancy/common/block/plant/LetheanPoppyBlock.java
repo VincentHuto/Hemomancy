@@ -3,12 +3,14 @@ package com.vincenthuto.hemomancy.common.block.plant;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +29,7 @@ public class LetheanPoppyBlock extends FlowerBlock {
 	public static final int DORMANT = 1;
 
 	public LetheanPoppyBlock(MobEffect effect, int effectDuration, Properties properties) {
-		super(effect, effectDuration, properties);
+		super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(STATE, BLOOMED));
 	}
 
@@ -48,9 +50,7 @@ public class LetheanPoppyBlock extends FlowerBlock {
 		}
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-			BlockHitResult hit) {
+	private InteractionResult handleUse(BlockState state, Level level, BlockPos pos) {
 		if (state.getValue(STATE) == BLOOMED) {
 			if (!level.isClientSide) {
 				popResource(level, pos, new ItemStack(ItemInit.lethean_dew.get()));
@@ -60,5 +60,19 @@ public class LetheanPoppyBlock extends FlowerBlock {
 			return InteractionResult.sidedSuccess(level.isClientSide);
 		}
 		return InteractionResult.PASS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return handleUse(state, level, pos);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand hand, BlockHitResult hit) {
+		InteractionResult result = handleUse(state, level, pos);
+		return result == InteractionResult.PASS ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 }

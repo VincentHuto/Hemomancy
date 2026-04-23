@@ -91,7 +91,6 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 			ChunkPos cp = region.getCenter();
 			centerCX = cp.x;
 			centerCZ = cp.z;
-			writeRadiusCutoff = region.writeRadiusCutoff;
 		}
 
 		int height = 30 + random.nextInt(21); // 30-50

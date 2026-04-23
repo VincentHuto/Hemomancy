@@ -19,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SummonAvatarManip extends BloodManipulation {
 
@@ -30,12 +29,12 @@ public class SummonAvatarManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player playerIn, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		if (playerIn.isAddedToWorld()) {
-			HemoCapabilityAccess.getKnownManipulations(playerIn).ifPresent((manip) -> {
+		if (playerIn instanceof ServerPlayer serverPlayer) {
+			HemoCapabilityAccess.getKnownManipulations(serverPlayer).ifPresent((manip) -> {
 				manip.setAvatarActive(!manip.isAvatarActive());
-				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(manip));
-				List<ServerPlayer> receivers = new ArrayList<>(((ServerLevel) playerIn.level()).players());
-				KnownManipulationEvents.syncAvatar(playerIn, receivers, manip.isAvatarActive());
+				PacketHandler.sendToPlayer(serverPlayer, new KnownManipulationServerPacket(manip));
+				List<ServerPlayer> receivers = new ArrayList<>(((ServerLevel) serverPlayer.level()).players());
+				KnownManipulationEvents.syncAvatar(serverPlayer, receivers, manip.isAvatarActive());
 			});
 
 		}

@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
@@ -31,17 +32,16 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand {
+public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand, HemoClientItemExtensionsProvider {
 
 	public BloodAbsorptionItem(Properties prop) {
 		super(prop.stacksTo(1));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 	}
 
 	@Override
@@ -49,7 +49,6 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		return true;
 	}
 
-	@Override
 	public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity) {
 		return armorType == EquipmentSlot.MAINHAND || armorType == EquipmentSlot.OFFHAND;
 	}
@@ -79,20 +78,20 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 72000 / 2;
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
 			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				return myRenderer;
 			}
-		});
+		};
 	}
 
 	@Override

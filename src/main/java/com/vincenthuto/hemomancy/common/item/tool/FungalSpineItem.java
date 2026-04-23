@@ -102,8 +102,8 @@ public class FungalSpineItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal("A calcified tendril from somewhere deep below. It hums faintly, as if listening.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 }

@@ -31,7 +31,7 @@ public class BloodyFlaskItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		// TODO Auto-generated method stub
 		tooltip.add(Component.literal("Used to Quickly Gain " + amount + "ml of Blood"));
 	}
@@ -57,7 +57,6 @@ public class BloodyFlaskItem extends Item {
 				}
 				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
 				stack.shrink(1);
-				playerIn.broadcastBreakEvent(handIn);
 			}
 
 		}

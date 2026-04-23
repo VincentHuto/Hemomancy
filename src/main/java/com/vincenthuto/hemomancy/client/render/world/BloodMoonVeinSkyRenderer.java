@@ -140,10 +140,10 @@ public class BloodMoonVeinSkyRenderer {
 			int[] c0 = color(prog0, pulse);
 			int[] c1 = color(prog1, pulse);
 
-			buf.vertex(mat, PX[step]     - nx, MOON_PLANE_Y, PZ[step]     - nz).color(c0[0], c0[1], c0[2], a0).endVertex();
-			buf.vertex(mat, PX[step]     + nx, MOON_PLANE_Y, PZ[step]     + nz).color(c0[0], c0[1], c0[2], a0).endVertex();
-			buf.vertex(mat, PX[step + 1] + nx, MOON_PLANE_Y, PZ[step + 1] + nz).color(c1[0], c1[1], c1[2], a1).endVertex();
-			buf.vertex(mat, PX[step + 1] - nx, MOON_PLANE_Y, PZ[step + 1] - nz).color(c1[0], c1[1], c1[2], a1).endVertex();
+			buf.addVertex(mat, PX[step]     - nx, MOON_PLANE_Y, PZ[step]     - nz).setColor(c0[0], c0[1], c0[2], a0);
+			buf.addVertex(mat, PX[step]     + nx, MOON_PLANE_Y, PZ[step]     + nz).setColor(c0[0], c0[1], c0[2], a0);
+			buf.addVertex(mat, PX[step + 1] + nx, MOON_PLANE_Y, PZ[step + 1] + nz).setColor(c1[0], c1[1], c1[2], a1);
+			buf.addVertex(mat, PX[step + 1] - nx, MOON_PLANE_Y, PZ[step + 1] - nz).setColor(c1[0], c1[1], c1[2], a1);
 		}
 	}
 

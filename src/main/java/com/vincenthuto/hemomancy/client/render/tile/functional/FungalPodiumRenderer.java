@@ -73,25 +73,25 @@ public class FungalPodiumRenderer implements BlockEntityRenderer<FungalPodiumBlo
 				float rast = (float) Math.sqrt(i * i + g * g);
 
 				if (rast <= 1.05f) {
-					vertex.vertex(i, g, 0).color(r, gr, b, 1f).uv(uvValue, uvValueg)
-							.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-					vertex.vertex(i, g + mod, 0).color(r, gr, b, 1f).uv(uvValue, uvValueg + mod * 0.5f)
-							.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-					vertex.vertex(i + mod, g + mod, 0).color(r, gr, b, 1f)
-							.uv(uvValue + mod * 0.5f, uvValueg + mod * 0.5f).overlayCoords(OverlayTexture.NO_OVERLAY)
-							.uv2(15728880).endVertex();
-					vertex.vertex(i + mod, g, 0).color(r, gr, b, 1f).uv(uvValue + mod * 0.5f, uvValueg)
-							.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
+					vertex.addVertex(i, g, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg)
+							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+					vertex.addVertex(i, g + mod, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg + mod * 0.5f)
+							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+					vertex.addVertex(i + mod, g + mod, 0).setColor(r, gr, b, 1f)
+							.setUv(uvValue + mod * 0.5f, uvValueg + mod * 0.5f).setOverlay(OverlayTexture.NO_OVERLAY)
+							.setLight(15728880);
+					vertex.addVertex(i + mod, g, 0).setColor(r, gr, b, 1f).setUv(uvValue + mod * 0.5f, uvValueg)
+							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
 
-					vertex.vertex(i + mod, g, 0).color(r, gr, b, 1f).uv(uvValue + mod * 0.5f, uvValueg)
-							.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-					vertex.vertex(i + mod, g + mod, 0).color(r, gr, b, 1f)
-							.uv(uvValue + mod * 0.5f, uvValueg + mod * 0.5f).overlayCoords(OverlayTexture.NO_OVERLAY)
-							.uv2(15728880).endVertex();
-					vertex.vertex(i, g + mod, 0).color(r, gr, b, 1f).uv(uvValue, uvValueg + mod * 0.5f)
-							.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-					vertex.vertex(i, g, 0).color(r, gr, b, 1f).uv(uvValue, uvValueg)
-							.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
+					vertex.addVertex(i + mod, g, 0).setColor(r, gr, b, 1f).setUv(uvValue + mod * 0.5f, uvValueg)
+							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+					vertex.addVertex(i + mod, g + mod, 0).setColor(r, gr, b, 1f)
+							.setUv(uvValue + mod * 0.5f, uvValueg + mod * 0.5f).setOverlay(OverlayTexture.NO_OVERLAY)
+							.setLight(15728880);
+					vertex.addVertex(i, g + mod, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg + mod * 0.5f)
+							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+					vertex.addVertex(i, g, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg)
+							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
 				}
 			}
 

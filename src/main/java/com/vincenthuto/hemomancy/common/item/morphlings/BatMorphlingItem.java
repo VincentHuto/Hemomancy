@@ -52,8 +52,8 @@ public class BatMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Echoic Perception (reveal nearby entities, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.echoic_perception.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.echoic_perception.get(),
+		if (!player.hasEffect(EffectInit.echoic_perception)) {
+			player.addEffect(new MobEffectInstance(EffectInit.echoic_perception,
 					100, maturity, false, true, true));
 		}
 

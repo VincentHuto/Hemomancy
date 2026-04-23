@@ -19,8 +19,10 @@ public class LuminousDissipationEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		// Attribute modifiers handle the passive bonus; no per-tick logic needed.
+	
+		return true;
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class LuminousDissipationEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 

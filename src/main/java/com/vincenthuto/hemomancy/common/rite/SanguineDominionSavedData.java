@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -28,17 +29,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class SanguineDominionSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_sanguine_dominions";
+	private static final SavedData.Factory<SanguineDominionSavedData> FACTORY =
+			new SavedData.Factory<>(SanguineDominionSavedData::new, SanguineDominionSavedData::load, null);
 
 	private final List<DominionEntry> dominions = new ArrayList<>();
 
 	public SanguineDominionSavedData() {}
 
 	public static SanguineDominionSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				SanguineDominionSavedData::load, SanguineDominionSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static SanguineDominionSavedData load(CompoundTag tag) {
+	public static SanguineDominionSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		SanguineDominionSavedData data = new SanguineDominionSavedData();
 		if (tag.contains("dominions", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("dominions", Tag.TAG_COMPOUND);
@@ -57,7 +59,7 @@ public class SanguineDominionSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (DominionEntry entry : dominions) {
 			CompoundTag domTag = new CompoundTag();

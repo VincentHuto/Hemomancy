@@ -47,7 +47,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 		renderStationModel(matrixStackIn, bufferIn, te, combinedLightIn, combinedOverlayIn);
 
 		// ── Render items on the station ──
-		Minecraft.getInstance().textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
+		Minecraft.getInstance().getTextureManager().bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
 		matrixStackIn.translate(0, 0.5, 0);
 

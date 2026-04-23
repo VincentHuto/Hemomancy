@@ -26,43 +26,27 @@ import net.minecraft.client.renderer.LevelRenderer;
 @Mixin(LevelRenderer.class)
 public class MixinLevelRenderer {
 
-	private static final float BLOOD_MOON_RED   = 1.00F;
-	private static final float BLOOD_MOON_GREEN = 0.05F;
-	private static final float BLOOD_MOON_BLUE  = 0.05F;
+	private static final float hemomancy$bloodMoonRed = 1.00F;
+	private static final float hemomancy$bloodMoonGreen = 0.05F;
+	private static final float hemomancy$bloodMoonBlue = 0.05F;
 
-	@Inject(
-		method = "renderSky",
-		at = @At(
-			value = "INVOKE",
-			target = "net/minecraft/client/multiplayer/ClientLevel.getMoonPhase()I",
-			shift = At.Shift.BEFORE
-		),
-		require = 0
-	)
-	private void hemomancy$renderBloodMoonVeins(PoseStack poseStack, Matrix4f projectionMatrix,
+	@Inject(method = "renderSky", at = @At("TAIL"), require = 0, remap = false)
+	private void hemomancy$renderBloodMoonVeins(Matrix4f frustumMatrix, Matrix4f projectionMatrix,
 			float partialTick, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
 		if (!BloodMoonClientState.isActive()) return;
 		Minecraft mc = Minecraft.getInstance();
 		ClientLevel level = mc.level;
 		if (level == null) return;
-		BloodMoonVeinSkyRenderer.renderInSky(poseStack, level, partialTick);
+		BloodMoonVeinSkyRenderer.renderInSky(new PoseStack(), level, mc.getTimer().getGameTimeDeltaPartialTick(false));
 	}
 
-	@Inject(
-		method = "renderSky",
-		at = @At(
-			value = "INVOKE",
-			target = "net/minecraft/client/multiplayer/ClientLevel.getMoonPhase()I",
-			shift = At.Shift.AFTER
-		),
-		require = 0
-	)
-	private void hemomancy$applyBloodMoonTint(PoseStack poseStack, Matrix4f projectionMatrix,
+	@Inject(method = "renderSky", at = @At("TAIL"), require = 0, remap = false)
+	private void hemomancy$applyBloodMoonTint(Matrix4f frustumMatrix, Matrix4f projectionMatrix,
 			float partialTick, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
 		if (!BloodMoonClientState.isActive()) return;
 		Minecraft mc = Minecraft.getInstance();
-		float rainLevel = (mc.level != null) ? mc.level.getRainLevel(mc.getFrameTime()) : 0.0F;
+		float rainLevel = (mc.level != null) ? mc.level.getRainLevel(mc.getTimer().getGameTimeDeltaPartialTick(false)) : 0.0F;
 		float alpha = 1.0F - rainLevel;
-		RenderSystem.setShaderColor(BLOOD_MOON_RED, BLOOD_MOON_GREEN, BLOOD_MOON_BLUE, alpha);
+		RenderSystem.setShaderColor(hemomancy$bloodMoonRed, hemomancy$bloodMoonGreen, hemomancy$bloodMoonBlue, alpha);
 	}
 }

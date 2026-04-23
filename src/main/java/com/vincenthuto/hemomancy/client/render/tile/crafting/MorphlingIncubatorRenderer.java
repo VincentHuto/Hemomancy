@@ -333,14 +333,14 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		Vector3f p3 = new Vector3f(to).add(offset);
 		Vector3f p4 = new Vector3f(to).sub(offset);
 
-		builder.vertex(positionMatrix, p1.x(), p1.y(), p1.z()).color(r, g, b, alpha).uv(1, (float) v1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p3.x(), p3.y(), p3.z()).color(r, g, b, alpha).uv(1, (float) v2)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p4.x(), p4.y(), p4.z()).color(r, g, b, alpha).uv(0, (float) v2)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p2.x(), p2.y(), p2.z()).color(r, g, b, alpha).uv(0, (float) v1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
+		builder.addVertex(positionMatrix, p1.x(), p1.y(), p1.z()).setColor(r, g, b, alpha).setUv(1, (float) v1)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+		builder.addVertex(positionMatrix, p3.x(), p3.y(), p3.z()).setColor(r, g, b, alpha).setUv(1, (float) v2)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+		builder.addVertex(positionMatrix, p4.x(), p4.y(), p4.z()).setColor(r, g, b, alpha).setUv(0, (float) v2)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+		builder.addVertex(positionMatrix, p2.x(), p2.y(), p2.z()).setColor(r, g, b, alpha).setUv(0, (float) v1)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
 	}
 
 	/**
@@ -410,35 +410,35 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			float x0, float y0, float z0, float x1, float y1, float z1,
 			int r, int g, int b, int a) {
 		// Top
-		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
 		// Bottom
-		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
 		// North (z0)
-		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
 		// South (z1)
-		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
 		// West (x0)
-		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
 		// East (x1)
-		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
 	}
 }
 

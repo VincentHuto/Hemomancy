@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 
 /**
@@ -99,7 +98,7 @@ public class LetheCovenantEvents {
 		if (data.isInDomain(spawnPos, dimension, tick)) {
 			// 50% chance to block the spawn
 			if (sLevel.getRandom().nextBoolean()) {
-				event.setResult(Event.Result.DENY);
+				event.setResult(MobSpawnEvent.PositionCheck.Result.FAIL);
 			}
 		}
 	}
@@ -113,7 +112,7 @@ public class LetheCovenantEvents {
 		if (!event.getSource().is(DamageTypes.MAGIC)) return;
 
 		// Only protect players who have Silver Ward active
-		if (!player.hasEffect(EffectInit.silver_ward.get())) return;
+		if (!player.hasEffect(EffectInit.silver_ward)) return;
 
 		ServerLevel sLevel = (ServerLevel) player.level();
 		ServerLevel overworld = sLevel.getServer().overworld();

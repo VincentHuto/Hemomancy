@@ -16,7 +16,7 @@ public class ElytraEffect extends MobEffect {
 		super(MobEffectCategory.BENEFICIAL, 0);
 	}
 
-	public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
+	public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
 		return true;
 	}
 
@@ -46,7 +46,7 @@ public class ElytraEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
+	public boolean applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
 		// System.out.println("fef");
 		if (livingEntity instanceof Player player) {
 			setFlightEnabled(player, true);
@@ -98,12 +98,18 @@ public class ElytraEffect extends MobEffect {
 				player.stopFallFlying();
 			}
 		}
+	
+		return true;
 	}
 
 	@Override
-	public void removeAttributeModifiers(@NotNull LivingEntity living, @NotNull AttributeMap attributemods,
-			int p_111187_3_) {
-		super.removeAttributeModifiers(living, attributemods, p_111187_3_);
+	public void removeAttributeModifiers(@NotNull AttributeMap attributemods) {
+		super.removeAttributeModifiers(attributemods);
+	}
+
+	@Override
+	public void onMobRemoved(LivingEntity living, int amplifier, net.minecraft.world.entity.Entity.RemovalReason reason) {
+		super.onMobRemoved(living, amplifier, reason);
 		if (living instanceof ServerPlayer serverPlayer) {
 			setFlightEnabled(serverPlayer, false);
 		} else if (living instanceof Player player && living.level().isClientSide) {

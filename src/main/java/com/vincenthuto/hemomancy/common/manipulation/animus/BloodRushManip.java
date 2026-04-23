@@ -27,7 +27,7 @@ public class BloodRushManip extends BloodManipulation {
 		will.setPos(player.getEyePosition());
 		will.setCreator(player);
 		world.addFreshEntity(will);
-		player.addEffect(new MobEffectInstance(EffectInit.blood_rush.get(), 250, 1));
+		player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 250, 1));
 	}
 
 }

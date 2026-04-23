@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.tool;
 import java.util.List;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -14,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
 public class DrudgeElectrodeItem extends Item {
@@ -25,16 +27,16 @@ public class DrudgeElectrodeItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		tooltip.add(Component.literal("Used to give and reflect commands to drudges"));
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_MODE)) {
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_MODE)) {
 				tooltip.add(Component.literal("State: On").withStyle(ChatFormatting.RED));
 			} else {
 				tooltip.add(Component.literal("State: Off").withStyle(ChatFormatting.GRAY));
 			}
 		}
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		super.appendHoverText(stack, context, tooltip, flagIn);
 
 	}
 
@@ -65,7 +67,7 @@ public class DrudgeElectrodeItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();
 		if (stack.getItem() instanceof DrudgeElectrodeItem) {
-			CompoundTag compound = stack.getOrCreateTag();
+			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (!compound.getBoolean(TAG_MODE)) {
 				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_MODE, !compound.getBoolean(TAG_MODE));
@@ -73,7 +75,7 @@ public class DrudgeElectrodeItem extends Item {
 				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_MODE, !compound.getBoolean(TAG_MODE));
 			}
-			stack.setTag(compound);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

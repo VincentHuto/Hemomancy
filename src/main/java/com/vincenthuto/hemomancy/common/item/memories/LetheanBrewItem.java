@@ -34,8 +34,8 @@ public class LetheanBrewItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal("Highly concentrated lethean dew"));
 		tooltip.add(Component.literal("Used to forget ALL your manipulations"));
 		tooltip.add(Component.literal("\"Dont Spill It...\""));
@@ -84,7 +84,7 @@ public class LetheanBrewItem extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack p_43001_) {
+	public int getUseDuration(ItemStack p_43001_, LivingEntity entity) {
 		return 32;
 	}
 

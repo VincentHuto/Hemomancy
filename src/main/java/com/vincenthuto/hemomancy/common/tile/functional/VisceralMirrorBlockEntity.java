@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -362,8 +363,8 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	// ========================== NBT ==========================
 
 	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.saveAdditional(tag, provider);
 		tag.putInt("Phase", phase.ordinal());
 		tag.putInt("RitualTicks", ritualTicks);
 		tag.putInt("TotalRitualTicks", totalRitualTicks);
@@ -375,8 +376,8 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.loadAdditional(tag, provider);
 		int phaseOrd = tag.getInt("Phase");
 		phase = phaseOrd >= 0 && phaseOrd < RitualPhase.values().length
 				? RitualPhase.values()[phaseOrd] : RitualPhase.IDLE;
@@ -390,9 +391,9 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
-		saveAdditional(tag);
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		CompoundTag tag = super.getUpdateTag(provider);
+		saveAdditional(tag, provider);
 		return tag;
 	}
 

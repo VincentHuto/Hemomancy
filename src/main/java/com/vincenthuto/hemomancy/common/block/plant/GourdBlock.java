@@ -4,11 +4,13 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,16 +25,17 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.common.ItemAbilities;
 
 public class GourdBlock extends PumpkinBlock {
 	public GourdBlock(BlockBehaviour.Properties p_55284_) {
 		super(p_55284_);
 	}
 
-	public InteractionResult use(BlockState p_55289_, Level p_55290_, BlockPos p_55291_, Player p_55292_,
-			InteractionHand p_55293_, BlockHitResult p_55294_) {
-		ItemStack itemstack = p_55292_.getItemInHand(p_55293_);
-		if (itemstack.canPerformAction(net.neoforged.neoforge.common.ToolActions.SHEARS_CARVE)) {
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack itemstack, BlockState p_55289_, Level p_55290_, BlockPos p_55291_,
+			Player p_55292_, InteractionHand p_55293_, BlockHitResult p_55294_) {
+		if (itemstack.canPerformAction(ItemAbilities.SHEARS_CARVE)) {
 			if (!p_55290_.isClientSide) {
 				Direction direction = p_55294_.getDirection();
 				Direction direction1 = direction.getAxis() == Direction.Axis.Y ? p_55292_.getDirection().getOpposite()
@@ -49,17 +52,21 @@ public class GourdBlock extends PumpkinBlock {
 						0.05D * (double) direction1.getStepX() + p_55290_.random.nextDouble() * 0.02D, 0.05D,
 						0.05D * (double) direction1.getStepZ() + p_55290_.random.nextDouble() * 0.02D);
 				p_55290_.addFreshEntity(itementity);
-				itemstack.hurtAndBreak(1, p_55292_, (p_55287_) -> {
-					p_55287_.broadcastBreakEvent(p_55293_);
-				});
+				itemstack.hurtAndBreak(1, p_55292_, p_55293_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND
+						: EquipmentSlot.OFFHAND);
 				p_55290_.gameEvent(p_55292_, GameEvent.SHEAR, p_55291_);
 				p_55292_.awardStat(Stats.ITEM_USED.get(Items.SHEARS));
 			}
 
-			return InteractionResult.sidedSuccess(p_55290_.isClientSide);
-		} else {
-			return super.use(p_55289_, p_55290_, p_55291_, p_55292_, p_55293_, p_55294_);
+			return ItemInteractionResult.SUCCESS;
 		}
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return InteractionResult.PASS;
 	}
 
 	public StemBlock getStem() {

@@ -229,10 +229,10 @@ public class BloodBallRenderer {
 				float[] v11 = applyStretch(x11, y11, z11, dX, dY, dZ, stretchFactor, squeeze);
 				float[] v01 = applyStretch(x01, y01, z01, dX, dY, dZ, stretchFactor, squeeze);
 
-				vc.vertex(mat, v00[0], v00[1], v00[2]).color(r, g, b, a).endVertex();
-				vc.vertex(mat, v10[0], v10[1], v10[2]).color(r, g, b, a).endVertex();
-				vc.vertex(mat, v11[0], v11[1], v11[2]).color(r, g, b, a).endVertex();
-				vc.vertex(mat, v01[0], v01[1], v01[2]).color(r, g, b, a).endVertex();
+				vc.addVertex(mat, v00[0], v00[1], v00[2]).setColor(r, g, b, a);
+				vc.addVertex(mat, v10[0], v10[1], v10[2]).setColor(r, g, b, a);
+				vc.addVertex(mat, v11[0], v11[1], v11[2]).setColor(r, g, b, a);
+				vc.addVertex(mat, v01[0], v01[1], v01[2]).setColor(r, g, b, a);
 			}
 		}
 	}

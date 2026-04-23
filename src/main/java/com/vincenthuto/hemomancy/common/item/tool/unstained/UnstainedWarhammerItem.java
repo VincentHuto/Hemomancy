@@ -26,7 +26,7 @@ public class UnstainedWarhammerItem extends DiggerItem {
 	private static final int CRIPPLE_AMPLIFIER = 0;
 
 	public UnstainedWarhammerItem(float attackDamage, float attackSpeed, Tier tier, Properties properties) {
-		super(attackDamage, attackSpeed, tier, BlockTags.MINEABLE_WITH_PICKAXE, properties);
+		super(tier, BlockTags.MINEABLE_WITH_PICKAXE, properties);
 	}
 
 	@Override

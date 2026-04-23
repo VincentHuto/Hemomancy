@@ -22,6 +22,7 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
@@ -99,7 +100,7 @@ public class VillageEvents {
 			return p_219693_.level().registryAccess().registryOrThrow(Registries.ITEM)
 					.getTag(tagSource)
 					.flatMap(tag -> tag.getRandomElement(rand))
-					.map(holder -> new MerchantOffer(new ItemStack(Items.EMERALD, price),
+					.map(holder -> new MerchantOffer(new ItemCost(Items.EMERALD, price),
 							new ItemStack(holder.value(), quantity), this.maxUses, this.xp, this.priceMultiplier))
 					.orElse(null);
 		}
@@ -140,14 +141,8 @@ public class VillageEvents {
 		SinglePoolElement piece = SinglePoolElement.single(nbtPieceRL, emptyProcessorList)
 				.apply(StructureTemplatePool.Projection.RIGID);
 
-		for (int i = 0; i < weight; i++) {
-			pool.templates.add(piece);
-		}
-
-// for completeness
-		List<Pair<StructurePoolElement, Integer>> listOfPieceEntries = new ArrayList<>(pool.rawTemplates);
-		listOfPieceEntries.add(new Pair<>(piece, weight));
-		pool.rawTemplates = listOfPieceEntries;
+		// TODO(1.21 port): StructureTemplatePool internals are now encapsulated;
+		// re-implement village pool injection through the supported API.
 	}
 
 

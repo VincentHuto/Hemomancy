@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingAxeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -13,6 +15,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -21,43 +24,31 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-public class LivingAxeItem extends LivingToolItem {
+public class LivingAxeItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
 
 	public static String TAG_STATE = "state";
-
-	float count = 0.5f;
 
 	public LivingAxeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.3f, tier, builderIn);
 	}
-//
-//	@Override
-//		public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-//		consumer.accept(new IClientItemExtensions() {
-//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingAxe();
-//
-//			@Override
-//			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-//				return myRenderer;
-//			}
-//		});
-//	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_STATE)) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
 			} else {
 				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
@@ -68,13 +59,13 @@ public class LivingAxeItem extends LivingToolItem {
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
-		if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
-			attacker.heal(this.getAttackDamage() / 2);
+		if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
+			attacker.heal(this.getLivingAttackDamage() / 2);
 			if (!attacker.level().isClientSide) {
 				Player playerIn = (Player) attacker;
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						.orElseThrow(NullPointerException::new);
-				float damageMod = this.getAttackDamage() * 75f;
+				float damageMod = this.getLivingAttackDamage() * 75f;
 				if (playerVolume.getBloodVolume() > damageMod) {
 					playerVolume.drain(damageMod);
 
@@ -82,9 +73,7 @@ public class LivingAxeItem extends LivingToolItem {
 				} else {
 					playerVolume.drain(damageMod);
 					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
-					stack.hurtAndBreak(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
-						p_220017_1_.broadcastBreakEvent(attacker.getUsedItemHand());
-					});
+					stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
 				}
 
 			}
@@ -93,10 +82,8 @@ public class LivingAxeItem extends LivingToolItem {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropLivingAxe.INSTANCE);
-
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return RenderPropLivingAxe.INSTANCE;
 	}
 
 	@Override
@@ -124,7 +111,7 @@ public class LivingAxeItem extends LivingToolItem {
 		if (entity instanceof Player) {
 			Player player = (Player) entity;
 			if (stack.getItem() instanceof LivingAxeItem) {
-				CompoundTag compound = stack.getOrCreateTag();
+				CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 				if (compound.getBoolean(TAG_STATE)) {
 					if (player.onGround()) {
 
@@ -157,7 +144,7 @@ public class LivingAxeItem extends LivingToolItem {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();
 		if (stack.getItem() instanceof LivingAxeItem) {
-			CompoundTag compound = stack.getOrCreateTag();
+			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (!compound.getBoolean(TAG_STATE)) {
 				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
@@ -165,7 +152,7 @@ public class LivingAxeItem extends LivingToolItem {
 				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
 				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
 			}
-			stack.setTag(compound);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

@@ -2,13 +2,17 @@ package com.vincenthuto.hemomancy.common.itemhandler;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class CharmItemHandler implements IItemHandlerModifiable {
 	private final ItemStack itemStack;
@@ -38,9 +42,9 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 			return existing;
 		} else {
 			if (!simulate) {
-				setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+				setStackInSlot(slot, copyWithSize(existing, existing.getCount() - toExtract));
 			}
-			return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+			return copyWithSize(existing, toExtract);
 		}
 	}
 
@@ -65,18 +69,17 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 			if (itemTags.getInt("Slot") != slot)
 				continue;
 
-			return ItemStack.of(itemTags);
+			return ItemStack.parseOptional(provider(), itemTags);
 		}
 
 		return ItemStack.EMPTY;
 	}
 
 	private CompoundTag getTag() {
-		CompoundTag tag;
-		tag = itemStack.getTag();
-		if (tag == null)
-			itemStack.setTag(tag = new CompoundTag());
-		return tag;
+		if (!itemStack.has(DataComponents.CUSTOM_DATA)) {
+			itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag()));
+		}
+		return itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 	}
 
 	@Override
@@ -92,7 +95,7 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 		int limit = stack.getMaxStackSize();
 
 		if (existing.getCount() > 0) {
-			if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+			if (!canStacksStack(stack, existing))
 				return stack;
 
 			limit -= existing.getCount();
@@ -105,14 +108,14 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 
 		if (!simulate) {
 			if (existing.getCount() <= 0) {
-				existing = reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack;
+				existing = reachedLimit ? copyWithSize(stack, limit) : stack;
 			} else {
 				existing.grow(reachedLimit ? limit : stack.getCount());
 			}
 			setStackInSlot(slot, existing);
 		}
 
-		return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit) : ItemStack.EMPTY;
+		return reachedLimit ? copyWithSize(stack, stack.getCount() - limit) : ItemStack.EMPTY;
 	}
 
 	@Override
@@ -123,16 +126,16 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 	@Override
 	public void setStackInSlot(int slot, ItemStack stack) {
 		validateSlotIndex(slot);
+		CompoundTag rootTag = getTag();
 
 		CompoundTag itemTag = null;
 		boolean hasStack = stack.getCount() > 0;
 		if (hasStack) {
-			itemTag = new CompoundTag();
+			itemTag = (CompoundTag) stack.save(provider());
 			itemTag.putInt("Slot", slot);
-			stack.save(itemTag);
 		}
 
-		ListTag tagList = getTag().getList("Items", Tag.TAG_COMPOUND);
+		ListTag tagList = rootTag.getList("Items", Tag.TAG_COMPOUND);
 		for (int i = 0; i < tagList.size(); i++) {
 			CompoundTag existing = tagList.getCompound(i);
 			if (existing.getInt("Slot") != slot)
@@ -148,11 +151,29 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 		if (hasStack)
 			tagList.add(itemTag);
 
-		getTag().put("Items", tagList);
+		rootTag.put("Items", tagList);
+		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(rootTag));
+	}
+
+	private HolderLookup.Provider provider() {
+		return ServerLifecycleHooks.getCurrentServer() != null
+				? ServerLifecycleHooks.getCurrentServer().registryAccess()
+				: RegistryAccess.EMPTY;
 	}
 
 	private void validateSlotIndex(int slot) {
 		if (slot < 0 || slot >= getSlots())
 			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlots() + ")");
+	}
+
+	private static ItemStack copyWithSize(ItemStack stack, int size) {
+		if (size <= 0) {
+			return ItemStack.EMPTY;
+		}
+		return stack.copyWithCount(size);
+	}
+
+	private static boolean canStacksStack(ItemStack first, ItemStack second) {
+		return ItemStack.isSameItemSameComponents(first, second);
 	}
 }

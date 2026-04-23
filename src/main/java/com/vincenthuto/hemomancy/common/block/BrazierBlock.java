@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -159,12 +160,10 @@ public class BrazierBlock extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(RITUAL_PHASE, 0);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
+			ItemStack stack) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
-		ItemStack stack = player.getItemInHand(handIn);
 		int phase = state.getValue(RITUAL_PHASE);
 
 		// === Phase 0: Unlit — light the brazier ===
@@ -220,6 +219,20 @@ public class BrazierBlock extends Block implements EntityBlock {
 		}
 
 		return InteractionResult.PASS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(state, worldIn, pos, player, ItemStack.EMPTY);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		return handleInteraction(state, worldIn, pos, player, stack) == InteractionResult.PASS
+				? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 
 	/**

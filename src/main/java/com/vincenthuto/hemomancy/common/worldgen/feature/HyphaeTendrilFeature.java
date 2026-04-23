@@ -189,16 +189,6 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	private boolean respectsCutoff(WorldGenRegion region, BlockPos pos) {
-		int i = SectionPos.blockToSectionCoord(pos.getX());
-		int j = SectionPos.blockToSectionCoord(pos.getZ());
-		ChunkPos chunkpos = region.getCenter();
-		int k = Math.abs(chunkpos.x - i);
-		int l = Math.abs(chunkpos.z - j);
-
-		if (k <= region.writeRadiusCutoff && l <= region.writeRadiusCutoff) {
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 }

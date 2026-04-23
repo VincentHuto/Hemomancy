@@ -8,6 +8,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PacketOpenScarsInv implements CustomPacketPayload {
 	public static final Type<PacketOpenScarsInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_scars_inv"));
@@ -27,8 +28,10 @@ public class PacketOpenScarsInv implements CustomPacketPayload {
 
 	public static void handle(final PacketOpenScarsInv msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ctx.player().doCloseContainer();
-			ctx.player().openMenu(new ScarMenuProvider());
+			if (ctx.player() instanceof ServerPlayer player) {
+				player.closeContainer();
+				player.openMenu(new ScarMenuProvider());
+			}
 		});
 	}
 

@@ -58,13 +58,13 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 			AbstractClientPlayer playerIn, HumanoidArm side) {
 		if (side == HumanoidArm.RIGHT) {
 			Minecraft mc = Minecraft.getInstance();
-			mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+			mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 			renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).rightArm,
 					(playerrenderer.getModel()).rightSleeve);
 		} else {
 			Minecraft mc = Minecraft.getInstance();
-			mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+			mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 			this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).leftArm,
 					(playerrenderer.getModel()).leftSleeve);
@@ -74,7 +74,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side) {
 		Minecraft mc = Minecraft.getInstance();
-		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 		matrixStackIn.pushPose();
 		if (side == HumanoidArm.RIGHT) {
 			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(12.0f).toMoj());
@@ -159,7 +159,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 			AbstractClientPlayer playerIn, ModelPart rendererArmIn, ModelPart rendererArmwearIn) {
 		Minecraft mc = Minecraft.getInstance();
 
-		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 		PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 		// playerrenderer.setModelVisibilities(playerIn);
@@ -172,7 +172,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY);
 		rendererArmwearIn.xRot = 0.0F;
 		rendererArmwearIn.render(matrixStackIn,
-				bufferIn.getBuffer(RenderType.entityTranslucent(playerIn.getSkinTextureLocation())), combinedLightIn,
+				bufferIn.getBuffer(RenderType.entityTranslucent(playerIn.getSkin().texture())), combinedLightIn,
 				OverlayTexture.NO_OVERLAY);
 	}
 

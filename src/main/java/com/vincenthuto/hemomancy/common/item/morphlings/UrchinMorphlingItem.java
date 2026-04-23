@@ -55,10 +55,9 @@ public class UrchinMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Spined Barricade (armor via attribute, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.spined_barricade.get())) {
-			int amplifier = Math.min(maturity, 2);
-			player.addEffect(new MobEffectInstance(EffectInit.spined_barricade.get(),
-					100, amplifier, false, true, true));
+		if (!player.hasEffect(EffectInit.spined_barricade)) {
+			player.addEffect(new MobEffectInstance(EffectInit.spined_barricade,
+					100, maturity, false, true, true));
 		}
 
 		// Mature (3+): Tidal Anchor — periodically push away nearby hostile mobs

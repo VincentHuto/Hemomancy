@@ -5,13 +5,15 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -42,7 +45,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
     public SanguisLanceaEntity(Level pLevel, LivingEntity pShooter, ItemStack pStack) {
         super(EntityInit.sanguis_lancea.get(), pShooter, pLevel, pStack.copy(), ItemStack.EMPTY);
         this.sanguisLanceaItem = pStack.copy();
-        this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, pStack));
+        this.entityData.set(ID_LOYALTY, (byte)getEnchantmentLevel(Enchantments.LOYALTY, pStack));
         this.entityData.set(ID_FOIL, pStack.hasFoil());
     }
 
@@ -125,7 +128,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
         Entity entity1 = this.getOwner();
         DamageSource damagesource = this.damageSources().trident(this, (Entity)(entity1 == null ? this : entity1));
         this.dealtDamage = true;
-        Holder<SoundEvent> soundevent = SoundEvents.TRIDENT_HIT;
+        SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
         if (entity.hurt(damagesource, f)) {
             if (entity.getType() == EntityType.ENDERMAN) {
                 return;
@@ -150,17 +153,17 @@ public class SanguisLanceaEntity extends AbstractArrow {
                     lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
                     lightningbolt.setCause(entity1 instanceof ServerPlayer ? (ServerPlayer)entity1 : null);
                     this.level().addFreshEntity(lightningbolt);
-                    soundevent = SoundEvents.TRIDENT_THUNDER;
+                    soundevent = SoundEvents.TRIDENT_THUNDER.value();
                     f1 = 5.0F;
                 }
             }
         }
 
-        this.playSound(soundevent.value(), f1, 1.0F);
+        this.playSound(soundevent, f1, 1.0F);
     }
 
     public boolean isChanneling() {
-        return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.CHANNELING, this.sanguisLanceaItem) > 0;
+        return getEnchantmentLevel(Enchantments.CHANNELING, this.sanguisLanceaItem) > 0;
     }
 
     @Override
@@ -188,7 +191,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
         }
 
         this.dealtDamage = pCompound.getBoolean("DealtDamage");
-        this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, this.sanguisLanceaItem));
+        this.entityData.set(ID_LOYALTY, (byte)getEnchantmentLevel(Enchantments.LOYALTY, this.sanguisLanceaItem));
     }
 
     @Override
@@ -214,5 +217,10 @@ public class SanguisLanceaEntity extends AbstractArrow {
     @Override
     public boolean shouldRender(double pX, double pY, double pZ) {
         return true;
+    }
+
+    private int getEnchantmentLevel(ResourceKey<Enchantment> enchantmentKey, ItemStack stack) {
+        Holder<Enchantment> enchantment = this.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantmentKey);
+        return EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
     }
 }

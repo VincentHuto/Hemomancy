@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.puzzle;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.puzzle.BloodPylonBlockEntity;
 import net.minecraft.ChatFormatting;
@@ -7,7 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -19,10 +22,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class BloodPylonBlock extends BaseEntityBlock {
+  public static final MapCodec<BloodPylonBlock> CODEC = simpleCodec(BloodPylonBlock::new);
 
     public BloodPylonBlock(Properties props) {
         super(props);
     }
+
+  @Override
+  protected MapCodec<? extends BaseEntityBlock> codec() {
+    return CODEC;
+  }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
@@ -42,9 +51,7 @@ public class BloodPylonBlock extends BaseEntityBlock {
         return createTickerHelper(type, BlockEntityInit.blood_pylon.get(), BloodPylonBlockEntity::serverTick);
     }
 
-    @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand, BlockHitResult hit) {
+    private InteractionResult handleUse(Level level, Player player) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         player.displayClientMessage(
             Component.translatable("message.hemomancy.blood_pylon.inspect")
@@ -52,4 +59,17 @@ public class BloodPylonBlock extends BaseEntityBlock {
             false);
         return InteractionResult.CONSUME;
     }
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return handleUse(level, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand hand, BlockHitResult hit) {
+		handleUse(level, player);
+		return ItemInteractionResult.SUCCESS;
+	}
 }

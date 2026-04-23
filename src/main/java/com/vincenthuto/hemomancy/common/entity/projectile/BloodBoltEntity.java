@@ -20,6 +20,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -53,7 +54,7 @@ public class BloodBoltEntity extends AbstractArrow {
 	}
 
 	@Nullable
-	private Potion potion = null;
+	private Holder<Potion> potion = null;
 	private final Set<MobEffectInstance> customPotionEffects = Sets.newHashSet();
 
 	private boolean fixedColor;
@@ -82,7 +83,7 @@ public class BloodBoltEntity extends AbstractArrow {
 			ListTag listnbt = new ListTag();
 
 			for (MobEffectInstance effectinstance : this.customPotionEffects) {
-				listnbt.add(effectinstance.save(new CompoundTag()));
+				listnbt.add(effectinstance.save());
 			}
 
 			compound.put("CustomPotionEffects", listnbt);
@@ -94,7 +95,7 @@ public class BloodBoltEntity extends AbstractArrow {
 		this.customPotionEffects.add(effect);
 		this.getEntityData().set(COLOR,
 				PotionContents.getColor(Stream.concat(
-						potion != null ? potion.getEffects().stream() : Stream.empty(),
+						potion != null ? potion.value().getEffects().stream() : Stream.empty(),
 						this.customPotionEffects.stream()).toList()));
 	}
 
@@ -181,7 +182,7 @@ public class BloodBoltEntity extends AbstractArrow {
 		super.readAdditionalSaveData(compound);
 		if (compound.contains("Potion", 8)) {
 			String potionId = compound.getString("Potion");
-			this.potion = potionId.isEmpty() ? null : BuiltInRegistries.POTION.get(ResourceLocation.parse(potionId));
+			this.potion = potionId.isEmpty() ? null : BuiltInRegistries.POTION.getHolder(ResourceLocation.parse(potionId)).orElse(null);
 		}
 
 		if (compound.contains("custom_potion_effects", 9)) {
@@ -207,7 +208,7 @@ public class BloodBoltEntity extends AbstractArrow {
 		} else {
 			this.entityData.set(COLOR,
 					PotionContents.getColor(Stream.concat(
-							potion != null ? potion.getEffects().stream() : Stream.empty(),
+							potion != null ? potion.value().getEffects().stream() : Stream.empty(),
 							this.customPotionEffects.stream()).toList()));
 		}
 

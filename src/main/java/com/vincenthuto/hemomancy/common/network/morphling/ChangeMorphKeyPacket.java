@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -33,8 +34,8 @@ public class ChangeMorphKeyPacket implements CustomPacketPayload {
 	public static class Handler {
 		public static void handle(final ChangeMorphKeyPacket msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
-				ServerPlayer player = ctx.player();
-				if (player == null)
+				Player packetPlayer = ctx.player();
+				if (!(packetPlayer instanceof ServerPlayer player))
 					return;
 
 				ItemStack jar = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);

@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -34,6 +35,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class QliphothBloomSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_qliphoth_blooms";
+	private static final SavedData.Factory<QliphothBloomSavedData> FACTORY =
+			new SavedData.Factory<>(QliphothBloomSavedData::new, QliphothBloomSavedData::load, null);
 	/** Maximum pomes a single bloom produces before its lifecycle is exhausted. */
 	public static final int MAX_POMES_PER_BLOOM = 9;
 
@@ -49,11 +52,10 @@ public class QliphothBloomSavedData extends SavedData {
 	public QliphothBloomSavedData() {}
 
 	public static QliphothBloomSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				QliphothBloomSavedData::load, QliphothBloomSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static QliphothBloomSavedData load(CompoundTag tag) {
+	public static QliphothBloomSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		QliphothBloomSavedData data = new QliphothBloomSavedData();
 		if (tag.contains("blooms", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("blooms", Tag.TAG_COMPOUND);
@@ -81,7 +83,7 @@ public class QliphothBloomSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (BloomEntry entry : blooms) {
 			CompoundTag bloomTag = new CompoundTag();

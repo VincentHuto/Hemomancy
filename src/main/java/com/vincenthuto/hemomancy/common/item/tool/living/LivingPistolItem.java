@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingPistolItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBulletEntity;
@@ -12,6 +13,7 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -24,13 +26,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class LivingPistolItem extends Item implements IDispellable {
+public class LivingPistolItem extends Item implements IDispellable, HemoClientItemExtensionsProvider {
 	public static String TAG_MODE = "mode";
 
 	public LivingPistolItem(Item.Properties propertiesIn) {
@@ -38,11 +41,12 @@ public class LivingPistolItem extends Item implements IDispellable {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().contains(TAG_MODE)) {
-				int mode = stack.getTag().getInt(TAG_MODE);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			if (tag.contains(TAG_MODE)) {
+				int mode = tag.getInt(TAG_MODE);
 				tooltip.add(Component.literal("State: " + mode).withStyle(ChatFormatting.RED));
 
 			}
@@ -89,7 +93,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 
 	public int getGunMode(ItemStack stack) {
 		if (stack.getItem() instanceof LivingPistolItem) {
-			CompoundTag compound = stack.getOrCreateTag();
+			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (compound.contains(TAG_MODE)) {
 				int mode = compound.getInt(TAG_MODE);
 				return mode;
@@ -113,7 +117,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		int count = 16;
 		int mode = getGunMode(stack);
 		if (mode == 0) {
@@ -127,16 +131,14 @@ public class LivingPistolItem extends Item implements IDispellable {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropPistol.INSTANCE);
-
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return RenderPropPistol.INSTANCE;
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		CompoundTag compound = stack.getOrCreateTag();
+		CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (playerIn.isCrouching()) {
 			int mode = getGunMode(stack);
 			if (mode == 0) {
@@ -149,7 +151,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 				compound.putInt(TAG_MODE, 0);
 				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 			}
-			stack.setTag(compound);
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		} else {
 			ItemUtils.startUsingInstantly(worldIn, playerIn, handIn);
 		}

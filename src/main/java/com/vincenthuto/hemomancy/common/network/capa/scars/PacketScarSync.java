@@ -46,9 +46,13 @@ public class PacketScarSync implements CustomPacketPayload {
 
 	public static void handle(final PacketScarSync msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Entity p = Minecraft.getInstance().level.getEntity(msg.playerId);
-			if (p instanceof Player) {
-				HemoCapabilityAccess.getScars(p).ifPresent(b -> {
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.level == null) {
+				return;
+			}
+			Entity p = mc.level.getEntity(msg.playerId);
+			if (p instanceof Player player) {
+				HemoCapabilityAccess.getScars(player).ifPresent(b -> {
 					b.setStackInSlot(msg.slot, msg.mindscar);
 				});
 			}

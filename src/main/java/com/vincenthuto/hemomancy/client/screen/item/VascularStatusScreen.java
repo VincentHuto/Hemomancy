@@ -153,7 +153,7 @@ public class VascularStatusScreen extends Screen {
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		// Default dim overlay for the area outside the GUI
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, mouseX, mouseY, partialTick);
 
 		int centerX = this.width / 2;
 		int centerY = this.height / 2;
@@ -211,9 +211,9 @@ public class VascularStatusScreen extends Screen {
 	 */
 	private void renderVascularModel(IVascularSystem vascular, LocalPlayer player,
 									 int posX, int posY, int scale) {
-		PoseStack modelViewStack = RenderSystem.getModelViewStack();
-		modelViewStack.pushPose();
-		modelViewStack.translate(posX, posY, 1050.0);
+		var modelViewStack = RenderSystem.getModelViewStack();
+		modelViewStack.pushMatrix();
+		modelViewStack.translate((float) posX, (float) posY, 1050.0F);
 		modelViewStack.scale(1.0F, 1.0F, -1.0F);
 		RenderSystem.applyModelViewMatrix();
 
@@ -269,7 +269,7 @@ public class VascularStatusScreen extends Screen {
 
 		poseStack.popPose();
 
-		modelViewStack.popPose();
+		modelViewStack.popMatrix();
 		RenderSystem.applyModelViewMatrix();
 		Lighting.setupFor3DItems();
 	}
@@ -296,13 +296,12 @@ public class VascularStatusScreen extends Screen {
 		g *= pulse;
 		b *= pulse;
 
-		// Use entityTranslucentCull with a white texture so the color tint is the only visual
+		int packedColor = net.minecraft.util.FastColor.ARGB32.colorFromFloat(a, r, g, b);
 		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(
-				new net.minecraft.resources.ResourceLocation("minecraft", "textures/misc/white.png")));
+				net.minecraft.resources.ResourceLocation.parse("minecraft:textures/misc/white.png")));
 
 		// Render the actual model part geometry with the tint color
-		part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-				r, g, b, a);
+		part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, packedColor);
 	}
 
 	/**
@@ -328,11 +327,11 @@ public class VascularStatusScreen extends Screen {
 		g *= pulse;
 		b *= pulse;
 
+		int packedColor = net.minecraft.util.FastColor.ARGB32.colorFromFloat(a, r, g, b);
 		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(
-				new net.minecraft.resources.ResourceLocation("minecraft", "textures/misc/white.png")));
+				net.minecraft.resources.ResourceLocation.parse("minecraft:textures/misc/white.png")));
 
-		part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-				r, g, b, a);
+		part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, packedColor);
 	}
 
 	// ───── Hover Tooltips with 2D Projection ─────

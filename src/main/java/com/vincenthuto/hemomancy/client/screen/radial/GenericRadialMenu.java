@@ -150,7 +150,7 @@ public class GenericRadialMenu {
 	public void close() {
 		Screen owner = host.getScreen();
 		state = State.CLOSING;
-		startAnimation = minecraft.level.getGameTime() + (double) minecraft.getFrameTime();
+		startAnimation = minecraft.level.getGameTime() + (double) minecraft.getTimer().getGameTimeDeltaPartialTick(false);
 		animProgress = 1.0f;
 		setHovered(-1);
 	}
@@ -159,7 +159,7 @@ public class GenericRadialMenu {
 		Screen owner = host.getScreen();
 
 		if (state == State.INITIALIZING) {
-			startAnimation = minecraft.level.getGameTime() + (double) minecraft.getFrameTime();
+			startAnimation = minecraft.level.getGameTime() + (double) minecraft.getTimer().getGameTimeDeltaPartialTick(false);
 			state = State.OPENING;
 			animProgress = 0;
 		}
@@ -334,10 +334,10 @@ public class GenericRadialMenu {
 			float pos2InX = x + radiusIn * (float) Math.cos(angle2);
 			float pos2InY = y + radiusIn * (float) Math.sin(angle2);
 
-			buffer.vertex(pos1OutX, pos1OutY, z).color(r, g, b, a).endVertex();
-			buffer.vertex(pos1InX, pos1InY, z).color(r, g, b, a).endVertex();
-			buffer.vertex(pos2InX, pos2InY, z).color(r, g, b, a).endVertex();
-			buffer.vertex(pos2OutX, pos2OutY, z).color(r, g, b, a).endVertex();
+			buffer.addVertex(pos1OutX, pos1OutY, z).setColor(r, g, b, a);
+			buffer.addVertex(pos1InX, pos1InY, z).setColor(r, g, b, a);
+			buffer.addVertex(pos2InX, pos2InY, z).setColor(r, g, b, a);
+			buffer.addVertex(pos2OutX, pos2OutY, z).setColor(r, g, b, a);
 		}
 	}
 

@@ -57,6 +57,7 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
@@ -86,6 +87,11 @@ public class BlockInit {
 
 	public static final DeferredRegister<Block> POTTEDBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
+
+	private static final ResourceKey<Block> GOURD_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("gourd"));
+	private static final ResourceKey<Block> GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("gourd_stem"));
+	private static final ResourceKey<Block> ATTACHED_GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("attached_gourd_stem"));
+	private static final ResourceKey<Item> GOURD_SEED_ITEM_KEY = ResourceKey.create(Registries.ITEM, Hemomancy.rloc("gourd_seeds"));
 
 	// Ash
 	public static final DeferredHolder<Block, Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
@@ -143,8 +149,8 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> venous_stone_slab = SLABBLOCKS.register("venous_stone_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final DeferredHolder<Block, Block> venous_stone_stairs = BASEBLOCKS.register(("venous_stone_stairs"),
-			() -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
-					BlockBehaviour.Properties.copy(venous_stone.get())));
+			() -> new StairBlock(venous_stone.get().defaultBlockState(),
+					BlockBehaviour.Properties.ofFullCopy(venous_stone.get())));
 
 	public static final DeferredHolder<Block, Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -154,8 +160,8 @@ public class BlockInit {
 			"polished_venous_stone_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final DeferredHolder<Block, Block> polished_venous_stone_stairs = STAIRBLOCKS.register(
-			("polished_venous_stone_stairs"), () -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
-					BlockBehaviour.Properties.copy(venous_stone.get())));
+			("polished_venous_stone_stairs"), () -> new StairBlock(venous_stone.get().defaultBlockState(),
+					BlockBehaviour.Properties.ofFullCopy(venous_stone.get())));
 	public static final DeferredHolder<Block, Block> chiseled_polished_venous_stone = BASEBLOCKS.register(
 			"chiseled_polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -166,8 +172,8 @@ public class BlockInit {
 			"polished_venous_stone_brick_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final DeferredHolder<Block, Block> polished_venous_stone_brick_stairs = STAIRBLOCKS.register(
-			("polished_venous_stone_brick_stairs"), () -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
-					BlockBehaviour.Properties.copy(venous_stone.get())));
+			("polished_venous_stone_brick_stairs"), () -> new StairBlock(venous_stone.get().defaultBlockState(),
+					BlockBehaviour.Properties.ofFullCopy(venous_stone.get())));
 	public static final DeferredHolder<Block, Block> cracked_polished_venous_stone_bricks = BASEBLOCKS.register(
 			"cracked_polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -210,7 +216,7 @@ public class BlockInit {
 					.sound(SoundType.METAL)));
 
 	public static final DeferredHolder<Block, Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
-            CrimsonFlameBlock::new);
+			() -> new CrimsonFlameBlock());
 
 	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
 			MnemonicReliquaryBlock::new);
@@ -228,7 +234,7 @@ public class BlockInit {
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
-			() -> new BleedingHeartBlock(MobEffects.ABSORPTION, 12,
+			() -> new BleedingHeartBlock(MobEffects.ABSORPTION.value(), 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_bleeding_heart = POTTEDBLOCKS.register("potted_bleeding_heart",
@@ -236,7 +242,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of()));
 
 	public static final DeferredHolder<Block, Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
-			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
+			() -> new InfectedFungusBlock(MobEffects.CONFUSION.value(), 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
@@ -244,7 +250,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final DeferredHolder<Block, Block> puffball_fungus = MODELEDBLOCKS.register("puffball_fungus",
-			() -> new PuffballFungusBlock(MobEffects.SATURATION, 12,
+			() -> new PuffballFungusBlock(MobEffects.SATURATION.value(), 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_puffball_fungus = POTTEDBLOCKS.register("potted_puffball_fungus",
@@ -252,7 +258,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final DeferredHolder<Block, Block> stinkhorn_fungus = CROSSBLOCKS.register("stinkhorn_fungus",
-			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
+			() -> new InfectedFungusBlock(MobEffects.CONFUSION.value(), 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_stinkhorn_fungus = POTTEDBLOCKS.register("potted_stinkhorn_fungus",
@@ -260,11 +266,11 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final DeferredHolder<Block, Block> devils_tooth = CROSSBLOCKS.register("devils_tooth",
-			() -> new DevilsToothBlock(MobEffects.CONFUSION, 12,
+			() -> new DevilsToothBlock(MobEffects.CONFUSION.value(), 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> lethean_poppy = CROSSBLOCKS.register("lethean_poppy",
-			() -> new LetheanPoppyBlock(MobEffects.REGENERATION, 8,
+			() -> new LetheanPoppyBlock(MobEffects.REGENERATION.value(), 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
 	public static final DeferredHolder<Block, Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
@@ -294,15 +300,15 @@ public class BlockInit {
 	// Myco-heterotrophic Plants
 
 	public static final DeferredHolder<Block, Block> ghost_pipe = CROSSBLOCKS.register("ghost_pipe",
-			() -> new GhostPipeBlock(MobEffects.NIGHT_VISION, 10,
+			() -> new GhostPipeBlock(MobEffects.NIGHT_VISION.value(), 10,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
 	public static final DeferredHolder<Block, Block> sarcodes = CROSSBLOCKS.register("sarcodes",
-			() -> new SarcodesBlock(MobEffects.REGENERATION, 8,
+			() -> new SarcodesBlock(MobEffects.REGENERATION.value(), 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> rafflesia = CROSSBLOCKS.register("rafflesia",
-			() -> new RafflesiaBlock(MobEffects.CONFUSION, 12,
+			() -> new RafflesiaBlock(MobEffects.CONFUSION.value(), 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
 	public static final DeferredHolder<Block, Block> potted_ghost_pipe = POTTEDBLOCKS.register("potted_ghost_pipe",
@@ -324,15 +330,11 @@ public class BlockInit {
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> attached_gourd_stem = MODELEDBLOCKS.register("attached_gourd_stem",
-			() -> new AttachedStemBlock(gourd.get(), () -> {
-				return ItemInit.gourd_seeds.get();
-			}, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.WOOD)
+			() -> new AttachedStemBlock(GOURD_BLOCK_KEY, GOURD_STEM_BLOCK_KEY, GOURD_SEED_ITEM_KEY, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.WOOD)
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> gourd_stem = MODELEDBLOCKS.register("gourd_stem",
-			() -> new StemBlock(gourd.get(), () -> {
-				return ItemInit.gourd_seeds.get();
-			}, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak()
+			() -> new StemBlock(GOURD_BLOCK_KEY, ATTACHED_GOURD_STEM_BLOCK_KEY, GOURD_SEED_ITEM_KEY, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak()
 					.sound(SoundType.HARD_CROP).pushReaction(PushReaction.DESTROY)));
 
 	// Idols
@@ -485,9 +487,10 @@ public class BlockInit {
 		return blocks;
 	}
 
-	public static Stream<DeferredHolder<Block, Block>> getAllBlockEntriesAsStream() {
+	public static Stream<DeferredHolder<Block, ? extends Block>> getAllBlockEntriesAsStream() {
 
-		Stream<DeferredHolder<Block, Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
+		Stream<DeferredHolder<Block, ? extends Block>> combinedStream = Stream
+				.<Collection<? extends DeferredHolder<Block, ? extends Block>>>of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
 				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
 				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
 				.flatMap(Collection::stream);

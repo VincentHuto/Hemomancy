@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.plant;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
@@ -19,13 +20,20 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.util.TriState;
 
-public class HyphaeBlock extends BushBlock implements BonemealableBlock, net.neoforged.neoforge.common.IForgeShearable {
+public class HyphaeBlock extends BushBlock implements BonemealableBlock {
+	public static final MapCodec<HyphaeBlock> CODEC = simpleCodec(HyphaeBlock::new);
 	protected static final float AABB_OFFSET = 6.0F;
 	protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
 
 	public HyphaeBlock(BlockBehaviour.Properties pProperties) {
 		super(pProperties);
+	}
+
+	@Override
+	protected MapCodec<? extends BushBlock> codec() {
+		return CODEC;
 	}
 
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -35,14 +43,17 @@ public class HyphaeBlock extends BushBlock implements BonemealableBlock, net.neo
 	/**
 	 * @return whether bonemeal can be used on this block
 	 */
-	public boolean isValidBonemealTarget(LevelReader pLevel, BlockPos pPos, BlockState pState, boolean pIsClient) {
+	@Override
+	public boolean isValidBonemealTarget(LevelReader pLevel, BlockPos pPos, BlockState pState) {
 		return true;
 	}
 
+	@Override
 	public boolean isBonemealSuccess(Level pLevel, RandomSource pRandom, BlockPos pPos, BlockState pState) {
 		return true;
 	}
 
+	@Override
 	public void performBonemeal(ServerLevel pLevel, RandomSource pRandom, BlockPos pPos, BlockState pState) {
 		DoublePlantBlock doubleplantblock = (DoublePlantBlock) (pState.is(Blocks.FERN) ? Blocks.LARGE_FERN
 				: Blocks.TALL_GRASS);
@@ -57,8 +68,9 @@ public class HyphaeBlock extends BushBlock implements BonemealableBlock, net.neo
 		BlockPos blockpos = pPos.below();
 		if (pState.getBlock() == this) // Forge: This function is called during world gen and placement, before this
 										// block is set, so if we are not 'here' then assume it's the pre-check.
-			return pLevel.getBlockState(blockpos).canSustainPlant(pLevel, blockpos, Direction.UP, this)
-					|| pState.is(BlockInit.erythrocytic_mycelium.get());
+			return pLevel.getBlockState(blockpos).canSustainPlant(pLevel, blockpos, Direction.UP,
+					this.defaultBlockState()) == TriState.TRUE
+					|| pLevel.getBlockState(blockpos).is(BlockInit.erythrocytic_mycelium.get());
 		return this.mayPlaceOn(pLevel.getBlockState(blockpos), pLevel, blockpos);
 	}
 

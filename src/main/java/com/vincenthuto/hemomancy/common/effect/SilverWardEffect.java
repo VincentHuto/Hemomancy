@@ -27,7 +27,7 @@ public class SilverWardEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		// Spawn ambient teal particles around the entity to visualize the ward
 		if (!entity.level().isClientSide && entity.level() instanceof ServerLevel serverLevel) {
 			if (entity.tickCount % PARTICLE_INTERVAL == 0) {
@@ -37,6 +37,8 @@ public class SilverWardEffect extends MobEffect {
 						count, 0.5, 0.8, 0.5, 0.01);
 			}
 		}
+	
+		return true;
 	}
 
 	/**
@@ -69,7 +71,7 @@ public class SilverWardEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 }

@@ -59,8 +59,8 @@ public class MothMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Luminous Dissipation (knockback resistance, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.luminous_dissipation.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.luminous_dissipation.get(),
+		if (!player.hasEffect(EffectInit.luminous_dissipation)) {
+			player.addEffect(new MobEffectInstance(EffectInit.luminous_dissipation,
 					100, maturity, false, true, true));
 		}
 

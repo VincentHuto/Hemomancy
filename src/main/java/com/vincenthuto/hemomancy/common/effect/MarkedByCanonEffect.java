@@ -24,13 +24,15 @@ public class MarkedByCanonEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		// Passive debuff — the main penalty is reduced extraction success
 		// and the attribute modifier on movement speed.
 		// At higher amplifiers, could apply periodic minor damage.
 		if (amplifier >= 2 && entity.level().getGameTime() % 100 == 0) {
 			entity.hurt(entity.damageSources().magic(), 1.0f);
 		}
+	
+		return true;
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class MarkedByCanonEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return amplifier >= 2;
 	}
 }

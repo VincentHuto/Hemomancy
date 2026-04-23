@@ -2,11 +2,9 @@ package com.vincenthuto.hemomancy.common.capability.player.scar;
 
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityKeys;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
@@ -24,7 +22,8 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketGourdScarSync;
 import com.vincenthuto.hemomancy.common.network.capa.scars.PacketScarSync;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -67,36 +66,46 @@ public class ScarEntityEventHandler {
 
 	// --- Synergy bonus definitions (one per tendency) ---
 
-	private record SynergyBonus(Attribute attribute, UUID uuid, String name, double amount,
-			AttributeModifier.Operation operation) {
+	private static final class SynergyBonus {
+		private final Holder<Attribute> attribute;
+		private final ResourceLocation modifierId;
+		private final double amount;
+		private final AttributeModifier.Operation operation;
+
+		private SynergyBonus(Holder<Attribute> attribute, ResourceLocation modifierId, double amount,
+				AttributeModifier.Operation operation) {
+			this.attribute = attribute;
+			this.modifierId = modifierId;
+			this.amount = amount;
+			this.operation = operation;
+		}
+
+		private Holder<Attribute> attribute() { return attribute; }
+		private ResourceLocation modifierId() { return modifierId; }
+		private double amount() { return amount; }
+		private AttributeModifier.Operation operation() { return operation; }
 	}
 
 	private static final EnumMap<EnumBloodTendency, SynergyBonus> SYNERGY_BONUSES = new EnumMap<>(
 			EnumBloodTendency.class);
 
 	static {
-		SYNERGY_BONUSES.put(EnumBloodTendency.ANIMUS, makeSynergy(EnumBloodTendency.ANIMUS,
-				Attributes.MAX_HEALTH, 2.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.FLAMMEUS, makeSynergy(EnumBloodTendency.FLAMMEUS,
-				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.MORTEM, makeSynergy(EnumBloodTendency.MORTEM,
-				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.CONGEATIO, makeSynergy(EnumBloodTendency.CONGEATIO,
-				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		SYNERGY_BONUSES.put(EnumBloodTendency.DUCTILIS, makeSynergy(EnumBloodTendency.DUCTILIS,
-				Attributes.ATTACK_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		SYNERGY_BONUSES.put(EnumBloodTendency.LUX, makeSynergy(EnumBloodTendency.LUX,
-				Attributes.ARMOR_TOUGHNESS, 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.FERRIC, makeSynergy(EnumBloodTendency.FERRIC,
-				Attributes.ARMOR, 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.TENEBRIS, makeSynergy(EnumBloodTendency.TENEBRIS,
-				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-	}
-
-	private static SynergyBonus makeSynergy(EnumBloodTendency tendency, Attribute attribute,
-		double amount, AttributeModifier.Operation operation) {
-		net.minecraft.resources.ResourceLocation id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "synergy_" + tendency.name().toLowerCase());
-		return new SynergyBonus(attribute, id, amount, operation);
+		SYNERGY_BONUSES.put(EnumBloodTendency.ANIMUS, new SynergyBonus(Attributes.MAX_HEALTH,
+				Hemomancy.rloc("synergy_animus"), 2.0, AttributeModifier.Operation.ADD_VALUE));
+		SYNERGY_BONUSES.put(EnumBloodTendency.FLAMMEUS, new SynergyBonus(Attributes.ATTACK_DAMAGE,
+				Hemomancy.rloc("synergy_flammeus"), 1.0, AttributeModifier.Operation.ADD_VALUE));
+		SYNERGY_BONUSES.put(EnumBloodTendency.MORTEM, new SynergyBonus(Attributes.ATTACK_DAMAGE,
+				Hemomancy.rloc("synergy_mortem"), 1.0, AttributeModifier.Operation.ADD_VALUE));
+		SYNERGY_BONUSES.put(EnumBloodTendency.CONGEATIO, new SynergyBonus(Attributes.MOVEMENT_SPEED,
+				Hemomancy.rloc("synergy_congeatio"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+		SYNERGY_BONUSES.put(EnumBloodTendency.DUCTILIS, new SynergyBonus(Attributes.ATTACK_SPEED,
+				Hemomancy.rloc("synergy_ductilis"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+		SYNERGY_BONUSES.put(EnumBloodTendency.LUX, new SynergyBonus(Attributes.ARMOR_TOUGHNESS,
+				Hemomancy.rloc("synergy_lux"), 1.0, AttributeModifier.Operation.ADD_VALUE));
+		SYNERGY_BONUSES.put(EnumBloodTendency.FERRIC, new SynergyBonus(Attributes.ARMOR,
+				Hemomancy.rloc("synergy_ferric"), 1.0, AttributeModifier.Operation.ADD_VALUE));
+		SYNERGY_BONUSES.put(EnumBloodTendency.TENEBRIS, new SynergyBonus(Attributes.MOVEMENT_SPEED,
+				Hemomancy.rloc("synergy_tenebris"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 	}
 
 	// --- Capability lifecycle ---
@@ -140,10 +149,8 @@ public class ScarEntityEventHandler {
 				// slot 5 is the special curved-horn slot, not a regular scar slot
 				ItemStack itemstack = scars.getStackInSlot(5);
 				if (itemstack.getItem() == ItemInit.curved_horn.get()) {
-					itemstack.hurtAndBreak(1, player, (p_220017_1_) -> {
-						p_220017_1_.broadcastBreakEvent(player.getUsedItemHand());
-					});
-					player.addEffect(new MobEffectInstance(EffectInit.blood_rush.get(), 200, 1));
+					itemstack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+					player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 200, 1));
 					player.setHealth(1.0f);
 					ServerLevel world = (ServerLevel) player.level();
 					world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE,
@@ -168,11 +175,11 @@ public class ScarEntityEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onGlideTick(PlayerTickEvent event) {
-		if (event.getEntity().hasEffect(EffectInit.fungal_elytra.get())) {
-			AttributeInstance attributeInstance = event.getEntity()
-					.getAttribute(AttributeInit.getFlightAttribute());
+		Player player = event.getEntity();
+		if (player.hasEffect(EffectInit.fungal_elytra)) {
+			AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
 			if (attributeInstance != null
-					&& !attributeInstance.hasModifier(AttributeInit.getElytraModifier()))
+					&& !attributeInstance.hasModifier(AttributeInit.getElytraModifier().id()))
 				attributeInstance.addTransientModifier(AttributeInit.getElytraModifier());
 		}
 	}
@@ -185,10 +192,10 @@ public class ScarEntityEventHandler {
 		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
 		if (attributeInstance != null) {
 			AttributeModifier elytraModifier = AttributeInit.getElytraModifier();
-			attributeInstance.removeModifier(elytraModifier);
+			attributeInstance.removeModifier(elytraModifier.id());
 			ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
 
-			if (stack.canElytraFly(player) && !attributeInstance.hasModifier(elytraModifier)) {
+			if (stack.canElytraFly(player) && !attributeInstance.hasModifier(elytraModifier.id())) {
 				attributeInstance.addTransientModifier(elytraModifier);
 			}
 		}
@@ -203,22 +210,24 @@ public class ScarEntityEventHandler {
 
 	@SubscribeEvent
 	public static void onLivingHurt(LivingDamageEvent.Pre event) {
+		LivingEntity harmed = event.getEntity();
+		Entity sourceEntity = event.getContainer().getSource().getEntity();
+
 		// Player attacks another entity
-	if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
-			LivingEntity target = event.getEntity();
+		if (sourceEntity instanceof Player player && !player.level().isClientSide) {
 			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
-						scar.onPlayerAttack(player, target);
+						scar.onPlayerAttack(player, harmed);
 					}
 				}
 			});
 		}
 
 		// Player is attacked by another entity
-		if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
-			if (event.getSource().getEntity() instanceof LivingEntity attacker) {
+		if (harmed instanceof Player player && !player.level().isClientSide) {
+			if (sourceEntity instanceof LivingEntity attacker) {
 				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 					for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 						ItemStack stack = scars.getStackInSlot(i);
@@ -268,16 +277,16 @@ public class ScarEntityEventHandler {
 					continue;
 
 				boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
-				boolean hasModifier = attr.getModifier(bonus.id()) != null;
+				boolean hasModifier = attr.getModifier(bonus.modifierId()) != null;
 				double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier();
 
 				if (hasSynergy) {
 					// Remove and re-add so Scar Affinity level changes take effect immediately
-					if (hasModifier) attr.removePermanentModifier(bonus.id());
+					if (hasModifier) attr.removeModifier(bonus.modifierId());
 					attr.addPermanentModifier(new AttributeModifier(
-							bonus.id(), scaledAmount, bonus.operation()));
+							bonus.modifierId(), scaledAmount, bonus.operation()));
 				} else if (hasModifier) {
-					attr.removePermanentModifier(bonus.id());
+					attr.removeModifier(bonus.modifierId());
 				}
 			}
 		});
@@ -306,7 +315,7 @@ public class ScarEntityEventHandler {
 
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
 
-		if (stack.getItem() instanceof BloodGourdItem gourd) {
+		if (stack.getItem() instanceof BloodGourdItem) {
 			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
 					.orElseThrow(NullPointerException::new);
 			PacketGourdScarSync pkt = new PacketGourdScarSync(player.getId(), slot, stack,

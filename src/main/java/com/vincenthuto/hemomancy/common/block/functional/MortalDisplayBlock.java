@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -96,9 +97,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player) {
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
@@ -109,8 +108,8 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 					Component.literal("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
 			// Grant the advancement programmatically
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
-				Advancement adv = serverPlayer.server.getAdvancements()
-						.getAdvancement(Hemomancy.rloc("hemomancy/the_first_awakening"));
+				AdvancementHolder adv = serverPlayer.server.getAdvancements()
+						.get(Hemomancy.rloc("hemomancy/the_first_awakening"));
 				if (adv != null) {
 					serverPlayer.getAdvancements().award(adv, "activate_temple");
 				}
@@ -155,6 +154,19 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 
 		return InteractionResult.SUCCESS;
 
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(worldIn, pos, player);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 }

@@ -12,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.level.Level;
 
 /**
  * Consecrated Syringe — produced by offering a filled Blood Vial to a Saint Sarcophagus.
@@ -42,8 +41,8 @@ public class ConsecratedSyringeItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		EnumSaintType saint = getSaintType(stack);
 		if (saint != null) {
 			tooltip.add(Component.literal("Consecrated by Saint " + saint.getDisplayName() + ".")

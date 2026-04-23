@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Client → Server packet: player toggles a passive Unstained bonus
@@ -38,8 +39,8 @@ public class PacketToggleUnstainedBonus implements CustomPacketPayload {
 
     public static void handle(final PacketToggleUnstainedBonus msg, final IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.player();
-            if (player == null) return;
+            Player packetPlayer = ctx.player();
+            if (!(packetPlayer instanceof ServerPlayer player)) return;
 
             HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
                 switch (msg.bonusId) {

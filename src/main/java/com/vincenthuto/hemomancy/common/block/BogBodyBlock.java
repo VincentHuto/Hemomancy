@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -117,27 +118,34 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
         }
     }
 
-    @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-                                 BlockHitResult result) {
-        ItemStack stack = player.getItemInHand(handIn);
-        if (stack.isEmpty() && !state.getValue(HARVESTED).booleanValue()) {
-            BlockState newState = state.setValue(HARVESTED, true);
-            worldIn.setBlock(pos, newState, 10);
+      private InteractionResult harvest(BlockState state, Level worldIn, BlockPos pos, Player player) {
+        if (!state.getValue(HARVESTED)) {
+          BlockState newState = state.setValue(HARVESTED, true);
+          worldIn.setBlock(pos, newState, 10);
 
-            player.hurt(player.damageSources().generic(), 1.5f);
-            if (!worldIn.isClientSide) {
-                HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
-                        BloodCellParticleFactory.createData(ParticleColor.BLOOD));
-                ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
-                        new ItemStack(ItemInit.vivianite_cluster.get(), 1));
-                worldIn.addFreshEntity(spawn);
-            }
-
+          player.hurt(player.damageSources().generic(), 1.5f);
+          if (!worldIn.isClientSide) {
+            HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
+                BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+            ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
+                new ItemStack(ItemInit.vivianite_cluster.get(), 1));
+            worldIn.addFreshEntity(spawn);
+          }
         }
         return InteractionResult.SUCCESS;
+      }
 
-    }
+      @Override
+      protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+          BlockHitResult result) {
+        return harvest(state, worldIn, pos, player);
+      }
+
+      @Override
+      protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+          Player player, InteractionHand handIn, BlockHitResult result) {
+        return ItemInteractionResult.SUCCESS;
+      }
 
     @Override
     public BlockState updateShape(

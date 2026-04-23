@@ -53,9 +53,9 @@ public class CentipedeMorphlingItem extends MorphlingItem {
 
 		// Base effect: Venomous Resilience (speed + poison immunity, amplifier = maturity)
 		int amplifier = Math.min(maturity, 2);
-		if (!player.hasEffect(EffectInit.venomous_resilience.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.venomous_resilience.get(),
-					100, amplifier, false, true, true));
+		if (!player.hasEffect(EffectInit.venomous_resilience)) {
+			player.addEffect(new MobEffectInstance(EffectInit.venomous_resilience,
+					100, maturity, false, true, true));
 		}
 	}
 

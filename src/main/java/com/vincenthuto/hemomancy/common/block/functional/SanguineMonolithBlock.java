@@ -20,6 +20,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -182,9 +183,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		};
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
@@ -218,8 +217,21 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		return InteractionResult.SUCCESS;
 	}
 
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(state, worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(state, worldIn, pos, player);
+		return ItemInteractionResult.SUCCESS;
+	}
+
 	private static void explodeIntoBlackShards(Level level, BlockPos pos) {
-		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 0.8f);
+		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 0.8f);
 		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
 		if (!level.isClientSide) {
 			PacketHandler.sendMonolithShatterBurst(

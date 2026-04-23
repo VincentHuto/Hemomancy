@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 /**
  * Special emissive render layer for Saint Seraphae's wing-like radiance protrusions
@@ -27,6 +28,14 @@ public class SeraphaeWingGlowLayer<T extends SeraphaeEntity> extends RenderLayer
 
 	/** Maximum light value — ensures wings always render at full brightness. */
 	private static final int FULL_BRIGHT = 0x00F000F0;
+
+	private static int packColor(float red, float green, float blue, float alpha) {
+		int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
+		int r = Mth.clamp((int) (red * 255.0F), 0, 255);
+		int g = Mth.clamp((int) (green * 255.0F), 0, 255);
+		int b = Mth.clamp((int) (blue * 255.0F), 0, 255);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
 
 	public SeraphaeWingGlowLayer(RenderLayerParent<T, SeraphaeModel<T>> parent) {
 		super(parent);
@@ -59,6 +68,6 @@ public class SeraphaeWingGlowLayer<T extends SeraphaeEntity> extends RenderLayer
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(GLOW);
 		this.getParentModel().renderToBuffer(poseStack, vertexConsumer, FULL_BRIGHT,
-				OverlayTexture.NO_OVERLAY, r, g, b, 1.0F);
+				OverlayTexture.NO_OVERLAY, packColor(r, g, b, 1.0F));
 	}
 }

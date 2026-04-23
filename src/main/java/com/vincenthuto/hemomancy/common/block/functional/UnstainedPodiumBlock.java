@@ -24,6 +24,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -99,12 +100,9 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
 
 		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
-		ItemStack stack = player.getItemInHand(handIn);
 		if (!player.isShiftKeyDown()) {
 			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
 			//	worldIn.destroyBlock(pos, false);
@@ -126,6 +124,19 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 
 		return InteractionResult.SUCCESS;
 
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(worldIn, pos, player, ItemStack.EMPTY);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(worldIn, pos, player, stack);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 	private void handleUnstainedInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {

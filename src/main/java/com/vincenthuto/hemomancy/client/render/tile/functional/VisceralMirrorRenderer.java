@@ -133,7 +133,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         renderStandModel(stack, buffer, facing, light, overlay);
 
         // Always draw the tinted glass overlay
-        renderMirrorGlass(stack, buffer, facing, te);
+            renderMirrorGlass(stack, buffer, facing, te, partialTicks);
 
         // Render the reflection only when a player is close and in front
         if (player != null && isPlayerInFront(te, player, facing)) {
@@ -192,8 +192,8 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         mc.getMainRenderTarget().enableStencil();
 
         // Animated time for ripple synchronisation
-        float time = te.getLevel() != null
-                ? te.getLevel().getGameTime() + mc.getFrameTime()
+            float time = te.getLevel() != null
+                ? te.getLevel().getGameTime() + partialTicks
                 : 0f;
 
         // ── Phase 1: write mirror quad into stencil ──────────────────────
@@ -250,16 +250,16 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
                 float z01 = rippleZ(x0, y1, time, 1f);
 
                 // Front face
-                builder.vertex(mat, x0, y0, z00).endVertex();
-                builder.vertex(mat, x0, y1, z01).endVertex();
-                builder.vertex(mat, x1, y1, z11).endVertex();
-                builder.vertex(mat, x1, y0, z10).endVertex();
+                builder.addVertex(mat, x0, y0, z00);
+                builder.addVertex(mat, x0, y1, z01);
+                builder.addVertex(mat, x1, y1, z11);
+                builder.addVertex(mat, x1, y0, z10);
 
                 // Back face
-                builder.vertex(mat, x1, y0, z10).endVertex();
-                builder.vertex(mat, x1, y1, z11).endVertex();
-                builder.vertex(mat, x0, y1, z01).endVertex();
-                builder.vertex(mat, x0, y0, z00).endVertex();
+                builder.addVertex(mat, x1, y0, z10);
+                builder.addVertex(mat, x1, y1, z11);
+                builder.addVertex(mat, x0, y1, z01);
+                builder.addVertex(mat, x0, y0, z00);
             }
         }
 
@@ -411,8 +411,8 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
     //  Reflected player entity
     // =====================================================================
 
-    private void renderMirrorGlass(PoseStack stack, MultiBufferSource buffer,
-                                   Direction facing, VisceralMirrorBlockEntity te) {
+      private void renderMirrorGlass(PoseStack stack, MultiBufferSource buffer,
+                       Direction facing, VisceralMirrorBlockEntity te, float partialTicks) {
         stack.pushPose();
         applyFacingTransform(stack, facing);
 
@@ -434,8 +434,8 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
         }
 
         // Animated time value (ticks + partial for smooth motion)
-        float time = te.getLevel() != null
-                ? te.getLevel().getGameTime() + Minecraft.getInstance().getFrameTime()
+            float time = te.getLevel() != null
+                ? te.getLevel().getGameTime() + partialTicks
                 : 0f;
 
         // Increase ripple during ritual
@@ -464,16 +464,16 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
                 float a01 = baseA + rippleAlpha(x0, y1, time) * ampScale;
 
                 // Front face
-                vc.vertex(mat, x0, y0, z00).color(r, g, b, a00).endVertex();
-                vc.vertex(mat, x0, y1, z01).color(r, g, b, a01).endVertex();
-                vc.vertex(mat, x1, y1, z11).color(r, g, b, a11).endVertex();
-                vc.vertex(mat, x1, y0, z10).color(r, g, b, a10).endVertex();
+                vc.addVertex(mat, x0, y0, z00).setColor(r, g, b, a00);
+                vc.addVertex(mat, x0, y1, z01).setColor(r, g, b, a01);
+                vc.addVertex(mat, x1, y1, z11).setColor(r, g, b, a11);
+                vc.addVertex(mat, x1, y0, z10).setColor(r, g, b, a10);
 
                 // Back face
-                vc.vertex(mat, x1, y0, z10).color(r, g, b, a10).endVertex();
-                vc.vertex(mat, x1, y1, z11).color(r, g, b, a11).endVertex();
-                vc.vertex(mat, x0, y1, z01).color(r, g, b, a01).endVertex();
-                vc.vertex(mat, x0, y0, z00).color(r, g, b, a00).endVertex();
+                vc.addVertex(mat, x1, y0, z10).setColor(r, g, b, a10);
+                vc.addVertex(mat, x1, y1, z11).setColor(r, g, b, a11);
+                vc.addVertex(mat, x0, y1, z01).setColor(r, g, b, a01);
+                vc.addVertex(mat, x0, y0, z00).setColor(r, g, b, a00);
             }
         }
 

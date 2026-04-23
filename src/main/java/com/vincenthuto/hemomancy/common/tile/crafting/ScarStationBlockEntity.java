@@ -13,6 +13,7 @@ import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
@@ -49,7 +50,6 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 		super(BlockEntityInit.scar_station.get(), pos, state);
 	}
 
-	@Override
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
@@ -155,10 +155,10 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 
 	// NBT
 	@Override
-	public void load(CompoundTag compound) {
-		super.load(compound);
+	protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.loadAdditional(compound, registries);
 		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(compound, this.contents);
+		ContainerHelper.loadAllItems(compound, this.contents, registries);
 		ListTag tagList = compound.getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
 		if (this.scarsList != null) {
 			for (int i = 0; i < tagList.size(); i++) {
@@ -169,9 +169,9 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
-		ContainerHelper.saveAllItems(compound, this.contents);
+	protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.saveAdditional(compound, registries);
+		ContainerHelper.saveAllItems(compound, this.contents, registries);
 		if (compound != null) {
 			ListTag tagList = new ListTag();
 			if (scarsList != null) {
@@ -186,8 +186,8 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		super.handleUpdateTag(tag, registries);
 		if (tag != null) {
 			ListTag tagList = tag.getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
 			if (this.scarsList != null) {
@@ -200,9 +200,9 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	}
 
 	@Override
-	public final CompoundTag getUpdateTag() {
+	public final CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		ContainerHelper.saveAllItems(tag, this.contents);
+		ContainerHelper.saveAllItems(tag, this.contents, registries);
 		ListTag tagList = new ListTag();
 		if (scarsList != null) {
 			for (int i = 0; i < scarsList.length; i++) {
@@ -215,8 +215,8 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+		super.onDataPacket(net, pkt, registries);
 		if (pkt.getTag() != null) {
 			ListTag tagList = pkt.getTag().getList(TAG_scarList, Tag.TAG_BYTE_ARRAY);
 			if (this.scarsList != null) {
@@ -301,8 +301,13 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 				ItemStack knapperIn = contents.get(3);
 				if (knapperIn.getItem() instanceof ItemKnapper) {
 					ItemStack newKnapper = knapperIn.copy();
-					newKnapper.hurt(recipe.getPattern().length, level.random, null);
-					contents.set(3, newKnapper);
+					int newDamage = newKnapper.getDamageValue() + recipe.getPattern().length;
+					if (newDamage >= newKnapper.getMaxDamage()) {
+						contents.set(3, ItemStack.EMPTY);
+					} else {
+						newKnapper.setDamageValue(newDamage);
+						contents.set(3, newKnapper);
+					}
 				}
 				currentRecipe = null;
 				scarsList = ScarRecipe.blank();
@@ -344,6 +349,12 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 		this.contents.clear();
 	}
 
+	@Override
+	protected void setItems(NonNullList<ItemStack> items) {
+		this.contents = items;
+	}
+
+	@Override
 	public NonNullList<ItemStack> getItems() {
 		return this.contents;
 	}

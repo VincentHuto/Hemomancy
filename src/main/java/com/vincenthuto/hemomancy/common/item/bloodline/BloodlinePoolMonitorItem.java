@@ -34,8 +34,8 @@ public class BloodlinePoolMonitorItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, level, tooltip, flag);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 		tooltip.add(Component.literal("Right-click to manage your Bloodline Pool").withStyle(ChatFormatting.DARK_RED));
 		tooltip.add(Component.literal("View, donate, and configure auto-draw settings").withStyle(ChatFormatting.GRAY));
 	}

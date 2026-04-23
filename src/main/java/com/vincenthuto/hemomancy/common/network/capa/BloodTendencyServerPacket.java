@@ -14,7 +14,6 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 
 public class BloodTendencyServerPacket implements CustomPacketPayload {
 
@@ -46,9 +45,12 @@ public class BloodTendencyServerPacket implements CustomPacketPayload {
 	@SuppressWarnings("unused")
 	public static void handle(final BloodTendencyServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player();
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.player == null) {
+				return;
+			}
 
-			HemoCapabilityAccess.getBloodTendency(Minecraft.getInstance().player)
+			HemoCapabilityAccess.getBloodTendency(mc.player)
 					.orElseThrow(IllegalStateException::new).setTendency(msg.Tendency);
 
 		});

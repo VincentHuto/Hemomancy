@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 
 public class ScarArmorSlot extends Slot {
 
@@ -40,7 +41,8 @@ public class ScarArmorSlot extends Slot {
 	@Override
 	public boolean mayPickup(Player playerIn) {
 		ItemStack itemstack = this.getItem();
-		return (itemstack.isEmpty() || playerIn.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack))
+		return (itemstack.isEmpty() || playerIn.isCreative()
+				|| !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE))
 				&& super.mayPickup(playerIn);
 	}
 

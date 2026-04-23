@@ -25,8 +25,8 @@ public class HemorrhagicVenomEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null || entity.level().isClientSide) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null || entity.level().isClientSide) return true;
 
 		Level level = entity.level();
 		double radius = 5.0 + amplifier * 2.0;
@@ -38,6 +38,7 @@ public class HemorrhagicVenomEffect extends MobEffect {
 		for (Monster mob : nearbyHostiles) {
 			mob.hurt(entity.damageSources().magic(), damage);
 		}
+		return true;
 	}
 
 	@Override
@@ -57,8 +58,9 @@ public class HemorrhagicVenomEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 40 == 0;
 	}
 
 }
+

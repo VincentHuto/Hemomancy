@@ -177,7 +177,7 @@ public class VisceralMirrorScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(gfx);
+		this.renderBackground(gfx, mouseX, mouseY, partialTicks);
 
 		int px = panelX;
 		int py = panelY;

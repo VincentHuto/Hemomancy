@@ -15,18 +15,18 @@ public class HemoConfig {
 	private static void registerClientConfigs() {
 		ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
 		HemoClientConfig.registerClientConfig(CLIENT_BUILDER);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
+		ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
 	}
 
 	private static void registerCommonConfigs() {
 		ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 		HemoCommonConfig.registerCommonConfig(COMMON_BUILDER);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
+		ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
 	}
 
 	private static void registerServerConfigs() {
 		ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
 		HemoServerConfig.registerServerConfig(SERVER_BUILDER);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
+		ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
 	}
 }

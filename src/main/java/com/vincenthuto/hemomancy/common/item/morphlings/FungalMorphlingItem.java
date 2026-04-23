@@ -62,8 +62,8 @@ public class FungalMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Mycorrhizal Mending (health regen, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.mycorrhizal_mending.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending.get(),
+		if (!player.hasEffect(EffectInit.mycorrhizal_mending)) {
+			player.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending,
 					100, maturity, false, true, true));
 		}
 
@@ -128,13 +128,13 @@ public class FungalMorphlingItem extends MorphlingItem {
 
 			// Bonus loot: re-roll the mob's loot table
 			var lootTableId = victim.getLootTable();
-			LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
+			LootTable lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(lootTableId);
 			LootParams.Builder lootParams = new LootParams.Builder(serverLevel)
 					.withParameter(LootContextParams.THIS_ENTITY, victim)
 					.withParameter(LootContextParams.ORIGIN, victim.position())
 					.withParameter(LootContextParams.DAMAGE_SOURCE, player.damageSources().playerAttack(player))
-					.withParameter(LootContextParams.KILLER_ENTITY, player)
-					.withParameter(LootContextParams.DIRECT_KILLER_ENTITY, player)
+					.withParameter(LootContextParams.ATTACKING_ENTITY, player)
+					.withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, player)
 					.withOptionalParameter(LootContextParams.LAST_DAMAGE_PLAYER, player);
 			List<ItemStack> bonusLoot = lootTable.getRandomItems(
 					lootParams.create(LootContextParamSets.ENTITY));

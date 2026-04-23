@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
@@ -33,22 +34,18 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LivingToolItem extends DiggerItem implements IDispellable {
 	private static final HashSet<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
+	private final float attackDamage;
 	private float speed;
 
 	public LivingToolItem(float speedIn, float attackDamageIn, float attackSpeedIn, Tier tier, Properties builderIn) {
-		super(attackDamageIn, attackSpeedIn, tier, BlockTags.WART_BLOCKS, builderIn);
+		super(tier, BlockTags.WART_BLOCKS, builderIn);
+		this.attackDamage = attackDamageIn;
+		this.speed = speedIn;
 	}
-//	@Override
-//		public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-//		consumer.accept(new IClientItemExtensions() {
-//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingSpear();
-//
-//			@Override
-//			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-//				return myRenderer;
-//			}
-//		});
-//	}
+
+	protected float getLivingAttackDamage() {
+		return this.attackDamage;
+	}
 
 	@Override
 	public float getDestroySpeed(ItemStack stack, BlockState state) {
@@ -81,16 +78,14 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 					Player playerIn = (Player) attacker;
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 							.orElseThrow(NullPointerException::new);
-					float damageMod = this.getAttackDamage() * 25f;
+					float damageMod = this.getLivingAttackDamage() * 25f;
 					if (playerVolume.getBloodVolume() > damageMod) {
 						playerVolume.drain(damageMod);
 						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 					} else {
 						playerVolume.drain(damageMod);
 						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
-						stack.hurtAndBreak(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
-							p_220017_1_.broadcastBreakEvent(attacker.getUsedItemHand());
-						});
+						stack.hurtAndBreak(getMaxDamage(stack) + 10, attacker, EquipmentSlot.MAINHAND);
 						Vec3 pos = playerIn.position();
 						if (attacker.level() instanceof ServerLevel serverLevel) {
 							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);
@@ -102,13 +97,12 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 		}
 
 		if (target.level().random.nextDouble() > 0.75) {
-			attacker.addEffect(new MobEffectInstance(EffectInit.blood_rush.get(), 50, 2));
-			target.addEffect(new MobEffectInstance(EffectInit.blood_loss.get(), 50, 2));
+			attacker.addEffect(new MobEffectInstance(EffectInit.blood_rush, 50, 2));
+			target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 50, 2));
 		}
 		return super.hurtEnemy(stack, target, attacker);
 	}
 
-	@Override
 	public boolean isCorrectToolForDrops(BlockState blockIn) {
 		if (EFFECTIVE_ON.contains(blockIn.getBlock())) {
 			return true;

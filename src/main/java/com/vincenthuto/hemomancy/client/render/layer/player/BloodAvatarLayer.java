@@ -44,6 +44,14 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	private final BloodAvatarModel<T> modelBloodAvatar;
 	ResourceLocation glowTexture = Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
+	private static int packColor(float red, float green, float blue, float alpha) {
+		int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
+		int r = Mth.clamp((int) (red * 255.0F), 0, 255);
+		int g = Mth.clamp((int) (green * 255.0F), 0, 255);
+		int b = Mth.clamp((int) (blue * 255.0F), 0, 255);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
 	public BloodAvatarLayer(RenderLayerParent<T, M> p_117346_) {
 		super(p_117346_);
 		modelBloodAvatar = new BloodAvatarModel<>(
@@ -73,8 +81,8 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 					VertexConsumer swirlConsumer = pBuffer
 							.getBuffer(RenderType.energySwirl(glowTexture, this.xOffset(f) % 4.0F, f * .01F % 2.0F));
 					modelBloodAvatar.setupAnim(ent, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
-					modelBloodAvatar.renderToBuffer(ms, swirlConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 0.5F,
-							0.5F, 0.5F, 0.3F);
+					modelBloodAvatar.renderToBuffer(ms, swirlConsumer, pPackedLight, OverlayTexture.NO_OVERLAY,
+							packColor(0.5F, 0.5F, 0.5F, 0.3F));
 					ms.popPose();
 
 					if (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
@@ -174,7 +182,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 			float f = (i >> 16 & 255) / 255.0F;
 			float f1 = (i >> 8 & 255) / 255.0F;
 			float f2 = (i & 255) / 255.0F;
-			pBuffer.putBulkData(posestack$pose, bakedquad, f, f1, f2, pCombinedLight, pCombinedOverlay);
+			pBuffer.putBulkData(posestack$pose, bakedquad, f, f1, f2, 1.0F, pCombinedLight, pCombinedOverlay);
 		}
 
 	}

@@ -38,7 +38,7 @@ public class ItemMorphlingJar extends Item implements IScar {
 	Rarity rarity;
 
 	public ItemMorphlingJar(String name, Integer size, Rarity rarity) {
-		super(new Item.Properties().stacksTo(1));
+		super(new Item.Properties().stacksTo(1).rarity(rarity));
 		this.name = name;
 		this.size = size;
 		this.rarity = rarity;
@@ -51,7 +51,7 @@ public class ItemMorphlingJar extends Item implements IScar {
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		IItemHandler jarHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		if (jarHandler instanceof MorphlingJarItemHandler mjh) {
 			mjh.load();
@@ -68,10 +68,6 @@ public class ItemMorphlingJar extends Item implements IScar {
 		}
 	}
 
-	@Override
-	public Rarity getRarity(ItemStack stack) {
-		return rarity;
-	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {

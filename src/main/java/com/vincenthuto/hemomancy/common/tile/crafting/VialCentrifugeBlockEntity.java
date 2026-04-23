@@ -24,6 +24,7 @@ import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -412,7 +413,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			return true;
 		}
 		int maxAllowed = Math.min(outputStack.getMaxStackSize(), resultStack.getMaxStackSize());
-		return ItemStack.isSameItemSameTags(outputStack, resultStack)
+		return ItemStack.isSameItemSameComponents(outputStack, resultStack)
 				&& outputStack.getCount() + resultStack.getCount() <= maxAllowed;
 	}
 
@@ -470,6 +471,16 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		return this.inventory.get(pSlot);
 	}
 
+	@Override
+	protected NonNullList<ItemStack> getItems() {
+		return this.inventory;
+	}
+
+	@Override
+	protected void setItems(NonNullList<ItemStack> items) {
+		this.inventory = items;
+	}
+
 	public double getMaxBloodVolume() {
 		IBloodVolume vol = resolveVolume();
 		return vol != null ? vol.getMaxBloodVolume() : 0;
@@ -481,11 +492,11 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt("SpinTime", this.spinningProgress);
 		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
-		ContainerHelper.saveAllItems(tag, this.inventory);
+		ContainerHelper.saveAllItems(tag, this.inventory, registries);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
@@ -494,8 +505,8 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		super.handleUpdateTag(tag, registries);
 		if (tag != null) {
 			IBloodVolume vol = resolveVolume();
 			if (vol != null) {
@@ -515,12 +526,12 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void load(CompoundTag pTag) {
-		super.load(pTag);
+	protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider registries) {
+		super.loadAdditional(pTag, registries);
 		this.spinningProgress = pTag.getInt("SpinTime");
 		this.spinningTotalTime = pTag.getInt("SpinTimeTotal");
 		this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(pTag, this.inventory);
+		ContainerHelper.loadAllItems(pTag, this.inventory, registries);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null && pTag != null) {
 			vol.setBloodVolume(pTag.getFloat(TAG_BLOOD_LEVEL));
@@ -528,8 +539,8 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+		super.onDataPacket(net, pkt, registries);
 		if (pkt.getTag() != null) {
 			CompoundTag tag = pkt.getTag();
 			IBloodVolume vol = resolveVolume();
@@ -561,11 +572,11 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	// NBT and Data
 	@Override
-	protected void saveAdditional(CompoundTag pTag) {
-		super.saveAdditional(pTag);
+	protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider registries) {
+		super.saveAdditional(pTag, registries);
 		pTag.putInt("SpinTime", this.spinningProgress);
 		pTag.putInt("SpinTimeTotal", this.spinningTotalTime);
-		ContainerHelper.saveAllItems(pTag, this.inventory);
+		ContainerHelper.saveAllItems(pTag, this.inventory, registries);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			pTag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());

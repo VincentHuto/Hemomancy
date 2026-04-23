@@ -33,7 +33,7 @@ public class EquippedMorphling implements IEquippedMorphling, INBTSerializable<C
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
 		if (!equippedMorphling.isEmpty()) {
-			tag.put("EquippedMorphling", equippedMorphling.save(new CompoundTag()));
+			tag.put("EquippedMorphling", equippedMorphling.save(provider));
 		}
 		return tag;
 	}
@@ -41,7 +41,7 @@ public class EquippedMorphling implements IEquippedMorphling, INBTSerializable<C
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 		if (nbt.contains("EquippedMorphling")) {
-			equippedMorphling = ItemStack.of(nbt.getCompound("EquippedMorphling"));
+			equippedMorphling = ItemStack.parseOptional(provider, nbt.getCompound("EquippedMorphling"));
 		} else {
 			equippedMorphling = ItemStack.EMPTY;
 		}

@@ -74,7 +74,7 @@ public class BloodTitheHandler {
 
 		// ─── Sanguine Clarity (combo system) ───
 		if (HemoMnAConfig.SPELL_MANIP_COMBO_ENABLED.get()) {
-			if (player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity.get())) {
+			if (player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity)) {
 				float clarityReduction = (float) (currentCost * HemoMnAConfig.SANGUINE_CLARITY_MANA_REDUCTION.get());
 				currentCost -= clarityReduction;
 			}
@@ -126,15 +126,15 @@ public class BloodTitheHandler {
 			int duration = HemoMnAConfig.ARCANE_RESONANCE_DURATION.get();
 			if (com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance != null) {
 				player.addEffect(new MobEffectInstance(
-						com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance.get(),
+						com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance,
 						duration, 0, false, true));
 			}
 		}
 
 		// ─── Consume Sanguine Clarity if it was active (combo used) ───
 		if (HemoMnAConfig.SPELL_MANIP_COMBO_ENABLED.get()) {
-			if (player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity.get())) {
-				player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity.get());
+			if (player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity)) {
+				player.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.sanguine_clarity);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -11,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +37,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ScryingPodiumBlock extends BaseEntityBlock {
+	public static final MapCodec<ScryingPodiumBlock> CODEC = simpleCodec(ScryingPodiumBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
@@ -43,6 +46,11 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
 
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override
@@ -111,9 +119,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleUse(Level worldIn, BlockPos pos, Player player) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
 				PacketHandler.sendToServer(new PacketOpenScarsInv());
@@ -132,6 +138,18 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 //
 //		}
 		return InteractionResult.SUCCESS;
+	}
 
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleUse(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleUse(worldIn, pos, player);
+		return ItemInteractionResult.SUCCESS;
 	}
 }

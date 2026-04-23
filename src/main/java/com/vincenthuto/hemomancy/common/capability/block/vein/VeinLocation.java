@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.vincenthuto.hutoslib.math.DimensionalPosition;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
@@ -84,13 +85,20 @@ public class VeinLocation extends DimensionalPosition {
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		super.deserializeNBT(nbt);
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+		super.deserializeNBT(provider, nbt);
 		if (nbt.contains("name") && nbt.contains("id")) {
-			String name = nbt.getString("dim");
+			String name = nbt.getString("name");
 			UUID uuid = nbt.getUUID("id");
 			this.name = name;
 			this.uuid = uuid;
+		}
+	}
+
+	public void deserializeNBT(CompoundTag nbt) {
+		if (nbt.contains("name") && nbt.contains("id")) {
+			this.name = nbt.getString("name");
+			this.uuid = nbt.getUUID("id");
 		}
 	}
 
@@ -103,8 +111,17 @@ public class VeinLocation extends DimensionalPosition {
 	}
 
 	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag nbt = super.serializeNBT(provider);
+		nbt.putString("name", this.name);
+		nbt.putUUID("id", this.uuid);
+		return nbt;
+	}
+
 	public CompoundTag serializeNBT() {
-		CompoundTag nbt = super.serializeNBT();
+		CompoundTag nbt = new CompoundTag();
+		nbt.putString("dim", getDimension().toString());
+		nbt.put("pos", NbtUtils.writeBlockPos(getPosition()));
 		nbt.putString("name", this.name);
 		nbt.putUUID("id", this.uuid);
 		return nbt;

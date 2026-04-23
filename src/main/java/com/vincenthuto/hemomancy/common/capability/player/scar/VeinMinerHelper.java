@@ -55,7 +55,7 @@ public class VeinMinerHelper {
 			if (!s.isEmpty()) {
 				for (int j = i + 1; j < list.size(); j++) {
 					ItemStack s1 = list.get(j);
-					if (ItemHandlerHelper.canItemStacksStack(s, s1)) {
+					if (ItemStack.isSameItemSameComponents(s, s1)) {
 						s.grow(s1.getCount());
 						list.set(j, ItemStack.EMPTY);
 					}
@@ -131,8 +131,12 @@ public class VeinMinerHelper {
 	}
 
 	public static boolean hasBreakPermission(ServerPlayer player, BlockPos pos) {
-		return hasEditPermission(player, pos) && CommonHooks.onBlockBreakEvent(player.getCommandSenderWorld(),
-				player.gameMode.getGameModeForPlayer(), player, pos) != -1;
+		if (!hasEditPermission(player, pos)) {
+			return false;
+		}
+		BlockState state = player.getCommandSenderWorld().getBlockState(pos);
+		return !CommonHooks.fireBlockBreak(player.getCommandSenderWorld(), player.gameMode.getGameModeForPlayer(),
+				player, pos, state).isCanceled();
 	}
 
 	public static boolean hasEditPermission(ServerPlayer player, BlockPos pos) {

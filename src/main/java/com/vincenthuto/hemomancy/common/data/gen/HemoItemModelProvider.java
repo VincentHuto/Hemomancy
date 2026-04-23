@@ -22,19 +22,19 @@ public class HemoItemModelProvider extends ItemModelProvider {
 
 	@Override
 	protected void registerModels() {
-		for (DeferredHolder<Block, Block> b : BlockInit.BASEBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (DeferredHolder<Block, Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.SLABBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (DeferredHolder<Block, Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (DeferredHolder<Block, Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (DeferredHolder<Block, Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block != BlockInit.sanguine_pane.get()
 					&& block != BlockInit.cleansed_sanguine_pane.get()
@@ -48,10 +48,10 @@ public class HemoItemModelProvider extends ItemModelProvider {
 				registerBlockModel(block);
 			}
 		}
-		for (DeferredHolder<Block, Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
-		for (DeferredHolder<Item, Item> item : ItemInit.BASEITEMS.getEntries()) {
+		for (DeferredHolder<Item, ? extends Item> item : ItemInit.BASEITEMS.getEntries()) {
 			if (item.get() instanceof ItemScarPattern patternItem) {
 				String itemPath = BuiltInRegistries.ITEM.getKey(item.get()).getPath();
 				String scarPath = BuiltInRegistries.ITEM.getKey(patternItem.getSCAR().get()).getPath();
@@ -72,10 +72,10 @@ public class HemoItemModelProvider extends ItemModelProvider {
 				basicItem(item.get());
 			}
 		}
-		for (DeferredHolder<Item, Item> item : ItemInit.SPAWNEGGS.getEntries()) {
+		for (DeferredHolder<Item, ? extends Item> item : ItemInit.SPAWNEGGS.getEntries()) {
 			registerSpawnEggItem(item.get());
 		}
-		for (DeferredHolder<Item, Item> item : ItemInit.HANDHELDITEMS.getEntries()) {
+		for (DeferredHolder<Item, ? extends Item> item : ItemInit.HANDHELDITEMS.getEntries()) {
 			registerHandheldItem(item.get());
 		}
 	}

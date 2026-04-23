@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -147,9 +148,7 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMult
 		}
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(Level level, BlockPos pos, Player player) {
 		if (level.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
@@ -160,6 +159,19 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMult
 			((ServerPlayer) player).openMenu(te, pos);
 		}
 		return InteractionResult.CONSUME;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(level, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(level, pos, player);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 	@Override

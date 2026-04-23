@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -51,8 +52,8 @@ public abstract class WaterloggableBlock extends Block implements SimpleWaterlog
 	}
 	
 	@Override
-	public boolean canPlaceLiquid(BlockGetter p_56301_, BlockPos p_56302_, BlockState p_56303_, Fluid p_56304_) {
-		return SimpleWaterloggedBlock.super.canPlaceLiquid(p_56301_, p_56302_, p_56303_, p_56304_);
+	public boolean canPlaceLiquid(@Nullable Player player, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+		return SimpleWaterloggedBlock.super.canPlaceLiquid(player, level, pos, state, fluid);
 	}
 	
 	@Override

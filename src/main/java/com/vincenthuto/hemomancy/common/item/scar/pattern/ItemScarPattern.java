@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.scar.pattern;
 
-import java.util.function.Consumer;
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-public class ItemScarPattern extends Item {
+public class ItemScarPattern extends Item implements HemoClientItemExtensionsProvider {
 
 	String path;
 	DeferredHolder<Item, Item> scar;
@@ -63,15 +64,15 @@ public class ItemScarPattern extends Item {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
 			final BlockEntityWithoutLevelRenderer renderer = new ScarPatternItemRenderer(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				return renderer;
 			}
-		});
+		};
 	}
 
 }

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -28,9 +29,10 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 	public void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, int offsetX, int offsetY,
 			int offsetZ, float textureX, float textureY, int p_229039_9_, int p_229039_10_, int p_229039_11_,
 			int packedLightIn) {
-		vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(255, 255, 255, 255).uv(textureX, textureY)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn)
-				.normal(normals, p_229039_9_, p_229039_11_, p_229039_10_).endVertex();
+		Vector3f normal = new Vector3f(p_229039_9_, p_229039_11_, p_229039_10_).mul(normals).normalize();
+		vertexBuilder.addVertex(matrix, offsetX, offsetY, offsetZ).setColor(255, 255, 255, 255)
+				.setUv(textureX, textureY).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLightIn)
+				.setNormal(normal.x(), normal.y(), normal.z());
 	}
 
 	@Override

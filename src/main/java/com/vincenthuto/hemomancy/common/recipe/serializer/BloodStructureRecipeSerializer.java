@@ -15,6 +15,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -33,7 +34,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -137,7 +137,9 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		Block hitBlock = blockFromString(GsonHelper.getAsString(pJson, "hitBlock"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
 		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
-		ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
+		ItemStack result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
+				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
+				.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
@@ -171,11 +173,11 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			prefix.add("id", ops.createString(recipe.getId().toString()));
 			prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getHeldItem()).result()
-					.ifPresent(e -> prefix.add("heldItem", ops.convertFrom(JsonOps.INSTANCE, e)));
+					.ifPresent(e -> prefix.add("heldItem", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("hitBlock", ops.createString(BuiltInRegistries.BLOCK.getKey(recipe.getHitBlock()).toString()));
 			// pattern / key are complex — skip encode for now (server-to-client via stream codec)
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
-					.ifPresent(e -> prefix.add("result", ops.convertFrom(JsonOps.INSTANCE, e)));
+					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			return prefix;
 		}

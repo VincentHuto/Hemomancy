@@ -131,8 +131,12 @@ public class BloodlinePoolScreen extends Screen {
 		y += 32;
 
 		// ── Trickle Donation Section ──
-		trickleCheckbox = new Checkbox(widgetX, y, 20, 20,
-				Component.literal("Trickle Donate"), trickleEnabled);
+		trickleCheckbox = Checkbox.builder(Component.literal("Trickle Donate"), this.font)
+				.pos(widgetX, y)
+				.selected(trickleEnabled)
+				.onValueChange((checkbox, selected) -> {
+				})
+				.build();
 		addRenderableWidget(trickleCheckbox);
 
 		y += 22;
@@ -146,8 +150,12 @@ public class BloodlinePoolScreen extends Screen {
 		y += 26;
 
 		// ── Auto-Draw Section ──
-		autoDrawCheckbox = new Checkbox(widgetX, y, 20, 20,
-				Component.literal("Auto-Draw"), autoDrawEnabled);
+		autoDrawCheckbox = Checkbox.builder(Component.literal("Auto-Draw"), this.font)
+				.pos(widgetX, y)
+				.selected(autoDrawEnabled)
+				.onValueChange((checkbox, selected) -> {
+				})
+				.build();
 		addRenderableWidget(autoDrawCheckbox);
 
 		y += 22;
@@ -247,7 +255,7 @@ public class BloodlinePoolScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, mouseX, mouseY, partialTick);
 
 		int centerX = this.width / 2;
 		int centerY = this.height / 2;

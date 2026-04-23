@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.compat.mna.item;
 
-import java.util.function.Consumer;
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 
 import com.mna.items.renderers.books.SpellBookRenderer;
 import com.mna.items.sorcery.Grimoire;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.common.util.NonNullLazy;
 
-public class HarbingerGrimoireItem extends Grimoire {
+public class HarbingerGrimoireItem extends Grimoire implements HemoClientItemExtensionsProvider {
 
 	public HarbingerGrimoireItem(Properties properties, ResourceLocation factionHarbingersId,
 			ResourceLocation open_model, ResourceLocation closed_model, boolean b) {
@@ -21,8 +22,8 @@ public class HarbingerGrimoireItem extends Grimoire {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
 			private final NonNullLazy<BlockEntityWithoutLevelRenderer> ister = NonNullLazy.of(() -> {
 
 				return new SpellBookRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
@@ -36,7 +37,7 @@ public class HarbingerGrimoireItem extends Grimoire {
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				return ister.get();
 			}
-		});
+		};
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -33,17 +34,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class CrimsonLodgeSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_crimson_lodges";
+	private static final SavedData.Factory<CrimsonLodgeSavedData> FACTORY =
+			new SavedData.Factory<>(CrimsonLodgeSavedData::new, CrimsonLodgeSavedData::load, null);
 
 	private final List<LodgeEntry> lodges = new ArrayList<>();
 
 	public CrimsonLodgeSavedData() {}
 
 	public static CrimsonLodgeSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				CrimsonLodgeSavedData::load, CrimsonLodgeSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static CrimsonLodgeSavedData load(CompoundTag tag) {
+	public static CrimsonLodgeSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		CrimsonLodgeSavedData data = new CrimsonLodgeSavedData();
 		if (tag.contains("lodges", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("lodges", Tag.TAG_COMPOUND);
@@ -66,7 +68,7 @@ public class CrimsonLodgeSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (LodgeEntry entry : lodges) {
 			CompoundTag lodgeTag = new CompoundTag();

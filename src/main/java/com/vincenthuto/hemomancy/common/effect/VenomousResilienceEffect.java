@@ -20,12 +20,13 @@ public class VenomousResilienceEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null) return true;
 		// Passive poison immunity: strip the Poison effect if present
 		if (entity.hasEffect(net.minecraft.world.effect.MobEffects.POISON)) {
 			entity.removeEffect(net.minecraft.world.effect.MobEffects.POISON);
 		}
+		return true;
 	}
 
 	@Override
@@ -45,8 +46,9 @@ public class VenomousResilienceEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 
 }
+

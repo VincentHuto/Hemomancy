@@ -61,7 +61,7 @@ public final class HemoAttachmentTypes {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ScarsContainer>> SCARS =
             ATTACHMENT_TYPES.register("scars",
-                    () -> AttachmentType.serializable(ScarsContainer::new).copyOnDeath().build());
+                    () -> AttachmentType.serializable(() -> new ScarsContainer()).copyOnDeath().build());
 
     // ── Block-entity attachments (no copyOnDeath) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOCK_BLOOD_VOLUME =

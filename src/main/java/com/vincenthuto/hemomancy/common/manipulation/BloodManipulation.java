@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.lang.reflect.Method;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
@@ -62,6 +63,7 @@ public class BloodManipulation  {
 	EnumManipulationType type;
 
 	private static final double TICKS_PER_SECOND = 20.0;
+	private static final String MNA_MANIP_COMBO_HELPER = "com.vincenthuto.hemomancy.compat.mna.spell.ManipComboHelper";
 
 	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
 
@@ -159,6 +161,16 @@ public class BloodManipulation  {
 	public static long getUniversalCooldownExpiry(Player player) {
 		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
 		return expiryTick != null ? expiryTick : 0;
+	}
+
+	private void invokeMnAComboHelper(Player player) {
+		try {
+			Class<?> helperClass = Class.forName(MNA_MANIP_COMBO_HELPER);
+			Method onManipulationUsed = helperClass.getMethod("onManipulationUsed", Player.class);
+			onManipulationUsed.invoke(null, player);
+		} catch (Exception ignored) {
+			// MnA compat classes unavailable or incompatible — skip silently
+		}
 	}
 
 	private void startCooldown(Player player) {
@@ -262,7 +274,7 @@ public class BloodManipulation  {
 
 				// MnA Combo System: Arcane Resonance reduces blood cost
 				if (ModList.get().isLoaded("mna")
-						&& player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance.get())) {
+						&& player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance)) {
 					try {
 						double reduction = com.vincenthuto.hemomancy.config.HemoMnAConfig.ARCANE_RESONANCE_BLOOD_REDUCTION.get();
 						effectiveCost *= (1.0 - reduction);
@@ -303,12 +315,7 @@ public class BloodManipulation  {
 						// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
 						// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
 						if (ModList.get().isLoaded("mna")) {
-							try {
-								com.vincenthuto.hemomancy.compat.mna.spell.ManipComboHelper
-										.onManipulationUsed(player);
-							} catch (Exception e) {
-								// MnA classes not available — silently skip
-							}
+							invokeMnAComboHelper(player);
 						}
 
 						startCooldown(player);

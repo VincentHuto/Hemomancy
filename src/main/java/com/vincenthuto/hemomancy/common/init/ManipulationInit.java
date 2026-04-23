@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.init;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
@@ -60,9 +59,9 @@ public class ManipulationInit {
 	public static final DeferredRegister<BloodManipulation> MANIPS = DeferredRegister.create(MANIP_KEY,
 			Hemomancy.MOD_ID);
 
-	public static Supplier<Registry<BloodManipulation>> MANIPS_TYPE_REGISTRY = MANIPS
-			.makeRegistry(() -> new RegistryBuilder<BloodManipulation>().setMaxID(Integer.MAX_VALUE - 1)
-					.setDefaultKey(Hemomancy.rloc("bloodmanipulations")));
+	public static final Registry<BloodManipulation> MANIPS_TYPE_REGISTRY = MANIPS
+			.makeRegistry(builder -> builder.maxId(Integer.MAX_VALUE - 1)
+					.defaultKey(Hemomancy.rloc("venous_travel")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> venous_travel = MANIPS.register("venous_travel",
 			() -> new BloodManipulation("venous_travel", 1000, 0, 0, EnumManipulationType.CONTINUOUS,
@@ -271,7 +270,7 @@ public class ManipulationInit {
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();
-		Registry<BloodManipulation> registry = MANIPS_TYPE_REGISTRY.get();
+		Registry<BloodManipulation> registry = MANIPS_TYPE_REGISTRY;
 		if (registry != null) {
 			registry.forEach(entries::add);
 		}

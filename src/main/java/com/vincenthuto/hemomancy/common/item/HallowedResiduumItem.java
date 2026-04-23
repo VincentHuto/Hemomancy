@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 /**
  * Hallowed Residuum — a hybridized saint-enzyme extracted from a Preserved Corpus.
@@ -30,8 +29,8 @@ public class HallowedResiduumItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal("Saint: " + saintType.getDisplayName())
 				.withStyle(ChatFormatting.GOLD));
 		tooltip.add(Component.literal("Primary: " + saintType.getPrimaryTendency().name())

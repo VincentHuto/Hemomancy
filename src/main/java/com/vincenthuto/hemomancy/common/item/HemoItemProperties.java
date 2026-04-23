@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item;
 
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -24,7 +26,8 @@ public final class HemoItemProperties {
 	@SuppressWarnings("deprecation")
 	public static ItemPropertyFunction booleanTag(String tagKey) {
 		return (stack, world, entity, seed) -> {
-			if (stack.hasTag() && stack.getTag().getBoolean(tagKey)) {
+			if (stack.has(DataComponents.CUSTOM_DATA)
+					&& stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(tagKey)) {
 				return 1.0F;
 			}
 			return 0.0F;
@@ -41,8 +44,8 @@ public final class HemoItemProperties {
 	@SuppressWarnings("deprecation")
 	public static ItemPropertyFunction intTag(String tagKey) {
 		return (stack, world, entity, seed) -> {
-			if (stack.hasTag()) {
-				return stack.getTag().getInt(tagKey);
+			if (stack.has(DataComponents.CUSTOM_DATA)) {
+				return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getInt(tagKey);
 			}
 			return 0.0F;
 		};

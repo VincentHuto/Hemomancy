@@ -28,6 +28,9 @@ import net.neoforged.api.distmarker.OnlyIn;
 public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 
 	LivingEntity shooter;
+	public double xPower;
+	public double yPower;
+	public double zPower;
 
 	/**
 	 * Called to update the entity's position/logic.
@@ -46,10 +49,12 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	public BloodCloudCarrierEntity(Level worldIn, LivingEntity shooter) {
 		super(EntityInit.blood_cloud_carrier.get(), worldIn);
 		this.shooter = shooter;
+		this.setOwner(shooter);
 	}
 	public BloodCloudCarrierEntity(Level worldIn, LivingEntity shooter, double aX, double aY, double aZ) {
-		super(EntityInit.blood_cloud_carrier.get(), shooter, aX, aY, aZ, worldIn);
+		super(EntityInit.blood_cloud_carrier.get(), aX, aY, aZ, worldIn);
 		this.shooter = shooter;
+		this.setOwner(shooter);
 	}
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {

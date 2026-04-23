@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Client → Server: Player updates their per-player bloodline pool settings
@@ -50,8 +51,8 @@ public class PacketUpdatePoolSettings implements CustomPacketPayload {
 
 	public static void handle(final PacketUpdatePoolSettings msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer player = ctx.player();
-			if (player == null) return;
+			Player packetPlayer = ctx.player();
+			if (!(packetPlayer instanceof ServerPlayer player)) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				volume.setTrickleEnabled(msg.trickleEnabled);

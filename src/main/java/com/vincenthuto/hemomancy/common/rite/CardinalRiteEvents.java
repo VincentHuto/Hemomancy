@@ -44,6 +44,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -57,6 +58,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -392,7 +394,7 @@ public class CardinalRiteEvents {
 		caster.hurtMarked = true;
 
 		// Play loud, ominous failure sounds
-		sLevel.playSound(null, center, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2.0f, 0.5f);
+		sLevel.playSound(null, center, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 2.0f, 0.5f);
 		sLevel.playSound(null, center, SoundEvents.ENDER_DRAGON_GROWL, SoundSource.BLOCKS, 1.5f, 0.7f);
 
 		// Notify the caster
@@ -1481,12 +1483,13 @@ public class CardinalRiteEvents {
 			int startHuskIndex, int count, boolean tainted) {
 		for (int i = 0; i < count; i++) {
 			ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
-			net.minecraft.nbt.CompoundTag tag = pomeStack.getOrCreateTag();
+			net.minecraft.nbt.CompoundTag tag = pomeStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			tag.putLong(QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
 			tag.putInt(QliphothPomeItem.HUSK_INDEX_KEY, startHuskIndex + i);
 			if (tainted) {
 				tag.putBoolean(QliphothPomeItem.TAINTED_KEY, true);
 			}
+			pomeStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			double x = center.getX() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
 			double y = center.getY() + 1.0;
 			double z = center.getZ() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
@@ -1584,10 +1587,10 @@ public class CardinalRiteEvents {
 		});
 
 		// Write signed state and bloodline data onto the ledger
-		CompoundTag compound = ledgerStack.getOrCreateTag();
+		CompoundTag compound = ledgerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
 		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, playerLine.serialize());
-		ledgerStack.setTag(compound);
+		ledgerStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 
 		caster.displayClientMessage(
 				Component.literal("You have founded: " + playerLine.getName())
@@ -1611,10 +1614,10 @@ public class CardinalRiteEvents {
 		}
 
 		// Write the existing bloodline data onto the new ledger as a signed copy
-		CompoundTag compound = ledgerStack.getOrCreateTag();
+		CompoundTag compound = ledgerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
 		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, existingLine.serialize());
-		ledgerStack.setTag(compound);
+		ledgerStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 
 		caster.displayClientMessage(
 				Component.literal("The covenant remembers. Your ledger for " + existingLine.getName()
@@ -1670,7 +1673,7 @@ public class CardinalRiteEvents {
 
 			// Apply Silver Ward effect (amplifier 1, 30 minutes)
 			caster.addEffect(new MobEffectInstance(
-					EffectInit.silver_ward.get(), SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
+					EffectInit.silver_ward, SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
 
 			caster.displayClientMessage(
 					Component.literal("A veil of pale silver light surrounds you. Blood magic cannot touch you.")
@@ -1740,7 +1743,7 @@ public class CardinalRiteEvents {
 				if (volume.isActive()) {
 					// Apply Hemolysis effect (amplifier 2, 30 seconds)
 					target.addEffect(new MobEffectInstance(
-							EffectInit.hemolysis.get(), 600, 2, false, true, true));
+							EffectInit.hemolysis, 600, 2, false, true, true));
 
 					// Disrupt vascular system
 					HemoCapabilityAccess.getVascularSystem(target).ifPresent(vascular -> {
@@ -1841,7 +1844,7 @@ public class CardinalRiteEvents {
 
 		// Grant extended Verdigris Aura
 		caster.addEffect(new MobEffectInstance(
-				EffectInit.verdigris_aura.get(), SILVER_DAWN_AURA_DURATION, SILVER_DAWN_AURA_AMPLIFIER, false, true, true));
+				EffectInit.verdigris_aura, SILVER_DAWN_AURA_DURATION, SILVER_DAWN_AURA_AMPLIFIER, false, true, true));
 
 		// Grant purity/clarity boost
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(progress -> {
@@ -1970,7 +1973,7 @@ public class CardinalRiteEvents {
 				UnstainedProgressEvents.syncProgress(target, progress);
 
 				target.addEffect(new MobEffectInstance(
-						EffectInit.silver_ward.get(), REMEMBRANCE_SILVER_WARD_DURATION, 1,
+						EffectInit.silver_ward, REMEMBRANCE_SILVER_WARD_DURATION, 1,
 						false, true, true));
 
 				target.displayClientMessage(

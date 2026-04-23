@@ -52,7 +52,7 @@ public class ScreenScarPattern extends Screen {
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		int centerX = (width / 2) - guiWidth / 2;
 		int centerY = (height / 2) - guiHeight / 2;
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 
 		graphics.drawCenteredString(font, ChatFormatting.GOLD + I18n.get(recipe.getResultItem().getDescriptionId()),
 				-85, 0, 8060954);
@@ -103,8 +103,8 @@ public class ScreenScarPattern extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics pGuiGraphics) {
-		super.renderBackground(pGuiGraphics);
+	public void renderBackground(GuiGraphics pGuiGraphics, int mouseX, int mouseY, float partialTick) {
+		super.renderBackground(pGuiGraphics, mouseX, mouseY, partialTick);
 
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;

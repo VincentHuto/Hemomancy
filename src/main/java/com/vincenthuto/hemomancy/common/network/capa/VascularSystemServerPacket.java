@@ -14,7 +14,6 @@ import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSecti
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 
 public class VascularSystemServerPacket implements CustomPacketPayload {
 
@@ -46,9 +45,12 @@ public class VascularSystemServerPacket implements CustomPacketPayload {
 	@SuppressWarnings("unused")
 	public static void handle(final VascularSystemServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player();
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.player == null) {
+				return;
+			}
 
-			Minecraft.getInstance().HemoCapabilityAccess.getVascularSystem(player)
+			HemoCapabilityAccess.getVascularSystem(mc.player)
 					.orElseThrow(IllegalStateException::new).setVascularSystem(msg.vascularSystem);
 
 		});

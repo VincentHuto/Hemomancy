@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -131,17 +132,19 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag compound = super.getUpdateTag();
-		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		CompoundTag compound = super.getUpdateTag(provider);
+		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT(provider));
 		compound.putString(TAG_NAME, getName());
 		return compound;
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
+		super.handleUpdateTag(tag, provider);
+		VeinLocation veinLocation = VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC));
+		veinLocation.deserializeNBT(provider, tag.getCompound(TAG_VEIN_LOC));
+		locCap.setVeinLoc(veinLocation);
 		name = tag.getString(TAG_NAME);
 
 	}
@@ -152,25 +155,29 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 
 	// NBT JUNK
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
-		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.loadAdditional(tag, provider);
+		VeinLocation veinLocation = VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC));
+		veinLocation.deserializeNBT(provider, tag.getCompound(TAG_VEIN_LOC));
+		locCap.setVeinLoc(veinLocation);
 		name = tag.getString(TAG_NAME);
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
+		super.onDataPacket(net, pkt, provider);
 		CompoundTag tag = pkt.getTag();
-		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
+		VeinLocation veinLocation = VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC));
+		veinLocation.deserializeNBT(provider, tag.getCompound(TAG_VEIN_LOC));
+		locCap.setVeinLoc(veinLocation);
 		name = tag.getString(TAG_NAME);
 
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
-		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
+	protected void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
+		super.saveAdditional(compound, provider);
+		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT(provider));
 		compound.putString(TAG_NAME, getName());
 	}
 

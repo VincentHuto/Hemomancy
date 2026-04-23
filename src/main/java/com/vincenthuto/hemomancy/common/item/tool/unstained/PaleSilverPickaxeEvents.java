@@ -8,7 +8,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 
 /**
@@ -37,7 +36,7 @@ public class PaleSilverPickaxeEvents {
 
 			double distSq = player.blockPosition().distSqr(spawnPos);
 			if (distSq <= SUPPRESS_RADIUS * SUPPRESS_RADIUS) {
-				event.setResult(Event.Result.DENY);
+				event.setResult(MobSpawnEvent.PositionCheck.Result.FAIL);
 				return;
 			}
 		}

@@ -85,14 +85,14 @@ public class VitricCombustionManip extends BloodManipulation {
 		for (LivingEntity target : targets) {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
-			target.setSecondsOnFire(FIRE_SECONDS);
+			target.igniteForSeconds(FIRE_SECONDS);
 			target.hurt(world.damageSources().explosion(null, player), (float) (BLAST_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
 			target.push(toTarget.x * KNOCKBACK_STRENGTH,
 					0.4 * KNOCKBACK_STRENGTH,
 					toTarget.z * KNOCKBACK_STRENGTH);
 		}
 
-		world.playSound(null, blastPos, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.2f, 0.7f);
+		world.playSound(null, blastPos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.2f, 0.7f);
 		world.playSound(null, blastPos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0f, 0.6f);
 
 		RandomSource random = world.random;

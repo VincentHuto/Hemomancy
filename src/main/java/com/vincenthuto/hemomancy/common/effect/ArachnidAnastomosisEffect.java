@@ -27,9 +27,9 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null || entity.level().isClientSide) return;
-		if (!(entity instanceof Player player)) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null || entity.level().isClientSide) return true;
+		if (!(entity instanceof Player player)) return true;
 
 		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			float healAmount = 0.5f + amplifier * 0.25f;
@@ -50,6 +50,7 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 				VascularSystemEvents.syncVascular((ServerPlayer) player, vascular);
 			}
 		});
+		return true;
 	}
 
 	@Override
@@ -69,9 +70,10 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		// Tick every 2 seconds (40 ticks) to match the vascular system check cadence
 		return duration % 40 == 0;
 	}
 
 }
+

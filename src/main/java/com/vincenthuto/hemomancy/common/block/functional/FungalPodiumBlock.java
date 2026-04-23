@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.stream.Stream;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -19,8 +20,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -46,6 +49,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class FungalPodiumBlock extends BaseEntityBlock {
+	public static final MapCodec<FungalPodiumBlock> CODEC = simpleCodec(FungalPodiumBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE_N = Stream.of(Block.box(3, 0, 3, 13, 2, 13), Block.box(3, 12, 3, 13, 14, 13),
 			Block.box(6, 13, 6, 10, 15, 10), Block.box(6, 13, 6, 10, 15, 10), Block.box(5, 15, 5, 11, 16, 11),
@@ -77,6 +81,11 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 	public FungalPodiumBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override
@@ -144,9 +153,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 		return blockEntity != null && blockEntity.triggerEvent(id, param);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleUse(Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
@@ -193,6 +200,19 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 
 		serverPlayer.getCooldowns().addCooldown(Item.byBlock(this), TRAVEL_COOLDOWN);
 		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleUse(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleUse(worldIn, pos, player);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 	private void storeReturnPosition(ServerPlayer player) {

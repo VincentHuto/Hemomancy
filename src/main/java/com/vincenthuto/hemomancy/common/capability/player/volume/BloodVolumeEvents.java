@@ -226,7 +226,8 @@ public class BloodVolumeEvents {
 				double gain = baseGain * healthScale;
 
 				// Boss multiplier
-				if (!victim.canChangeDimensions()) {
+				if (victim instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon
+						|| victim instanceof net.minecraft.world.entity.boss.wither.WitherBoss) {
 					gain *= HemoServerConfig.BLOOD_GAIN_BOSS_MULTIPLIER.get();
 				}
 

@@ -78,40 +78,41 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 		}
 		Minecraft mc = Minecraft.getInstance();
-		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 
 		// Right InteractionHand only
 		if (rightHandItem.getItem() instanceof ICellHand && !(leftHandItem.getItem() instanceof ICellHand)) {
-			model.rightArm = playerrenderer.getModel().rightArm;
-			model.leftArm = playerrenderer.getModel().leftArm;
+			model.rightArm.copyFrom(playerrenderer.getModel().rightArm);
+			model.leftArm.copyFrom(playerrenderer.getModel().leftArm);
+			model.rightArm.visible = true;
 			model.leftArm.visible = false;
 			VertexConsumer ivertexbuilder = bufferIn.getBuffer(model.renderType(skinTexture));
-			model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0,
-					100);
+			model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0x64FF0000);
 			PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 			this.renderHandParticle(entitylivingbaseIn, rightHandItem,
 					ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, matrixStackIn, bufferIn,
 					packedLightIn);
 			// Left InteractionHand only
 		} else if (leftHandItem.getItem() instanceof ICellHand && !(rightHandItem.getItem() instanceof ICellHand)) {
-			model.rightArm = playerrenderer.getModel().rightArm;
-			model.leftArm = playerrenderer.getModel().leftArm;
+			model.rightArm.copyFrom(playerrenderer.getModel().rightArm);
+			model.leftArm.copyFrom(playerrenderer.getModel().leftArm);
 			model.rightArm.visible = false;
+			model.leftArm.visible = true;
 			VertexConsumer ivertexbuilder = bufferIn.getBuffer(model.renderType(skinTexture));
-			model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0,
-					100);
+			model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0x64FF0000);
 			PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 			this.renderHandParticle(entitylivingbaseIn, leftHandItem,
 					ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStackIn, bufferIn,
 					packedLightIn);
 			// Both Hands
 		} else if (leftHandItem.getItem() instanceof ICellHand && rightHandItem.getItem() instanceof ICellHand) {
-			model.rightArm = playerrenderer.getModel().rightArm;
-			model.leftArm = playerrenderer.getModel().leftArm;
+			model.rightArm.copyFrom(playerrenderer.getModel().rightArm);
+			model.leftArm.copyFrom(playerrenderer.getModel().leftArm);
+			model.rightArm.visible = true;
+			model.leftArm.visible = true;
 			VertexConsumer ivertexbuilder = bufferIn.getBuffer(model.renderType(skinTexture));
-			model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0,
-					100);
+			model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 0x64FF0000);
 			PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 			this.renderHandParticle(entitylivingbaseIn, rightHandItem,
 					ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStackIn, bufferIn,

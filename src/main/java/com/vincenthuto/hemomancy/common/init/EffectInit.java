@@ -29,14 +29,14 @@ public class EffectInit {
             () -> new BloodBindingEffect(MobEffectCategory.HARMFUL, 3735555));
     public static final DeferredHolder<Potion, Potion> potion_of_blood_binding = POTION_TYPES.register(
             "potion_of_blood_binding",
-            () -> new Potion("potion_of_blood_binding", new MobEffectInstance(blood_binding.get(), 1000, 3)));
+            () -> new Potion("potion_of_blood_binding", new MobEffectInstance(blood_binding, 1000, 3)));
 
     public static final DeferredHolder<MobEffect, MobEffect> blood_loss = EFFECTS.register("blood_loss",
             () -> new BloodLossEffect(MobEffectCategory.HARMFUL, 11075587).addAttributeModifier(
                     Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_loss_movement_speed"), -0.15F,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Potion, Potion> potion_of_blood_loss = POTION_TYPES.register("potion_of_blood_loss",
-            () -> new Potion("potion_of_blood_loss", new MobEffectInstance(blood_loss.get(), 1000, 3)));
+            () -> new Potion("potion_of_blood_loss", new MobEffectInstance(blood_loss, 1000, 3)));
 
     public static final DeferredHolder<MobEffect, MobEffect> blood_rush = EFFECTS.register("blood_rush",
             () -> new BloodRushEffect(MobEffectCategory.BENEFICIAL, 16711680)
@@ -47,41 +47,41 @@ public class EffectInit {
                     .addAttributeModifier(Attributes.ATTACK_DAMAGE, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_rush_attack_damage"), 0.0D,
                             AttributeModifier.Operation.ADD_VALUE));
     public static final DeferredHolder<Potion, Potion> potion_of_blood_rush = POTION_TYPES.register("potion_of_blood_rush",
-            () -> new Potion("potion_of_blood_rush", new MobEffectInstance(blood_rush.get(), 1000, 3)));
+            () -> new Potion("potion_of_blood_rush", new MobEffectInstance(blood_rush, 1000, 3)));
 
     public static final DeferredHolder<MobEffect, MobEffect> hemolysis = EFFECTS.register("hemolysis",
             () -> new HemolysisEffect(MobEffectCategory.NEUTRAL, 15186121));
 
     public static final DeferredHolder<Potion, Potion> potion_of_hemolysis = POTION_TYPES.register("potion_of_hemolysis",
-            () -> new Potion("potion_of_hemolysis", new MobEffectInstance(hemolysis.get(), 1000, 3)));
+            () -> new Potion("potion_of_hemolysis", new MobEffectInstance(hemolysis, 1000, 3)));
 
     public static final DeferredHolder<MobEffect, MobEffect> sanguine_fertility = EFFECTS.register("sanguine_fertility",
             () -> new SanguineFertilityEffect(MobEffectCategory.BENEFICIAL, 0xCC3344));
     public static final DeferredHolder<Potion, Potion> potion_of_sanguine_fertility = POTION_TYPES.register(
             "potion_of_sanguine_fertility",
             () -> new Potion("potion_of_sanguine_fertility",
-                    new MobEffectInstance(sanguine_fertility.get(), 1200, 0)));
+                    new MobEffectInstance(sanguine_fertility, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> arachnid_anastomosis = EFFECTS.register("arachnid_anastomosis",
             () -> new ArachnidAnastomosisEffect(MobEffectCategory.BENEFICIAL, 0x8B0000));
     public static final DeferredHolder<Potion, Potion> potion_of_arachnid_anastomosis = POTION_TYPES.register(
             "potion_of_arachnid_anastomosis",
             () -> new Potion("potion_of_arachnid_anastomosis",
-                    new MobEffectInstance(arachnid_anastomosis.get(), 1200, 0)));
+                    new MobEffectInstance(arachnid_anastomosis, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> mycorrhizal_mending = EFFECTS.register("mycorrhizal_mending",
             () -> new MycorrhizalMendingEffect(MobEffectCategory.BENEFICIAL, 0x7B4F2A));
     public static final DeferredHolder<Potion, Potion> potion_of_mycorrhizal_mending = POTION_TYPES.register(
             "potion_of_mycorrhizal_mending",
             () -> new Potion("potion_of_mycorrhizal_mending",
-                    new MobEffectInstance(mycorrhizal_mending.get(), 1200, 0)));
+                    new MobEffectInstance(mycorrhizal_mending, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> sanguine_siphon = EFFECTS.register("sanguine_siphon",
             () -> new SanguineSiphonEffect(MobEffectCategory.BENEFICIAL, 0x8B0000));
     public static final DeferredHolder<Potion, Potion> potion_of_sanguine_siphon = POTION_TYPES.register(
             "potion_of_sanguine_siphon",
             () -> new Potion("potion_of_sanguine_siphon",
-                    new MobEffectInstance(sanguine_siphon.get(), 1200, 0)));
+                    new MobEffectInstance(sanguine_siphon, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> chitinous_bulwark = EFFECTS.register("chitinous_bulwark",
             () -> new ChitinousBulwarkEffect(MobEffectCategory.BENEFICIAL, 0x556B2F)
@@ -90,7 +90,7 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_chitinous_bulwark = POTION_TYPES.register(
             "potion_of_chitinous_bulwark",
             () -> new Potion("potion_of_chitinous_bulwark",
-                    new MobEffectInstance(chitinous_bulwark.get(), 1200, 0)));
+                    new MobEffectInstance(chitinous_bulwark, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> serpentine_guile = EFFECTS.register("serpentine_guile",
             () -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0x2E8B57)
@@ -101,14 +101,14 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_serpentine_guile = POTION_TYPES.register(
             "potion_of_serpentine_guile",
             () -> new Potion("potion_of_serpentine_guile",
-                    new MobEffectInstance(serpentine_guile.get(), 1200, 0)));
+                    new MobEffectInstance(serpentine_guile, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> verminous_aura = EFFECTS.register("verminous_aura",
             () -> new VerminousAuraEffect(MobEffectCategory.BENEFICIAL, 0x4A3728));
     public static final DeferredHolder<Potion, Potion> potion_of_verminous_aura = POTION_TYPES.register(
             "potion_of_verminous_aura",
             () -> new Potion("potion_of_verminous_aura",
-                    new MobEffectInstance(verminous_aura.get(), 1200, 0)));
+                    new MobEffectInstance(verminous_aura, 1200, 0)));
 
     // New Morphling Effects
     public static final DeferredHolder<MobEffect, MobEffect> luminous_dissipation = EFFECTS.register("luminous_dissipation",
@@ -118,14 +118,14 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_luminous_dissipation = POTION_TYPES.register(
             "potion_of_luminous_dissipation",
             () -> new Potion("potion_of_luminous_dissipation",
-                    new MobEffectInstance(luminous_dissipation.get(), 1200, 0)));
+                    new MobEffectInstance(luminous_dissipation, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> hemorrhagic_venom = EFFECTS.register("hemorrhagic_venom",
             () -> new HemorrhagicVenomEffect(MobEffectCategory.BENEFICIAL, 0x660033));
     public static final DeferredHolder<Potion, Potion> potion_of_hemorrhagic_venom = POTION_TYPES.register(
             "potion_of_hemorrhagic_venom",
             () -> new Potion("potion_of_hemorrhagic_venom",
-                    new MobEffectInstance(hemorrhagic_venom.get(), 1200, 0)));
+                    new MobEffectInstance(hemorrhagic_venom, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> venomous_resilience = EFFECTS.register("venomous_resilience",
             () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x336B87)
@@ -134,14 +134,14 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_venomous_resilience = POTION_TYPES.register(
             "potion_of_venomous_resilience",
             () -> new Potion("potion_of_venomous_resilience",
-                    new MobEffectInstance(venomous_resilience.get(), 1200, 0)));
+                    new MobEffectInstance(venomous_resilience, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> echoic_perception = EFFECTS.register("echoic_perception",
             () -> new EchoicPerceptionEffect(MobEffectCategory.BENEFICIAL, 0x2A0A3C));
     public static final DeferredHolder<Potion, Potion> potion_of_echoic_perception = POTION_TYPES.register(
             "potion_of_echoic_perception",
             () -> new Potion("potion_of_echoic_perception",
-                    new MobEffectInstance(echoic_perception.get(), 1200, 0)));
+                    new MobEffectInstance(echoic_perception, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> spined_barricade = EFFECTS.register("spined_barricade",
             () -> new SpinedBarricadeEffect(MobEffectCategory.BENEFICIAL, 0x1A8A9F)
@@ -150,7 +150,7 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_spined_barricade = POTION_TYPES.register(
             "potion_of_spined_barricade",
             () -> new Potion("potion_of_spined_barricade",
-                    new MobEffectInstance(spined_barricade.get(), 1200, 0)));
+                    new MobEffectInstance(spined_barricade, 1200, 0)));
 
     public static final DeferredHolder<MobEffect, MobEffect> burrowers_instinct = EFFECTS.register("burrowers_instinct",
             () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0x8B6914)
@@ -159,7 +159,7 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_burrowers_instinct = POTION_TYPES.register(
             "potion_of_burrowers_instinct",
             () -> new Potion("potion_of_burrowers_instinct",
-                    new MobEffectInstance(burrowers_instinct.get(), 1200, 0)));
+                    new MobEffectInstance(burrowers_instinct, 1200, 0)));
 
     // Unstained Path Effects
     public static final DeferredHolder<MobEffect, MobEffect> silver_ward = EFFECTS.register("silver_ward",

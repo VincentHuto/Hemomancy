@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.hematic.SanguisLanceaItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.SanguisLanceaEntity;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
@@ -34,7 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class SanguisLanceaItem extends LivingToolItem {
+public class SanguisLanceaItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
 
 	public static String TAG_STATE = "state";
 
@@ -43,8 +45,8 @@ public class SanguisLanceaItem extends LivingToolItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
@@ -60,7 +62,7 @@ public class SanguisLanceaItem extends LivingToolItem {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 72000 / 2;
 	}
 
@@ -91,10 +93,8 @@ public class SanguisLanceaItem extends LivingToolItem {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropSanguisLancea.INSTANCE);
-
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return RenderPropSanguisLancea.INSTANCE;
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class SanguisLanceaItem extends LivingToolItem {
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		int i = this.getUseDuration(stack) - timeLeft;
+		int i = this.getUseDuration(stack, entityLiving) - timeLeft;
 		if (i >= 10) {
 			if (entityLiving instanceof Player player) {
 				SanguisLanceaEntity throwntrident = new SanguisLanceaEntity(worldIn, player, stack);
@@ -112,7 +112,7 @@ public class SanguisLanceaItem extends LivingToolItem {
 						2.5F + (float) 0 * 0.5F, 1.0F);
 					throwntrident.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 				worldIn.addFreshEntity(throwntrident);
-				worldIn.playSound((Player) null, throwntrident, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F,
+				worldIn.playSound((Player) null, throwntrident, SoundEvents.TRIDENT_THROW.value(), SoundSource.PLAYERS, 1.0F,
 						1.0F);
 
 				Vec3 pos = player.position();

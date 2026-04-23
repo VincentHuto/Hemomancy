@@ -1,22 +1,23 @@
 package com.vincenthuto.hemomancy.common.item.scar;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -45,11 +46,11 @@ public class ItemScar extends Item implements IScar {
 	private final List<ScarModifier> passiveModifiers = new ArrayList<>();
 	private final List<ScarEffectEntry> passiveEffects = new ArrayList<>();
 
-	public record ScarModifier(Attribute attribute, UUID uuid, String name, double amount,
+	public record ScarModifier(Holder<Attribute> attribute, ResourceLocation id, double amount,
 			AttributeModifier.Operation operation) {
 	}
 
-	public record ScarEffectEntry(MobEffect effect, int amplifier) {
+	public record ScarEffectEntry(Holder<MobEffect> effect, int amplifier) {
 	}
 
 	/** Legacy constructor for backward compatibility (tier defaults to 0). */
@@ -65,15 +66,14 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	/** Adds a persistent attribute modifier applied on equip and removed on unequip. */
-	public ItemScar withModifier(Attribute attribute, String name, double amount,
+	public ItemScar withModifier(Holder<Attribute> attribute, String name, double amount,
 			AttributeModifier.Operation operation) {
-		UUID uuid = UUID.nameUUIDFromBytes(("hemomancy:" + name).getBytes());
-		this.passiveModifiers.add(new ScarModifier(attribute, uuid, name, amount, operation));
+		this.passiveModifiers.add(new ScarModifier(attribute, Hemomancy.rloc(name), amount, operation));
 		return this;
 	}
 
 	/** Adds a persistent mob effect granted while the scar is equipped. */
-	public ItemScar withEffect(MobEffect effect, int amplifier) {
+	public ItemScar withEffect(Holder<MobEffect> effect, int amplifier) {
 		this.passiveEffects.add(new ScarEffectEntry(effect, amplifier));
 		return this;
 	}
@@ -120,7 +120,7 @@ public class ItemScar extends Item implements IScar {
 				for (ScarModifier mod : passiveModifiers) {
 					AttributeInstance attr = player.getAttribute(mod.attribute());
 					if (attr != null) {
-						attr.removePermanentModifier(mod.id());
+						attr.removeModifier(mod.id());
 					}
 				}
 
@@ -133,14 +133,14 @@ public class ItemScar extends Item implements IScar {
 		}
 	}
 
-	private boolean hasotherScarWithEffect(LivingEntity player, MobEffect effect) {
+	private boolean hasotherScarWithEffect(LivingEntity player, Holder<MobEffect> effect) {
 		if (!(player instanceof net.minecraft.world.entity.player.Player p)) return false;
 		return HemoCapabilityAccess.getScars(p).map(scars -> {
 			for (int i = 0; i < scars.getSlots(); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemScar otherScar) {
 					for (ScarEffectEntry otherEff : otherScar.passiveEffects) {
-						if (otherEff.effect() == effect)
+						if (otherEff.effect().equals(effect))
 							return true;
 					}
 				}
@@ -202,7 +202,7 @@ public class ItemScar extends Item implements IScar {
 	 */
 	public void onPlayerDefend(Player player, LivingEntity attacker) {
 		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 3) {
-			attacker.setSecondsOnFire(4);
+			attacker.igniteForSeconds(4.0F);
 		}
 		if (assignedTendency == EnumBloodTendency.FERRIC && tier >= 1) {
 			attacker.hurt(player.damageSources().thorns(player), tier);
@@ -252,8 +252,8 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 
 		if (tier > 0) {
 			String tierStr = tier == 1 ? "I" : tier == 2 ? "II" : "III";
@@ -273,12 +273,12 @@ public class ItemScar extends Item implements IScar {
 				valueStr = sign + String.format("%.0f", mod.amount());
 			}
 			tooltip.add(Component.literal(valueStr + " ")
-					.append(Component.translatable(mod.attribute().getDescriptionId()))
+					.append(Component.translatable(mod.attribute().value().getDescriptionId()))
 					.withStyle(ChatFormatting.BLUE));
 		}
 
 		for (ScarEffectEntry eff : passiveEffects) {
-			tooltip.add(Component.translatable(eff.effect().getDescriptionId())
+			tooltip.add(Component.translatable(eff.effect().value().getDescriptionId())
 					.withStyle(ChatFormatting.AQUA));
 		}
 

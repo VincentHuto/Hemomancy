@@ -40,7 +40,6 @@ public class ItemScarBinder extends Item {
 		this.rarity = rarity;
 	}
 
-	@Override
 	public Rarity getRarity(ItemStack stack) {
 		return rarity;
 	}
@@ -101,8 +100,8 @@ public class ItemScarBinder extends Item {
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		String translationKey = getDescriptionId();
 
 

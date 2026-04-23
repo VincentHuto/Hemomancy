@@ -33,7 +33,9 @@ public class OpenLivingStaffPacket implements CustomPacketPayload {
 
 	public static void handle(final OpenLivingStaffPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer player = ctx.player();
+			if (!(ctx.player() instanceof ServerPlayer player)) {
+				return;
+			}
 			if (!Hemomancy.findItemInPlayerInv(player, LivingStaffItem.class).isEmpty()) {
 				player.openMenu(new MenuProvider() {
 					@Nullable

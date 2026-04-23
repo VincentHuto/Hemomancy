@@ -34,8 +34,9 @@ public class PacketSyncDegree implements CustomPacketPayload {
 
 	public static void handle(final PacketSyncDegree msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (Minecraft.getInstance().player != null) {
-				Minecraft.getInstance().HemoCapabilityAccess.getInitiatoryDegree(player)
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.player != null) {
+				HemoCapabilityAccess.getInitiatoryDegree(mc.player)
 						.ifPresent(degree -> degree.setDegreeNumber(msg.degreeNumber));
 			}
 		});

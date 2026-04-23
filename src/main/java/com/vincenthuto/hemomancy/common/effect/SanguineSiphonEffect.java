@@ -24,9 +24,9 @@ public class SanguineSiphonEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null || entity.level().isClientSide) return;
-		if (!(entity instanceof Player player)) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null || entity.level().isClientSide) return true;
+		if (!(entity instanceof Player player)) return true;
 
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (!volume.isActive()) return;
@@ -36,6 +36,7 @@ public class SanguineSiphonEffect extends MobEffect {
 				BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
 			}
 		});
+		return true;
 	}
 
 	@Override
@@ -55,8 +56,9 @@ public class SanguineSiphonEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 40 == 0;
 	}
 
 }
+

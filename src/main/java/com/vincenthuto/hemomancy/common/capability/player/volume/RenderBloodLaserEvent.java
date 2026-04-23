@@ -10,9 +10,12 @@ import net.neoforged.bus.api.SubscribeEvent;
 public class RenderBloodLaserEvent {
 	@SubscribeEvent
 	public static void renderLevelLastEvent(RenderLevelStageEvent evt) {
+		if (Minecraft.getInstance().level == null) {
+			return;
+		}
 		List<AbstractClientPlayer> players = Minecraft.getInstance().level.players();
 		players.forEach((p) -> {
-			RenderBloodLaser.renderLaser(evt, p, Minecraft.getInstance().getFrameTime());
+			RenderBloodLaser.renderLaser(evt, p);
 
 		});
 	}

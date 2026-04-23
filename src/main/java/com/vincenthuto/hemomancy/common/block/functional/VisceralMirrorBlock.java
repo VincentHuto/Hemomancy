@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -162,18 +163,11 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 	 * <p>Right-click with an empty hand opens the GUI screen, which sends
 	 * the player all organ data needed to make informed extraction choices.</p>
 	 */
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player,
-			InteractionHand handIn, BlockHitResult result) {
+	private InteractionResult handleEmptyHandInteraction(Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof VisceralMirrorBlockEntity te)) return InteractionResult.PASS;
-
-		// Only react to empty-hand interactions
-		if (!player.getItemInHand(handIn).isEmpty()) {
-			return InteractionResult.PASS;
-		}
 
 		if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
 
@@ -199,6 +193,18 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 		PacketHandler.sendToPlayer(serverPlayer, new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVol, maxBloodVol, degree));
 
 		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleEmptyHandInteraction(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	private boolean playerHasEcho(Player player, EnumOrgan organ) {

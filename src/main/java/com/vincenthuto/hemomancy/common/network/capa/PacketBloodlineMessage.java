@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Client → Server: Player sends a message to all online members of their shared bloodline.
@@ -43,8 +44,8 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 
 	public static void handle(final PacketBloodlineMessage msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player();
-			if (sender == null) return;
+			Player player = ctx.player();
+			if (!(player instanceof ServerPlayer sender)) return;
 
 			String trimmed = msg.message.trim();
 			if (trimmed.isEmpty() || trimmed.length() > MAX_LENGTH) return;

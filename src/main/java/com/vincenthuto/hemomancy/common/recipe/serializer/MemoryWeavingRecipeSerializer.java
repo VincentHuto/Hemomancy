@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -24,7 +26,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWeavingRecipe> {
 	public static HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();
@@ -58,7 +59,9 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 
 		ItemStack result;
 		if (pJson.get("result").isJsonObject())
-			result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
+			result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
+					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
+					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
 		else {
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
@@ -70,7 +73,8 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			JsonElement jsonelement = GsonHelper.isArrayNode(pJson, "ingredient")
 					? GsonHelper.getAsJsonArray(pJson, "ingredient")
 					: GsonHelper.getAsJsonObject(pJson, "ingredient");
-			Ingredient ingredient = Ingredient.fromJson(jsonelement, false);
+			Ingredient ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, jsonelement)
+					.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient: " + err));
 			return new MemoryWeavingRecipe(pRecipeId, ingredient, tendency, result);
 		} else {
 			return new MemoryWeavingRecipe(pRecipeId, Ingredient.EMPTY, tendency, result);
@@ -110,9 +114,9 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 				prefix.add(tend.toString().toLowerCase(), ops.createBoolean(recipe.isTendencyRequired(tend)));
 			}
 			Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient()).result()
-					.ifPresent(e -> prefix.add("ingredient", ops.convertFrom(JsonOps.INSTANCE, e)));
-			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem()).result()
-					.ifPresent(e -> prefix.add("result", ops.convertFrom(JsonOps.INSTANCE, e)));
+					.ifPresent(e -> prefix.add("ingredient", JsonOps.INSTANCE.convertTo(ops, e)));
+			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem(null)).result()
+					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			return prefix;
 		}
 	};
@@ -154,7 +158,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				pBuffer.writeBoolean(pRecipe.getTendency().getOrDefault(tend, 0f) > 0f);
 			}
-			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResultItem());
+			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResultItem(null));
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error writing memory weaving recipe to packet.", e);
 			throw e;

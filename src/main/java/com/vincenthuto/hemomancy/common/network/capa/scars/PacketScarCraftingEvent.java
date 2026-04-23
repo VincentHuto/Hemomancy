@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class PacketScarCraftingEvent implements CustomPacketPayload {
@@ -41,8 +42,8 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 
 		public static void handle(final PacketScarCraftingEvent msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
-				ServerPlayer player = ctx.player();
-				if (player == null) return;
+				Player packetPlayer = ctx.player();
+				if (!(packetPlayer instanceof ServerPlayer player)) return;
 
 				// ── Degree gate: Scar crafting requires Adept (degree 4) ──
 				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);

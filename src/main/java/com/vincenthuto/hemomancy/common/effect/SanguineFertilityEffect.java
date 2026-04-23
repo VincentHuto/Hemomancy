@@ -27,8 +27,8 @@ public class SanguineFertilityEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null) return true;
 		Level level = entity.level();
 
 		double radius = 6.0 + amplifier * 2.0;
@@ -77,6 +77,7 @@ public class SanguineFertilityEffect extends MobEffect {
 				}
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -96,7 +97,8 @@ public class SanguineFertilityEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 }
+

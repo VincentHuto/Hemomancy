@@ -21,6 +21,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -310,7 +311,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public void setItem(int slot, ItemStack stack) {
 		ItemStack existing = this.items.get(slot);
-		boolean sameItem = !stack.isEmpty() && ItemStack.isSameItemSameTags(existing, stack);
+		boolean sameItem = !stack.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack);
 		this.items.set(slot, stack);
 		if (stack.getCount() > this.getMaxStackSize()) {
 			stack.setCount(this.getMaxStackSize());
@@ -432,6 +433,17 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		this.recipesUsed.clear();
 	}
 
+	public void getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 pos) {
+		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+			level.getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+				if (holder.value() instanceof DistillationRecipe recipe) {
+					createExperience(level, pos, entry.getIntValue(), recipe.getExperience());
+				}
+			});
+		}
+		this.recipesUsed.clear();
+	}
+
 	@Override
 	@Nullable
 	public RecipeHolder<?> getRecipeUsed() {
@@ -463,6 +475,16 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public ItemStack getItem(int slot) {
 		return this.items.get(slot);
+	}
+
+	@Override
+	protected NonNullList<ItemStack> getItems() {
+		return this.items;
+	}
+
+	@Override
+	protected void setItems(NonNullList<ItemStack> items) {
+		this.items = items;
 	}
 
 	@Override
@@ -539,10 +561,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.items);
+		ContainerHelper.loadAllItems(tag, this.items, registries);
 		this.heated = tag.getBoolean("Heated");
 		this.cookingProgress = tag.getInt("CookTime");
 		this.cookingTotalTime = tag.getInt("CookTimeTotal");
@@ -557,12 +579,12 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 		tag.putBoolean("Heated", this.heated);
 		tag.putInt("CookTime", this.cookingProgress);
 		tag.putInt("CookTimeTotal", this.cookingTotalTime);
-		ContainerHelper.saveAllItems(tag, this.items);
+		ContainerHelper.saveAllItems(tag, this.items, registries);
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
 		tag.put("RecipesUsed", recipesTag);
@@ -580,12 +602,12 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
 		tag.putBoolean("Heated", this.heated);
 		tag.putInt("CookTime", this.cookingProgress);
 		tag.putInt("CookTimeTotal", this.cookingTotalTime);
-		ContainerHelper.saveAllItems(tag, this.items);
+		ContainerHelper.saveAllItems(tag, this.items, registries);
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
 		tag.put("RecipesUsed", recipesTag);
@@ -597,8 +619,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		super.handleUpdateTag(tag, registries);
 		if (tag != null) {
 			IBloodVolume vol = resolveVolume();
 			if (vol != null) {
@@ -608,8 +630,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+		super.onDataPacket(net, pkt, registries);
 		if (pkt.getTag() != null) {
 			IBloodVolume vol = resolveVolume();
 			if (vol != null) {

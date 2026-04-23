@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.AttributeInit.TriState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 
 public final class CPacketFlight implements CustomPacketPayload {
 
@@ -28,9 +29,8 @@ public final class CPacketFlight implements CustomPacketPayload {
 	@SuppressWarnings("ConstantConditions")
 	public static void handle(final CPacketFlight msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player();
-
-			if (sender != null) {
+			Player player = ctx.player();
+			if (player instanceof ServerPlayer sender) {
 				sender.stopFallFlying();
 
 				if (!sender.onGround() && !sender.isFallFlying() && !sender.isInWater()

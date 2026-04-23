@@ -161,7 +161,7 @@ public class ManipulationsTabController implements IProgressTab {
         knownManipNames.clear();
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            mc.HemoCapabilityAccess.getKnownManipulations(player).ifPresent(cap -> {
+            HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(cap -> {
                 for (BloodManipulation m : cap.getManipList()) {
                     if (m != null && m.getName() != null) knownManipNames.add(m.getName());
                 }

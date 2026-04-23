@@ -58,8 +58,8 @@ public class LeechesMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Sanguine Siphon (blood fill, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.sanguine_siphon.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon.get(),
+		if (!player.hasEffect(EffectInit.sanguine_siphon)) {
+			player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon,
 					100, maturity, false, true, true));
 		}
 

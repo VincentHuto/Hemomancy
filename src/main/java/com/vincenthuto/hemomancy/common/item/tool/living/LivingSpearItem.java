@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingSpearItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
@@ -18,7 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -29,6 +28,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
@@ -37,7 +37,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class LivingSpearItem extends LivingToolItem {
+public class LivingSpearItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
 
 	public static String TAG_STATE = "state";
 
@@ -47,8 +47,8 @@ public class LivingSpearItem extends LivingToolItem {
 
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
 				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
@@ -64,7 +64,7 @@ public class LivingSpearItem extends LivingToolItem {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 72000 / 2;
 	}
 
@@ -95,10 +95,8 @@ public class LivingSpearItem extends LivingToolItem {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropLivingSpear.INSTANCE);
-
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return RenderPropLivingSpear.INSTANCE;
 	}
 
 	@Override
@@ -108,10 +106,9 @@ public class LivingSpearItem extends LivingToolItem {
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		int i = this.getUseDuration(stack) - timeLeft;
+		int i = this.getUseDuration(stack, entityLiving) - timeLeft;
 		if (i >= 10) {
-			if (entityLiving instanceof Player) {
-				Player player = (Player) entityLiving;
+			if (entityLiving instanceof Player player) {
 
 				float f7 = player.getYRot();
 				float f = player.getXRot();
@@ -124,12 +121,11 @@ public class LivingSpearItem extends LivingToolItem {
 				f2 = f2 * (f5 / f4);
 				f3 = f3 * (f5 / f4);
 				player.push(f1, f2, f3);
-				player.startAutoSpinAttack(20);
+				player.startAutoSpinAttack(20, this.getLivingAttackDamage(), stack);
 				if (player.onGround()) {
 					player.move(MoverType.SELF, new Vec3(0.0D, 1.1999999F, 0.0D));
 				}
-				SoundEvent soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
-				worldIn.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+				worldIn.playSound(null, player, SoundEvents.TRIDENT_RIPTIDE_1.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
 
 				Vec3 pos = player.position();
 				if (player.level() instanceof ServerLevel serverLevel) {
@@ -156,7 +152,9 @@ public class LivingSpearItem extends LivingToolItem {
 				 */
 			}
 
-			((Player) entityLiving).awardStat(Stats.ITEM_USED.get(this));
+			if (entityLiving instanceof Player player) {
+				player.awardStat(Stats.ITEM_USED.get(this));
+			}
 		}
 	}
 

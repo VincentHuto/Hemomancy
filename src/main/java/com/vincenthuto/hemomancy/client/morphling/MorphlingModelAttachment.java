@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -42,6 +43,14 @@ import com.vincenthuto.hemomancy.Hemomancy;
  */
 @OnlyIn(Dist.CLIENT)
 public abstract class MorphlingModelAttachment {
+
+    protected static int packColor(float red, float green, float blue, float alpha) {
+        int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
+        int r = Mth.clamp((int) (red * 255.0F), 0, 255);
+        int g = Mth.clamp((int) (green * 255.0F), 0, 255);
+        int b = Mth.clamp((int) (blue * 255.0F), 0, 255);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
 
     /**
      * Which part of the player's humanoid model this attachment parents to.
@@ -163,7 +172,7 @@ public abstract class MorphlingModelAttachment {
             poseStack.scale(scale, scale, scale);
             VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(texture));
             model().renderToBuffer(poseStack, consumer, packedLight,
-                    OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, alpha);
+                    OverlayTexture.NO_OVERLAY, packColor(1f, 1f, 1f, alpha));
             poseStack.popPose();
         }
     }

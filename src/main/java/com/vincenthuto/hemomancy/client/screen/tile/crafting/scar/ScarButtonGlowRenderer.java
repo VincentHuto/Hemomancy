@@ -62,7 +62,7 @@ public class ScarButtonGlowRenderer {
 		// Pulsing animation driven by game time
 		float gameTime = (float) (Minecraft.getInstance().level != null
 				? Minecraft.getInstance().level.getGameTime() : 0)
-				+ Minecraft.getInstance().getFrameTime();
+				+ Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
 		float pulse = PULSE_MIN + (1.0f - PULSE_MIN) * ((float) Math.sin(gameTime * PULSE_SPEED * 0.1f) * 0.5f + 0.5f);
 
 		for (int i = 0; i < 8; i++) {
@@ -97,7 +97,7 @@ public class ScarButtonGlowRenderer {
 			byte[][] source, byte[][] exclude, int r, int g, int b) {
 		float gameTime = (float) (Minecraft.getInstance().level != null
 				? Minecraft.getInstance().level.getGameTime() : 0)
-				+ Minecraft.getInstance().getFrameTime();
+				+ Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
 		float pulse = PULSE_MIN + (1.0f - PULSE_MIN) * ((float) Math.sin(gameTime * PULSE_SPEED * 0.1f) * 0.5f + 0.5f);
 
 		for (int i = 0; i < 8; i++) {

@@ -87,7 +87,7 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 			ItemStack prev = previous[slot];
 			ItemStack now = getStackInSlot(slot);
 
-			if (!ItemStack.isSameItemSameTags(prev, now)) {
+			if (!ItemStack.isSameItemSameComponents(prev, now)) {
 				if (!prev.isEmpty()) {
 					IScar prevScar = prev.getCapability(HemoCapabilityKeys.ITEM_SCAR);
 					if (prevScar != null) prevScar.onUnequipped(holder);
@@ -142,7 +142,7 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 			ItemStack stack = getStackInSlot(i);
 			IScar scar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
 			boolean autosync = scar != null && scar.willAutoSync(holder);
-			if (changed[i] || autosync && !ItemStack.isSameItemSameTags(stack, previous[i])) {
+			if (changed[i] || autosync && !ItemStack.isSameItemSameComponents(stack, previous[i])) {
 				if (receivers == null) {
 					receivers = new ArrayList<>(((ServerLevel) holder.level()).players());
 					receivers.add((ServerPlayer) holder);

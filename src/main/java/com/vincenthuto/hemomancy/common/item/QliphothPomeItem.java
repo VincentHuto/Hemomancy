@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -14,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,9 +26,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Edible reagent fruit dropped by Qliphoth Bloom trees. Renders as a dark
@@ -55,7 +57,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * flag on the player's persistent data, unlocking the Rite of Apotheos
  * (the Eighth Degree gate).
  */
-public class QliphothPomeItem extends Item {
+public class QliphothPomeItem extends Item implements HemoClientItemExtensionsProvider {
 
 	// ── ItemStack NBT keys (written when the pome drops from the tree) ──
 
@@ -121,14 +123,18 @@ public class QliphothPomeItem extends Item {
 		super(properties);
 	}
 
+	private static CompoundTag getCustomData(ItemStack stack) {
+		return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+	}
+
 	// ── Tooltip ──
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
-		CompoundTag tag = stack.getTag();
-		boolean isTainted = tag != null && tag.getBoolean(TAINTED_KEY);
+		CompoundTag tag = getCustomData(stack);
+		boolean isTainted = tag.getBoolean(TAINTED_KEY);
 
 		if (isTainted) {
 			tooltip.add(Component.literal("A severed husk — cut before it was ready to fall.")
@@ -137,7 +143,7 @@ public class QliphothPomeItem extends Item {
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 		} else {
 			// Show husk name and index if the pome was assigned one at drop time
-			if (tag != null && tag.contains(HUSK_INDEX_KEY)) {
+			if (tag.contains(HUSK_INDEX_KEY)) {
 				int huskIdx = tag.getInt(HUSK_INDEX_KEY);
 				if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
 					int ordinal = huskIdx + 1;
@@ -171,8 +177,8 @@ public class QliphothPomeItem extends Item {
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide && entity instanceof Player player) {
-			CompoundTag itemTag = stack.getTag();
-			boolean isTainted = itemTag != null && itemTag.getBoolean(TAINTED_KEY);
+			CompoundTag itemTag = getCustomData(stack);
+			boolean isTainted = itemTag.getBoolean(TAINTED_KEY);
 
 			if (isTainted) {
 				applyTaintedEffects(player);
@@ -220,7 +226,7 @@ public class QliphothPomeItem extends Item {
 
 		// Husk-flavoured eat message (localized, one line per pome 1-9)
 		String consumeMessageKey = POME_MESSAGE_KEY_BASE + "default";
-		if (itemTag != null && itemTag.contains(HUSK_INDEX_KEY)) {
+		if (itemTag.contains(HUSK_INDEX_KEY)) {
 			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
 			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
 				consumeMessageKey = POME_MESSAGE_KEY_BASE + (huskIdx + 1);
@@ -232,7 +238,7 @@ public class QliphothPomeItem extends Item {
 				true);
 
 		// ── Per-bloom communion tracking ──
-		if (itemTag != null && itemTag.contains(BLOOM_ORIGIN_KEY)) {
+		if (itemTag.contains(BLOOM_ORIGIN_KEY)) {
 			long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);
 			trackCommunionProgress((ServerPlayer) player, bloomOrigin);
 		}
@@ -286,14 +292,14 @@ public class QliphothPomeItem extends Item {
 	// ── Renderer ──
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				return new QliphothPomeItemRenderer(
 						Minecraft.getInstance().getBlockEntityRenderDispatcher(),
 						Minecraft.getInstance().getEntityModels());
 			}
-		});
+		};
 	}
 }

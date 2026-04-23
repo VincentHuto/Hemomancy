@@ -225,7 +225,7 @@ public class BloodMoonEvents {
 
 			mob.moveTo(spawnPos, sLevel.random.nextFloat() * 360f, 0f);
 			mob.finalizeSpawn(sLevel, sLevel.getCurrentDifficultyAt(spawnPos),
-					MobSpawnType.EVENT, null, null);
+					MobSpawnType.EVENT, null);
 			sLevel.addFreshEntity(mob);
 			break;
 		}

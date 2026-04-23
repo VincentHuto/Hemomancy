@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,7 +26,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LivingGraspItem extends Item {
 
@@ -53,7 +53,7 @@ public class LivingGraspItem extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 72000 / 2;
 	}
 
@@ -83,9 +83,9 @@ public class LivingGraspItem extends Item {
 							0.8F + (float) Math.random() * 0.2F);
 				}
 
-				stack.hurtAndBreak(1, player, (p_220009_1_) -> {
-					p_220009_1_.broadcastBreakEvent(player.getUsedItemHand());
-				});
+				stack.hurtAndBreak(1, player,
+						player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND
+								: EquipmentSlot.OFFHAND);
 			} else {
 				player.displayClientMessage(Component.literal("Not enough blood to be shed"), true);
 			}

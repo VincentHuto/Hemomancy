@@ -48,6 +48,10 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
     private final net.minecraft.client.renderer.entity.ItemRenderer itemRenderer;
     private final Random random = new Random();
 
+    private static int toByte(float component) {
+        return Mth.clamp((int) (component * 255.0f), 0, 255);
+    }
+
     public QliphothSeedItemRenderer(Context ctx) {
         super(ctx);
         this.itemRenderer = Minecraft.getInstance().getItemRenderer();
@@ -216,16 +220,21 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
             float w0, float w1,
             float r, float g, float b, float a) {
 
+        int ri = toByte(r);
+        int gi = toByte(g);
+        int bi = toByte(b);
+        int ai = toByte(a);
+
         // Quad facing along perp1
-        vc.vertex(mat, x0 - p1x*w0, y0 - p1y*w0, z0 - p1z*w0).color(r, g, b, a).endVertex();
-        vc.vertex(mat, x0 + p1x*w0, y0 + p1y*w0, z0 + p1z*w0).color(r, g, b, a).endVertex();
-        vc.vertex(mat, x1 + p1x*w1, y1 + p1y*w1, z1 + p1z*w1).color(r, g, b, a).endVertex();
-        vc.vertex(mat, x1 - p1x*w1, y1 - p1y*w1, z1 - p1z*w1).color(r, g, b, a).endVertex();
+        vc.addVertex(mat, x0 - p1x*w0, y0 - p1y*w0, z0 - p1z*w0).setColor(ri, gi, bi, ai);
+        vc.addVertex(mat, x0 + p1x*w0, y0 + p1y*w0, z0 + p1z*w0).setColor(ri, gi, bi, ai);
+        vc.addVertex(mat, x1 + p1x*w1, y1 + p1y*w1, z1 + p1z*w1).setColor(ri, gi, bi, ai);
+        vc.addVertex(mat, x1 - p1x*w1, y1 - p1y*w1, z1 - p1z*w1).setColor(ri, gi, bi, ai);
 
         // Quad facing along perp2 (perpendicular to above)
-        vc.vertex(mat, x0 - p2x*w0, y0 - p2y*w0, z0 - p2z*w0).color(r, g, b, a).endVertex();
-        vc.vertex(mat, x0 + p2x*w0, y0 + p2y*w0, z0 + p2z*w0).color(r, g, b, a).endVertex();
-        vc.vertex(mat, x1 + p2x*w1, y1 + p2y*w1, z1 + p2z*w1).color(r, g, b, a).endVertex();
-        vc.vertex(mat, x1 - p2x*w1, y1 - p2y*w1, z1 - p2z*w1).color(r, g, b, a).endVertex();
+        vc.addVertex(mat, x0 - p2x*w0, y0 - p2y*w0, z0 - p2z*w0).setColor(ri, gi, bi, ai);
+        vc.addVertex(mat, x0 + p2x*w0, y0 + p2y*w0, z0 + p2z*w0).setColor(ri, gi, bi, ai);
+        vc.addVertex(mat, x1 + p2x*w1, y1 + p2y*w1, z1 + p2z*w1).setColor(ri, gi, bi, ai);
+        vc.addVertex(mat, x1 - p2x*w1, y1 - p2y*w1, z1 - p2z*w1).setColor(ri, gi, bi, ai);
     }
 }

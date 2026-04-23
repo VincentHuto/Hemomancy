@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundEvents;
@@ -137,22 +138,32 @@ public class VialCentrifugeBlock extends Block implements EntityBlock {
 		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
 	}
 
-	@Override
-	public InteractionResult use(BlockState p_48706_, Level p_48707_, BlockPos p_48708_, Player p_48709_,
-			InteractionHand p_48710_, BlockHitResult p_48711_) {
-		ItemStack heldStack = p_48709_.getItemInHand(p_48710_);
-		BlockEntity blockEntity = p_48707_.getBlockEntity(p_48708_);
+	private InteractionResult handleInteraction(Level level, BlockPos pos, Player player, ItemStack heldStack) {
+		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (heldStack.getItem() instanceof VialRackItem && blockEntity instanceof VialCentrifugeBlockEntity te) {
-			if (!p_48707_.isClientSide) {
+			if (!level.isClientSide) {
 				int moved = te.insertVialsFromRack(heldStack);
 				if (moved > 0) {
-					p_48707_.playSound(null, p_48708_, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
+					level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
 				}
 			}
-			return InteractionResult.sidedSuccess(p_48707_.isClientSide);
+			return InteractionResult.sidedSuccess(level.isClientSide);
 		}
-		this.openContainer(p_48707_, p_48708_, p_48709_);
+		this.openContainer(level, pos, player);
 		return InteractionResult.CONSUME;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return handleInteraction(level, pos, player, ItemStack.EMPTY);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult hit) {
+		handleInteraction(level, pos, player, stack);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 }

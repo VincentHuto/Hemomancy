@@ -154,14 +154,14 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics graphics) {
-		super.renderBackground(graphics);
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		super.renderBackground(graphics, mouseX, mouseY, partialTick);
 		for (int i = 0; i < renderables.size(); i++) {
 			renderables.get(i).render(graphics, 0, 00, 10);
 		}
 		// Auto-detect when a pattern item is placed/removed in slot 4
 		ItemStack currentPatternSlot = te.getItem(4);
-		if (!ItemStack.isSameItemSameTags(currentPatternSlot, lastPatternSlotItem)) {
+		if (!ItemStack.isSameItemSameComponents(currentPatternSlot, lastPatternSlotItem)) {
 			lastPatternSlotItem = currentPatternSlot.copy();
 			if (currentPatternSlot.getItem() instanceof ItemScarBinder) {
 				// A binder was placed — rebuild the pattern selector panel
@@ -274,7 +274,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, x, y, partialTicks);
 
 		int gx = this.leftPos;
 		int gy = this.topPos;
@@ -927,7 +927,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		// Scroll the binder panel if mouse is over it
 		if (binderPanelVisible && !binderEntries.isEmpty()) {
 			int px = getPanelX();
@@ -936,11 +936,11 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 			if (mouseX >= px && mouseX < px + PANEL_WIDTH
 					&& mouseY >= py && mouseY < py + panelHeight) {
 				int maxScroll = Math.max(0, binderEntries.size() - PANEL_VISIBLE_ENTRIES);
-				binderScrollOffset = Mth.clamp(binderScrollOffset - (int) Math.signum(delta), 0, maxScroll);
+				binderScrollOffset = Mth.clamp(binderScrollOffset - (int) Math.signum(scrollY), 0, maxScroll);
 				return true;
 			}
 		}
-		return super.mouseScrolled(mouseX, mouseY, delta);
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	@Override

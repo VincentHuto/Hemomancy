@@ -111,8 +111,9 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 
     public static void handle(final PacketSyncUnstainedProgress msg, final IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().HemoCapabilityAccess.getUnstainedProgress(player)
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null) {
+                HemoCapabilityAccess.getUnstainedProgress(mc.player)
                         .ifPresent(progress -> {
                             progress.setBegunPurification(msg.begunPurification);
                             progress.setPurity(msg.purity);

@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -26,17 +27,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class SanguineFervorSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_sanguine_fervor";
+	private static final SavedData.Factory<SanguineFervorSavedData> FACTORY =
+			new SavedData.Factory<>(SanguineFervorSavedData::new, SanguineFervorSavedData::load, null);
 
 	private final List<FervorEntry> entries = new ArrayList<>();
 
 	public SanguineFervorSavedData() {}
 
 	public static SanguineFervorSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				SanguineFervorSavedData::load, SanguineFervorSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static SanguineFervorSavedData load(CompoundTag tag) {
+	public static SanguineFervorSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		SanguineFervorSavedData data = new SanguineFervorSavedData();
 		if (tag.contains("entries", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("entries", Tag.TAG_COMPOUND);
@@ -55,7 +57,7 @@ public class SanguineFervorSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (FervorEntry entry : entries) {
 			CompoundTag entryTag = new CompoundTag();

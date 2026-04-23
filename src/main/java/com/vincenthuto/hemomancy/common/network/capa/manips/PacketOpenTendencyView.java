@@ -7,6 +7,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PacketOpenTendencyView implements CustomPacketPayload {
 	public static final Type<PacketOpenTendencyView> TYPE = new Type<>(Hemomancy.rloc("packet_open_tendency_view"));
@@ -26,8 +27,10 @@ public class PacketOpenTendencyView implements CustomPacketPayload {
 
 	public static void handle(final PacketOpenTendencyView msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ctx.player().doCloseContainer();
-			ctx.player().openMenu(new TendencyViewMenuProvider());
+			if (ctx.player() instanceof ServerPlayer player) {
+				player.closeContainer();
+				player.openMenu(new TendencyViewMenuProvider());
+			}
 		});
 	}
 

@@ -25,7 +25,7 @@ public final class HarbingerSaintEncounterHooks {
 
 		boss.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
 				level.random.nextFloat() * 360.0F, 0.0F);
-		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null, null);
+		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
 		boss.setPersistenceRequired();
 		boss.setCustomName(Component.translatable("entity.hemomancy.hollow_vessel"));
 		boss.setCustomNameVisible(true);

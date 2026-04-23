@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.screen.item.RiteHintScreen;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import com.vincenthuto.hemomancy.Hemomancy;
 
@@ -53,8 +55,9 @@ public class RiteHintItem extends Item {
 	 */
 	public static ItemStack createForRite(Item riteHintItem, ResourceLocation riteId) {
 		ItemStack stack = new ItemStack(riteHintItem);
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putString(TAG_RITE_ID, riteId.toString());
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		return stack;
 	}
 
@@ -65,8 +68,8 @@ public class RiteHintItem extends Item {
 	 */
 	@Nullable
 	public static ResourceLocation getRiteId(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		if (tag != null && tag.contains(TAG_RITE_ID)) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		if (tag.contains(TAG_RITE_ID)) {
 			return ResourceLocation.tryParse(tag.getString(TAG_RITE_ID));
 		}
 		return null;
@@ -92,9 +95,9 @@ public class RiteHintItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn,
-								List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+							List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		ResourceLocation riteId = getRiteId(stack);
 		if (riteId != null) {
 			// Show the rite name derived from the path

@@ -20,9 +20,11 @@ public class SpinedBarricadeEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		// Attribute modifiers handle the passive armor bonus; no per-tick logic needed.
 		// Thorns reflection is handled by the morphling's onEquippedHurt.
+	
+		return true;
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class SpinedBarricadeEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 

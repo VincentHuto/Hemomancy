@@ -56,8 +56,8 @@ public class TickMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Hemorrhagic Venom (AoE damage to nearby hostiles)
-		if (!player.hasEffect(EffectInit.hemorrhagic_venom.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.hemorrhagic_venom.get(),
+		if (!player.hasEffect(EffectInit.hemorrhagic_venom)) {
+			player.addEffect(new MobEffectInstance(EffectInit.hemorrhagic_venom,
 					100, maturity, false, true, true));
 		}
 

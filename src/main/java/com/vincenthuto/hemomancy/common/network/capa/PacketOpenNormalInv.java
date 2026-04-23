@@ -7,6 +7,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class PacketOpenNormalInv implements CustomPacketPayload {
 	public static final Type<PacketOpenNormalInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_normal_inv"));
@@ -26,8 +27,8 @@ public class PacketOpenNormalInv implements CustomPacketPayload {
 
 	public static void handle(final PacketOpenNormalInv msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer playerEntity = ctx.player();
-			if (playerEntity != null) {
+			Player player = ctx.player();
+			if (player instanceof ServerPlayer playerEntity) {
 				playerEntity.containerMenu.removed(playerEntity);
 				playerEntity.containerMenu = playerEntity.inventoryMenu;
 			}

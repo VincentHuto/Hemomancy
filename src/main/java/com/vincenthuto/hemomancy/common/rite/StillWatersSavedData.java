@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -24,17 +25,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class StillWatersSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_still_waters";
+	private static final SavedData.Factory<StillWatersSavedData> FACTORY =
+			new SavedData.Factory<>(StillWatersSavedData::new, StillWatersSavedData::load, null);
 
 	private final List<StillWatersEntry> entries = new ArrayList<>();
 
 	public StillWatersSavedData() {}
 
 	public static StillWatersSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				StillWatersSavedData::load, StillWatersSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static StillWatersSavedData load(CompoundTag tag) {
+	public static StillWatersSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		StillWatersSavedData data = new StillWatersSavedData();
 		if (tag.contains("entries", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("entries", Tag.TAG_COMPOUND);
@@ -53,7 +55,7 @@ public class StillWatersSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
 		for (StillWatersEntry entry : entries) {
 			CompoundTag entryTag = new CompoundTag();

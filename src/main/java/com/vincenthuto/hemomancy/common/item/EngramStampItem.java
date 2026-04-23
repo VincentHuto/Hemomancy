@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,19 +24,19 @@ public class EngramStampItem extends Item {
 						(BlockState) (BlockInit.engram_block.get()).defaultBlockState()
 								.setValue(EngramBlock.CHARACTERINDEX, (int) Math.floor(Math.random()
 										* (double) (EngramBlock.CHARACTERINDEX.getPossibleValues().size()))));
-				ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), (player) -> {
-					player.broadcastBreakEvent(ctx.getHand());
-				});
-			} else 
+				if (ctx.getPlayer() != null) {
+					ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), LivingEntity.getSlotForHand(ctx.getHand()));
+				}
+			} else
 				//Cycle Engrams
 				if (ctx.getLevel().getBlockState(ctx.getClickedPos()).getBlock() == BlockInit.engram_block.get()) {
 				ctx.getLevel().setBlockAndUpdate(ctx.getClickedPos(),
 						(BlockState) (BlockInit.engram_block.get()).defaultBlockState()
 								.setValue(EngramBlock.CHARACTERINDEX, (int) Math.floor(Math.random()
 										* (double) (EngramBlock.CHARACTERINDEX.getPossibleValues().size()))));
-				ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), (player) -> {
-					player.broadcastBreakEvent(ctx.getHand());
-				});
+				if (ctx.getPlayer() != null) {
+					ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), LivingEntity.getSlotForHand(ctx.getHand()));
+				}
 				return InteractionResult.SUCCESS;
 
 			} else {

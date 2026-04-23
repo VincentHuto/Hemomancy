@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -43,8 +44,8 @@ public class AttributeInit {
 		}
 	}
 
-	public static Attribute getFlightAttribute() {
-		return FALL_FLYING.get();
+	public static Holder<Attribute> getFlightAttribute() {
+		return FALL_FLYING;
 	}
 
 	public static AttributeModifier getElytraModifier() {
@@ -52,13 +53,13 @@ public class AttributeInit {
 	}
 
 	public static TriState canFallFly(LivingEntity livingEntity) {
-		Attribute fallFlying = FALL_FLYING.get();
+		Holder<Attribute> fallFlying = FALL_FLYING;
 		AttributeInstance attribute = livingEntity.getAttribute(fallFlying);
 
 		if (attribute != null) {
 			double val = attribute.getValue();
 			double baseValue = attribute.getBaseValue();
-			double actualBaseValue = fallFlying.getDefaultValue();
+			double actualBaseValue = fallFlying.value().getDefaultValue();
 
 			if (baseValue != actualBaseValue) {
 				attribute.setBaseValue(actualBaseValue);

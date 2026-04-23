@@ -269,8 +269,8 @@ public class LivingSpearModel extends Model {
 
 	@Override
 	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
-		parts.forEach((model) -> model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn));
+			int packedColor) {
+		parts.forEach((model) -> model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, packedColor));
 	}
 
 	public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

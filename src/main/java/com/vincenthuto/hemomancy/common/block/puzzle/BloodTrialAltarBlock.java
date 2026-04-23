@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.puzzle;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.puzzle.BloodTrialAltarBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -13,10 +14,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class BloodTrialAltarBlock extends BaseEntityBlock {
+  public static final MapCodec<BloodTrialAltarBlock> CODEC = simpleCodec(BloodTrialAltarBlock::new);
 
     public BloodTrialAltarBlock(Properties props) {
         super(props);
     }
+
+  @Override
+  protected MapCodec<? extends BaseEntityBlock> codec() {
+    return CODEC;
+  }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {

@@ -37,10 +37,10 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 		Tesselator tess = Tesselator.getInstance();
 		BufferBuilder buffer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-		buffer.vertex((double) x + 0, (double) y + height, z).uv(tx, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + height, z).uv(tx + tw, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + 0, z).uv(tx + tw, ty).endVertex();
-		buffer.vertex((double) x + 0, (double) y + 0, z).uv(tx, ty).endVertex();
+		buffer.addVertex((float) x, (float) y + height, z).setUv(tx, ty + th);
+		buffer.addVertex((float) x + width, (float) y + height, z).setUv(tx + tw, ty + th);
+		buffer.addVertex((float) x + width, (float) y, z).setUv(tx + tw, ty);
+		buffer.addVertex((float) x, (float) y, z).setUv(tx, ty);
 
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
@@ -61,7 +61,7 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) { // render
-		this.renderBackground(graphics); // renderBackground
+		this.renderBackground(graphics, mouseX, mouseY, partialTicks); // renderBackground
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY); // renderHoveredToolTip
 		this.oldMouseX = mouseX;
@@ -86,8 +86,8 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 					graphics.blit(background, k + slot.x, l + slot.y, 200, 0, 16, 16);
 				}
 			}
-			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k + 51, l + 75, 30, k + 51 - this.oldMouseX,
-					l + 75 - 50 - this.oldMouseY, this.minecraft.player);
+			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k + 51, l + 75, k + 51, l + 75, 30, 0.0F,
+					k + 51 - this.oldMouseX, l + 75 - 50 - this.oldMouseY, this.minecraft.player);
 		}
 	}
 

@@ -33,7 +33,9 @@ public class PacketOpenScarBinder implements CustomPacketPayload {
 
 	public static void handle(final PacketOpenScarBinder message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer player = ctx.player();
+			if (!(ctx.player() instanceof ServerPlayer player)) {
+				return;
+			}
 			if (!Hemomancy.findItemInPlayerInv(player, ItemScarBinder.class).isEmpty()) {
 				player.openMenu(new MenuProvider() {
 					@Override

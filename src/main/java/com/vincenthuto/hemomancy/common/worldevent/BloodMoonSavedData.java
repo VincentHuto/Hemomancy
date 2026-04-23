@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.worldevent;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -13,6 +14,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class BloodMoonSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_blood_moon";
+	private static final SavedData.Factory<BloodMoonSavedData> FACTORY =
+			new SavedData.Factory<>(BloodMoonSavedData::new, BloodMoonSavedData::load, null);
 
 	private boolean active = false;
 	private long endTick = 0L;
@@ -20,11 +23,10 @@ public class BloodMoonSavedData extends SavedData {
 	public BloodMoonSavedData() {}
 
 	public static BloodMoonSavedData get(ServerLevel overworld) {
-		return overworld.getDataStorage().computeIfAbsent(
-				BloodMoonSavedData::load, BloodMoonSavedData::new, DATA_NAME);
+		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static BloodMoonSavedData load(CompoundTag tag) {
+	public static BloodMoonSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
 		BloodMoonSavedData data = new BloodMoonSavedData();
 		data.active = tag.getBoolean("Active");
 		data.endTick = tag.getLong("EndTick");
@@ -33,7 +35,7 @@ public class BloodMoonSavedData extends SavedData {
 
 	@Override
 	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag) {
+	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		tag.putBoolean("Active", active);
 		tag.putLong("EndTick", endTick);
 		return tag;

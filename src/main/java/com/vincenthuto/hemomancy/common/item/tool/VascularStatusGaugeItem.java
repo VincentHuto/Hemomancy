@@ -30,8 +30,8 @@ public class VascularStatusGaugeItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, level, tooltip, flag);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 		tooltip.add(Component.literal("Right-click to view your Vascular Status").withStyle(ChatFormatting.DARK_RED));
 		tooltip.add(Component.literal("Shows the health of each vein section").withStyle(ChatFormatting.GRAY));
 	}

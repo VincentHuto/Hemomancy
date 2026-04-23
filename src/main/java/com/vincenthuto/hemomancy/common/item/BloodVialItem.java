@@ -47,8 +47,8 @@ public class BloodVialItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			EntityType<?> type = getEntityType(stack);
 			if (type != null) {
@@ -91,7 +91,7 @@ public class BloodVialItem extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 		ItemStack curr = pPlayer.getItemInHand(pUsedHand);
-		if (curr.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
+		if (curr.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().get(TAG_ENTITY_TYPE) != null) {
 			System.out.println(getEntityType(curr));
 		}
 		return super.use(pLevel, pPlayer, pUsedHand);

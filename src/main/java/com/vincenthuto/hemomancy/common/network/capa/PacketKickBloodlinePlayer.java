@@ -18,6 +18,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Client → Server: Leader/progenitor removes a player member from their bloodline.
@@ -43,8 +44,8 @@ public class PacketKickBloodlinePlayer implements CustomPacketPayload {
 
 	public static void handle(final PacketKickBloodlinePlayer msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer leader = ctx.player();
-			if (leader == null) return;
+			Player player = ctx.player();
+			if (!(player instanceof ServerPlayer leader)) return;
 
 			HemoCapabilityAccess.getBloodVolume(leader).ifPresent(volume -> {
 				Bloodline localLine = volume.getBloodLine();

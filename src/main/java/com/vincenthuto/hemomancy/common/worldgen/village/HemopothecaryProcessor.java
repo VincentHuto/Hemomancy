@@ -1,17 +1,15 @@
 package com.vincenthuto.hemomancy.common.worldgen.village;
 
-import com.mojang.datafixers.util.Unit;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 
 public class HemopothecaryProcessor extends StructureProcessor {
-	public static final Codec<HemopothecaryProcessor> CODEC = Codec.EMPTY
-			.xmap(u -> new HemopothecaryProcessor(), p -> Unit.INSTANCE).codec();
+	public static final MapCodec<HemopothecaryProcessor> CODEC = MapCodec.unit(HemopothecaryProcessor::new);
 
-	public static Codec<HemopothecaryProcessor> codec() {
+	public static MapCodec<HemopothecaryProcessor> codec() {
 		return CODEC;
 	}
 

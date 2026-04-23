@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForge;
 
 /**
@@ -40,8 +41,8 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 
 	public static void handle(final DialogueOptionPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player();
-			if (sender != null && msg.eventId != null && !msg.eventId.isEmpty()) {
+			Player player = ctx.player();
+			if (player instanceof ServerPlayer sender && msg.eventId != null && !msg.eventId.isEmpty()) {
 				if (msg.entityId == 0) {
 					// Disembodied voice (e.g. fungal whispers) — no entity to validate
 					NeoForge.EVENT_BUS.post(

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.Util;
@@ -27,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CrimsonFlameBlock extends BaseFireBlock {
+	public static final MapCodec<CrimsonFlameBlock> CODEC = simpleCodec(CrimsonFlameBlock::new);
 	public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
 	public static final BooleanProperty NORTH = PipeBlock.NORTH;
 	public static final BooleanProperty EAST = PipeBlock.EAST;
@@ -48,7 +50,12 @@ public class CrimsonFlameBlock extends BaseFireBlock {
 	private final Object2IntMap<Block> flammabilities = new Object2IntOpenHashMap<>();
 
 	public CrimsonFlameBlock() {
-		super(Properties.of().mapColor(DyeColor.LIME).noOcclusion().noCollission().instabreak().lightLevel(state -> 15).sound(SoundType.WOOL), 3.0F);
+		this(Properties.of().mapColor(DyeColor.LIME).noOcclusion().noCollission().instabreak().lightLevel(state -> 15)
+				.sound(SoundType.WOOL));
+	}
+
+	public CrimsonFlameBlock(Properties properties) {
+		super(properties, 3.0F);
 		this.registerDefaultState(
 				this.stateDefinition
 						.any()
@@ -66,6 +73,11 @@ public class CrimsonFlameBlock extends BaseFireBlock {
 						.filter(p_242674_0_ -> p_242674_0_.getValue(AGE) == 0)
 						.collect(Collectors.toMap(Function.identity(), CrimsonFlameBlock::calculateShape))
 		);
+	}
+
+	@Override
+	protected MapCodec<? extends BaseFireBlock> codec() {
+		return CODEC;
 	}
 
 	private static VoxelShape calculateShape(BlockState p_242673_0_) {

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -12,7 +13,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -75,7 +75,7 @@ public class BloodTrialAltarBlockEntity extends BlockEntity {
 
         for (Player player : players) {
             player.addEffect(new MobEffectInstance(
-                    EffectInit.hematic_strain.get(), STRAIN_DURATION, 0, false, true));
+                    EffectInit.hematic_strain, STRAIN_DURATION, 0, false, true));
             // Prevent players from mining through mausoleum walls during the trial
             player.addEffect(new MobEffectInstance(
                     MobEffects.DIG_SLOWDOWN, STRAIN_DURATION, 3, false, false));
@@ -99,8 +99,8 @@ public class BloodTrialAltarBlockEntity extends BlockEntity {
             double spawnX = pos.getX() + 0.5 + Math.cos(angle) * 3.0;
             double spawnZ = pos.getZ() + 0.5 + Math.sin(angle) * 3.0;
             construct.moveTo(spawnX, pos.getY() + 1.0, spawnZ, 0, 0);
-            construct.finalizeSpawn((ServerLevelAccessor) level,
-                    level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null, null);
+            construct.finalizeSpawn(level,
+                    level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
             if (!players.isEmpty()) {
                 construct.setTarget(players.get(level.random.nextInt(players.size())));
             }
@@ -109,16 +109,16 @@ public class BloodTrialAltarBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         tag.putBoolean("Active", active);
         tag.putBoolean("Completed", completed);
         tag.putInt("TickCounter", tickCounter);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
         active = tag.getBoolean("Active");
         completed = tag.getBoolean("Completed");
         tickCounter = tag.getInt("TickCounter");

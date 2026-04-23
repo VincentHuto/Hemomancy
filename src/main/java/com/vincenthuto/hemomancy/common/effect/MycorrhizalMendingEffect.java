@@ -18,11 +18,12 @@ public class MycorrhizalMendingEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
-		if (entity == null) return;
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+		if (entity == null) return true;
 		if (entity.getHealth() < entity.getMaxHealth()) {
 			entity.heal(0.5F + amplifier * 0.25F);
 		}
+		return true;
 	}
 
 	@Override
@@ -42,8 +43,9 @@ public class MycorrhizalMendingEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 40 == 0;
 	}
 
 }
+

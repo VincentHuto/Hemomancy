@@ -14,7 +14,6 @@ public class AltarOfCleansingBlockEntity extends BlockEntity implements IMultiBl
 		super(BlockEntityInit.altar_of_cleansing.get(), pos, state);
 	}
 
-	@Override
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}

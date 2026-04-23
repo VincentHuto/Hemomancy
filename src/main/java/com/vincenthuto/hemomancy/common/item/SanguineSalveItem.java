@@ -53,8 +53,8 @@ public class SanguineSalveItem extends Item {
 	// ── Tooltip ──
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 		tooltip.add(Component.literal("Repairs the most damaged vein section")
 				.withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.literal("Restores +" + (int) healAmount + " vascular health")
@@ -69,7 +69,7 @@ public class SanguineSalveItem extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 30; // 1.5 seconds
 	}
 

@@ -79,9 +79,9 @@ public class SanguineMonolithShatterRenderer {
 			Vec3 rv2 = rotate(shard.v2, shard.spinAxis, angle).add(center);
 			Vec3 rv3 = rotate(shard.v3, shard.spinAxis, angle).add(center);
 
-			vc.vertex(mat, (float) rv1.x, (float) rv1.y, (float) rv1.z).color(0f, 0f, 0f, alpha).endVertex();
-			vc.vertex(mat, (float) rv2.x, (float) rv2.y, (float) rv2.z).color(0f, 0f, 0f, alpha).endVertex();
-			vc.vertex(mat, (float) rv3.x, (float) rv3.y, (float) rv3.z).color(0f, 0f, 0f, alpha).endVertex();
+			vc.addVertex(mat, (float) rv1.x, (float) rv1.y, (float) rv1.z).setColor(0f, 0f, 0f, alpha);
+			vc.addVertex(mat, (float) rv2.x, (float) rv2.y, (float) rv2.z).setColor(0f, 0f, 0f, alpha);
+			vc.addVertex(mat, (float) rv3.x, (float) rv3.y, (float) rv3.z).setColor(0f, 0f, 0f, alpha);
 		}
 
 		buffer.endBatch(RenderTypeInit.MONOLITH_SHATTER_TRIANGLES);

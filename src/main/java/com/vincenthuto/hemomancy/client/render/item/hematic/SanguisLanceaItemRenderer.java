@@ -108,7 +108,7 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 						ms.translate(0, 0, 1);
 					}
 					 
-					spearModel.setupAnimation(mc.level, mc.getPartialTick(), animCtx);
+					spearModel.setupAnimation(mc.level, mc.getTimer().getGameTimeDeltaPartialTick(false), animCtx);
 
 					VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 					VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);

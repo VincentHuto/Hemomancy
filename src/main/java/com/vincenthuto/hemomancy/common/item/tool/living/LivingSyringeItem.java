@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -25,6 +26,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -38,8 +40,8 @@ public class LivingSyringeItem extends LivingItemItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (hasLoadedRack(stack)) {
 			ItemStack rack = getLoadedRack(stack);
 			tooltip.add(Component.translatable("item.hemomancy.living_syringe.loaded",
@@ -182,12 +184,13 @@ public class LivingSyringeItem extends LivingItemItem {
 		if (!hasLoadedRack(syringe)) {
 			return ItemStack.EMPTY;
 		}
-		return ItemStack.of(syringe.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(TAG_LOADED_RACK));
+		return ItemStack.parseOptional(RegistryAccess.EMPTY,
+				syringe.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(TAG_LOADED_RACK));
 	}
 
 	private void setLoadedRack(ItemStack syringe, ItemStack rack) {
 		CompoundTag tag = syringe.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-		tag.put(TAG_LOADED_RACK, rack.save(new CompoundTag()));
+		tag.put(TAG_LOADED_RACK, rack.save(RegistryAccess.EMPTY));
 		tag.putBoolean(TAG_STATE, true);
 		syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}

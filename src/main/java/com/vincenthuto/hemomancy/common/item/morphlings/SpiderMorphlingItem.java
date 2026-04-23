@@ -60,8 +60,8 @@ public class SpiderMorphlingItem extends MorphlingItem {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
 		// Base effect: Arachnid Anastomosis (vascular repair, amplifier = maturity)
-		if (!player.hasEffect(EffectInit.arachnid_anastomosis.get())) {
-			player.addEffect(new MobEffectInstance(EffectInit.arachnid_anastomosis.get(),
+		if (!player.hasEffect(EffectInit.arachnid_anastomosis)) {
+			player.addEffect(new MobEffectInstance(EffectInit.arachnid_anastomosis,
 					100, maturity, false, true, true));
 		}
 

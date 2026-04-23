@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BloodVolumeClientPacket implements CustomPacketPayload {
@@ -29,8 +30,8 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 
 	public static void handle(final BloodVolumeClientPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			ServerPlayer sender = ctx.player(); // the client that sent this packet
-			if (sender != null) {
+			Player player = ctx.player();
+			if (player instanceof ServerPlayer sender) {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						.orElseThrow(IllegalStateException::new);
 				// Send message back to the client to set the information

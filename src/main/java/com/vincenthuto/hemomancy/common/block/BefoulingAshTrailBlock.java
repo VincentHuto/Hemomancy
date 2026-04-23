@@ -19,7 +19,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -524,24 +526,34 @@ public class BefoulingAshTrailBlock extends Block {
 		}
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult hit) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player) {
 		if (!player.getAbilities().mayBuild) {
 			return InteractionResult.PASS;
-		} else {
-			if (areAllSidesValid(state) || areAllSidesInvalid(state)) {
-				BlockState blockstate = areAllSidesValid(state) ? this.defaultBlockState() : this.sideBaseState;
-				blockstate = blockstate.setValue(POWER, state.getValue(POWER));
-				blockstate = this.getUpdatedState(worldIn, blockstate, pos);
-				if (blockstate != state) {
-					worldIn.setBlock(pos, blockstate, 3);
-					this.updateChangedConnections(worldIn, pos, state, blockstate);
-					return InteractionResult.SUCCESS;
-				}
-			}
-
-			return InteractionResult.PASS;
 		}
+		if (areAllSidesValid(state) || areAllSidesInvalid(state)) {
+			BlockState blockstate = areAllSidesValid(state) ? this.defaultBlockState() : this.sideBaseState;
+			blockstate = blockstate.setValue(POWER, state.getValue(POWER));
+			blockstate = this.getUpdatedState(worldIn, blockstate, pos);
+			if (blockstate != state) {
+				worldIn.setBlock(pos, blockstate, 3);
+				this.updateChangedConnections(worldIn, pos, state, blockstate);
+				return InteractionResult.SUCCESS;
+			}
+		}
+		return InteractionResult.PASS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult hit) {
+		return handleInteraction(state, worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult hit) {
+		return handleInteraction(state, worldIn, pos, player) == InteractionResult.PASS
+				? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 }

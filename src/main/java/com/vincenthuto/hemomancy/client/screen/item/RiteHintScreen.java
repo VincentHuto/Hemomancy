@@ -97,7 +97,7 @@ public class RiteHintScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		this.renderBackground(gfx);
+		this.renderBackground(gfx, mouseX, mouseY, partial);
 
 		// Slowly rotate when not dragging
 		if (!dragging) {
@@ -510,14 +510,14 @@ public class RiteHintScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		// Scroll info panel (right half)
 		if (mouseX > guiLeft + GUI_WIDTH / 2) {
-			infoScroll -= (int) (delta * 12);
+			infoScroll -= (int) (scrollY * 12);
 			if (infoScroll < 0) infoScroll = 0;
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, delta);
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	@Override

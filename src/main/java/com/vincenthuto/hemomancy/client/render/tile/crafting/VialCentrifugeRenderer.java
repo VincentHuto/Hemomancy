@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -45,29 +46,29 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 	//	System.out.println(spinMod);
 		matrixStackIn.mulPose(Vector3.YP.rotationDegrees((float) ticks * spinMod).toMoj());
 		// Displaying vials in slots
-		arms.vial1.visible = !te.inventory.get(2).isEmpty() && te.inventory.get(2).hasTag();
-		arms.vial1Empty.visible = !te.inventory.get(2).isEmpty() && !te.inventory.get(2).hasTag();
+		arms.vial1.visible = !te.inventory.get(2).isEmpty() && te.inventory.get(2).has(DataComponents.CUSTOM_DATA);
+		arms.vial1Empty.visible = !te.inventory.get(2).isEmpty() && !te.inventory.get(2).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial2.visible = !te.inventory.get(3).isEmpty() && te.inventory.get(3).hasTag();
-		arms.vial2Empty.visible = !te.inventory.get(3).isEmpty() && !te.inventory.get(3).hasTag();
+		arms.vial2.visible = !te.inventory.get(3).isEmpty() && te.inventory.get(3).has(DataComponents.CUSTOM_DATA);
+		arms.vial2Empty.visible = !te.inventory.get(3).isEmpty() && !te.inventory.get(3).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial3.visible = !te.inventory.get(4).isEmpty() && te.inventory.get(4).hasTag();
-		arms.vial3Empty.visible = !te.inventory.get(4).isEmpty() && !te.inventory.get(4).hasTag();
+		arms.vial3.visible = !te.inventory.get(4).isEmpty() && te.inventory.get(4).has(DataComponents.CUSTOM_DATA);
+		arms.vial3Empty.visible = !te.inventory.get(4).isEmpty() && !te.inventory.get(4).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial4.visible = !te.inventory.get(5).isEmpty() && te.inventory.get(5).hasTag();
-		arms.vial4Empty.visible = !te.inventory.get(5).isEmpty() && !te.inventory.get(5).hasTag();
+		arms.vial4.visible = !te.inventory.get(5).isEmpty() && te.inventory.get(5).has(DataComponents.CUSTOM_DATA);
+		arms.vial4Empty.visible = !te.inventory.get(5).isEmpty() && !te.inventory.get(5).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial5.visible = !te.inventory.get(6).isEmpty() && te.inventory.get(6).hasTag();
-		arms.vial5Empty.visible = !te.inventory.get(6).isEmpty() && !te.inventory.get(6).hasTag();
+		arms.vial5.visible = !te.inventory.get(6).isEmpty() && te.inventory.get(6).has(DataComponents.CUSTOM_DATA);
+		arms.vial5Empty.visible = !te.inventory.get(6).isEmpty() && !te.inventory.get(6).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial6.visible = !te.inventory.get(7).isEmpty() && te.inventory.get(7).hasTag();
-		arms.vial6Empty.visible = !te.inventory.get(7).isEmpty() && !te.inventory.get(7).hasTag();
+		arms.vial6.visible = !te.inventory.get(7).isEmpty() && te.inventory.get(7).has(DataComponents.CUSTOM_DATA);
+		arms.vial6Empty.visible = !te.inventory.get(7).isEmpty() && !te.inventory.get(7).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial7.visible = !te.inventory.get(8).isEmpty() && te.inventory.get(8).hasTag();
-		arms.vial7Empty.visible = !te.inventory.get(8).isEmpty() && !te.inventory.get(8).hasTag();
+		arms.vial7.visible = !te.inventory.get(8).isEmpty() && te.inventory.get(8).has(DataComponents.CUSTOM_DATA);
+		arms.vial7Empty.visible = !te.inventory.get(8).isEmpty() && !te.inventory.get(8).has(DataComponents.CUSTOM_DATA);
 
-		arms.vial8.visible = !te.inventory.get(9).isEmpty() && te.inventory.get(9).hasTag();
-		arms.vial8Empty.visible = !te.inventory.get(9).isEmpty() && !te.inventory.get(9).hasTag();
+		arms.vial8.visible = !te.inventory.get(9).isEmpty() && te.inventory.get(9).has(DataComponents.CUSTOM_DATA);
+		arms.vial8Empty.visible = !te.inventory.get(9).isEmpty() && !te.inventory.get(9).has(DataComponents.CUSTOM_DATA);
 
 		// Render
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(texture));

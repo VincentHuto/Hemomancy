@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -63,10 +64,8 @@ public class EngramBlock extends WaterloggableBlock {
 
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
-		ItemStack stack = player.getItemInHand(handIn);
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
+			ItemStack stack) {
 		if (!state.getValue(LIT)) {
 			if (stack.getItem() == Items.FLINT_AND_STEEL || stack.getItem() == Items.FIRE_CHARGE) {
 				BlockState newState = state.setValue(LIT, true);
@@ -97,6 +96,19 @@ public class EngramBlock extends WaterloggableBlock {
 
 	}
 
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(state, worldIn, pos, player, ItemStack.EMPTY);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(state, worldIn, pos, player, stack);
+		return ItemInteractionResult.SUCCESS;
+	}
+
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return SHAPE;
 	}
@@ -106,7 +118,7 @@ public class EngramBlock extends WaterloggableBlock {
 	}
 
 	public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
-		return 3;
+		return 15;
 	}
 
 	@Override
@@ -171,8 +183,9 @@ public class EngramBlock extends WaterloggableBlock {
 		return 0;
 	}
 
-	public boolean canPlaceLiquid(BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
-		return super.canPlaceLiquid(worldIn, pos, state, fluidIn);
+	public boolean canPlaceLiquid(@javax.annotation.Nullable Player player, BlockGetter worldIn, BlockPos pos,
+			BlockState state, Fluid fluidIn) {
+		return super.canPlaceLiquid(player, worldIn, pos, state, fluidIn);
 	}
 
 	public boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {

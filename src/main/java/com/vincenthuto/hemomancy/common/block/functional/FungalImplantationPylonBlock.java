@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMultiBlock {
+	public static final MapCodec<FungalImplantationPylonBlock> CODEC = simpleCodec(FungalImplantationPylonBlock::new);
 
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0),
@@ -45,6 +48,11 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 	public FungalImplantationPylonBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
 	}
 
 	@Override
@@ -137,9 +145,7 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleUse(Level worldIn, BlockPos pos, Player player) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
 				PacketHandler.sendToServer(new PacketOpenSporeInv());
@@ -158,6 +164,18 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 //
 //		}
 		return InteractionResult.SUCCESS;
+	}
 
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleUse(worldIn, pos, player);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleUse(worldIn, pos, player);
+		return ItemInteractionResult.SUCCESS;
 	}
 }

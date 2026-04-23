@@ -25,8 +25,8 @@ public class BloodyBookItem extends ItemGuideBook {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
         tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
     }
 
@@ -73,7 +73,6 @@ public class BloodyBookItem extends ItemGuideBook {
 //		return super.hurtEnemy(stack, entity, attacker);
 //	}
 
-    @Override
     public Rarity getRarity(ItemStack par1ItemStack) {
         return Rarity.UNCOMMON;
     }

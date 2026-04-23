@@ -61,7 +61,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics);
+            this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
     }
@@ -169,10 +169,10 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
             float cos2 = (float) Math.cos(a2);
             float sin2 = (float) Math.sin(a2);
 
-            buffer.vertex(x + radiusOut * cos1, y + radiusOut * sin1, z).color(r, g, b, a).endVertex();
-            buffer.vertex(x + radiusIn  * cos1, y + radiusIn  * sin1, z).color(r, g, b, a).endVertex();
-            buffer.vertex(x + radiusIn  * cos2, y + radiusIn  * sin2, z).color(r, g, b, a).endVertex();
-            buffer.vertex(x + radiusOut * cos2, y + radiusOut * sin2, z).color(r, g, b, a).endVertex();
+                  buffer.addVertex(x + radiusOut * cos1, y + radiusOut * sin1, z).setColor(r, g, b, a);
+                  buffer.addVertex(x + radiusIn  * cos1, y + radiusIn  * sin1, z).setColor(r, g, b, a);
+                  buffer.addVertex(x + radiusIn  * cos2, y + radiusIn  * sin2, z).setColor(r, g, b, a);
+                  buffer.addVertex(x + radiusOut * cos2, y + radiusOut * sin2, z).setColor(r, g, b, a);
         }
     }
 

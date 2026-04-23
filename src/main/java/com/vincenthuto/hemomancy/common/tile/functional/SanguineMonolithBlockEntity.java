@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -39,7 +40,6 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 		super(BlockEntityInit.sanguine_monolith.get(), pos, state);
 	}
 
-	@Override
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
@@ -113,8 +113,8 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		CompoundTag tag = super.getUpdateTag(provider);
 		tag.putInt("TickCount", tickCount);
 		tag.putInt("ArchonInteractions", archonInteractions);
 		if (placedGameTime >= 0) tag.putLong("PlacedGameTime", placedGameTime);
@@ -127,16 +127,16 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.saveAdditional(tag, provider);
 		tag.putInt("TickCount", tickCount);
 		tag.putInt("ArchonInteractions", archonInteractions);
 		if (placedGameTime >= 0) tag.putLong("PlacedGameTime", placedGameTime);
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+		super.loadAdditional(tag, provider);
 		tickCount = tag.getInt("TickCount");
 		archonInteractions = tag.getInt("ArchonInteractions");
 		placedGameTime = tag.contains("PlacedGameTime") ? tag.getLong("PlacedGameTime") : -1L;

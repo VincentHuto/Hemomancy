@@ -274,7 +274,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
                 }
 
                 if (mobeffectinstance != null) {
-                    java.util.List<Component> list = List.of(this.getEffectName(mobeffectinstance), MobEffectUtil.formatDuration(mobeffectinstance, 1.0F));
+                    java.util.List<Component> list = List.of(this.getEffectName(mobeffectinstance), MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, 1.0F));
                     pGuiGraphics.renderTooltip(this.font, list, Optional.empty(), pMouseX, pMouseY);
                 }
             }
@@ -290,14 +290,14 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
             } else {
                 Component component = this.getEffectName(mobeffectinstance);
                 pGuiGraphics.drawString(this.font, component, pRenderX + 10 + 18, i + 6, 16777215);
-                Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F);
+                Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, 1.0F);
                 pGuiGraphics.drawString(this.font, component1, pRenderX + 10 + 18, i + 6 + 10, 8355711);
                 i += pYOffset;
             }
         }
     }
     private Component getEffectName(MobEffectInstance pEffect) {
-        MutableComponent mutablecomponent = pEffect.getEffect().getDisplayName().copy();
+        MutableComponent mutablecomponent = pEffect.getEffect().value().getDisplayName().copy();
         if (pEffect.getAmplifier() >= 1 && pEffect.getAmplifier() <= 9) {
             mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + (pEffect.getAmplifier() + 1)));
         }
@@ -312,9 +312,8 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
             IClientMobEffectExtensions renderer = IClientMobEffectExtensions.of(mobeffectinstance);
             if (renderer.renderInventoryIcon(mobeffectinstance, this, pGuiGraphics, pRenderX + (pIsSmall ? 6 : 7), i, 0)) {
                 i += pYOffset;
-            } else {
-                MobEffect mobeffect = mobeffectinstance.getEffect();
-                TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(mobeffect);
+                  } else {
+                    TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(mobeffectinstance.getEffect());
                 pGuiGraphics.blit(pRenderX + (pIsSmall ? 6 : 7), i + 7, 0, 18, 18, textureatlassprite);
                 i += pYOffset;
             }
@@ -324,13 +323,13 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
-        super.renderBackground(guiGraphics);
+            super.renderBackground(guiGraphics, i, i1, v);
     }
 
 
     @Override
-    public void renderBackground(GuiGraphics graphics) {
-        super.renderBackground(graphics);
+      public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
@@ -366,8 +365,9 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
         });
 
-        InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k-7 + guiWidth / 2, l-30 + guiHeight / 2, 30, k + 51 - this.oldMouseX,
-                l + 75 - 50 - this.oldMouseY, player);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k - 7 + guiWidth / 2, l - 30 + guiHeight / 2,
+                k - 7 + guiWidth / 2, l - 30 + guiHeight / 2, 30, 0.0F,
+                k + 51 - this.oldMouseX, l + 75 - 50 - this.oldMouseY, player);
     }
     private static Point rotatePointAbout(Point in, Point about, double degrees) {
         double rad = degrees * Math.PI / 180.0;

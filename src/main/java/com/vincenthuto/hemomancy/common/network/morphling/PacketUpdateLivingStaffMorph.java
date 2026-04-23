@@ -30,8 +30,7 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 	public static class Handler {
 		public static void handle(final PacketUpdateLivingStaffMorph msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
-				ServerPlayer player = ctx.player();
-				if (player == null)
+				if (!(ctx.player() instanceof ServerPlayer player))
 					return;
 
 				// ── Unequip: selected == -1 means clear the equipped morphling ──────────
@@ -48,8 +47,8 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 				if (jarStack.isEmpty())
 					return;
 
-				MorphlingJarItemHandler jarHandler = (MorphlingJarItemHandler) jarStack.getCapability(Capabilities.ItemHandler.ITEM);
-				if (jarHandler == null)
+				var itemHandler = jarStack.getCapability(Capabilities.ItemHandler.ITEM);
+				if (!(itemHandler instanceof MorphlingJarItemHandler jarHandler))
 					return;
 				jarHandler.load();
 

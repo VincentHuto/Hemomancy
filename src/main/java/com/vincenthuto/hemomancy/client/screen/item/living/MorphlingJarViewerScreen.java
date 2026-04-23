@@ -209,7 +209,7 @@ public class MorphlingJarViewerScreen extends Screen {
 			ItemStack equipped = cap.getEquippedMorphling();
 			if (!equipped.isEmpty()) {
 				for (int i = 0; i < slotCount; i++) {
-					if (ItemStack.isSameItemSameTags(jarHandler.getStackInSlot(i), equipped)) {
+					if (ItemStack.isSameItemSameComponents(jarHandler.getStackInSlot(i), equipped)) {
 						activeIndex = i;
 						break;
 					}
@@ -291,7 +291,7 @@ public class MorphlingJarViewerScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics g, int mx, int my, float partialTicks) {
-		renderBackground(g);
+		renderBackground(g, mx, my, partialTicks);
 
 		if (jarHandler == null || speedX == null) return;
 
@@ -364,7 +364,7 @@ public class MorphlingJarViewerScreen extends Screen {
 		if (jarHandler == null || speedX == null)
 			return super.mouseClicked(mx, my, button);
 
-		float time = getAnimTime(Minecraft.getInstance().getPartialTick());
+		float time = getAnimTime(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
 
 		for (int i = 0; i < slotCount; i++) {
 			ItemStack morphStack = jarHandler.getStackInSlot(i);

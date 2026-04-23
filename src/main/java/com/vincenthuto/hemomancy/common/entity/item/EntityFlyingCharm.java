@@ -7,6 +7,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -55,14 +57,14 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 	public void addAdditionalSaveData(CompoundTag pCompound) {
 		ItemStack itemstack = this.getItemRaw();
 		if (!itemstack.isEmpty()) {
-			pCompound.put("Item", itemstack.save(new CompoundTag()));
+			pCompound.put("Item", itemstack.save(this.registryAccess()));
 		}
 
 	}
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		this.getEntityData().define(DATA_ITEM_STACK, ItemStack.EMPTY);
+		builder.define(DATA_ITEM_STACK, ItemStack.EMPTY);
 	}
 
 	/**
@@ -111,12 +113,12 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 	 */
 	@Override
 	public void readAdditionalSaveData(CompoundTag pCompound) {
-		ItemStack itemstack = ItemStack.of(pCompound.getCompound("Item"));
+		ItemStack itemstack = ItemStack.parseOptional(this.registryAccess(), pCompound.getCompound("Item"));
 		this.setItem(itemstack);
 	}
 
 	public void setItem(ItemStack p_36973_) {
-		if (!p_36973_.is(ItemInit.charm_of_vascularium.get()) || p_36973_.hasTag()) {
+		if (!p_36973_.is(ItemInit.charm_of_vascularium.get()) || p_36973_.has(DataComponents.CUSTOM_DATA)) {
 			this.getEntityData().set(DATA_ITEM_STACK, Util.make(p_36973_.copy(), (p_36978_) -> {
 				p_36978_.setCount(1);
 			}));

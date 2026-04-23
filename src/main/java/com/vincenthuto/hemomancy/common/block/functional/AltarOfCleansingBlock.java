@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -153,14 +154,10 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 		return new AltarOfCleansingBlockEntity(pos, state);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
 		if (worldIn.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
-
-		ItemStack stack = player.getItemInHand(handIn);
 
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
 			if (!unstained.hasBegunPurification()) {
@@ -187,6 +184,19 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 		});
 
 		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleInteraction(worldIn, pos, player, ItemStack.EMPTY);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleInteraction(worldIn, pos, player, stack);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 	private void handleTearsOfSilthmere(Level worldIn, BlockPos pos, Player player, ItemStack stack,

@@ -34,7 +34,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerBaseBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.BASEBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block == BlockInit.erythrocytic_mycelium.get()) {
 				String name = getName(block);
@@ -56,7 +56,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerSlabBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.SLABBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block instanceof SlabBlock slabBlock) {
 				String name = getName(block);
@@ -72,7 +72,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerStairBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block instanceof StairBlock stairBlock) {
 				String name = getName(block);
@@ -86,7 +86,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerColumnBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block instanceof RotatedPillarBlock pillarBlock) {
 				String name = getName(block);
@@ -101,7 +101,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerCrossBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			String name = getName(b.get());
 			ModelFile model = models()
 					.withExistingParent(name, mcLoc("block/cross"))
@@ -112,7 +112,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerSpecialBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			Block block = b.get();
 
 			if (block instanceof IronBarsBlock paneBlock) {
@@ -125,7 +125,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerPottedBlocks() {
-		for (DeferredHolder<Block, Block> b : BlockInit.POTTEDBLOCKS.getEntries()) {
+		for (DeferredHolder<Block, ? extends Block> b : BlockInit.POTTEDBLOCKS.getEntries()) {
 			Block block = b.get();
 			String name = getName(block);
 			if (block instanceof FlowerPotBlock potBlock) {

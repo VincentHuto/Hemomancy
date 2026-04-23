@@ -49,7 +49,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib.GeckoLib;
 
 @Mod(Hemomancy.MOD_ID)
 public class Hemomancy {
@@ -114,7 +113,7 @@ public class Hemomancy {
         HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         HemoCapabilityRegistrar.register(modEventBus);
 
-        GeckoLib.initialize();
+            // GeckoLib 4 on NeoForge initializes via mod loading; explicit bootstrap call removed.
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::buildContents);

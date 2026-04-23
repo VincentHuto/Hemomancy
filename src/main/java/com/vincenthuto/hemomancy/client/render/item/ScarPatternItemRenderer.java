@@ -53,7 +53,7 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 				float r = (color >> 16 & 0xFF) / 255.0F;
 				float g = (color >> 8 & 0xFF) / 255.0F;
 				float b = (color & 0xFF) / 255.0F;
-				opaqueBuffer.putBulkData(poseStack.last(), quad, r, g, b, combinedLight, combinedOverlay);
+				opaqueBuffer.putBulkData(poseStack.last(), quad, r, g, b, 1.0F, combinedLight, combinedOverlay);
 			}
 		}
 
@@ -112,13 +112,12 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 			int a = (int) (alpha * 255.0F);
 
-			consumer.vertex(pos.x(), pos.y(), pos.z())
-					.color(255, 255, 255, a)
-					.uv(u, v)
-					.overlayCoords(overlay)
-					.uv2(light)
-					.normal(norm.x(), norm.y(), norm.z())
-					.endVertex();
+			consumer.addVertex(pos.x(), pos.y(), pos.z())
+					.setColor(255, 255, 255, a)
+					.setUv(u, v)
+					.setOverlay(overlay)
+					.setLight(light)
+					.setNormal(norm.x(), norm.y(), norm.z());
 		}
 	}
 }

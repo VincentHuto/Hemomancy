@@ -2,10 +2,15 @@ package com.vincenthuto.hemomancy.common.data.gen;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
 import net.minecraft.world.level.block.Block;
 
 public class HemoBlockLootTableProvider extends VanillaBlockLoot {
+
+	public HemoBlockLootTableProvider(HolderLookup.Provider provider) {
+		super(provider);
+	}
 
 	@Override
 	protected void generate() {

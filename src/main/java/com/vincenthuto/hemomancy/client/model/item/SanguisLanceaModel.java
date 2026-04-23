@@ -148,7 +148,7 @@ public class SanguisLanceaModel extends Model
 
 	@Override
 	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay,
-			float pRed, float pGreen, float pBlue, float pAlpha) {
+			int packedColor) {
 		root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, packedColor);
 	}
 

@@ -20,8 +20,10 @@ public class ArcaneResonanceEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		// Marker effect — no tick behavior. Cost reduction is checked at manipulation time.
+	
+		return true;
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class ArcaneResonanceEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return false;
 	}
 }

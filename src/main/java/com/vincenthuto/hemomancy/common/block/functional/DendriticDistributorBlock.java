@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.DendriticDistributorBlockEntity;
@@ -10,7 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -32,6 +35,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class DendriticDistributorBlock extends BaseEntityBlock {
+	public static final MapCodec<DendriticDistributorBlock> CODEC = simpleCodec(DendriticDistributorBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
@@ -40,7 +44,12 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
 
 	}
-	
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
+	}
+
 	@Override
 	public RenderShape getRenderShape(BlockState p_48727_) {
 		return RenderShape.MODEL;
@@ -100,15 +109,25 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 						: DendriticDistributorBlockEntity::serverTick);
 	}
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-								 BlockHitResult result) {
+	private InteractionResult handleUse(Level worldIn) {
 		// Opens the Skill Tree screen (client-only)
 		if (worldIn.isClientSide) {
 			HarbingerProgressScreen.openScreen();
 		}
 		return InteractionResult.SUCCESS;
+	}
 
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
+			BlockHitResult result) {
+		return handleUse(worldIn);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
+			Player player, InteractionHand handIn, BlockHitResult result) {
+		handleUse(worldIn);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 }

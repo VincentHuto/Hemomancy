@@ -45,7 +45,7 @@ public static Optional<IBloodVolume> getBloodVolume(BlockEntity be) {
 }
 
 public static Optional<IBloodVolume> getBloodVolume(ItemStack stack) {
-    return Optional.of(stack.getData(HemoAttachmentTypes.ITEM_BLOOD_VOLUME));
+    return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_BLOOD_VOLUME));
 }
 
 public static IBloodVolume requireBloodVolume(Player player) {

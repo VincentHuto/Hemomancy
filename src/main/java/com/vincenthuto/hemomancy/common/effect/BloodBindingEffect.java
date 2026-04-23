@@ -20,10 +20,10 @@ public class BloodBindingEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		super.applyEffectTick(entity, amplifier);
 		if (entity != null) {
-			if (entity.getEffect(EffectInit.blood_binding.get()) != null) {
+			if (entity.getEffect(EffectInit.blood_binding) != null) {
 				entity.setDeltaMovement(0, 0, 0);
 				Level level = entity.level();
 				Vector3 centerVec = Vector3.fromEntityCenter(entity);
@@ -47,6 +47,8 @@ public class BloodBindingEffect extends MobEffect {
 				}
 			}
 		}
+	
+		return true;
 	}
 
 	@Override
@@ -66,7 +68,7 @@ public class BloodBindingEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 

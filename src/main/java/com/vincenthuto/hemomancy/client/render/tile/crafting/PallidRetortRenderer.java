@@ -114,35 +114,35 @@ public class PallidRetortRenderer implements BlockEntityRenderer<PallidRetortBlo
 			float x0, float y0, float z0, float x1, float y1, float z1,
 			int r, int g, int b, int a) {
 		// Top
-		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
 		// Bottom
-		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
 		// North (z0)
-		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
 		// South (z1)
-		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
 		// West (x0)
-		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
 		// East (x1)
-		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
+		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
+		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
 	}
 }
 

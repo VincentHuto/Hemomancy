@@ -100,7 +100,7 @@ public class PurityGainEvents {
 
     /** Whether the player has the Hemolysis effect active. */
     private static boolean hasHemolysis(Player player) {
-        return player.hasEffect(EffectInit.hemolysis.get());
+		return player.hasEffect(EffectInit.hemolysis);
     }
 
     /** Whether the player is on the unstained path and not yet fully purified. */

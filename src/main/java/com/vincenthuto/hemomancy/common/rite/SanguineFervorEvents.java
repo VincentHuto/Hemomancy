@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.MobSpawnType;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 
 /**
@@ -61,7 +60,7 @@ public class SanguineFervorEvents {
 		if (data.isInFervorRange(spawnPos, dimension, currentTick)) {
 			// Force the spawn through even if the mob cap has been reached.
 			// This is the Forge-recommended way to bypass the cap for a specific position.
-			event.setResult(Event.Result.ALLOW);
+			event.setResult(MobSpawnEvent.PositionCheck.Result.SUCCEED);
 		}
 	}
 }

@@ -27,7 +27,7 @@ public class BloodLossEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		// Entities without blood cant lose any...
 
 		if (entity != null) {
@@ -39,7 +39,7 @@ public class BloodLossEffect extends MobEffect {
 					// ── Skill: Coagulation — chance to block this blood-drain tick ──
 					double coagChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getCoagulationChance();
 					if (coagChance > 0 && playerIn.level().random.nextDouble() < coagChance) {
-						return; // Blocked by Coagulation skill
+						return true; // Blocked by Coagulation skill
 					}
 
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
@@ -62,6 +62,7 @@ public class BloodLossEffect extends MobEffect {
 			}
 		}
 
+		return true;
 	}
 
 	@Override
@@ -81,8 +82,9 @@ public class BloodLossEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
+	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
 
 }
+
