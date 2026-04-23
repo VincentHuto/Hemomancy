@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -16,6 +17,7 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -33,7 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -51,7 +52,8 @@ public class BloodBoltEntity extends AbstractArrow {
 		return CompoundTag.contains("CustomPotionColor", 99) ? CompoundTag.getInt("CustomPotionColor") : -1;
 	}
 
-	private Potion potion = Potions.EMPTY;
+	@Nullable
+	private Potion potion = null;
 	private final Set<MobEffectInstance> customPotionEffects = Sets.newHashSet();
 
 	private boolean fixedColor;
@@ -91,7 +93,9 @@ public class BloodBoltEntity extends AbstractArrow {
 	public void addEffect(MobEffectInstance effect) {
 		this.customPotionEffects.add(effect);
 		this.getEntityData().set(COLOR,
-				PotionContents.getColor(Stream.concat(this.potion.getEffects().stream(), this.customPotionEffects.stream()).toList()));
+				PotionContents.getColor(Stream.concat(
+						potion != null ? potion.getEffects().stream() : Stream.empty(),
+						this.customPotionEffects.stream()).toList()));
 	}
 
 	@Override
@@ -119,12 +123,12 @@ public class BloodBoltEntity extends AbstractArrow {
 
 	@Override
 	protected ItemStack getPickupItem() {
-		if (this.customPotionEffects.isEmpty() && this.potion == Potions.EMPTY) {
+		if (this.customPotionEffects.isEmpty() && this.potion == null) {
 			return new ItemStack(ItemInit.blood_bolt.get());
 		} else {
 			ItemStack itemstack = new ItemStack(Items.TIPPED_ARROW);
 			itemstack.set(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
-				new PotionContents(java.util.Optional.of(this.potion), java.util.Optional.empty(), new java.util.ArrayList<>(this.customPotionEffects)));
+				new PotionContents(java.util.Optional.ofNullable(this.potion), java.util.Optional.empty(), new java.util.ArrayList<>(this.customPotionEffects)));
 			if (this.fixedColor) {
 				CompoundTag colorTag = itemstack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 				colorTag.putInt("CustomPotionColor", this.getColor());
@@ -146,13 +150,10 @@ public class BloodBoltEntity extends AbstractArrow {
 		if (id == 0) {
 			int i = this.getColor();
 			if (i != -1) {
-				double d0 = (i >> 16 & 255) / 255.0D;
-				double d1 = (i >> 8 & 255) / 255.0D;
-				double d2 = (i >> 0 & 255) / 255.0D;
-
+				ColorParticleOption particle = ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, i | 0xFF000000);
 				for (int j = 0; j < 20; ++j) {
-					this.level().addParticle(ParticleTypes.ENTITY_EFFECT, this.getRandomX(0.5D), this.getRandomY(),
-							this.getRandomZ(0.5D), d0, d1, d2);
+					this.level().addParticle(particle, this.getRandomX(0.5D), this.getRandomY(),
+							this.getRandomZ(0.5D), 0, 0, 0);
 				}
 			}
 		} else {
@@ -180,8 +181,7 @@ public class BloodBoltEntity extends AbstractArrow {
 		super.readAdditionalSaveData(compound);
 		if (compound.contains("Potion", 8)) {
 			String potionId = compound.getString("Potion");
-			this.potion = potionId.isEmpty() ? Potions.EMPTY : BuiltInRegistries.POTION.get(ResourceLocation.parse(potionId));
-			if (this.potion == null) this.potion = Potions.EMPTY;
+			this.potion = potionId.isEmpty() ? null : BuiltInRegistries.POTION.get(ResourceLocation.parse(potionId));
 		}
 
 		if (compound.contains("custom_potion_effects", 9)) {
@@ -202,11 +202,13 @@ public class BloodBoltEntity extends AbstractArrow {
 
 	private void refreshColor() {
 		this.fixedColor = false;
-		if (this.potion == Potions.EMPTY && this.customPotionEffects.isEmpty()) {
+		if (this.potion == null && this.customPotionEffects.isEmpty()) {
 			this.entityData.set(COLOR, -1);
 		} else {
 			this.entityData.set(COLOR,
-					PotionContents.getColor(Stream.concat(this.potion.getEffects().stream(), this.customPotionEffects.stream()).toList()));
+					PotionContents.getColor(Stream.concat(
+							potion != null ? potion.getEffects().stream() : Stream.empty(),
+							this.customPotionEffects.stream()).toList()));
 		}
 
 	}
@@ -219,7 +221,7 @@ public class BloodBoltEntity extends AbstractArrow {
 	public void setPotionEffect(ItemStack stack) {
 		if (stack.getItem() == Items.TIPPED_ARROW) {
 			PotionContents contents2 = stack.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
-			this.potion = contents2 != null && contents2.potion().isPresent() ? contents2.potion().get() : Potions.EMPTY;
+			this.potion = contents2 != null && contents2.potion().isPresent() ? contents2.potion().get() : null;
 			Collection<MobEffectInstance> collection = contents2 != null ? contents2.customEffects() : List.of();
 			if (!collection.isEmpty()) {
 				for (MobEffectInstance effectinstance : collection) {
@@ -234,7 +236,7 @@ public class BloodBoltEntity extends AbstractArrow {
 				this.setFixedColor(i);
 			}
 		} else if (stack.getItem() == Items.ARROW) {
-			this.potion = Potions.EMPTY;
+			this.potion = null;
 			this.customPotionEffects.clear();
 			this.entityData.set(COLOR, -1);
 		}
@@ -244,13 +246,10 @@ public class BloodBoltEntity extends AbstractArrow {
 	private void spawnPotionParticles(int particleCount) {
 		int i = this.getColor();
 		if (i != -1 && particleCount > 0) {
-			double d0 = (i >> 16 & 255) / 255.0D;
-			double d1 = (i >> 8 & 255) / 255.0D;
-			double d2 = (i >> 0 & 255) / 255.0D;
-
+			ColorParticleOption particle = ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, i | 0xFF000000);
 			for (int j = 0; j < particleCount; ++j) {
-				this.level().addParticle(ParticleTypes.ENTITY_EFFECT, this.getRandomX(0.5D), this.getRandomY(),
-						this.getRandomZ(0.5D), d0, d1, d2);
+				this.level().addParticle(particle, this.getRandomX(0.5D), this.getRandomY(),
+						this.getRandomZ(0.5D), 0, 0, 0);
 			}
 
 		}
@@ -280,7 +279,7 @@ public class BloodBoltEntity extends AbstractArrow {
 		} else if (this.inGround && this.inGroundTime != 0 && !this.customPotionEffects.isEmpty()
 				&& this.inGroundTime >= 600) {
 			this.level().broadcastEntityEvent(this, (byte) 0);
-			this.potion = Potions.EMPTY;
+			this.potion = null;
 			this.customPotionEffects.clear();
 			this.entityData.set(COLOR, -1);
 		}

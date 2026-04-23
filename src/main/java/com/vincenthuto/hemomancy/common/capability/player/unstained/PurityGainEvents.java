@@ -7,9 +7,9 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
@@ -29,7 +29,7 @@ import net.neoforged.bus.api.SubscribeEvent;
  * <h3>Combat â€” Kill Rewards</h3>
  * <ul>
  *   <li>Hemomancy mob (tagged) â†’ +2.0</li>
- *   <li>Undead (MobType.UNDEAD) â†’ +0.5</li>
+ *   <li>Undead (EntityTypeTags.UNDEAD) â†’ +0.5</li>
  *   <li>Other hostile (MobCategory.MONSTER) â†’ +0.25</li>
  *   <li>Flawless kill bonus (kill without having taken damage recently) â†’ +0.5 extra</li>
  * </ul>
@@ -132,7 +132,7 @@ public class PurityGainEvents {
         if (victim.getType().is(EntityInit.HEMOMANCY_MOB)) {
             reward = PURITY_KILL_HEMOMANCY_MOB;
             isHemo = true;
-        } else if (victim.getMobType() == MobType.UNDEAD) {
+        } else if (victim.getType().is(EntityTypeTags.UNDEAD)) {
             reward = PURITY_KILL_UNDEAD;
             isUndead = true;
         } else if (victim.getType().getCategory() == MobCategory.MONSTER) {

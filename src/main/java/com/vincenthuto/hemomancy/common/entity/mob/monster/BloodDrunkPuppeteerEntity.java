@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
-import net.minecraft.network.syncher.SynchedEntityData;
 import java.util.List;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvent;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -28,6 +28,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public class BloodDrunkPuppeteerEntity extends Monster {
 
+	private boolean spawnedDolls = false;
+
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
 				.add(Attributes.ATTACK_DAMAGE, 1.0D);
@@ -35,7 +37,6 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 
 	public BloodDrunkPuppeteerEntity(EntityType<? extends BloodDrunkPuppeteerEntity> type, Level worldIn) {
 		super(type, worldIn);
-
 	}
 
 	@Override
@@ -46,7 +47,6 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-
 	}
 
 	@Override
@@ -84,7 +84,6 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
 		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
-
 	}
 
 	@Override
@@ -93,21 +92,19 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 		this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-
 	}
 
 	@Override
-	public void onAddedToWorld() {
-		super.onAddedToWorld();
-		EnthralledDollEntity[] needles = new EnthralledDollEntity[4];
-		for (int i = 0; i < needles.length; i++) {
-			needles[i] = new EnthralledDollEntity(level(), this);
-			needles[i].setPos(position().add(1, 1, 1));
-			needles[i].setOwnerUUID(this.getUUID());
-			level().addFreshEntity(needles[i]);
-		}
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		tag.putBoolean("SpawnedDolls", spawnedDolls);
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		spawnedDolls = tag.getBoolean("SpawnedDolls");
 	}
 
 	public List<EnthralledDollEntity> getPuppeteer() {
@@ -124,9 +121,18 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	@Override
 	public void tick() {
 		super.tick();
+		if (!level().isClientSide && !spawnedDolls) {
+			spawnedDolls = true;
+			EnthralledDollEntity[] needles = new EnthralledDollEntity[4];
+			for (int i = 0; i < needles.length; i++) {
+				needles[i] = new EnthralledDollEntity(level(), this);
+				needles[i].setPos(position().add(1, 1, 1));
+				needles[i].setOwnerUUID(this.getUUID());
+				level().addFreshEntity(needles[i]);
+			}
+		}
 
 //		if (level().dayTime() % 10 == 0) {
-//
 //			EnthralledDollEntity[] needles = new EnthralledDollEntity[1];
 //			for (int i = 0; i < needles.length; i++) {
 //				needles[i] = new EnthralledDollEntity(level(), this);
@@ -135,6 +141,5 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 //				level().addFreshEntity(needles[i]);
 //			}
 //		}
-
 	}
 }

@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -46,7 +47,7 @@ public class BarbedUrchinEntity extends AbstractFish {
 		if (p_289442_ instanceof Player && ((Player) p_289442_).isCreative()) {
 			return false;
 		} else {
-			return p_289442_.getType() == EntityType.AXOLOTL || p_289442_.getMobType() != MobType.WATER;
+			return p_289442_.getType() == EntityType.AXOLOTL || !p_289442_.getType().is(EntityTypeTags.AQUATIC);
 		}
 	};
 	static final TargetingConditions targetingConditions = TargetingConditions.forNonCombat()
@@ -101,11 +102,6 @@ public class BarbedUrchinEntity extends AbstractFish {
 	protected void registerGoals() {
 		// super.registerGoals();
 		this.goalSelector.addGoal(1, new BarbedUrchinEntity.BarbedUrchinEntityPuffGoal(this));
-	}
-
-	@Override
-	public MobType getMobType() {
-		return MobType.WATER;
 	}
 
 	public static boolean canSpawnHere(EntityType<? extends AbstractFish> fish, LevelAccessor world,
@@ -244,8 +240,9 @@ public class BarbedUrchinEntity extends AbstractFish {
 		return SoundEvents.PUFFER_FISH_FLOP;
 	}
 
-	public EntityDimensions getDimensions(Pose pPose) {
-		return super.getDimensions(pPose).scale(getScale(this.getPuffState()));
+	@Override
+	public EntityDimensions getDefaultDimensions(Pose pPose) {
+		return super.getDefaultDimensions(pPose).scale(getScale(this.getPuffState()));
 	}
 
 	private static float getScale(int pPuffState) {

@@ -48,7 +48,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		this.shooter = shooter;
 	}
 	public BloodCloudCarrierEntity(Level worldIn, LivingEntity shooter, double aX, double aY, double aZ) {
-		super(EntityInit.blood_cloud_carrier.get(), shooter, aZ, aZ, aZ, worldIn);
+		super(EntityInit.blood_cloud_carrier.get(), shooter, aX, aY, aZ, worldIn);
 		this.shooter = shooter;
 	}
 	@Override

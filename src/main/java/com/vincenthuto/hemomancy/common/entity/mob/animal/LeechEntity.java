@@ -22,11 +22,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -40,6 +38,7 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -65,11 +64,6 @@ public class LeechEntity extends Animal {
 
 	public LeechEntity(EntityType<? extends LeechEntity> type, Level worldIn) {
 		super(type, worldIn);
-	}
-
-	@Override
-	public boolean canBreatheUnderwater() {
-		return true;
 	}
 
 	@Override
@@ -126,6 +120,11 @@ public class LeechEntity extends Animal {
 	}
 
 	@Override
+	public boolean isFood(ItemStack stack) {
+		return stack.is(Items.SUGAR);
+	}
+
+	@Override
 	protected SoundEvent getDeathSound() {
 		return SoundInit.ENTITY_LEECH_DEATH.get();
 	}
@@ -151,10 +150,6 @@ public class LeechEntity extends Animal {
 		return 0.2F;
 	}
 
-	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-		return this.isBaby() ? sizeIn.height * 0.1F : 1F;
-	}
 
 	@Override
 	protected void registerGoals() {

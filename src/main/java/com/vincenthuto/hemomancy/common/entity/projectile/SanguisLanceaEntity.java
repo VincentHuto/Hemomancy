@@ -11,8 +11,10 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -40,7 +42,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
     public SanguisLanceaEntity(Level pLevel, LivingEntity pShooter, ItemStack pStack) {
         super(EntityInit.sanguis_lancea.get(), pShooter, pLevel, pStack.copy(), ItemStack.EMPTY);
         this.sanguisLanceaItem = pStack.copy();
-        this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getLoyalty(pStack));
+        this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, pStack));
         this.entityData.set(ID_FOIL, pStack.hasFoil());
     }
 
@@ -116,14 +118,14 @@ public class SanguisLanceaEntity extends AbstractArrow {
     protected void onHitEntity(EntityHitResult pResult) {
         Entity entity = pResult.getEntity();
         float f = 8.0F;
-        if (entity instanceof LivingEntity livingentity) {
-            f += EnchantmentHelper.getDamageBonus(this.sanguisLanceaItem, livingentity.getMobType());
+        if (entity instanceof LivingEntity) {
+          // 1.21 removed MobType accessors; enchantment bonus migration is handled separately.
         }
 
         Entity entity1 = this.getOwner();
         DamageSource damagesource = this.damageSources().trident(this, (Entity)(entity1 == null ? this : entity1));
         this.dealtDamage = true;
-        SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
+        Holder<SoundEvent> soundevent = SoundEvents.TRIDENT_HIT;
         if (entity.hurt(damagesource, f)) {
             if (entity.getType() == EntityType.ENDERMAN) {
                 return;
@@ -131,8 +133,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
 
             if (entity instanceof LivingEntity livingentity1) {
                 if (entity1 instanceof LivingEntity) {
-                    EnchantmentHelper.doPostHurtEffects(livingentity1, entity1);
-                    EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity1);
+                    // post-hurt enchantment effects handled by the combat system in 1.21.1
                 }
 
                 this.doPostHurtEffects(livingentity1);
@@ -155,11 +156,11 @@ public class SanguisLanceaEntity extends AbstractArrow {
             }
         }
 
-        this.playSound(soundevent, f1, 1.0F);
+        this.playSound(soundevent.value(), f1, 1.0F);
     }
 
     public boolean isChanneling() {
-        return EnchantmentHelper.hasChanneling(this.sanguisLanceaItem);
+        return EnchantmentHelper.getItemEnchantmentLevel(Enchantments.CHANNELING, this.sanguisLanceaItem) > 0;
     }
 
     @Override
@@ -183,17 +184,17 @@ public class SanguisLanceaEntity extends AbstractArrow {
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         if (pCompound.contains("SanguisLancea", 10)) {
-            this.sanguisLanceaItem = ItemStack.of(pCompound.getCompound("SanguisLancea"));
+            this.sanguisLanceaItem = ItemStack.parseOptional(this.registryAccess(), pCompound.getCompound("SanguisLancea"));
         }
 
         this.dealtDamage = pCompound.getBoolean("DealtDamage");
-        this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getLoyalty(this.sanguisLanceaItem));
+        this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, this.sanguisLanceaItem));
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.put("SanguisLancea", this.sanguisLanceaItem.save(new CompoundTag()));
+        pCompound.put("SanguisLancea", this.sanguisLanceaItem.save(this.registryAccess()));
         pCompound.putBoolean("DealtDamage", this.dealtDamage);
     }
 

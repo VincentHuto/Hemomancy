@@ -65,8 +65,8 @@ public class TrackingBloodOrbEntity extends ThrowableProjectile {
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		entityData.define(EVIL, false);
-		entityData.define(TARGET, 0);
+		builder.define(EVIL, false);
+		builder.define(TARGET, 0);
 	}
 
 	public boolean findTarget() {
