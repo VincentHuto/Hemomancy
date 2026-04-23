@@ -45,48 +45,45 @@ import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
-import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.StemBlock;
-import net.minecraft.world.level.block.StemGrownBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class BlockInit {
-	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> SLABBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> SLABBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> STAIRBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> STAIRBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> COLUMNBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> COLUMNBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> CROSSBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> CROSSBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> OBJBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> OBJBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> MODELEDBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> MODELEDBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
-	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
 
-	public static final DeferredRegister<Block> POTTEDBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+	public static final DeferredRegister<Block> POTTEDBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
 
 	// Ash
@@ -116,7 +113,7 @@ public class BlockInit {
 	// Blocks
 
 	public static final DeferredHolder<Block, Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
-			() -> new GlassBlock(
+			() -> new Block(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> sanguine_pane = SPECIALBLOCKS.register("sanguine_pane",
@@ -124,7 +121,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> vivianite_glass = BASEBLOCKS.register("vivianite_glass",
-			() -> new GlassBlock(
+			() -> new Block(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> vivianite_pane = SPECIALBLOCKS.register("vivianite_pane",
@@ -132,7 +129,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> cleansed_sanguine_glass = BASEBLOCKS.register("cleansed_sanguine_glass",
-			() -> new GlassBlock(
+			() -> new Block(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> cleansed_sanguine_pane = SPECIALBLOCKS.register("cleansed_sanguine_pane",
@@ -326,13 +323,13 @@ public class BlockInit {
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> attached_gourd_stem = MODELEDBLOCKS.register("attached_gourd_stem",
-			() -> new AttachedStemBlock((StemGrownBlock) gourd.get(), () -> {
+			() -> new AttachedStemBlock(gourd.get(), () -> {
 				return ItemInit.gourd_seeds.get();
 			}, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.WOOD)
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> gourd_stem = MODELEDBLOCKS.register("gourd_stem",
-			() -> new StemBlock((StemGrownBlock) gourd.get(), () -> {
+			() -> new StemBlock(gourd.get(), () -> {
 				return ItemInit.gourd_seeds.get();
 			}, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak()
 					.sound(SoundType.HARD_CROP).pushReaction(PushReaction.DESTROY)));
@@ -603,4 +600,3 @@ public class BlockInit {
 	}
 
 }
-

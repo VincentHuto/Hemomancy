@@ -49,7 +49,6 @@ import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.IForgeRegistry;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -61,7 +60,7 @@ public class ManipulationInit {
 	public static final DeferredRegister<BloodManipulation> MANIPS = DeferredRegister.create(MANIP_KEY,
 			Hemomancy.MOD_ID);
 
-	public static Supplier<IForgeRegistry<BloodManipulation>> MANIPS_TYPE_REGISTRY = MANIPS
+	public static Supplier<Registry<BloodManipulation>> MANIPS_TYPE_REGISTRY = MANIPS
 			.makeRegistry(() -> new RegistryBuilder<BloodManipulation>().setMaxID(Integer.MAX_VALUE - 1)
 					.setDefaultKey(Hemomancy.rloc("bloodmanipulations")));
 
@@ -272,9 +271,9 @@ public class ManipulationInit {
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();
-		IForgeRegistry<BloodManipulation> registry = MANIPS_TYPE_REGISTRY.get();
+		Registry<BloodManipulation> registry = MANIPS_TYPE_REGISTRY.get();
 		if (registry != null) {
-			entries.addAll(registry.getValues());
+			registry.forEach(entries::add);
 		}
 		return entries;
 	}

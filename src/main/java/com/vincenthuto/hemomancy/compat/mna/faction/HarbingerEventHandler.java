@@ -5,13 +5,13 @@ import com.mna.api.faction.IFaction;
 import com.mna.capabilities.playerdata.magic.resources.CastingResourceGuiRegistry;
 import com.mna.capabilities.playerdata.magic.resources.CastingResourceRegistry;
 import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.registries.IForgeRegistry;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 
@@ -26,8 +26,9 @@ public class HarbingerEventHandler {
 
 
     @SubscribeEvent
+    @SuppressWarnings("unchecked")
     public static void registerFactions(RegisterEvent event) {
-        event.register(((IForgeRegistry) Registries.Factions.get()).getRegistryKey(), (helper) -> {
+        event.register(((Registry<IFaction>) Registries.Factions.get()).key(), (helper) -> {
             helper.register(Hemomancy.rloc("harbingers_faction"), HARBINGERS_FACTION);
         });
     }
