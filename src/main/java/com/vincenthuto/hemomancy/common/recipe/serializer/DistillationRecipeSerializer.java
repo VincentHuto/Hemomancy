@@ -25,8 +25,8 @@ ResourceLocation.CODEC.optionalFieldOf("id", Hemomancy.rloc("distillation/unknow
 Codec.STRING.optionalFieldOf("group", "").forGetter(DistillationRecipe::getGroup),
 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(DistillationRecipe::getIngredient),
 Ingredient.CODEC.optionalFieldOf("catalyst", Ingredient.EMPTY).forGetter(DistillationRecipe::getCatalyst),
-RESULT_CODEC.fieldOf("result").forGetter(recipe -> Either.left(recipe.getResultItem(null))),
-Codec.INT.optionalFieldOf("count", 1).forGetter(recipe -> recipe.getResultItem(null).getCount()),
+RESULT_CODEC.fieldOf("result").forGetter(recipe -> Either.left(recipe.getResultItemRaw())),
+Codec.INT.optionalFieldOf("count", 1).forGetter(recipe -> recipe.getResultItemRaw().getCount()),
 Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(DistillationRecipe::getExperience),
 Codec.INT.optionalFieldOf("cookingtime", 100).forGetter(DistillationRecipe::getCookingTime),
 Codec.BOOL.optionalFieldOf("pallid", false).forGetter(DistillationRecipe::isPallid)).apply(instance,
@@ -60,7 +60,7 @@ boolean hasCatalyst = recipe.requiresCatalyst();
 buffer.writeBoolean(hasCatalyst);
 if (hasCatalyst) Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getCatalyst());
 buffer.writeBoolean(recipe.isPallid());
-ItemStack.STREAM_CODEC.encode(buffer, recipe.getResultItem(null));
+ItemStack.STREAM_CODEC.encode(buffer, recipe.getResultItemRaw());
 buffer.writeFloat(recipe.getExperience());
 buffer.writeInt(recipe.getCookingTime());
 }

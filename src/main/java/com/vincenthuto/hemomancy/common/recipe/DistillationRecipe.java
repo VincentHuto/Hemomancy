@@ -115,8 +115,15 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 		return list;
 	}
 
-	/** Returns this recipe's ResourceLocation id (stored in the recipe, not from Recipe interface). */
+	/**
+	 * Returns this recipe's ResourceLocation id.
+	 * In 1.21.1 the Recipe interface no longer provides {@code getId()}; this is
+	 * a plain accessor on the recipe object itself.
+	 */
 	public ResourceLocation getId() { return id; }
+
+	/** Returns the result ItemStack directly, without needing a registry lookup. */
+	public ItemStack getResultItemRaw() { return result; }
 
 	@Override
 	public String getGroup() { return group; }

@@ -42,6 +42,7 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 		JsonArray catalystsArray = GsonHelper.getAsJsonArray(json, "catalysts");
 		NonNullList<Ingredient> catalysts = NonNullList.create();
 		for (int i = 0; i < catalystsArray.size(); i++) {
+			// false = disallow empty ingredients in recipe JSON
 			Ingredient ingredient = Ingredient.fromJson(catalystsArray.get(i), false);
 			if (!ingredient.isEmpty()) catalysts.add(ingredient);
 		}
