@@ -17,14 +17,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CarvedPumpkinBlock;
+import net.minecraft.world.level.block.PumpkinBlock;
 import net.minecraft.world.level.block.StemBlock;
-import net.minecraft.world.level.block.StemGrownBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class GourdBlock extends StemGrownBlock {
+public class GourdBlock extends PumpkinBlock {
 	public GourdBlock(BlockBehaviour.Properties p_55284_) {
 		super(p_55284_);
 	}

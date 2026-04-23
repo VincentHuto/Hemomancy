@@ -11,7 +11,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.registries.IForgeRegistry;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 
@@ -27,7 +26,7 @@ public class HarbingerEventHandler {
 
     @SubscribeEvent
     public static void registerFactions(RegisterEvent event) {
-        event.register(((IForgeRegistry) Registries.Factions.get()).getRegistryKey(), (helper) -> {
+        event.register(Registries.Factions.get().key(), (helper) -> {
             helper.register(Hemomancy.rloc("harbingers_faction"), HARBINGERS_FACTION);
         });
     }
