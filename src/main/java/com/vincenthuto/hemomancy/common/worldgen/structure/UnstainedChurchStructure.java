@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
@@ -21,8 +22,10 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
+import net.minecraft.world.level.levelgen.structure.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.StructureManager;
 
@@ -30,7 +33,7 @@ import java.util.Optional;
 
 public class UnstainedChurchStructure extends Structure {
 
-	public static final Codec<UnstainedChurchStructure> CODEC = RecordCodecBuilder
+	public static final MapCodec<UnstainedChurchStructure> CODEC = RecordCodecBuilder
 			.<UnstainedChurchStructure>mapCodec(instance -> instance.group(UnstainedChurchStructure.settingsCodec(instance),
 					StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
 					ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name")
@@ -83,7 +86,8 @@ public class UnstainedChurchStructure extends Structure {
 
 		Optional<GenerationStub> structurePiecesGenerator = JigsawPlacement.addPieces(context, this.startPool,
 				this.startJigsawName, this.size, blockPos, false, this.projectStartToHeightmap,
-				this.maxDistanceFromCenter);
+				this.maxDistanceFromCenter, PoolAliasLookup.EMPTY, Structure.DEFAULT_DIMENSION_PADDING,
+				LiquidSettings.APPLY_WATERLOGGING);
 		return structurePiecesGenerator;
 	}
 

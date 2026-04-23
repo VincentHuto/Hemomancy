@@ -111,13 +111,13 @@ public class SpectralCompanionEntity extends PathfinderMob implements OwnableEnt
 
 	private void dissipate() {
 		this.level().playSound(null, this.blockPosition(),
-				SoundEvents.SOUL_ESCAPE, SoundSource.NEUTRAL, 1.0f, 1.0f);
+				SoundEvents.SOUL_ESCAPE.value(), SoundSource.NEUTRAL, 1.0f, 1.0f);
 		this.discard();
 	}
 
 	@Override
-	public void onAddedToWorld() {
-		super.onAddedToWorld();
+	public void onAddedToLevel() {
+		super.onAddedToLevel();
 		// Limit number of spectral companions per summoner to 2
 		if (!this.level().isClientSide() && summoner != null) {
 			List<SpectralCompanionEntity> existing = this.level().getEntitiesOfClass(
@@ -134,7 +134,7 @@ public class SpectralCompanionEntity extends PathfinderMob implements OwnableEnt
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.SOUL_ESCAPE;
+		return SoundEvents.SOUL_ESCAPE.value();
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class SpectralCompanionEntity extends PathfinderMob implements OwnableEnt
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.SOUL_ESCAPE;
+		return SoundEvents.SOUL_ESCAPE.value();
 	}
 
 	@Override

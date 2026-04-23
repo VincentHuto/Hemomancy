@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BloodTempleStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
@@ -10,9 +10,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.neoforged.neoforge.common.world.BiomeModifier;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class StructureInit {
 	/**
@@ -23,7 +23,7 @@ public class StructureInit {
 	public static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister
 			.create(Registries.STRUCTURE_TYPE, Hemomancy.MOD_ID);
 
-	public static DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister
+	public static DeferredRegister<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister
 			.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, Hemomancy.MOD_ID);
 
 	public static final DeferredHolder<StructureType<?>, StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
@@ -38,7 +38,7 @@ public class StructureInit {
 	public static final DeferredHolder<StructureType<?>, StructureType<MausoleumStructure>> mausoleum = STRUCTURES
 			.register("mausoleum", () -> explicitStructureTypeTyping(MausoleumStructure.CODEC));
 
-	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(Codec<T> structureCodec) {
+	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
 		return () -> structureCodec;
 	}
 

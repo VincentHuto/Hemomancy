@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
 import net.minecraft.core.BlockPos;
@@ -12,14 +13,16 @@ import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
 
 import java.util.Optional;
 
 public class MausoleumStructure extends Structure {
 
-	public static final Codec<MausoleumStructure> CODEC = RecordCodecBuilder
+	public static final MapCodec<MausoleumStructure> CODEC = RecordCodecBuilder
 			.<MausoleumStructure>mapCodec(instance -> instance.group(MausoleumStructure.settingsCodec(instance),
 					StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
 					ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name")
@@ -30,8 +33,7 @@ public class MausoleumStructure extends Structure {
 							.forGetter(structure -> structure.projectStartToHeightmap),
 					Codec.intRange(1, 128).fieldOf("max_distance_from_center")
 							.forGetter(structure -> structure.maxDistanceFromCenter))
-					.apply(instance, MausoleumStructure::new))
-			.codec();
+					.apply(instance, MausoleumStructure::new));
 
 	private final Holder<StructureTemplatePool> startPool;
 	private final Optional<ResourceLocation> startJigsawName;
@@ -59,7 +61,8 @@ public class MausoleumStructure extends Structure {
 		ChunkPos chunkPos = context.chunkPos();
 		BlockPos blockPos = new BlockPos(chunkPos.getMinBlockX(), startY, chunkPos.getMinBlockZ());
 		return JigsawPlacement.addPieces(context, this.startPool, this.startJigsawName, this.size, blockPos, false,
-				this.projectStartToHeightmap, this.maxDistanceFromCenter);
+				this.projectStartToHeightmap, this.maxDistanceFromCenter,
+				PoolAliasLookup.EMPTY, Structure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
 	}
 
 	@Override

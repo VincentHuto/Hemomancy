@@ -77,7 +77,7 @@ public class CruorFiendEntity extends Monster {
 	public boolean doHurtTarget(Entity target) {
 		boolean flag = super.doHurtTarget(target);
 		if (flag) {
-			target.setSecondsOnFire(5);
+			target.setRemainingFireTicks(5);
 			if (target instanceof net.minecraft.world.entity.LivingEntity living) {
 				living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 0));
 			}

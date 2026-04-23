@@ -87,10 +87,10 @@ public class UnstainedMilestoneHandler {
 			if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
 				int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
 				// Only refresh if no existing effect or existing effect is weaker
-				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura.get());
+				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura);
 				if (existing == null || existing.getAmplifier() < auraAmplifier || existing.getDuration() < 40) {
 					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.verdigris_aura.get(), AUTO_EFFECT_DURATION, auraAmplifier, false, false, true));
+							EffectInit.verdigris_aura, AUTO_EFFECT_DURATION, auraAmplifier, false, false, true));
 				}
 			}
 
@@ -98,10 +98,10 @@ public class UnstainedMilestoneHandler {
 			if (progress.isSilverWardEnabled() && progress.hasClarityUnlocked()
 					&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
 				int wardAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
-				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward.get());
+				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward);
 				if (existing == null || existing.getAmplifier() < wardAmplifier || existing.getDuration() < 40) {
 					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.silver_ward.get(), AUTO_EFFECT_DURATION, wardAmplifier, false, false, true));
+							EffectInit.silver_ward, AUTO_EFFECT_DURATION, wardAmplifier, false, false, true));
 				}
 			}
 
@@ -177,7 +177,7 @@ public class UnstainedMilestoneHandler {
 	public static void onLivingHurt(LivingDamageEvent.Pre event) {
 		// — Silver Ward: reduce incoming blood damage —
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide()) {
-			MobEffectInstance ward = player.getEffect(EffectInit.silver_ward.get());
+			MobEffectInstance ward = player.getEffect(EffectInit.silver_ward);
 			if (ward != null) {
 				// Check if the damage source entity is a hemomancy mob
 				boolean isBloodDamage = false;

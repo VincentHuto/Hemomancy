@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -74,8 +75,7 @@ public class DialogueEventHandler {
 					Vec3 pos = hermit.position();
 					// Drop the rite hint item â€” configured for the Sanguine Initiation rite
 					ItemStack riteHint = RiteHintItem.createForRite(
-							ItemInit.rite_hint.get(),
-							new net.minecraft.resources.ResourceLocation(Hemomancy.MOD_ID,
+							ItemInit.rite_hint.get(), ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
 									"cardinal_rite/sanguine_initiation"));
 					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, riteHint);
 					hermit.level().addFreshEntity(drop);

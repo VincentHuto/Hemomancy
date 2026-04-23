@@ -30,19 +30,21 @@ public class EntityWretchedWill extends BloodConstructEntity {
 
 	}
 
-	@Override
-	public boolean broadcastToPlayer(ServerPlayer p_19937_) {
-		return super.broadcastToPlayer(p_19937_);
-	}
 
 	@Override
-	public void onAddedToWorld() {
-		super.onAddedToWorld();
+	public void onAddedToLevel() {
+		super.onAddedToLevel();
 		if (this.creator != null) {
 			if (creator instanceof Player player) {
 			}
 		}
 	}
+
+	@Override
+	public boolean broadcastToPlayer(ServerPlayer p_19937_) {
+		return super.broadcastToPlayer(p_19937_);
+	}
+
 
 	@Override
 	protected void sendDebugPackets() {

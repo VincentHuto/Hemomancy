@@ -30,9 +30,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
@@ -281,7 +282,6 @@ public class EntityInit {
                     .sized(0.6F, 1.8F).build(Hemomancy.rloc("venous_strider").toString()));
 
     // Projectiles
-
     public static final DeferredHolder<EntityType<?>, EntityType<EntityFlyingCharm>> flying_charm = ENTITY_TYPES.register(
             "flying_charm",
             () -> EntityType.Builder.<EntityFlyingCharm>of(EntityFlyingCharm::new, MobCategory.MISC).sized(0.25F, 0.25F)
@@ -376,55 +376,67 @@ public class EntityInit {
                     .build(Hemomancy.rloc("dark_arrow").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SanguisLanceaEntity>> sanguis_lancea = ENTITY_TYPES.register(
-            "sanguis_lancea", () ->  EntityType.Builder.<SanguisLanceaEntity>of(SanguisLanceaEntity::new, MobCategory.MISC)
+            "sanguis_lancea", () -> EntityType.Builder.<SanguisLanceaEntity>of(SanguisLanceaEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20)
                     .build(Hemomancy.rloc("sanguis_lancea").toString()));
 
     public static TagKey<EntityType<?>> createTag(String name) {
-        return TagKey.create(Registries.ENTITY_TYPE,
-                Hemomancy.rloc(name));
+        return TagKey.create(Registries.ENTITY_TYPE, Hemomancy.rloc(name));
     }
 
     @SubscribeEvent
-    public static void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
-            SpawnPlacements.register(EntityInit.chitinite.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChitiniteEntity::canSpawnInCave);
-            SpawnPlacements.register(EntityInit.fervent_chitinite.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FerventChitiniteEntity::canSpawnInCave);
-            SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.hemolymphopoda.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.fargone.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules);
-            SpawnPlacements.register(EntityInit.abhorent_thought.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules);
-            SpawnPlacements.register(EntityInit.dessicant.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DessicantEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.cruor_fiend.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CruorFiendEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.void_drinker.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VoidDrinkerEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.frozen_clot.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FrozenClotEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.abyssal_siphon.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbyssalSiphonEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.synapse_hound.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SynapseHoundEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.myelin_borer.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.crimson_doe.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.hemojelly.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.venous_strider.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere);
-            Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
-        });
+    public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
+        event.register(EntityInit.chitinite.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChitiniteEntity::canSpawnInCave,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.fervent_chitinite.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FerventChitiniteEntity::canSpawnInCave,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.barbed_urchin.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.hemolymphopoda.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.fargone.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.abhorent_thought.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.dessicant.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DessicantEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.cruor_fiend.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CruorFiendEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.void_drinker.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VoidDrinkerEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.frozen_clot.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FrozenClotEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.abyssal_siphon.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbyssalSiphonEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.synapse_hound.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SynapseHoundEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.myelin_borer.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.crimson_doe.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.hemojelly.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.venous_strider.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
     }
-
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
@@ -472,8 +484,10 @@ public class EntityInit {
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
         event.put(EntityInit.tooth_pecks.get(), ToothPecksEntity.setAttributes().build());
-
     }
 
+    @SubscribeEvent
+    public static void commonSetup(final FMLCommonSetupEvent event) {
+        // Spawn placements are now registered via RegisterSpawnPlacementsEvent above.
+    }
 }
-

@@ -64,7 +64,7 @@ public class ArmorSetBonusHandler {
 	private static int countArmorPieces(Player player, ArmorMaterial material) {
 		int count = 0;
 		for (ItemStack stack : player.getArmorSlots()) {
-			if (stack.getItem() instanceof ArmorItem armor && armor.getMaterial() == material) {
+			if (stack.getItem() instanceof ArmorItem armor && armor.getMaterial().value() == material) {
 				count++;
 			}
 		}
@@ -89,7 +89,7 @@ public class ArmorSetBonusHandler {
 		if (player.level().isClientSide()) return;
 
 		EquipmentSlot slot = event.getSlot();
-		if (slot.getType() != EquipmentSlot.Type.ARMOR) return;
+		if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) return;
 
 		// Chitinite set bonus: attribute modifier for toughness
 		updateChitiniteToughness(player);
@@ -122,11 +122,11 @@ public class ArmorSetBonusHandler {
 
 		// Unstained set bonus: remove blood-related debuffs (check every UNSTAINED_CHECK_INTERVAL ticks)
 		if (player.tickCount % UNSTAINED_CHECK_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.UNSTAINED)) {
-			if (player.hasEffect(EffectInit.blood_loss.get())) {
-				player.removeEffect(EffectInit.blood_loss.get());
+			if (player.hasEffect(EffectInit.blood_loss)) {
+				player.removeEffect(EffectInit.blood_loss);
 			}
-			if (player.hasEffect(EffectInit.hemolysis.get())) {
-				player.removeEffect(EffectInit.hemolysis.get());
+			if (player.hasEffect(EffectInit.hemolysis)) {
+				player.removeEffect(EffectInit.hemolysis);
 			}
 		}
 	}
@@ -137,7 +137,7 @@ public class ArmorSetBonusHandler {
 	public static void onLivingDamage(LivingDamageEvent.Post event) {
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide()) return;
-		if (event.getSource().isIndirect()) return;
+		if (!event.getSource().isDirect()) return;
 
 		if (hasFullSet(player, EnumModArmorTiers.BLOODLUST)) {
 			float healAmount = event.getNewDamage() * BLOOD_LUST_LIFESTEAL_FRACTION;
@@ -166,14 +166,14 @@ public class ArmorSetBonusHandler {
 
 			// Apply Blood Loss effect to attacker
 			attacker.addEffect(new MobEffectInstance(
-					EffectInit.blood_loss.get(),
+					EffectInit.blood_loss,
 					BARBED_BLOOD_LOSS_DURATION,
 					BARBED_BLOOD_LOSS_AMPLIFIER));
 		}
 
 		// Chitinite set bonus: projectile damage reduction
 		if (hasFullSet(player, EnumModArmorTiers.CHITINITE)) {
-			if (event.getSource().isIndirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
+			if (!event.getSource().isDirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
 				event.setNewDamage(event.getNewDamage() * (1.0f - CHITINITE_PROJECTILE_REDUCTION));
 			}
 		}
