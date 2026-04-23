@@ -86,6 +86,7 @@ public class CruorFiendEntity extends Monster {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
 			MobSpawnType pReason, SpawnGroupData pSpawnData) {
 		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
