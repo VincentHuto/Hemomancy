@@ -62,19 +62,32 @@ public class CardinalRiteBoundaryRenderer {
 		float currentTime = mc.level.getGameTime() + partialTick;
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
+		// Two separate passes so only one non-fixed render type is active at a time.
+		// NeoForge 1.21.1's sequential BufferSource flushes the current type when a
+		// second different type is requested, leaving the first VertexConsumer dead.
+		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			drawBoundaryRing(poseStack, buffer, rite, currentTime, cam);
+			drawBoundaryRing(poseStack, glowVC, null, rite, currentTime, cam);
 		}
-
-		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
+
+		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		for (ActiveRiteClientData.RiteEntry rite : rites) {
+			drawBoundaryRing(poseStack, null, coreVC, rite, currentTime, cam);
+		}
+		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
 	//  Main ring + veins
 	// ════════════════════════════════════════════════════════════════════════
 
-	private static void drawBoundaryRing(PoseStack stack, MultiBufferSource buffer,
+	/**
+	 * Draws one rite's boundary ring for a single pass.
+	 * Pass {@code glowVC} non-null and {@code coreVC} null for the glow pass,
+	 * or {@code glowVC} null and {@code coreVC} non-null for the core pass.
+	 */
+	private static void drawBoundaryRing(PoseStack stack, VertexConsumer glowVC, VertexConsumer coreVC,
 			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam) {
 
 		BlockPos center = rite.getCenter();
@@ -93,9 +106,6 @@ public class CardinalRiteBoundaryRenderer {
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
 		Matrix4f mat = stack.last().pose();
-
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
 		for (int ring = 0; ring < ringCount; ring++) {
 			float ringRadius = baseRadius + ring * 2.0f;
@@ -144,26 +154,30 @@ public class CardinalRiteBoundaryRenderer {
 				float oCore2 = r2 + CORE_WIDTH * 0.5f;
 				float oGlow2 = r2 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
 
-				// Inner glow
-				emitQuad(glowVC, mat,
-						cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
-						cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
-						cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
-						cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
+				if (glowVC != null) {
+					// Inner glow
+					emitQuad(glowVC, mat,
+							cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
+							cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
+							cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
+							cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
 
-				// Core
-				emitQuad(coreVC, mat,
-						cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
-						cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
-						cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
-						cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
+					// Outer glow
+					emitQuad(glowVC, mat,
+							cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
+							cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
+							cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
+							cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
+				}
 
-				// Outer glow
-				emitQuad(glowVC, mat,
-						cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
-						cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
-						cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
-						cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
+				if (coreVC != null) {
+					// Core
+					emitQuad(coreVC, mat,
+							cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
+							cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
+							cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
+							cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
+				}
 			}
 
 			// ── Draw vein branches sprouting inward from each ring ──
@@ -248,37 +262,41 @@ public class CardinalRiteBoundaryRenderer {
 				float px1 = (float) -Math.sin(ang1);
 				float pz1 = (float) Math.cos(ang1);
 
-				// Core vein quad
-				emitQuad(coreVC, mat,
-						cos0 * rad0 - px0 * w0, 0.001f, sin0 * rad0 - pz0 * w0, cR, cG, cB, a0 * cA,
-						cos0 * rad0 + px0 * w0, 0.001f, sin0 * rad0 + pz0 * w0, cR, cG, cB, a0 * cA,
-						cos1 * rad1 + px1 * w1, 0.001f, sin1 * rad1 + pz1 * w1, cR, cG, cB, a1 * cA,
-						cos1 * rad1 - px1 * w1, 0.001f, sin1 * rad1 - pz1 * w1, cR, cG, cB, a1 * cA);
+				if (coreVC != null) {
+					// Core vein quad
+					emitQuad(coreVC, mat,
+							cos0 * rad0 - px0 * w0, 0.001f, sin0 * rad0 - pz0 * w0, cR, cG, cB, a0 * cA,
+							cos0 * rad0 + px0 * w0, 0.001f, sin0 * rad0 + pz0 * w0, cR, cG, cB, a0 * cA,
+							cos1 * rad1 + px1 * w1, 0.001f, sin1 * rad1 + pz1 * w1, cR, cG, cB, a1 * cA,
+							cos1 * rad1 - px1 * w1, 0.001f, sin1 * rad1 - pz1 * w1, cR, cG, cB, a1 * cA);
+				}
 
-				// Glow halo around vein (wider, more transparent)
-				float gw0 = w0 * 3.0f;
-				float gw1 = w1 * 3.0f;
-				float ga0 = a0 * 0.35f;
-				float ga1 = a1 * 0.25f;
+				if (glowVC != null) {
+					// Glow halo around vein (wider, more transparent)
+					float gw0 = w0 * 3.0f;
+					float gw1 = w1 * 3.0f;
+					float ga0 = a0 * 0.35f;
+					float ga1 = a1 * 0.25f;
 
-				emitQuad(glowVC, mat,
-						cos0 * rad0 - px0 * gw0, 0.001f, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0f,
-						cos0 * rad0 + px0 * gw0, 0.001f, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0f,
-						cos1 * rad1 + px1 * gw1, 0.001f, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0f,
-						cos1 * rad1 - px1 * gw1, 0.001f, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0f);
+					emitQuad(glowVC, mat,
+							cos0 * rad0 - px0 * gw0, 0.001f, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0f,
+							cos0 * rad0 + px0 * gw0, 0.001f, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0f,
+							cos1 * rad1 + px1 * gw1, 0.001f, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0f,
+							cos1 * rad1 - px1 * gw1, 0.001f, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0f);
 
-				// Inner part of glow (brighter core of the halo)
-				emitQuad(glowVC, mat,
-						cos0 * rad0 - px0 * gw0, 0.001f, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0f,
-						cos0 * rad0 - px0 * w0, 0.001f, sin0 * rad0 - pz0 * w0, gR, gG, gB, ga0,
-						cos1 * rad1 - px1 * w1, 0.001f, sin1 * rad1 - pz1 * w1, gR, gG, gB, ga1,
-						cos1 * rad1 - px1 * gw1, 0.001f, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0f);
+					// Inner part of glow (brighter core of the halo)
+					emitQuad(glowVC, mat,
+							cos0 * rad0 - px0 * gw0, 0.001f, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0f,
+							cos0 * rad0 - px0 * w0, 0.001f, sin0 * rad0 - pz0 * w0, gR, gG, gB, ga0,
+							cos1 * rad1 - px1 * w1, 0.001f, sin1 * rad1 - pz1 * w1, gR, gG, gB, ga1,
+							cos1 * rad1 - px1 * gw1, 0.001f, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0f);
 
-				emitQuad(glowVC, mat,
-						cos0 * rad0 + px0 * w0, 0.001f, sin0 * rad0 + pz0 * w0, gR, gG, gB, ga0,
-						cos0 * rad0 + px0 * gw0, 0.001f, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0f,
-						cos1 * rad1 + px1 * gw1, 0.001f, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0f,
-						cos1 * rad1 + px1 * w1, 0.001f, sin1 * rad1 + pz1 * w1, gR, gG, gB, ga1);
+					emitQuad(glowVC, mat,
+							cos0 * rad0 + px0 * w0, 0.001f, sin0 * rad0 + pz0 * w0, gR, gG, gB, ga0,
+							cos0 * rad0 + px0 * gw0, 0.001f, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0f,
+							cos1 * rad1 + px1 * gw1, 0.001f, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0f,
+							cos1 * rad1 + px1 * w1, 0.001f, sin1 * rad1 + pz1 * w1, gR, gG, gB, ga1);
+				}
 			}
 		}
 	}
