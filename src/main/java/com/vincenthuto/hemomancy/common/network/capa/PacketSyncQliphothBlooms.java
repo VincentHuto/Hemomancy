@@ -33,6 +33,7 @@ public class PacketSyncQliphothBlooms implements CustomPacketPayload {
 		for (QliphothBloomClientData.BloomEntry entry : msg.entries) {
 			buf.writeBlockPos(entry.getCenter());
 			buf.writeInt(entry.getChunkRadius());
+			buf.writeInt(entry.getPomesDropped());
 		}
 	}
 
@@ -42,7 +43,8 @@ public class PacketSyncQliphothBlooms implements CustomPacketPayload {
 		for (int i = 0; i < count; i++) {
 			BlockPos center = buf.readBlockPos();
 			int chunkRadius = buf.readInt();
-			entries.add(new QliphothBloomClientData.BloomEntry(center, chunkRadius));
+			int pomesDropped = buf.readInt();
+			entries.add(new QliphothBloomClientData.BloomEntry(center, chunkRadius, pomesDropped));
 		}
 		return new PacketSyncQliphothBlooms(entries);
 	}

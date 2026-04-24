@@ -99,12 +99,48 @@ public class QliphothBloomRenderer {
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
+	//  Growth-stage helpers
+	// ════════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Returns the fraction of {@link #TREE_HEIGHT} the trunk should be drawn to
+	 * for the given growth stage (0 = freshly planted, 9 = fully grown).
+	 * Stages 0–5 produce a linearly-scaled trunk (25% → 100%).
+	 * Stages 6–9 are always at full height.
+	 */
+	private static float trunkHeightFrac(int stage) {
+		if (stage >= 6) return 1.0f;
+		return 0.25f + (stage / 5.0f) * 0.75f;
+	}
+
+	/**
+	 * Returns the root-length multiplier for the given growth stage.
+	 * Stages 0–4 scale linearly from 15% → 100%; stage 5+ is full.
+	 */
+	private static float rootLengthFrac(int stage) {
+		if (stage >= 5) return 1.0f;
+		return 0.15f + (stage / 4.0f) * 0.85f;
+	}
+
+	/**
+	 * Returns the branch-length multiplier for the given growth stage.
+	 * Branches are absent below stage 6; stage 6 → 40%; stage 7 → 70%; 8+ → 100%.
+	 */
+	private static float branchLengthFrac(int stage) {
+		if (stage < 6) return 0.0f;
+		if (stage >= 8) return 1.0f;
+		return 0.4f + (stage - 6) * 0.3f; // 0.40 at stage 6, 0.70 at stage 7
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
 	//  Public API for BlockEntityRenderer usage
 	// ════════════════════════════════════════════════════════════════════════
 
 	/**
 	 * Renders the Qliphoth tree geometry (trunk, branches, canopy, roots, orbs)
-	 * at the given offset from the current PoseStack origin.
+	 * at the given offset from the current PoseStack origin, respecting the
+	 * current growth {@code stage} (0 = freshly planted stub, 9 = fully grown
+	 * with apex black-hole orb).
 	 * <p>
 	 * For use by the block entity renderer where the PoseStack is already
 	 * translated to the block entity position.
@@ -115,21 +151,32 @@ public class QliphothBloomRenderer {
 	 * @param offsetX X offset from PoseStack origin to center the tree
 	 * @param offsetY Y offset from PoseStack origin (e.g. 0.1 for slight raise)
 	 * @param offsetZ Z offset from PoseStack origin to center the tree
+	 * @param stage   number of Qliphoth Pomes already dropped (0–9)
 	 */
 	public static void renderTree(PoseStack stack, MultiBufferSource buffer, float time,
-			double offsetX, double offsetY, double offsetZ) {
+			double offsetX, double offsetY, double offsetZ, int stage) {
 		stack.pushPose();
 		stack.translate(offsetX, offsetY, offsetZ);
 		Matrix4f mat = stack.last().pose();
 
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
-		drawTrunk(buffer, mat, time, pulse);
-		drawTrunkOrbs(buffer, mat, time, pulse);
-		drawRoots(buffer, mat, time, pulse);
-		drawBranches(buffer, mat, time, pulse);
-		drawCanopy(buffer, mat, time, pulse);
-		drawApexOrb(buffer, mat, time, pulse);
+		float heightFrac = trunkHeightFrac(stage);
+		float rootFrac   = rootLengthFrac(stage);
+		float branchFrac = branchLengthFrac(stage);
+
+		drawTrunk(buffer, mat, time, pulse, heightFrac);
+		drawTrunkOrbs(buffer, mat, time, pulse, heightFrac);
+		drawRoots(buffer, mat, time, pulse, rootFrac);
+		if (branchFrac > 0f) {
+			drawBranches(buffer, mat, time, pulse, branchFrac, stage >= 7);
+		}
+		if (stage >= 8) {
+			drawCanopy(buffer, mat, time, pulse);
+		}
+		if (stage >= 9) {
+			drawApexOrb(buffer, mat, time, pulse);
+		}
 
 		stack.popPose();
 	}
@@ -252,12 +299,23 @@ public class QliphothBloomRenderer {
 		// Global breathing pulse
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
-		drawTrunk(buffer, mat, time, pulse);
-		drawTrunkOrbs(buffer, mat, time, pulse);
-		drawRoots(buffer, mat, time, pulse);
-		drawBranches(buffer, mat, time, pulse);
-		drawCanopy(buffer, mat, time, pulse);
-		drawApexOrb(buffer, mat, time, pulse);
+		int stage      = bloom.getPomesDropped();
+		float heightFrac = trunkHeightFrac(stage);
+		float rootFrac   = rootLengthFrac(stage);
+		float branchFrac = branchLengthFrac(stage);
+
+		drawTrunk(buffer, mat, time, pulse, heightFrac);
+		drawTrunkOrbs(buffer, mat, time, pulse, heightFrac);
+		drawRoots(buffer, mat, time, pulse, rootFrac);
+		if (branchFrac > 0f) {
+			drawBranches(buffer, mat, time, pulse, branchFrac, stage >= 7);
+		}
+		if (stage >= 8) {
+			drawCanopy(buffer, mat, time, pulse);
+		}
+		if (stage >= 9) {
+			drawApexOrb(buffer, mat, time, pulse);
+		}
 
 		stack.popPose();
 	}
@@ -266,9 +324,13 @@ public class QliphothBloomRenderer {
 	 * Draws the main trunk — a tapered column of dark quads with subtle red veining.
 	 * Tapers smoothly to a point at the top. The base flares outward with organic
 	 * buttress ridges that align with root positions, blending the trunk into the roots.
+	 *
+	 * @param heightFrac fraction of {@link #TREE_HEIGHT} to draw (0..1); drives early growth
 	 */
 	private static void drawTrunk(MultiBufferSource buffer,
-			Matrix4f mat, float time, double pulse) {
+			Matrix4f mat, float time, double pulse, float heightFrac) {
+
+		float effectiveHeight = TREE_HEIGHT * heightFrac;
 
 		// Precompute root base angles for buttress bulging
 		double[] rootAngles = new double[ROOT_COUNT];
@@ -280,8 +342,8 @@ public class QliphothBloomRenderer {
 			float t0 = (float) v / TRUNK_SEGMENTS_V;
 			float t1 = (float) (v + 1) / TRUNK_SEGMENTS_V;
 
-			float y0 = t0 * TREE_HEIGHT;
-			float y1 = t1 * TREE_HEIGHT;
+			float y0 = t0 * effectiveHeight;
+			float y1 = t1 * effectiveHeight;
 
 			// Smooth taper to a point: quadratic ease-in (1-t²) gives a natural tree shape
 			// (wider at base, accelerating taper toward the tip)
@@ -396,9 +458,14 @@ public class QliphothBloomRenderer {
 	 * Draws small dark orbs that fade in and out at different positions on the
 	 * trunk surface. Each orb runs on its own time cycle — it fades in at a
 	 * random spot, holds briefly, fades out, then reappears at a new location.
+	 *
+	 * @param heightFrac fraction of {@link #TREE_HEIGHT} the trunk currently reaches;
+	 *                   orbs are clamped to this height so they never float above the trunk tip
 	 */
 	private static void drawTrunkOrbs(MultiBufferSource buffer,
-			Matrix4f mat, float time, double pulse) {
+			Matrix4f mat, float time, double pulse, float heightFrac) {
+
+		float effectiveHeight = TREE_HEIGHT * heightFrac;
 
 		for (int i = 0; i < TRUNK_ORB_COUNT; i++) {
 			// ── Per-orb lifecycle timing ──
@@ -432,9 +499,11 @@ public class QliphothBloomRenderer {
 			double seedA = hashIndex(i * 59 + cycleIndex * 23 + 3000);
 			double seedP = hashIndex(i * 41 + cycleIndex * 19 + 4000);
 
-			// Height along the trunk: spread between 10% and 85%
+			// Height along the trunk: spread between 10% and 85% of effective height
 			float t = 0.10f + (float) seedH * 0.75f;
-			float orbCenterY = t * TREE_HEIGHT;
+			float orbCenterY = t * effectiveHeight;
+			// Skip orbs that would be above the current trunk tip (can occur during growth)
+			if (orbCenterY > effectiveHeight - TRUNK_ORB_RADIUS) continue;
 
 			// Trunk radius at this height (matching drawTrunk taper logic)
 			float taper = 1.0f - t * t;
@@ -535,12 +604,12 @@ public class QliphothBloomRenderer {
 	 * smaller sub-roots to look like veins rather than tentacles.
 	 */
 	private static void drawRoots(MultiBufferSource buffer,
-			Matrix4f mat, float time, double pulse) {
+			Matrix4f mat, float time, double pulse, float lengthFrac) {
 
 		for (int i = 0; i < ROOT_COUNT; i++) {
 			double baseAngle = (Math.PI * 2.0 / ROOT_COUNT) * i;
 			double seed = hashIndex(i) * 0.5 + 0.5;
-			float rootLength = (float) (1.8 + seed * 2.0);
+			float rootLength = (float) ((1.8 + seed * 2.0) * lengthFrac);
 			double curvature = Math.sin(seed * 13.7) * 0.4;
 
 			// Writhing frequency and phase unique to each root
@@ -718,9 +787,12 @@ public class QliphothBloomRenderer {
 	 * outward and upward with lateral bending and gentle writhing.
 	 * Each segment bends from the previous one for a natural, non-linear shape.
 	 * Sub-branches fork off main branches for added complexity.
+	 *
+	 * @param lengthFrac      branch length as a fraction of full length (0..1)
+	 * @param drawSubBranches whether to draw sub-branches (true from stage 7+)
 	 */
 	private static void drawBranches(MultiBufferSource buffer,
-			Matrix4f mat, float time, double pulse) {
+			Matrix4f mat, float time, double pulse, float lengthFrac, boolean drawSubBranches) {
 
 		for (int b = 0; b < BRANCH_COUNT; b++) {
 			double baseAngle = (Math.PI * 2.0 / BRANCH_COUNT) * b;
@@ -729,7 +801,7 @@ public class QliphothBloomRenderer {
 
 			// Branches start between 40%-80% up the trunk
 			float startHeight = TREE_HEIGHT * (0.4f + (float) seed * 0.4f);
-			float branchLen = BRANCH_LENGTH * (0.6f + (float) seed * 0.4f);
+			float branchLen = BRANCH_LENGTH * (0.6f + (float) seed * 0.4f) * lengthFrac;
 			float segLen = branchLen / BRANCH_SEGS;
 
 			// Initial direction: outward and upward (elevation from horizontal)
@@ -843,6 +915,7 @@ public class QliphothBloomRenderer {
 			}
 
 			// ── Sub-branches forking off the main branch ──
+		if (drawSubBranches) {
 			for (int sub = 0; sub < BRANCH_SUB_COUNT; sub++) {
 				double subSeed = hashIndex(b * 31 + sub * 13 + 700);
 				double subSeed2 = hashIndex(b * 23 + sub * 11 + 800);
@@ -948,7 +1021,8 @@ public class QliphothBloomRenderer {
 							sx1 + spx * sw1 * 2, sy1, sz1 + spz * sw1 * 2, sgR, 0.02f, 0.02f, sgA * 0.7f,
 							sx1 - spx * sw1 * 2, sy1, sz1 - spz * sw1 * 2, sgR, 0.02f, 0.02f, sgA * 0.7f);
 				}
-			}
+			} // end for (int sub...)
+			} // end if (drawSubBranches)
 		}
 	}
 

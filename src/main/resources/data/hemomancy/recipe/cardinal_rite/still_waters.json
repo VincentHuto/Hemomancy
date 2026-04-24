@@ -14,10 +14,10 @@
       "block": "hemomancy:cleansed_stone"
     },
     "L": {
-      "block": "hemomancy:pallid_lantern"
+      "block": "minecraft:white_candle"
     },
     "P": {
-      "block": "hemomancy:pale_silver_block"
+      "block": "minecraft:calcite"
     }
   },
   "result": {

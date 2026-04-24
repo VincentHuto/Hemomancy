@@ -41,7 +41,7 @@ public class QliphothBloomBlockRenderer implements BlockEntityRenderer<QliphothB
 		// The PoseStack is already translated to the block entity origin by the
 		// vanilla BER pipeline, so we only need a small +0.5/+0.1/+0.5 offset
 		// to center the tree on the block.
-		QliphothBloomRenderer.renderTree(poseStack, buffer, currentTime, 0.5, 0.1, 0.5);
+		QliphothBloomRenderer.renderTree(poseStack, buffer, currentTime, 0.5, 0.1, 0.5, 0);
 	}
 
 	@Override

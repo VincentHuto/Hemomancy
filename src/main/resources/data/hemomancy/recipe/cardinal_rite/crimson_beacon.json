@@ -19,7 +19,7 @@
       "block": "hemomancy:venous_stone"
     },
     "C": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:red_stained_glass"
     },
     "P": {
       "block": "hemomancy:hematic_iron_block"
@@ -28,7 +28,7 @@
       "block": "hemomancy:befouling_ash_trail"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:sea_lantern"
     }
   },
   "result": {

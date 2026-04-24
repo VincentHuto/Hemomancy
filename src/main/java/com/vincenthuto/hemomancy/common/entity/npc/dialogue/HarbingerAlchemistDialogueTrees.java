@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -22,19 +23,21 @@ public final class HarbingerAlchemistDialogueTrees {
 	/**
 	 * Returns the appropriate dialogue tree for the player's progression state.
 	 *
-	 * @param degree   The player's current initiatory degree number (0–7).
-	 * @param entityId The entity id of the alchemist being spoken to.
+	 * @param degree       The player's current initiatory degree number (0–7).
+	 * @param entityId     The entity id of the alchemist being spoken to.
+	 * @param hasBloodline Whether the player has an established bloodline. Recruit
+	 *                     and expel options are only shown when this is true.
 	 */
-	public static DialogueTree forDegree(int degree, int entityId) {
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline) {
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
 			case 2 -> votary(entityId);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId);
-			case 5 -> illuminatus(entityId);
-			case 6 -> sanctified(entityId);
-			default -> archon(entityId); // degree 7+
+			case 5 -> illuminatus(entityId, hasBloodline);
+			case 6 -> sanctified(entityId, hasBloodline);
+			default -> archon(entityId, hasBloodline); // degree 7+
 		};
 	}
 
@@ -209,17 +212,19 @@ public final class HarbingerAlchemistDialogueTrees {
 	}
 
 	/** Degree 5 — Illuminatus. Speaks of advanced blood crafting and cardinal rite machines. */
-	public static DialogueTree illuminatus(int entityId) {
+	public static DialogueTree illuminatus(int entityId, boolean hasBloodline) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_crafting", "blood_crafting_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator", "incubator_lore", null));
+		if (hasBloodline) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.illuminatus.line1"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_crafting", "blood_crafting_lore", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator", "incubator_lore", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
+				), greetingOptions))
 				.addNode(new DialogueNode("blood_crafting_lore", List.of(
 						"hemomancy.alchemist.illuminatus.blood_crafting_lore"
 				), List.of(
@@ -241,16 +246,18 @@ public final class HarbingerAlchemistDialogueTrees {
 	}
 
 	/** Degree 6 — Sanctified. The alchemist speaks of the pinnacle of Harbinger engineering. */
-	public static DialogueTree sanctified(int entityId) {
+	public static DialogueTree sanctified(int entityId, boolean hasBloodline) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_remains", "final_machines", null));
+		if (hasBloodline) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.sanctified.line1"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.what_remains", "final_machines", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
+				), greetingOptions))
 				.addNode(new DialogueNode("final_machines", List.of(
 						"hemomancy.alchemist.sanctified.final_machines"
 				), List.of(
@@ -267,16 +274,18 @@ public final class HarbingerAlchemistDialogueTrees {
 	}
 
 	/** Degree 7 — Archon. The alchemist defers to the player's mastery. */
-	public static DialogueTree archon(int entityId) {
+	public static DialogueTree archon(int entityId, boolean hasBloodline) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		if (hasBloodline) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.archon.line1",
 						"hemomancy.alchemist.archon.line2"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
+				), greetingOptions))
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"

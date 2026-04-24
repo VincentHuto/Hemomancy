@@ -4,11 +4,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.functional.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.RiteHintItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -116,6 +118,39 @@ public class DialogueEventHandler {
 			case "expel_harbinger" -> {
 				handleExpelHarbinger(player, event.getEntityId());
 			}
+			case "qliphoth_communion_done" -> {
+				// Player completed the full Qliphoth Communion — nine pomes consumed.
+				// This is a narrative milestone; the apotheos_rite path is now spiritually prepared.
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.qliphoth_communion_done")
+								.withStyle(ChatFormatting.DARK_GREEN),
+						false);
+			}
+			case "archon_choice_silence" -> {
+				// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
+				player.getPersistentData().putString(
+						FungalPodiumBlock.ARCHON_CHOICE_KEY,
+						FungalPodiumBlock.ARCHON_CHOICE_SILENCE);
+				FungalPodiumBlock.performReturnTravel(player);
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.archon_choice_silence")
+								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+						false);
+			}
+			case "archon_choice_eighth_degree" -> {
+				// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
+				player.getPersistentData().putString(
+						FungalPodiumBlock.ARCHON_CHOICE_KEY,
+						FungalPodiumBlock.ARCHON_CHOICE_APOTHEOS);
+				FungalPodiumBlock.performReturnTravel(player);
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.archon_choice_eighth_degree")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						false);
+			}
+			case "give_blood_structure_hint" -> {
+				handleGiveBloodStructureHint(player, event.getEntityId());
+			}
 			case "whisper_dismiss" -> {
 				// Player dismissed the whisper â€” no gameplay effect, just acknowledged
 			}
@@ -130,6 +165,36 @@ public class DialogueEventHandler {
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
+	}
+
+	/**
+	 * Gives the player an ancient scrap of parchment — a {@link BloodStructureHintItem}
+	 * pre-configured for the Sanguine Monolith blood structure. The item is dropped
+	 * at the NPC entity's position so the player can pick it up naturally.
+	 * If the NPC entity cannot be found, the item is given directly to the player's
+	 * inventory instead.
+	 */
+	private static void handleGiveBloodStructureHint(ServerPlayer player, int entityId) {
+		ItemStack hint = BloodStructureHintItem.createForStructure(
+				ItemInit.blood_structure_hint.get(),
+				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith"));
+
+		Entity entity = player.level().getEntity(entityId);
+		if (entity != null) {
+			Vec3 pos = entity.position();
+			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, hint);
+			entity.level().addFreshEntity(drop);
+		} else {
+			// Fallback: give directly to inventory, drop if full
+			if (!player.getInventory().add(hint)) {
+				player.drop(hint, false);
+			}
+		}
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vicar_gives_scrap")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
 	}
 
 	/**

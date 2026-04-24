@@ -10,7 +10,7 @@
   ],
   "key": {
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:chiseled_stone_bricks"
     },
     "T": {
       "block": "hemomancy:hematic_iron_block"

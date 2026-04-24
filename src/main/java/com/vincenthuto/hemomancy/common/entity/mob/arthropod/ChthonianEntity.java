@@ -37,6 +37,10 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -200,6 +204,22 @@ public class ChthonianEntity extends Spider {
 	@Override
 	protected int calculateFallDamage(float distance, float damageMultiplier) {
 		return 0;
+	}
+
+	@Override
+	public boolean doHurtTarget(Entity target) {
+		boolean hit = super.doHurtTarget(target);
+		if (hit && target instanceof Player player) {
+			ItemStack mainHand = player.getMainHandItem();
+			if (!mainHand.isEmpty() && mainHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
+				mainHand.hurtAndBreak(5, player, EquipmentSlot.MAINHAND);
+			}
+			ItemStack offHand = player.getOffhandItem();
+			if (!offHand.isEmpty() && offHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
+				offHand.hurtAndBreak(5, player, EquipmentSlot.OFFHAND);
+			}
+		}
+		return hit;
 	}
 
 	@Override
