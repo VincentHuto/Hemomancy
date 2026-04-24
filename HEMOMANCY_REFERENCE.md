@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-21
+> **Last Updated:** 2026-04-24
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -596,11 +596,9 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Blood Flow | ✅ Yes | `BloodManipulation` — multiplies effective cooldown of manipulations |
 | Coagulation | ✅ Yes | `BloodLossEffect` — chance to block incoming bleed effect ticks |
 | Sanguine Reach | ✅ Yes | `BloodLampManip`, `CrimsonFlameConjurationManip`, `UmbralStepManip`, `SanguineExcavationManip` — scales range |
-| Scar Affinity | ⚠️ Helper only | Helper exists; scar effect potency scaling not yet wired |
-| Scar Resonance | ⚠️ Helper only | Helper exists; scar slot expansion not yet wired |
-| Scar Mastery | ⚠️ Helper only | Helper exists; scar effect duration not yet wired |
-
-> **Note:** Skills marked "⚠️ Helper only" have their bonus calculations fully implemented in `SkillPointHelper` but need to be wired into the relevant event handlers to have actual gameplay effects.
+| Scar Affinity | ✅ Yes | `ScarEntityEventHandler.checkScarSynergy` — synergy attribute modifier amount multiplied by `getScarAffinityMultiplier()`; modifier removed and re-added every 20 ticks so level changes take effect immediately |
+| Scar Resonance | ✅ Yes | `ScarEntityEventHandler.getEffectiveScarSlotMax()` — returns `SCAR_SLOT_MAX + getScarResonanceSlots()`; used as upper bound in all scar combat loops (`onLivingHurt`, `onEntityKilledByPlayer`, `checkScarSynergy`) |
+| Scar Mastery | ✅ Yes | `ItemScar.onPlayerAttack`, `onPlayerDefend`, `onPlayerKill`, `applyTierThreeTickEffect` — all triggered effect durations multiplied by `getScarMasteryDurationMultiplier()` |
 
 ---
 
@@ -1867,7 +1865,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
-- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **MOSTLY RESOLVED:** All 18 skills in `SkillPointHelper` have helper methods. Fully wired into event handlers (14): Capacity, Efficiency, Manip Slots, Last Wind, Feeding Frenzy, Crimson Mastery, Sanguine Reach, Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Blood Flow, Coagulation, Iron Will. Still helper-only/not called from events (3): Scar Affinity, Scar Resonance, Scar Mastery.
+- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **RESOLVED:** All 18 skills are fully wired into event handlers. Scar Affinity: `checkScarSynergy` scales synergy attribute bonuses. Scar Resonance: `getEffectiveScarSlotMax()` expands active scar slots (+1 per level). Scar Mastery: `ItemScar` triggered-effect methods multiply durations via `getScarMasteryDurationMultiplier()`. No helper-only skills remain.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
 - **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
