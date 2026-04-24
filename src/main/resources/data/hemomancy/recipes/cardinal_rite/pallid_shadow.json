@@ -20,10 +20,10 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:obsidian"
     },
     "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
+      "block": "minecraft:soul_sand"
     },
     "E": {
       "block": "hemomancy:engram_block"

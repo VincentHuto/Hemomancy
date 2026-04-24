@@ -17,7 +17,7 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "P": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:polished_basalt"
     }
   },
   "result": {

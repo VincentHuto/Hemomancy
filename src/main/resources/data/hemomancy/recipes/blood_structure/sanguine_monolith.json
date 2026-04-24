@@ -10,10 +10,10 @@
   ],
   "key": {
     "P": {"block": "hemomancy:hematic_iron_pillar"},
-    "S": {"block": "hemomancy:polished_venous_stone"},
+    "S": {"block": "minecraft:polished_basalt"},
     "I": {"block": "hemomancy:hematic_iron_block"},
     "C": {"block": "hemomancy:conscious_mass"},
-    "G": {"block": "hemomancy:sanguine_glass"}
+    "G": {"block": "minecraft:tinted_glass"}
   },
   "result": {
     "item": "hemomancy:sanguine_monolith"

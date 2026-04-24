@@ -19,10 +19,10 @@
       "block": "hemomancy:venous_stone"
     },
     "C": {
-      "block": "hemomancy:befouling_ash_trail"
+      "block": "minecraft:iron_bars"
     },
     "P": {
-      "block": "minecraft:quartz_pillar"
+      "block": "minecraft:polished_basalt"
     },
     "B": {
       "block": "hemomancy:hematic_iron_block"

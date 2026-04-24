@@ -25,10 +25,10 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "B": {
-      "block": "hemomancy:chiseled_polished_venous_stone"
+      "block": "minecraft:crying_obsidian"
     },
     "L": {
-      "block": "hemomancy:befouling_ash_trail"
+      "block": "minecraft:iron_bars"
     }
   },
   "result": {

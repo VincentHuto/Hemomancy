@@ -16,7 +16,7 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:iron_bars"
     },
     "C": {
       "block": "hemomancy:chiseled_hematic_iron_block"

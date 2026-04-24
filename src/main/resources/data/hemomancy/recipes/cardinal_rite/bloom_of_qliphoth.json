@@ -41,7 +41,7 @@
       "block": "hemomancy:blood_wood_log"
     },
     "B": {
-      "block": "hemomancy:polished_venous_stone_brick_stairs"
+      "block": "minecraft:nether_wart_block"
     },
     "C": {
       "block": "hemomancy:polished_venous_stone"
@@ -53,7 +53,7 @@
       "block": "hemomancy:engram_block"
     },
     "F": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:soul_soil"
     }
   },
   "result": {

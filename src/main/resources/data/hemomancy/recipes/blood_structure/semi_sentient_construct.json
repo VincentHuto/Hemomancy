@@ -13,13 +13,13 @@
   ],
   "key": {
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:nether_wart_block"
     },"T": {
       "block": "hemomancy:hematic_iron_block"
     },"B": {
       "block": "hemomancy:befouling_ash_trail"
     },"S": {
-      "block": "hemomancy:smouldering_ash_trail"
+      "block": "minecraft:soul_sand"
     },"C": {
       "block": "hemomancy:conscious_mass"
     }

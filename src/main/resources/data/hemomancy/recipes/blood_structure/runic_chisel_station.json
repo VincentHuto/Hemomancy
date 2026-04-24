@@ -13,7 +13,7 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "S": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:polished_deepslate"
     }
   },
   "result": {

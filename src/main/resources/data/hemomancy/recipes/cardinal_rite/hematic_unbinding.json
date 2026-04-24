@@ -16,7 +16,7 @@
       "block": "hemomancy:engram_block"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:crying_obsidian"
     },
     "V": {
       "block": "hemomancy:venous_stone"
@@ -28,7 +28,7 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "B": {
-      "block": "hemomancy:befouling_ash_trail"
+      "block": "minecraft:soul_sand"
     }
   },
   "result": {

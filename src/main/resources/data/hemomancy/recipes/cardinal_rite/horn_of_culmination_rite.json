@@ -27,7 +27,7 @@
       "block": "hemomancy:engram_block"
     },
     "B": {
-      "block": "hemomancy:befouling_ash_trail"
+      "block": "minecraft:bone_block"
     }
   },
   "result": {

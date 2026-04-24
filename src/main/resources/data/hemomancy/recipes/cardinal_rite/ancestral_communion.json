@@ -20,10 +20,10 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:nether_wart_block"
     },
     "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
+      "block": "minecraft:mushroom_stem"
     },
     "E": {
       "block": "hemomancy:engram_block"

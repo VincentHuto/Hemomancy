@@ -71,16 +71,16 @@
   ],
   "key": {
     "S": {
-      "block": "hemomancy:cleansed_stone"
+      "block": "minecraft:calcite"
     },
     "L": {
-      "block": "hemomancy:pallid_lantern"
+      "block": "minecraft:white_stained_glass"
     },
     "C": {
       "block": "hemomancy:suspended_cleansed_blood_crystal"
     },
     "P": {
-      "block": "hemomancy:pale_silver_block"
+      "block": "minecraft:smooth_quartz"
     }
   },
   "result": {
