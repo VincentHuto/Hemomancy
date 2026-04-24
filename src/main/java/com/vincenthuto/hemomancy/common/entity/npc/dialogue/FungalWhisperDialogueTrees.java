@@ -229,6 +229,31 @@ public final class FungalWhisperDialogueTrees {
 		};
 	}
 
+	/**
+	 * Fires when a degree-7 Archon interacts with the morphic pool (fungal podium)
+	 * in the Fungal Gardens for the first time. The Entity's voice presents the
+	 * Archon with two mutually exclusive paths: carry the truth in silence and
+	 * walk away, or commit to the Eighth Degree and become its finest spore.
+	 * <p>
+	 * Selecting an option stamps {@code hemomancy:archon_choice_made} in the
+	 * player's persistent data and triggers the return journey to the overworld.
+	 */
+	public static DialogueTree coreWitnessDialogue() {
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.whisper.core_witness.line1",
+						"hemomancy.whisper.core_witness.line2",
+						"hemomancy.whisper.core_witness.line3"
+				), List.of(
+						new DialogueOption("hemomancy.whisper.core_witness.option.silence",
+								null, "archon_choice_silence"),
+						new DialogueOption("hemomancy.whisper.core_witness.option.eighth_degree",
+								null, "archon_choice_eighth_degree")
+				)))
+				.build();
+	}
+
 	// ── One-shot event whispers ──
 
 	/**
