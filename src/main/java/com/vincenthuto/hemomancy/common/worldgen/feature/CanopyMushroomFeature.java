@@ -81,10 +81,20 @@ public abstract class CanopyMushroomFeature extends AbstractHugeBloodMushroomFea
 
 	protected abstract double getLength(RandomSource random);
 
+	private static BlockPos translate(BlockPos pos, double distance, double angle, double tilt) {
+		double rangle = angle * 2.0D * Math.PI;
+		double rtilt = tilt * Math.PI;
+
+		return pos.offset(
+				(int) Math.round(Math.sin(rangle) * Math.sin(rtilt) * distance),
+				(int) Math.round(Math.cos(rtilt) * distance),
+				(int) Math.round(Math.cos(rangle) * Math.sin(rtilt) * distance));
+	}
+
 	private void buildABranch(LevelAccessor levelAccessor, BlockPos pos, int height, double length, double angle,
 			RandomSource random, HugeMushroomFeatureConfiguration featureConfiguration) {
 		BlockPos src = pos.above(height);
-		BlockPos dest = FeatureLogic.translate(src, length, angle, 0.2);
+		BlockPos dest = translate(src, length, angle, 0.2);
 
 		for (BlockPos pixel : new VoxelBresenhamIterator(src, new BlockPos(dest.getX(), src.getY(), dest.getZ()))) {
 			BlockState blockstate = featureConfiguration.stemProvider.getState(random, pos);
@@ -173,3 +183,4 @@ public abstract class CanopyMushroomFeature extends AbstractHugeBloodMushroomFea
 		return super.place(context);
 	}
 }
+

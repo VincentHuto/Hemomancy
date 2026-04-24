@@ -178,6 +178,8 @@ dependencies {
     // TODO: re-enable once mezz.jei builds for 1.21.1+neoforge are published
     // compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     // runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    implementation files("libs/jei-1.21.1-neoforge-19.27.0.340.jar")
+
 
     // ── Mana and Artifice – NOT available on NeoForge 1.21 ───────────────────────
     // compat/mna is stub-gated behind ModList.isLoaded("mna") at runtime.

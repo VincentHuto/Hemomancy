@@ -75,14 +75,35 @@ public class FillerBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
-        return getMainBlockPos(level, pos) != null ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        BlockPos mainPos = getMainBlockPos(level, pos);
+        if (mainPos == null || mainPos.equals(pos)) {
+            return InteractionResult.PASS;
+        }
+
+        BlockState mainState = level.getBlockState(mainPos);
+        if (mainState.getBlock() == this) {
+            return InteractionResult.PASS;
+        }
+
+        BlockHitResult redirectedHit = new BlockHitResult(hit.getLocation(), hit.getDirection(), mainPos, hit.isInside());
+        return mainState.useWithoutItem(level, player, redirectedHit);
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
-        return getMainBlockPos(level, pos) != null ? ItemInteractionResult.SUCCESS
-                : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        BlockPos mainPos = getMainBlockPos(level, pos);
+        if (mainPos == null || mainPos.equals(pos)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        BlockState mainState = level.getBlockState(mainPos);
+        if (mainState.getBlock() == this) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        BlockHitResult redirectedHit = new BlockHitResult(hit.getLocation(), hit.getDirection(), mainPos, hit.isInside());
+        return mainState.useItemOn(stack, level, player, hand, redirectedHit);
     }
 
     @Override

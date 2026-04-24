@@ -6,8 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.scars.PacketOpenSporeInv;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalImplantationPylonBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -17,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -147,8 +147,8 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 
 	private InteractionResult handleUse(Level worldIn, BlockPos pos, Player player) {
 		if (!player.isShiftKeyDown()) {
-			if (worldIn.isClientSide) {
-				PacketHandler.sendToServer(new PacketOpenSporeInv());
+			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+				serverPlayer.openMenu(new FungalImplantMenuProvider());
 			}
 		} else {
 			if (!worldIn.isClientSide) {
