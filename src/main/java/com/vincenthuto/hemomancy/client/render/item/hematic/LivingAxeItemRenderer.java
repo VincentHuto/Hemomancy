@@ -13,7 +13,6 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -44,20 +43,17 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.pushPose();
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
-
-			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
 			ms.scale(0.65f, 0.65f, 0.65f);
 			ms.translate(-0.6, 0.25, 0.25);
 			if (p_239207_2_ == ItemDisplayContext.GUI) {
 				ms.translate(-0, 0.15, 0);
 			}
 			model = unleashed;
+			VertexConsumer baseBuffer = buffers.getBuffer(model.renderType(living_blade));
+			model.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
 			if (model == unleashed) {
-				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
 				model.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
-			} else {
-				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
 			}
 
 			ms.popPose();

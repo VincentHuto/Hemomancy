@@ -151,6 +151,9 @@ public class ItemScar extends Item implements IScar {
 
 	@Override
 	public void onWornTick(LivingEntity entity) {
+		if (entity == null) {
+			return;
+		}
 		if (!entity.level().isClientSide && tier >= 3) {
 			applyTierThreeTickEffect(entity);
 		}

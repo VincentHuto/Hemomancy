@@ -125,6 +125,9 @@ public class ItemInit {
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png")));
     public static final DeferredHolder<Item, Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
             () -> new UnsignedLedgerItem(new Item.Properties()));
+    public static final  DeferredHolder<Item, Item>  liber_immaculatus = SPECIALITEMS.register("liber_immaculatus",
+            () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
+                    Hemomancy.rloc("textures/entity/liber_immaculatus.png")));
 
     // Base Items
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",

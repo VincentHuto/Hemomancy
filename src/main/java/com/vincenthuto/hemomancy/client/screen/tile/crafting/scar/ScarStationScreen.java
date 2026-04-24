@@ -124,6 +124,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		// Render glowing borders: red for confirmed, purple for preview
 		ScarButtonGlowRenderer.renderGlowGrid(graphics, scarbuttonArray, pattern, preview);
@@ -156,9 +157,15 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	@Override
 	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		super.renderBackground(graphics, mouseX, mouseY, partialTick);
-		for (int i = 0; i < renderables.size(); i++) {
-			renderables.get(i).render(graphics, 0, 00, 10);
-		}
+	}
+
+	@Override
+	protected void containerTick() {
+		super.containerTick();
+		syncPatternSlotState();
+	}
+
+	private void syncPatternSlotState() {
 		// Auto-detect when a pattern item is placed/removed in slot 4
 		ItemStack currentPatternSlot = te.getItem(4);
 		if (!ItemStack.isSameItemSameComponents(currentPatternSlot, lastPatternSlotItem)) {
@@ -274,7 +281,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
-		this.renderBackground(graphics, x, y, partialTicks);
 
 		int gx = this.leftPos;
 		int gy = this.topPos;

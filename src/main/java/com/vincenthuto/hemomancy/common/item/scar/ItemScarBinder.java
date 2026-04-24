@@ -51,10 +51,11 @@ public class ItemScarBinder extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack heldStack = playerIn.getItemInHand(handIn);
 		if (worldIn.isClientSide) {
 			if (!playerIn.isShiftKeyDown()) {
 			//	Hemomancy.proxy.openBinderGui();
-				ScreenScarBinderViewer.openScreenViaItem();
+				ScreenScarBinderViewer.openScreenViaItem(heldStack);
 				playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 			}
 		}

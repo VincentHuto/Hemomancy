@@ -43,12 +43,20 @@ public class ScreenScarBinderViewer extends Screen {
 	// ── Singleton access ────────────────────────────────────────────────
 	private static ScreenScarBinderViewer screen;
 
-	public static void openScreenViaItem() {
-		openScreen(true);
+	public static void openScreenViaItem(ItemStack binderStack) {
+		openScreen(true, binderStack);
 	}
 
 	public static void openScreen(boolean ignoreNextMouseClick) {
-		screen = new ScreenScarBinderViewer();
+		Player player = HLClientUtils.getClientPlayer();
+		ItemStack binderStack = player != null
+				? Hemomancy.findItemInPlayerInv(player, ItemScarBinder.class)
+				: ItemStack.EMPTY;
+		openScreen(ignoreNextMouseClick, binderStack);
+	}
+
+	public static void openScreen(boolean ignoreNextMouseClick, ItemStack binderStack) {
+		screen = new ScreenScarBinderViewer(binderStack);
 		Minecraft.getInstance().setScreen(screen);
 	}
 
@@ -78,6 +86,7 @@ public class ScreenScarBinderViewer extends Screen {
 	// ── Instance state ──────────────────────────────────────────────────
 	private int left, top;
 	private final ItemStack binderIcon = new ItemStack(ItemInit.scar_binder.get());
+	private final ItemStack sourceBinder;
 	public ScarBinderItemHandler handler;
 
 	/** Cached list of pattern entries extracted from the binder inventory. */
@@ -107,8 +116,9 @@ public class ScreenScarBinderViewer extends Screen {
 	) {}
 
 	// ── Constructor ─────────────────────────────────────────────────────
-	public ScreenScarBinderViewer() {
+	public ScreenScarBinderViewer(ItemStack binderStack) {
 		super(Component.translatable("screen.hemomancy.scar_binder_viewer"));
+		this.sourceBinder = binderStack.copy();
 	}
 
 	// ── Initialization ──────────────────────────────────────────────────
@@ -130,25 +140,30 @@ public class ScreenScarBinderViewer extends Screen {
 		Player player = HLClientUtils.getClientPlayer();
 		if (player == null) return;
 
-		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemScarBinder.class);
+		ItemStack stack = sourceBinder;
+		if (stack.isEmpty() || !(stack.getItem() instanceof ItemScarBinder)) {
+			stack = Hemomancy.findItemInPlayerInv(player, ItemScarBinder.class);
+		}
 		if (stack.isEmpty()) return;
 
-		if (stack.getCapability(Capabilities.ItemHandler.ITEM) == null) return;
 		IItemHandler binderHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-		if (!(binderHandler instanceof ScarBinderItemHandler rbHandler)) return;
+		if (binderHandler instanceof ScarBinderItemHandler rbHandler) {
+			handler = rbHandler;
+			handler.load();
+		} else {
+			int fallbackSize = stack.getItem() == ItemInit.scar_binder_upgraded.get() ? 27 : 18;
+			handler = new ScarBinderItemHandler(stack, fallbackSize);
+			handler.load();
+			binderHandler = handler;
+		}
 
-		handler = rbHandler;
-		handler.load();
-
-		for (int i = 0; i < handler.getSlots(); i++) {
-			ItemStack slotStack = handler.getStackInSlot(i);
+		for (int i = 0; i < binderHandler.getSlots(); i++) {
+			ItemStack slotStack = binderHandler.getStackInSlot(i);
 			if (slotStack.getItem() instanceof ItemScarPattern pat) {
 				ScarRecipe recipe = pat.getRecipe();
-				if (recipe == null) continue;
-
-				ItemStack resultIcon = recipe.getResultItem();
+				ItemStack resultIcon = recipe != null ? recipe.getResultItem() : slotStack.copyWithCount(1);
 				String name = resultIcon.getHoverName().getString();
-				byte[][] pattern = recipe.getPattern();
+				byte[][] pattern = recipe != null ? recipe.getPattern() : null;
 
 				entries.add(new PatternEntry(i, pat, resultIcon, name, pattern, pat.getSCAR(), recipe));
 			}
@@ -217,8 +232,12 @@ public class ScreenScarBinderViewer extends Screen {
 			PatternEntry entry = entries.get(hoveredEntry);
 			List<Component> tooltipLines = new ArrayList<>();
 			tooltipLines.add(Component.literal(ChatFormatting.GOLD + entry.displayName()));
-			tooltipLines.add(Component.literal(ChatFormatting.GRAY + "Click to view full pattern"));
-			if (!entry.recipe().getIngredients().isEmpty()) {
+			if (entry.recipe() != null) {
+				tooltipLines.add(Component.literal(ChatFormatting.GRAY + "Click to view full pattern"));
+			} else {
+				tooltipLines.add(Component.literal(ChatFormatting.DARK_GRAY + "Pattern data unavailable"));
+			}
+			if (entry.recipe() != null && !entry.recipe().getIngredients().isEmpty()) {
 				tooltipLines.add(Component.literal(ChatFormatting.DARK_GRAY + "Ingredients: "
 						+ ChatFormatting.WHITE + entry.recipe().getIngredients().size()));
 			}
@@ -398,6 +417,13 @@ public class ScreenScarBinderViewer extends Screen {
 			// Check entry click
 			if (hoveredEntry >= 0 && hoveredEntry < entries.size()) {
 				PatternEntry entry = entries.get(hoveredEntry);
+				if (entry.recipe() == null) {
+					Player player = HLClientUtils.getClientPlayer();
+					if (player != null) {
+						player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.35f, 0.8f);
+					}
+					return true;
+				}
 				Player player = HLClientUtils.getClientPlayer();
 				if (player != null) {
 					player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);

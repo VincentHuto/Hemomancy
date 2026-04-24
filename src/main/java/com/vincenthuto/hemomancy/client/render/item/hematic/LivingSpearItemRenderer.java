@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingSpearModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -15,7 +14,6 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -44,11 +42,12 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 		if (stack.getItem() instanceof LivingSpearItem) {
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
+			if (player == null) {
+				return;
+			}
 			ms.pushPose();
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
-
-			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_spear));
 
 			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
 			InteractionHand activeHand = player.getUsedItemHand();
@@ -89,14 +88,17 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 					}
 				}
 				if (player.getUseItem() == stack) {
+					VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
+					spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
 					VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-					VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-					spearModel.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, -1);
+					spearModel.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 				} else {
-					spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
+					VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
+					spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
 				}
 			} else {
-				spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
+				VertexConsumer baseBuffer = buffers.getBuffer(spearModel.renderType(living_spear));
+				spearModel.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
 			}
 
 			ms.popPose();

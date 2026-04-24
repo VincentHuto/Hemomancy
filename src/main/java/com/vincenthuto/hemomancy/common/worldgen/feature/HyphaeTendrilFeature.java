@@ -35,6 +35,7 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 
 	private static final int MIN_DISTANCE = 8;
 	private static final int MAX_DISTANCE = 16;
+	private static final int FEATURE_WRITE_RADIUS_CHUNKS = 0;
 	private static final float MID_POS_MULTIPLIER = 0.9F;
 	private static final float TENDON_STEP = 0.005f;
 
@@ -92,7 +93,9 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 					sporeBlock = BlockInit.hyphae_block.get().defaultBlockState();
 				}
 
-				this.setBlock(world, curPos, sporeBlock);
+				if (!this.setBlock(world, curPos, sporeBlock)) {
+					continue;
+				}
 
 				if (rand.nextInt(75) == 0) {
 					this.generateSporeBall(world, curPos, rand);
@@ -189,6 +192,10 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	private boolean respectsCutoff(WorldGenRegion region, BlockPos pos) {
-		return true;
+		ChunkPos center = region.getCenter();
+		int chunkX = SectionPos.blockToSectionCoord(pos.getX());
+		int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
+		return Math.abs(chunkX - center.x) <= FEATURE_WRITE_RADIUS_CHUNKS
+				&& Math.abs(chunkZ - center.z) <= FEATURE_WRITE_RADIUS_CHUNKS;
 	}
 }

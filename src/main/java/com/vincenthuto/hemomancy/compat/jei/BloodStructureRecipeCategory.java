@@ -223,7 +223,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			Matrix4f matrix = gfx.pose().last().pose();
 			FloatBuffer buf = BufferUtils.createFloatBuffer(16);
 			matrix.get(buf);
-			Lighting.setupLevel(matrix);
+			Lighting.setupLevel();
 
 			Vec3 translation = new Vec3(buf.get(12) * scale, buf.get(13) * scale, buf.get(14) * scale);
 

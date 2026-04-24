@@ -1,5 +1,5 @@
 {
-  "sea_level": 46,
+  "sea_level": -16,
   "disable_mob_generation": false,
   "aquifers_enabled": false,
   "ore_veins_enabled": true,
@@ -99,54 +99,32 @@
             "type": "minecraft:blend_density",
             "argument": {
               "type": "minecraft:add",
-              "argument1": 1.8,
+              "argument1": {
+                "type": "minecraft:y_clamped_gradient",
+                "from_y": -64,
+                "to_y": 200,
+                "from_value": 1.5,
+                "to_value": -1.5
+              },
               "argument2": {
-                "type": "minecraft:mul",
-                "argument1": {
-                  "type": "minecraft:y_clamped_gradient",
-                  "from_y": -72,
-                  "to_y": -25,
-                  "from_value": 0,
-                  "to_value": 1
-                },
+                "type": "minecraft:add",
+                "argument1": "hemomancy:continental_shape",
                 "argument2": {
                   "type": "minecraft:add",
-                  "argument1": -2.65,
-                  "argument2": {
-                    "type": "minecraft:add",
-                    "argument1": 1,
+                  "argument1": "hemomancy:erosion_shape",
                     "argument2": {
-                      "type": "minecraft:mul",
-                      "argument1": {
-                        "type": "minecraft:y_clamped_gradient",
-                        "from_y": 300,
-                        "to_y": 310,
-                        "from_value": 1,
-                        "to_value": 0.25
-                      },
+                    "type": "minecraft:mul",
+                    "argument1": 1.0,
+                    "argument2": {
+                      "type": "minecraft:add",
+                      "argument1": -0.7,
                       "argument2": {
                         "type": "minecraft:add",
-                        "argument1": {
-                          "type": "minecraft:add",
-                          "argument1": "hemomancy:continental_shape",
-                          "argument2": "hemomancy:erosion_shape"
-                        },
+                        "argument1": "hemomancy:colby",
                         "argument2": {
                           "type": "minecraft:mul",
-                          "argument1": 0.5,
-                          "argument2": {
-                            "type": "minecraft:add",
-                            "argument1": -0.9375,
-                            "argument2": {
-                              "type": "minecraft:add",
-                              "argument1": "hemomancy:colby",
-                              "argument2": {
-                                "type": "minecraft:mul",
-                                "argument1": "hemomancy:colby2",
-                                "argument2": "hemomancy:colby3"
-                              }
-                            }
-                          }
+                          "argument1": "hemomancy:colby2",
+                          "argument2": "hemomancy:colby3"
                         }
                       }
                     }

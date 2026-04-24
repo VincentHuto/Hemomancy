@@ -110,9 +110,24 @@ public class ScarBinderItemHandler extends ItemStackHandler {
 	}
 
 	private HolderLookup.Provider provider() {
-		return ServerLifecycleHooks.getCurrentServer() != null
-				? ServerLifecycleHooks.getCurrentServer().registryAccess()
-				: RegistryAccess.EMPTY;
+		if (ServerLifecycleHooks.getCurrentServer() != null) {
+			return ServerLifecycleHooks.getCurrentServer().registryAccess();
+		}
+		// Client-side fallback — use the connected level's registry access so item
+		// lookups succeed when deserialising the binder contents on the client.
+		if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
+			return getClientProvider();
+		}
+		return RegistryAccess.EMPTY;
+	}
+
+	@net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
+	private HolderLookup.Provider getClientProvider() {
+		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+		if (mc != null && mc.level != null) {
+			return mc.level.registryAccess();
+		}
+		return RegistryAccess.EMPTY;
 	}
 
 }

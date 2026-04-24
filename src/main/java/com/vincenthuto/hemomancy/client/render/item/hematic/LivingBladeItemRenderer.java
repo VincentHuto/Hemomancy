@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingBladeHandTameModel;
 import com.vincenthuto.hemomancy.client.model.item.LivingBladeUnleashedModel;
@@ -15,7 +14,6 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.component.DataComponents;
@@ -51,17 +49,14 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			ms.pushPose();
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
-
-			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(living_blade));
 			ms.scale(0.5f, 0.5f, 0.5f);
 			ms.translate(-1, -1, 1);
 			model = (stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean("state")) ? unleashed : tame;
+			VertexConsumer baseBuffer = buffers.getBuffer(model.renderType(living_blade));
+			model.renderToBuffer(ms, baseBuffer, light, OverlayTexture.NO_OVERLAY, -1);
 			if (model == unleashed) {
 				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-				VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-				model.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, -1);
-			} else {
-				model.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
+				model.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 			}
 
 			ms.popPose();

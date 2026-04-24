@@ -22,7 +22,8 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public class ScarsContainer extends ItemStackHandler implements IScarsItemHandler, INBTSerializable<CompoundTag> {
 
 	private final static int SCAR_SLOTS = 8;
-	private final ItemStack[] previous = new ItemStack[SCAR_SLOTS];
+	private final ItemStack[] eventPrevious = new ItemStack[SCAR_SLOTS];
+	private final ItemStack[] syncPrevious = new ItemStack[SCAR_SLOTS];
 	private boolean[] changed = new boolean[SCAR_SLOTS];
 	private boolean blockEvents = false;
 	private boolean ScarsUnlocked = false;
@@ -31,17 +32,41 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 	public ScarsContainer() {
 		super(SCAR_SLOTS);
 		this.holder = null;
-		Arrays.fill(previous, ItemStack.EMPTY);
+		Arrays.fill(eventPrevious, ItemStack.EMPTY);
+		Arrays.fill(syncPrevious, ItemStack.EMPTY);
 	}
 
 	public ScarsContainer(LivingEntity player) {
 		super(SCAR_SLOTS);
 		this.holder = player;
-		Arrays.fill(previous, ItemStack.EMPTY);
+		Arrays.fill(eventPrevious, ItemStack.EMPTY);
+		Arrays.fill(syncPrevious, ItemStack.EMPTY);
 	}
 
 	public LivingEntity getHolder() {
 		return this.holder;
+	}
+
+	public void bindHolder(LivingEntity holder) {
+		if (this.holder == holder) {
+			return;
+		}
+
+		boolean firstBind = this.holder == null && holder != null;
+		this.holder = holder;
+
+		if (firstBind && !blockEvents) {
+			for (int i = 0; i < getSlots(); i++) {
+				ItemStack stack = getStackInSlot(i);
+				if (!stack.isEmpty()) {
+					IScar scar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+					if (scar != null) {
+						scar.onEquipped(holder);
+					}
+				}
+				eventPrevious[i] = stack.copy();
+			}
+		}
 	}
 
 	@Override
@@ -63,6 +88,8 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 			return false;
 		if (mindscar.getScarType() == ScarType.SCAR && !ScarsUnlocked)
 			return false;
+		if (holder == null)
+			return mindscar.getScarType().hasSlot(slot);
 		return mindscar.canEquip(holder) && mindscar.getScarType().hasSlot(slot);
 	}
 
@@ -83,21 +110,21 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 
 		// Make equip/unequip airtight: drive side effects from the capability container,
 		// not from UI slots, so shift-click/drag/hotkey swaps can't bypass cleanup.
-		if (!blockEvents && holder != null) {
-			ItemStack prev = previous[slot];
-			ItemStack now = getStackInSlot(slot);
+		ItemStack prev = eventPrevious[slot];
+		ItemStack now = getStackInSlot(slot);
 
-			if (!ItemStack.isSameItemSameComponents(prev, now)) {
-				if (!prev.isEmpty()) {
-					IScar prevScar = prev.getCapability(HemoCapabilityKeys.ITEM_SCAR);
-					if (prevScar != null) prevScar.onUnequipped(holder);
-				}
-				if (!now.isEmpty()) {
-					IScar nowScar = now.getCapability(HemoCapabilityKeys.ITEM_SCAR);
-					if (nowScar != null) nowScar.onEquipped(holder);
-				}
+		if (!blockEvents && holder != null && !ItemStack.isSameItemSameComponents(prev, now)) {
+			if (!prev.isEmpty()) {
+				IScar prevScar = prev.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+				if (prevScar != null) prevScar.onUnequipped(holder);
+			}
+			if (!now.isEmpty()) {
+				IScar nowScar = now.getCapability(HemoCapabilityKeys.ITEM_SCAR);
+				if (nowScar != null) nowScar.onEquipped(holder);
 			}
 		}
+
+		eventPrevious[slot] = now.copy();
 	}
 
 	@Override
@@ -142,23 +169,26 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 			ItemStack stack = getStackInSlot(i);
 			IScar scar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
 			boolean autosync = scar != null && scar.willAutoSync(holder);
-			if (changed[i] || autosync && !ItemStack.isSameItemSameComponents(stack, previous[i])) {
+			if (changed[i] || autosync && !ItemStack.isSameItemSameComponents(stack, syncPrevious[i])) {
 				if (receivers == null) {
 					receivers = new ArrayList<>(((ServerLevel) holder.level()).players());
 					receivers.add((ServerPlayer) holder);
 				}
 				ScarEntityEventHandler.syncSlot((ServerPlayer) holder, i, stack, receivers);
 				this.changed[i] = false;
-				previous[i] = stack.copy();
+				syncPrevious[i] = stack.copy();
 			}
 		}
 	}
 
 	@Override
 	public void tick() {
+		if (holder == null) {
+			return;
+		}
 		for (int i = 0; i < getSlots(); i++) {
 			ItemStack stack = getStackInSlot(i);
-			if (stack.getItem() != Items.AIR) {
+			if (!stack.isEmpty() && stack.getItem() != Items.AIR) {
 				IScar scar = stack.getCapability(HemoCapabilityKeys.ITEM_SCAR);
 				if (scar != null) scar.onWornTick(holder);
 			}

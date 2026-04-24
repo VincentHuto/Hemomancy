@@ -38,7 +38,7 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
 
-public class eCardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRiteRecipe> {
+public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRiteRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	private static Block blockFromJson(JsonObject pItemObject) {

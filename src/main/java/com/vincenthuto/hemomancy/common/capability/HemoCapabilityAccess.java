@@ -220,7 +220,11 @@ public static IVisceralOrgans requireVisceralOrgans(Player player) {
 // ── Scars ─────────────────────────────────────────────────────────────────
 
 public static Optional<IScarsItemHandler> getScars(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.SCARS));
+    IScarsItemHandler scars = player.getCapability(HemoCapabilityKeys.SCARS);
+    if (scars instanceof com.vincenthuto.hemomancy.common.capability.player.scar.ScarsContainer container) {
+        container.bindHolder(player);
+    }
+    return Optional.ofNullable(scars);
 }
 
 public static IScarsItemHandler requireScars(Player player) {

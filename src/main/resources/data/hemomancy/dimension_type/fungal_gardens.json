@@ -8,7 +8,7 @@
   "has_skylight": false,
   "has_ceiling": false,
   "coordinate_scale": 8,
-    "effects": "hemomancy:renderer",
+  "effects": "hemomancy:fungal_gardens",
   "ambient_light": 0,
   "fixed_time": 18000,
   "logical_height": 256,

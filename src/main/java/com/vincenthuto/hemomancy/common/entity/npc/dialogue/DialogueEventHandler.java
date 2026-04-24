@@ -177,7 +177,7 @@ public class DialogueEventHandler {
 	private static void handleGiveBloodStructureHint(ServerPlayer player, int entityId) {
 		ItemStack hint = BloodStructureHintItem.createForStructure(
 				ItemInit.blood_structure_hint.get(),
-				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith"));
+				 ResourceLocation.tryBuild(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith"));
 
 		Entity entity = player.level().getEntity(entityId);
 		if (entity != null) {

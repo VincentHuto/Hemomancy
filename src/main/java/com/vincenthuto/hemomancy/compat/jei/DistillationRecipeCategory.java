@@ -66,7 +66,7 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 			@Override
 			public IDrawableAnimated load(Integer cookTime) {
 				return guiHelper.drawableBuilder(
-						ResourceLocation.parse(Hemomancy.MOD_ID, getOverlayTexturePath()),
+						ResourceLocation.tryBuild(Hemomancy.MOD_ID, getOverlayTexturePath()),
 						143 + 16, 14, 24, 17
 				).buildAnimated(cookTime, IDrawableAnimated.StartDirection.LEFT, false);
 			}

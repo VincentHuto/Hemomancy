@@ -28,6 +28,9 @@ public class LivingPistolItemRenderer extends BlockEntityWithoutLevelRenderer {
 		if (stack.getItem()instanceof LivingPistolItem pistol) {
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
+			if (player == null) {
+				return;
+			}
 			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
 			InteractionHand activeHand = player.getUsedItemHand();
 			if (itemIsInUse) {

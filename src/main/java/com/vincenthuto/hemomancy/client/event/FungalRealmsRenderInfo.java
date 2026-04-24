@@ -59,8 +59,16 @@ public class FungalRealmsRenderInfo extends DimensionSpecialEffects {
         //Make the fog on these biomes much much darker, maybe pitch black even. Do we keep this harsher fog underground too?
     }
 
-    public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
-        return FungalSkyBoxRenderer.renderSky(level, partialTick, poseStack, camera, projectionMatrix, setupFog);
+    @Override
+    public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera,
+                             Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+        return FungalSkyBoxRenderer.renderSky(level, partialTick, modelViewMatrix, camera, projectionMatrix, setupFog);
+    }
+
+    @Override
+    public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack,
+                                double camX, double camY, double camZ, Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
+        return true;
     }
 
     @Override

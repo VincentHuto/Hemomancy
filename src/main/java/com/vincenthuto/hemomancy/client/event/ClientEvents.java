@@ -65,8 +65,11 @@ import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPa
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
-import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
+import com.vincenthuto.hutoslib.client.render.item.RenderItemArmBanner;
+import com.vincenthuto.hutoslib.client.render.item.RenderItemGuideBook;
+import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
+import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -74,6 +77,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -92,6 +96,7 @@ import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.ModelEvent.BakingCompleted;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityEvent;
@@ -318,10 +323,11 @@ public class ClientEvents {
 
 		@SubscribeEvent
 		public static void registerDimEffects(RegisterDimensionSpecialEffectsEvent event) {
-			new FungalSkyBoxRenderer();
-			// new TFWeatherRenderer();
-			event.register(Hemomancy.rloc("renderer"),
-					new FungalRealmsRenderInfo(128.0F, true, DimensionSpecialEffects.SkyType.END, true, true));
+			DimensionSpecialEffects fungalEffects =
+					new FungalRealmsRenderInfo(Float.NaN, true, DimensionSpecialEffects.SkyType.END, true, true);
+			event.register(Hemomancy.rloc("fungal_gardens"), fungalEffects);
+			// Legacy alias in case an older save still points to hemomancy:renderer.
+			event.register(Hemomancy.rloc("renderer"), fungalEffects);
 		}
 
 		@SubscribeEvent
@@ -471,8 +477,32 @@ public class ClientEvents {
 
 		@SubscribeEvent
 		public static void registerClientItemExtensions(RegisterClientExtensionsEvent event) {
+			IClientItemExtensions armBannerRenderer = new IClientItemExtensions() {
+				@Override
+				public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+					return new RenderItemArmBanner(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+							Minecraft.getInstance().getEntityModels());
+				}
+			};
+
+			IClientItemExtensions guideBookRenderer = new IClientItemExtensions() {
+				@Override
+				public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+					return new RenderItemGuideBook(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+							Minecraft.getInstance().getEntityModels());
+				}
+			};
+
 			for (Item item : BuiltInRegistries.ITEM) {
 				if (!BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(Hemomancy.MOD_ID)) {
+					continue;
+				}
+				if (item instanceof ItemArmBanner) {
+					event.registerItem(armBannerRenderer, item);
+					continue;
+				}
+				if (item instanceof ItemGuideBook) {
+					event.registerItem(guideBookRenderer, item);
 					continue;
 				}
 				if (item instanceof HemoClientItemExtensionsProvider provider) {
