@@ -178,6 +178,13 @@ public class ItemScar extends Item implements IScar {
 				entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (int)(80 * masteryMult), 0, true, false));
 			}
 			break;
+		case LUX:
+			if (entity.tickCount % 40 == 0
+					&& entity.level().getBrightness(LightLayer.SKY, entity.blockPosition()) >= 12) {
+				entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+						(int)(60 * masteryMult), 0, true, false));
+			}
+			break;
 		default:
 			break;
 		}
@@ -187,13 +194,17 @@ public class ItemScar extends Item implements IScar {
 	 * Called when a player wearing this scar attacks another entity.
 	 */
 	public void onPlayerAttack(Player player, LivingEntity target) {
+		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
 		if (assignedTendency == EnumBloodTendency.MORTEM) {
-			double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
 			if (tier >= 3) {
 				target.addEffect(new MobEffectInstance(MobEffects.WITHER, (int)(80 * masteryMult), 1));
 			} else if (tier >= 2) {
 				target.addEffect(new MobEffectInstance(MobEffects.POISON, (int)(60 * masteryMult), 0));
 			}
+		}
+		if (assignedTendency == EnumBloodTendency.CONGEATIO) {
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+					(int)(30 * tier * masteryMult), 0));
 		}
 	}
 
@@ -201,11 +212,27 @@ public class ItemScar extends Item implements IScar {
 	 * Called when a player wearing this scar is attacked by another entity.
 	 */
 	public void onPlayerDefend(Player player, LivingEntity attacker) {
-		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 3) {
-			attacker.igniteForSeconds(4.0F);
+		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
+		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
+			attacker.igniteForSeconds(tier >= 3 ? 4.0F : 2.0F);
 		}
 		if (assignedTendency == EnumBloodTendency.FERRIC && tier >= 1) {
 			attacker.hurt(player.damageSources().thorns(player), tier);
+		}
+		if (assignedTendency == EnumBloodTendency.LUX) {
+			int blindDur = (int)((tier >= 2 ? 60 : 40) * masteryMult);
+			attacker.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, blindDur, 0));
+			if (tier >= 2) {
+				attacker.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+						(int)(200 * masteryMult), 0));
+			}
+		}
+		if (assignedTendency == EnumBloodTendency.TENEBRIS) {
+			int light = player.level().getBrightness(LightLayer.BLOCK, player.blockPosition());
+			if (tier >= 2 || light < 7) {
+				int dur = (int)((tier >= 2 ? 80 : 60) * masteryMult);
+				player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, dur, 0, true, false));
+			}
 		}
 	}
 
@@ -213,8 +240,20 @@ public class ItemScar extends Item implements IScar {
 	 * Called when a player wearing this scar kills another entity.
 	 */
 	public void onPlayerKill(Player player, LivingEntity killed) {
+		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
 		if (assignedTendency == EnumBloodTendency.ANIMUS) {
 			player.heal(tier);
+		}
+		if (assignedTendency == EnumBloodTendency.DUCTILIS) {
+			int dur = (int)(80 * tier * masteryMult);
+			int amp = tier >= 3 ? 1 : 0;
+			player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, dur, amp, true, true));
+			player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
+					(int)(60 * tier * masteryMult), amp, true, true));
+			if (tier >= 3) {
+				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
+						(int)(60 * tier * masteryMult), 0, true, true));
+			}
 		}
 	}
 
@@ -297,8 +336,8 @@ public class ItemScar extends Item implements IScar {
 			tooltip.add(Component.literal("Poisons struck foes")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
-		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 3) {
-			tooltip.add(Component.literal("Ignites attackers")
+		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
+			tooltip.add(Component.literal(tier >= 3 ? "Ignites attackers" : "Briefly ignites attackers")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
 		if (tier >= 3) {
@@ -315,8 +354,38 @@ public class ItemScar extends Item implements IScar {
 				tooltip.add(Component.literal("Regenerates when wounded")
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 				break;
+			case LUX:
+				tooltip.add(Component.literal("Grants Resistance in bright light")
+						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				break;
 			default:
 				break;
+			}
+		}
+		if (assignedTendency == EnumBloodTendency.CONGEATIO) {
+			tooltip.add(Component.literal("Slows struck foes")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		}
+		if (assignedTendency == EnumBloodTendency.LUX) {
+			tooltip.add(Component.literal("Blinds attackers")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			if (tier >= 2) {
+				tooltip.add(Component.literal("Marks attackers with Glowing")
+						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			}
+		}
+		if (assignedTendency == EnumBloodTendency.TENEBRIS) {
+			tooltip.add(Component.literal(tier >= 2
+					? "Grants invisibility when struck"
+					: "Grants invisibility when struck in darkness")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		}
+		if (assignedTendency == EnumBloodTendency.DUCTILIS) {
+			tooltip.add(Component.literal("Grants Haste and Speed on kill")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			if (tier >= 3) {
+				tooltip.add(Component.literal("Grants Strength on kill")
+						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			}
 		}
 	}

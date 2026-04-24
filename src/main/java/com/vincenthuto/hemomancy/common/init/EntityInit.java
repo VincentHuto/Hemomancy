@@ -435,6 +435,25 @@ public class EntityInit {
         event.register(EntityInit.venous_strider.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        // Dimension-biome mobs — wired in BiomeInit but need SpawnPlacements so the engine can place them.
+        event.register(EntityInit.thirster.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ThirsterEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.lump_of_thought.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LumpOfThoughtEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.erythromycelium_eruptus.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ErythromyceliumEruptusEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.chthonian.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChthonianEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.chthonian_queen.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChthonianQueenEntity::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.fungling.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FunglingEntity::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
     }
 

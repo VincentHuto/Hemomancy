@@ -109,7 +109,8 @@ public class FrozenClotEntity extends Monster {
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
-				&& (pLevel.getBlockState(pPos.below()).is(Blocks.SNOW_BLOCK)
+				&& (pLevel.getBlockState(pPos.below()).is(Blocks.SNOW)
+						|| pLevel.getBlockState(pPos.below()).is(Blocks.SNOW_BLOCK)
 						|| pLevel.getBlockState(pPos.below()).is(Blocks.ICE)
 						|| pLevel.getBlockState(pPos.below()).is(Blocks.PACKED_ICE)
 						|| pLevel.getBlockState(pPos.below()).is(Blocks.BLUE_ICE)

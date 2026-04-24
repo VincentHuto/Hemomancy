@@ -37,6 +37,10 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -204,6 +208,22 @@ public class ChthonianQueenEntity extends Spider {
 	}
 
 	@Override
+	public boolean doHurtTarget(Entity target) {
+		boolean hit = super.doHurtTarget(target);
+		if (hit && target instanceof Player player) {
+			ItemStack mainHand = player.getMainHandItem();
+			if (!mainHand.isEmpty() && mainHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
+				mainHand.hurtAndBreak(8, player, EquipmentSlot.MAINHAND);
+			}
+			ItemStack offHand = player.getOffhandItem();
+			if (!offHand.isEmpty() && offHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
+				offHand.hurtAndBreak(8, player, EquipmentSlot.OFFHAND);
+			}
+		}
+		return hit;
+	}
+
+	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 
@@ -252,8 +272,8 @@ public class ChthonianQueenEntity extends Spider {
 
 	@Override
 	protected void registerGoals() {
-		//this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
-	//	this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
+		this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
+		//	this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
 		this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
