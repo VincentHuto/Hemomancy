@@ -33,6 +33,8 @@ public class SanguisLanceaModel extends Model
 	private final ModelPart root;
 
 	public SanguisLanceaModel(ModelPart root) {
+		// Base pass uses lit translucent so the spear texture itself is visible;
+		// the crimson glint is added as a separate textured overlay pass.
 		super(RenderType::entityTranslucent);
 		this.root = root.getChild("root");
 	}

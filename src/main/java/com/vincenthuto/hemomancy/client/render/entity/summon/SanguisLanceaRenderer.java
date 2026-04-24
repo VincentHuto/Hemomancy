@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
@@ -33,21 +32,19 @@ public class SanguisLanceaRenderer extends EntityRenderer<SanguisLanceaEntity> {
 
     @Override
     public void render(SanguisLanceaEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        pPoseStack.pushPose();
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
-        pPoseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.xRotO, pEntity.getXRot()) + 90.0F));
+		pPoseStack.pushPose();
+		pPoseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
+		pPoseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.xRotO, pEntity.getXRot()) + 90.0F));
+		pPoseStack.translate(0f,2f,0f);
+		pPoseStack.scale(0.5f,0.5f,0.5f);
 
-        VertexConsumer ivertexbuilder = pBuffer.getBuffer(RenderType.text(texture));
+		VertexConsumer base = pBuffer.getBuffer(this.model.renderType(texture));
+		this.model.renderToBuffer(pPoseStack, base, pPackedLight, OverlayTexture.NO_OVERLAY, -1);
+		VertexConsumer glint = pBuffer.getBuffer(RenderTypeInit.getCrimsonGlint());
+		this.model.renderToBuffer(pPoseStack, glint, pPackedLight, OverlayTexture.NO_OVERLAY, -1);
 
-        VertexConsumer glint = pBuffer.getBuffer(RenderTypeInit.getCrimsonGlint());
-        VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-        pPoseStack.translate(0f,2f,0f);
-
-        pPoseStack.scale(0.5f,0.5f,0.5f);
-
-        this.model.renderToBuffer(pPoseStack, buffer, pPackedLight, OverlayTexture.NO_OVERLAY, -1);
-        pPoseStack.popPose();
-        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
+		pPoseStack.popPose();
+		super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }
 }
 

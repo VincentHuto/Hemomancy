@@ -92,6 +92,12 @@ public class RiteHintScreen extends Screen {
 		}
 	}
 
+	/** Suppress the 1.21.1 menu_blur post-effect from Screen#renderBackground. */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	// ══════════════════════════════════════════════════════════════
 	//  Rendering
 	// ══════════════════════════════════════════════════════════════

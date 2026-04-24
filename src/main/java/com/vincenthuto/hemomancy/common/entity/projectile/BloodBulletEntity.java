@@ -35,11 +35,11 @@ public class BloodBulletEntity extends AbstractArrow {
 	}
 
 	public BloodBulletEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.blood_bullet.get(), x, y, z, worldIn, ItemStack.EMPTY, ItemStack.EMPTY);
+		super(EntityInit.blood_bullet.get(), x, y, z, worldIn, ItemStack.EMPTY, (ItemStack) null);
 	}
 
 	public BloodBulletEntity(Level worldIn, LivingEntity shooter) {
-		super(EntityInit.blood_bullet.get(), shooter, worldIn, ItemStack.EMPTY, ItemStack.EMPTY);
+		super(EntityInit.blood_bullet.get(), shooter, worldIn, ItemStack.EMPTY, (ItemStack) null);
 	}
 
 	@Override

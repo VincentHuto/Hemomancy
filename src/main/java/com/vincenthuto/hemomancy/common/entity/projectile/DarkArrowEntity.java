@@ -31,11 +31,11 @@ public class DarkArrowEntity extends AbstractArrow {
 	}
 
 	public DarkArrowEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.dark_arrow.get(), x, y, z, worldIn, ItemStack.EMPTY, ItemStack.EMPTY);
+		super(EntityInit.dark_arrow.get(), x, y, z, worldIn, ItemStack.EMPTY, (ItemStack) null);
 	}
 
 	public DarkArrowEntity(Level worldIn, LivingEntity shooter) {
-		super(EntityInit.dark_arrow.get(), shooter, worldIn, ItemStack.EMPTY, ItemStack.EMPTY);
+		super(EntityInit.dark_arrow.get(), shooter, worldIn, ItemStack.EMPTY, (ItemStack) null);
 		this.shooter = shooter;
 	}
 

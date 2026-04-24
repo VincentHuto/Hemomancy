@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.init;
+ package com.vincenthuto.hemomancy.common.init;
 
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -175,13 +175,14 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(LIGHTMAP).setTextureState(new TextureStateShard(vine, false, false))
 					.setWriteMaskState(COLOR_WRITE).setCullState(NO_CULL).createCompositeState(false));
 
-	private static final RenderType CRIMSON_GLINT = create("glint_direct", DefaultVertexFormat.POSITION_TEX,
+	private static final RenderType CRIMSON_GLINT = create("hemomancy_crimson_entity_glint", DefaultVertexFormat.NEW_ENTITY,
 			VertexFormat.Mode.QUADS, 256, false, false,
 			RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
 					.setTextureState(new RenderStateShard.TextureStateShard(
 							Hemomancy.rloc("textures/item/crimson_item_glint.png"), true, false))
 					.setWriteMaskState(COLOR_WRITE).setCullState(NO_CULL).setDepthTestState(EQUAL_DEPTH_TEST)
-					.setTransparencyState(GLINT_TRANSPARENCY).setTexturingState(GLINT_TEXTURING)
+					.setTransparencyState(GLINT_TRANSPARENCY).setTexturingState(ENTITY_GLINT_TEXTURING)
+					.setLightmapState(LIGHTMAP).setOverlayState(OVERLAY)
 					.createCompositeState(false));
 
 	public static RenderType energySwirl(ResourceLocation pLocation, float pU, float pV) {

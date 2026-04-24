@@ -296,6 +296,16 @@ public class DialogueScreen extends Screen {
 		RenderSystem.defaultBlendFunc();
 	}
 
+	/**
+	 * In MC 1.21.1, Screen#renderBackground applies the menu_blur post-process effect
+	 * to the framebuffer, which blurs everything we drew this frame. Override to no-op
+	 * so the dialogue panel and world behind it stay sharp.
+	 */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	// ──────────────────────────────────────────────
 
 	@Override

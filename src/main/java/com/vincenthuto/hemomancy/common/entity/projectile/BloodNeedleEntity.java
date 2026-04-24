@@ -27,11 +27,11 @@ public class BloodNeedleEntity extends AbstractArrow {
 	}
 
 	public BloodNeedleEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.blood_needle.get(), x, y, z, worldIn, ItemStack.EMPTY, ItemStack.EMPTY);
+		super(EntityInit.blood_needle.get(), x, y, z, worldIn, ItemStack.EMPTY, (ItemStack) null);
 	}
 
 	public BloodNeedleEntity(Level worldIn, LivingEntity shooter) {
-		super(EntityInit.blood_needle.get(), shooter, worldIn, ItemStack.EMPTY, ItemStack.EMPTY);
+		super(EntityInit.blood_needle.get(), shooter, worldIn, ItemStack.EMPTY, (ItemStack) null);
 	}
 
 	@Override

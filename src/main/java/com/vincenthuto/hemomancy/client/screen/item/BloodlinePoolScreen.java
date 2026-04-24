@@ -253,6 +253,12 @@ public class BloodlinePoolScreen extends Screen {
 		return false;
 	}
 
+	/** Suppress the 1.21.1 menu_blur post-effect from Screen#renderBackground. */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.

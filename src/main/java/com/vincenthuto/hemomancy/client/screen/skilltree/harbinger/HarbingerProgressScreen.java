@@ -264,6 +264,16 @@ public class HarbingerProgressScreen extends Screen {
         super.render(gfx, mouseX, mouseY, partial);
     }
 
+    /**
+     * In MC 1.21.1, Screen#renderBackground triggers the menu_blur post-process effect
+     * which blurs everything previously drawn this frame. We render our own background
+     * (vein art) and want the screen contents crisp, so we override this to a no-op.
+     */
+    @Override
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        // intentionally empty — no blur, no dimming
+    }
+
     private List<ScreenDrawUtils.TabDesc> buildTabDescs() {
         List<ScreenDrawUtils.TabDesc> descs = new ArrayList<>();
         for (Tab tab : Tab.values()) descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));

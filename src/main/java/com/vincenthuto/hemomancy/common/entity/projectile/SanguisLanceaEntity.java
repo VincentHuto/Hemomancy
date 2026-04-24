@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 public class SanguisLanceaEntity extends AbstractArrow {
     private static final EntityDataAccessor<Byte> ID_LOYALTY = SynchedEntityData.defineId(SanguisLanceaEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> ID_FOIL = SynchedEntityData.defineId(SanguisLanceaEntity.class, EntityDataSerializers.BOOLEAN);
-    private ItemStack sanguisLanceaItem = new ItemStack(ItemInit.sanguis_lancea.get());
+    private ItemStack sanguisLanceaItem = ItemStack.EMPTY;
     private boolean dealtDamage;
     public int clientSideReturnSanguisLanceaTickCount;
 
@@ -43,7 +43,9 @@ public class SanguisLanceaEntity extends AbstractArrow {
     }
 
     public SanguisLanceaEntity(Level pLevel, LivingEntity pShooter, ItemStack pStack) {
-        super(EntityInit.sanguis_lancea.get(), pShooter, pLevel, pStack.copy(), ItemStack.EMPTY);
+        // NOTE: firedFromWeapon must be null (or non-empty); passing ItemStack.EMPTY trips
+        // AbstractArrow's "Invalid weapon firing an arrow" guard in 1.21.1.
+        super(EntityInit.sanguis_lancea.get(), pShooter, pLevel, pStack.copy(), (ItemStack) null);
         this.sanguisLanceaItem = pStack.copy();
         this.entityData.set(ID_LOYALTY, (byte)getEnchantmentLevel(Enchantments.LOYALTY, pStack));
         this.entityData.set(ID_FOIL, pStack.hasFoil());
@@ -97,14 +99,22 @@ public class SanguisLanceaEntity extends AbstractArrow {
         return entity != null && entity.isAlive() ? !(entity instanceof ServerPlayer) || !entity.isSpectator() : false;
     }
 
+    private ItemStack resolveLanceaStack() {
+        if (this.sanguisLanceaItem == null || this.sanguisLanceaItem.isEmpty()) {
+            return this.getDefaultPickupItem();
+        }
+        return this.sanguisLanceaItem;
+    }
+
     @Override
     protected ItemStack getPickupItem() {
-        return this.sanguisLanceaItem.copy();
+        return this.resolveLanceaStack().copy();
     }
 
     @Override
     protected ItemStack getDefaultPickupItem() {
-        return this.sanguisLanceaItem.copy();
+        // AbstractArrow may call this during super-construction before subclass fields initialize.
+        return new ItemStack(ItemInit.sanguis_lancea.get());
     }
 
     public boolean isFoil() {
@@ -163,7 +173,7 @@ public class SanguisLanceaEntity extends AbstractArrow {
     }
 
     public boolean isChanneling() {
-        return getEnchantmentLevel(Enchantments.CHANNELING, this.sanguisLanceaItem) > 0;
+        return getEnchantmentLevel(Enchantments.CHANNELING, this.resolveLanceaStack()) > 0;
     }
 
     @Override
@@ -191,13 +201,13 @@ public class SanguisLanceaEntity extends AbstractArrow {
         }
 
         this.dealtDamage = pCompound.getBoolean("DealtDamage");
-        this.entityData.set(ID_LOYALTY, (byte)getEnchantmentLevel(Enchantments.LOYALTY, this.sanguisLanceaItem));
+        this.entityData.set(ID_LOYALTY, (byte)getEnchantmentLevel(Enchantments.LOYALTY, this.resolveLanceaStack()));
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.put("SanguisLancea", this.sanguisLanceaItem.save(this.registryAccess()));
+        pCompound.put("SanguisLancea", this.resolveLanceaStack().save(this.registryAccess()));
         pCompound.putBoolean("DealtDamage", this.dealtDamage);
     }
 
@@ -220,6 +230,9 @@ public class SanguisLanceaEntity extends AbstractArrow {
     }
 
     private int getEnchantmentLevel(ResourceKey<Enchantment> enchantmentKey, ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return 0;
+        }
         Holder<Enchantment> enchantment = this.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantmentKey);
         return EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
     }

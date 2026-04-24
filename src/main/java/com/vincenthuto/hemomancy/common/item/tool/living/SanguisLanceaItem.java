@@ -127,7 +127,7 @@ public class SanguisLanceaItem extends LivingToolItem implements HemoClientItemE
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack stack = playerIn.getMainHandItem();
+		ItemStack stack = playerIn.getItemInHand(handIn);
 		playerIn.startUsingItem(handIn);
 
 		if (stack.getItem() instanceof SanguisLanceaItem) {

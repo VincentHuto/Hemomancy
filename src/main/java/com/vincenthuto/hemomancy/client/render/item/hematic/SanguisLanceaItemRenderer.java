@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -49,17 +48,22 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 		if (stack.getItem() instanceof SanguisLanceaItem) {
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
-			
 
-			
-			
 			ms.pushPose();
 			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
-			VertexConsumer ivertexbuilder = buffers.getBuffer(RenderType.text(texture));
+			if (player == null || mc.level == null) {
+				VertexConsumer base = buffers.getBuffer(this.spearModel.renderType(texture));
+				spearModel.renderToBuffer(ms, base, light, OverlayTexture.NO_OVERLAY, -1);
+				VertexConsumer glint0 = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
+				spearModel.renderToBuffer(ms, glint0, light, OverlayTexture.NO_OVERLAY, -1);
+				ms.popPose();
+				return;
+			}
 
-			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
+			boolean itemIsInUse = player.isUsingItem() && !player.getUseItem().isEmpty()
+					&& ItemStack.isSameItemSameComponents(player.getUseItem(), stack);
 			InteractionHand activeHand = player.getUsedItemHand();
 			ms.scale(0.65f, 0.65f, 0.65f);
 			ms.translate(-0.75, -0, 0.75);
@@ -103,19 +107,18 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 					}
 				}
-				if (player.getUseItem() == stack) {
+				if (ItemStack.isSameItemSameComponents(player.getUseItem(), stack)) {
 					if (p_239207_2_ != ItemDisplayContext.GUI) {
 						ms.translate(0, 0, 1);
 					}
-					 
-					spearModel.setupAnimation(mc.level, mc.getTimer().getGameTimeDeltaPartialTick(false), animCtx);
 
-					VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-					VertexConsumer buffer = VertexMultiConsumer.create(glint, ivertexbuilder);
-					spearModel.renderToBuffer(ms, buffer, light, OverlayTexture.NO_OVERLAY, -1);
-				} else {
-					spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
+					spearModel.setupAnimation(mc.level, mc.getTimer().getGameTimeDeltaPartialTick(false), animCtx);
 				}
+
+				VertexConsumer base = buffers.getBuffer(this.spearModel.renderType(texture));
+				spearModel.renderToBuffer(ms, base, light, OverlayTexture.NO_OVERLAY, -1);
+				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
+				spearModel.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 			} else {
 				if (p_239207_2_ == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
 					ms.scale(0.75f, 0.75f, 0.75f);
@@ -132,7 +135,10 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 				}
 
-				spearModel.renderToBuffer(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, -1);
+				VertexConsumer base = buffers.getBuffer(this.spearModel.renderType(texture));
+				spearModel.renderToBuffer(ms, base, light, OverlayTexture.NO_OVERLAY, -1);
+				VertexConsumer glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
+				spearModel.renderToBuffer(ms, glint, light, OverlayTexture.NO_OVERLAY, -1);
 			}
 
 			ms.popPose();

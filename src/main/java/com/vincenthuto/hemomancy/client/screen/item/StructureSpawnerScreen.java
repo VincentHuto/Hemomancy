@@ -215,6 +215,12 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 		this.renderTooltip(graphics, mouseX, mouseY);
 	}
 
+	/** Suppress the 1.21.1 menu_blur post-effect from Screen#renderBackground. */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	@Override
 	public boolean isPauseScreen() {
 		return false;

@@ -481,6 +481,12 @@ public class UnstainedProgressScreen extends Screen {
 		super.render(gfx, mouseX, mouseY, partial);
 	}
 
+	/** Suppress the 1.21.1 menu_blur post-effect from Screen#renderBackground. */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	// ────────────────────────────────────────────────────────────
 	//  "Not begun" message
 	// ────────────────────────────────────────────────────────────

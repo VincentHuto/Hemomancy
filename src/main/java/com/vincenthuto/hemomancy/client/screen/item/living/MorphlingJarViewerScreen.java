@@ -266,6 +266,12 @@ public class MorphlingJarViewerScreen extends Screen {
 		return false;
 	}
 
+	/** Suppress the 1.21.1 menu_blur post-effect from Screen#renderBackground. */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	// ── Animation helpers ────────────────────────────────────────────────────────
 
 	private float getAnimTime(float partialTicks) {
@@ -641,5 +647,4 @@ public class MorphlingJarViewerScreen extends Screen {
 		}
 	}
 }
-
 
