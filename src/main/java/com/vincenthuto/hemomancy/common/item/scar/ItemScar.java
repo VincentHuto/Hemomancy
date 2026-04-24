@@ -252,10 +252,10 @@ public class ItemScar extends Item implements IScar {
 			int amp = tier >= 3 ? 1 : 0;
 			player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, dur, amp, true, true));
 			player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
-					(int)(60 * masteryMult), amp, true, true));
+					(int)(60 * tier * masteryMult), amp, true, true));
 			if (tier >= 3) {
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
-						(int)(60 * masteryMult), 0, true, true));
+						(int)(60 * tier * masteryMult), 0, true, true));
 			}
 		}
 	}
