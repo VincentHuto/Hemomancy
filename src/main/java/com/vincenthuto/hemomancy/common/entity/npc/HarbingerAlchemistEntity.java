@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -98,7 +99,7 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
             } else {
                 int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
-                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId());
+                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
             }
 
             PacketHandler.CHANNELBLOODVOLUME.send(
@@ -106,6 +107,13 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                     new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    /** Returns true if the given player has an established (valid) bloodline. */
+    private static boolean hasBloodline(Player player) {
+        return player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+                .map(vol -> vol.getBloodLine().isValid())
+                .orElse(false);
     }
 
     /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */

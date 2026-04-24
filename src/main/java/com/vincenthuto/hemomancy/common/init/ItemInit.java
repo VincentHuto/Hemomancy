@@ -124,6 +124,8 @@ public class ItemInit {
             () -> new SanguineBlobItem(new Item.Properties()));
     public static final RegistryObject<Item> rite_hint = BASEITEMS.register("rite_hint",
             () -> new RiteHintItem(new Item.Properties().fireResistant()));
+    public static final RegistryObject<Item> blood_structure_hint = BASEITEMS.register("blood_structure_hint",
+            () -> new BloodStructureHintItem(new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> foul_paste = BASEITEMS.register("foul_paste",
             () -> new FoulPasteItem(new Item.Properties()));
     public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
