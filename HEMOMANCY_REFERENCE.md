@@ -1917,13 +1917,7 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of St
   - ✅ Pale Silver Ingot = Iron Ingot + The Pale Distillate (crafting)
   - Pallid Lantern = Pale Silver Ingot + The Pale Distillate + Glowstone (crafting) — planned
   - Cleansed Stone = Stone + Hemolytic Solution (crafting) — planned
-- **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
-  - Begin the Unstained path
-  - Receive the Altar's blessing
-  - Reach each purity stage (Tainted → Cleansing → Absolved → Purified)
-  - Unlock clarity
-  - Reach each clarity stage (Awakened → Discerning → Vigilant → Resolute → Enlightened)
-  - Collect all Unstained materials
+- ~~**Unstained Advancement/Achievement Tree**~~ **RESOLVED:** 13 advancement JSON files fully implemented under `data/hemomancy/advancements/hemomancy/` covering all purity stages (Tainted → Cleansing → Absolved → Purified) and all clarity stages (Awakened → Discerning → Vigilant → Resolute → Enlightened), plus path-entry and material-collection milestones (Unstained, Path of Purity, Lady of the Forgotten Waters, Our Lady of Still Waters, Blessed by the Altar). All programmatic grants wired through `UnstainedAdvancementGranter.grantIfNotDone()` called from `UnstainedMilestoneHandler` (tick-based threshold checks) and `CardinalRiteEvents` (clarity ascension rite, altar of cleansing). Full tree documented in §27.3.
 - **Silver Ward / Verdigris Aura Visual Indicators** — particle effects and visual indicators for active Unstained bonuses, potentially with Our Lady's motifs (silver droplets, pale blue mist).
 
 ---
