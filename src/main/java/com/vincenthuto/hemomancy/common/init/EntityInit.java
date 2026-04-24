@@ -423,6 +423,20 @@ public class EntityInit {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere);
             SpawnPlacements.register(EntityInit.venous_strider.get(), SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere);
+            // Dimension biomes (Fungal Gardens, Fungal Isles, Sporecrown Thicket, Mycelial Depths)
+            // — these mobs are wired in BiomeInit but need SpawnPlacements so the engine can place them.
+            SpawnPlacements.register(EntityInit.thirster.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ThirsterEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.lump_of_thought.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LumpOfThoughtEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.erythromycelium_eruptus.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ErythromyceliumEruptusEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.chthonian.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChthonianEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.chthonian_queen.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChthonianQueenEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.fungling.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FunglingEntity::checkMobSpawnRules);
             Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
         });
     }

@@ -106,8 +106,11 @@ public class FrozenClotEntity extends Monster {
 
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
+		// Blocks.SNOW is the natural snow-layer that covers snowy plains/taiga/slopes;
+		// the other blocks cover glacial peaks, ice fields, and powder-snow pockets.
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
-				&& (pLevel.getBlockState(pPos.below()).is(Blocks.SNOW_BLOCK)
+				&& (pLevel.getBlockState(pPos.below()).is(Blocks.SNOW)
+						|| pLevel.getBlockState(pPos.below()).is(Blocks.SNOW_BLOCK)
 						|| pLevel.getBlockState(pPos.below()).is(Blocks.ICE)
 						|| pLevel.getBlockState(pPos.below()).is(Blocks.PACKED_ICE)
 						|| pLevel.getBlockState(pPos.below()).is(Blocks.BLUE_ICE)

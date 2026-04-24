@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-21
+> **Last Updated:** 2026-04-24
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -230,7 +230,7 @@ After reaching Archon and receiving the requisite Fungal Whispers, a **Fungal Sp
 - Continue deeper into the eldritch truth toward the true 8th Degree (transcendence)
 - The Archon may draw a Fungal Spine at any time to return or revisit
 
-> **⚠️ WIP:** Terrain generation, creature spawning, and player choice mechanics in the Fungal Dimension are still in early implementation. Spawn placement needs to be fixed to avoid spawning in the middle of water.
+> **Partially implemented:** Terrain generation and player choice mechanics are still in early development. Spawn placement is fixed — both `FungalPodiumBlock.findSafePos()` and `FungalSpineItem.findSafePos()` use `MOTION_BLOCKING_NO_LEAVES` heightmap with a solid-ground upward scan fallback, preventing placement in water. Dimension-exclusive mob population is implemented: `AbhorentThought` (fungal_gardens, fungal_isles, hemorrhagic_plateau), `LumpOfThought` (fungal_isles), and `ErythromyceliumEruptus` (mycelial_depths) are all registered with `SpawnPlacements.ON_GROUND` and `checkMonsterSpawnRules` that gate spawning to `!isInWaterOrBubble()`. Remaining WIP: player choice branching mechanics and morphic-pool alternate exits.
 
 ### 3.7 The Founding Sanctum (Degree 5)
 
@@ -241,7 +241,7 @@ At **Degree 5 (Illuminatus)**, a Harbinger can perform a founding rite that cons
 - Intended to encourage collective settlement and cooperative play
 - A crafting material called **Quintessence** is granted by the Illuminatus rite and is required for the founding ritual
 
-> **Partially implemented:** Buff application logic is functional (`FoundingSanctumEvents` applies Damage Boost, Regeneration, and Damage Resistance to qualifying players within the sanctum radius). The Sanguine Quintessence item is registered, produced by the Exsanguination cardinal rite, and required as a placed catalyst at the sanctum heart. Sanctum locations are persisted via `FoundingSanctumSavedData`. Remaining WIP: sanctum boundary detection confirmation and full gameplay tuning.
+> **RESOLVED:** Buff application logic is functional (`FoundingSanctumEvents` applies Damage Boost I, Regeneration I, and Damage Resistance I every 40 ticks to qualifying players within the sanctum). Boundary detection is implemented via `isInSanctum()` — circular 40-block radius (constant `SANCTUM_RADIUS = 40.0`). The Sanguine Quintessence item is registered, produced by the Exsanguination cardinal rite, and required as a placed catalyst at the sanctum heart. Sanctum locations are persisted via `FoundingSanctumSavedData`. Advancements `founding_sanctum_established` and `sanctum_sanguinium` are live. System is mechanically complete.
 
 ### 3.8 The Saints System (Degree 3–4)
 
@@ -592,15 +592,13 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Sanguine Surge | ✅ Yes | `BloodVolumeEvents` — adds passive blood regen per tick |
 | Crimson Mastery | ✅ Yes | `PyreticForgeManip` — scales items smelted per cast |
 | Vital Link | ✅ Yes | `KnownManipulationEvents` — chance to heal player on dealing manipulation damage |
-| Iron Will | ⚠️ Helper only | `SkillPointHelper.getIronWillReduction()` exists but no event caller found |
+| Iron Will | ✅ Yes | `BloodVolumeEvents.onPlayerDamaged` — reduces incoming damage by `getIronWillMultiplier()` when blood is below `getIronWillThreshold()` (default 15% of max blood) |
 | Blood Flow | ✅ Yes | `BloodManipulation` — multiplies effective cooldown of manipulations |
 | Coagulation | ✅ Yes | `BloodLossEffect` — chance to block incoming bleed effect ticks |
 | Sanguine Reach | ✅ Yes | `BloodLampManip`, `CrimsonFlameConjurationManip`, `UmbralStepManip`, `SanguineExcavationManip` — scales range |
-| Scar Affinity | ⚠️ Helper only | Helper exists; scar effect potency scaling not yet wired |
-| Scar Resonance | ⚠️ Helper only | Helper exists; scar slot expansion not yet wired |
-| Scar Mastery | ⚠️ Helper only | Helper exists; scar effect duration not yet wired |
-
-> **Note:** Skills marked "⚠️ Helper only" have their bonus calculations fully implemented in `SkillPointHelper` but need to be wired into the relevant event handlers to have actual gameplay effects.
+| Scar Affinity | ✅ Yes | `ScarEntityEventHandler.checkScarSynergy` — synergy attribute modifier amount multiplied by `getScarAffinityMultiplier()`; modifier removed and re-added every 20 ticks so level changes take effect immediately |
+| Scar Resonance | ✅ Yes | `ScarEntityEventHandler.getEffectiveScarSlotMax()` — returns `SCAR_SLOT_MAX + getScarResonanceSlots()`; used as upper bound in all scar combat loops (`onLivingHurt`, `onEntityKilledByPlayer`, `checkScarSynergy`) |
+| Scar Mastery | ✅ Yes | `ItemScar.onPlayerAttack`, `onPlayerDefend`, `onPlayerKill`, `applyTierThreeTickEffect` — all triggered effect durations multiplied by `getScarMasteryDurationMultiplier()` |
 
 ---
 
@@ -625,22 +623,20 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 
 ### 11.1 Types
 
-| Morphling | Item Class | Preferred Tendency | Effect / Notes |
-|-----------|-----------|-------------------|----------------|
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_fungal.png) Fungal | `FungalMorphlingItem` | Animus | Mycorrhizal Mending (passive fungal regeneration). Base morphling type |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_leeches.png) Leeches | `LeechesMorphlingItem` | Animus | Sanguine Siphon (blood drain on hit). Summons leeches to fight and drain blood |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_chitinite.png) Chitinite | `ChitiniteMorphlingItem` | Ferric | Chitinous Bulwark (+4 armor toughness). Chitin shield / defense |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_serpent.png) Serpent | `SerpentMorphlingItem` | Mortem | Serpentine Guile (+15% move speed, +10% attack speed). Paralyzing serpent projectile |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Mortem | Verminous Aura (pest-based AoE effect). Swarm of pest projectiles |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_spider.png) Spider | `SpiderMorphlingItem` | Tenebris | Arachnid Anastomosis (spider-vein healing). Arachnid-themed attacks |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_bat.png) Bat | `BatMorphlingItem` | Tenebris | Echoic Perception (nearby entities glow, radius scales with amplifier). Maturity: Sonar Shriek → Membrane Glide → Nightwing Frenzy |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_moth.png) Moth | `MothMorphlingItem` | Lux | Luminous Dissipation (knockback resistance). Maturity: Dustwing Trail → Phototaxis Pulse → Cocoon Rebirth |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_tick.png) Tick | `TickMorphlingItem` | Mortem | Hemorrhagic Venom (AoE damage aura to nearby hostiles). Maturity: Engorge → Blood Fever → Pandemic Burst |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_urchin.png) Urchin | `UrchinMorphlingItem` | Ferric | Spined Barricade (passive thorns + armor bonus). Maturity: Spine Lash → Tidal Anchor → Calcareous Shell |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio | Venomous Resilience (poison immunity + speed boost). Maturity: Burrowing Strike → Segmented Defense → Myriapod Swarm |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_mole.png) Mole | `MoleMorphlingItem` | Ferric | Burrower's Instinct (mining speed + underground regen/night vision). Maturity: Burrow Sense → Earthen Bulwark → Seismic Slam |
-
-> **Note:** The older morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) apply their signature status effect as a passive but do **not yet have named maturity-tier reactive abilities** like the newer morphlings (Bat, Moth, Tick, Urchin, Centipede, Mole). Adding maturity ability names and implementations for these 6 original morphlings is a planned task.
+| Morphling | Item Class | Preferred / Secondary Tendency | Base Effect | Maturity Abilities (Developing → Mature → Apex) |
+|-----------|-----------|-------------------------------|-------------|--------------------------------------------------|
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_fungal.png) Fungal | `FungalMorphlingItem` | Mortem / Animus | Mycorrhizal Mending (passive health regeneration) | Sporulation (AoE toxic spores when hit) → Mycorrhizal Network (heal nearby allies) → Cordyceps Burst (kills explode, poison foes + bonus loot) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_leeches.png) Leeches | `LeechesMorphlingItem` | Animus / Congeatio | Sanguine Siphon (passive blood volume refill) | Life Steal (heal from melee damage dealt) → Blood Transfusion (emergency heal using blood volume) → Sanguine Frenzy (missing-HP bonus damage + execute weakened targets) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_chitinite.png) Chitinite | `ChitiniteMorphlingItem` | Ferric / Congeatio | Chitinous Bulwark (passive armor toughness) | Carapace Thorns (reflect melee damage back) → Ablative Plating (regenerating Absorption shield) → Ironhide (invulnerability + thorn burst on heavy hit) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_serpent.png) Serpent | `SerpentMorphlingItem` | Ductilis / Flammeus | Serpentine Guile (move and attack speed) | Venom Strike (Poison on melee hit) → Constrict (3 hits roots & crushes target with Wither) → Ambush Predator (sneak 3s for lethal poison first-strike) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Flammeus / Tenebris | Verminous Aura (AoE pest damage aura to nearby hostiles) | Swarm Retaliation (tracking pest projectiles hunt your attacker) → Infest (kills spawn pests targeting nearby foes) → Plague Burst (AoE Wither + damage at low health) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_spider.png) Spider | `SpiderMorphlingItem` | Tenebris / Lux | Arachnid Anastomosis (vascular/spider-vein healing) | Wall Climbing (cling to walls, arrest downward velocity) → Silk Tether (spawn temporary cobweb to break falls) → Web Cocoon (root & Poison attacker when struck) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_bat.png) Bat | `BatMorphlingItem` | Tenebris / Ductilis | Echoic Perception (nearby entities glow, radius scales with maturity) | Sonar Shriek (Darkness & Slow attacker on hit) → Membrane Glide (slow falling & reduced fall damage) → Nightwing Frenzy (Strength II + Speed I in darkness) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_moth.png) Moth | `MothMorphlingItem` | Lux / Ductilis | Luminous Dissipation (knockback resistance) | Dustwing Trail (blind hostiles while sprinting) → Phototaxis Pulse (flash blinds attacker + nearby hostiles on hit) → Cocoon Rebirth (prevent death by spending blood, 10 min cooldown) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_tick.png) Tick | `TickMorphlingItem` | Mortem / Tenebris | Hemorrhagic Venom (AoE damage aura to nearby hostiles) | Engorge (Resistance on kill from feeding) → Blood Fever (Speed near wounded hostiles) → Pandemic Burst (AoE Wither + Weakness on heavy hit) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_urchin.png) Urchin | `UrchinMorphlingItem` | Ferric / Congeatio | Spined Barricade (passive thorns + armor bonus) | Spine Lash (thorns + slow melee attackers) → Tidal Anchor (periodic knockback pulse vs. nearby hostiles) → Calcareous Shell (Resistance II after heavy hit, 20 s cooldown) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio / Ferric | Venomous Resilience (poison immunity + speed boost) | Burrowing Strike (Weakness on hit to simulate armor bypass) → Segmented Defense (Regeneration to offset heavy hits) → Myriapod Swarm (Invisibility + Speed III escape at low HP) |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_mole.png) Mole | `MoleMorphlingItem` | Ferric / Mortem | Burrower's Instinct (mining speed + underground regen/night vision) | Burrow Sense (reveal entities underground via Glowing) → Earthen Bulwark (Resistance when taking damage underground) → Seismic Slam (shockwave attack while sneaking+jumping underground) |
 
 ### 11.2 Cultivation
 
@@ -684,46 +680,46 @@ Scars are organized in **three tiers** by `deepenAmount` — how strongly they s
 
 **Tier 1 Scars (deepenAmount = 1) — Basic, available at Degree 4:**
 
-| Scar | Tendency | Effect |
-|------|----------|--------|
-| ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_transcendence.png) Scar of Transcendence | Lux | Deepens Lux tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_sol.png) Scar of Sol | Flammeus | Deepens Flammeus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | Deepens Animus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_descendence.png) Scar of Descendence | Mortem | Deepens Mortem tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_moon.png) Scar of the Moon | Congeatio | Deepens Congeatio tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_eye.png) Scar of the Eye | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| Scar of the Thorn | Ferric | Deepens Ferric tendency alignment when equipped |
-| Scar of the Shade | Tenebris | Deepens Tenebris tendency alignment when equipped |
+| Scar | Tendency | Passive Modifier | Triggered Effect |
+|------|----------|-----------------|-----------------|
+| Mind Spike | Ductilis | — | — |
+| Scar of Transcendence | Lux | +10% Knockback Resistance | Blinds attacker (2 s) on defend |
+| Scar of Sol | Flammeus | Fire Resistance (permanent) | — |
+| Scar of the Heart | Animus | +2 Max Health | Heals 1♥ on kill |
+| Scar of Descendence | Mortem | +1 Attack Damage | — |
+| Scar of the Moon | Congeatio | +5% Movement Speed | Slows struck foe (1.5 s) on attack |
+| Scar of the Eye | Ductilis | +1 Luck | Grants Haste I + Speed I on kill |
+| Scar of the Feral | Ductilis | +5% Attack Speed | Grants Haste I + Speed I on kill |
+| Scar of the Thorn | Ferric | +1 Armor | Reflects 1 damage (thorns) on defend |
+| Scar of the Shade | Tenebris | +5% Movement Speed | Grants Invisibility when struck in darkness |
 
 **Tier 2 Scars (deepenAmount = 2) — Advanced, available at Degree 4:**
 
-| Scar | Tendency |
-|------|----------|
-| Scar of the Pyre | Flammeus |
-| Scar of Marrow | Animus |
-| Scar of Blight | Mortem |
-| Scar of Rime | Congeatio |
-| Scar of Flux | Ductilis |
-| Scar of the Halo | Lux |
-| Scar of the Anvil | Ferric |
-| Scar of the Veil | Tenebris |
+| Scar | Tendency | Passive Modifier | Triggered Effect |
+|------|----------|-----------------|-----------------|
+| Scar of the Pyre | Flammeus | Fire Resistance, +1 Attack Damage | Briefly ignites attacker (2 s) on defend |
+| Scar of Marrow | Animus | +4 Max Health | Heals 2♥ on kill |
+| Scar of Blight | Mortem | +2 Attack Damage | Poisons struck foe on attack |
+| Scar of Rime | Congeatio | +10% Movement Speed | Slows struck foe (3 s) on attack |
+| Scar of Flux | Ductilis | +10% Attack Speed | Grants Haste II + Speed II on kill |
+| Scar of the Halo | Lux | +20% KB Resist, +1 Armor Tough. | Blinds (3 s) + marks attacker with Glowing on defend |
+| Scar of the Anvil | Ferric | +2 Armor, +1 Armor Toughness | Reflects 2 damage (thorns) on defend |
+| Scar of the Veil | Tenebris | +10% Movement Speed | Grants Invisibility when struck (any light) |
 
 **Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5:**
 
-| Scar | Tendency |
-|------|----------|
-| Scar of the Phoenix | Flammeus |
-| Scar of Ichor | Animus |
-| Scar of Withering | Mortem |
-| Scar of the Glacier | Congeatio |
-| Scar of the Chimera | Ductilis |
-| Scar of the Corona | Lux |
-| Scar of the Crucible | Ferric |
-| Scar of Oblivion | Tenebris |
+| Scar | Tendency | Passive Modifier | Triggered / Tick Effect |
+|------|----------|-----------------|------------------------|
+| Scar of the Phoenix | Flammeus | Fire Resistance, +2 Attack Damage | Ignites attacker (4 s) on defend; `onWornTick` (T3) — ignite attackers |
+| Scar of Ichor | Animus | +6 Max Health | Heals 3♥ on kill; regen when HP < 50% (tick) |
+| Scar of Withering | Mortem | +3 Attack Damage | Withers struck foe on attack |
+| Scar of the Glacier | Congeatio | +15% Movement Speed | Slows struck foe (4.5 s) on attack; slows nearby mobs (tick) |
+| Scar of the Chimera | Ductilis | +15% Attack Speed, +1 Luck | Grants Haste II + Speed II + Strength I on kill |
+| Scar of the Corona | Lux | +30% KB Resist, +2 Armor Tough. | Blinds + Glowing on defend; Resistance I in bright skylight (tick) |
+| Scar of the Crucible | Ferric | +3 Armor, +2 Armor Toughness | Reflects 3 damage (thorns) on defend |
+| Scar of Oblivion | Tenebris | +15% Movement Speed | Invisibility when struck; invisibility in deep darkness (tick) |
 
-> **Scar Mechanic:** All standard scars extend `ItemScar` and share the same core mechanic: when equipped in a Scar Binder slot, they deepen the player's Blood Tendency alignment toward their assigned tendency by a fixed amount (set per scar via `deepenAmount`). This shifts which manipulations the player has strongest affinity with. Individual gameplay bonuses beyond tendency alignment are not yet implemented for standard scars.
+> **Scar Mechanics:** All standard scars extend `ItemScar`. Core effects: (1) tendency alignment deepening on equip/unequip; (2) attribute modifiers (`withModifier`); (3) passive mob effects (`withEffect`); (4) per-tendency triggered effects wired through `ScarEntityEventHandler` into `onPlayerAttack`, `onPlayerDefend`, `onPlayerKill`; (5) T3 tick effects in `applyTierThreeTickEffect`. A synergy bonus fires when 2+ scars of the same tendency are equipped simultaneously (see `ScarEntityEventHandler.checkScarSynergy`). Scar Mastery skill multiplies all triggered effect durations.
 
 Each scar has a corresponding **Scar Pattern** item used in crafting.
 
@@ -1531,7 +1527,14 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 
 **Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new — she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) §9 for the full cosmological explanation.
 
-> **⚠️ WIP:** Blood Moon gameplay effects (strength/weakness application, special spawns) are partially implemented. Manual triggering ritual and exact mechanical values are still being finalized.
+**Ritual triggers (fully implemented):**
+
+| Rite | Faction | Requirement | Effect |
+|------|---------|-------------|--------|
+| **Rite of the Sanguine Eclipse** (`sanguine_eclipse`) | Harbinger | Degree 3 (`Illuminatus`), blood cost 750 | Forces a Blood Moon to rise immediately; broadcasts the start message server-wide. Blocked if a Blood Moon is already active. |
+| **Rite of the Lethean Tide** (`lethean_tide`) | Unstained | Purity ≥ 50 | Forcibly ends an active Blood Moon, broadcasts a cleansing message, and grants the caster +10 purity. |
+
+Both rites are fully wired in `CardinalRiteEvents` (`completeSanguineEclipse` / `completeLetheanTide`) and have JSON recipes with block patterns in `data/hemomancy/recipes/cardinal_rite/`.
 
 ### 22.2 World Features
 
@@ -1724,7 +1727,7 @@ JEI recipe category support for:
 | `SporeImplantScreen` | Fungal Implantation Pylon | Spore implantation GUI |
 | `StructureSpawnerScreen` | Structure Spawner item | Debug structure spawning |
 | Various radial menus | Living Staff / keybinds | Morphling/manipulation selection |
-| Guide/Codex screens | Liber Sanguinum | **⚠️ NON-FUNCTIONAL** — `HemoProgressionScreen.setupEntries()` is entirely commented out, `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. |
+| Guide/Codex screens | Liber Sanguinum / Liber Immaculatus | **Fully implemented.** Book data lives in `data/hemomancy/books/sanctumsanguinium/` (Harbinger/general) and `data/hemomancy/books/liberimmaculatus/` (Unstained). `BloodyBookItem`/`UnstainedBookItem` call `BookPlaceboReloadListener.INSTANCE.getBookByTitle(...)` and open via `HLGuiGuideTitlePage.openScreenViaItem(book)`. |
 
 ---
 
@@ -1858,16 +1861,16 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 ## 30. Known WIP / Incomplete Systems
 
 - **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by Forge convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
-- **Progression Codex / Liber Sanguinum** — `HemoProgressionScreen.setupEntries()` is entirely commented out. The `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. Needs entry definitions and page content.
+- ~~**Progression Codex / Liber Sanguinum**~~ **RESOLVED:** Both guidebooks are fully implemented and populated. `BloodyBookItem` opens `sanctumsanguinium` (Liber Sanguinum, Harbinger/general); `UnstainedBookItem` opens `liberimmaculatus` (Liber Immaculatus, Unstained). Book data is in `data/hemomancy/books/` and loaded by HutosLib's `BookPlaceboReloadListener`. **Sanctum Sanguinium** has 7 chapters (ordinalities 0–6): *The World* (intro), *The Infection*, *The Hematic Order*, *The Unstained*, *Our Lady*, *Cosmic Forces*, *Blood Tendency* — with 40+ pages covering faction lore, the fungal entity, degrees, Our Lady of Still Waters, Blood Moons, Saints, Annetta Knowles, the Qliphoth, and all 8 tendency enzymes. **Liber Immaculatus** is the Unstained counterpart.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
-- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **MOSTLY RESOLVED:** All 18 skills in `SkillPointHelper` have helper methods. Fully wired into event handlers (13): Capacity, Efficiency, Manip Slots, Last Wind, Feeding Frenzy, Crimson Mastery, Sanguine Reach, Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Blood Flow, Coagulation. Still helper-only/not called from events (4): Iron Will, Scar Affinity, Scar Resonance, Scar Mastery.
+- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **RESOLVED:** All 18 skills are fully wired into event handlers. Scar Affinity: `checkScarSynergy` scales synergy attribute bonuses. Scar Resonance: `getEffectiveScarSlotMax()` expands active scar slots (+1 per level). Scar Mastery: `ItemScar` triggered-effect methods multiply durations via `getScarMasteryDurationMultiplier()`. No helper-only skills remain.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
 - **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
-- **Old Morphling Maturity** — The 6 original morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) lack named maturity-tier reactive abilities unlike the 6 newer morphlings.
-- **Scar Gameplay Effects** — Standard scars only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.
+- **Old Morphling Maturity** — ~~The 6 original morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) lack named maturity-tier reactive abilities unlike the 6 newer morphlings.~~ **RESOLVED:** All 6 original morphlings now have complete Developing/Mature/Apex tier ability implementations. Fungal: Sporulation → Mycorrhizal Network → Cordyceps Burst. Leeches: Life Steal → Blood Transfusion → Sanguine Frenzy. Chitinite: Carapace Thorns → Ablative Plating → Ironhide. Serpent: Venom Strike → Constrict → Ambush Predator. Pests: Swarm Retaliation → Infest → Plague Burst. Spider: Wall Climbing → Silk Tether → Web Cocoon. All hooks wired through `EquippedMorphlingEvents`. Reference doc §11.1 updated to show full ability chains and corrected tendency values.
+- **Scar Gameplay Effects** — ~~Standard scars only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.~~ **RESOLVED:** All 26 standard scars now have individual gameplay effects beyond tendency alignment. Attribute modifiers and passive effects were already in place. New triggered effects added: LUX (blind attackers; Glowing at T2+; Resistance in daylight at T3), DUCTILIS (Haste + Speed on kill, Strength added at T3), CONGEATIO (slow struck foes on attack, tier-scaled), TENEBRIS (Invisibility when struck — darkness-conditional at T1, always at T2+), FLAMMEUS (ignite attacker expanded from T3-only to T2+ with 2 s / 4 s duration). Scar Mastery skill scales all triggered effect durations.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — All manipulations now have unique overlay textures (`textures/item/memories/memory_*_overlay.png`) for the layered memory item model system. The `HemoItemModelProvider` generates 2-layer models (base `memory_blank` + per-manipulation overlay) for all `BloodMemoryItem` instances.
 - **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipes/incubator/`.
@@ -1881,7 +1884,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
 - **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
-- **New Monster Mobs (WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). Spawn rules are registered but specific spawn biomes, AI, drops, and loot tables are still being designed/implemented.
+- **New Monster Mobs (Biome Routing RESOLVED, AI/Drops WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). ~~Spawn rules are registered but specific spawn biomes have not been assigned.~~ **Biome routing RESOLVED:** All 7 primary monsters now have both a populated biome tag spawnlist (`data/hemomancy/tags/worldgen/biome/<mob>_spawnlist.json`) and a Forge BiomeModifier (`data/hemomancy/forge/biome_modifier/add_<mob>.json` using `forge:add_spawns`). Assignments: Dessicant → desert/badlands; Cruor Fiend → all Nether biomes; Void Drinker → End biomes; Frozen Clot → snowy/icy biomes; Synapse Hound → savanna/plains/windswept hills; Myelin Borer → dripstone/lush caves/deep dark; Abyssal Siphon → deep dark. AI behaviours, drops, and loot tables are still being designed/implemented.
 - **New NPC Entities Dialogue** — ~~Dialogue still being developed.~~ **RESOLVED:** Full dialogue trees are now implemented for all 5 NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, and **Harbinger Vicar**. All trees are degree/purity-stage gated. `DialogueEventHandler` handles gameplay consequences (rite hint drops, death of Hermit, chat messages). AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
 - **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals.
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
@@ -1889,14 +1892,14 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System (WIP)** — Four Saints planned. Trial Chamber structure for Hemorath (First Saint) is in early development. Hemorath boss fight mechanic (blood-absorb → exsanguinate puzzle) and The Chain Saint (light-avoidance, re-chaining mechanic) are designed but not yet implemented. Saints 3 and 4 are to be determined. See §3.8.
-- **Founding Sanctum (Partially Implemented)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum. Buff application logic (`FoundingSanctumEvents`), Sanguine Quintessence item, catalyst requirement, and sanctum persistence (`FoundingSanctumSavedData`) are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §3.7.
-- **Blood Moon Mechanics (WIP)** — Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented. See §22.1.1.
-- **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, player choice branching, and exit mechanics are in early development. See §3.6.
+- ~~**Founding Sanctum (Partially Implemented)**~~ **RESOLVED:** Degree 5 Illuminatus consecration is fully wired. `FoundingSanctumEvents.isInSanctum()` performs a 40-block-radius circle boundary check (constant `SANCTUM_RADIUS = 40.0` in `FoundingSanctumSavedData`). Buff application (Damage Boost I, Regeneration I, Damage Resistance I — 40-tick interval, 60-tick duration) is live. Sanctum locations are persisted via `FoundingSanctumSavedData` (SavedData, per-dimension). Sanguine Quintessence item and cardinal rite recipe (`founding_sanctum.json`) are in place. Advancements `founding_sanctum_established` and `sanctum_sanguinium` are registered. See §3.7.
+- **Blood Moon Mechanics** — ~~Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented.~~ **RESOLVED:** `BloodMoonEvents` fully handles occurrence (~1-in-7 per night / configurable), Harbinger Strength II + Night Vision, non-Harbinger Weakness I, Thirster/Fargone mob spawning, and server-wide sync. Manual ritual trigger implemented via **Rite of the Sanguine Eclipse** (Harbinger, Degree 3, blood cost 750 — wired in `completeSanguineEclipse`). Unstained counter-rite **Rite of the Lethean Tide** ends an active Blood Moon and grants +10 purity. Both rites have JSON recipes in `data/hemomancy/recipes/cardinal_rite/`. See §22.1.1.
+- **Fungal Dimension (Partially Implemented)** — The dimension (`hemomancy:fungal_gardens`) is registered with 8 biomes, noise settings, and carvers. Teleportation works via `FungalPodiumBlock` (Votary, degree 2, 500 blood cost) and `FungalSpineItem` (Archon); both use safe-spawn logic with `MOTION_BLOCKING_NO_LEAVES` heightmap + solid-ground upward scan. Dimension-exclusive mobs are populated: `AbhorentThought` (fungal_gardens, fungal_isles, hemorrhagic_plateau), `LumpOfThought` (fungal_isles), `ErythromyceliumEruptus` (mycelial_depths) — all registered `ON_GROUND` with water-spawn guards. Remaining WIP: terrain feature population depth, player choice branching mechanics, and morphic-pool alternate exits. See §3.6.
 - **Annetta Knowles / Stained Priestess (WIP)** — Boss entity planned. Two-phase fight designed (Unstained powers → blood spear phase 2). Model and AI not yet implemented. See §19.3.
 - **Chthonian Termite Mound (WIP)** — Savanna structure with guaranteed queen spawn and loot chest. Wood-chewing behavior for Chthonians is implemented; wooden plank chewing and wooden tool targeting are planned. Spawn rate needs tuning (currently over-common). See §23.
 - **Deep-Sea Iron Snail (WIP)** — Planned creature for deep ocean biomes, inspired by real-world Chrysomallon squamiferum (iron-sulfide shell snail from hydrothermal vents). Part of the arthropods-as-natural-hemomancers theme.
 - **Ghost Pipes as Unstained Material (WIP)** — Ghost Pipe plant (real-world Monotropa uniflora, white parasitic plant with no chlorophyll) registered in the mod. Planned role: Unstained crafting ingredient for alchemical and purification recipes. Acolyte gives "gather Ghost Pipe" as early task.
-- **Cleansed Stone and Pallid Lantern (WIP)** — Planned Unstained building materials: Cleansed Stone (Stone + Hemolytic Solution) and Pallid Lantern (Pale Silver + Pale Distillate + Glowstone). Neither recipe is yet implemented.
+- ~~**Cleansed Stone and Pallid Lantern (WIP)**~~ **RESOLVED:** Both Unstained building material recipes are implemented. `cleansed_stone.json`: 1× Stone + 1× Hemolytic Solution → 4× Cleansed Stone (shapeless). `pallid_lantern.json`: 4× Cleansed Sanguine Glass + 1× Lethean Dew (shaped cross) → 1× Pallid Lantern. (Note: final ingredient choice differs from the original plan; actual recipe uses Cleansed Sanguine Glass + Lethean Dew rather than Pale Silver + Pale Distillate + Glowstone.)
 
 ### 30.1 Unstained Expansion — Planned Features
 
@@ -1906,20 +1909,15 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of St
 - **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Pallid Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
 - **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
 - **Unstained Dialogue Expansion** — ~~Zealot dialogues should reference Our Lady of Still Waters more directly.~~ **RESOLVED:** Both Unstained Zealot and Unstained Acolyte have full purity-stage-aware dialogue trees. The Acolyte provides Our Lady of Still Waters lore, Silver Veil lore, and Clarity guidance at appropriate stages.
+- **Our Lady of Still Waters Whisper System** — ~~Content coverage for all 8 stage variants was incomplete.~~ **RESOLVED:** `OurLadyWhisperDialogueTrees` has all 8 stages fully populated with 3 variants each (tainted v0–v2, cleansing v0–v2, absolved v0–v2, purified v0–v2, discerning v0–v2, vigilant v0–v2, resolute v0–v2, enlightened v0–v2). `OurLadyWhisperEvents` fires with correct per-stage intervals (TAINTED ~45 min → ENLIGHTENED ~10 min) using the player's purity/clarity capability. All 50+ lang keys (`hemomancy.lady.*`) are populated in `en_us.json`. The tone progression is complete: barely perceptible water sounds at TAINTED → cold, ancient, satisfied presence at ENLIGHTENED.
 - **Lethean Crafting Recipes** — implemented recipes:
   - ✅ Tears of Silthmere = The Pale Distillate + Silver Chalice (crafting)
   - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
   - ✅ The Pale Distillate = Lethean Dew + Consecrated Copper Ingot (crafting)
   - ✅ Pale Silver Ingot = Iron Ingot + The Pale Distillate (crafting)
-  - Pallid Lantern = Pale Silver Ingot + The Pale Distillate + Glowstone (crafting) — planned
-  - Cleansed Stone = Stone + Hemolytic Solution (crafting) — planned
-- **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
-  - Begin the Unstained path
-  - Receive the Altar's blessing
-  - Reach each purity stage (Tainted → Cleansing → Absolved → Purified)
-  - Unlock clarity
-  - Reach each clarity stage (Awakened → Discerning → Vigilant → Resolute → Enlightened)
-  - Collect all Unstained materials
+  - ✅ Pallid Lantern = 4× Cleansed Sanguine Glass + Lethean Dew (shaped cross) — implemented
+  - ✅ Cleansed Stone = Stone + Hemolytic Solution → 4× (shapeless) — implemented
+- ~~**Unstained Advancement/Achievement Tree**~~ **RESOLVED:** 13 advancement JSON files fully implemented under `data/hemomancy/advancements/hemomancy/` covering all purity stages (Tainted → Cleansing → Absolved → Purified) and all clarity stages (Awakened → Discerning → Vigilant → Resolute → Enlightened), plus path-entry and material-collection milestones (Unstained, Path of Purity, Lady of the Forgotten Waters, Our Lady of Still Waters, Blessed by the Altar). All programmatic grants wired through `UnstainedAdvancementGranter.grantIfNotDone()` called from `UnstainedMilestoneHandler` (tick-based threshold checks) and `CardinalRiteEvents` (clarity ascension rite, altar of cleansing). Full tree documented in §27.3.
 - **Silver Ward / Verdigris Aura Visual Indicators** — particle effects and visual indicators for active Unstained bonuses, potentially with Our Lady's motifs (silver droplets, pale blue mist).
 
 ---
