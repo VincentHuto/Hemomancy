@@ -1529,7 +1529,14 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 
 **Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new — she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) §9 for the full cosmological explanation.
 
-> **⚠️ WIP:** Blood Moon gameplay effects (strength/weakness application, special spawns) are partially implemented. Manual triggering ritual and exact mechanical values are still being finalized.
+**Ritual triggers (fully implemented):**
+
+| Rite | Faction | Requirement | Effect |
+|------|---------|-------------|--------|
+| **Rite of the Sanguine Eclipse** (`sanguine_eclipse`) | Harbinger | Degree 3 (`Illuminatus`), blood cost 750 | Forces a Blood Moon to rise immediately; broadcasts the start message server-wide. Blocked if a Blood Moon is already active. |
+| **Rite of the Lethean Tide** (`lethean_tide`) | Unstained | Purity ≥ 50 | Forcibly ends an active Blood Moon, broadcasts a cleansing message, and grants the caster +10 purity. |
+
+Both rites are fully wired in `CardinalRiteEvents` (`completeSanguineEclipse` / `completeLetheanTide`) and have JSON recipes with block patterns in `data/hemomancy/recipes/cardinal_rite/`.
 
 ### 22.2 World Features
 
@@ -1888,7 +1895,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System (WIP)** — Four Saints planned. Trial Chamber structure for Hemorath (First Saint) is in early development. Hemorath boss fight mechanic (blood-absorb → exsanguinate puzzle) and The Chain Saint (light-avoidance, re-chaining mechanic) are designed but not yet implemented. Saints 3 and 4 are to be determined. See §3.8.
 - **Founding Sanctum (Partially Implemented)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum. Buff application logic (`FoundingSanctumEvents`), Sanguine Quintessence item, catalyst requirement, and sanctum persistence (`FoundingSanctumSavedData`) are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §3.7.
-- **Blood Moon Mechanics (WIP)** — Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented. See §22.1.1.
+- **Blood Moon Mechanics** — ~~Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented.~~ **RESOLVED:** `BloodMoonEvents` fully handles occurrence (~1-in-7 per night / configurable), Harbinger Strength II + Night Vision, non-Harbinger Weakness I, Thirster/Fargone mob spawning, and server-wide sync. Manual ritual trigger implemented via **Rite of the Sanguine Eclipse** (Harbinger, Degree 3, blood cost 750 — wired in `completeSanguineEclipse`). Unstained counter-rite **Rite of the Lethean Tide** ends an active Blood Moon and grants +10 purity. Both rites have JSON recipes in `data/hemomancy/recipes/cardinal_rite/`. See §22.1.1.
 - **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, player choice branching, and exit mechanics are in early development. See §3.6.
 - **Annetta Knowles / Stained Priestess (WIP)** — Boss entity planned. Two-phase fight designed (Unstained powers → blood spear phase 2). Model and AI not yet implemented. See §19.3.
 - **Chthonian Termite Mound (WIP)** — Savanna structure with guaranteed queen spawn and loot chest. Wood-chewing behavior for Chthonians is implemented; wooden plank chewing and wooden tool targeting are planned. Spawn rate needs tuning (currently over-common). See §23.
@@ -1904,6 +1911,7 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of St
 - **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Pallid Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
 - **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
 - **Unstained Dialogue Expansion** — ~~Zealot dialogues should reference Our Lady of Still Waters more directly.~~ **RESOLVED:** Both Unstained Zealot and Unstained Acolyte have full purity-stage-aware dialogue trees. The Acolyte provides Our Lady of Still Waters lore, Silver Veil lore, and Clarity guidance at appropriate stages.
+- **Our Lady of Still Waters Whisper System** — ~~Content coverage for all 8 stage variants was incomplete.~~ **RESOLVED:** `OurLadyWhisperDialogueTrees` has all 8 stages fully populated with 3 variants each (tainted v0–v2, cleansing v0–v2, absolved v0–v2, purified v0–v2, discerning v0–v2, vigilant v0–v2, resolute v0–v2, enlightened v0–v2). `OurLadyWhisperEvents` fires with correct per-stage intervals (TAINTED ~45 min → ENLIGHTENED ~10 min) using the player's purity/clarity capability. All 50+ lang keys (`hemomancy.lady.*`) are populated in `en_us.json`. The tone progression is complete: barely perceptible water sounds at TAINTED → cold, ancient, satisfied presence at ENLIGHTENED.
 - **Lethean Crafting Recipes** — implemented recipes:
   - ✅ Tears of Silthmere = The Pale Distillate + Silver Chalice (crafting)
   - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
