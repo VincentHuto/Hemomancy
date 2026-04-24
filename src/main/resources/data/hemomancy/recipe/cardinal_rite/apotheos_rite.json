@@ -21,10 +21,10 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:crying_obsidian"
     },
     "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
+      "block": "minecraft:end_stone_bricks"
     },
     "E": {
       "block": "hemomancy:engram_block"

@@ -19,13 +19,13 @@
       "block": "hemomancy:venous_stone"
     },
     "C": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:dark_oak_log"
     },
     "P": {
       "block": "hemomancy:hematic_iron_block"
     },
     "B": {
-      "block": "hemomancy:befouling_ash_trail"
+      "block": "minecraft:iron_bars"
     },
     "L": {
       "block": "hemomancy:gilded_venous_stone"

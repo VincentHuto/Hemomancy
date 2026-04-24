@@ -17,13 +17,13 @@
       "block": "hemomancy:engram_block"
     },
     "S": {
-      "block": "hemomancy:sanguine_glass"
+      "block": "minecraft:tinted_glass"
     },
     "I": {
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:red_stained_glass"
     }
   },
   "result": {

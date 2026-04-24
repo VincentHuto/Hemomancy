@@ -14,7 +14,7 @@
       "block": "hemomancy:engram_block"
     },
     "C": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:stone_bricks"
     },
     "P": {
       "block": "hemomancy:hematic_iron_block"

@@ -129,7 +129,7 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
 | 7 | Archon of the Hematic Order | `archon_rite` |
-| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion flag)* |
+| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion flag — gate enforced in `BloodCraftingKeyPressPacket` before rite start, checks `hemomancy:qliphoth_communion` on player persistent data)* |
 
 Cardinal Rites have:
 - A blood cost
@@ -223,14 +223,15 @@ After reaching Archon and receiving the requisite Fungal Whispers, a **Fungal Sp
 - Fungal Whispers occur almost constantly, nearly harassing in frequency
 - The player keeps their Fungal Spine and can use it to return to the overworld
 - Digging to the bottom of the space and "puncturing" the core severs the connection temporarily (ejecting the player)
-- May contain **morphic pools** as alternate exits (planned)
+- May contain **morphic pools** as alternate exits — **RESOLVED:** The existing `FungalPodiumBlock` serves as the morphic pool exit. See §3.9 for the Archon choice fork behaviour.
 
 **Player Choice at the End:**
-- Stay silent and simply return; remain an Archon and tell no one
-- Continue deeper into the eldritch truth toward the true 8th Degree (transcendence)
+- Stay silent and simply return; remain an Archon and tell no one — choice stamped as `hemomancy:archon_choice_made = "silent"` in persistent data
+- Continue deeper into the eldritch truth toward the true 8th Degree (transcendence) — choice stamped as `hemomancy:archon_choice_made = "apotheos"`; `apotheos_rite` is now unblocked in combination with the Qliphoth Communion flag
 - The Archon may draw a Fungal Spine at any time to return or revisit
 
-> **Partially implemented:** Terrain generation and player choice mechanics are still in early development. Spawn placement is fixed — both `FungalPodiumBlock.findSafePos()` and `FungalSpineItem.findSafePos()` use `MOTION_BLOCKING_NO_LEAVES` heightmap with a solid-ground upward scan fallback, preventing placement in water. Dimension-exclusive mob population is implemented: `AbhorentThought` (fungal_gardens, fungal_isles, hemorrhagic_plateau), `LumpOfThought` (fungal_isles), and `ErythromyceliumEruptus` (mycelial_depths) are all registered with `SpawnPlacements.ON_GROUND` and `checkMonsterSpawnRules` that gate spawning to `!isInWaterOrBubble()`. Remaining WIP: player choice branching mechanics and morphic-pool alternate exits.
+> ~~**Partially implemented:** Terrain generation and player choice mechanics are still in early development. Spawn placement is fixed — both `FungalPodiumBlock.findSafePos()` and `FungalSpineItem.findSafePos()` use `MOTION_BLOCKING_NO_LEAVES` heightmap with a solid-ground upward scan fallback, preventing placement in water. Dimension-exclusive mob population is implemented: `AbhorentThought` (fungal_gardens, fungal_isles, hemorrhagic_plateau), `LumpOfThought` (fungal_isles), and `ErythromyceliumEruptus` (mycelial_depths) are all registered with `SpawnPlacements.ON_GROUND` and `checkMonsterSpawnRules` that gate spawning to `!isInWaterOrBubble()`. Remaining WIP: player choice branching mechanics and morphic-pool alternate exits.~~
+> **RESOLVED (morphic pool + choice fork):** Spawn placement and mob population remain as described above. `FungalPodiumBlock.use()` now gates Degree-7 Archons: on first exit attempt (when `hemomancy:archon_choice_made` is absent) the pool fires `FungalWhisperDialogueTrees.coreWitnessDialogue()` instead of teleporting. The two-option fork ("Carry the truth in silence" / "I seek the Eighth Degree") stamps the choice key and then calls `FungalPodiumBlock.performReturnTravel()`. All players with an existing choice proceed directly to the overworld on subsequent uses. Remaining WIP: terrain feature population depth.
 
 ### 3.7 The Founding Sanctum (Degree 5)
 
@@ -284,6 +285,66 @@ There are **four Saints** in total; which one a player encounters first is parti
 | **Velorum** | WIP | WIP | CONGEATIO + TENEBRIS (martyrdom, silence, frozen dark) |
 
 > **⚠️ WIP:** Saints 2–4 (Seraphae, Putriciel, Velorum) have their code skeletons, Hallowed Residuum items, Canon Memory items, and incubator recipes implemented. Trial Chamber structure generation and saint boss AI are in active development.
+
+---
+
+### 3.9 Qliphoth Communion (Degree 7 → 8 Prerequisites)
+
+Qliphoth Communion is the multi-step prerequisite chain that unlocks the Rite of Apotheos. It is **fully implemented**. The five stages are:
+
+**Stage 1 — Monolith Shatter**
+An Archon (Degree 7) interacts with their **Sanguine Monolith** twice (`SHATTER_INTERACTION_THRESHOLD = 2`). On the second interaction the monolith explodes, drops a **Qliphoth Seed** (`hemomancy:qliphoth_seed`), and fires `FungalWhisperDialogueTrees.postMonolithShatter()` — the Entity comments on what was hidden inside.
+
+**Stage 2 — Bloom of the Qliphoth Rite**
+The player places the Qliphoth Seed as a catalyst item within the multiblock pattern of the **Bloom of the Qliphoth** cardinal rite (Degree 7 Grand rite, blood cost 1200, uses `nether_wart_block`, `soul_soil`, `blood_wood_log`, `polished_venous_stone`, and `engram_block` as pattern blocks). The rite consumes the seed. On completion `CardinalRiteEvents.completeBloomOfQliphoth()`:
+- Places a `QliphothBloomBlock` (1×1×8 multiblock) at the rite center
+- Registers the bloom in `QliphothBloomSavedData` (overworld SavedData) with owner UUID, center position, dimension, and 3-chunk radius
+- Fires `FungalWhisperDialogueTrees.postBloom()`
+
+**Stage 3 — Qliphoth Pome Drops (and Tree Growth)**
+`QliphothBloomEvents.onLevelTick()` runs every 40 ticks. Each tick it may attempt `trySpawnPome()` for each bloom (1-in-80 chance). Each pome is tagged:
+- `hemomancy:bloom_origin` (Long) — bloom center as `BlockPos.asLong()`
+- `hemomancy:husk_index` (Int, 0–8) — ordinal index of the nine Qliphoth husks
+
+The nine husks in order: *Nahemoth, Samael, Gamaliel, Harab Serapel, Golachab, Thagirion, A'arab Zaraq, Satariel, Ghagiel*. Each drop fires `FungalWhisperDialogueTrees.pomeDropped(huskIndex)` to the bloom owner. Pomes are invulnerable (fire/lava/void) and never despawn (`lifespan = Integer.MAX_VALUE`). A bloom produces exactly 9 pomes then ceases (`MAX_POMES_PER_BLOOM = 9` in `QliphothBloomSavedData`).
+
+After each `incrementPomesDropped()` call, `CardinalRiteEvents.syncQliphothBlooms()` is called so the client receives the updated `pomesDropped` count and can advance the tree's visual growth stage. The tree progresses through 9 visual stages tied to the pome count (see rendering below).
+
+**Tree Visual Growth Stages**
+
+The `QliphothBloomRenderer` reads `bloom.getPomesDropped()` and passes it as a `stage` integer into each draw method. Stage helpers compute per-component fractions:
+
+| Pomes Dropped (stage) | Trunk height | Root length | Branches | Sub-branches | Canopy floaters | Apex black-hole orb |
+|---|---|---|---|---|---|---|
+| 0 | 25% | 15% | — | — | — | — |
+| 1 | 40% | 36% | — | — | — | — |
+| 2 | 55% | 57% | — | — | — | — |
+| 3 | 70% | 79% | — | — | — | — |
+| 4 | 85% | 100% | — | — | — | — |
+| 5 | 100% | 100% | — | — | — | — |
+| 6 | 100% | 100% | 40% length | — | — | — |
+| 7 | 100% | 100% | 70% length | ✓ | — | — |
+| 8 | 100% | 100% | 100% | ✓ | ✓ | — |
+| 9 | 100% | 100% | 100% | ✓ | ✓ | ✓ |
+
+Implementation: `trunkHeightFrac(stage)`, `rootLengthFrac(stage)`, `branchLengthFrac(stage)` in `QliphothBloomRenderer`. The `pomesDropped` count is stored in `QliphothBloomClientData.BloomEntry` and synced via `PacketSyncQliphothBlooms`.
+
+**Stage 4 — Qliphoth Communion Achieved**
+`QliphothPomeItem.trackCommunionProgress()` tracks per-bloom consumption in `hemomancy:pome_communion_progress` (CompoundTag keyed by bloom origin Long). When the ninth pome from a single bloom is consumed:
+- `hemomancy:qliphoth_communion = true` is stamped on the player's persistent data
+- `FungalWhisperDialogueTrees.qliphothCommunion()` fires the nine-shell completion whisper
+
+**Stage 5 — Rite of Apotheos Unlocked**
+`BloodCraftingKeyPressPacket` (server-side rite activation) checks `hemomancy:qliphoth_communion` before allowing the `apotheos_rite` to begin. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree ≥ 7), the rite proceeds normally.
+
+**Key NBT flags on player persistent data:**
+
+| Key | Type | Meaning |
+|-----|------|---------|
+| `hemomancy:qliphoth_communion` | Boolean | Communion completed; Apotheos rite now accessible |
+| `hemomancy:pome_communion_progress` | CompoundTag | Per-bloom pome consumption counters (keys = bloom origin Long as String) |
+| `hemomancy:pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
+| `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` — set when Archon resolves the Fungal Dimension choice fork |
 
 ---
 
@@ -869,6 +930,8 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/engram_stamp.png) Engram Stamp | Engram-related tool |
 | ![](src/main/resources/assets/hemomancy/textures/item/vivianite_scalpel.png) Vivianite Scalpel | Vivianite-based tool |
 | ![](src/main/resources/assets/hemomancy/textures/item/fungal_spine.png) Fungal Spine | Fungal tool item (unstackable, Uncommon) |
+| **Qliphoth Seed** | Dropped by the Sanguine Monolith when shattered by a Degree-7 Archon (two interactions). Custom entity `EntityQliphothSeedItem`. Used as a placed catalyst inside the **Bloom of the Qliphoth** rite. One-time per monolith. |
+| **Qliphoth Pome** | Edible fruit dropped by the Qliphoth Bloom tree over time (9 total per bloom lifecycle). Each pome tagged with `hemomancy:bloom_origin` + `hemomancy:husk_index` (0–8). Grants +300 blood, Regeneration II (12 s), Darkness (7 s), 25% manip cost reduction (3 min). Consuming all nine from one bloom sets `hemomancy:qliphoth_communion = true` and fires the Communion whisper. See §3.9. |
 | ![](src/main/resources/assets/hemomancy/textures/item/sanguine_salve.png) Sanguine Salve | Heals 25 blood on use |
 | ![](src/main/resources/assets/hemomancy/textures/item/cleansing_hemolymph.png) Cleansing Hemolymph | Blue vial from Hemolymphopoda mobs |
 | ![](src/main/resources/assets/hemomancy/textures/item/structure_spawner.png) Structure Spawner | Debug/creative item for spawning structures |
@@ -1044,7 +1107,9 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Cerebral Scarring Station**        | `ScarStationBlockEntity`                   | Crafts scars from patterns and blanks                    ![](src/main/resources/assets/hemomancy/textures/ref doc images/scar_station.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](src/main/resources/assets/hemomancy/textures/ref doc images/morphling_incubator.png) 
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
-| **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Fungal-related interaction station                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Portal to the Fungal Gardens dimension. Degree 2+ (Votary) required; costs 500 blood. Stores overworld return coordinates in player persistent data. Degree-7 Archons on first exit attempt see the `coreWitnessDialogue()` choice fork instead of teleporting home; subsequent uses proceed directly. See §3.6, §3.9.                                                                                                                                                                                                                                                                                                                                               |
+| **Sanguine Monolith**                | `SanguineMonolithBlockEntity`              | 1×2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated cryptic guidance (degrees 4–7). At Degree 7 an Archon may interact with it **twice** to shatter it — exploding into shards, dropping a **Qliphoth Seed**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Uses `SanguineMonolithDialogueTrees`. Custom animated model (`SanguineMonolithModel`). See §3.9.                                                                                                                                                                                                        |
+| **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1×1×8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime — one per Qliphoth husk (Nahemoth → Ghagiel). Registered and synced via `QliphothBloomSavedData`. Removing the block removes it from SavedData and stops effects. See §3.9.                                                                                                                                                                                                                       |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/ref doc images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Where Hemolytic Solution / Consecrated Copper are used for the Unstained path                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -1233,6 +1298,7 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 | **Eternal Covenant** | 4000 | Greater | Permanently expands the caster's maximum blood volume (one-time only) |
 | **Pallid Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player — a blasphemous assault on Our Lady's path |
 | **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees` — 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
+| **Bloom of the Qliphoth** | 1200 | Grand | Degree 7. Plants a Qliphoth Seed (placed as catalyst within the rite pattern) → summons a `QliphothBloomBlock` (1×1×8 tree, 3-chunk radius). In-range players gain Regeneration I and +5 blood/tick. Tree produces exactly 9 Qliphoth Pomes over its lifecycle. First step toward Qliphoth Communion. One bloom allowed per 3-chunk radius. Fires `FungalWhisperDialogueTrees.postBloom()`. See §3.9. |
 
 ### 18.3 Plant & Fungi Recipes
 
@@ -1879,7 +1945,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
 - **New Monster Mobs (WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). Spawn rules are registered but specific spawn biomes, AI, drops, and loot tables are still being designed/implemented.
 - **New NPC Entities Dialogue** — ~~Dialogue still being developed.~~ **RESOLVED:** Full dialogue trees are now implemented for all 5 NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, and **Harbinger Vicar**. All trees are degree/purity-stage gated. `DialogueEventHandler` handles gameplay consequences (rite hint drops, death of Hermit, chat messages). AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
-- **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals.
+- **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index)` (per-husk drop announcement), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork).
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
 - **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
@@ -1887,7 +1953,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Saints System (WIP)** — Four Saints planned. Trial Chamber structure for Hemorath (First Saint) is in early development. Hemorath boss fight mechanic (blood-absorb → exsanguinate puzzle) and The Chain Saint (light-avoidance, re-chaining mechanic) are designed but not yet implemented. Saints 3 and 4 are to be determined. See §3.8.
 - **Founding Sanctum (Partially Implemented)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum. Buff application logic (`FoundingSanctumEvents`), Sanguine Quintessence item, catalyst requirement, and sanctum persistence (`FoundingSanctumSavedData`) are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §3.7.
 - **Blood Moon Mechanics (WIP)** — Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented. See §22.1.1.
-- **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, player choice branching, and exit mechanics are in early development. See §3.6.
+- **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, and exit mechanics are in early development. ~~Player choice branching mechanics are WIP.~~ **RESOLVED (choice fork + morphic pool):** `FungalPodiumBlock.use()` now gates Degree-7 Archons on first exit — fires `coreWitnessDialogue()` fork ("silence" vs "Eighth Degree"). `DialogueEventHandler` stamps `hemomancy:archon_choice_made` and calls `performReturnTravel()`. See §3.6.
 - **Annetta Knowles / Stained Priestess (WIP)** — Boss entity planned. Two-phase fight designed (Unstained powers → blood spear phase 2). Model and AI not yet implemented. See §19.3.
 - **~~Chthonian Termite Mound~~** — Savanna structure with guaranteed queen spawn and loot chest. Wood-chewing behavior implemented for both logs and planks. Wooden tool degradation (5 damage per hit for Chthonian, 8 for Chthonian Queen) implemented. Spawn rate fixed (rarity_filter.chance increased from 32 to 200). Spawn placements now registered for Chthonian, Chthonian Queen, Thirster, Lump of Thought, Erythromycelium Eruptus, and Fungling. See §23.
 - **Deep-Sea Iron Snail (WIP)** — Planned creature for deep ocean biomes, inspired by real-world Chrysomallon squamiferum (iron-sulfide shell snail from hydrothermal vents). Part of the arthropods-as-natural-hemomancers theme.

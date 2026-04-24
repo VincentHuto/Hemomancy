@@ -18,10 +18,10 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:crying_obsidian"
     },
     "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
+      "block": "minecraft:iron_bars"
     },
     "P": {
       "block": "hemomancy:hematic_iron_block"

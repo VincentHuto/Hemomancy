@@ -14,10 +14,10 @@
       "block": "hemomancy:engram_block"
     },
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:dark_oak_planks"
     },
     "P": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:iron_bars"
     }
   },
   "result": {

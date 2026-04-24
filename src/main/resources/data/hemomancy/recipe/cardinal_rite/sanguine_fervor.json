@@ -16,7 +16,7 @@
       "block": "hemomancy:engram_block"
     },
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:magma_block"
     },
     "B": {
       "block": "hemomancy:befouling_ash_trail"
@@ -25,7 +25,7 @@
       "block": "hemomancy:chiseled_hematic_iron_block"
     },
     "P": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:red_nether_bricks"
     }
   },
   "result": {

@@ -16,7 +16,7 @@
       "block": "hemomancy:sanguine_glass"
     },
     "I": {
-      "block": "hemomancy:infested_venous_stone"
+      "block": "minecraft:moss_block"
     }
   },
   "result": {

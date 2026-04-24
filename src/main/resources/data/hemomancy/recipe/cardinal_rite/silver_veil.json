@@ -16,13 +16,13 @@
       "block": "hemomancy:cleansed_stone"
     },
     "L": {
-      "block": "hemomancy:pallid_lantern"
+      "block": "minecraft:oxidized_copper"
     },
     "C": {
       "block": "hemomancy:lethean_poppy"
     },
     "P": {
-      "block": "hemomancy:pale_silver_block"
+      "block": "minecraft:smooth_quartz"
     }
   },
   "result": {

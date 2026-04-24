@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.functional.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -115,6 +116,36 @@ public class DialogueEventHandler {
 			}
 			case "expel_harbinger" -> {
 				handleExpelHarbinger(player, event.getEntityId());
+			}
+			case "qliphoth_communion_done" -> {
+				// Player completed the full Qliphoth Communion — nine pomes consumed.
+				// This is a narrative milestone; the apotheos_rite path is now spiritually prepared.
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.qliphoth_communion_done")
+								.withStyle(ChatFormatting.DARK_GREEN),
+						false);
+			}
+			case "archon_choice_silence" -> {
+				// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
+				player.getPersistentData().putString(
+						FungalPodiumBlock.ARCHON_CHOICE_KEY,
+						FungalPodiumBlock.ARCHON_CHOICE_SILENCE);
+				FungalPodiumBlock.performReturnTravel(player);
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.archon_choice_silence")
+								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+						false);
+			}
+			case "archon_choice_eighth_degree" -> {
+				// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
+				player.getPersistentData().putString(
+						FungalPodiumBlock.ARCHON_CHOICE_KEY,
+						FungalPodiumBlock.ARCHON_CHOICE_APOTHEOS);
+				FungalPodiumBlock.performReturnTravel(player);
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.archon_choice_eighth_degree")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						false);
 			}
 			case "whisper_dismiss" -> {
 				// Player dismissed the whisper â€” no gameplay effect, just acknowledged
