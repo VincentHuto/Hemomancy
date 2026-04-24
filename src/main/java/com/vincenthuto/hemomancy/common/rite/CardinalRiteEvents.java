@@ -1541,17 +1541,19 @@ public class CardinalRiteEvents {
 
 	/**
 	 * Syncs all Qliphoth Bloom locations to each connected client for rendering.
-	 * Each player receives only the blooms in their current dimension.
+	 * Each player receives only the blooms in their current dimension, including
+	 * the current pomes-dropped count so the client can render the correct growth stage.
 	 */
-	private static void syncQliphothBlooms(net.minecraft.server.MinecraftServer server) {
+	static void syncQliphothBlooms(net.minecraft.server.MinecraftServer server) {
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(server.overworld());
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			String dimension = player.level().dimension().location().toString();
 			java.util.List<com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry> clientEntries = new ArrayList<>();
 			for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
 				if (bloom.dimension().equals(dimension)) {
+					int pomesDropped = data.getPomesDropped(bloom.center());
 					clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
-							bloom.center(), bloom.chunkRadius()));
+							bloom.center(), bloom.chunkRadius(), pomesDropped));
 				}
 			}
 			com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms packet =
