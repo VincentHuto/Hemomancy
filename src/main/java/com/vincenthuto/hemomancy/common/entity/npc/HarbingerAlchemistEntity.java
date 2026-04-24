@@ -97,7 +97,7 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
             } else {
                 int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId());
+                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
             }
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -109,6 +109,13 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
     private static boolean hasClarityUnlocked(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
                 .map(IUnstainedProgress::hasClarityUnlocked)
+                .orElse(false);
+    }
+
+    /** Returns true if the given player has an established (valid) bloodline. */
+    private static boolean hasBloodline(Player player) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(vol -> vol.getBloodLine().isValid())
                 .orElse(false);
     }
 

@@ -82,7 +82,17 @@ public class HarbingerVicarEntity extends PathfinderMob {
 
 
 
-    /** Returns true if the given player has begun purification but not yet entered Clarity. */
+    /** Returns true if the given player has an established (valid) bloodline.
+     * Recruit and expel dialogue options are only offered when this is true.
+     */
+    private static boolean hasBloodline(Player player) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(vol -> vol.getBloodLine().isValid())
+                .orElse(false);
+    }
+
+    /**
+     * Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
                 .map(IUnstainedProgress::hasBegunPurification)
@@ -144,7 +154,7 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 // Archon players with active pome empowerment receive the unsettled reaction
                 tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
             } else {
-                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId());
+                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
             }
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
