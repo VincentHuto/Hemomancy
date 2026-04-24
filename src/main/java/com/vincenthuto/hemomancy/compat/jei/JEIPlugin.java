@@ -69,7 +69,11 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
-		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
+		ClientLevel world = Minecraft.getInstance().level;
+		if (world == null) {
+			Hemomancy.LOGGER.warn("JEI recipe registration skipped: client level is null.");
+			return;
+		}
 		registry.addRecipes(ghastly_distillation_recipe_type,
 				DistillationRecipe.getAllRecipes(world).stream().filter(r -> !r.isPallid()).toList());
 		registry.addRecipes(pallid_distillation_recipe_type,
