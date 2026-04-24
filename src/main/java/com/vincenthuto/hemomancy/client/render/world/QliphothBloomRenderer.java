@@ -124,7 +124,7 @@ public class QliphothBloomRenderer {
 
 	/**
 	 * Returns the branch-length multiplier for the given growth stage.
-	 * Branches are absent below stage 6; stage 6 → 50%; stage 7 → 80%; 8+ → 100%.
+	 * Branches are absent below stage 6; stage 6 → 40%; stage 7 → 70%; 8+ → 100%.
 	 */
 	private static float branchLengthFrac(int stage) {
 		if (stage < 6) return 0.0f;
