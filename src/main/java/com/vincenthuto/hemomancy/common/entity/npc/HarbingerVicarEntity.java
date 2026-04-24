@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
 import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
@@ -83,7 +84,18 @@ public class HarbingerVicarEntity extends PathfinderMob {
 
 
 
-    /** Returns true if the given player has begun purification but not yet entered Clarity. */
+    /**
+     * Returns true if the given player has an established (valid) bloodline.
+     * Recruit and expel dialogue options are only offered when this is true.
+     */
+    private static boolean hasBloodline(Player player) {
+        return player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+                .map(vol -> vol.getBloodLine().isValid())
+                .orElse(false);
+    }
+
+    /**
+     * Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {
         return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
                 .map(IUnstainedProgress::hasBegunPurification)
@@ -145,7 +157,7 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 // Archon players with active pome empowerment receive the unsettled reaction
                 tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
             } else {
-                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId());
+                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
             }
 
             PacketHandler.CHANNELBLOODVOLUME.send(
