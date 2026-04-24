@@ -22,6 +22,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,7 +38,10 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -201,6 +205,22 @@ public class ChthonianEntity extends Spider {
 	@Override
 	protected int calculateFallDamage(float distance, float damageMultiplier) {
 		return 0;
+	}
+
+	@Override
+	public boolean doHurtTarget(Entity target) {
+		boolean hit = super.doHurtTarget(target);
+		if (hit && target instanceof Player player) {
+			ItemStack mainHand = player.getMainHandItem();
+			if (!mainHand.isEmpty() && mainHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
+				mainHand.hurtAndBreak(5, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+			}
+			ItemStack offHand = player.getOffhandItem();
+			if (!offHand.isEmpty() && offHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
+				offHand.hurtAndBreak(5, player, p -> p.broadcastBreakEvent(InteractionHand.OFF_HAND));
+			}
+		}
+		return hit;
 	}
 
 	@Override

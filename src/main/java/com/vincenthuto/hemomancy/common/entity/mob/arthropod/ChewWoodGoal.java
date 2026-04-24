@@ -39,7 +39,8 @@ public class ChewWoodGoal extends MoveToBlockGoal {
 
 	@Override
 	protected boolean isValidTarget(LevelReader level, BlockPos pos) {
-		if (!level.getBlockState(pos).is(BlockTags.LOGS)) {
+		BlockState state = level.getBlockState(pos);
+		if (!state.is(BlockTags.LOGS) && !state.is(BlockTags.PLANKS)) {
 			return false;
 		}
 		// Reject floating wood — require at least one adjacent/below block
@@ -105,7 +106,7 @@ public class ChewWoodGoal extends MoveToBlockGoal {
 			this.stuckTimer = 0;
 
 			BlockState state = level.getBlockState(target);
-			if (!state.is(BlockTags.LOGS)) {
+			if (!state.is(BlockTags.LOGS) && !state.is(BlockTags.PLANKS)) {
 				return; // Block was already broken by something else
 			}
 
