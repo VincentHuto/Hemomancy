@@ -684,46 +684,46 @@ Scars are organized in **three tiers** by `deepenAmount` — how strongly they s
 
 **Tier 1 Scars (deepenAmount = 1) — Basic, available at Degree 4:**
 
-| Scar | Tendency | Effect |
-|------|----------|--------|
-| ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_transcendence.png) Scar of Transcendence | Lux | Deepens Lux tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_sol.png) Scar of Sol | Flammeus | Deepens Flammeus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | Deepens Animus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_descendence.png) Scar of Descendence | Mortem | Deepens Mortem tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_moon.png) Scar of the Moon | Congeatio | Deepens Congeatio tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_eye.png) Scar of the Eye | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| Scar of the Thorn | Ferric | Deepens Ferric tendency alignment when equipped |
-| Scar of the Shade | Tenebris | Deepens Tenebris tendency alignment when equipped |
+| Scar | Tendency | Passive Modifier | Triggered Effect |
+|------|----------|-----------------|-----------------|
+| Mind Spike | Ductilis | — | — |
+| Scar of Transcendence | Lux | +10% Knockback Resistance | Blinds attacker (2 s) on defend |
+| Scar of Sol | Flammeus | Fire Resistance (permanent) | — |
+| Scar of the Heart | Animus | +2 Max Health | Heals 1♥ on kill |
+| Scar of Descendence | Mortem | +1 Attack Damage | — |
+| Scar of the Moon | Congeatio | +5% Movement Speed | Slows struck foe (1.5 s) on attack |
+| Scar of the Eye | Ductilis | +1 Luck | Grants Haste I + Speed I on kill |
+| Scar of the Feral | Ductilis | +5% Attack Speed | Grants Haste I + Speed I on kill |
+| Scar of the Thorn | Ferric | +1 Armor | Reflects 1 damage (thorns) on defend |
+| Scar of the Shade | Tenebris | +5% Movement Speed | Grants Invisibility when struck in darkness |
 
 **Tier 2 Scars (deepenAmount = 2) — Advanced, available at Degree 4:**
 
-| Scar | Tendency |
-|------|----------|
-| Scar of the Pyre | Flammeus |
-| Scar of Marrow | Animus |
-| Scar of Blight | Mortem |
-| Scar of Rime | Congeatio |
-| Scar of Flux | Ductilis |
-| Scar of the Halo | Lux |
-| Scar of the Anvil | Ferric |
-| Scar of the Veil | Tenebris |
+| Scar | Tendency | Passive Modifier | Triggered Effect |
+|------|----------|-----------------|-----------------|
+| Scar of the Pyre | Flammeus | Fire Resistance, +1 Attack Damage | Briefly ignites attacker (2 s) on defend |
+| Scar of Marrow | Animus | +4 Max Health | Heals 2♥ on kill |
+| Scar of Blight | Mortem | +2 Attack Damage | Poisons struck foe on attack |
+| Scar of Rime | Congeatio | +10% Movement Speed | Slows struck foe (3 s) on attack |
+| Scar of Flux | Ductilis | +10% Attack Speed | Grants Haste II + Speed II on kill |
+| Scar of the Halo | Lux | +20% KB Resist, +1 Armor Tough. | Blinds (3 s) + marks attacker with Glowing on defend |
+| Scar of the Anvil | Ferric | +2 Armor, +1 Armor Toughness | Reflects 2 damage (thorns) on defend |
+| Scar of the Veil | Tenebris | +10% Movement Speed | Grants Invisibility when struck (any light) |
 
 **Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5:**
 
-| Scar | Tendency |
-|------|----------|
-| Scar of the Phoenix | Flammeus |
-| Scar of Ichor | Animus |
-| Scar of Withering | Mortem |
-| Scar of the Glacier | Congeatio |
-| Scar of the Chimera | Ductilis |
-| Scar of the Corona | Lux |
-| Scar of the Crucible | Ferric |
-| Scar of Oblivion | Tenebris |
+| Scar | Tendency | Passive Modifier | Triggered / Tick Effect |
+|------|----------|-----------------|------------------------|
+| Scar of the Phoenix | Flammeus | Fire Resistance, +2 Attack Damage | Ignites attacker (4 s) on defend; `onWornTick` (T3) — ignite attackers |
+| Scar of Ichor | Animus | +6 Max Health | Heals 3♥ on kill; regen when HP < 50% (tick) |
+| Scar of Withering | Mortem | +3 Attack Damage | Withers struck foe on attack |
+| Scar of the Glacier | Congeatio | +15% Movement Speed | Slows struck foe (4.5 s) on attack; slows nearby mobs (tick) |
+| Scar of the Chimera | Ductilis | +15% Attack Speed, +1 Luck | Grants Haste II + Speed II + Strength I on kill |
+| Scar of the Corona | Lux | +30% KB Resist, +2 Armor Tough. | Blinds + Glowing on defend; Resistance I in bright skylight (tick) |
+| Scar of the Crucible | Ferric | +3 Armor, +2 Armor Toughness | Reflects 3 damage (thorns) on defend |
+| Scar of Oblivion | Tenebris | +15% Movement Speed | Invisibility when struck; invisibility in deep darkness (tick) |
 
-> **Scar Mechanic:** All standard scars extend `ItemScar` and share the same core mechanic: when equipped in a Scar Binder slot, they deepen the player's Blood Tendency alignment toward their assigned tendency by a fixed amount (set per scar via `deepenAmount`). This shifts which manipulations the player has strongest affinity with. Individual gameplay bonuses beyond tendency alignment are not yet implemented for standard scars.
+> **Scar Mechanics:** All standard scars extend `ItemScar`. Core effects: (1) tendency alignment deepening on equip/unequip; (2) attribute modifiers (`withModifier`); (3) passive mob effects (`withEffect`); (4) per-tendency triggered effects wired through `ScarEntityEventHandler` into `onPlayerAttack`, `onPlayerDefend`, `onPlayerKill`; (5) T3 tick effects in `applyTierThreeTickEffect`. A synergy bonus fires when 2+ scars of the same tendency are equipped simultaneously (see `ScarEntityEventHandler.checkScarSynergy`). Scar Mastery skill multiplies all triggered effect durations.
 
 Each scar has a corresponding **Scar Pattern** item used in crafting.
 
@@ -1867,7 +1867,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
 - **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
 - **Old Morphling Maturity** — The 6 original morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) lack named maturity-tier reactive abilities unlike the 6 newer morphlings.
-- **Scar Gameplay Effects** — Standard scars only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.
+- **Scar Gameplay Effects** — ~~Standard scars only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.~~ **RESOLVED:** All 26 standard scars now have individual gameplay effects beyond tendency alignment. Attribute modifiers and passive effects were already in place. New triggered effects added: LUX (blind attackers; Glowing at T2+; Resistance in daylight at T3), DUCTILIS (Haste + Speed on kill, Strength added at T3), CONGEATIO (slow struck foes on attack, tier-scaled), TENEBRIS (Invisibility when struck — darkness-conditional at T1, always at T2+), FLAMMEUS (ignite attacker expanded from T3-only to T2+ with 2 s / 4 s duration). Scar Mastery skill scales all triggered effect durations.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — All manipulations now have unique overlay textures (`textures/item/memories/memory_*_overlay.png`) for the layered memory item model system. The `HemoItemModelProvider` generates 2-layer models (base `memory_blank` + per-manipulation overlay) for all `BloodMemoryItem` instances.
 - **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipes/incubator/`.
