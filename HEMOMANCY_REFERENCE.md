@@ -1727,7 +1727,7 @@ JEI recipe category support for:
 | `SporeImplantScreen` | Fungal Implantation Pylon | Spore implantation GUI |
 | `StructureSpawnerScreen` | Structure Spawner item | Debug structure spawning |
 | Various radial menus | Living Staff / keybinds | Morphling/manipulation selection |
-| Guide/Codex screens | Liber Sanguinum | **⚠️ NON-FUNCTIONAL** — `HemoProgressionScreen.setupEntries()` is entirely commented out, `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. |
+| Guide/Codex screens | Liber Sanguinum / Liber Immaculatus | **Fully implemented.** Book data lives in `data/hemomancy/books/sanctumsanguinium/` (Harbinger/general) and `data/hemomancy/books/liberimmaculatus/` (Unstained). `BloodyBookItem`/`UnstainedBookItem` call `BookPlaceboReloadListener.INSTANCE.getBookByTitle(...)` and open via `HLGuiGuideTitlePage.openScreenViaItem(book)`. |
 
 ---
 
@@ -1861,7 +1861,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 ## 30. Known WIP / Incomplete Systems
 
 - **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by Forge convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
-- **Progression Codex / Liber Sanguinum** — `HemoProgressionScreen.setupEntries()` is entirely commented out. The `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. Needs entry definitions and page content.
+- ~~**Progression Codex / Liber Sanguinum**~~ **RESOLVED:** Both guidebooks are fully implemented and populated. `BloodyBookItem` opens `sanctumsanguinium` (Liber Sanguinum, Harbinger/general); `UnstainedBookItem` opens `liberimmaculatus` (Liber Immaculatus, Unstained). Book data is in `data/hemomancy/books/` and loaded by HutosLib's `BookPlaceboReloadListener`. **Sanctum Sanguinium** has 7 chapters (ordinalities 0–6): *The World* (intro), *The Infection*, *The Hematic Order*, *The Unstained*, *Our Lady*, *Cosmic Forces*, *Blood Tendency* — with 40+ pages covering faction lore, the fungal entity, degrees, Our Lady of Still Waters, Blood Moons, Saints, Annetta Knowles, the Qliphoth, and all 8 tendency enzymes. **Liber Immaculatus** is the Unstained counterpart.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
