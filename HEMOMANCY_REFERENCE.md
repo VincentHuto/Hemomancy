@@ -299,12 +299,33 @@ The player places the Qliphoth Seed as a catalyst item within the multiblock pat
 - Registers the bloom in `QliphothBloomSavedData` (overworld SavedData) with owner UUID, center position, dimension, and 3-chunk radius
 - Fires `FungalWhisperDialogueTrees.postBloom()`
 
-**Stage 3 — Qliphoth Pome Drops**
+**Stage 3 — Qliphoth Pome Drops (and Tree Growth)**
 `QliphothBloomEvents.onLevelTick()` runs every 40 ticks. Each tick it may attempt `trySpawnPome()` for each bloom (1-in-80 chance). Each pome is tagged:
 - `hemomancy:bloom_origin` (Long) — bloom center as `BlockPos.asLong()`
 - `hemomancy:husk_index` (Int, 0–8) — ordinal index of the nine Qliphoth husks
 
 The nine husks in order: *Nahemoth, Samael, Gamaliel, Harab Serapel, Golachab, Thagirion, A'arab Zaraq, Satariel, Ghagiel*. Each drop fires `FungalWhisperDialogueTrees.pomeDropped(huskIndex)` to the bloom owner. Pomes are invulnerable (fire/lava/void) and never despawn (`lifespan = Integer.MAX_VALUE`). A bloom produces exactly 9 pomes then ceases (`MAX_POMES_PER_BLOOM = 9` in `QliphothBloomSavedData`).
+
+After each `incrementPomesDropped()` call, `CardinalRiteEvents.syncQliphothBlooms()` is called so the client receives the updated `pomesDropped` count and can advance the tree's visual growth stage. The tree progresses through 9 visual stages tied to the pome count (see rendering below).
+
+**Tree Visual Growth Stages**
+
+The `QliphothBloomRenderer` reads `bloom.getPomesDropped()` and passes it as a `stage` integer into each draw method. Stage helpers compute per-component fractions:
+
+| Pomes Dropped (stage) | Trunk height | Root length | Branches | Sub-branches | Canopy floaters | Apex black-hole orb |
+|---|---|---|---|---|---|---|
+| 0 | 25% | 15% | — | — | — | — |
+| 1 | 40% | 36% | — | — | — | — |
+| 2 | 55% | 57% | — | — | — | — |
+| 3 | 70% | 79% | — | — | — | — |
+| 4 | 85% | 100% | — | — | — | — |
+| 5 | 100% | 100% | — | — | — | — |
+| 6 | 100% | 100% | 40% length | — | — | — |
+| 7 | 100% | 100% | 70% length | ✓ | — | — |
+| 8 | 100% | 100% | 100% | ✓ | ✓ | — |
+| 9 | 100% | 100% | 100% | ✓ | ✓ | ✓ |
+
+Implementation: `trunkHeightFrac(stage)`, `rootLengthFrac(stage)`, `branchLengthFrac(stage)` in `QliphothBloomRenderer`. The `pomesDropped` count is stored in `QliphothBloomClientData.BloomEntry` and synced via `PacketSyncQliphothBlooms`.
 
 **Pome effects when consumed (untainted):** +300 blood burst, Regeneration II (12 s), Darkness (7 s), 25% manipulation cost reduction for 3 minutes (`hemomancy:pome_empowerment_expiry` on persistent data, checked in `BloodManipulation.performAction()`). Tainted pomes (Unstained-severed variant) apply inverted effects: Weakness II + prolonged Darkness, no blood burst.
 
