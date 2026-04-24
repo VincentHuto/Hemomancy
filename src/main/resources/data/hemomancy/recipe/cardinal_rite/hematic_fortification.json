@@ -1,0 +1,34 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 500,
+  "riteType": "lesser",
+  "riteName": "Rite of Hematic Fortification",
+  "riteDescription": "A lesser rite that strengthens the caster's connection to the blood arts.",
+  "pattern": [
+    ["E   E", " V V ", "  C  ", " V V ", "E   E"],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["  P  ", " PCP ", "PCPCP", " PCP ", "  P  "],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["E   E", " V V ", "  C  ", " V V ", "E   E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:befouling_ash_trail"
+    },
+    "P": {
+      "block": "minecraft:quartz_pillar"
+    },
+    "B": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:liber_sanguinum"
+  }
+}

@@ -15,7 +15,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -137,9 +136,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		Block hitBlock = blockFromString(GsonHelper.getAsString(pJson, "hitBlock"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
 		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
-		ItemStack result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
-				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
-				.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
+		ItemStack result = RecipeResultStackParser.parseResultStack(pJson, "result");
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
@@ -197,7 +194,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		ResourceLocation id = pBuffer.readResourceLocation();
 		double cost = pBuffer.readDouble();
 		ItemStack heldItem = ItemStack.STREAM_CODEC.decode(pBuffer);
-		Block hitBlock = Block.byItem(ItemStack.STREAM_CODEC.decode(pBuffer).getItem());
+		Block hitBlock = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
 		int length = pBuffer.readInt();
 		List<String[]> patternList = new ArrayList<>();
 		for (int i = 0; i < length; i++) {
@@ -216,7 +213,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		}
 		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
-		ItemStack result = ItemStack.STREAM_CODEC.decode(pBuffer);
+		boolean hasResult = pBuffer.readBoolean();
+		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		boolean unstained = pBuffer.readBoolean();
 		return new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained);
 	}
@@ -225,7 +223,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		pBuffer.writeResourceLocation(pRecipe.getId());
 		pBuffer.writeDouble(pRecipe.getBloodCost());
 		ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getHeldItem());
-		ItemStack.STREAM_CODEC.encode(pBuffer, new ItemStack(pRecipe.getHitBlock().asItem()));
+		pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(pRecipe.getHitBlock()));
 		pBuffer.writeInt(pRecipe.getPattern().getPatternArray().length);
 		for (String[] row : pRecipe.getPattern().getPatternArray()) {
 			pBuffer.writeInt(row.length);
@@ -236,7 +234,12 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			pBuffer.writeUtf(k);
 			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v));
 		});
-		ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResult());
+		ItemStack result = pRecipe.getResult();
+		boolean hasResult = result != null && !result.isEmpty();
+		pBuffer.writeBoolean(hasResult);
+		if (hasResult) {
+			ItemStack.STREAM_CODEC.encode(pBuffer, result);
+		}
 		pBuffer.writeBoolean(pRecipe.isUnstained());
 	}
 }

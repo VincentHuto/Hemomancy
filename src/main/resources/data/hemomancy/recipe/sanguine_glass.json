@@ -1,0 +1,23 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "AGA",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "hemomancy:blood_crystal_shard"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "A": {
+      "item": "hemomancy:befouling_ash"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_glass",
+    "count": 4
+  }
+}

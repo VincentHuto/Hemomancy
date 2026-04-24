@@ -14,7 +14,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -123,9 +122,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		ItemStack result = ItemStack.EMPTY;
 		if (pJson.has("result")) {
-			result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
-					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
-					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
+			result = RecipeResultStackParser.parseResultStack(pJson, "result");
 		}
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
@@ -209,7 +206,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
-		ItemStack result = ItemStack.STREAM_CODEC.decode(pBuffer);
+		boolean hasResult = pBuffer.readBoolean();
+		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		int requiredDegree = pBuffer.readInt();
 		boolean breakBlocksOnCreation = pBuffer.readBoolean();
 		boolean unstained = pBuffer.readBoolean();
@@ -233,7 +231,12 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			pBuffer.writeUtf(k);
 			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v));
 		});
-		ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResult());
+		ItemStack result = pRecipe.getResult();
+		boolean hasResult = result != null && !result.isEmpty();
+		pBuffer.writeBoolean(hasResult);
+		if (hasResult) {
+			ItemStack.STREAM_CODEC.encode(pBuffer, result);
+		}
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 		pBuffer.writeBoolean(pRecipe.isUnstained());

@@ -1,0 +1,33 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "minor",
+  "riteName": "Rite of Lethean Baptism",
+  "riteDescription": "The first rite of the Unstained path. The supplicant kneels before cleansed stone and lethean flowers, renouncing the blood and beginning the long walk toward purification.",
+  "pattern": [
+    [
+      "SLS"
+    ],
+    [
+      "LCL"
+    ],
+    [
+      "SLS"
+    ]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "L": {
+      "block": "hemomancy:pallid_lantern"
+    },
+    "C": {
+      "block": "hemomancy:lethean_poppy"
+    }
+  },
+  "result": {
+    "id": "hemomancy:lethean_poppy_wreath"
+  },
+  "unstained": true
+}

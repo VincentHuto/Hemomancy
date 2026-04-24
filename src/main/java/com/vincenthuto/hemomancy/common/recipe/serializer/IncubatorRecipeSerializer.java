@@ -6,7 +6,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -48,17 +47,7 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 			if (!ingredient.isEmpty()) catalysts.add(ingredient);
 		}
 
-		ItemStack result;
-		if (json.get("result").isJsonObject()) {
-			result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
-					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(json, "result"))
-					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
-		} else {
-			String resultId = GsonHelper.getAsString(json, "result");
-			int count = GsonHelper.getAsInt(json, "count", 1);
-			ResourceLocation resultLoc = ResourceLocation.parse(resultId);
-			result = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(resultLoc), count);
-		}
+		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result");
 
 		return new IncubatorRecipe(recipeId, catalysts, result);
 	}
@@ -116,7 +105,8 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 			for (int i = 0; i < catalystCount; i++) {
 				catalysts.add(Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
 			}
-			ItemStack result = ItemStack.STREAM_CODEC.decode(buffer);
+			boolean hasResult = buffer.readBoolean();
+			ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(buffer) : ItemStack.EMPTY;
 			return new IncubatorRecipe(id, catalysts, result);
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error reading incubator recipe from packet.", e);
@@ -132,7 +122,12 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 			for (Ingredient catalyst : catalysts) {
 				Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, catalyst);
 			}
-			ItemStack.STREAM_CODEC.encode(buffer, recipe.getResultItemStack());
+			ItemStack result = recipe.getResultItemStack();
+			boolean hasResult = result != null && !result.isEmpty();
+			buffer.writeBoolean(hasResult);
+			if (hasResult) {
+				ItemStack.STREAM_CODEC.encode(buffer, result);
+			}
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error writing incubator recipe to packet.", e);
 			throw e;

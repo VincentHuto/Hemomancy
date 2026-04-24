@@ -1,0 +1,23 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PHP",
+    "HIH",
+    "PHP"
+  ],
+  "key": {
+    "P": {
+      "item": "hemomancy:hemolytic_plating"
+    },
+    "H": {
+      "item": "hemomancy:hemolytic_solution"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:neutralizing_gasket",
+    "count": 1
+  }
+}

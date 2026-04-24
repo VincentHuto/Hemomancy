@@ -1,0 +1,37 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 800,
+  "riteType": "lesser",
+  "riteName": "Rite of Vascular Mending",
+  "riteDescription": "A restorative rite that floods the caster's vascular system with purified blood, fully healing all seven vein sections from strain and damage.",
+  "pattern": [
+    ["E   E", " V V ", "  G  ", " V V ", "E   E"],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["  C  ", " CGC ", "CGPGC", " CGC ", "  C  "],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["E   E", " V V ", "  G  ", " V V ", "E   E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    },
+    "C": {
+      "block": "hemomancy:polished_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_formation"
+  }
+}

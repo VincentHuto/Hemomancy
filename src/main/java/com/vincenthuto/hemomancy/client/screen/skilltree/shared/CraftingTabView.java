@@ -244,6 +244,7 @@ public final class CraftingTabView {
 		float offZ = -(minZ + sizeZ / 2f);
 
 		MultiBufferSource.BufferSource buf = Minecraft.getInstance().renderBuffers().bufferSource();
+		boolean usedBlend = false;
 
 		for (BlockPosBlockPair pair : blockPairs) {
 			Block block = pair.getBlock();
@@ -259,6 +260,7 @@ public final class CraftingTabView {
 				if (dimmed) {
 					RenderSystem.enableBlend();
 					RenderSystem.defaultBlendFunc();
+					usedBlend = true;
 				}
 				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
 						block.defaultBlockState(), pose, buf,
@@ -269,6 +271,10 @@ public final class CraftingTabView {
 		}
 
 		buf.endBatch();
+		if (usedBlend) {
+			RenderSystem.defaultBlendFunc();
+			RenderSystem.disableBlend();
+		}
 		pose.popPose();
 	}
 

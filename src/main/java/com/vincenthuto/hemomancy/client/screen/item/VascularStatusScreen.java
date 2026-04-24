@@ -152,8 +152,8 @@ public class VascularStatusScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-		// Default dim overlay for the area outside the GUI
-		this.renderBackground(graphics, mouseX, mouseY, partialTick);
+		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
+		// For a dim overlay, use a fill instead if needed.
 
 		int centerX = this.width / 2;
 		int centerY = this.height / 2;

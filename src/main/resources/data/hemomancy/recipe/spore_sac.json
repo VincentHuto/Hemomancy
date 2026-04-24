@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:puffball_fungus" },
+    { "item": "hemomancy:hyphae" }
+  ],
+  "result": {
+    "id": "hemomancy:spore_sac",
+    "count": 2
+  }
+}

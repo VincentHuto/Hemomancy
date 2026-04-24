@@ -97,6 +97,10 @@ public class BloodMoonVeinSkyRenderer {
 			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
 		);
+		// Reset shared state so GUI/text rendering is never affected by this world pass.
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableBlend();
 	}
 
 	private static void drawTendril(BufferBuilder buf, Matrix4f mat,

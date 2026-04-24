@@ -1,0 +1,19 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SDS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:sanguine_formation"
+    },
+    "D": {
+      "item": "hemomancy:dicentra_sap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:charm_of_vascularium"
+  }
+}

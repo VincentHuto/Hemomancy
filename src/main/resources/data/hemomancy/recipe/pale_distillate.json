@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:lethean_dew" },
+    { "item": "hemomancy:lethean_poppy" }
+  ],
+  "result": {
+    "id": "hemomancy:pale_distillate",
+    "count": 1
+  }
+}

@@ -1,0 +1,19 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "H",
+    "H",
+    "S"
+  ],
+  "key": {
+    "H": {
+      "item": "hemomancy:chitinous_husk"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "hemomancy:barbed_blade"
+  }
+}

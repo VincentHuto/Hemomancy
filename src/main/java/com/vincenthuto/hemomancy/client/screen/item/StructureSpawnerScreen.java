@@ -210,7 +210,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-		this.renderBackground(graphics, mouseX, mouseY, partialTick);
+		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
 		super.render(graphics, mouseX, mouseY, partialTick);
 		this.renderTooltip(graphics, mouseX, mouseY);
 	}

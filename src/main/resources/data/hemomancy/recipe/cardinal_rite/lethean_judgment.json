@@ -1,0 +1,126 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "grand",
+  "riteName": "Rite of Lethean Judgment",
+  "riteDescription": "The most powerful rite of the Unstained \u2014 a holy cleansing that projects Lethe's will outward. All blood-active practitioners within range feel their veins seize and their manipulations scatter. A declaration of war against hemomancy itself.",
+  "pattern": [
+    [
+      "LSCSCSCSL",
+      "S       S",
+      "C       C",
+      "S       S",
+      "C   L   C",
+      "S       S",
+      "C       C",
+      "S       S",
+      "LSCSCSCSL"
+    ],
+    [
+      "         ",
+      " SSSSSSS ",
+      " S     S ",
+      " S     S ",
+      " S  L  S ",
+      " S     S ",
+      " S     S ",
+      " SSSSSSS ",
+      "         "
+    ],
+    [
+      "         ",
+      " S     S ",
+      "   LCSCL ",
+      "   C   C ",
+      "   S P S ",
+      "   C   C ",
+      "   LCSCL ",
+      " S     S ",
+      "         "
+    ],
+    [
+      "         ",
+      " S     S ",
+      "   C   C ",
+      "    LSL  ",
+      "    SPS  ",
+      "    LSL  ",
+      "   C   C ",
+      " S     S ",
+      "         "
+    ],
+    [
+      "         ",
+      " S  L  S ",
+      "   S P S ",
+      "    SPS  ",
+      "    PLP  ",
+      "    SPS  ",
+      "   S P S ",
+      " S  L  S ",
+      "         "
+    ],
+    [
+      "         ",
+      " S     S ",
+      "   C   C ",
+      "    LSL  ",
+      "    SPS  ",
+      "    LSL  ",
+      "   C   C ",
+      " S     S ",
+      "         "
+    ],
+    [
+      "         ",
+      " S     S ",
+      "   LCSCL ",
+      "   C   C ",
+      "   S P S ",
+      "   C   C ",
+      "   LCSCL ",
+      " S     S ",
+      "         "
+    ],
+    [
+      "         ",
+      " SSSSSSS ",
+      " S     S ",
+      " S     S ",
+      " S  L  S ",
+      " S     S ",
+      " S     S ",
+      " SSSSSSS ",
+      "         "
+    ],
+    [
+      "LSCSCSCSL",
+      "S       S",
+      "C       C",
+      "S       S",
+      "C   L   C",
+      "S       S",
+      "C       C",
+      "S       S",
+      "LSCSCSCSL"
+    ]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "L": {
+      "block": "hemomancy:pallid_lantern"
+    },
+    "C": {
+      "block": "hemomancy:suspended_cleansed_blood_crystal"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:tears_of_silthmere"
+  },
+  "unstained": true
+}

@@ -44,9 +44,9 @@ public class MixinLevelRenderer {
 	private void hemomancy$applyBloodMoonTint(Matrix4f frustumMatrix, Matrix4f projectionMatrix,
 			float partialTick, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
 		if (!BloodMoonClientState.isActive()) return;
-		Minecraft mc = Minecraft.getInstance();
-		float rainLevel = (mc.level != null) ? mc.level.getRainLevel(mc.getTimer().getGameTimeDeltaPartialTick(false)) : 0.0F;
-		float alpha = 1.0F - rainLevel;
-		RenderSystem.setShaderColor(hemomancy$bloodMoonRed, hemomancy$bloodMoonGreen, hemomancy$bloodMoonBlue, alpha);
+		// TAIL injections happen after sky draw; ensure we do not leak tint/alpha into GUI render passes.
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableBlend();
 	}
 }

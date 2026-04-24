@@ -1,0 +1,36 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 2000,
+  "riteType": "greater",
+  "riteName": "Rite of the Scarlet Summons",
+  "riteDescription": "A commanding rite that draws upon the shared bloodline pool to teleport all online bloodline members to the rite location. The cost scales with the number of members summoned.",
+  "pattern": [
+    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"],
+    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
+    ["       ", " C   C ", "   EGE ", "   G G ", "   EGE ", "       ", " C   C "],
+    ["       ", " C G C ", "   G G ", "   GPG ", "  GCGCG", "   GGG ", " C G C "],
+    ["       ", " C   C ", "   EGE ", "   G G ", "   EGE ", "       ", " C   C "],
+    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
+    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"]
+  ],
+  "key": {
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "C": {
+      "block": "hemomancy:chiseled_polished_venous_stone"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_formation"
+  }
+}

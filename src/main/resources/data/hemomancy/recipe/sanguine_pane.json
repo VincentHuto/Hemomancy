@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "hemomancy:sanguine_glass"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_pane",
+    "count": 16
+  }
+}

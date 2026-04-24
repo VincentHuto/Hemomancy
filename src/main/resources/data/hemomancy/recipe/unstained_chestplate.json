@@ -1,0 +1,19 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "C C",
+    "PCP",
+    "CPC"
+  ],
+  "key": {
+    "C": {
+      "item": "hemomancy:consecrated_copper_ingot"
+    },
+    "P": {
+      "item": "hemomancy:hemolytic_plating"
+    }
+  },
+  "result": {
+    "id": "hemomancy:unstained_chestplate"
+  }
+}

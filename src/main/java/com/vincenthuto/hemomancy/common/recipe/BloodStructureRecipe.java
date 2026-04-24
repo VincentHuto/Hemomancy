@@ -24,12 +24,48 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public static List<BloodStructureRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get())
-				.stream().map(RecipeHolder::value).collect(Collectors.toList());
+				.stream().map(holder -> {
+					BloodStructureRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).collect(Collectors.toList());
 	}
 
 	public static BloodStructureRecipe getStructureByLocation(Level world, ResourceLocation loc) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
-				.filter(h -> h.id().equals(loc)).map(RecipeHolder::value).findFirst().orElse(null);
+		BloodStructureRecipe direct = world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
+				.filter(h -> h.id().equals(loc)).findFirst().map(holder -> {
+					BloodStructureRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).orElse(null);
+		if (direct != null) {
+			return direct;
+		}
+
+		String path = loc.getPath();
+		ResourceLocation prefixed = path.startsWith("blood_structure/")
+				? loc
+				: ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), "blood_structure/" + path);
+		BloodStructureRecipe withPrefix = world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
+				.filter(h -> h.id().equals(prefixed)).findFirst().map(holder -> {
+					BloodStructureRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).orElse(null);
+		if (withPrefix != null) {
+			return withPrefix;
+		}
+
+		if (path.startsWith("blood_structure/")) {
+			ResourceLocation stripped = ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), path.substring("blood_structure/".length()));
+			return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
+					.filter(h -> h.id().equals(stripped)).findFirst().map(holder -> {
+						BloodStructureRecipe recipe = holder.value();
+						recipe.setId(holder.id());
+						return recipe;
+					}).orElse(null);
+		}
+		return null;
 	}
 
 	private ResourceLocation id;
@@ -61,6 +97,10 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	public ResourceLocation getId() { return id; }
+
+	public void setId(ResourceLocation id) {
+		this.id = id;
+	}
 
 	@Override
 	public ItemStack assemble(CraftingInput p_44001_, HolderLookup.Provider p_267165_) {

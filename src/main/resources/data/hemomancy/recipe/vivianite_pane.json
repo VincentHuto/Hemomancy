@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "hemomancy:vivianite_glass"
+    }
+  },
+  "result": {
+    "id": "hemomancy:vivianite_pane",
+    "count": 16
+  }
+}

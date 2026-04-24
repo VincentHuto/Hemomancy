@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -206,7 +207,10 @@ public class HarbingerProgressScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-            renderBackground(gfx, mouseX, mouseY, partial);
+            // Do NOT call renderBackground() — it applies blur. This is not a pause screen.
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableBlend();
         veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight);
         ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, 0xFF330808, 0xFF220606);
 
@@ -254,6 +258,9 @@ public class HarbingerProgressScreen extends Screen {
             }
         }
 
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableBlend();
         super.render(gfx, mouseX, mouseY, partial);
     }
 

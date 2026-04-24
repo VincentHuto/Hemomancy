@@ -1,0 +1,18 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:desiccated_membrane"
+    },
+    {
+      "item": "hemomancy:desiccated_membrane"
+    },
+    {
+      "item": "hemomancy:foul_paste"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:sanguine_formation",
+    "count": 3
+  }
+}

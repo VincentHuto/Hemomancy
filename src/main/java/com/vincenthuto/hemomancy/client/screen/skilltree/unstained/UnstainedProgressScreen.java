@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -383,7 +384,10 @@ public class UnstainedProgressScreen extends Screen {
 
 	@Override
 	public void render(@Nonnull GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		renderBackground(gfx, mouseX, mouseY, partial);
+		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableBlend();
 
 		cachePlayerData();
 		buildContentBounds();
@@ -471,6 +475,9 @@ public class UnstainedProgressScreen extends Screen {
 			materialsTab.renderTooltip(gfx, makeContext(), mouseX, mouseY);
 		}
 
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableBlend();
 		super.render(gfx, mouseX, mouseY, partial);
 	}
 

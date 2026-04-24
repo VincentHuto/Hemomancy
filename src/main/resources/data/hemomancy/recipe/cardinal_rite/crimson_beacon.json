@@ -1,0 +1,37 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 600,
+  "riteType": "lesser",
+  "riteName": "Rite of the Crimson Beacon",
+  "riteDescription": "A binding rite that anchors the caster's dying essence to this location. Upon taking a fatal blow, the caster's body will be returned here before death claims them.",
+  "pattern": [
+    ["E   E", " V V ", "  C  ", " V V ", "E   E"],
+    ["     ", " E E ", " EGE ", " E E ", "     "],
+    ["  B  ", " BVB ", "BVPVB", " BVB ", "  B  "],
+    ["     ", " E E ", " EGE ", " E E ", "     "],
+    ["E   E", " V V ", "  C  ", " V V ", "E   E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_formation"
+  }
+}

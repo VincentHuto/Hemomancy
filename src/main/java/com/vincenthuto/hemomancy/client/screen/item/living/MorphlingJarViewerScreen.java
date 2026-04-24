@@ -291,7 +291,7 @@ public class MorphlingJarViewerScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics g, int mx, int my, float partialTicks) {
-		renderBackground(g, mx, my, partialTicks);
+		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
 
 		if (jarHandler == null || speedX == null) return;
 

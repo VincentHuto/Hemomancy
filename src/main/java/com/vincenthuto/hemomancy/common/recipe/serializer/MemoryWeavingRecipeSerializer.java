@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -18,12 +17,12 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -57,16 +56,13 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			}
 		}
 
-		ItemStack result;
-		if (pJson.get("result").isJsonObject())
-			result = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
-					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
-					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
-		else {
-			int c = GsonHelper.getAsInt(pJson, "count");
-			String s1 = GsonHelper.getAsString(pJson, "result");
-			ResourceLocation resourcelocation = ResourceLocation.parse(s1);
-			result = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation), c);
+		ItemStack result = RecipeResultStackParser.parseResultStack(pJson, "result");
+
+		// Validate result is not empty
+		if (result.isEmpty()) {
+			Hemomancy.LOGGER.warn("Memory weaving recipe {} has an empty result item. This recipe will be skipped.", pRecipeId);
+			// Use a non-empty fallback so network sync cannot crash.
+			result = new ItemStack(Items.BARRIER);
 		}
 
 		if (pJson.has("ingredient")) {
@@ -134,7 +130,10 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 	private static MemoryWeavingRecipe fromNetwork(RegistryFriendlyByteBuf pBuffer) {
 		try {
 			ResourceLocation id = pBuffer.readResourceLocation();
-			Ingredient input = Ingredient.of(ItemStack.STREAM_CODEC.decode(pBuffer));
+			boolean hasIngredient = pBuffer.readBoolean();
+			Ingredient input = hasIngredient
+					? Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer)
+					: Ingredient.EMPTY;
 			Map<EnumBloodTendency, Float> tends = new HashMap<>();
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tends.put(tend, pBuffer.readBoolean() ? 1f : 0f);
@@ -150,15 +149,24 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, MemoryWeavingRecipe pRecipe) {
 		try {
 			pBuffer.writeResourceLocation(pRecipe.getId());
-			if (pRecipe.getIngredients().get(0).getItems().length > 0) {
-				ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getIngredients().get(0).getItems()[0]);
-			} else {
-				ItemStack.STREAM_CODEC.encode(pBuffer, ItemStack.EMPTY);
+			Ingredient ingredient = pRecipe.getIngredient();
+			boolean hasIngredient = ingredient != null && !ingredient.isEmpty();
+			pBuffer.writeBoolean(hasIngredient);
+			if (hasIngredient) {
+				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, ingredient);
 			}
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				pBuffer.writeBoolean(pRecipe.getTendency().getOrDefault(tend, 0f) > 0f);
 			}
-			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResultItem(null));
+			// Validate result is not empty before encoding
+			ItemStack result = pRecipe.getResultItem(null);
+			if (result.isEmpty()) {
+				Hemomancy.LOGGER.warn("Memory weaving recipe {} has an empty result item. Skipping network sync.", pRecipe.getId());
+				// Write a non-empty sentinel stack to maintain protocol alignment.
+				ItemStack.STREAM_CODEC.encode(pBuffer, new ItemStack(Items.BARRIER));
+			} else {
+				ItemStack.STREAM_CODEC.encode(pBuffer, result);
+			}
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error writing memory weaving recipe to packet.", e);
 			throw e;

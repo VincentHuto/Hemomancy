@@ -1,0 +1,10 @@
+﻿{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "hemomancy:serpent_scale" },
+    { "item": "minecraft:rotten_flesh" }
+  ],
+  "result": {
+    "id": "hemomancy:morphling_serpent"
+  }
+}

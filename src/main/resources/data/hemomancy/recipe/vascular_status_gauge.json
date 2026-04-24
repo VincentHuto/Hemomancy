@@ -1,0 +1,19 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "RSR",
+    " R "
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:sanguine_formation"
+    },
+    "R": {
+      "item": "hemomancy:dicentra_sap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:vascular_status_gauge"
+  }
+}

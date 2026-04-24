@@ -1,0 +1,18 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:nerve_bundle"
+    },
+    {
+      "item": "hemomancy:nerve_bundle"
+    },
+    {
+      "item": "hemomancy:puppeteering_thread"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:sanguine_conduit",
+    "count": 2
+  }
+}

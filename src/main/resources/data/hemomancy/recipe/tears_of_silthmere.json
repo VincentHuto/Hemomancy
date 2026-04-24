@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:pale_distillate" },
+    { "item": "hemomancy:silver_chalice" }
+  ],
+  "result": {
+    "id": "hemomancy:tears_of_silthmere",
+    "count": 1
+  }
+}

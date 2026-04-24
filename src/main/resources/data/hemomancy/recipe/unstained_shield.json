@@ -1,0 +1,19 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PHP",
+    "PPP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "hemomancy:pale_silver_ingot"
+    },
+    "H": {
+      "item": "hemomancy:hemolytic_plating"
+    }
+  },
+  "result": {
+    "id": "hemomancy:unstained_shield"
+  }
+}

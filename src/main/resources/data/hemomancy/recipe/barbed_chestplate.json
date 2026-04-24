@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "H H",
+    "HHH",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "item": "hemomancy:chitinous_husk"
+    }
+  },
+  "result": {
+    "id": "hemomancy:barbed_chestplate"
+  }
+}

@@ -48,6 +48,10 @@ public class ScarRecipe extends CustomRecipe {
 
 	public ResourceLocation getId() { return id; }
 
+	public void setId(ResourceLocation id) {
+		this.id = id;
+	}
+
 	private void initializePattern() {
 		if (this.pattern.length == 0) {
 			Hemomancy.LOGGER.error("Chisel pattern {0} has a length of 0 - this won't work right!",
@@ -129,7 +133,11 @@ public class ScarRecipe extends CustomRecipe {
 
 	public static List<ScarRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get())
-				.stream().map(RecipeHolder::value).collect(Collectors.toList());
+				.stream().map(holder -> {
+					ScarRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).collect(Collectors.toList());
 	}
 
 	public ScarType getScarType() {

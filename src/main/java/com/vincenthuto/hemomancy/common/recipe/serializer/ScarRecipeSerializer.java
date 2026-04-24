@@ -13,12 +13,12 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -81,16 +81,11 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			}
 		}
 
-		ItemStack itemstack;
-		if (pJson.get("result").isJsonObject())
-			itemstack = Codec.withAlternative(ItemStack.STRICT_CODEC, ItemStack.CODEC)
-					.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "result"))
-					.getOrThrow(err -> new JsonSyntaxException("Invalid result item: " + err));
-		else {
-			int c = GsonHelper.getAsInt(pJson, "count");
-			String s1 = GsonHelper.getAsString(pJson, "result");
-			ResourceLocation resourcelocation = ResourceLocation.parse(s1);
-			itemstack = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation), c);
+		ItemStack itemstack = RecipeResultStackParser.parseResultStack(pJson, "result");
+
+		if (itemstack.isEmpty()) {
+			Hemomancy.LOGGER.warn("Scar recipe {} has an empty result item. Using BARRIER fallback for sync safety.", id);
+			itemstack = new ItemStack(Items.BARRIER);
 		}
 
 		return new ScarRecipe(id, tier, scarType, ingredient1, ingredient2, pattern, itemstack);
@@ -163,8 +158,10 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	private static ScarRecipe fromNetwork(RegistryFriendlyByteBuf pBuffer) {
 		try {
 			ResourceLocation id = pBuffer.readResourceLocation();
-			Ingredient input1 = Ingredient.of(ItemStack.STREAM_CODEC.decode(pBuffer));
-			Ingredient input2 = Ingredient.of(ItemStack.STREAM_CODEC.decode(pBuffer));
+			boolean hasInput1 = pBuffer.readBoolean();
+			Ingredient input1 = hasInput1 ? Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer) : Ingredient.EMPTY;
+			boolean hasInput2 = pBuffer.readBoolean();
+			Ingredient input2 = hasInput2 ? Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer) : Ingredient.EMPTY;
 			int tier = pBuffer.readInt();
 			ScarType scarType = ScarType.fromString(pBuffer.readUtf());
 			int len = pBuffer.readInt();
@@ -172,7 +169,8 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			for (int i = 0; i < len; ++i) {
 				pattern[i] = pBuffer.readByteArray();
 			}
-			ItemStack result = ItemStack.STREAM_CODEC.decode(pBuffer);
+			boolean hasResult = pBuffer.readBoolean();
+			ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : new ItemStack(Items.BARRIER);
 			ScarRecipe recipe = new ScarRecipe(id, tier, scarType, input1, input2, pattern, result);
 			recipe.setPatternBytes(pattern);
 			ALL_RECIPES.put(id, recipe);
@@ -186,10 +184,18 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, ScarRecipe pRecipe) {
 		try {
 			pBuffer.writeResourceLocation(pRecipe.getId());
-			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getIngredient1().getItems().length > 0
-					? pRecipe.getIngredient1().getItems()[0] : ItemStack.EMPTY);
-			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getIngredient2().getItems().length > 0
-					? pRecipe.getIngredient2().getItems()[0] : ItemStack.EMPTY);
+			Ingredient ingredient1 = pRecipe.getIngredient1();
+			boolean hasInput1 = ingredient1 != null && !ingredient1.isEmpty();
+			pBuffer.writeBoolean(hasInput1);
+			if (hasInput1) {
+				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, ingredient1);
+			}
+			Ingredient ingredient2 = pRecipe.getIngredient2();
+			boolean hasInput2 = ingredient2 != null && !ingredient2.isEmpty();
+			pBuffer.writeBoolean(hasInput2);
+			if (hasInput2) {
+				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, ingredient2);
+			}
 			pBuffer.writeInt(pRecipe.getTier());
 			pBuffer.writeUtf(pRecipe.getScarType().toString());
 			byte[][] pattern = pRecipe.getPattern();
@@ -197,7 +203,13 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			for (int i = 0; i < pattern.length; ++i) {
 				pBuffer.writeByteArray(pattern[i]);
 			}
-			ItemStack.STREAM_CODEC.encode(pBuffer, pRecipe.getResultItem());
+			ItemStack result = pRecipe.getResultItem();
+			if (result == null || result.isEmpty()) {
+				Hemomancy.LOGGER.warn("Scar recipe {} has empty result during packet sync. Using BARRIER fallback.", pRecipe.getId());
+				result = new ItemStack(Items.BARRIER);
+			}
+			pBuffer.writeBoolean(true);
+			ItemStack.STREAM_CODEC.encode(pBuffer, result);
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error writing scar recipe to packet.", (Throwable) e);
 			throw e;

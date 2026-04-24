@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -208,8 +209,7 @@ public class DialogueScreen extends Screen {
 	@Override
 	public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
 		// Do NOT call renderBackground — we want the world visible behind the panel.
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.defaultBlendFunc();
+		resetGuiRenderState();
 
 		int panelX = PANEL_MARGIN;
 		int panelY = PANEL_MARGIN;
@@ -228,59 +228,72 @@ public class DialogueScreen extends Screen {
 		int y = panelY + 10;
 
 		gfx.enableScissor(panelX, panelY, panelX + panelW, panelY + panelH);
+		try {
+			// ── Speaker portrait ──
+			int portraitX = contentX;
+			int portraitY = y;
+			renderPortrait(gfx, portraitX, portraitY);
 
-		// ── Speaker portrait ──
-		int portraitX = contentX;
-		int portraitY = y;
-		renderPortrait(gfx, portraitX, portraitY);
+			// Reassert vanilla GUI pipeline before any font draws.
+			resetGuiRenderState();
 
-		int nameX = portraitX + PORTRAIT_SIZE + 8;
-		Component speakerName = Component.translatable(tree.speakerName());
-		gfx.drawString(font, speakerName, nameX, portraitY + 4, palette.speakerColor, true);
+			int nameX = portraitX + PORTRAIT_SIZE + 8;
+			Component speakerName = Component.translatable(tree.speakerName());
+			gfx.drawString(font, speakerName, nameX, portraitY + 4, palette.speakerColor, true);
 
-		// Thin separator
-		int sepY = portraitY + PORTRAIT_SIZE + 6;
-		gfx.fill(contentX, sepY, contentX + contentW, sepY + 1, palette.separatorColor);
-		y = sepY + 8;
+			// Thin separator
+			int sepY = portraitY + PORTRAIT_SIZE + 6;
+			gfx.fill(contentX, sepY, contentX + contentW, sepY + 1, palette.separatorColor);
+			y = sepY + 8;
 
-		// ── Dialogue lines ──
-		if (currentNode != null) {
-			for (String lineKey : currentNode.lines()) {
-				Component line = Component.translatable(lineKey);
-				List<net.minecraft.util.FormattedCharSequence> wrapped = font.split(line, contentW);
-				for (var seq : wrapped) {
-					gfx.drawString(font, seq, contentX, y, palette.lineColor, false);
-					y += LINE_SPACING;
+			// ── Dialogue lines ──
+			if (currentNode != null) {
+				for (String lineKey : currentNode.lines()) {
+					Component line = Component.translatable(lineKey);
+					List<net.minecraft.util.FormattedCharSequence> wrapped = font.split(line, contentW);
+					for (var seq : wrapped) {
+						gfx.drawString(font, seq, contentX, y, palette.lineColor, false);
+						y += LINE_SPACING;
+					}
+					y += 4;
 				}
-				y += 4;
-			}
 
-			y += 8;
-			optionRects.clear();
-			int optX = contentX + OPTION_LEFT_PAD;
-			int optW = contentW - OPTION_LEFT_PAD;
-			for (int i = 0; i < currentNode.options().size(); i++) {
-				DialogueOption opt = currentNode.options().get(i);
-				Component optText = Component.literal("> ").append(Component.translatable(opt.text()));
-				List<net.minecraft.util.FormattedCharSequence> wrapped = font.split(optText, optW);
+				y += 8;
+				optionRects.clear();
+				int optX = contentX + OPTION_LEFT_PAD;
+				int optW = contentW - OPTION_LEFT_PAD;
+				for (int i = 0; i < currentNode.options().size(); i++) {
+					DialogueOption opt = currentNode.options().get(i);
+					Component optText = Component.literal("> ").append(Component.translatable(opt.text()));
+					List<net.minecraft.util.FormattedCharSequence> wrapped = font.split(optText, optW);
 
-				int optTop = y;
-				boolean hovered = mouseX >= optX && mouseX <= optX + optW
-						&& mouseY >= optTop && mouseY < optTop + wrapped.size() * LINE_SPACING;
-				int col = hovered ? palette.optionHoverColor : palette.optionColor;
+					int optTop = y;
+					boolean hovered = mouseX >= optX && mouseX <= optX + optW
+							&& mouseY >= optTop && mouseY < optTop + wrapped.size() * LINE_SPACING;
+					int col = hovered ? palette.optionHoverColor : palette.optionColor;
 
-				for (var seq : wrapped) {
-					gfx.drawString(font, seq, optX, y, col, false);
-					y += LINE_SPACING;
+					for (var seq : wrapped) {
+						gfx.drawString(font, seq, optX, y, col, false);
+						y += LINE_SPACING;
+					}
+					optionRects.add(new OptionRect(optX, optTop, optX + optW, y, i));
+					y += OPTION_SPACING - LINE_SPACING;
 				}
-				optionRects.add(new OptionRect(optX, optTop, optX + optW, y, i));
-				y += OPTION_SPACING - LINE_SPACING;
 			}
+		} finally {
+			gfx.disableScissor();
 		}
 
-		gfx.disableScissor();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		resetGuiRenderState();
 		super.render(gfx, mouseX, mouseY, partialTick);
+	}
+
+	private void resetGuiRenderState() {
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.disableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
 	}
 
 	// ──────────────────────────────────────────────
@@ -335,13 +348,13 @@ public class DialogueScreen extends Screen {
 		gfx.fill(x - 1, y - 1, x + PORTRAIT_SIZE + 1, y + PORTRAIT_SIZE + 1, palette.borderOuter);
 		gfx.fill(x, y, x + PORTRAIT_SIZE, y + PORTRAIT_SIZE, palette.portraitBacking);
 
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, icon);
 		gfx.blit(icon, x, y, PORTRAIT_SIZE, PORTRAIT_SIZE,
 				(float) TEXTURE_HEAD_U, (float) TEXTURE_HEAD_V,
 				TEXTURE_HEAD_SIZE, TEXTURE_HEAD_SIZE,
 				TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		portraitTexture.restoreLastBlurMipmap();
-		RenderSystem.disableBlend();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 

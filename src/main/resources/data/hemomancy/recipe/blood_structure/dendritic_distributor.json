@@ -1,0 +1,22 @@
+﻿{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 75,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:infested_venous_stone",
+  "pattern": [
+    [" V "],
+    ["VIV"],
+    [" V "]
+  ],
+  "key": {
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "I": {
+      "block": "hemomancy:infested_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:dendritic_distributor"
+  }
+}

@@ -1,0 +1,22 @@
+﻿{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 150,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+    ["TGT", "   "],
+    ["GTG", " T "],
+    ["TGT", "   "]
+  ],
+  "key": {
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "G": {
+      "block": "hemomancy:sanguine_glass"
+    }
+  },
+  "result": {
+    "id": "hemomancy:vial_centrifuge"
+  }
+}

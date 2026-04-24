@@ -23,12 +23,48 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public static List<CardinalRiteRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get())
-				.stream().map(RecipeHolder::value).collect(Collectors.toList());
+				.stream().map(holder -> {
+					CardinalRiteRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).collect(Collectors.toList());
 	}
 
 	public static CardinalRiteRecipe getRiteByLocation(Level world, ResourceLocation loc) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
-				.filter(h -> h.id().equals(loc)).map(RecipeHolder::value).findFirst().orElse(null);
+		CardinalRiteRecipe direct = world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
+				.filter(h -> h.id().equals(loc)).findFirst().map(holder -> {
+					CardinalRiteRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).orElse(null);
+		if (direct != null) {
+			return direct;
+		}
+
+		String path = loc.getPath();
+		ResourceLocation prefixed = path.startsWith("cardinal_rite/")
+				? loc
+				: ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), "cardinal_rite/" + path);
+		CardinalRiteRecipe withPrefix = world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
+				.filter(h -> h.id().equals(prefixed)).findFirst().map(holder -> {
+					CardinalRiteRecipe recipe = holder.value();
+					recipe.setId(holder.id());
+					return recipe;
+				}).orElse(null);
+		if (withPrefix != null) {
+			return withPrefix;
+		}
+
+		if (path.startsWith("cardinal_rite/")) {
+			ResourceLocation stripped = ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), path.substring("cardinal_rite/".length()));
+			return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
+					.filter(h -> h.id().equals(stripped)).findFirst().map(holder -> {
+						CardinalRiteRecipe recipe = holder.value();
+						recipe.setId(holder.id());
+						return recipe;
+					}).orElse(null);
+		}
+		return null;
 	}
 
 	private ResourceLocation id;
@@ -76,6 +112,10 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	}
 
 	public ResourceLocation getId() { return id; }
+
+	public void setId(ResourceLocation id) {
+		this.id = id;
+	}
 
 	@Override
 	public ItemStack assemble(CraftingInput p_44001_, HolderLookup.Provider p_267165_) {

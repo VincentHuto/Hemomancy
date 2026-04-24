@@ -1,0 +1,37 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 500,
+  "riteType": "lesser",
+  "riteName": "Rite of the Scarlet Sanctum",
+  "riteDescription": "The third rite of the Hematic Order, granting formal entry into the Scarlet Sanctum.",
+  "pattern": [
+    ["E C E", " V V ", "  P  ", " V V ", "E C E"],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["  G  ", " GCG ", "GCGCG", " GCG ", "  G  "],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["E C E", " V V ", "  P  ", " V V ", "E C E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_quintessence"
+  }
+}

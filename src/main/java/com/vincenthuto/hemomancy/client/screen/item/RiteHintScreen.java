@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import java.util.List;
 import java.util.Map;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
@@ -97,7 +98,10 @@ public class RiteHintScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		this.renderBackground(gfx, mouseX, mouseY, partial);
+		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableBlend();
 
 		// Slowly rotate when not dragging
 		if (!dragging) {
@@ -142,6 +146,9 @@ public class RiteHintScreen extends Screen {
 
 		gfx.pose().popPose();
 
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableBlend();
 		super.render(gfx, mouseX, mouseY, partial);
 	}
 

@@ -46,7 +46,8 @@ Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 boolean hasCatalyst = buffer.readBoolean();
 Ingredient catalyst = hasCatalyst ? Ingredient.CONTENTS_STREAM_CODEC.decode(buffer) : Ingredient.EMPTY;
 boolean pallid = buffer.readBoolean();
-ItemStack result = ItemStack.STREAM_CODEC.decode(buffer);
+boolean hasResult = buffer.readBoolean();
+ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(buffer) : ItemStack.EMPTY;
 float xp = buffer.readFloat();
 int time = buffer.readInt();
 return new DistillationRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
@@ -60,7 +61,12 @@ boolean hasCatalyst = recipe.requiresCatalyst();
 buffer.writeBoolean(hasCatalyst);
 if (hasCatalyst) Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getCatalyst());
 buffer.writeBoolean(recipe.isPallid());
-ItemStack.STREAM_CODEC.encode(buffer, recipe.getResultItemRaw());
+ItemStack result = recipe.getResultItemRaw();
+boolean hasResult = result != null && !result.isEmpty();
+buffer.writeBoolean(hasResult);
+if (hasResult) {
+ItemStack.STREAM_CODEC.encode(buffer, result);
+}
 buffer.writeFloat(recipe.getExperience());
 buffer.writeInt(recipe.getCookingTime());
 }

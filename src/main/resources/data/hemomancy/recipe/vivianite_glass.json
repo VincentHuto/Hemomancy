@@ -1,0 +1,20 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " V ",
+    "VGV",
+    " V "
+  ],
+  "key": {
+    "V": {
+      "item": "hemomancy:vivianite_cluster"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    }
+  },
+  "result": {
+    "id": "hemomancy:vivianite_glass",
+    "count": 4
+  }
+}

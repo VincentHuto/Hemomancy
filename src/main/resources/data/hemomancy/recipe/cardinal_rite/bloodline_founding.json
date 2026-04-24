@@ -1,0 +1,37 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 500,
+  "riteType": "lesser",
+  "riteName": "Rite of Bloodline Founding",
+  "riteDescription": "A lesser rite that binds the caster's essence into a new bloodline, producing a presigned ancestral ledger that others may use to join.",
+  "pattern": [
+    ["E   E", " V V ", "  C  ", " V V ", "E   E"],
+    ["     ", " E E ", " ELE ", " E E ", "     "],
+    ["  B  ", " BCB ", "BCPCB", " BCB ", "  B  "],
+    ["     ", " E E ", " ELE ", " E E ", "     "],
+    ["E   E", " V V ", "  C  ", " V V ", "E   E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    },
+    "L": {
+      "block": "hemomancy:gilded_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:unsigned_ancestral_ledger"
+  }
+}

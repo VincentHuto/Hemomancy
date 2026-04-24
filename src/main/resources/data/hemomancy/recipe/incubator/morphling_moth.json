@@ -1,0 +1,11 @@
+﻿{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "minecraft:glowstone_dust" },
+    { "item": "minecraft:feather" },
+    { "item": "minecraft:rotten_flesh" }
+  ],
+  "result": {
+    "id": "hemomancy:morphling_moth"
+  }
+}

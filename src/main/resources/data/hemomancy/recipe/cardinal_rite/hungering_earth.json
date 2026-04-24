@@ -1,0 +1,34 @@
+﻿{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 750,
+  "riteType": "lesser",
+  "riteName": "Rite of the Hungering Earth",
+  "riteDescription": "A corruption rite that feeds the caster's blood into the earth, converting the surrounding terrain into blood-touched stone and befouling ash.",
+  "pattern": [
+    ["V   V", " E E ", "  C  ", " E E ", "V   V"],
+    ["     ", " V V ", " VBV ", " V V ", "     "],
+    ["  E  ", " ECE ", "ECPCE", " ECE ", "  E  "],
+    ["     ", " V V ", " VBV ", " V V ", "     "],
+    ["V   V", " E E ", "  C  ", " E E ", "V   V"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:befouling_ash_trail"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:polished_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_formation"
+  }
+}

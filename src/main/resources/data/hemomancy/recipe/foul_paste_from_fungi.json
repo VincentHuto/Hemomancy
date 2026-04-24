@@ -1,0 +1,12 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:infected_fungus" },
+    { "item": "hemomancy:stinkhorn_fungus" },
+    { "item": "minecraft:bone_meal" }
+  ],
+  "result": {
+    "id": "hemomancy:foul_paste",
+    "count": 3
+  }
+}

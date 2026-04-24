@@ -1,0 +1,12 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:hematic_iron_block"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:hematic_iron_scrap",
+    "count": 4
+  }
+}
