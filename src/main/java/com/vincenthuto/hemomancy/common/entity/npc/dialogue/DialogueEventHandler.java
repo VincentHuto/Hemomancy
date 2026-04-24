@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.block.functional.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodStructureHintItem;
+import com.vincenthuto.hemomancy.common.item.RiteHintItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
