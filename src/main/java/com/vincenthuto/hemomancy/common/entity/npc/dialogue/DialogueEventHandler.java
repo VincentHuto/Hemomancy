@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedD
 import com.vincenthuto.hemomancy.common.block.functional.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -15,6 +16,7 @@ import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -146,6 +148,9 @@ public class DialogueEventHandler {
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 						false);
 			}
+			case "give_blood_structure_hint" -> {
+				handleGiveBloodStructureHint(player, event.getEntityId());
+			}
 			case "whisper_dismiss" -> {
 				// Player dismissed the whisper — no gameplay effect, just acknowledged
 			}
@@ -160,6 +165,36 @@ public class DialogueEventHandler {
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
+	}
+
+	/**
+	 * Gives the player an ancient scrap of parchment — a {@link BloodStructureHintItem}
+	 * pre-configured for the Sanguine Monolith blood structure. The item is dropped
+	 * at the NPC entity's position so the player can pick it up naturally.
+	 * If the NPC entity cannot be found, the item is given directly to the player's
+	 * inventory instead.
+	 */
+	private static void handleGiveBloodStructureHint(ServerPlayer player, int entityId) {
+		ItemStack hint = BloodStructureHintItem.createForStructure(
+				ItemInit.blood_structure_hint.get(),
+				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith"));
+
+		Entity entity = player.level().getEntity(entityId);
+		if (entity != null) {
+			Vec3 pos = entity.position();
+			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, hint);
+			entity.level().addFreshEntity(drop);
+		} else {
+			// Fallback: give directly to inventory, drop if full
+			if (!player.getInventory().add(hint)) {
+				player.drop(hint, false);
+			}
+		}
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vicar_gives_scrap")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
 	}
 
 	/**

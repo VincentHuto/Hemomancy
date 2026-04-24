@@ -192,13 +192,14 @@ public final class HarbingerVicarDialogueTrees {
 
 	/**
 	 * Degree 5 — Illuminatus. The vicar reveals the legend of the Crimson Lodge and
-	 * hints at raising the Sanguine Monolith. The Monolith takes over guidance from
-	 * here; the Vicar knows nothing of what lies beyond it.
+	 * shares vague rumors of an ancient rite harbingers of old used to ascend further.
+	 * They hand the player an old parchment fragment ({@code BloodStructureHintItem}).
+	 * The Vicar knows nothing of the specifics — only that the knowledge was lost.
 	 */
 	public static DialogueTree illuminatus(int entityId, boolean hasBloodline) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null));
 		if (hasBloodline) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
@@ -213,8 +214,15 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("monolith_hint", List.of(
-						"hemomancy.vicar.illuminatus.monolith_hint"
+				.addNode(new DialogueNode("monolith_rumor", List.of(
+						"hemomancy.vicar.illuminatus.monolith_rumor.line1",
+						"hemomancy.vicar.illuminatus.monolith_rumor.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.take_the_scrap", "scrap_given", "give_blood_structure_hint"),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("scrap_given", List.of(
+						"hemomancy.vicar.illuminatus.scrap_given"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
