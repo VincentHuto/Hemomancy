@@ -14,7 +14,7 @@
       "block": "hemomancy:engram_block"
     },
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:dead_bush"
     },
     "G": {
       "block": "hemomancy:gilded_venous_stone"

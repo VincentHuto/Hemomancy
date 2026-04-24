@@ -10,13 +10,13 @@
   ],
   "key": {
     "P": {
-      "block": "hemomancy:hematic_iron_pillar"
+      "block": "minecraft:iron_bars"
     },
     "T": {
       "block": "hemomancy:hematic_iron_block"
     },
     "I": {
-      "block": "hemomancy:infested_venous_stone"
+      "block": "minecraft:bookshelf"
     }
   },
   "result": {

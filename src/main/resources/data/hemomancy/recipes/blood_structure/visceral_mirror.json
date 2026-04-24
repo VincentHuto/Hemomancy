@@ -13,10 +13,10 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "P": {
-      "block": "hemomancy:hematic_iron_pillar"
+      "block": "minecraft:deepslate_bricks"
     },
     "G": {
-      "block": "hemomancy:sanguine_glass"
+      "block": "minecraft:tinted_glass"
     }
   },
   "result": {

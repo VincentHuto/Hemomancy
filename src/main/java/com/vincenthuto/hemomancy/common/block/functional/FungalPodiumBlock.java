@@ -6,8 +6,12 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalPodiumBlockEntity;
+import net.minecraftforge.network.PacketDistributor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -71,6 +75,17 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 	public static final String RETURN_YROT = "hemomancy:fungal_return_yrot";
 	/** NBT key — stored overworld return xRot. */
 	public static final String RETURN_XROT = "hemomancy:fungal_return_xrot";
+
+	/**
+	 * NBT key — the Archon-tier choice made at the Entity's core.
+	 * Value is either {@link #ARCHON_CHOICE_SILENCE} or {@link #ARCHON_CHOICE_APOTHEOS}.
+	 * Absent until the player resolves the fork at degree 7.
+	 */
+	public static final String ARCHON_CHOICE_KEY = "hemomancy:archon_choice_made";
+	/** Choice value: carry the truth in silence, walk away from the Eighth Degree. */
+	public static final String ARCHON_CHOICE_SILENCE = "silent";
+	/** Choice value: pursue the Eighth Degree — the Apotheos path is now open. */
+	public static final String ARCHON_CHOICE_APOTHEOS = "apotheos";
 
 	public static final ResourceKey<Level> FUNGAL_GARDENS = ResourceKey.create(Registries.DIMENSION,
 			Hemomancy.rloc("fungal_gardens"));
@@ -167,6 +182,18 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 						true);
 				return InteractionResult.SUCCESS;
 			}
+
+			// Archon (degree 7) who has not yet made the core-witness choice sees the
+			// branching dialogue fork before the pool will carry them home.
+			int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+			if (degree == 7 && !serverPlayer.getPersistentData().contains(ARCHON_CHOICE_KEY)) {
+				PacketHandler.CHANNELBLOODVOLUME.send(
+						PacketDistributor.PLAYER.with(() -> serverPlayer),
+						new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
+				serverPlayer.getCooldowns().addCooldown(Item.byBlock(this), TRAVEL_COOLDOWN);
+				return InteractionResult.SUCCESS;
+			}
+
 			performReturnTravel(serverPlayer);
 		} else {
 			// ── Entry: Overworld → Fungal Gardens ──
@@ -196,7 +223,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 		return InteractionResult.SUCCESS;
 	}
 
-	private void storeReturnPosition(ServerPlayer player) {
+	private static void storeReturnPosition(ServerPlayer player) {
 		var data = player.getPersistentData();
 		data.putDouble(RETURN_X, player.getX());
 		data.putDouble(RETURN_Y, player.getY());
@@ -205,7 +232,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 		data.putFloat(RETURN_XROT, player.getXRot());
 	}
 
-	private boolean drainTravelBlood(ServerPlayer player) {
+	private static boolean drainTravelBlood(ServerPlayer player) {
 		var opt = player.getCapability(BloodVolumeProvider.VOLUME_CAPA);
 		if (!opt.isPresent()) return false;
 		var volume = opt.orElseThrow(IllegalStateException::new);
@@ -215,7 +242,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 		return true;
 	}
 
-	private void performFungalGardensTravel(ServerPlayer player) {
+	private static void performFungalGardensTravel(ServerPlayer player) {
 		ServerLevel destination = player.server.getLevel(FUNGAL_GARDENS);
 		if (destination == null) return;
 
@@ -234,7 +261,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 				false);
 	}
 
-	private void performReturnTravel(ServerPlayer player) {
+	public static void performReturnTravel(ServerPlayer player) {
 		ServerLevel overworld = player.server.getLevel(Level.OVERWORLD);
 		if (overworld == null) return;
 
@@ -265,7 +292,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 				false);
 	}
 
-	private BlockPos findSafePos(ServerLevel destination, int x, int z) {
+	private static BlockPos findSafePos(ServerLevel destination, int x, int z) {
 		destination.getChunk(x >> 4, z >> 4);
 
 		int y = destination.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);

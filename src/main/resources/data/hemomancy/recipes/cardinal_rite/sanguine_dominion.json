@@ -18,10 +18,10 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:red_nether_bricks"
     },
     "V": {
-      "block": "hemomancy:polished_venous_stone_bricks"
+      "block": "minecraft:deepslate_bricks"
     },
     "C": {
       "block": "hemomancy:chiseled_hematic_iron_block"

@@ -16,16 +16,16 @@
       "block": "hemomancy:engram_block"
     },
     "V": {
-      "block": "hemomancy:venous_stone"
+      "block": "minecraft:podzol"
     },
     "C": {
-      "block": "hemomancy:befouling_ash_trail"
+      "block": "minecraft:soul_soil"
     },
     "P": {
       "block": "hemomancy:hematic_iron_block"
     },
     "B": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:rooted_dirt"
     }
   },
   "result": {

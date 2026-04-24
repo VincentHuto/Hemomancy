@@ -19,10 +19,10 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "C": {
-      "block": "hemomancy:chiseled_polished_venous_stone"
+      "block": "minecraft:polished_deepslate"
     },
     "G": {
-      "block": "hemomancy:gilded_venous_stone"
+      "block": "minecraft:deepslate_bricks"
     }
   },
   "result": {

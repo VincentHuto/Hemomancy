@@ -13,10 +13,10 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "S": {
-      "block": "hemomancy:polished_venous_stone"
+      "block": "minecraft:polished_basalt"
     },
     "P": {
-      "block": "hemomancy:hematic_iron_pillar"
+      "block": "minecraft:iron_bars"
     }
   },
   "result": {

@@ -18,10 +18,17 @@ public class QliphothBloomClientData {
 	public static class BloomEntry {
 		private final BlockPos center;
 		private final int chunkRadius;
+		/** Number of Qliphoth Pomes already dropped (0–9). Controls the growth stage. */
+		private final int pomesDropped;
 
 		public BloomEntry(BlockPos center, int chunkRadius) {
+			this(center, chunkRadius, 0);
+		}
+
+		public BloomEntry(BlockPos center, int chunkRadius, int pomesDropped) {
 			this.center = center;
 			this.chunkRadius = chunkRadius;
+			this.pomesDropped = pomesDropped;
 		}
 
 		public BlockPos getCenter() {
@@ -30,6 +37,11 @@ public class QliphothBloomClientData {
 
 		public int getChunkRadius() {
 			return chunkRadius;
+		}
+
+		/** Returns the number of pomes dropped so far (0–9), which drives the visual growth stage. */
+		public int getPomesDropped() {
+			return pomesDropped;
 		}
 	}
 

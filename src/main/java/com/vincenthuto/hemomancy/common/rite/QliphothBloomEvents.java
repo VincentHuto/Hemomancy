@@ -136,6 +136,8 @@ public class QliphothBloomEvents {
 
 		// Register the drop in SavedData before spawning (so we don't double-count)
 		data.incrementPomesDropped(center);
+		// Sync the updated pomes-dropped count to all clients so the tree advances its growth stage
+		CardinalRiteEvents.syncQliphothBlooms(level.getServer());
 
 		// Spawn at the tree center with a small random horizontal offset,
 		// a few blocks up (as if falling from the canopy), with slight outward velocity
