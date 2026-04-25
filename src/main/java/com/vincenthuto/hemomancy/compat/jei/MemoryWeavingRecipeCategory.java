@@ -123,13 +123,15 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	// ═══════════════════════════════════════════════════════════════
 	//  Drawing
 	// ═══════════════════════════════════════════════════════════════
+	private float animTime = 0f;
 
 	@Override
 	public void draw(MemoryWeavingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
 			double mouseX, double mouseY) {
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// ── Dark background with subtle glow ──
 		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
 		drawSubtleGlow(gfx, WHEEL_CENTER_X, WHEEL_CENTER_Y, time);

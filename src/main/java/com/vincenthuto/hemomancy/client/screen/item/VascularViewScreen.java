@@ -130,6 +130,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
     }
 
     // ───── Procedural Animated Vein Background ─────
+    private float animTime = 0f;
 
     private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
         graphics.enableScissor(gx, gy, gx + gw, gy + gh);
@@ -152,8 +153,9 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         }
 
         // Layer 3: animated vein tendrils
-        float time = (System.nanoTime() / 1_000_000_000f);
-        if (veinParams != null) {
+        animTime += 0.016f; // ~60 FPS approximation
+
+        float time = animTime;        if (veinParams != null) {
             for (int i = 0; i < VEIN_COUNT; i++) {
                 drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
             }

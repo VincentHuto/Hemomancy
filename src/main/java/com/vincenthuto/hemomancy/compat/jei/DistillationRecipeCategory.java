@@ -72,13 +72,15 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 			}
 		});
 	}
+	private float animTime = 0f;
 
 	@Override
 	public void draw(DistillationRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx, double mouseX,
 			double mouseY) {
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// ── Dark background ──
 		gfx.fill(0, 0, BG_W, BG_H, pallid ? 0xFF060A1E : 0xFF0A0204);
 		// Subtle radial glow

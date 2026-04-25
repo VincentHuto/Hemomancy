@@ -40,4 +40,45 @@ public interface IInitiatoryDegree {
 	 *         the maximum or uninitiated with no next step.
 	 */
 	boolean advanceDegree();
+
+	// ── Qliphoth Pome communion tracking ──────────────────────────────────────
+
+	/** Returns {@code true} if the player has completed the Qliphoth Communion. */
+	boolean isQliphothCommunionDone();
+
+	/** Sets the Qliphoth Communion completion flag. */
+	void setQliphothCommunionDone(boolean done);
+
+	/**
+	 * Records one pome consumed from the given bloom origin. Returns the new
+	 * per-bloom consumption count after the increment.
+	 */
+	int recordPomeConsumed(long bloomOrigin);
+
+	/**
+	 * Returns total pomes consumed (0–9, capped). Used for HUD display.
+	 * The server increments this on every normal pome eat; the client receives
+	 * the value via {@code PacketSyncPomeProgress}.
+	 */
+	int getTotalPomesConsumed();
+
+	/** Increments the total-consumed counter (server-side, capped at 9). */
+	void incrementTotalPomesConsumed();
+
+	/**
+	 * Overwrites the stored total with a server-synced value.
+	 * Called client-side by {@code PacketSyncPomeProgress}.
+	 */
+	void syncTotalPomesConsumed(int count);
+
+	// ── Qliphoth Pome empowerment ──────────────────────────────────────────────
+
+	/**
+	 * Returns the game tick at which the pome manipulation-cost discount expires.
+	 * A value of {@code 0} (or less) means no active empowerment.
+	 */
+	long getPomeEmpowermentExpiry();
+
+	/** Sets the game tick at which the pome empowerment expires. */
+	void setPomeEmpowermentExpiry(long tick);
 }

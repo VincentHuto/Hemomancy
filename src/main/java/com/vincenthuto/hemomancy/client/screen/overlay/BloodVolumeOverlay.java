@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import java.util.Random;
+
+import net.minecraft.world.item.ItemStack;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -28,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 public class BloodVolumeOverlay {
 
 	public static BloodVolumeOverlay instance;
+
 
 	// ── Organic bar dimensions ──
 	private static final int BAR_W = 10;
@@ -61,18 +65,21 @@ public class BloodVolumeOverlay {
 						case 3 -> { posX = width - BAR_W - 8; posY = height - BAR_H - 30; }
 						default -> { posX = 4; posY = 4; }
 					}
-					renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, partialTicks);
+					renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, partialTicks, width);
 				}
 			});
 		});
 	}
 
 	// ───── Organic blood vial bar ─────
+	private float animTime = 0f;
 
 	private void renderBloodBar(GuiGraphics gfx, int posX, int posY, IBloodVolume bloodCap,
-			Player player, ClientLevel world, float partialTicks) {
+			Player player, ClientLevel world, float partialTicks, int screenWidth) {
 		Font fr = mc.font;
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 
 		double vol = bloodCap.getBloodVolume();
 		double maxVol = bloodCap.getMaxBloodVolume();
@@ -84,7 +91,7 @@ public class BloodVolumeOverlay {
 		// ── Organic vein tendrils around the frame ──
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		//renderVeinTendrils(gfx, barX, barY, time);
+		renderVeinTendrils(gfx, barX, barY, time);
 
 		// ── Outer frame — double border with organic bulge ──
 		// Slightly irregular outer shape
@@ -181,12 +188,39 @@ public class BloodVolumeOverlay {
 		gfx.fill(barX + 1, barY + BAR_H + 2, barX + BAR_W - 1, barY + BAR_H + 3, BORDER_OUTER);
 		gfx.fill(barX + 2, barY + BAR_H + 3, barX + BAR_W - 2, barY + BAR_H + 4, BORDER_OUTER);
 
+		// ── Pome communion tracker — 9 items alongside the bar ──
+		int orbColX = (posX > screenWidth / 2) ? barX -10 : barX + BAR_W + 3;
+		int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(d -> d.getTotalPomesConsumed())
+				.orElse(0);
+		renderPomeTracker(gfx, orbColX, barY, pomeProgress);
+
 		RenderSystem.disableBlend();
 
 		// ── Volume text ──
 		String volText = String.format("%.0f", vol);
 		int textX = barX + (BAR_W / 2) - (fr.width(volText) / 2);
 		gfx.drawString(fr, Component.literal(volText), textX, posY, 0xCC4444, true);
+	}
+
+	// ───── Pome communion tracker ─────
+
+	private void renderPomeTracker(GuiGraphics gfx, int orbColX, int barY, int progress) {
+		ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
+		// Render 9 slots at 0.5x scale → 8×8 px each, 9 px apart, fits in BAR_H=80
+		gfx.pose().pushPose();
+		gfx.pose().translate(orbColX, barY, 0);
+		gfx.pose().scale(0.5f, 0.5f, 1.0f);
+		for (int i = 0; i < 9; i++) {
+			int py = (8 - i) * 18; // bottom-to-top in scaled space
+			if (i < progress) {
+				gfx.renderItem(pomeStack, 0, py);
+			} else {
+//				// Empty slot — faint dark-purple square
+//				gfx.fill(1, py + 1, 15, py + 15, 0x35100028);
+			}
+		}
+		gfx.pose().popPose();
 	}
 
 	// ───── Organic vein tendrils around the bar frame ─────

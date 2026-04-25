@@ -457,7 +457,14 @@ public class MorphlingJarViewerScreen extends Screen {
 	 * Similar to the red vein background used in TendencyView and VascularStatus,
 	 * but tinted green with higher-frequency curves for a more swirly, organic feel.
 	 */
+		private float animTime = 0f;
+
 	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
+		
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+		
 		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -478,8 +485,7 @@ public class MorphlingJarViewerScreen extends Screen {
 			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
 		}
 
-		// Layer 3: animated green vein tendrils (swirly)
-		float time = (System.nanoTime() / 1_000_000_000f);
+	
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawGreenVeinTendril(graphics, i, time, gx, gy, gw, gh);

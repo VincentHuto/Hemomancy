@@ -178,6 +178,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	}
 
 	// ───── Heat indicator ─────
+	private float animTime = 0f;
 
 	private void renderHeatIndicator(GuiGraphics gfx, int gx, int gy) {
 		// Flame area centered below the input slot
@@ -186,8 +187,9 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int flameW = 16;
 		int flameH = 14;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		if (this.menu.isHeated()) {
 			// Animated flame — draw pixel fire from bottom up
 			for (int row = 0; row < flameH; row++) {
@@ -237,8 +239,10 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int arrowFullW = 58;
 		int arrowH = 8;
 
-		float time = System.nanoTime() / 1_000_000_000f;
-		double progress = this.menu.getBurnProgress() / 24.0;
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				double progress = this.menu.getBurnProgress() / 24.0;
 		int filledW = (int) (arrowFullW * progress);
 
 		// Background track (dark blue-grey)
@@ -305,8 +309,9 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		double maxVol = te.getMaxWhiteHumorVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// Outer frame — double border
 		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
 		gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_INNER);
@@ -409,8 +414,10 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		}
 
 		// Layer 3: floating hollow rhombuses
-		float time = System.nanoTime() / 1_000_000_000f;
-		if (rhombusParams != null) {
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				if (rhombusParams != null) {
 			for (int i = 0; i < RHOMBUS_COUNT; i++) {
 				drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
 			}

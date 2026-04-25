@@ -284,6 +284,8 @@ public class VascularStatusScreen extends Screen {
 	 * Renders a single ModelPart using the player model's actual geometry,
 	 * tinted with the health-based color for the given vein section.
 	 */
+	private float animTime = 0f;
+
 	private void renderTintedPart(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource,
 								  ModelPart part, IVascularSystem vascular,
 								  EnumVeinSections section) {
@@ -296,7 +298,9 @@ public class VascularStatusScreen extends Screen {
 		float b = (color & 0xFF) / 255.0f;
 
 		// Pulsing glow effect
-		float time = (System.nanoTime() / 1_000_000_000f);
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 		float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + section.ordinal() * 1.3f);
 		r *= pulse;
 		g *= pulse;
@@ -326,8 +330,10 @@ public class VascularStatusScreen extends Screen {
 		float r = ((color >> 16) & 0xFF) / 255.0f;
 		float g = ((color >> 8) & 0xFF) / 255.0f;
 		float b = (color & 0xFF) / 255.0f;
+		animTime += 0.016f; // ~60 FPS approximation
 
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = animTime;
+
 		float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + section1.ordinal() * 1.3f);
 		r *= pulse;
 		g *= pulse;
@@ -477,8 +483,10 @@ public class VascularStatusScreen extends Screen {
 			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
 		}
 
-		// Layer 3: animated vein tendrils
-		float time = (System.nanoTime() / 1_000_000_000f); // seconds since epoch, smooth
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+
 
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {

@@ -47,6 +47,7 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnMonolithShatterBur
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
@@ -105,6 +106,9 @@ public class PacketHandler {
                 BloodVolumeClientPacket.STREAM_CODEC, BloodVolumeClientPacket::handle);
         net.playToClient(BloodVolumeServerPacket.TYPE,
                 BloodVolumeServerPacket.STREAM_CODEC, BloodVolumeServerPacket::handle);
+
+        net.playToClient(PacketSyncPomeProgress.TYPE,
+                PacketSyncPomeProgress.STREAM_CODEC, PacketSyncPomeProgress::handle);
 
         // ── Blood Tendency capability ─────────────────────────────────────────
         net.playToServer(BloodTendencyClientPacket.TYPE,

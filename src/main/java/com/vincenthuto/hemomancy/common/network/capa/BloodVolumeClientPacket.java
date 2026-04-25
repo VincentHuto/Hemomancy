@@ -8,6 +8,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -34,10 +35,16 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 			if (player instanceof ServerPlayer sender) {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						.orElseThrow(IllegalStateException::new);
-				// Send message back to the client to set the information
 				PacketHandler.sendToPlayer(sender, new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer(sender, new PacketSyncPomeProgress(computePomeProgress(sender)));
 			}
 		});
+	}
+
+	private static int computePomeProgress(ServerPlayer player) {
+		return HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(d -> d.isQliphothCommunionDone() ? 9 : d.getTotalPomesConsumed())
+				.orElse(0);
 	}
 
 	public BloodVolumeClientPacket() {

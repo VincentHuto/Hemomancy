@@ -336,6 +336,8 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
      * Renders a dark red/black background covered in swimming, squiggling vein tendrils.
      * All rendering is clipped to the given GUI bounds.
      */
+    private float animTime = 0f;
+
     private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
         graphics.enableScissor(gx, gy, gx + gw, gy + gh);
         RenderSystem.enableBlend();
@@ -355,9 +357,11 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
             int color = (alpha << 24) | (red << 16);
             graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
         }
+        animTime += 0.016f; // ~60 FPS approximation
+
+        float time = animTime;
 
         // Layer 3: animated vein tendrils
-        float time = (System.nanoTime() / 1_000_000_000f);
 
         if (veinParams != null) {
             for (int i = 0; i < VEIN_COUNT; i++) {

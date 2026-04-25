@@ -236,8 +236,10 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
 		}
 
-		float time = (System.nanoTime() / 1_000_000_000f);
-		if (veinParams != null) {
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
 			}
@@ -325,13 +327,16 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
 		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
 	}
+	private float animTime = 0f;
 
 	private void drawBrainArea(GuiGraphics graphics, float partialTicks) {
 		int cx = guiLeft + GUI_WIDTH / 2;
 		int cy = guiTop + GUI_HEIGHT / 2;
 
-		float time = (System.nanoTime() / 1_000_000_000f);
-		float pulseAlpha = 0.15f + 0.05f * Mth.sin(time * 2.0f);
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				float pulseAlpha = 0.15f + 0.05f * Mth.sin(time * 2.0f);
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();

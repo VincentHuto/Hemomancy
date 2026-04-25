@@ -53,8 +53,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
  * Darkness is prolonged to 15 seconds, and no empowerment is granted.
  *
  * <p>Consuming all nine pomes from a single bloom's lifecycle triggers the
- * Qliphoth Communion whisper and sets the {@link #QLIPHOTH_COMMUNION_DONE_KEY}
- * flag on the player's persistent data, unlocking the Rite of Apotheos
+ * Qliphoth Communion whisper and sets the communion flag on the player's
+ * {@code IInitiatoryDegree} capability, unlocking the Rite of Apotheos
  * (the Eighth Degree gate).
  */
 public class QliphothPomeItem extends Item implements HemoClientItemExtensionsProvider {
@@ -76,26 +76,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	 */
 	public static final String TAINTED_KEY = "hemomancy:tainted_pome";
 
-	// ── Player persistent-data keys ──
-
-	/**
-	 * Long value: world game-time tick at which the Pome Empowerment discount
-	 * expires. A value of 0 (or absent) means no active empowerment.
-	 */
-	public static final String POME_EMPOWERMENT_KEY = "hemomancy:pome_empowerment_expiry";
-
-	/**
-	 * CompoundTag on the player's persistent data mapping bloom-origin longs
-	 * (stored as string keys) to the number of pomes consumed from that bloom.
-	 * Used to detect when the player has consumed all nine husks.
-	 */
-	public static final String POME_COMMUNION_PROGRESS_KEY = "hemomancy:pome_communion_progress";
-
-	/**
-	 * Boolean flag set to {@code true} when the player has completed the
-	 * Qliphoth Communion (consumed all nine pomes from a single bloom).
-	 */
-	public static final String QLIPHOTH_COMMUNION_DONE_KEY = "hemomancy:qliphoth_communion";
+	// Pome communion and empowerment data is stored in IInitiatoryDegree capability.
 
 	// ── Effect constants ──
 
@@ -222,7 +203,8 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 
 		// ── Timed manipulation discount ──
 		long expiryTick = level.getGameTime() + EMPOWERMENT_DURATION_TICKS;
-		player.getPersistentData().putLong(POME_EMPOWERMENT_KEY, expiryTick);
+		HemoCapabilityAccess.getInitiatoryDegree(player)
+				.ifPresent(d -> d.setPomeEmpowermentExpiry(expiryTick));
 
 		// Husk-flavoured eat message (localized, one line per pome 1-9)
 		String consumeMessageKey = POME_MESSAGE_KEY_BASE + "default";
@@ -237,7 +219,11 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 				true);
 
-		// ── Per-bloom communion tracking ──
+		// ── Total pome counter (drives the HUD tracker) ──
+		HemoCapabilityAccess.getInitiatoryDegree(player)
+				.ifPresent(d -> d.incrementTotalPomesConsumed());
+
+		// ── Per-bloom communion tracking (Apotheos gate) ──
 		if (itemTag.contains(BLOOM_ORIGIN_KEY)) {
 			long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);
 			trackCommunionProgress((ServerPlayer) player, bloomOrigin);
@@ -247,30 +233,18 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	/**
 	 * Increments the per-bloom consumption counter for the given bloom origin.
 	 * When the count reaches nine, fires the Qliphoth Communion whisper and
-	 * sets the permanent communion flag on the player's persistent data.
+	 * sets the permanent communion flag on the InitiatoryDegree capability.
 	 */
 	private static void trackCommunionProgress(ServerPlayer player, long bloomOrigin) {
-		CompoundTag persistentData = player.getPersistentData();
-
-		// Don't track if communion already achieved
-		if (persistentData.getBoolean(QLIPHOTH_COMMUNION_DONE_KEY)) return;
-
-		CompoundTag progress = persistentData.contains(POME_COMMUNION_PROGRESS_KEY)
-				? persistentData.getCompound(POME_COMMUNION_PROGRESS_KEY)
-				: new CompoundTag();
-
-		String bloomKey = String.valueOf(bloomOrigin);
-		int count = progress.getInt(bloomKey) + 1;
-		progress.putInt(bloomKey, count);
-		persistentData.put(POME_COMMUNION_PROGRESS_KEY, progress);
-
-		if (count >= 9) {
-			// All nine husks consumed from this single bloom — Qliphoth Communion
-			persistentData.putBoolean(QLIPHOTH_COMMUNION_DONE_KEY, true);
-
-			DialogueTree communion = FungalWhisperDialogueTrees.qliphothCommunion();
-			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(communion));
-		}
+		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
+			if (degree.isQliphothCommunionDone()) return;
+			int count = degree.recordPomeConsumed(bloomOrigin);
+			if (count >= 9) {
+				degree.setQliphothCommunionDone(true);
+				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(
+						FungalWhisperDialogueTrees.qliphothCommunion()));
+			}
+		});
 	}
 
 	/** Returns the English ordinal string for a number 1–9 (e.g. "First", "Second"). */

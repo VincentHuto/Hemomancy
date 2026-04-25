@@ -631,13 +631,15 @@ public class UnstainedProgressScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 	//  Shape-aware stage node
 	// ────────────────────────────────────────────────────────────
-
+	private float animTime = 0f;
 	private void drawShapedNode(GuiGraphics gfx, int scrX, int scrY, String title,
 								 boolean reached, boolean isCurrent, int accentColor, int glowColor,
 								 EnumNodeShape shape,
 								 @javax.annotation.Nullable ResourceLocation iconTexture,
 								 @javax.annotation.Nullable ItemStack iconStack) {
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 		int hn = halfNode();
 
 		// Determine border colour
@@ -822,6 +824,7 @@ public class UnstainedProgressScreen extends Screen {
 	 * @param glow      glow colour for pulse when active
 	 * @param hovered   whether the mouse is over this button
 	 */
+
 	private void drawBonusButton(GuiGraphics gfx, int bx, int by, String icon,
 								  boolean enabled, boolean unlocked, int accent, int glow, boolean hovered) {
 		int bs = BONUS_BTN_SIZE;
@@ -853,8 +856,9 @@ public class UnstainedProgressScreen extends Screen {
 
 		// Pulsing glow when enabled and unlocked
 		if (enabled && unlocked) {
-			float time = System.nanoTime() / 1_000_000_000f;
-			float p = 0.3f + 0.3f * Mth.sin(time * 2.0f);
+animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;			float p = 0.3f + 0.3f * Mth.sin(time * 2.0f);
 			int ga = (int)(30 * p);
 			int gr = (glow >> 16) & 0xFF;
 			int gg = (glow >> 8) & 0xFF;
@@ -1097,7 +1101,10 @@ public class UnstainedProgressScreen extends Screen {
 
 		// Completion glow
 		if (current >= goal) {
-			float time = System.nanoTime() / 1_000_000_000f;
+			animTime += 0.016f; // ~60 FPS approximation
+
+			float time = animTime;
+
 			float pulse = 0.3f + 0.2f * Mth.sin(time * 2.0f);
 			int ga = (int) (pulse * 255);
 			gfx.fill(barX, y, barX + barW, y + barH, (ga << 24) | 0x60CC60);

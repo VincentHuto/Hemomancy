@@ -31,6 +31,7 @@ public final class UnstainedBackgroundRenderer {
             rhombusParams[i][7] = (rand.nextFloat() - 0.5f) * 1.2f;
         }
     }
+	private float animTime = 0f;
 
     public void render(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
         gfx.enableScissor(gx, gy, gx + gw, gy + gh);
@@ -53,8 +54,10 @@ public final class UnstainedBackgroundRenderer {
             gfx.fill(centerX - ring, centerY - ring, centerX + ring, centerY + ring, color);
         }
 
-        float time = System.nanoTime() / 1_000_000_000f;
-        for (int i = 0; i < RHOMBUS_COUNT; i++) {
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+                for (int i = 0; i < RHOMBUS_COUNT; i++) {
             drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
         }
 

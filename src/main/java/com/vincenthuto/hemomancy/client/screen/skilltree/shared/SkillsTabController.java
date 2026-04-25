@@ -120,9 +120,11 @@ public class SkillsTabController implements IProgressTab {
             gfx.fill(x2 - lw, midY, x2 + lw, y2 - hn, col);
         }
     }
-
+private float animTime = 0f;
     private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
-        float time = System.nanoTime() / 1_000_000_000f;
+        	animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
         int hn = halfNode();
         for (var e : nodePositions.entrySet()) {
             SkillPoint sp = e.getKey();

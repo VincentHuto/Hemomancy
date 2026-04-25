@@ -392,8 +392,10 @@ public class VisceralMirrorScreen extends Screen {
 	private void renderProgressBar(GuiGraphics gfx, int bx, int by, int bw) {
 		if (!isRitualActive()) return;
 
-		float time = System.nanoTime() / 1_000_000_000f;
-		float progress = totalRitualTicks > 0 ? (float) ritualTicks / totalRitualTicks : 0;
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				float progress = totalRitualTicks > 0 ? (float) ritualTicks / totalRitualTicks : 0;
 
 		// Phase label
 		String phaseLabel = phase == VisceralMirrorBlockEntity.RitualPhase.CHANNELING
@@ -508,6 +510,7 @@ public class VisceralMirrorScreen extends Screen {
 	}
 
 	// ───── Animated vein background (matching VialCentrifugeScreen) ─────
+	private float animTime = 0f;
 
 	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
 		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
@@ -531,8 +534,10 @@ public class VisceralMirrorScreen extends Screen {
 		}
 
 		// Layer 3: animated vein tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
-		if (veinParams != null) {
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
 			}

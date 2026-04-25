@@ -288,8 +288,8 @@ public class BloodManipulation  {
 				}
 
 				// Qliphoth Pome Empowerment: 25% cost reduction for 3 minutes after eating a Pome
-				long pomeExpiry = player.getPersistentData()
-						.getLong(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.POME_EMPOWERMENT_KEY);
+				long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player)
+						.map(d -> d.getPomeEmpowermentExpiry()).orElse(0L);
 				if (player.level().getGameTime() < pomeExpiry) {
 					effectiveCost *= 0.75;
 				}

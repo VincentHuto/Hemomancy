@@ -395,9 +395,13 @@ public class DialogueScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 	//  BLOOD theme — red veiny tendrils (original)
 	// ────────────────────────────────────────────────────────────
+	private float animTime = 0f;
 
 	private void renderBloodBackground(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
 		gfx.enableScissor(gx, gy, gx + gw, gy + gh);
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
@@ -414,7 +418,6 @@ public class DialogueScreen extends Screen {
 			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16));
 		}
 
-		float time = System.nanoTime() / 1_000_000_000f;
 		if (bloodVeinParams != null) {
 			for (int i = 0; i < BLOOD_VEIN_COUNT; i++) {
 				drawBloodVeinTendril(gfx, i, time, gx, gy, gw, gh);
@@ -477,7 +480,9 @@ public class DialogueScreen extends Screen {
 		gfx.enableScissor(gx, gy, gx + gw, gy + gh);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// Layer 1: rich dark blue base
 		gfx.fill(gx, gy, gx + gw, gy + gh, palette.bgColor);
 
@@ -497,7 +502,6 @@ public class DialogueScreen extends Screen {
 		}
 
 		// Layer 3: floating hollow rhombuses
-		float time = System.nanoTime() / 1_000_000_000f;
 		if (unstainedRhombusParams != null) {
 			for (int i = 0; i < UNSTAINED_RHOMBUS_COUNT; i++) {
 				drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
@@ -591,7 +595,9 @@ public class DialogueScreen extends Screen {
 
 		// Layer 1: dark amber base
 		gfx.fill(gx, gy, gx + gw, gy + gh, palette.bgColor);
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// Layer 2: warm radial glow
 		int cx = gx + gw / 2;
 		int cy = gy + gh / 2;
@@ -607,7 +613,6 @@ public class DialogueScreen extends Screen {
 		}
 
 		// Layer 3: animated fungal tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
 		if (fungalTendrilParams != null) {
 			for (int i = 0; i < FUNGAL_TENDRIL_COUNT; i++) {
 				drawFungalTendril(gfx, i, time, gx, gy, gw, gh);

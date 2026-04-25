@@ -164,6 +164,7 @@ public final class MaterialsTabView {
 	 * @param selectedGlow  ARGB glow color for the selected node (low-alpha)
 	 * @param defaultBorder default node border color
 	 */
+
 	public static void drawNodes(GuiGraphics gfx, Font font,
 								 List<MaterialEntry> entries,
 								 Map<MaterialEntry, int[]> positions,
@@ -172,7 +173,11 @@ public final class MaterialsTabView {
 								 int accentColor,
 								 MaterialEntry selectedEntry, int selectedGlow,
 								 int defaultBorder) {
-		float time = System.nanoTime() / 1_000_000_000f;
+		 float animTime = 0f;
+
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 		int hn = state.halfNode(nodeSize);
 
 		// ── Cluster backgrounds & headers ───────────────────────

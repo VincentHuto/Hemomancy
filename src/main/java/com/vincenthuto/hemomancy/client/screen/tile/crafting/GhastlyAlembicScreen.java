@@ -179,6 +179,7 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 	}
 
 	// ───── Heat indicator ─────
+	private float animTime = 0f;
 
 	private void renderHeatIndicator(GuiGraphics gfx, int gx, int gy) {
 		// Flame area centered below the input slot
@@ -187,7 +188,9 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 		int flameW = 16;
 		int flameH = 14;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+				animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 
 		if (this.menu.isHeated()) {
 			// Animated flame — draw pixel fire from bottom up
@@ -238,8 +241,9 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 		int arrowFullW = 58;
 		int arrowH = 8;
 
-		float time = System.nanoTime() / 1_000_000_000f;
-		double progress = this.menu.getBurnProgress() / 24.0;
+		animTime += 0.016f; // ~60 FPS approximation
+		float time = animTime;
+				double progress = this.menu.getBurnProgress() / 24.0;
 		int filledW = (int) (arrowFullW * progress);
 
 		// Background track (dark)
@@ -306,8 +310,9 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 		double maxVol = te.getMaxBloodVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+	animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// Outer frame — double border
 		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
 		gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_INNER);
@@ -403,8 +408,9 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 		}
 
 		// Layer 3: animated vein tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
-		if (veinParams != null) {
+		animTime += 0.016f; // ~60 FPS approximation
+		float time = animTime;
+				if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
 			}

@@ -321,7 +321,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 				// ── Apotheos gate: requires completed Qliphoth Communion ──
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
-						&& !player.getPersistentData().getBoolean(QliphothPomeItem.QLIPHOTH_COMMUNION_DONE_KEY)) {
+						&& !HemoCapabilityAccess.getInitiatoryDegree(player)
+								.map(d -> d.isQliphothCommunionDone()).orElse(false)) {
 					player.displayClientMessage(
 							Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
 									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),

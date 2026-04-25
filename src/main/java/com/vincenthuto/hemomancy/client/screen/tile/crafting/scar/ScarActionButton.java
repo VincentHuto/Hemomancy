@@ -30,6 +30,8 @@ public class ScarActionButton extends Button {
 		super(x, y, width, height, Component.empty(), action, DEFAULT_NARRATION);
 		this.iconType = iconType;
 	}
+		private float animTime = 0f;
+
 
 	@Override
 	public void renderWidget(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
@@ -59,7 +61,9 @@ public class ScarActionButton extends Button {
 
 		// Pulsing accent on hover
 		if (hovered) {
-			float time = System.nanoTime() / 1_000_000_000f;
+					animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 			float pulse = 0.4f + 0.6f * ((float) Math.sin(time * 3.0f) * 0.5f + 0.5f);
 			int accentAlpha = (int) (40 * pulse);
 			int accent = (accentAlpha << 24) | 0xCC2020;

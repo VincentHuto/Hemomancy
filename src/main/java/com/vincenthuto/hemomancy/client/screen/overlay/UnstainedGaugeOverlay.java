@@ -57,13 +57,15 @@ public class UnstainedGaugeOverlay {
 			renderGauge(gfx, screenWidth, screenHeight, cap, partialTicks);
 		});
 	}
+		private float animTime = 0f;
 
 	private void renderGauge(GuiGraphics gfx, int screenWidth, int screenHeight,
 			IUnstainedProgress cap, float partialTicks) {
 		Font fr = mc.font;
 		ClientLevel world = mc.level;
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// Position: top-right area
 		int baseX = screenWidth - 46;
 		int baseY = 6;

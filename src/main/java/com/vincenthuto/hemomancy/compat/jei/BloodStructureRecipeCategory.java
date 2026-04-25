@@ -114,6 +114,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	public Component getTitle() {
 		return Component.translatable("hemomancy.jei.blood_crafting");
 	}
+	private float animTime = 0f;
 
 	// ═══════════════════════════════════════════════════════════════
 	//  Drawing
@@ -123,8 +124,9 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
 			double mouseX, double mouseY) {
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// ── Dark background with subtle glow ──
 		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
 		drawSubtleGlow(gfx, BG_W / 2, BG_H / 2, time);

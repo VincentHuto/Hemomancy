@@ -88,6 +88,7 @@ public final class ScarsTabView {
 	/**
 	 * Draws the 8×8 chisel pattern grid for a scar recipe.
 	 */
+	
 	public static void drawPatternGrid(GuiGraphics gfx, ProgressScreenContext ctx,
 									   ScarRecipe recipe,
 									   int areaX, int areaY, int areaW, int areaH) {

@@ -173,6 +173,7 @@ public class LedgerScreen extends Screen {
 	}
 
 	// ───── Procedural Animated Vein Background (matches BloodlinePoolScreen) ─────
+	private float animTime = 0f;
 
 	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
 		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
@@ -191,8 +192,9 @@ public class LedgerScreen extends Screen {
 			int color = (alpha << 24) | (red << 16);
 			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
 		}
+		animTime += 0.016f; // ~60 FPS approximation
 
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = animTime;
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);

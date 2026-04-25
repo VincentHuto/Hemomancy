@@ -39,6 +39,9 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	private float[][] sporeParams;
 	private int[][] speckleParams;
 
+	private float animTime = 0f;
+
+
 	public SporeImplantScreen(SporeImplantMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 		this.imageWidth = 176;
@@ -94,6 +97,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY);
+
 	}
 
 	@Override
@@ -144,6 +148,9 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	private void renderFungalBackground(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
 		// NOTE: Avoid scissor here. A mismatched scissor space (GUI coords vs window coords)
 		// can clip vanilla slot/item rendering and hover tooltips after renderBg.
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
@@ -165,7 +172,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		}
 
 		// Layer 3: animated fungal tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
 		if (tendrilParams != null) {
 			for (int i = 0; i < TENDRIL_COUNT; i++) {
 				drawFungalTendril(gfx, i, time, gx, gy, gw, gh);
@@ -281,8 +287,9 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		// Center fungal scar slot is at (80, 35) in GUI coords
 		int cx = gx + 80 + 8; // center of the 16px slot
 		int cy = gy + 35 + 8;
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		int outerRadius = 18;
 		int innerRadius = 12;
 

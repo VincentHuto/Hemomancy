@@ -231,8 +231,9 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		}
 		int filledSegments = (int) (segments * progress);
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		for (int i = 0; i < segments; i++) {
 			double angle1 = -Math.PI / 2 + (2 * Math.PI / segments) * i;
 			double angle2 = -Math.PI / 2 + (2 * Math.PI / segments) * (i + 1);
@@ -283,8 +284,9 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		btnX2 = bx + btnW;
 		btnY2 = by + btnH;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		if (this.menu.isSpinning()) {
 			// Spinning — pulsing center glow
 			float spinPulse = 0.5f + 0.5f * Mth.sin(time * 4f);
@@ -315,6 +317,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	}
 
 	// ───── Blood volume bar ─────
+	private float animTime = 0f;
 
 	private void renderBloodBar(GuiGraphics gfx, int gx, int gy) {
 		int barW = 8;
@@ -332,8 +335,9 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		double maxVol = te.getMaxBloodVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		animTime += 0.016f; // ~60 FPS approximation
 
+		float time = animTime;
 		// Outer frame — double border
 		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
 		gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_INNER);
@@ -428,8 +432,10 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		}
 
 		// Layer 3: animated vein tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
-		if (veinParams != null) {
+		animTime += 0.016f; // ~60 FPS approximation
+
+		float time = animTime;
+				if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
 			}
