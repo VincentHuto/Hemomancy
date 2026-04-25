@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/water",
+  "textures": {
+    "particle": "hemomancy:block/morphic_nectar_still"
+  }
+}

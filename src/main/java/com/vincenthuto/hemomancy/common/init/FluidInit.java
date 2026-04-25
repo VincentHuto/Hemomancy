@@ -1,33 +1,76 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import java.util.function.Consumer;
+
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.core.registries.Registries;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class FluidInit {
 
-	public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID,
-			Hemomancy.MOD_ID);
+	public static final DeferredRegister<Fluid> FLUIDS =
+			DeferredRegister.create(net.minecraft.core.registries.Registries.FLUID, Hemomancy.MOD_ID);
 
-//	public static final ResourceLocation WATER_STILL_RL = ResourceLocation.withDefaultNamespace("block/water_still");
-//	public static final ResourceLocation WATER_FLOWING_RL = ResourceLocation.withDefaultNamespace("block/water_flow");
-//	public static final ResourceLocation WATER_OVERLAY_RL = ResourceLocation.withDefaultNamespace("block/water_overlay");
-//
-//	public static final DeferredHolder<FlowingFluid, FlowingFluid> blood = FLUIDS.register("blood",
-//			() -> new ForgeFlowingFluid.Source(FluidInit.blood_prop));
-//
-//	public static final DeferredHolder<FlowingFluid, FlowingFluid> blood_flowing = FLUIDS.register("blood_flowing",
-//			() -> new ForgeFlowingFluid.Flowing(FluidInit.blood_prop));
+	public static final DeferredRegister<FluidType> FLUID_TYPES =
+			DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Hemomancy.MOD_ID);
 
-//	public static final ForgeFlowingFluid.Properties blood_prop = new ForgeFlowingFluid.Properties(() -> blood.get(),
-//			() -> blood_flowing.get(), FluidAttributes.builder(WATER_STILL_RL, WATER_FLOWING_RL).density(15)
-//					.luminosity(2).viscosity(5).overlay(WATER_OVERLAY_RL).color(0xbf7c0000)).slopeFindDistance(2)
-//							.levelDecreasePerBlock(0);
-////
-//	public static final DeferredHolder<LiquidBlock, LiquidBlock> blood_block = BlockInit.BASEBLOCKS.register("blood_block",
-//			() -> new LiquidBlock(() -> FluidInit.blood.get(),
-//					BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100f).noDrops()));
+	// ---- Morphic Nectar ----
 
+	public static final DeferredHolder<FluidType, FluidType> MORPHIC_NECTAR_TYPE = FLUID_TYPES.register(
+			"morphic_nectar",
+			() -> new FluidType(FluidType.Properties.create()
+					.density(1200)
+					.viscosity(1500)
+					.lightLevel(7)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+					consumer.accept(new IClientFluidTypeExtensions() {
+						private static final ResourceLocation STILL =
+								Hemomancy.rloc("block/morphic_nectar_still");
+						private static final ResourceLocation FLOW =
+								Hemomancy.rloc("block/morphic_nectar_flow");
+						private static final ResourceLocation OVERLAY =
+								Hemomancy.rloc("block/morphic_nectar_overlay");
+
+						@Override
+						public ResourceLocation getStillTexture() { return STILL; }
+
+						@Override
+						public ResourceLocation getFlowingTexture() { return FLOW; }
+
+						@Override
+						public ResourceLocation getOverlayTexture() { return OVERLAY; }
+
+						// Amber-green tint (ARGB): slightly translucent, yellow-green
+						@Override
+						public int getTintColor() { return 0xCFB4E832; }
+					});
+				}
+			});
+
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MORPHIC_NECTAR =
+			FLUIDS.register("morphic_nectar",
+					() -> new BaseFlowingFluid.Source(FluidInit.MORPHIC_NECTAR_PROPS));
+
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> MORPHIC_NECTAR_FLOWING =
+			FLUIDS.register("morphic_nectar_flowing",
+					() -> new BaseFlowingFluid.Flowing(FluidInit.MORPHIC_NECTAR_PROPS));
+
+	// Properties defined after the holders to avoid forward-reference issues.
+	// Suppliers in DeferredHolder are lazy — both sides are fine at use-time.
+	public static final BaseFlowingFluid.Properties MORPHIC_NECTAR_PROPS =
+			new BaseFlowingFluid.Properties(
+					MORPHIC_NECTAR_TYPE,
+					MORPHIC_NECTAR,
+					MORPHIC_NECTAR_FLOWING)
+			.slopeFindDistance(3)
+			.levelDecreasePerBlock(1)
+			.block(BlockInit.MORPHIC_NECTAR_BLOCK);
 }
-

@@ -1438,5 +1438,8 @@
   "advancements.hemomancy.scars_of_the_mind.title": "Scars of the Mind",
   "advancements.hemomancy.scars_of_the_mind.description": "Obtain a Scar Binder — the vascular arts are now written into your flesh",
   "advancements.hemomancy.sanguine_domain.title": "The Land Bleeds for You",
-  "advancements.hemomancy.sanguine_domain.description": "Establish a Sanguine Domain — a territory where the blood-tide answers your call"
+  "advancements.hemomancy.sanguine_domain.description": "Establish a Sanguine Domain — a territory where the blood-tide answers your call",
+
+  "block.hemomancy.morphic_nectar_block": "Morphic Nectar",
+  "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar"
 }
