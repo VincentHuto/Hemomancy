@@ -111,7 +111,7 @@ public class BloodVolumeOverlay {
 			int fillTop = barY + BAR_H - fillH;
 			for (int row = 0; row < fillH; row++) {
 				float rowT = (float) row / fillH; // 0 at top of fill, 1 at bottom
-				float pulse = 0.75f + 0.25f * Mth.sin(time * 2.5f + row * 0.08f);
+				float pulse = 0.75f + 0.25f * Mth.sin(time * .3f + row * 0.08f);
 				// Gradient: lighter crimson at bottom → darker at meniscus
 				int r = (int) (Mth.clamp((100 + 80 * rowT) * pulse, 0, 255));
 				int g = (int) (Mth.clamp((5 + 15 * rowT) * pulse, 0, 255));

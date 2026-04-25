@@ -10,10 +10,10 @@
           "biome": "hemomancy:fungal_gardens",
           "parameters": {
             "temperature": [-1.0, 1.0],
-            "humidity": [-1.0, 0.2],
-            "continentalness": [-0.2, 0.1],
-            "erosion": [0.0, 0.4],
-            "weirdness": [-0.4, 0.4],
+            "humidity": [-1.0, 0.35],
+            "continentalness": [-0.25, 0.2],
+            "erosion": [-0.05, 0.5],
+            "weirdness": [-0.5, 0.5],
             "depth": [0.0, 1.0],
             "offset": 0.15
           }
@@ -23,9 +23,9 @@
           "parameters": {
             "temperature": [-1.0, 1.0],
             "humidity": [-1.0, 1.0],
-            "continentalness": [0.1, 0.5],
-            "erosion": [-0.1, 0.5],
-            "weirdness": [-0.5, 0.5],
+            "continentalness": [0.05, 0.55],
+            "erosion": [-0.15, 0.55],
+            "weirdness": [-0.55, 0.55],
             "depth": [0.0, 1.0],
             "offset": 0
           }
@@ -35,8 +35,8 @@
           "parameters": {
             "temperature": [-1.0, 1.0],
             "humidity": [-1.0, 1.0],
-            "continentalness": [-0.4, 0.6],
-            "erosion": [-0.5, -0.1],
+            "continentalness": [-0.45, 0.65],
+            "erosion": [-0.55, -0.05],
             "weirdness": [-1.0, -0.5],
             "depth": [0.0, 1.0],
             "offset": 0
@@ -47,8 +47,8 @@
           "parameters": {
             "temperature": [-1.0, 1.0],
             "humidity": [-1.0, 1.0],
-            "continentalness": [-0.4, 0.6],
-            "erosion": [-0.5, -0.1],
+            "continentalness": [-0.45, 0.65],
+            "erosion": [-0.55, -0.05],
             "weirdness": [0.5, 1.0],
             "depth": [0.0, 1.0],
             "offset": 0
@@ -59,7 +59,7 @@
           "parameters": {
             "temperature": [-1.0, 1.0],
             "humidity": [-1.0, 1.0],
-            "continentalness": [-1.0, -0.2],
+            "continentalness": [-1.0, -0.15],
             "erosion": [-1.0, 1.0],
             "weirdness": [-1.0, 1.0],
             "depth": [0.0, 1.0],
@@ -70,10 +70,10 @@
           "biome": "hemomancy:sporecrown_thicket",
           "parameters": {
             "temperature": [-1.0, 1.0],
-            "humidity": [0.1, 1.0],
-            "continentalness": [-0.2, 0.6],
-            "erosion": [-0.5, 0.2],
-            "weirdness": [-0.2, 1.0],
+            "humidity": [0.0, 1.0],
+            "continentalness": [-0.25, 0.65],
+            "erosion": [-0.55, 0.25],
+            "weirdness": [-0.3, 1.0],
             "depth": [0.0, 1.0],
             "offset": 0.05
           }
@@ -83,8 +83,8 @@
           "parameters": {
             "temperature": [-1.0, 1.0],
             "humidity": [-1.0, 1.0],
-            "continentalness": [0.3, 1.0],
-            "erosion": [-1.0, -0.2],
+            "continentalness": [0.25, 1.0],
+            "erosion": [-1.0, -0.15],
             "weirdness": [-1.0, 1.0],
             "depth": [0.0, 1.0],
             "offset": 0.05
@@ -94,9 +94,9 @@
           "biome": "hemomancy:hemorrhagic_plateau",
           "parameters": {
             "temperature": [-1.0, 1.0],
-            "humidity": [-1.0, 0.2],
-            "continentalness": [0.2, 1.0],
-            "erosion": [0.2, 1.0],
+            "humidity": [-1.0, 0.35],
+            "continentalness": [0.15, 1.0],
+            "erosion": [0.15, 1.0],
             "weirdness": [-1.0, 1.0],
             "depth": [0.0, 1.0],
             "offset": 0.05

@@ -45,7 +45,12 @@ public abstract class AbstractHugeBloodMushroomFeature extends Feature<HugeMushr
 				BlockState blockstate = worldgenlevel.getBlockState(blockpos.below());
 				if (isDirt(blockstate) || isStone(blockstate)
 						|| blockstate.getBlock() != BlockInit.infected_stem.get()
-						|| blockstate.getBlock() != BlockInit.erythrocytic_mycelium.get()) {
+						|| blockstate.getBlock() != BlockInit.erythrocytic_mycelium.get()
+						|| blockstate.getBlock() != BlockInit.calcified_hyphae.get()
+						|| blockstate.getBlock() != BlockInit.conscious_mass.get()
+						|| blockstate.getBlock() != BlockInit.erythrocytic_mycelium.get()
+						|| blockstate.getBlock() != BlockInit.hyphae_block.get()
+				) {
 					break;
 				}
 			}

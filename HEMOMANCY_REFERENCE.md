@@ -1570,7 +1570,7 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 | **Hyphal Spires** | `hyphal_spires` | 0.9 | None | Extreme towering terrain with calcified hyphae, conscious mass patches; high-weirdness / low-erosion zones |
 | **Drifting Mycelium** | `drifting_mycelium` | 0.7 | None | Anti-gravity floating islands of fungal terrain; high-continentalness zones with 3D noise creating disconnected landmasses |
 
-Registered via 3 TerraBlender regions (`TestRegion1/2/3`) with custom surface rules.
+The Fungal Gardens dimension uses a datapack `multi_noise` biome source in `data/hemomancy/dimension/fungal_gardens.json`. Its climate noise is intentionally tuned at a higher horizontal frequency so the dimension's fungal biomes appear as shorter, more varied patches rather than enormous single-biome regions. Its terrain density is intentionally high-relief: `continental_shape`, `erosion_shape`, and `fungal_noise_settings` amplify mid-scale rises, basins, and eroded ridges so the ground does not collapse into broad uniform shelves. Water is also meant to appear as real fungal seas and lowland basins: `fungal_noise_settings` uses sea level 32 and `continental_shape` avoids an excessive positive landmass bias. The dimension is visually dim: `dimension_type/fungal_gardens.json` uses low ambient light, the Fungal Gardens / Fungal Isles biome fog colors are darkened, and `FungalSkyBoxRenderer` tints the spore skybox down so the custom Earth, moon, and star field remain readable without washing out the realm. Its fungal biomes use End music (`minecraft:music.end`) with cave mood ambience rather than Nether ambient loops or additions. Sky-reaching hyphae tendrils are intentionally common (`hyphae_tendril` placed-feature count 12) so the horizon reads as an alien mycelial forest. Open ground is broken up by `venous_ridge`, a sparse low surface feature that lays smoother organic ribs of infested stone, hyphae, conscious mass, and hemorrhagic crust across dry fungal terrain; some runs begin partially embedded and rise through the ground like exposed roots. Sparse canopy mushrooms are also shared into more fungal dimension biomes so big silhouettes appear outside only the dense thickets. Registered overworld biome hooks still live in the 3 TerraBlender regions (`TestRegion1/2/3`) with custom surface rules.
 
 > **Custom environment textures:**
 >
@@ -1610,9 +1610,9 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 ### 22.3 Configured/Placed Features
 
 Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
-- `HYPHAE_TENDRIL`, `HUGE_FUNGUS`, `SMALL_INFECTED_FUNGUS`
+- `HYPHAE_TENDRIL`, `VENOUS_RIDGE`, `HUGE_FUNGUS`, `SMALL_INFECTED_FUNGUS`
 - `PLACED_INFESTED_VENOUS_STONE_BLOB`, `PLACED_MYCELIUM_BLOB`
-- `PLACED_CANOPY_MUSHROOMS_DENSE`
+- `PLACED_CANOPY_MUSHROOMS_DENSE`, `PLACED_CANOPY_MUSHROOMS_SPARSE`
 - `PATCH_HYPHAE`, `BLEEDING_HEARTS`, `STINK_HORNS`
 
 ---

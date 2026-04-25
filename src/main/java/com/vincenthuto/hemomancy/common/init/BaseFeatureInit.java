@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.worldgen.feature.SilverBellsTowerFeature
 import com.vincenthuto.hemomancy.common.worldgen.feature.SmallInfectedMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.SporeNexusTowerFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.TermiteMoundFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.VenousRidgeFeature;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -41,6 +42,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> HYPHAE_TENDRIL = register("hyphae_tendril",
 			new HyphaeTendrilFeature(NoneFeatureConfiguration.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> VENOUS_RIDGE = register("venous_ridge",
+			new VenousRidgeFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> HUGE_FUNGUS = register("huge_fungus",
 			new FungusFeature(NoneFeatureConfiguration.CODEC));

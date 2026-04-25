@@ -2,38 +2,42 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import org.joml.Matrix4f;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class FungalSkyBoxRenderer {
 
-	/** The base sky box texture — uses the hemomancy copy of end_sky. */
-	private static final ResourceLocation SKY_TEXTURE =
-			Hemomancy.rloc("textures/environment/end_sky.png");
+	private static final int STAR_LAYER_COUNT = 4;
+	private static VertexBuffer[] starBuffers;
+	private static boolean starsCreated = false;
+	private static VertexBuffer skyBuffer;
+	private static VertexBuffer darkBuffer;
 
-	/**
-	 * Secondary tiled blood-spore layer rendered on top of the base sky,
-	 * scrolling slowly to give the impression of drifting spores.
-	 */
-	private static final ResourceLocation SPORE_TEXTURE =
-			Hemomancy.rloc("textures/environment/blood_fill_tiled.png");
-
-	// ------------------------------------------------------------------ utils
+	private static final ResourceLocation EARTH_LOCATION = Hemomancy.rloc("textures/environment/earth.png");
+	private static final ResourceLocation MOON_LOCATION = Hemomancy.rloc("textures/environment/moon.png");
+	private static final ResourceLocation END_SKY_LOCATION = Hemomancy.rloc("textures/environment/blood_fill_tiled.png");
 
 	public static double heartbeatEffect(float f, double frequency, double amplitude) {
 		return amplitude * Math.sin(frequency * f);
@@ -44,107 +48,296 @@ public class FungalSkyBoxRenderer {
 		return baseValue + heartbeatEffect(f, 0, 0);
 	}
 
-	// ------------------------------------------------------------------ sky
-
-	/**
-	 * Renders a two-layer fungal void sky:
-	 * <ol>
-	 *   <li>A slowly rotating cube mapped with {@code end_sky.png}, tinted deep
-	 *       blood-crimson so the familiar void pattern reads as an alien void.</li>
-	 *   <li>A very faint scrolling tiled spore overlay for atmospheric depth.</li>
-	 * </ol>
-	 * Returns {@code true} to suppress vanilla sky fallback.
-	 */
 	public static boolean renderSky(ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
 			Matrix4f projectionMatrix, Runnable setupFog) {
+		PoseStack stack = new PoseStack();
+		stack.mulPose(modelViewMatrix);
+
+		float rainFade = 1.0F - level.getRainLevel(partialTicks);
+		Tesselator tesselator = Tesselator.getInstance();
+		FogRenderer.levelFogColor();
+
+		RenderSystem.depthMask(false);
+		RenderSystem.enableBlend();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+		RenderSystem.disableDepthTest();
+		renderHorizonDarkness(level, partialTicks, stack, camera, projectionMatrix);
+		renderLightSkyDisc(stack, projectionMatrix);
+		renderSunrise(level, partialTicks, stack, tesselator);
+		renderSporeSkybox(stack, tesselator);
+
+		renderEarthAndMoon(level, partialTicks, stack, rainFade, tesselator);
+		renderStars(level, partialTicks, stack, projectionMatrix);
 
 		setupFog.run();
-
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.depthMask(false);
-
-		var mvStack = RenderSystem.getModelViewStack();
-		mvStack.pushMatrix();
-		mvStack.set(modelViewMatrix);
-
-		// Very slow Y-axis rotation — one full turn every ~28 real-time minutes.
-		float angle = ((level.getGameTime() % 100000L) + partialTicks) * (float) (Math.PI * 2.0 / 100000.0);
-		mvStack.rotateY(angle);
-		RenderSystem.applyModelViewMatrix();
-
-		// --- Layer 1: base sky cube tinted deep crimson ---
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, SKY_TEXTURE);
-		RenderSystem.setShaderColor(0.22f, 0.0f, 0.06f, 1.0f);
-
-		float d = 100.0f;
-		Tesselator tess = Tesselator.getInstance();
-
-		renderBoxFace(tess, -d, -d, -d,  d, -d, -d,  d, -d,  d, -d, -d,  d);  // top
-		renderBoxFace(tess, -d,  d,  d,  d,  d,  d,  d,  d, -d, -d,  d, -d);  // bottom
-		renderBoxFace(tess,  d, -d, -d, -d, -d, -d, -d,  d, -d,  d,  d, -d);  // north
-		renderBoxFace(tess, -d, -d,  d,  d, -d,  d,  d,  d,  d, -d,  d,  d);  // south
-		renderBoxFace(tess, -d, -d, -d, -d, -d,  d, -d,  d,  d, -d,  d, -d);  // west
-		renderBoxFace(tess,  d, -d,  d,  d, -d, -d,  d,  d, -d,  d,  d,  d);  // east
-
-		// --- Layer 2: faint scrolling spore overlay ---
-		// Scroll in the opposite direction and at a different speed for parallax.
-		mvStack.rotateY(-angle * 0.4f);
-		RenderSystem.applyModelViewMatrix();
-
-		RenderSystem.setShaderTexture(0, SPORE_TEXTURE);
-		RenderSystem.setShaderColor(0.35f, 0.0f, 0.08f, 0.35f); // semi-transparent
-
-		float scroll = ((level.getGameTime() + partialTicks) * 0.00015f) % 1.0f;
-		float sd = 95.0f; // slightly inside the base box to avoid z-fighting
-
-		renderBoxFaceScrolled(tess, -sd, -sd, -sd,  sd, -sd, -sd,  sd, -sd,  sd, -sd, -sd,  sd, scroll);
-		renderBoxFaceScrolled(tess, -sd,  sd,  sd,  sd,  sd,  sd,  sd,  sd, -sd, -sd,  sd, -sd, scroll);
-		renderBoxFaceScrolled(tess,  sd, -sd, -sd, -sd, -sd, -sd, -sd,  sd, -sd,  sd,  sd, -sd, scroll);
-		renderBoxFaceScrolled(tess, -sd, -sd,  sd,  sd, -sd,  sd,  sd,  sd,  sd, -sd,  sd,  sd, scroll);
-		renderBoxFaceScrolled(tess, -sd, -sd, -sd, -sd, -sd,  sd, -sd,  sd,  sd, -sd,  sd, -sd, scroll);
-		renderBoxFaceScrolled(tess,  sd, -sd,  sd,  sd, -sd, -sd,  sd,  sd, -sd,  sd,  sd,  sd, scroll);
-
-		// --- Cleanup ---
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		mvStack.popMatrix();
-		RenderSystem.applyModelViewMatrix();
+		FogRenderer.levelFogColor();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
 		RenderSystem.disableBlend();
-
 		return true;
 	}
 
-	// ------------------------------------------------------------------ helpers
+	private static void renderEarthAndMoon(ClientLevel level, float partialTicks, PoseStack stack, float rainFade,
+			Tesselator tesselator) {
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.disableCull();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, rainFade);
 
-	/** Draws one face of the sky box with standard [0,1] UV mapping. */
-	private static void renderBoxFace(Tesselator tess,
-			float x0, float y0, float z0,
-			float x1, float y1, float z1,
-			float x2, float y2, float z2,
-			float x3, float y3, float z3) {
-		BufferBuilder buf = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buf.addVertex(x0, y0, z0).setUv(0f, 0f);
-		buf.addVertex(x1, y1, z1).setUv(1f, 0f);
-		buf.addVertex(x2, y2, z2).setUv(1f, 1f);
-		buf.addVertex(x3, y3, z3).setUv(0f, 1f);
-		BufferUploader.drawWithShader(buf.buildOrThrow());
+		stack.pushPose();
+		stack.mulPose(Axis.YN.rotationDegrees((level.getGameTime() + partialTicks) * 0.03F));
+		Matrix4f matrix = stack.last().pose();
+
+		RenderSystem.setShaderTexture(0, EARTH_LOCATION);
+		renderTexturedQuad(tesselator, matrix, 30.0F, 0.0F, 0.0F, 0.0F, 0.5F, 0.25F, 1.0F);
+
+		RenderSystem.setShaderTexture(0, MOON_LOCATION);
+		renderTexturedQuad(tesselator, matrix, 5.0F, -34.0F, -34.0F, 0.0F, 0.5F, 0.25F, 1.0F);
+
+		stack.popPose();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		RenderSystem.enableCull();
 	}
 
-	/** Draws one face of the spore overlay with a time-based UV scroll offset. */
-	private static void renderBoxFaceScrolled(Tesselator tess,
-			float x0, float y0, float z0,
-			float x1, float y1, float z1,
-			float x2, float y2, float z2,
-			float x3, float y3, float z3,
-			float scroll) {
-		float tile = 2.0f; // tile the spore texture 2× per face for smaller pattern
-		BufferBuilder buf = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buf.addVertex(x0, y0, z0).setUv(scroll,          scroll);
-		buf.addVertex(x1, y1, z1).setUv(scroll + tile,   scroll);
-		buf.addVertex(x2, y2, z2).setUv(scroll + tile,   scroll + tile);
-		buf.addVertex(x3, y3, z3).setUv(scroll,          scroll + tile);
-		BufferUploader.drawWithShader(buf.buildOrThrow());
+	private static void renderTexturedQuad(Tesselator tesselator, Matrix4f matrix, float size, float xOffset,
+			float zOffset, float minU, float minV, float maxU, float maxV) {
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		buffer.addVertex(matrix, -size + xOffset, 100.0F, -size + zOffset).setUv(minU, minV);
+		buffer.addVertex(matrix, size + xOffset, 100.0F, -size + zOffset).setUv(maxU, minV);
+		buffer.addVertex(matrix, size + xOffset, 100.0F, size + zOffset).setUv(maxU, maxV);
+		buffer.addVertex(matrix, -size + xOffset, 100.0F, size + zOffset).setUv(minU, maxV);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
+	}
+
+	private static void renderStars(ClientLevel level, float partialTicks, PoseStack stack, Matrix4f projectionMatrix) {
+		RenderSystem.depthMask(false);
+		RenderSystem.enableDepthTest();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+		createStars();
+
+		float[] layerSpeeds = { 1.0F, 0.6F, 0.35F, 0.15F };
+		float[] layerTilts = { 0.0F, 15.0F, -25.0F, 40.0F };
+		float[] layerAxisTilts = { 0.0F, 10.0F, -20.0F, 30.0F };
+
+		for (int layer = 0; layer < STAR_LAYER_COUNT; layer++) {
+			stack.pushPose();
+			stack.mulPose(Axis.XP.rotationDegrees(layerTilts[layer]));
+			stack.mulPose(Axis.ZP.rotationDegrees(layerAxisTilts[layer]));
+			stack.mulPose(Axis.YP.rotationDegrees((level.getGameTime() + partialTicks) * layerSpeeds[layer]));
+
+			RenderSystem.setShaderColor(1.0F, 1.0F, 0.0F, 1.0F);
+			FogRenderer.setupNoFog();
+			starBuffers[layer].bind();
+			starBuffers[layer].drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
+			VertexBuffer.unbind();
+			stack.popPose();
+		}
+	}
+
+	private static void renderHorizonDarkness(ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
+			Matrix4f projectionMatrix) {
+		RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
+		double distanceBelowHorizon = camera.getEntity().getEyePosition(partialTicks).y()
+				- level.getLevelData().getHorizonHeight(level);
+		if (distanceBelowHorizon < 0.0D) {
+			createDarkSky();
+			stack.pushPose();
+			stack.translate(0.0F, 12.0F, 0.0F);
+			darkBuffer.bind();
+			darkBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
+			VertexBuffer.unbind();
+			stack.popPose();
+		}
+	}
+
+	private static void renderLightSkyDisc(PoseStack stack, Matrix4f projectionMatrix) {
+		createLightSky();
+		skyBuffer.bind();
+		skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
+		VertexBuffer.unbind();
+	}
+
+	private static void renderSunrise(ClientLevel level, float partialTicks, PoseStack stack, Tesselator tesselator) {
+		float[] sunriseColor = level.effects().getSunriseColor(level.getTimeOfDay(partialTicks), partialTicks);
+		if (sunriseColor == null) {
+			return;
+		}
+
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		stack.pushPose();
+		stack.mulPose(Axis.XP.rotationDegrees(90.0F));
+		float sunSide = Mth.sin(level.getSunAngle(partialTicks)) < 0.0F ? 180.0F : 0.0F;
+		stack.mulPose(Axis.ZP.rotationDegrees(sunSide));
+		stack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+
+		Matrix4f matrix = stack.last().pose();
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+		buffer.addVertex(matrix, 0.0F, 100.0F, 0.0F)
+				.setColor(sunriseColor[0], sunriseColor[1], sunriseColor[2], sunriseColor[3]);
+
+		for (int j = 0; j <= 16; j++) {
+			float angle = (float) j * ((float) Math.PI * 2F) / 16.0F;
+			float sin = Mth.sin(angle);
+			float cos = Mth.cos(angle);
+			buffer.addVertex(matrix, sin * 120.0F, cos * 120.0F, -cos * 40.0F * sunriseColor[3])
+					.setColor(sunriseColor[0], sunriseColor[1], sunriseColor[2], 0.0F);
+		}
+
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
+		stack.popPose();
+	}
+
+	private static void renderSporeSkybox(PoseStack stack, Tesselator tesselator) {
+		RenderSystem.enableBlend();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+		RenderSystem.setShaderTexture(0, END_SKY_LOCATION);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		for (int i = 0; i < 6; i++) {
+			stack.pushPose();
+			if (i == 1) {
+				stack.mulPose(Axis.XP.rotationDegrees(90.0F));
+			}
+			if (i == 2) {
+				stack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+			}
+			if (i == 3) {
+				stack.mulPose(Axis.XP.rotationDegrees(180.0F));
+			}
+			if (i == 4) {
+				stack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+			}
+			if (i == 5) {
+				stack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
+			}
+
+			Matrix4f matrix = stack.last().pose();
+			BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			buffer.addVertex(matrix, -100.0F, -100.0F, -100.0F).setUv(0.0F, 0.0F).setColor(24, 24, 24, 255);
+			buffer.addVertex(matrix, -100.0F, -100.0F, 100.0F).setUv(0.0F, 16.0F).setColor(24, 24, 24, 255);
+			buffer.addVertex(matrix, 100.0F, -100.0F, 100.0F).setUv(16.0F, 16.0F).setColor(24, 24, 24, 255);
+			buffer.addVertex(matrix, 100.0F, -100.0F, -100.0F).setUv(16.0F, 0.0F).setColor(24, 24, 24, 255);
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
+			stack.popPose();
+		}
+	}
+
+	private static void createLightSky() {
+		if (skyBuffer != null) {
+			skyBuffer.close();
+		}
+
+		skyBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		skyBuffer.bind();
+		skyBuffer.upload(buildSkyDisc(Tesselator.getInstance(), 16.0F));
+		VertexBuffer.unbind();
+	}
+
+	private static void createDarkSky() {
+		if (darkBuffer != null) {
+			darkBuffer.close();
+		}
+
+		darkBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		darkBuffer.bind();
+		darkBuffer.upload(buildSkyDisc(Tesselator.getInstance(), -16.0F));
+		VertexBuffer.unbind();
+	}
+
+	private static MeshData buildSkyDisc(Tesselator tesselator, float y) {
+		float radiusX = Math.signum(y) * 512.0F;
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
+		buffer.addVertex(0.0F, y, 0.0F);
+
+		for (int i = -180; i <= 180; i += 45) {
+			buffer.addVertex(radiusX * Mth.cos((float) i * ((float) Math.PI / 180F)), y,
+					512.0F * Mth.sin((float) i * ((float) Math.PI / 180F)));
+		}
+
+		return buffer.buildOrThrow();
+	}
+
+	private static void createStars() {
+		if (starsCreated && starBuffers != null) {
+			return;
+		}
+
+		if (starBuffers != null) {
+			for (VertexBuffer buffer : starBuffers) {
+				if (buffer != null) {
+					buffer.close();
+				}
+			}
+		}
+
+		starBuffers = new VertexBuffer[STAR_LAYER_COUNT];
+		long[] seeds = { 10842L, 27519L, 54637L, 83291L };
+		int starsPerLayer = 3000 / STAR_LAYER_COUNT;
+
+		for (int layer = 0; layer < STAR_LAYER_COUNT; layer++) {
+			starBuffers[layer] = new VertexBuffer(VertexBuffer.Usage.STATIC);
+			starBuffers[layer].bind();
+			starBuffers[layer].upload(drawStars(Tesselator.getInstance(), starsPerLayer, seeds[layer]));
+			VertexBuffer.unbind();
+		}
+		starsCreated = true;
+	}
+
+	private static MeshData drawStars(Tesselator tesselator, int starCount, long seed) {
+		RandomSource random = RandomSource.create(seed);
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+
+		for (int i = 0; i < starCount; i++) {
+			double spreadX = random.nextFloat() * 2.0F - 1F;
+			double spreadY = random.nextFloat() * 2.0F - 1F;
+			double spreadZ = random.nextFloat() * 2.0F - 1F;
+			double vertexEdgeLength = 0.15F + random.nextFloat() * 0.1F;
+			double pythagorean = spreadX * spreadX + spreadY * spreadY + spreadZ * spreadZ;
+			if (pythagorean < 1.0D && pythagorean > 0.31D) {
+				pythagorean = 1.0D / Math.sqrt(pythagorean);
+				spreadX *= pythagorean;
+				spreadY *= pythagorean;
+				spreadZ *= pythagorean;
+				double xDensity = spreadX * 100.0D;
+				double yDensity = spreadY * 100.0D;
+				double zDensity = spreadZ * 100.0D;
+				double d8 = Math.atan2(spreadX, spreadZ);
+				double d9 = Math.sin(d8);
+				double d10 = Math.cos(d8);
+				double d11 = Math.atan2(Math.sqrt(spreadX * spreadX + spreadZ * spreadZ), spreadY);
+				double d12 = Math.sin(d11);
+				double d13 = Math.cos(d11);
+				double d14 = random.nextDouble() * Math.PI * 2.0D;
+				double d15 = Math.sin(d14);
+				double d16 = Math.cos(d14);
+
+				for (int j = 0; j < 4; j++) {
+					double d18 = ((j & 2) - 1) * vertexEdgeLength;
+					double d19 = ((j + 1 & 2) - 1) * vertexEdgeLength;
+					double d21 = d18 * d16 - d19 * d15;
+					double d22 = d19 * d16 + d18 * d15;
+					double d23 = d21 * d12;
+					double d24 = -d21 * d13;
+					double d25 = d24 * d9 - d22 * d10;
+					double d26 = d22 * d9 + d24 * d10;
+
+					buffer.addVertex((float) (xDensity + d25), (float) (yDensity + d23), (float) (zDensity + d26));
+				}
+			}
+		}
+
+		return buffer.buildOrThrow();
 	}
 }

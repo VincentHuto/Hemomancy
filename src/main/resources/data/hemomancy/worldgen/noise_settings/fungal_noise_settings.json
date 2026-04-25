@@ -1,5 +1,5 @@
 {
-  "sea_level": -16,
+  "sea_level": 32,
   "disable_mob_generation": false,
   "aquifers_enabled": false,
   "ore_veins_enabled": true,
@@ -27,7 +27,7 @@
     "temperature": {
       "type": "minecraft:shifted_noise",
       "noise": "minecraft:temperature",
-      "xz_scale": 0.1,
+      "xz_scale": 0.3,
       "y_scale": 0,
       "shift_x": "minecraft:shift_x",
       "shift_y": 0,
@@ -36,7 +36,7 @@
     "vegetation": {
       "type": "minecraft:shifted_noise",
       "noise": "minecraft:vegetation",
-      "xz_scale": 0.25,
+      "xz_scale": 0.45,
       "y_scale": 0,
       "shift_x": "minecraft:shift_x",
       "shift_y": 0,
@@ -47,7 +47,7 @@
       "argument": {
         "type": "minecraft:shifted_noise",
         "noise": "minecraft:continentalness",
-        "xz_scale": 0.05,
+        "xz_scale": 0.14,
         "y_scale": 0,
         "shift_x": "minecraft:shift_x",
         "shift_y": 0,
@@ -57,7 +57,7 @@
     "erosion": {
       "type": "minecraft:shifted_noise",
       "noise": "minecraft:erosion",
-      "xz_scale": 0.15,
+      "xz_scale": 0.28,
       "y_scale": 0,
       "shift_x": "minecraft:shift_x",
       "shift_y": 0,
@@ -81,7 +81,7 @@
     "ridges": {
       "type": "minecraft:shifted_noise",
       "noise": "minecraft:ridge",
-      "xz_scale": 0.15,
+      "xz_scale": 0.35,
       "y_scale": 0,
       "shift_x": "minecraft:shift_x",
       "shift_y": 0,
@@ -92,7 +92,7 @@
       "type": "minecraft:squeeze",
       "argument": {
         "type": "minecraft:mul",
-        "argument1": 0.64,
+        "argument1": 0.86,
         "argument2": {
           "type": "minecraft:interpolated",
           "argument": {
@@ -114,7 +114,7 @@
                   "argument1": "hemomancy:erosion_shape",
                     "argument2": {
                     "type": "minecraft:mul",
-                    "argument1": 1.0,
+                    "argument1": 1.35,
                     "argument2": {
                       "type": "minecraft:add",
                       "argument1": -0.7,

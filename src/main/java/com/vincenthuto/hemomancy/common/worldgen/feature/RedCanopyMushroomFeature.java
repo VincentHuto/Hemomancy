@@ -39,13 +39,7 @@ public class RedCanopyMushroomFeature extends CanopyMushroomFeature {
 		return 10 + random.nextInt(2);
 	}
 
-	/**
-	 * 33% Chance to get a vanilla - styled big red mushroom cap, 33% chance for it
-	 * to be a "smooth" cap, kinda like the ones on a mushroom castle, 33% chance
-	 * it's the same style of cap as you'd find in TF version 1.17, for example 1%
-	 * chance for it to be a flat cap, same as the brown mushroom one, these used to
-	 * be in older versions of TF
-	 */
+
 	@Override
 	protected void makeCap(LevelAccessor levelAccessor, RandomSource random, BlockPos pos, int height,
 			BlockPos.MutableBlockPos mutableBlockPos,

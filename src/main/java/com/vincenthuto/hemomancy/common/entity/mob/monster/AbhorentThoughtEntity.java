@@ -148,11 +148,7 @@ public class AbhorentThoughtEntity extends Monster {
 			} else {
 				this.walkAnimationState.stop();
 				this.idleAnimationState.startIfStopped(this.tickCount);
-
 			}
-
 		}
-
 	}
-
 }

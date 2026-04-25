@@ -7,14 +7,14 @@
       "argument": {
         "type": "minecraft:shifted_noise",
         "noise": "minecraft:erosion",
-        "xz_scale": 0.15,
+        "xz_scale": 0.22,
         "y_scale": 0,
         "shift_x": "minecraft:shift_x",
         "shift_y": 0,
         "shift_z": "minecraft:shift_z"
       }
     },
-    "argument2": -0.45
+    "argument2": -0.7
   },
   "argument2": 0
 }

@@ -34,7 +34,8 @@ public class FungalRealmsRenderInfo extends DimensionSpecialEffects {
 
     @Override
     public Vec3 getBrightnessDependentFogColor(Vec3 biomeFogColor, float daylight) { // For modifying biome fog color with daycycle
-        return biomeFogColor.multiply(daylight * 0.94F + 0.06F, (daylight * 0.94F + 0.06F), (daylight * 0.91F + 0.09F));
+        float light = daylight * 0.4F + 0.2F;
+        return biomeFogColor.multiply(light, light, daylight * 0.35F + 0.2F);
     }
 
     @Override
@@ -44,13 +45,13 @@ public class FungalRealmsRenderInfo extends DimensionSpecialEffects {
         if (player != null) {
             Optional<ResourceKey<Biome>> biome = player.level().getBiome(player.blockPosition()).unwrapKey();
             if (biome.isPresent()) {
-                boolean spooky = biome.get() != BiomeInit.FUNGAL_GARDENS;
+                boolean fungalGardens = biome.get().equals(BiomeInit.FUNGAL_GARDENS);
 
-                if (player.position().y > 20 && !spooky) {
-                    return false; // If player is above the dark forest then no need to make it so spooky. The darkwood leaves cover everything as low as y42.
+                if (player.position().y > 20) {
+                    return false;
                 }
 
-                return spooky || biome.get() != BiomeInit.FUNGAL_GARDENS || biome.get() != BiomeInit.FUNGAL_GARDENS;
+                return !fungalGardens;
             }
         }
 
