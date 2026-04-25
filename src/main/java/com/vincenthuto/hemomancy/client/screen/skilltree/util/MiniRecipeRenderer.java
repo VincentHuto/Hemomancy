@@ -474,7 +474,7 @@ public final class MiniRecipeRenderer {
 
 	/** Draws a small flame icon for Ghastly Alembic recipes. */
 	private static void drawFlameIcon(GuiGraphics gfx, int x, int y) {
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		for (int row = 0; row < 8; row++) {
 			float rowT = (float) row / 8;
 			float flicker = 0.6f + 0.4f * Mth.sin(time * 6f + row * 0.5f);

@@ -108,6 +108,7 @@ public final class ScarsTabView {
 		int filledColor  = TAB_COLOR;
 		int emptyBg      = 0xFF120808;
 		int emptyBorder  = 0xFF221111;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		for (int row = 0; row < 8 && row < pattern.length; row++) {
 			for (int col = 0; col < 8 && col < pattern[row].length; col++) {
@@ -115,7 +116,6 @@ public final class ScarsTabView {
 				int cy = gridY + row * cellSize;
 
 				if (pattern[row][col] != 0) {
-					float time  = System.nanoTime() / 1_000_000_000f;
 					float pulse = 0.7f + 0.3f * (float) Math.sin(time * 2.0 + row * 0.5 + col * 0.3);
 					int r = (int) (((filledColor >> 16) & 0xFF) * pulse);
 					int g = (int) (((filledColor >> 8)  & 0xFF) * pulse);

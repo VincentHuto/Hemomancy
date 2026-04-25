@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa;
 
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -30,9 +31,17 @@ public class BloodVolumeClientPacket {
 				// Send message back to the client to set the information
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),
 						new BloodVolumeServerPacket(volume));
+				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),
+						new PacketSyncPomeProgress(computePomeProgress(sender)));
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	private static int computePomeProgress(ServerPlayer player) {
+		return player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+				.map(degree -> degree.isQliphothCommunionDone() ? 9 : degree.getTotalPomesConsumed())
+				.orElse(0);
 	}
 
 	public BloodVolumeClientPacket() {

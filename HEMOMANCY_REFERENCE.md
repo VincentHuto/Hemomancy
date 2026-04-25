@@ -129,7 +129,7 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
 | 7 | Archon of the Hematic Order | `archon_rite` |
-| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion flag — gate enforced in `BloodCraftingKeyPressPacket` before rite start, checks `hemomancy:qliphoth_communion` on player persistent data)* |
+| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion flag - gate enforced in `BloodCraftingKeyPressPacket` before rite start, checks `IInitiatoryDegree#isQliphothCommunionDone()`)* |
 
 Cardinal Rites have:
 - A blood cost
@@ -327,24 +327,30 @@ The `QliphothBloomRenderer` reads `bloom.getPomesDropped()` and passes it as a `
 
 Implementation: `trunkHeightFrac(stage)`, `rootLengthFrac(stage)`, `branchLengthFrac(stage)` in `QliphothBloomRenderer`. The `pomesDropped` count is stored in `QliphothBloomClientData.BloomEntry` and synced via `PacketSyncQliphothBlooms`.
 
-**Pome effects when consumed (untainted):** +300 blood burst, Regeneration II (12 s), Darkness (7 s), 25% manipulation cost reduction for 3 minutes (`hemomancy:pome_empowerment_expiry` on persistent data, checked in `BloodManipulation.performAction()`). Tainted pomes (Unstained-severed variant) apply inverted effects: Weakness II + prolonged Darkness, no blood burst.
+**Pome effects when consumed (untainted):** +300 blood burst, Regeneration II (12 s), Darkness (7 s), 25% manipulation cost reduction for 3 minutes (`pome_empowerment_expiry` on `IInitiatoryDegree`, checked in `BloodManipulation.performAction()`). Tainted pomes (Unstained-severed variant) apply inverted effects: Weakness II + prolonged Darkness, no blood burst.
 
 **Stage 4 — Qliphoth Communion Achieved**
-`QliphothPomeItem.trackCommunionProgress()` tracks per-bloom consumption in `hemomancy:pome_communion_progress` (CompoundTag keyed by bloom origin Long). When the ninth pome from a single bloom is consumed:
-- `hemomancy:qliphoth_communion = true` is stamped on the player's persistent data
+`QliphothPomeItem.trackCommunionProgress()` tracks per-bloom consumption in `IInitiatoryDegree` (`pome_communion_progress`, keyed by bloom origin Long). When the ninth pome from a single bloom is consumed:
+- `pome_communion_done = true` is stamped on the player's Initiatory Degree capability
 - `FungalWhisperDialogueTrees.qliphothCommunion()` fires the nine-shell completion whisper
 
 **Stage 5 — Rite of Apotheos Unlocked**
-`BloodCraftingKeyPressPacket` (server-side rite activation) checks `hemomancy:qliphoth_communion` before allowing the `apotheos_rite` to begin. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree ≥ 7), the rite proceeds normally.
+`BloodCraftingKeyPressPacket` (server-side rite activation) checks `IInitiatoryDegree#isQliphothCommunionDone()` before allowing the `apotheos_rite` to begin. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree >= 7), the rite proceeds normally.
 
-**Key NBT flags on player persistent data:**
+**Key NBT fields on `IInitiatoryDegree`:**
 
 | Key | Type | Meaning |
 |-----|------|---------|
-| `hemomancy:qliphoth_communion` | Boolean | Communion completed; Apotheos rite now accessible |
-| `hemomancy:pome_communion_progress` | CompoundTag | Per-bloom pome consumption counters (keys = bloom origin Long as String) |
-| `hemomancy:pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
-| `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` — set when Archon resolves the Fungal Dimension choice fork |
+| `pome_communion_done` | Boolean | Communion completed; Apotheos rite now accessible |
+| `pome_communion_progress` | CompoundTag | Per-bloom pome consumption counters (keys = bloom origin Long as String) |
+| `pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
+| `pome_total_consumed` | Int | Total normal pomes consumed, capped at 9 and synced to the HUD tracker via `PacketSyncPomeProgress` |
+
+**Related persistent player data:**
+
+| Key | Type | Meaning |
+|-----|------|---------|
+| `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` - set when Archon resolves the Fungal Dimension choice fork |
 
 ---
 
@@ -484,6 +490,8 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 - Reaching 100 clarity = **Enlightenment**, the final state
 
 ### 4.6 HUD
+
+Harbinger players with an active blood system and Charm of Vascularium equipped see the Blood Volume overlay. It now also renders a 0-9 Qliphoth Pome tracker beside the blood bar, using `pome_total_consumed` synced from `IInitiatoryDegree` via `PacketSyncPomeProgress`.
 
 Unstained players see a dedicated gauge overlay (top-right corner) with:
 - Silver **Purity** bar
@@ -935,7 +943,7 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/structure_spawner.png) Structure Spawner | Debug/creative item for spawning structures |
 | ![](src/main/resources/assets/hemomancy/textures/item/recycled_enzyme.png) Recycled Enzyme | Generic enzyme fallback |
 | **Qliphoth Seed** | Dropped by the Sanguine Monolith when shattered by a Degree-7 Archon (two interactions). Custom entity `EntityQliphothSeedItem`. Used as a placed catalyst inside the **Bloom of the Qliphoth** rite. One-time per monolith. |
-| **Qliphoth Pome** | Edible fruit dropped by the Qliphoth Bloom tree over time (9 total per bloom lifecycle). Each pome tagged with `hemomancy:bloom_origin` + `hemomancy:husk_index` (0–8). Grants +300 blood, Regeneration II (12 s), Darkness (7 s), 25% manip cost reduction (3 min). Consuming all nine from one bloom sets `hemomancy:qliphoth_communion = true` and fires the Communion whisper. See §3.9. |
+| **Qliphoth Pome** | Edible fruit dropped by the Qliphoth Bloom tree over time (9 total per bloom lifecycle). Each pome tagged with `hemomancy:bloom_origin` + `hemomancy:husk_index` (0-8). Grants +300 blood, Regeneration II (12 s), Darkness (7 s), 25% manip cost reduction (3 min). Consuming all nine from one bloom sets `pome_communion_done = true` on the Initiatory Degree capability and fires the Communion whisper. See Section 3.9. |
 | ![](src/main/resources/assets/hemomancy/textures/item/debug_showcase_spawner.png) Debug Showcase | Creative-mode debug item (`DebugShowcaseItem`) — right-click to spawn a complete showcase area containing every Hemomancy feature organized into 4 sections: (1) All items in labeled chests, (2) All blocks placed on platforms, (3) All mob entities in fenced pens, (4) All blood structures and cardinal rites as placed patterns. |
 
 ### 13.6 Unstained Materials (Our Lady of Still Waters)
@@ -1953,7 +1961,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **New Monster Mobs (Biome Routing RESOLVED, AI/Drops WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). ~~Spawn rules are registered but specific spawn biomes have not been assigned.~~ **Biome routing RESOLVED:** All 7 primary monsters now have both a populated biome tag spawnlist (`data/hemomancy/tags/worldgen/biome/<mob>_spawnlist.json`) and a Forge BiomeModifier (`data/hemomancy/forge/biome_modifier/add_<mob>.json` using `forge:add_spawns`). Assignments: Dessicant → desert/badlands; Cruor Fiend → all Nether biomes; Void Drinker → End biomes; Frozen Clot → snowy/icy biomes; Synapse Hound → savanna/plains/windswept hills; Myelin Borer → dripstone/lush caves/deep dark; Abyssal Siphon → deep dark. AI behaviours, drops, and loot tables are still being designed/implemented.
 - **New NPC Entities Dialogue** — ~~Dialogue still being developed.~~ **RESOLVED:** Full dialogue trees are now implemented for all 5 NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, and **Harbinger Vicar**. All trees are degree/purity-stage gated. `DialogueEventHandler` handles gameplay consequences (rite hint drops, death of Hermit, chat messages). AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
 - **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index)` (per-husk drop announcement), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork).
-- **Qliphoth Communion System — FULLY IMPLEMENTED** — Complete 5-stage prerequisite chain for the Rite of Apotheos: (1) Monolith shatter (Degree 7, 2 interactions → drops Qliphoth Seed + `postMonolithShatter` whisper); (2) Bloom of the Qliphoth rite (Degree 7 Grand, blood cost 1200 — seed as catalyst → places `QliphothBloomBlock` 1×1×8 multiblock, registers in `QliphothBloomSavedData`); (3) Tree drops 9 Qliphoth Pomes over time (1-in-80 per 40-tick interval, each tagged with bloom origin + husk index 0–8, invulnerable + infinite lifespan, per-drop `pomeDropped()` whisper); (4) Consuming all 9 stamps `hemomancy:qliphoth_communion = true` + fires `qliphothCommunion()` dialogue; (5) `BloodCraftingKeyPressPacket` checks the flag before allowing `apotheos_rite` to begin. See §3.9 for the full specification.
+- **Qliphoth Communion System - FULLY IMPLEMENTED** - Complete 5-stage prerequisite chain for the Rite of Apotheos: (1) Monolith shatter (Degree 7, 2 interactions -> drops Qliphoth Seed + `postMonolithShatter` whisper); (2) Bloom of the Qliphoth rite (Degree 7 Grand, blood cost 1200 - seed as catalyst -> places `QliphothBloomBlock` 1x1x8 multiblock, registers in `QliphothBloomSavedData`); (3) Tree drops 9 Qliphoth Pomes over time (1-in-80 per 40-tick interval, each tagged with bloom origin + husk index 0-8, invulnerable + infinite lifespan, per-drop `pomeDropped()` whisper); (4) Consuming all 9 stamps `pome_communion_done = true` on the Initiatory Degree capability + fires `qliphothCommunion()` dialogue; (5) `BloodCraftingKeyPressPacket` checks the capability flag before allowing `apotheos_rite` to begin. See Section 3.9 for the full specification.
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
 - **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.

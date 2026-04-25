@@ -47,6 +47,7 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnMonolithShatterBur
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
@@ -189,6 +190,8 @@ public class PacketHandler {
 				BloodVolumeClientPacket::decode, BloodVolumeClientPacket::handle);
 		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumeServerPacket.class, BloodVolumeServerPacket::encode,
 				BloodVolumeServerPacket::decode, BloodVolumeServerPacket::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSyncPomeProgress.class, PacketSyncPomeProgress::encode,
+				PacketSyncPomeProgress::decode, PacketSyncPomeProgress::handle);
 		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodFormationKeyPressPacket.class,
 				BloodFormationKeyPressPacket::encode, BloodFormationKeyPressPacket::decode,
 				BloodFormationKeyPressPacket::handle);

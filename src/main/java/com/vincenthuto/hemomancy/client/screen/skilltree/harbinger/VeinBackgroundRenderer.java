@@ -42,7 +42,7 @@ public final class VeinBackgroundRenderer {
             int red = (int)(40 * (1f - t));
             gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16));
         }
-        float time = System.nanoTime() / 1_000_000_000f;
+        float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
         for (int i = 0; i < VEIN_COUNT; i++) drawVeinTendril(gfx, i, time, gx, gy, gw, gh);
         Random speckRand = new Random(12345L);
         for (int s = 0; s < 120; s++) {

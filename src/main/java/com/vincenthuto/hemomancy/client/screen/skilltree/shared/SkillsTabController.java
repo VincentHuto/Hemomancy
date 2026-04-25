@@ -122,7 +122,7 @@ public class SkillsTabController implements IProgressTab {
     }
 
     private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
-        float time = System.nanoTime() / 1_000_000_000f;
+        float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
         int hn = halfNode();
         for (var e : nodePositions.entrySet()) {
             SkillPoint sp = e.getKey();

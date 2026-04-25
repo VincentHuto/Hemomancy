@@ -624,7 +624,7 @@ public class UnstainedProgressScreen extends Screen {
 								 EnumNodeShape shape,
 								 @javax.annotation.Nullable ResourceLocation iconTexture,
 								 @javax.annotation.Nullable ItemStack iconStack) {
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		int hn = halfNode();
 
 		// Determine border colour
@@ -840,7 +840,7 @@ public class UnstainedProgressScreen extends Screen {
 
 		// Pulsing glow when enabled and unlocked
 		if (enabled && unlocked) {
-			float time = System.nanoTime() / 1_000_000_000f;
+			float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 			float p = 0.3f + 0.3f * Mth.sin(time * 2.0f);
 			int ga = (int)(30 * p);
 			int gr = (glow >> 16) & 0xFF;
@@ -1084,7 +1084,7 @@ public class UnstainedProgressScreen extends Screen {
 
 		// Completion glow
 		if (current >= goal) {
-			float time = System.nanoTime() / 1_000_000_000f;
+			float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 			float pulse = 0.3f + 0.2f * Mth.sin(time * 2.0f);
 			int ga = (int) (pulse * 255);
 			gfx.fill(barX, y, barX + barW, y + barH, (ga << 24) | 0x60CC60);

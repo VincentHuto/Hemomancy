@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -279,8 +280,9 @@ public class BloodManipulation  {
 				}
 
 				// Qliphoth Pome Empowerment: 25% cost reduction for 3 minutes after eating a Pome
-				long pomeExpiry = player.getPersistentData()
-						.getLong(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.POME_EMPOWERMENT_KEY);
+				long pomeExpiry = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+						.map(degree -> degree.getPomeEmpowermentExpiry())
+						.orElse(0L);
 				if (player.level().getGameTime() < pomeExpiry) {
 					effectiveCost *= 0.75;
 				}

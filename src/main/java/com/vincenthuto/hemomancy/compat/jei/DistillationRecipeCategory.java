@@ -77,7 +77,7 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 	public void draw(DistillationRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx, double mouseX,
 			double mouseY) {
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		// ── Dark background ──
 		gfx.fill(0, 0, BG_W, BG_H, pallid ? 0xFF060A1E : 0xFF0A0204);

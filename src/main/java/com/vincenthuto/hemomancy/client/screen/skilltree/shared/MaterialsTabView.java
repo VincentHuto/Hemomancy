@@ -172,7 +172,7 @@ public final class MaterialsTabView {
 								 int accentColor,
 								 MaterialEntry selectedEntry, int selectedGlow,
 								 int defaultBorder) {
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		int hn = state.halfNode(nodeSize);
 
 		// ── Cluster backgrounds & headers ───────────────────────

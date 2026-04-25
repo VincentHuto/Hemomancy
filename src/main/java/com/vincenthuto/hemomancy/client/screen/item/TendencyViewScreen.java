@@ -365,7 +365,7 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         }
 
         // Layer 3: animated vein tendrils
-        float time = (System.nanoTime() / 1_000_000_000f);
+        float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
         if (veinParams != null) {
             for (int i = 0; i < VEIN_COUNT; i++) {

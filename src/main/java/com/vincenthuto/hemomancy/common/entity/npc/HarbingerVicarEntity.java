@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
-import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -105,10 +104,12 @@ public class HarbingerVicarEntity extends PathfinderMob {
     /**
      * Returns true if the player has an active Qliphoth Pome empowerment
      * (the 3-minute manipulation-cost-reduction window from eating a pome).
-     * Checked server-side via persistent data.
+     * Checked server-side via the Initiatory Degree capability.
      */
     private static boolean hasPomeEmpowerment(Player player) {
-        long expiry = player.getPersistentData().getLong(QliphothPomeItem.POME_EMPOWERMENT_KEY);
+        long expiry = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+                .map(degree -> degree.getPomeEmpowermentExpiry())
+                .orElse(0L);
         return expiry > 0 && player.level().getGameTime() < expiry;
     }
 

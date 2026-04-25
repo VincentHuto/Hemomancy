@@ -192,7 +192,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		}
 		int filledSegments = (int) (segments * progress);
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		for (int i = 0; i < segments; i++) {
 			double angle1 = -Math.PI / 2 + (2 * Math.PI / segments) * i;
@@ -254,7 +254,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		double maxVol = te.getMaxBloodVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		// Outer frame — double border
 		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
@@ -351,7 +351,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		}
 
 		// Layer 3: animated vein tendrils
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);

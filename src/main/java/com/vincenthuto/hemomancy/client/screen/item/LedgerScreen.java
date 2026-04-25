@@ -192,7 +192,7 @@ public class LedgerScreen extends Screen {
 			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
 		}
 
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);

@@ -13,7 +13,6 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
@@ -321,7 +320,9 @@ public class BloodCraftingKeyPressPacket {
 
 				// ── Apotheos gate: requires completed Qliphoth Communion ──
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
-						&& !player.getPersistentData().getBoolean(QliphothPomeItem.QLIPHOTH_COMMUNION_DONE_KEY)) {
+						&& !player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+								.map(degree -> degree.isQliphothCommunionDone())
+								.orElse(false)) {
 					player.displayClientMessage(
 							Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
 									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),

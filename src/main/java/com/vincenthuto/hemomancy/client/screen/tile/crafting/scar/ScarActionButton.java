@@ -59,7 +59,7 @@ public class ScarActionButton extends Button {
 
 		// Pulsing accent on hover
 		if (hovered) {
-			float time = System.nanoTime() / 1_000_000_000f;
+			float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 			float pulse = 0.4f + 0.6f * ((float) Math.sin(time * 3.0f) * 0.5f + 0.5f);
 			int accentAlpha = (int) (40 * pulse);
 			int accent = (accentAlpha << 24) | 0xCC2020;

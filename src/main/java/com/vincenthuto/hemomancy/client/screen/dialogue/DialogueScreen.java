@@ -381,7 +381,7 @@ public class DialogueScreen extends Screen {
 			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16));
 		}
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (bloodVeinParams != null) {
 			for (int i = 0; i < BLOOD_VEIN_COUNT; i++) {
 				drawBloodVeinTendril(gfx, i, time, gx, gy, gw, gh);
@@ -464,7 +464,7 @@ public class DialogueScreen extends Screen {
 		}
 
 		// Layer 3: floating hollow rhombuses
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (unstainedRhombusParams != null) {
 			for (int i = 0; i < UNSTAINED_RHOMBUS_COUNT; i++) {
 				drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
@@ -574,7 +574,7 @@ public class DialogueScreen extends Screen {
 		}
 
 		// Layer 3: animated fungal tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (fungalTendrilParams != null) {
 			for (int i = 0; i < FUNGAL_TENDRIL_COUNT; i++) {
 				drawFungalTendril(gfx, i, time, gx, gy, gw, gh);

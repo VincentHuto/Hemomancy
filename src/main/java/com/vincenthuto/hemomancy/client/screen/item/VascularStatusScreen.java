@@ -290,7 +290,7 @@ public class VascularStatusScreen extends Screen {
 		float b = (color & 0xFF) / 255.0f;
 
 		// Pulsing glow effect
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + section.ordinal() * 1.3f);
 		r *= pulse;
 		g *= pulse;
@@ -322,7 +322,7 @@ public class VascularStatusScreen extends Screen {
 		float g = ((color >> 8) & 0xFF) / 255.0f;
 		float b = (color & 0xFF) / 255.0f;
 
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + section1.ordinal() * 1.3f);
 		r *= pulse;
 		g *= pulse;
@@ -473,7 +473,7 @@ public class VascularStatusScreen extends Screen {
 		}
 
 		// Layer 3: animated vein tendrils
-		float time = (System.nanoTime() / 1_000_000_000f); // seconds since epoch, smooth
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick(); // seconds since epoch, smooth
 
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {

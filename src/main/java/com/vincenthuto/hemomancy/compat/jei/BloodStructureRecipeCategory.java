@@ -123,7 +123,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
 			double mouseX, double mouseY) {
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		// ── Dark background with subtle glow ──
 		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);

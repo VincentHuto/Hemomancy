@@ -236,7 +236,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
 		}
 
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
@@ -330,7 +330,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		int cx = guiLeft + GUI_WIDTH / 2;
 		int cy = guiTop + GUI_HEIGHT / 2;
 
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		float pulseAlpha = 0.15f + 0.05f * Mth.sin(time * 2.0f);
 
 		RenderSystem.enableBlend();

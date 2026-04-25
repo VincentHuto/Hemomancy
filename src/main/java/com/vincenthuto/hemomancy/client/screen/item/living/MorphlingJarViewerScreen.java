@@ -474,7 +474,7 @@ public class MorphlingJarViewerScreen extends Screen {
 		}
 
 		// Layer 3: animated green vein tendrils (swirly)
-		float time = (System.nanoTime() / 1_000_000_000f);
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawGreenVeinTendril(graphics, i, time, gx, gy, gw, gh);

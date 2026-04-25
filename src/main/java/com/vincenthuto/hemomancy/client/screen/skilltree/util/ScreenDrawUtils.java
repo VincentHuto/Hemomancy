@@ -266,7 +266,7 @@ public final class ScreenDrawUtils {
 	 */
 	public static void drawProgressBar(GuiGraphics gfx, int x, int y, int w, int h,
 									   float value, float max, int fillColorRGB) {
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		float ratio = Mth.clamp(value / max, 0f, 1f);
 		int fillW = (int)(w * ratio);
 

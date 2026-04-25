@@ -186,7 +186,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int flameW = 16;
 		int flameH = 14;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		if (this.menu.isHeated()) {
 			// Animated flame — draw pixel fire from bottom up
@@ -237,7 +237,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int arrowFullW = 58;
 		int arrowH = 8;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		double progress = this.menu.getBurnProgress() / 24.0;
 		int filledW = (int) (arrowFullW * progress);
 
@@ -305,7 +305,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		double maxVol = te.getMaxWhiteHumorVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		// Outer frame — double border
 		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
@@ -409,7 +409,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		}
 
 		// Layer 3: floating hollow rhombuses
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (rhombusParams != null) {
 			for (int i = 0; i < RHOMBUS_COUNT; i++) {
 				drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.degree;
 
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 /**
@@ -40,4 +42,26 @@ public interface IInitiatoryDegree {
 	 *         the maximum or uninitiated with no next step.
 	 */
 	boolean advanceDegree();
+
+	// Qliphoth Pome communion tracking
+
+	boolean isQliphothCommunionDone();
+
+	void setQliphothCommunionDone(boolean done);
+
+	int recordPomeConsumed(long bloomOrigin);
+
+	Map<Long, Integer> getPomeCommunionProgress();
+
+	int getTotalPomesConsumed();
+
+	void incrementTotalPomesConsumed();
+
+	void syncTotalPomesConsumed(int count);
+
+	// Qliphoth Pome empowerment
+
+	long getPomeEmpowermentExpiry();
+
+	void setPomeEmpowermentExpiry(long tick);
 }

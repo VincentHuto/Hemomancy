@@ -53,7 +53,7 @@ public final class UnstainedBackgroundRenderer {
             gfx.fill(centerX - ring, centerY - ring, centerX + ring, centerY + ring, color);
         }
 
-        float time = System.nanoTime() / 1_000_000_000f;
+        float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
         for (int i = 0; i < RHOMBUS_COUNT; i++) {
             drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
         }

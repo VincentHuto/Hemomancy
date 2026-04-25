@@ -62,7 +62,7 @@ public class UnstainedGaugeOverlay {
 			IUnstainedProgress cap, float partialTicks) {
 		Font fr = mc.font;
 		ClientLevel world = mc.level;
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		// Position: top-right area
 		int baseX = screenWidth - 46;

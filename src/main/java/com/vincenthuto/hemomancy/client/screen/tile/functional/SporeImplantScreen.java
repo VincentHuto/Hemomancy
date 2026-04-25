@@ -165,7 +165,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		}
 
 		// Layer 3: animated fungal tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 		if (tendrilParams != null) {
 			for (int i = 0; i < TENDRIL_COUNT; i++) {
 				drawFungalTendril(gfx, i, time, gx, gy, gw, gh);
@@ -281,7 +281,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		// Center fungal scar slot is at (80, 35) in GUI coords
 		int cx = gx + 80 + 8; // center of the 16px slot
 		int cy = gy + 35 + 8;
-		float time = System.nanoTime() / 1_000_000_000f;
+		float time = com.vincenthuto.hemomancy.client.screen.util.ScreenAnimationClock.tick();
 
 		int outerRadius = 18;
 		int innerRadius = 12;
