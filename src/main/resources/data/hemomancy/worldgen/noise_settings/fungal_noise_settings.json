@@ -1,5 +1,5 @@
 {
-  "sea_level": 32,
+  "sea_level": -20,
   "disable_mob_generation": false,
   "aquifers_enabled": false,
   "ore_veins_enabled": true,
@@ -430,7 +430,7 @@
                       "then_run": {
                         "type": "minecraft:block",
                         "result_state": {
-                          "Name": "minecraft:mycelium",
+                          "Name": "hemomancy:mycelium_erythrocytic_dirt",
                           "Properties": {
                             "snowy": "false"
                           }
@@ -501,7 +501,7 @@
                       "then_run": {
                         "type": "minecraft:block",
                         "result_state": {
-                          "Name": "minecraft:mycelium",
+                          "Name": "hemomancy:mycelium_erythrocytic_dirt",
                           "Properties": {
                             "snowy": "false"
                           }
@@ -557,7 +557,7 @@
                       "then_run": {
                         "type": "minecraft:block",
                         "result_state": {
-                          "Name": "minecraft:mycelium",
+                          "Name": "hemomancy:mycelium_erythrocytic_dirt",
                           "Properties": {
                             "snowy": "false"
                           }

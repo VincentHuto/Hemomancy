@@ -1,17 +1,17 @@
 {
   "type": "minecraft:canyon",
   "config": {
-    "probability": 0.02,
+    "probability": 0.004,
     "y": {
       "type": "minecraft:uniform",
       "min_inclusive": {
-        "absolute": 10
+        "above_bottom": 12
       },
       "max_inclusive": {
-        "absolute": 67
+        "absolute": 8
       }
     },
-    "yScale": 3.0,
+    "yScale": 1.2,
     "lava_level": {
       "above_bottom": 0
     },

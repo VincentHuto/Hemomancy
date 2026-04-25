@@ -82,6 +82,7 @@ public class Hemomancy {
         ParticleInit.PARTICLE_TYPES.register(modEventBus);
         EffectInit.EFFECTS.register(modEventBus);
         EffectInit.POTION_TYPES.register(modEventBus);
+        CarverInit.CARVERS.register(modEventBus);
         BaseFeatureInit.FEATURE_REGISTER.register(modEventBus);
         ItemInit.BANNERPATTERNS.register(modEventBus);
         ItemInit.BASEITEMS.register(modEventBus);

@@ -1,17 +1,17 @@
 {
-  "type": "minecraft:cave",
+  "type": "hemomancy:dry_fungal_cave",
   "config": {
-    "probability": 0.07,
+    "probability": 0.18,
     "y": {
       "type": "minecraft:uniform",
       "min_inclusive": {
         "above_bottom": 8
       },
       "max_inclusive": {
-        "absolute": 126
+        "absolute": 108
       }
     },
-    "yScale": 1.0,
+    "yScale": 2.6,
     "lava_level": {
       "above_bottom": 0
     },
@@ -38,9 +38,9 @@
         "Name": "minecraft:barrier"
       }
     },
-    "horizontal_radius_multiplier": 1.4,
-    "vertical_radius_multiplier": 0.9,
-    "floor_level": -0.7
+    "horizontal_radius_multiplier": 2.25,
+    "vertical_radius_multiplier": 1.15,
+    "floor_level": -0.84
   }
 }
 

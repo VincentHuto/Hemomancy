@@ -1,0 +1,24 @@
+{
+  "variants": {
+    "snowy=false": [
+      {
+        "model": "hemomancy:block/mycelium_erythrocytic_dirt"
+      },
+      {
+        "model": "hemomancy:block/mycelium_erythrocytic_dirt",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/mycelium_erythrocytic_dirt",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/mycelium_erythrocytic_dirt",
+        "y": 270
+      }
+    ],
+    "snowy=true": {
+      "model": "hemomancy:block/erythrocytic_dirt_block_snow"
+    }
+  }
+}

@@ -281,6 +281,10 @@ public class BlockInit {
 			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
 					.randomTicks().strength(0.6F).sound(SoundType.GRASS)));
 
+	public static final DeferredHolder<Block, Block> mycelium_erythrocytic_dirt = BASEBLOCKS.register("mycelium_erythrocytic_dirt",
+			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+					.randomTicks().strength(0.6F).sound(SoundType.GRASS)));
+
 	public static final DeferredHolder<Block, Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 
