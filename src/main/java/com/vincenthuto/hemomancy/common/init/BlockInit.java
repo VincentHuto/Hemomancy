@@ -45,6 +45,7 @@ import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -87,6 +88,24 @@ public class BlockInit {
 
 	public static final DeferredRegister<Block> POTTEDBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
+
+	/** Liquid/fluid blocks. Not included in creative-tab population or auto block-item registration. */
+	public static final DeferredRegister<Block> LIQUIDBLOCKS = DeferredRegister.create(Registries.BLOCK,
+			Hemomancy.MOD_ID);
+
+	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
+			"morphic_nectar_block",
+			() -> new LiquidBlock(
+					() -> FluidInit.MORPHIC_NECTAR.get(),
+					BlockBehaviour.Properties.of()
+							.mapColor(MapColor.COLOR_GREEN)
+							.replaceable()
+							.noCollission()
+							.strength(100f)
+							.pushReaction(PushReaction.DESTROY)
+							.noDrops()
+							.liquid()
+							.sound(SoundType.EMPTY)));
 
 	private static final ResourceKey<Block> GOURD_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("gourd"));
 	private static final ResourceKey<Block> GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("gourd_stem"));

@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.worldgen.feature.SilverBellsTowerFeature
 import com.vincenthuto.hemomancy.common.worldgen.feature.SmallInfectedMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.SporeNexusTowerFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.TermiteMoundFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.MorphicPoolFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.VenousRidgeFeature;
 
 import net.minecraft.core.registries.Registries;
@@ -69,6 +70,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> SILVER_BELLS_TOWER = register("silver_bells_tower",
 			new SilverBellsTowerFeature(NoneFeatureConfiguration.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> MORPHIC_POOL = register("morphic_pool",
+			new MorphicPoolFeature(NoneFeatureConfiguration.CODEC));
 
 	private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
 		FEATURE_REGISTER.register(key, () -> value);

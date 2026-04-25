@@ -10,12 +10,14 @@ import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
+import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.DistillationRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
+import com.vincenthuto.hemomancy.common.recipe.serializer.MorphicNectarRecipeSerializer;
 
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -50,6 +52,9 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeType<?>, RecipeType<IncubatorRecipe>> incubator_recipe_type = RECIPE_TYPES
 			.register("incubator", () -> RecipeType.simple(Hemomancy.rloc("incubator")));
 
+	public static final DeferredHolder<RecipeType<?>, RecipeType<MorphicNectarRecipe>> morphic_nectar_recipe_type = RECIPE_TYPES
+			.register("morphic_nectar", () -> RecipeType.simple(Hemomancy.rloc("morphic_nectar")));
+
 	// Serialize
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
 			DistillationRecipeSerializer::new);
@@ -77,5 +82,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> incubator_serializer = SERIALIZERS
 			.register("incubator", IncubatorRecipeSerializer::new);
+
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> morphic_nectar_serializer = SERIALIZERS
+			.register("morphic_nectar", MorphicNectarRecipeSerializer::new);
 
 }

@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:morphic_nectar",
+  "input": {
+    "item": "hemomancy:hematic_iron_scrap"
+  },
+  "result": {
+    "id": "hemomancy:hematic_iron_powder",
+    "count": 2
+  },
+  "transform_time": 80
+}
