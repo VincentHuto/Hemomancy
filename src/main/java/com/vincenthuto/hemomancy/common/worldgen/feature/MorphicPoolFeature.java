@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.FluidInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -119,6 +118,6 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 				|| b == BlockInit.conscious_mass.get()
 				|| b == BlockInit.hemorrhagic_crust.get()
 				|| b == BlockInit.calcified_hyphae.get()
-				|| b == FluidInit.MORPHIC_NECTAR_BLOCK.get();
+				|| b == BlockInit.MORPHIC_NECTAR_BLOCK.get();
 	}
 }
