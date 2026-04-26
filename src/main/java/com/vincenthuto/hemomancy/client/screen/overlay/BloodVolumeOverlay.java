@@ -56,6 +56,9 @@ public class BloodVolumeOverlay {
 		LocalPlayer player = this.mc.player;
 		if (player == null) return;
 
+		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
+			if (cap.hasClarityUnlocked()) return;
+
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(bloodCap -> {
 			if (bloodCap == null || !bloodCap.isActive()) return;
 			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
@@ -76,6 +79,7 @@ public class BloodVolumeOverlay {
 					renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, partialTicks, width);
 				}
 			});
+		});
 		});
 	}
 

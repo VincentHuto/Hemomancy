@@ -482,8 +482,51 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 
 - **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
 - Reaching 100 clarity = **Enlightenment**, the final state
+### 4.6 Unstained Progression Level (`getPlayerUnstainedLevel`)
 
-### 4.6 HUD
+To gate Unstained cardinal rites the same way Harbinger degree gates Harbinger rites, the full purity → clarity path is divided into **8 numbered levels** by `HemoCapabilityAccess.getPlayerUnstainedLevel(Player)`:
+
+| Level | Milestone | Condition |
+|-------|-----------|-----------|
+| 0 | Not begun | `!hasBegunPurification()` |
+| 1 | Begun | `hasBegunPurification()`, purity < 25 |
+| 2 | Tainted | purity ≥ 25 |
+| 3 | Cleansing | purity ≥ 50 |
+| 4 | Absolved | purity ≥ 75 |
+| 5 | Purified | `isPurified()` (purity ≥ 100) |
+| 6 | Discerning | clarity ≥ 25 |
+| 7 | Vigilant | clarity ≥ 50 |
+| 8 | Enlightened | `isEnlightened()` (clarity ≥ 100) |
+
+These levels are compared against the same `getRequiredDegreeForRite()` thresholds used by Harbinger rites (MINOR=0, LESSER=1, GREATER=3, GRAND=5), so a GREATER Unstained rite blocks at level 3 (Cleansing) and a GRAND rite blocks at level 5 (Purified) unless the recipe overrides `requiredDegree`.
+
+### 4.7 Unstained Cardinal Rites
+
+All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather than the blood reservoir.
+
+**Purity-Phase Rites (levels 0–5):**
+
+| Rite | File | Tier | Min Level | Effect |
+|------|------|------|-----------|--------|
+| Rite of Lethean Baptism | `lethean_baptism` | Minor | 0 | Begins the Unstained path; sets `begunPurification = true`, grants starting purity |
+| Rite of Still Waters | `still_waters` | Minor | 0 | Creates a 5-min zone (16 block radius) reducing magic damage by 30% |
+| Rite of Pale Consecration | `pale_consecration` | Lesser | 1 | 10-min zone that sears and slows hostile mobs entering the consecrated ground |
+| Rite of the Silver Veil | `silver_veil` | Lesser | 1 | Grants Silver Ward effect (30 min, amplifier 1) to the caster |
+| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 3 (Cleansing) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
+| Rite of the Lethean Tide | `lethean_tide` | Greater | 3 (Cleansing) | Forcibly ends an active Blood Moon; grants the caster +10 purity |
+| Rite of Clarity Ascension | `clarity_ascension` | Greater | 5 (Purified) | Unlocks the clarity phase (`clarityUnlocked = true`); requires full purity enforced in handler |
+| Rite of the Lethe Covenant | `lethe_covenant` | Grand | 5 (Purified) | Establishes a Lethe Covenant domain: 5 chunks, 30 min. Halves spawns, shields Silver Ward from bleed, passively grows purity for Unstained inside |
+| Rite of Lethean Judgment | `lethean_judgment` | Grand | 5 (Purified) | Offensive — applies Hemolysis (amp 2, 30 s) and disrupts vascular system of all blood-active players within 16 blocks |
+
+**Clarity-Phase Rites (levels 6–8):**
+
+| Rite | File | Tier | Min Level | Effect |
+|------|------|------|-----------|--------|
+| Rite of the Silver Dawn | `silver_dawn` | Greater | 6 (Discerning) | Converts blood-faction blocks to cleansed equivalents in 8-block radius; grants Verdigris Aura (amp 2, 10 min) and +5 clarity |
+| Rite of the Pale Vigil | `pale_vigil` | Greater | 7 (Vigilant) | Bursts +10 clarity, Silver Ward (amp 2, 30 min), and Verdigris Aura (amp 2, 30 min) to all clarity-bearing Unstained within 40 blocks. Grants `ADV_VIGILANT`. |
+| Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`. |
+
+### 4.8 HUD
 
 Unstained players see a dedicated gauge overlay (top-right corner) with:
 - Silver **Purity** bar
