@@ -40,8 +40,8 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<LivingSyringeMenu>> living_syringe = CONTAINERS
 			.register("living_syringe", () -> IMenuTypeExtension.create(LivingSyringeMenu::new));
 
-	public static final DeferredHolder<MenuType<?>, MenuType<CharmGourdMenu>> gourd_charm_inventory = CONTAINERS
-			.register("gourd_charm_inventory", () -> IMenuTypeExtension.create(CharmGourdMenu::new));
+	public static final DeferredHolder<MenuType<?>, MenuType<HarbingerEquipmentMenu>> gourd_charm_inventory = CONTAINERS
+			.register("gourd_charm_inventory", () -> IMenuTypeExtension.create(HarbingerEquipmentMenu::new));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<SporeImplantMenu>> fungal_implantation = CONTAINERS
 			.register("fungal_implantation", () -> IMenuTypeExtension.create(SporeImplantMenu::new));

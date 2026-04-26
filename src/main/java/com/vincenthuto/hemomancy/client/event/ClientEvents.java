@@ -35,7 +35,7 @@ import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.CharmGourdScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.HarbingerEquipmentScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.TendencyViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
@@ -454,7 +454,7 @@ public class ClientEvents {
 
 		@SubscribeEvent
 		public static void registerMenuScreens(RegisterMenuScreensEvent event) {
-			event.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
+			event.register(ContainerInit.gourd_charm_inventory.get(), HarbingerEquipmentScreen::new);
 			event.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
 			event.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
 			event.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);

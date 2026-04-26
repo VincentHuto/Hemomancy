@@ -10,7 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeClientPacket;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
@@ -217,7 +217,7 @@ public class BloodVolumeOverlay {
 	private void renderEquippedGourd(GuiGraphics gfx, Player player, int barX, int barY, int screenWidth, int screenHeight,
 			float time) {
 		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-			ItemStack gourdStack = scars.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX);
+			ItemStack gourdStack = scars.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
 			if (!(gourdStack.getItem() instanceof BloodGourdItem)) {
 				return;
 			}

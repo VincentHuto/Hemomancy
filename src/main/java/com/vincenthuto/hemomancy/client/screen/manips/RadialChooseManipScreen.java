@@ -17,7 +17,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentManipPacket;
 
@@ -61,8 +61,8 @@ public class RadialChooseManipScreen extends Screen {
 		inv = invIn;
 		this.mc = Minecraft.getInstance();
 
-		this.vascCharmEquipped = inv.getStackInSlot(CharmGourdMenu.CHARM_SLOT_INDEX);
-		if (inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX).getItem() instanceof BloodGourdItem gourd) {
+		this.vascCharmEquipped = inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+		if (inv.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX).getItem() instanceof BloodGourdItem gourd) {
 			this.gourdEquipped = gourd;
 		}
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
@@ -151,7 +151,7 @@ public class RadialChooseManipScreen extends Screen {
 
 			MutableComponent textComponents = Component.empty().copy();
 			if (inv != null) {
-				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX))
+				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(inv.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX))
 						.orElseThrow(NullPointerException::new);
 				IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(mc.player)
 						.orElseThrow(NullPointerException::new);

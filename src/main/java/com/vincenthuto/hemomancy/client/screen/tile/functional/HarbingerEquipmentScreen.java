@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -21,14 +21,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdMenu> {
+public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<HarbingerEquipmentMenu> {
 
 	public static final ResourceLocation background = Hemomancy.rloc("textures/gui/charm_slot.png");
 
 	private float oldMouseX;
 	private float oldMouseY;
 
-	public CharmGourdScreen(CharmGourdMenu container, Inventory inventory, Component name) {
+	public HarbingerEquipmentScreen(HarbingerEquipmentMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 	}
 

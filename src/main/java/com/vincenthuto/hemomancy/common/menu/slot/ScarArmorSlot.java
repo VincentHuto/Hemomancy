@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.menu.slot;
 import javax.annotation.Nullable;
 
 import com.mojang.datafixers.util.Pair;
-import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -35,7 +35,7 @@ public class ScarArmorSlot extends Slot {
 	@Nullable
 	@Override
 	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() { // getSlotTexture
-		return Pair.of(InventoryMenu.BLOCK_ATLAS, CharmGourdMenu.ARMOR_SLOT_TEXTURES[slotType.getIndex()]);
+		return Pair.of(InventoryMenu.BLOCK_ATLAS, HarbingerEquipmentMenu.ARMOR_SLOT_TEXTURES[slotType.getIndex()]);
 	}
 
 	@Override

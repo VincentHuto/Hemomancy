@@ -29,6 +29,10 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	private static final int LIST_HEIGHT = 170;
 	private static final int ENTRY_HEIGHT = 20;
 	private static final int VISIBLE_ENTRIES = LIST_HEIGHT / ENTRY_HEIGHT;
+	private static final int BORDER_OUTER = 0xFF880000;
+	private static final int BORDER_INNER = 0xFF3A0808;
+	private static final int OPTION_BORDER = 0xFF7A1414;
+	private static final int OPTION_HOVER_BORDER = 0xFFB33838;
 
 	// Blood structure tier thresholds (must match BloodCraftingKeyPressPacket)
 	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
@@ -153,11 +157,8 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
 		// Draw a dark background
 		graphics.fill(leftPos, topPos, leftPos + GUI_WIDTH, topPos + GUI_HEIGHT, 0xCC101020);
-		// Draw border
-		graphics.fill(leftPos, topPos, leftPos + GUI_WIDTH, topPos + 1, 0xFF880000);
-		graphics.fill(leftPos, topPos + GUI_HEIGHT - 1, leftPos + GUI_WIDTH, topPos + GUI_HEIGHT, 0xFF880000);
-		graphics.fill(leftPos, topPos, leftPos + 1, topPos + GUI_HEIGHT, 0xFF880000);
-		graphics.fill(leftPos + GUI_WIDTH - 1, topPos, leftPos + GUI_WIDTH, topPos + GUI_HEIGHT, 0xFF880000);
+		graphics.fill(leftPos + LIST_X - 2, topPos + LIST_Y - 2,
+				leftPos + LIST_X + LIST_WIDTH + 2, topPos + LIST_Y + LIST_HEIGHT + 2, 0x88070206);
 
 		// Draw section headers
 		int startY = topPos + LIST_Y;
@@ -212,6 +213,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
 		super.render(graphics, mouseX, mouseY, partialTick);
+		renderBorders(graphics, mouseX, mouseY);
 		this.renderTooltip(graphics, mouseX, mouseY);
 	}
 
@@ -224,6 +226,45 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	@Override
 	public boolean isPauseScreen() {
 		return false;
+	}
+
+	private void renderBorders(GuiGraphics graphics, int mouseX, int mouseY) {
+		drawBorder(graphics, leftPos, topPos, GUI_WIDTH, GUI_HEIGHT, BORDER_OUTER, BORDER_INNER);
+		drawBorder(graphics, leftPos + LIST_X - 2, topPos + LIST_Y - 2,
+				LIST_WIDTH + 4, LIST_HEIGHT + 4, BORDER_OUTER, BORDER_INNER);
+
+		int startY = topPos + LIST_Y;
+		int currentY = 0;
+		for (int i = scrollOffset; i < displayRows.size(); i++) {
+			if (currentY + ENTRY_HEIGHT > LIST_HEIGHT) break;
+			ListRow row = displayRows.get(i);
+
+			if (row.isHeader()) {
+				currentY += HEADER_HEIGHT;
+				continue;
+			}
+
+			int rowX = leftPos + LIST_X;
+			int rowY = startY + currentY;
+			int rowHeight = ENTRY_HEIGHT - 2;
+			boolean hovered = mouseX >= rowX && mouseX < rowX + LIST_WIDTH
+					&& mouseY >= rowY && mouseY < rowY + rowHeight;
+			drawSingleBorder(graphics, rowX, rowY, LIST_WIDTH, rowHeight,
+					hovered ? OPTION_HOVER_BORDER : OPTION_BORDER);
+			currentY += ENTRY_HEIGHT;
+		}
+	}
+
+	private static void drawBorder(GuiGraphics graphics, int x, int y, int width, int height, int outer, int inner) {
+		drawSingleBorder(graphics, x, y, width, height, outer);
+		drawSingleBorder(graphics, x + 1, y + 1, width - 2, height - 2, inner);
+	}
+
+	private static void drawSingleBorder(GuiGraphics graphics, int x, int y, int width, int height, int color) {
+		graphics.fill(x, y, x + width, y + 1, color);
+		graphics.fill(x, y + height - 1, x + width, y + height, color);
+		graphics.fill(x, y, x + 1, y + height, color);
+		graphics.fill(x + width - 1, y, x + width, y + height, color);
 	}
 
 	private static String formatName(String path) {
