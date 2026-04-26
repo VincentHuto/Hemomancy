@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingVisualMutation;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -56,6 +57,9 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
             float limbSwing, float limbSwingAmount, float partialTicks,
             float ageInTicks, float netHeadYaw, float headPitch) {
+
+        if (!HemoClientConfig.RENDER_MORPHLING_MUTATION_LAYER.get())
+            return;
 
         if (!(entity instanceof Player player))
             return;

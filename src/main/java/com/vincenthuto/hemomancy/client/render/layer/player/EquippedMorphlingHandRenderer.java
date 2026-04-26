@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -30,6 +31,9 @@ public class EquippedMorphlingHandRenderer {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onRenderHand(RenderHandEvent event) {
+		if (!HemoClientConfig.RENDER_EQUIPPED_MORPHLING_HAND_LAYER.get())
+			return;
+
 		// Only render on the main hand (right hand) when it's empty
 		if (event.getHand() != InteractionHand.MAIN_HAND)
 			return;

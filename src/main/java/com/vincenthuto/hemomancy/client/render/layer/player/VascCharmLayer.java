@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,9 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 	@Override
 	public void render(PoseStack matrixStack, MultiBufferSource buffer, int lightness, T ent, float limbSwing,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+		if (!HemoClientConfig.RENDER_VASCULARIUM_CHARM_LAYER.get()) {
+			return;
+		}
 		if (ent instanceof Player player) {
 			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
 				if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {

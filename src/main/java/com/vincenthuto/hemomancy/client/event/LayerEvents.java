@@ -1,18 +1,8 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.armor.BarbedArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
-import com.vincenthuto.hemomancy.client.model.armor.BloodGourdModel;
-import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.*;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
-import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
-import com.vincenthuto.hemomancy.client.model.armor.HemolymphopodaHeadArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
-import com.vincenthuto.hemomancy.client.model.armor.OpenBloodGourdModel;
-import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
-import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.BloodBulletModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.IronPillarModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.IronSpikeModel;
@@ -71,15 +61,7 @@ import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
 import com.vincenthuto.hemomancy.client.model.tile.*;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.model.tile.functional.*;
-import com.vincenthuto.hemomancy.client.render.layer.player.BloodAvatarLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.BloodGourdLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.EquippedMorphlingLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.FungalElytraLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.HemolymphopodaHeadpieceLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.MorphlingMutationLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.RenderScarsLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
+import com.vincenthuto.hemomancy.client.render.layer.player.*;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
@@ -146,6 +128,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(ChthonianQueenModel.LAYER_LOCATION, ChthonianQueenModel::createBodyLayer);
 		event.registerLayerDefinition(ChitiniteModel.LAYER_LOCATION, ChitiniteModel::createBodyLayer);
 		event.registerLayerDefinition(FerventChitiniteModel.LAYER_LOCATION, FerventChitiniteModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingJarModel.morphling_jar, MorphlingJarModel::createBodyLayer);
 		event.registerLayerDefinition(FerventChitiniteModel.CRYSTAL_LAYER_LOCATION,
 				FerventChitiniteModel::createCrystalLayer);
 
@@ -276,7 +259,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new MorphlingMutationLayer<>(livingRenderer));
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
-
+			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
 		}
 	}
 

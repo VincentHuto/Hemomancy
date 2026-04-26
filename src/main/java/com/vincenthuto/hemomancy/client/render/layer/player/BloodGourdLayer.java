@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -59,6 +60,9 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 	@Override
 	public void render(PoseStack matrixStack, MultiBufferSource buffer, int lightness, T ent, float limbSwing,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+		if (!HemoClientConfig.RENDER_BLOOD_GOURD_LAYER.get()) {
+			return;
+		}
 		if (ent instanceof Player player) {
 			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
 				var stack = inv.getStackInSlot(6);

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -28,6 +29,9 @@ public class EquippedMorphlingLayer<T extends LivingEntity, M extends HumanoidMo
 	public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
 			float limbSwing, float limbSwingAmount, float partialTicks,
 			float ageInTicks, float netHeadYaw, float headPitch) {
+
+		if (!HemoClientConfig.RENDER_EQUIPPED_MORPHLING_LAYER.get())
+			return;
 
 		if (!(entity instanceof Player player))
 			return;

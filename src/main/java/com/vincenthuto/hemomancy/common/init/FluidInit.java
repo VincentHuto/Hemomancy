@@ -28,8 +28,8 @@ public class FluidInit {
 			"morphic_nectar",
 			() -> new FluidType(FluidType.Properties.create()
 					.density(1200)
-					.viscosity(1500)
-					.lightLevel(7)) {
+					.viscosity(3000)
+					.lightLevel(3)) {
 				@Override
 				public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
 					consumer.accept(new IClientFluidTypeExtensions() {
