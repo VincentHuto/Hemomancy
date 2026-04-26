@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Living the Life",
+  "subtitle": "Daily acts that earn purity",
+  "text": "Purity is earned through the texture of a life, not through any single act. Sleep with Hemolytic Solution active and let the night do its work. Kill what carries the infection — hemomantic creatures first, undead second. Breed animals. Plant crops. Heal your companions. Earn advancements. The blood diminishes gradually, and so does its host's pull on your attention. Abstaining from blood manipulation entirely adds a quiet steady trickle. Every five minutes of restraint is worth more than a battle.",
+  "icon": "hemomancy:lethean_poppy_wreath"
+}

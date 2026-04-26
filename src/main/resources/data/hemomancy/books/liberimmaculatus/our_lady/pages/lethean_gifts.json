@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Lethean Gifts",
+  "subtitle": "What she leaves behind",
+  "text": "Lethean Dew collects at dawn near water. It is not brewed — it is gathered, a physical expression of her presence condensed out of the morning. It accelerates purification and clears certain lingering effects of the blood. Lethean Poppies bloom where the soil holds old pain. They do not persist — they appear and then are gone. The Pale Silver Bells found near Unstained settlements are grown from seed she delivers directly. They ring when corruption is near. The ringing is not alarm. It is notice.",
+  "icon": "hemomancy:lethean_dew"
+}

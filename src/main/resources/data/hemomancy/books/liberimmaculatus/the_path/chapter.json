@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.7,0.9,0.7",
+  "title": "Purity and Clarity",
+  "subtitle": "The two measures of the path",
+  "icon": "hemomancy:consecrated_copper_ingot"
+}

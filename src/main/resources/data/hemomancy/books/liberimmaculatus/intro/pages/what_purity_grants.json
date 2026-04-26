@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "What Purity Grants",
+  "subtitle": "The Verdigris Aura",
+  "text": "As purity accumulates, the body begins to express it. At the first threshold — the Tainted stage — a faint Verdigris Aura takes hold: the trace of hemolytic chemistry made visible, clinging to the skin as pale oxidized light. It grows stronger at each stage. Fully purified, the aura reaches its greatest extent. It does not make you invulnerable. It makes you recognizable to those who know what it means. The Unstained recognize their own by this light. So does Our Lady.",
+  "icon": "hemomancy:pallid_icon"
+}

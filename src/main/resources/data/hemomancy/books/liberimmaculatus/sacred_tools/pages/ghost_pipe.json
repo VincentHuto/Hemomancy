@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Ghost Pipe",
+  "subtitle": "The plant that refuses the sun",
+  "text": "Ghost Pipe grows where light does not reach. It contains no chlorophyll — it draws no sustenance from sunlight and produces no sugar of its own. Instead it takes from the mycelium beneath the soil, parasitizing the very network that underlies the infection. There is a quiet poetry in using a plant that has spent its life quietly draining that network. Ghost Pipe is a primary ingredient for several purification preparations. Gather it when you find it. It does not grow where it is not needed.",
+  "icon": "hemomancy:ghost_pipe"
+}

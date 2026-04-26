@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Vivacious Manipulations",
+  "subtitle": "Animus — the animating force",
+  "text": "Blood Rush (PASSIVE, 100): living blood naturally quickens the body. Blood Needle (QUICK, 100): fire a burst of crystallized blood needles at range. Blood Shot (QUICK, 100): launch a single heavy blood projectile. Deadly Gaze (QUICK, 100): lock sight on a target and drain their vitality. Blood Cloud (QUICK, 300): erupt a cloud of blood mist that blinds and burns. Blood Aneurysm (QUICK, 400): rupture a target's vessels internally. Crimson Flame (QUICK, 150): conjure a wave of burning blood-fire. Summon Thrall (QUICK, 500): raise a blood-fed fighter. Summon Avatar (QUICK, 500): manifest a construct of living blood.",
+  "icon": "hemomancy:vivacious_enzyme"
+}

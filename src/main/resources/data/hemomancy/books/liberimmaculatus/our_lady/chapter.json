@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.8,0.85,1.0",
+  "title": "Our Lady of Still Waters",
+  "subtitle": "She who listens from the deep",
+  "icon": "hemomancy:pallid_icon"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Stages of Clarity",
+  "subtitle": "Discerning, Vigilant, Resolute, Enlightened",
+  "text": "Clarity is the second measure. It cannot be sought directly — it grows as Our Lady speaks and you listen. Discerning (25): the Silver Ward activates, reducing harm from blood-touched sources. Vigilant (50): the ward strengthens, and nearby hemomantic creatures glow at the edges of your sight. Resolute (75): the ward grows stronger still. Enlightened (100): full Silver Ward. She speaks less frequently at this stage. The silence has weight. Do not mistake it for absence.",
+  "icon": "hemomancy:pale_silver_ingot"
+}

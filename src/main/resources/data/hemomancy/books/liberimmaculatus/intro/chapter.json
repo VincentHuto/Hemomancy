@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.7,0.7,0.9",
+  "title": "The Road Untraveled",
+  "subtitle": "Choosing not to remember",
+  "icon": "hemomancy:hemolytic_solution"
+}

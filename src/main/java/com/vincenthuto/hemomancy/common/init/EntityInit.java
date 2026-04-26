@@ -10,6 +10,9 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.putriciel.PutricielEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.velorum.VelorumEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.seraphae.ContainmentAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeFragmentEntity;
@@ -141,6 +144,31 @@ public class EntityInit {
                     .sized(0.8F, 1.2F)
                     .clientTrackingRange(8)
                     .build(Hemomancy.rloc("containment_anchor").toString()));
+
+    // Boss: Annetta Knowles (The Stained Priestess)
+    public static final DeferredHolder<EntityType<?>, EntityType<AnnettaKnowlesEntity>> annetta_knowles = ENTITY_TYPES.register(
+            "annetta_knowles",
+            () -> EntityType.Builder.of(AnnettaKnowlesEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("annetta_knowles").toString()));
+
+    // Boss: Putriciel (The Rotting Saint)
+    public static final DeferredHolder<EntityType<?>, EntityType<PutricielEntity>> putriciel = ENTITY_TYPES.register(
+            "putriciel",
+            () -> EntityType.Builder.of(PutricielEntity::new, MobCategory.MONSTER)
+                    .sized(1.0F, 2.6F)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build(Hemomancy.rloc("putriciel").toString()));
+
+    // Boss: Velorum (The Frozen Martyr)
+    public static final DeferredHolder<EntityType<?>, EntityType<VelorumEntity>> velorum = ENTITY_TYPES.register(
+            "velorum",
+            () -> EntityType.Builder.of(VelorumEntity::new, MobCategory.MONSTER)
+                    .sized(0.7F, 2.0F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("velorum").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -492,6 +520,9 @@ public class EntityInit {
         event.put(EntityInit.hollow_vessel.get(), HollowVesselEntity.setAttributes().build());
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
+        event.put(EntityInit.annetta_knowles.get(), AnnettaKnowlesEntity.setAttributes().build());
+        event.put(EntityInit.putriciel.get(), PutricielEntity.setAttributes().build());
+        event.put(EntityInit.velorum.get(), VelorumEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
         event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
         event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());

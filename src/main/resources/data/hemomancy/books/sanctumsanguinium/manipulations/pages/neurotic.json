@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Neurotic Manipulations",
+  "subtitle": "Ductilis — the nerve of blood",
+  "text": "The Neurotic tendency is the strangest — blood that has learned from precision, from the fine movements of craft and the slow patience of cultivation. Activation Potential (QUICK, 200): send a neural pulse that disrupts a target's coordination. Sanguine Ward (CONTINUOUS, 10/tick): shape your blood into a passive shield that absorbs incoming harm. Crimson Harvest (QUICK, 200): extend your reach into the blood of nearby organisms and draw resources — crops, materials, energies — toward you. The Ductilis practitioner does not attack. They redirect.",
+  "icon": "hemomancy:neurotic_enzyme"
+}
