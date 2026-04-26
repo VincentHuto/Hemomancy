@@ -178,8 +178,10 @@ public class CardinalRiteEvents {
 		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || !toRemove.isEmpty()) {
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : activeRites.values()) {
+				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+				boolean isUnstained = recipe != null && recipe.isUnstained();
 				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId(), isUnstained));
 			}
 			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
@@ -203,8 +205,10 @@ public class CardinalRiteEvents {
 			// Sync updated rite list to clients so boundary circle is removed
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : savedData.getActiveRites().values()) {
+				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+				boolean isUnstained = recipe != null && recipe.isUnstained();
 				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId(), isUnstained));
 			}
 			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}

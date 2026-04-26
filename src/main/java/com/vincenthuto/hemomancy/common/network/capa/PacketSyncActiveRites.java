@@ -36,6 +36,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			buf.writeInt(entry.getRiteSize());
 			buf.writeDouble(entry.getProgress());
 			buf.writeResourceLocation(entry.getRecipeId());
+			buf.writeBoolean(entry.isUnstained());
 		}
 	}
 
@@ -47,7 +48,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			int riteSize = buf.readInt();
 			double progress = buf.readDouble();
 			ResourceLocation recipeId = buf.readResourceLocation();
-			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId));
+			boolean unstained = buf.readBoolean();
+			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId, unstained));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

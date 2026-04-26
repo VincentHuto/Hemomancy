@@ -18,12 +18,14 @@ public class ActiveRiteClientData {
 		private final int riteSize;
 		private final double progress;
 		private final ResourceLocation recipeId;
+		private final boolean unstained;
 
-		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId) {
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained) {
 			this.center = center;
 			this.riteSize = riteSize;
 			this.progress = progress;
 			this.recipeId = recipeId;
+			this.unstained = unstained;
 		}
 
 		public BlockPos getCenter() {
@@ -40,6 +42,10 @@ public class ActiveRiteClientData {
 
 		public ResourceLocation getRecipeId() {
 			return recipeId;
+		}
+
+		public boolean isUnstained() {
+			return unstained;
 		}
 	}
 

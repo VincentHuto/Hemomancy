@@ -117,6 +117,29 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	// Unstained cardinal rite boundary — hollow rhombus, white/ice-blue palette
+	public static final RenderType UNSTAINED_RITE_BOUNDARY_CORE = create("UnstainedRiteBoundaryCore",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
+	public static final RenderType UNSTAINED_RITE_BOUNDARY_GLOW = create("UnstainedRiteBoundaryGlow",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType MONOLITH_SHATTER_TRIANGLES = create("MonolithShatterTriangles",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES, 256, false, true,
 			RenderType.CompositeState.builder()
