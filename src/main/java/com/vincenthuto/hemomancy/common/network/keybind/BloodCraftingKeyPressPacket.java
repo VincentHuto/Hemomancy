@@ -319,6 +319,25 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return;
 				}
 
+				// ── Path alignment gate ──
+				boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
+				boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(u -> u.hasBegunPurification()).orElse(false);
+				if (recipe.isUnstained() && playerIsInitiated) {
+					player.displayClientMessage(
+							Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							false);
+					return;
+				}
+				if (!recipe.isUnstained() && playerIsUnstained) {
+					player.displayClientMessage(
+							Component.literal("One who has begun the purification cannot invoke the rites of the Hematic Order.")
+									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							false);
+					return;
+				}
+
 				// ── Apotheos gate: requires completed Qliphoth Communion ──
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
 						&& !HemoCapabilityAccess.getInitiatoryDegree(player)
