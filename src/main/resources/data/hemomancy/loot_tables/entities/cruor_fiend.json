@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:molten_clot",
+          "name": "hemomancy:molten_scab",
           "functions": [
             {
               "function": "minecraft:set_count",

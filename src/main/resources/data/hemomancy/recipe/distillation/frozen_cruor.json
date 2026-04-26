@@ -1,11 +1,11 @@
 {
   "type": "hemomancy:distillation_recipe",
   "ingredient": {
-    "item": "hemomancy:frozen_cruor"
+    "item": "hemomancy:frozen_clot"
   },
   "result": "hemomancy:dicentra_sap",
   "count": 3,
   "experience": 0.5,
   "cookingtime": 180,
-  "id": "hemomancy:distillation/frozen_cruor"
+  "id": "hemomancy:distillation/frozen_clot"
 }

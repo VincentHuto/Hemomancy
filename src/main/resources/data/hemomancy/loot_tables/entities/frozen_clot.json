@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:frozen_cruor",
+          "name": "hemomancy:frozen_clot",
           "functions": [
             {
               "function": "minecraft:set_count",

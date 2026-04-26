@@ -195,11 +195,11 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> desiccated_membrane = BASEITEMS.register("desiccated_membrane",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> molten_clot = BASEITEMS.register("molten_clot",
+    public static final DeferredHolder<Item, Item> molten_scab = BASEITEMS.register("molten_scab",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> void_ichor = BASEITEMS.register("void_ichor",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> frozen_cruor = BASEITEMS.register("frozen_cruor",
+    public static final DeferredHolder<Item, Item> frozen_clot = BASEITEMS.register("frozen_clot",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> abyssal_ichor = BASEITEMS.register("abyssal_ichor",
             () -> new Item(new Item.Properties()));
