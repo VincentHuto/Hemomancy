@@ -78,6 +78,7 @@
     ],
     [],
     [
+      "hemomancy:morphic_pool",
       "hemomancy:ore_hematic_iron",
       "hemomancy:venous_ridge",
       "hemomancy:mushroom/canopy_mushrooms_sparse",

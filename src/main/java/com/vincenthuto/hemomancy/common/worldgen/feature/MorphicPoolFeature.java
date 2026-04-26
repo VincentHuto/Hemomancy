@@ -70,10 +70,9 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 				int x = origin.getX() + dx;
 				int z = origin.getZ() + dz;
 
-				// Surface Y: the top of solid terrain (the block we'll replace)
-				int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
-
-				mutable.set(x, surfaceY, z);
+				if (!findPoolSurface(level, x, z, mutable)) {
+					continue;
+				}
 
 				if (dist < 0.78f) {
 					// Inner basin — fill surface + one block below with nectar source
@@ -109,9 +108,25 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 	/** Blocks that the pool is allowed to displace. */
 	private boolean isReplaceableByPool(BlockState state) {
 		if (state.canBeReplaced() || state.isAir()) return true;
+		return isPoolTerrainBlock(state);
+	}
+
+	private boolean findPoolSurface(WorldGenLevel level, int x, int z, BlockPos.MutableBlockPos mutable) {
+		int surfaceY = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+		for (int y = surfaceY + 8; y >= surfaceY - 16; y--) {
+			mutable.set(x, y, z);
+			if (isPoolTerrainBlock(level.getBlockState(mutable))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isPoolTerrainBlock(BlockState state) {
 		Block b = state.getBlock();
 		return b == BlockInit.erythrocytic_mycelium.get()
 				|| b == BlockInit.erythrocytic_dirt.get()
+				|| b == BlockInit.mycelium_erythrocytic_dirt.get()
 				|| b == BlockInit.venous_stone.get()
 				|| b == BlockInit.infested_venous_stone.get()
 				|| b == BlockInit.hyphae_block.get()

@@ -86,6 +86,7 @@
     ],
     [],
     [
+      "hemomancy:morphic_pool",
       "hemomancy:ore_hematic_iron",
       "hemomancy:hyphae_tendril",
       "hemomancy:venous_ridge",

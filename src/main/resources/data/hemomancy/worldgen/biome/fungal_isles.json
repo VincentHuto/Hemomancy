@@ -98,6 +98,7 @@
     [],
     [],
     [
+      "hemomancy:morphic_pool",
       "hemomancy:hyphae_tendril",
       "hemomancy:venous_ridge",
       "hemomancy:mushroom/canopy_mushrooms_sparse",

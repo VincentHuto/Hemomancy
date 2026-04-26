@@ -96,14 +96,14 @@ public class BlockInit {
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
 			() -> new LiquidBlock(
-					() -> FluidInit.MORPHIC_NECTAR.get(),
+					FluidInit.MORPHIC_NECTAR.get(),
 					BlockBehaviour.Properties.of()
 							.mapColor(MapColor.COLOR_GREEN)
 							.replaceable()
 							.noCollission()
 							.strength(100f)
 							.pushReaction(PushReaction.DESTROY)
-							.noDrops()
+							.noLootTable()
 							.liquid()
 							.sound(SoundType.EMPTY)));
 
