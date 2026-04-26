@@ -2,8 +2,10 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.volume.ItemStackBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
@@ -47,10 +49,16 @@ public final class HemoCapabilityRegistrar {
                 (player, ctx) -> player.getData(HemoAttachmentTypes.SCARS));
 
         event.registerItem(HemoCapabilityKeys.ITEM_BLOOD_VOLUME,
-                (stack, ctx) -> new BloodVolume(),
+                (stack, ctx) -> {
+                    if (stack.getItem() instanceof BloodGourdItem gourd) {
+                        return new ItemStackBloodVolume(stack, gourd.getMaxBlood());
+                    }
+                    return new BloodVolume();
+                },
                 ItemInit.blood_gourd_white.get(),
                 ItemInit.blood_gourd_red.get(),
-                ItemInit.blood_gourd_black.get());
+                ItemInit.blood_gourd_black.get(),
+                ItemInit.curved_horn.get());
 
         // ── IScar item capabilities — register each item that implements IScar ──
         for (Item item : BuiltInRegistries.ITEM) {

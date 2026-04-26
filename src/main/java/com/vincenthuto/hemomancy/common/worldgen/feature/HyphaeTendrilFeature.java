@@ -38,6 +38,7 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 	private static final int FEATURE_WRITE_RADIUS_CHUNKS = 0;
 	private static final float MID_POS_MULTIPLIER = 0.9F;
 	private static final float TENDON_STEP = 0.005f;
+	private static final int MIN_TENDRIL_RISE = 32;
 
 	public HyphaeTendrilFeature(Codec<NoneFeatureConfiguration> deserializer) {
 		super(deserializer);
@@ -75,10 +76,11 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 			return false;
 		}
 
-		int maxY = world.getMaxBuildHeight() - 1;
-		while (world.isEmptyBlock(endPos) && endPos.getY() < maxY) {
-			endPos = endPos.above();
+		int endY = chooseEndY(world, rand, pos.getY());
+		if (endY <= pos.getY() + MIN_TENDRIL_RISE) {
+			return false;
 		}
+		endPos = new BlockPos(endPos.getX(), endY, endPos.getZ());
 
 		// No room for the tendon
 
@@ -109,6 +111,20 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 		}
 
 		return true;
+	}
+
+	private int chooseEndY(WorldGenLevel world, RandomSource rand, int startY) {
+		int maxY = world.getMaxBuildHeight() - 16;
+		int roll = rand.nextInt(100);
+		int rise;
+		if (roll < 50) {
+			rise = Mth.nextInt(rand, 42, 96);
+		} else if (roll < 85) {
+			rise = Mth.nextInt(rand, 96, 168);
+		} else {
+			rise = Mth.nextInt(rand, 168, 256);
+		}
+		return Mth.clamp(startY + rise, startY + MIN_TENDRIL_RISE, maxY);
 	}
 
 	public boolean generateSporeBall(WorldGenLevel world, BlockPos pos, RandomSource rand) {

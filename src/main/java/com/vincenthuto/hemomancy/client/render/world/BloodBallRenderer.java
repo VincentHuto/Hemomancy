@@ -142,19 +142,18 @@ public class BloodBallRenderer {
 		Matrix4f mat = poseStack.last().pose();
 
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-
 		renderSphere(coreVC, mat, BASE_RADIUS * pulse, currentTime, jiggle,
 				CORE_R, CORE_G, CORE_B, CORE_A * fadeAlpha,
 				sdX, sdY, sdZ, stretchFactor);
+		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
+
+		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		renderSphere(glowVC, mat, (BASE_RADIUS + GLOW_EXTRA) * pulse, currentTime, jiggle,
 				GLOW_R, GLOW_G, GLOW_B, GLOW_A * fadeAlpha,
 				sdX, sdY, sdZ, stretchFactor);
+		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
 		poseStack.popPose();
-
-		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
-		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 	}
 
 	// ─────────────────────────────────────────────────────────────────────

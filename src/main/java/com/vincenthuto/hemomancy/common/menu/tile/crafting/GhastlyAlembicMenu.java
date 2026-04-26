@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
@@ -98,8 +99,18 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
 		// Catalyst slot: top-left corner of the crafting area
 		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 8));
-		// Flask output slot: to the left of the flask slot (empty flasks from consumed bloody flasks)
-		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, FLASK_OUTPUT_SLOT, 134, 58));
+		// Flask output slot: accepts a blood gourd to fill from the tank
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, FLASK_OUTPUT_SLOT, 134, 58) {
+			@Override
+			public boolean mayPlace(ItemStack stack) {
+				return stack.getItem() instanceof BloodGourdItem;
+			}
+
+			@Override
+			public int getMaxStackSize(ItemStack stack) {
+				return stack.getItem() instanceof BloodGourdItem ? 1 : super.getMaxStackSize(stack);
+			}
+		});
 
 		// Player inventory (3 rows) — pushed down below crafting area
 		int invY = CRAFT_AREA_HEIGHT + 14;
@@ -153,6 +164,10 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		return stack.getItem() == HLItemInit.cured_clay_flask.get() || stack.getItem() instanceof BloodyFlaskItem;
 	}
 
+	public boolean isBloodGourd(ItemStack stack) {
+		return stack.getItem() instanceof BloodGourdItem;
+	}
+
 	// ---- Shift-click logic ----
 
 	@Override
@@ -175,6 +190,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		else {
 			if (this.canSmelt(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, INGREDIENT_SLOT, INGREDIENT_SLOT + 1, false)) return ItemStack.EMPTY;
+			} else if (this.isBloodGourd(slotStack)) {
+				if (!this.moveItemStackTo(slotStack, FLASK_OUTPUT_SLOT, FLASK_OUTPUT_SLOT + 1, false)) return ItemStack.EMPTY;
 			} else if (this.isFlask(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, FLASK_SLOT, FLASK_SLOT + 1, false)) return ItemStack.EMPTY;
 			} else if (index >= INV_START && index < INV_END) {

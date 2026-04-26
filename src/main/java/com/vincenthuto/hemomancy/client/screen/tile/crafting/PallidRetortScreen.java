@@ -109,7 +109,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 			int sy = gy + slot.y;
 			drawSlotBackground(gfx, sx, sy, slot.index);
 		}
-
+		animTime += 0.016f; // ~60 FPS approximation
 		// ── Heat indicator (flame area below input slot) ──
 		renderHeatIndicator(gfx, gx, gy);
 
@@ -187,7 +187,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int flameW = 16;
 		int flameH = 14;
 
-		animTime += 0.016f; // ~60 FPS approximation
+
 
 		float time = animTime;
 		if (this.menu.isHeated()) {
@@ -239,7 +239,6 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int arrowFullW = 58;
 		int arrowH = 8;
 
-		animTime += 0.016f; // ~60 FPS approximation
 
 		float time = animTime;
 				double progress = this.menu.getBurnProgress() / 24.0;
@@ -309,7 +308,6 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		double maxVol = te.getMaxWhiteHumorVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-		animTime += 0.016f; // ~60 FPS approximation
 
 		float time = animTime;
 		// Outer frame — double border
@@ -414,7 +412,6 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		}
 
 		// Layer 3: floating hollow rhombuses
-		animTime += 0.016f; // ~60 FPS approximation
 
 		float time = animTime;
 				if (rhombusParams != null) {

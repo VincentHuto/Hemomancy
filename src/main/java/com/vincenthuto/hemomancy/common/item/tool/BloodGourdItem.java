@@ -47,10 +47,7 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		boolean bloodPresent = HemoCapabilityAccess.getBloodVolume(stack).isPresent();
-		if (bloodPresent) {
-			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
-					.orElseThrow(NullPointerException::new);
+		HemoCapabilityAccess.getBloodVolume(stack).ifPresent(bloodVolume -> {
 			CompoundTag data = getCustomData(stack);
 			tooltip.add(Component.literal("Max Blood Volume: " + tier.getMaxVolume())
 					.withStyle(ChatFormatting.GOLD));
@@ -63,7 +60,7 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 					tooltip.add(Component.literal("State: Corked").withStyle(ChatFormatting.GRAY));
 				}
 			}
-		}
+		});
 	}
 
 	public double getMaxBlood() {
@@ -78,26 +75,59 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
-				.orElseThrow(NullPointerException::new);
-		CompoundTag data = getCustomData(stack);
+		if (worldIn.isClientSide) {
+			return;
+		}
 		if (entityIn instanceof Player player) {
-			if (!data.isEmpty()) {
+			tickBloodTransfer(stack, player);
+		}
+	}
 
-				// Prevent overflow
-				if (bloodVolume.getBloodVolume() > tier.getMaxVolume()) {
-					bloodVolume.setBloodVolume(tier.getMaxVolume());
-				}
-				if (data.getBoolean(TAG_STATE)) {
-					// Restore player blood
-					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
-							.orElseThrow(NullPointerException::new);
-					if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
-						bloodVolume.drain(this.tier.getTierLevel()/2f);
-						playerVolume.fill(this.tier.getTierLevel()/2f);
+	@Override
+	public void onWornTick(LivingEntity entity) {
+		if (entity.level().isClientSide) {
+			return;
+		}
+		if (entity instanceof Player player) {
+			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
+				for (int slot = 0; slot < scars.getSlots(); slot++) {
+					ItemStack stack = scars.getStackInSlot(slot);
+					if (stack.getItem() == this) {
+						tickBloodTransfer(stack, player);
 					}
+				}
+			});
+		}
+	}
 
-				} else {
+	private void tickBloodTransfer(ItemStack stack, Player player) {
+		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
+		if (bloodVolume == null) {
+			return;
+		}
+		CompoundTag data = getCustomData(stack);
+		if (data.isEmpty()) {
+			return;
+		}
+
+		// Prevent overflow
+		if (bloodVolume.getBloodVolume() > tier.getMaxVolume()) {
+			bloodVolume.setBloodVolume(tier.getMaxVolume());
+		}
+		if (data.getBoolean(TAG_STATE)) {
+			// Restore player blood
+			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+			if (playerVolume == null) {
+				return;
+			}
+			if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
+				double transfer = Math.min(this.tier.getTierLevel() / 2f, bloodVolume.getBloodVolume());
+				transfer = Math.min(transfer, 5000 - playerVolume.getBloodVolume());
+				bloodVolume.drain(transfer);
+				playerVolume.fill(transfer);
+			}
+
+		} else {
 //					// Refill from player
 //					if (bloodVolume.getBloodVolume() < tier.getMaxVolume() / 10) {
 //						RandomSource rand = worldIn.random;
@@ -106,9 +136,6 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 //							bloodVolume.fill(50f);
 //						}
 //					}
-				}
-			}
-
 		}
 	}
 

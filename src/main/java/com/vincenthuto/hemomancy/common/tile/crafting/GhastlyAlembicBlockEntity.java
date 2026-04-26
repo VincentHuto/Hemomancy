@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -241,6 +242,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			level.setBlock(pos, state, 3);
 		}
 
+		// Drain stored blood into a gourd placed in the blood output slot
+		tryDrainBloodIntoGourd(te);
+
 		// Drain stored blood into flasks (independent of cooking)
 		tryDrainBloodIntoFlask(te);
 
@@ -354,6 +358,24 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	 * Called from serverTick — consumes bloody flasks in the flask slot to fill
 	 * the blood reservoir, outputting empty clay flasks to the flask output slot.
 	 */
+	private static void tryDrainBloodIntoGourd(GhastlyAlembicBlockEntity te) {
+		ItemStack gourdStack = te.items.get(SLOT_FLASK_OUTPUT);
+		if (!(gourdStack.getItem() instanceof BloodGourdItem)) return;
+
+		IBloodVolume alembicVolume = te.resolveVolume();
+		IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(gourdStack).orElse(null);
+		if (alembicVolume == null || gourdVolume == null) return;
+		if (alembicVolume.getBloodVolume() <= 0 || gourdVolume.isFull()) return;
+
+		double transfer = Math.min(100, alembicVolume.getBloodVolume());
+		transfer = Math.min(transfer, gourdVolume.getMaxBloodVolume() - gourdVolume.getBloodVolume());
+		if (transfer <= 0) return;
+
+		alembicVolume.drain(transfer);
+		gourdVolume.addBloodVolume(transfer);
+		te.sendUpdates();
+	}
+
 	private static void tryFillBloodFromFlask(GhastlyAlembicBlockEntity te) {
 		ItemStack flaskStack = te.items.get(SLOT_FLASK);
 		if (flaskStack.isEmpty()) return;
@@ -530,7 +552,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public boolean canPlaceItem(int slot, ItemStack stack) {
 		if (slot == SLOT_RESULT) return false;
-		if (slot == SLOT_FLASK_OUTPUT) return false;
+		if (slot == SLOT_FLASK_OUTPUT) return stack.getItem() instanceof BloodGourdItem;
 		if (slot == SLOT_FLASK) {
 			return stack.getItem() == HLItemInit.cured_clay_flask.get()
 					|| stack.getItem() instanceof BloodyFlaskItem;

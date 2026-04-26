@@ -316,10 +316,9 @@ public class ScarEntityEventHandler {
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
 
 		if (stack.getItem() instanceof BloodGourdItem) {
-			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack)
-					.orElseThrow(NullPointerException::new);
+			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
 			PacketGourdScarSync pkt = new PacketGourdScarSync(player.getId(), slot, stack,
-					bloodVolume.getBloodVolume());
+					bloodVolume != null ? bloodVolume.getBloodVolume() : 0);
 			for (Player receiver : receivers) {
 				PacketHandler.sendToPlayer((ServerPlayer) receiver, pkt);
 			}
