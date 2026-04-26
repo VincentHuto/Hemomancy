@@ -11,6 +11,9 @@ import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRende
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.HollowVesselRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaKnowlesRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.putriciel.PutricielRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.velorum.VelorumRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.ContainmentAnchorRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeFragmentRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeRenderer;
@@ -378,6 +381,9 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
 			event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
+			event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
+			event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
+			event.registerEntityRenderer(EntityInit.velorum.get(), VelorumRenderer::new);
 			event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
 			event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
 			event.registerEntityRenderer(EntityInit.containment_anchor.get(), ContainmentAnchorRenderer::new);
