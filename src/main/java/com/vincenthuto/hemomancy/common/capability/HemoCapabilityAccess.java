@@ -142,6 +142,40 @@ public static int getPlayerDegreeNumber(Player player) {
     return getInitiatoryDegree(player).map(IInitiatoryDegree::getDegreeNumber).orElse(0);
 }
 
+/**
+ * Returns the player's Unstained progression level (0–8), used to gate
+ * Unstained cardinal rites the same way degreeNumber gates Harbinger rites.
+ *
+ * <pre>
+ *  0 — not begun purification
+ *  1 — begun, purity &lt; 25 %  (Corrupted stage, path started)
+ *  2 — Tainted    (purity ≥ 25 %)
+ *  3 — Cleansing  (purity ≥ 50 %)
+ *  4 — Absolved   (purity ≥ 75 %)
+ *  5 — Purified   (purity ≥ 100 %)
+ *  6 — Discerning (clarity ≥ 25 %)
+ *  7 — Vigilant   (clarity ≥ 50 %)
+ *  8 — Enlightened(clarity ≥ 100 %)
+ * </pre>
+ */
+public static int getPlayerUnstainedLevel(Player player) {
+    return getUnstainedProgress(player).map(up -> {
+        if (!up.hasBegunPurification()) return 0;
+        if (!up.isPurified()) {
+            float purity = up.getPurity();
+            if (purity < 25f) return 1;
+            if (purity < 50f) return 2;
+            if (purity < 75f) return 3;
+            return 4;  // Absolved: >= 75 but < 100
+        }
+        float clarity = up.getClarity();
+        if (clarity >= 100f) return 8;
+        if (clarity >= 50f)  return 7;
+        if (clarity >= 25f)  return 6;
+        return 5;  // Purified, clarity not yet past 25
+    }).orElse(0);
+}
+
 // ── Equipped Morphling ────────────────────────────────────────────────────
 
 public static Optional<IEquippedMorphling> getEquippedMorphling(Player player) {

@@ -260,6 +260,7 @@ public class ClientEvents {
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
 			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
+			UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
 			GourdVineRenderer.render(event.getPoseStack(), partialTick);
 			BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
 			QliphothBloomRenderer.render(event.getPoseStack(), partialTick);

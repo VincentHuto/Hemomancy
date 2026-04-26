@@ -1,0 +1,31 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "riteName": "Rite of the Pale Vigil",
+  "riteDescription": "Performed by those who have crossed halfway into clarity, the Pale Vigil calls upon Our Lady's watchful gaze. All Unstained souls within 40 blocks draw clarity from the light, their Silver Ward and Verdigris Aura strengthened for thirty minutes.",
+  "pattern": [
+    ["SLCSCLS", "L     L", "C     C", "S  P  S", "C     C", "L     L", "SLCSCLS"],
+    ["       ", " SCSCS ", " C   C ", " S P S ", " C   C ", " SCSCS ", "       "],
+    ["       ", "       ", "  C C  ", "  CPC  ", "  C C  ", "       ", "       "]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "L": {
+      "block": "minecraft:sea_lantern"
+    },
+    "C": {
+      "block": "hemomancy:suspended_cleansed_blood_crystal"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:tears_of_silthmere"
+  },
+  "requiredDegree": 7,
+  "unstained": true
+}

@@ -93,6 +93,21 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		};
 	}
 
+	/** Maps an Unstained progression level (1–8) to its stage name for error messages. */
+	private static String getUnstainedLevelName(int level) {
+		return switch (level) {
+			case 1  -> "Begun";
+			case 2  -> "Tainted";
+			case 3  -> "Cleansing";
+			case 4  -> "Absolved";
+			case 5  -> "Purified";
+			case 6  -> "Discerning";
+			case 7  -> "Vigilant";
+			case 8  -> "Enlightened";
+			default -> "Unknown";
+		};
+	}
+
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodCraftingKeyPressPacket(ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
@@ -300,21 +315,61 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
 			BlockPattern.BlockPatternMatch match = bp.find(sLevel, searchStart);
 			if (match != null) {
-				// ── Tier degree check ──
-				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-				int requiredDegree = recipe.getRequiredDegree() >= 0
-						? recipe.getRequiredDegree()
-						: getRequiredDegreeForRite(recipe.getRiteType());
-				if (playerDegree < requiredDegree) {
-					String riteTypeName = recipe.getRiteType().getSerializedName().substring(0, 1).toUpperCase()
-							+ recipe.getRiteType().getSerializedName().substring(1);
+				// ── Tier progression check ──
+				if (!recipe.isUnstained()) {
+					// Harbinger: check Hematic Order degree
+					int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+					int requiredDegree = recipe.getRequiredDegree() >= 0
+							? recipe.getRequiredDegree()
+							: getRequiredDegreeForRite(recipe.getRiteType());
+					if (playerDegree < requiredDegree) {
+						String riteTypeName = recipe.getRiteType().getSerializedName().substring(0, 1).toUpperCase()
+								+ recipe.getRiteType().getSerializedName().substring(1);
+						player.displayClientMessage(
+								Component.literal("This rite requires the ")
+										.withStyle(ChatFormatting.RED)
+										.append(Component.literal(riteTypeName)
+												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
+										.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
+												.withStyle(ChatFormatting.RED)),
+								false);
+						return;
+					}
+				} else {
+					// Unstained: check purity/clarity progression level (0–8)
+					int playerLevel = HemoCapabilityAccess.getPlayerUnstainedLevel(player);
+					int requiredLevel = recipe.getRequiredDegree() >= 0
+							? recipe.getRequiredDegree()
+							: getRequiredDegreeForRite(recipe.getRiteType());
+					if (playerLevel < requiredLevel) {
+						String stageName = getUnstainedLevelName(requiredLevel);
+						player.displayClientMessage(
+								Component.literal("This rite demands ")
+										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+										.append(Component.literal(stageName)
+												.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD))
+										.append(Component.literal(" purity (Stage " + requiredLevel + ")")
+												.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)),
+								false);
+						return;
+					}
+				}
+
+				// ── Path alignment gate ──
+				boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
+				boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(u -> u.hasBegunPurification()).orElse(false);
+				if (recipe.isUnstained() && playerIsInitiated) {
 					player.displayClientMessage(
-							Component.literal("This rite requires the ")
-									.withStyle(ChatFormatting.RED)
-									.append(Component.literal(riteTypeName)
-											.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
-									.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
-											.withStyle(ChatFormatting.RED)),
+							Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							false);
+					return;
+				}
+				if (!recipe.isUnstained() && playerIsUnstained) {
+					player.displayClientMessage(
+							Component.literal("One who has begun the purification cannot invoke the rites of the Hematic Order.")
+									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
 					return;
 				}

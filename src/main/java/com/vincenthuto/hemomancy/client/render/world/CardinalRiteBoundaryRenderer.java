@@ -67,12 +67,14 @@ public class CardinalRiteBoundaryRenderer {
 		// second different type is requested, leaving the first VertexConsumer dead.
 		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		for (ActiveRiteClientData.RiteEntry rite : rites) {
+			if (rite.isUnstained()) continue;
 			drawBoundaryRing(poseStack, glowVC, null, rite, currentTime, cam);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
 		for (ActiveRiteClientData.RiteEntry rite : rites) {
+			if (rite.isUnstained()) continue;
 			drawBoundaryRing(poseStack, null, coreVC, rite, currentTime, cam);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);

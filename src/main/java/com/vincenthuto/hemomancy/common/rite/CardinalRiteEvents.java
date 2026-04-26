@@ -178,8 +178,10 @@ public class CardinalRiteEvents {
 		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || !toRemove.isEmpty()) {
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : activeRites.values()) {
+				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+				boolean isUnstained = recipe != null && recipe.isUnstained();
 				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId(), isUnstained));
 			}
 			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
@@ -203,8 +205,10 @@ public class CardinalRiteEvents {
 			// Sync updated rite list to clients so boundary circle is removed
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : savedData.getActiveRites().values()) {
+				CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+				boolean isUnstained = recipe != null && recipe.isUnstained();
 				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId(), isUnstained));
 			}
 			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
@@ -444,6 +448,8 @@ public class CardinalRiteEvents {
 	private static final String SILTHMERES_REMEMBRANCE_RITE = "cardinal_rite/silthmeres_remembrance";
 	private static final String LETHE_COVENANT_RITE = "cardinal_rite/lethe_covenant";
 	private static final String LETHEAN_TIDE_RITE = "cardinal_rite/lethean_tide";
+	private static final String PALE_VIGIL_RITE = "cardinal_rite/pale_vigil";
+	private static final String LETHEAN_FONT_RITE = "cardinal_rite/lethean_font";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -467,6 +473,22 @@ public class CardinalRiteEvents {
 	private static final int LETHEAN_JUDGMENT_RADIUS = 16;
 	/** Duration in ticks for Silver Veil effect (30 minutes = 36000 ticks). */
 	private static final int SILVER_VEIL_DURATION_TICKS = 36000;
+	/** Radius within which Pale Vigil blesses nearby Unstained. */
+	private static final int PALE_VIGIL_RADIUS = 40;
+	/** Clarity granted per player by the Pale Vigil burst. */
+	private static final float PALE_VIGIL_CLARITY = 10.0f;
+	/** Duration of Silver Ward / Verdigris Aura granted by Pale Vigil (30 min). */
+	private static final int PALE_VIGIL_EFFECT_TICKS = 36000;
+	/** Chunk radius of the Lethean Font domain. */
+	private static final int LETHEAN_FONT_CHUNK_RADIUS = 8;
+	/** Duration of the Lethean Font domain in ticks (1 hour). */
+	private static final long LETHEAN_FONT_DOMAIN_TICKS = 72000L;
+	/** Radius within which the Lethean Font burst blesses Unstained players. */
+	private static final int LETHEAN_FONT_BURST_RADIUS = 50;
+	/** Clarity granted per player by the Lethean Font burst. */
+	private static final float LETHEAN_FONT_CLARITY = 20.0f;
+	/** Duration of effects granted by the Lethean Font burst (1 hour). */
+	private static final int LETHEAN_FONT_EFFECT_TICKS = 72000;
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
@@ -750,6 +772,16 @@ public class CardinalRiteEvents {
 		// Rite of the Lethean Tide: cleanse an active Blood Moon
 		if (LETHEAN_TIDE_RITE.equals(ritePath)) {
 			completeLetheanTide(sLevel, caster);
+		}
+
+		// Rite of the Pale Vigil: burst clarity to nearby Unstained (Vigilant tier)
+		if (PALE_VIGIL_RITE.equals(ritePath)) {
+			completePaleVigil(sLevel, caster, center);
+		}
+
+		// Rite of the Lethean Font: pinnacle domain of ultimate stillness (Enlightened tier)
+		if (LETHEAN_FONT_RITE.equals(ritePath)) {
+			completeLetheanFont(sLevel, caster, center);
 		}
 
 		// Rite of the Sanguine Eclipse: manually invoke a Blood Moon
@@ -2106,6 +2138,130 @@ public class CardinalRiteEvents {
 							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 					false);
 		});
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	//  PALE VIGIL — clarity burst for all nearby Unstained (Vigilant tier)
+	// ════════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Rite of the Pale Vigil (Greater, 0 blood, level 7 / Vigilant):
+	 * Our Lady's gaze falls on all Unstained within 40 blocks. Each player
+	 * whose clarity has been unlocked gains +10 clarity, Silver Ward (amp 2,
+	 * 30 min), and Verdigris Aura (amp 2, 30 min).
+	 */
+	private static void completePaleVigil(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		AABB area = new AABB(center).inflate(PALE_VIGIL_RADIUS);
+		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(ServerPlayer.class, area, p -> true);
+
+		int[] affected = { 0 };
+		for (ServerPlayer target : nearby) {
+			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
+				if (!progress.hasClarityUnlocked()) return;
+
+				progress.addClarity(PALE_VIGIL_CLARITY);
+				UnstainedProgressEvents.syncProgress(target, progress);
+
+				target.addEffect(new MobEffectInstance(
+						EffectInit.silver_ward, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
+				target.addEffect(new MobEffectInstance(
+						EffectInit.verdigris_aura, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
+
+				target.displayClientMessage(
+						Component.literal("The Pale Vigil watches. Clarity deepens within you.")
+								.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+						false);
+				affected[0]++;
+			});
+		}
+
+		String msg = affected[0] > 0
+				? "The Pale Vigil holds. " + affected[0] + " soul(s) draw clarity from its light."
+				: "The Pale Vigil shines, but no clarity-bearers stand near enough to receive it.";
+		caster.displayClientMessage(
+				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
+
+		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
+				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_VIGILANT);
+
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				160, PALE_VIGIL_RADIUS * 0.25, 4.0, PALE_VIGIL_RADIUS * 0.25, 0.02);
+		sLevel.sendParticles(ParticleTypes.SCRAPE,
+				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
+				80, PALE_VIGIL_RADIUS * 0.2, 2.0, PALE_VIGIL_RADIUS * 0.2, 0.01);
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	//  LETHEAN FONT — pinnacle domain, 8-chunk / 1-hour (Enlightened tier)
+	// ════════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Rite of the Lethean Font (Grand, 0 blood, level 8 / Enlightened):
+	 * Opens the primordial source of Lethe's purifying waters. Establishes a
+	 * Lethe Covenant domain spanning 8 chunks for 1 hour (stronger than the
+	 * base covenant). All clarity-bearing Unstained within 50 blocks receive
+	 * +20 clarity, Silver Ward (amp 3, 1 hour), and Verdigris Aura (amp 3,
+	 * 1 hour). The full inverse of Sanguine Dominion.
+	 */
+	private static void completeLetheanFont(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		LetheCovenantSavedData data = LetheCovenantSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		long expiryTick = sLevel.getGameTime() + LETHEAN_FONT_DOMAIN_TICKS;
+
+		LetheCovenantSavedData.CovenantEntry entry = new LetheCovenantSavedData.CovenantEntry(
+				caster.getUUID(), center, dimension, LETHEAN_FONT_CHUNK_RADIUS, expiryTick);
+		data.addEntry(entry);
+
+		// Clarity burst to all nearby clarity-bearers
+		AABB area = new AABB(center).inflate(LETHEAN_FONT_BURST_RADIUS);
+		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(ServerPlayer.class, area, p -> true);
+
+		int[] affected = { 0 };
+		for (ServerPlayer target : nearby) {
+			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
+				if (!progress.hasClarityUnlocked()) return;
+
+				progress.addClarity(LETHEAN_FONT_CLARITY);
+				UnstainedProgressEvents.syncProgress(target, progress);
+
+				target.addEffect(new MobEffectInstance(
+						EffectInit.silver_ward, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
+				target.addEffect(new MobEffectInstance(
+						EffectInit.verdigris_aura, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
+
+				target.displayClientMessage(
+						Component.literal("Lethe's source flows through you. The font of all clarity is open.")
+								.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+						false);
+				affected[0]++;
+			});
+		}
+
+		int blockRadius = LETHEAN_FONT_CHUNK_RADIUS * 16;
+		long durationMinutes = LETHEAN_FONT_DOMAIN_TICKS / 1200;
+		caster.displayClientMessage(
+				Component.literal("The Lethean Font is open! A domain of ultimate stillness spreads "
+						+ blockRadius + " blocks for " + durationMinutes + " minutes.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+				false);
+		if (affected[0] > 0) {
+			caster.displayClientMessage(
+					Component.literal(affected[0] + " soul(s) have been blessed by the Font.")
+							.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+					false);
+		}
+
+		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
+				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_ENLIGHTENED_SEEKER);
+
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				300, blockRadius * 0.15, 5.0, blockRadius * 0.15, 0.025);
+		sLevel.sendParticles(ParticleTypes.SCRAPE,
+				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
+				150, blockRadius * 0.1, 3.0, blockRadius * 0.1, 0.015);
 	}
 
 	private static void completeFoundingSanctum(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
