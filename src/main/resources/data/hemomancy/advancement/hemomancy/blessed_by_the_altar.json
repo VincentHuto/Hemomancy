@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:tears_of_silthmere"
+      "count": 1,
+      "id": "hemomancy:tears_of_silthmere"
     },
     "title": {
       "translate": "advancements.hemomancy.blessed_by_the_altar.title"

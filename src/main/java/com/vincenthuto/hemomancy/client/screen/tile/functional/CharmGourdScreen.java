@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.item;
+package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -66,7 +66,7 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 		this.renderTooltip(graphics, mouseX, mouseY); // renderHoveredToolTip
 		this.oldMouseX = mouseX;
 		this.oldMouseY = mouseY;
-	}
+}
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) { // drawGuiContainerBackgroundLayer
@@ -86,8 +86,8 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 					graphics.blit(background, k + slot.x, l + slot.y, 200, 0, 16, 16);
 				}
 			}
-			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k + 51, l + 75, k + 51, l + 75, 30, 0.0F,
-					k + 51 - this.oldMouseX, l + 75 - 50 - this.oldMouseY, this.minecraft.player);
+			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k + 26, l + 8, k + 76, l + 78, 30, 0.0625F,
+					this.oldMouseX, this.oldMouseY, this.minecraft.player);
 		}
 	}
 

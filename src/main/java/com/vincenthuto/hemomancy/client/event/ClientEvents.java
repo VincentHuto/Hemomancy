@@ -32,7 +32,7 @@ import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
-import com.vincenthuto.hemomancy.client.screen.item.CharmGourdScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.CharmGourdScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.TendencyViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
@@ -245,6 +245,11 @@ public class ClientEvents {
 		if (event.getItemStack().getItem() instanceof StructureScannerItem scanner) {
 			scanner.addScannerStateTooltip(event.getItemStack(), event.getToolTip());
 		}
+	}
+
+	@SubscribeEvent
+	public static void renderMorphicNectarScreenOverlay(RenderGuiEvent.Pre event) {
+		MorphicNectarScreenOverlay.render(event.getGuiGraphics());
 	}
 
 	@SubscribeEvent

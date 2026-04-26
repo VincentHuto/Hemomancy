@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:fungal_spine"
+      "count": 1,
+      "id": "hemomancy:fungal_spine"
     },
     "title": {
       "translate": "advancements.hemomancy.the_blood_beneath_the_blood.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:fungal_spine"
-            ]
+            "items": "hemomancy:fungal_spine"
           }
         ]
       }

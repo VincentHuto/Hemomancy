@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:pallid_icon"
+      "count": 1,
+      "id": "hemomancy:pallid_icon"
     },
     "title": {
       "translate": "advancements.hemomancy.clarity_awakened.title"

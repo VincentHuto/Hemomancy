@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:gourd"
-            ]
+            "items": "hemomancy:gourd"
           }
         ]
       },

@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:recycled_enzyme"
+      "count": 1,
+      "id": "hemomancy:recycled_enzyme"
     },
     "title": {
       "translate": "advancements.hemomancy.old_habits.title"

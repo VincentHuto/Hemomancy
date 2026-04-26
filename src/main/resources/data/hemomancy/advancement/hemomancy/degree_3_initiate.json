@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:sanguine_formation"
+      "count": 1,
+      "id": "hemomancy:sanguine_formation"
     },
     "title": {
       "translate": "advancements.hemomancy.degree_3_initiate.title"

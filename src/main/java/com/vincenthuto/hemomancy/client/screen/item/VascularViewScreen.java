@@ -367,9 +367,11 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
         });
 
-            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k - 7 + guiWidth / 2, l - 30 + guiHeight / 2,
-                k - 7 + guiWidth / 2, l - 30 + guiHeight / 2, 30, 0.0F,
-                k + 51 - this.oldMouseX, l + 75 - 50 - this.oldMouseY, player);
+            int entityCenterX = k - 7 + guiWidth / 2;
+            int entityCenterY = l - 30 + guiHeight / 2;
+            InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, entityCenterX - 25, entityCenterY - 35,
+                entityCenterX + 25, entityCenterY + 35, 30, 0.0625F,
+                this.oldMouseX, this.oldMouseY, player);
     }
     private static Point rotatePointAbout(Point in, Point about, double degrees) {
         double rad = degrees * Math.PI / 180.0;

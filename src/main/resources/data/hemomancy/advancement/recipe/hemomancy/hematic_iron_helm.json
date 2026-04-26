@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:hematic_iron_scrap"
-            ]
+            "items": "hemomancy:hematic_iron_scrap"
           }
         ]
       }

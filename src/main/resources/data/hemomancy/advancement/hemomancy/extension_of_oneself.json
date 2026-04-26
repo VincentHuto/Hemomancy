@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:living_staff"
+      "count": 1,
+      "id": "hemomancy:living_staff"
     },
     "title": {
       "translate": "advancements.hemomancy.extension_of_oneself.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:living_staff"
-            ]
+            "items": "hemomancy:living_staff"
           }
         ]
       }

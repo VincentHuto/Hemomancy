@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:spore_sac"
+      "count": 1,
+      "id": "hemomancy:spore_sac"
     },
     "title": {
       "translate": "advancements.hemomancy.voices_in_the_vein.title"

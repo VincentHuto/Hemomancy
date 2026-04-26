@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:lethean_poppy_wreath"
+      "count": 1,
+      "id": "hemomancy:lethean_poppy_wreath"
     },
     "title": {
       "translate": "advancements.hemomancy.cleansing.title"

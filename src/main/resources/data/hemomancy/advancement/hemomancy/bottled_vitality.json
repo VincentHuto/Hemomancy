@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:blood_gourd_white"
+      "count": 1,
+      "id": "hemomancy:blood_gourd_white"
     },
     "title": {
       "translate": "advancements.hemomancy.bottled_vitality.title"

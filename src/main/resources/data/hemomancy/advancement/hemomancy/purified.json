@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:suspended_cleansed_blood_crystal"
+      "count": 1,
+      "id": "hemomancy:suspended_cleansed_blood_crystal"
     },
     "title": {
       "translate": "advancements.hemomancy.purified.title"

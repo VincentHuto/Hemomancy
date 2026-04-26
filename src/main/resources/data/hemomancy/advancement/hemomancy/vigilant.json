@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:cleansed_stone"
+      "count": 1,
+      "id": "hemomancy:cleansed_stone"
     },
     "title": {
       "translate": "advancements.hemomancy.vigilant.title"

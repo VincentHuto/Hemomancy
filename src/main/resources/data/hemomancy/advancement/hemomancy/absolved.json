@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:pale_silver_ingot"
+      "count": 1,
+      "id": "hemomancy:pale_silver_ingot"
     },
     "title": {
       "translate": "advancements.hemomancy.absolved.title"

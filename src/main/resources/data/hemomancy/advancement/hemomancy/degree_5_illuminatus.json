@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:sanguine_quintessence"
+      "count": 1,
+      "id": "hemomancy:sanguine_quintessence"
     },
     "title": {
       "translate": "advancements.hemomancy.degree_5_illuminatus.title"

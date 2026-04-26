@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:hematic_iron_sword"
+      "count": 1,
+      "id": "hemomancy:hematic_iron_sword"
     },
     "title": {
       "translate": "advancements.hemomancy.armed_to_the_veins.title"
@@ -20,24 +21,16 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:hematic_iron_helm"
-            ]
+            "items": "hemomancy:hematic_iron_helm"
           },
           {
-            "items": [
-              "hemomancy:hematic_iron_chestplate"
-            ]
+            "items": "hemomancy:hematic_iron_chestplate"
           },
           {
-            "items": [
-              "hemomancy:hematic_iron_leggings"
-            ]
+            "items": "hemomancy:hematic_iron_leggings"
           },
           {
-            "items": [
-              "hemomancy:hematic_iron_boots"
-            ]
+            "items": "hemomancy:hematic_iron_boots"
           }
         ]
       }

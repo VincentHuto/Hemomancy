@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:hemolytic_solution"
+      "count": 1,
+      "id": "hemomancy:hemolytic_solution"
     },
     "title": {
       "translate": "advancements.hemomancy.tainted.title"

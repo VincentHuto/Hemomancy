@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:venous_stone"
-            ]
+            "items": "hemomancy:venous_stone"
           }
         ]
       }

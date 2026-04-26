@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -38,6 +39,8 @@ public class FluidInit {
 								Hemomancy.rloc("block/morphic_nectar_flow");
 						private static final ResourceLocation OVERLAY =
 								Hemomancy.rloc("block/morphic_nectar_overlay");
+						private static final ResourceLocation CAMERA_OVERLAY =
+								Hemomancy.rloc("textures/block/morphic_nectar_overlay.png");
 
 						@Override
 						public ResourceLocation getStillTexture() { return STILL; }
@@ -47,6 +50,9 @@ public class FluidInit {
 
 						@Override
 						public ResourceLocation getOverlayTexture() { return OVERLAY; }
+
+						@Override
+						public ResourceLocation getRenderOverlayTexture(Minecraft mc) { return CAMERA_OVERLAY; }
 
 						// Amber-green tint (ARGB): slightly translucent, yellow-green
 						@Override

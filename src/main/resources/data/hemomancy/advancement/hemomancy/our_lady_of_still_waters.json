@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:pallid_icon"
+      "count": 1,
+      "id": "hemomancy:pallid_icon"
     },
     "title": {
       "translate": "advancements.hemomancy.our_lady_of_still_waters.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:pallid_icon"
-            ]
+            "items": "hemomancy:pallid_icon"
           }
         ]
       }

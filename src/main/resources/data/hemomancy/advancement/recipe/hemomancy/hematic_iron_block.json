@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:chiseled_hematic_iron_block"
-            ]
+            "items": "hemomancy:chiseled_hematic_iron_block"
           }
         ]
       }

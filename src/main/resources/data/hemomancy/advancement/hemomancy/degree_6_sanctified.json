@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:unsigned_ancestral_ledger"
+      "count": 1,
+      "id": "hemomancy:unsigned_ancestral_ledger"
     },
     "title": {
       "translate": "advancements.hemomancy.degree_6_sanctified.title"

@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:hematic_iron_scrap"
+      "count": 1,
+      "id": "hemomancy:hematic_iron_scrap"
     },
     "title": {
       "translate": "advancements.hemomancy.iron_in_the_blood.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:hematic_iron_block"
-            ]
+            "items": "hemomancy:hematic_iron_block"
           }
         ]
       }

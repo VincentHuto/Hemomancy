@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:blood_stained_stone"
+      "count": 1,
+      "id": "hemomancy:blood_stained_stone"
     },
     "title": {
       "translate": "advancements.hemomancy.crimson_lodge_consecrated.title"

@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:tome_of_the_unstained"
+      "count": 1,
+      "id": "hemomancy:tome_of_the_unstained"
     },
     "title": {
       "translate": "advancements.hemomancy.path_of_purity.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:tome_of_the_unstained"
-            ]
+            "items": "hemomancy:tome_of_the_unstained"
           }
         ]
       }

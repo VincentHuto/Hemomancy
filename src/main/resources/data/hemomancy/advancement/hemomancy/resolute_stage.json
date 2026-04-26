@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:pallid_lantern"
+      "count": 1,
+      "id": "hemomancy:pallid_lantern"
     },
     "title": {
       "translate": "advancements.hemomancy.resolute_stage.title"

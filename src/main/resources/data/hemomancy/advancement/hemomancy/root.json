@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:gourd_seeds"
+      "count": 1,
+      "id": "hemomancy:gourd_seeds"
     },
     "title": {
       "translate": "advancements.hemomancy.root.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:gourd_seeds"
-            ]
+            "items": "hemomancy:gourd_seeds"
           }
         ]
       }

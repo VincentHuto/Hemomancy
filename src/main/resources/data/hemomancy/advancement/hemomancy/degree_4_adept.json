@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:scar_binder"
+      "count": 1,
+      "id": "hemomancy:scar_binder"
     },
     "title": {
       "translate": "advancements.hemomancy.degree_4_adept.title"

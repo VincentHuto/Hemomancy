@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:tears_of_silthmere"
+      "count": 1,
+      "id": "hemomancy:tears_of_silthmere"
     },
     "title": {
       "translate": "advancements.hemomancy.lady_of_forgotten_waters.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:tears_of_silthmere"
-            ]
+            "items": "hemomancy:tears_of_silthmere"
           }
         ]
       }

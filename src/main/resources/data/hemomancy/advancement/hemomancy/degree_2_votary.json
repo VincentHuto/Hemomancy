@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:sanguine_blob"
+      "count": 1,
+      "id": "hemomancy:sanguine_blob"
     },
     "title": {
       "translate": "advancements.hemomancy.degree_2_votary.title"

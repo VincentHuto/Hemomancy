@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:ghastly_alembic"
+      "count": 1,
+      "id": "hemomancy:ghastly_alembic"
     },
     "title": {
       "translate": "advancements.hemomancy.bleeding_a_stone.title"
@@ -20,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:ghastly_alembic"
-            ]
+            "items": "hemomancy:ghastly_alembic"
           }
         ]
       }

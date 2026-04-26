@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "hemomancy:polished_venous_stone_bricks"
-            ]
+            "items": "hemomancy:polished_venous_stone_bricks"
           }
         ]
       }

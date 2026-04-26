@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:sanguine_conduit"
+      "count": 1,
+      "id": "hemomancy:sanguine_conduit"
     },
     "title": {
       "translate": "advancements.hemomancy.degree_1_neophyte.title"
