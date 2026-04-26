@@ -300,23 +300,26 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
 			BlockPattern.BlockPatternMatch match = bp.find(sLevel, searchStart);
 			if (match != null) {
-				// ── Tier degree check ──
-				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-				int requiredDegree = recipe.getRequiredDegree() >= 0
-						? recipe.getRequiredDegree()
-						: getRequiredDegreeForRite(recipe.getRiteType());
-				if (playerDegree < requiredDegree) {
-					String riteTypeName = recipe.getRiteType().getSerializedName().substring(0, 1).toUpperCase()
-							+ recipe.getRiteType().getSerializedName().substring(1);
-					player.displayClientMessage(
-							Component.literal("This rite requires the ")
-									.withStyle(ChatFormatting.RED)
-									.append(Component.literal(riteTypeName)
-											.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
-									.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
-											.withStyle(ChatFormatting.RED)),
-							false);
-					return;
+				// ── Tier degree check (Harbinger rites only) ──
+				// Unstained rites use riteType for duration/size, not Harbinger degree gating.
+				if (!recipe.isUnstained()) {
+					int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+					int requiredDegree = recipe.getRequiredDegree() >= 0
+							? recipe.getRequiredDegree()
+							: getRequiredDegreeForRite(recipe.getRiteType());
+					if (playerDegree < requiredDegree) {
+						String riteTypeName = recipe.getRiteType().getSerializedName().substring(0, 1).toUpperCase()
+								+ recipe.getRiteType().getSerializedName().substring(1);
+						player.displayClientMessage(
+								Component.literal("This rite requires the ")
+										.withStyle(ChatFormatting.RED)
+										.append(Component.literal(riteTypeName)
+												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
+										.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
+												.withStyle(ChatFormatting.RED)),
+								false);
+						return;
+					}
 				}
 
 				// ── Path alignment gate ──
