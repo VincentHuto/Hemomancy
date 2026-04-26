@@ -28,5 +28,6 @@
   "result": {
     "id": "hemomancy:consecrated_copper_ingot"
   },
+  "requiredDegree": 6,
   "unstained": true
 }
