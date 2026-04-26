@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.6,0.8,0.7",
+  "title": "Sacred Tools",
+  "subtitle": "What the pure carry",
+  "icon": "hemomancy:consecrated_copper_ingot"
+}

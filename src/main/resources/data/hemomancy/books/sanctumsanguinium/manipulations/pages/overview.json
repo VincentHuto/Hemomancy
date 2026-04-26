@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood Manipulation",
+  "subtitle": "Drawing on what is already there",
+  "text": "Manipulation is the act of giving form to what already lives in the blood. It does not create power from nothing — it directs power that was always present, seeded by the infection and bound to a tendency. Manipulations are ranked HUMILIS (first learning), MEDIOCRITAS (practiced), and SUMMA (mastered). They are typed: QUICK (a single act), PASSIVE (always active), CONTINUOUS (active while held), or CHARGED (building toward release). All draw from your blood reserve. Each is bound to a vein section — that section bears the strain.",
+  "icon": "hemomancy:sanguine_formation"
+}

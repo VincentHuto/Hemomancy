@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "She Who Listens",
+  "subtitle": "Not a goddess. Something older.",
+  "text": "Our Lady of Still Waters is not a deity in any conventional sense. She is a force — old and largely passive, analogous to an immune response made vast and slow. She does not intervene. She watches. She speaks in half-heard sounds, in the quality of water at dawn, in the particular silence before a storm. Those deep in purification begin to hear her clearly. She does not guide by command. She guides by attention — making those she watches aware of where they are, and where they are going.",
+  "icon": "hemomancy:pallid_icon"
+}

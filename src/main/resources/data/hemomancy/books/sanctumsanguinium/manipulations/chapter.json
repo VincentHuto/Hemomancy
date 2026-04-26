@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 7,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.6,0,0",
+  "title": "Blood Manipulation",
+  "subtitle": "What the blood already knows",
+  "icon": "hemomancy:sanguine_formation"
+}

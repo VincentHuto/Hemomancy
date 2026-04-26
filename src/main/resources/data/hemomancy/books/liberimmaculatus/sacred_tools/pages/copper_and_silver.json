@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Copper and Pale Silver",
+  "subtitle": "Materials of the purified",
+  "text": "Copper is naturally hostile to contamination. An Unstained who has carried copper long enough will find it has patinated: turned green with the oxidization of that service. This consecrated copper can be refined into Pale Silver — not a metal found in the earth, but one made by ceremony and long effort. Pale Silver is the Unstained's highest material. Armor and tools made from it carry the Verdigris Aura and apply Silver Ward. The silver does not protect by magic. It protects because the bearer earned it.",
+  "icon": "hemomancy:pale_silver_ingot"
+}

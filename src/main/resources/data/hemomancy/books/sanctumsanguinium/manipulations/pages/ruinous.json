@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Ruinous Manipulations",
+  "subtitle": "Mortem — blood remembers death",
+  "text": "Ruinous blood has witnessed too much dying. Vital Reservoir (QUICK, 50): siphon death-adjacent energy from nearby decay and store it as a temporary buffer in the blood. Hemorrhage (QUICK, ?): tear open a target's vessels, inflicting deep blood-loss over several seconds. Exsanguinate (QUICK, ?): forcibly draw blood from a target outward — the most violent of the common manipulations. Crimson Tithe (QUICK, high cost): offer your own blood to the Qliphoth in exchange for a significant power surge. A Saint's gift, not a student's tool.",
+  "icon": "hemomancy:ruinous_enzyme"
+}

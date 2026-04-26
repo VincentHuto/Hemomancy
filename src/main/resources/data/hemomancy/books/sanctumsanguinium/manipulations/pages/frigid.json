@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 7,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Frigid Manipulations",
+  "subtitle": "Congeatio — blood remembers cold",
+  "text": "The Frigid tendency belongs to blood that has congealed — not from death, but from exposure to deep cold. Glacial Grasp (QUICK, 125): crystallize blood around a target's extremities, slowing and rooting them briefly. Cryogenic Pulse (QUICK, 150): burst outward in a radius of congealing blood-frost, slowing everything nearby. Glacial Bastion (QUICK, 350): harden your blood into a temporary barrier of crystallized ice-blood directly in front of you. The Frigid practitioner is a defensive one. Cold blood does not rush.",
+  "icon": "hemomancy:frigid_enzyme"
+}

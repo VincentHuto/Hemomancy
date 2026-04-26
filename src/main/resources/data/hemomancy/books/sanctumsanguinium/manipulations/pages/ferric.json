@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Ferric Manipulations",
+  "subtitle": "Ferric — blood remembers iron",
+  "text": "Ferric tendency is borne by practitioners who have worked extensively with metal — smiths, miners, soldiers. Sanguine Mending (QUICK, 150): push blood into damaged tools and armor, repairing them. Sanguine Excavation (QUICK, 400): extend the iron in your blood outward through stone, breaking ore and rock in a radius. Ferric Transmutation (QUICK, 1000): transmute metal through the medium of blood. Conjure Blade / Blood Absorption / Blood Projection (QUICK, 1000 each): manifest living iron tools directly into hand from the reserve.",
+  "icon": "hemomancy:ferric_enzyme"
+}

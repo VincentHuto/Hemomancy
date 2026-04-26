@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Clarity and Its Price",
+  "subtitle": "What comes after purity",
+  "text": "Full purity is not the end of the path. It is a threshold. Beyond it, if you continue, Our Lady begins to speak directly — and what she offers is Clarity: a deeper attunement, a sharper sense of what is clean and what is not. The Silver Ward grows stronger. Your sight reaches further. But as Clarity deepens toward its final stage, her voice changes. Something colder comes through. Those who reach the very end of Clarity are advised to listen carefully. The price of her full attention is not clear.",
+  "icon": "hemomancy:tears_of_silthmere"
+}

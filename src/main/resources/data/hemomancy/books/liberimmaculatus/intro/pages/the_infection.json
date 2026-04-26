@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Infection",
+  "subtitle": "What is living in you",
+  "text": "The blood knows things you were never taught. That is not power — that is tenancy. Something ancient seeded itself into living blood long before any order or tradition gave it a name, and it has been waiting in you since before you drew your first breath. The Unstained do not call this evil. They call it borrowed. The practitioner who uses hemomancy does not master a force — they are used by one. Purification is not punishment. It is eviction.",
+  "icon": "hemomancy:hemolytic_solution"
+}

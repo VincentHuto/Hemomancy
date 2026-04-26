@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Stages of Purity",
+  "subtitle": "Tainted, Cleansing, Absolved, Purified",
+  "text": "Purity accumulates through action and restraint. Killing creatures of blood and undead, sleeping with Hemolysis active, breeding animals, tending crops and pets, and above all refusing to use blood magic — these deeds earn purity. There are four recognized stages. Tainted (25): the Verdigris Aura first appears. Cleansing (50): the aura deepens. Absolved (75): you strike harder against hemomantic creatures. Purified (100): the aura reaches its fullest extent, and the path to Clarity opens.",
+  "icon": "hemomancy:hemolytic_plating"
+}

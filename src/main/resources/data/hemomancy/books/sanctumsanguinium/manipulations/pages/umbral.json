@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 8,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Umbral Manipulations",
+  "subtitle": "Tenebris — blood remembers shadow",
+  "text": "Umbral blood has absorbed long hours in darkness — caves, long nights, the specific quality of shadow that lies behind things. Void Shroud (QUICK, ?): bend light around the blood in your skin, becoming invisible for several seconds. Any aggressive act dispels the shroud. Umbral Step (QUICK, 300): compress your body through shadow, teleporting a short distance in the direction you are looking. Blood Eclipse (QUICK, ?): flood an area with blood-shadow, blinding every target within range and disorienting them. Tenebris rewards patience and positioning.",
+  "icon": "hemomancy:umbral_enzyme"
+}

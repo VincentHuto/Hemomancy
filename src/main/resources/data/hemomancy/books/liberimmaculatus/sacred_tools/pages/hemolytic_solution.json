@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hemolytic Solution",
+  "subtitle": "The foundation of purification",
+  "text": "Hemolytic Solution is brewed from dicentra sap in a vessel of still water. Drinking it applies the Hemolysis effect — a sustained antiseptic state in the blood. While active, sleeping through a full night grants significant purity. Collecting experience also contributes, though less dramatically. The effect itself does not harm you. It is the infection that finds it uncomfortable. Brew it regularly. Keep a supply. The path is long.",
+  "icon": "hemomancy:hemolytic_solution"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Canon Memories",
+  "subtitle": "Gifts of the Sainted dead",
+  "text": "Certain manipulations cannot be learned — only received. They are imprinted from a Saint's Mausoleum: the preserved memory of an extraordinary act, pressed into the blood of anyone who stands in the presence of the entombed Saint and is judged worthy. These are SUMMA-rank manipulations of tremendous cost. The Unclosing Eye reveals what should be hidden. The Bloom of Rot seeds the Qliphoth's growth in living ground. The Endless Hour stretches the moment before an action to its absolute limit. Crimson Tithe offers blood in exchange for the Order's oldest power. They are not given freely.",
+  "icon": "hemomancy:sanguine_formation"
+}
