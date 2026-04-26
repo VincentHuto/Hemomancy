@@ -122,6 +122,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(WretchedWillModel.wretched_will, WretchedWillModel::createBodyLayer);
 		event.registerLayerDefinition(BloodGourdModel.blood_gourd, BloodGourdModel::createBodyLayer);
 		event.registerLayerDefinition(CurvedHornModel.curved_horn, CurvedHornModel::createBodyLayer);
+		event.registerLayerDefinition(HemorathRibModel.hemorath_rib, HemorathRibModel::createBodyLayer);
 		event.registerLayerDefinition(OpenBloodGourdModel.open_blood_gourd, OpenBloodGourdModel::createBodyLayer);
 		event.registerLayerDefinition(OpenCurvedHornModel.open_curved_horn, OpenCurvedHornModel::createBodyLayer);
 		event.registerLayerDefinition(ChthonianModel.LAYER_LOCATION, ChthonianModel::createBodyLayer);

@@ -474,6 +474,8 @@ public class ItemInit {
             () -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.ASHEN));
     public static final DeferredHolder<Item, Item> curved_horn = SPECIALITEMS.register("curved_horn",
             () -> new CurvedHornItem(EnumBloodGourdTiers.HORN));
+    public static final DeferredHolder<Item, Item> hemorath_rib = SPECIALITEMS.register("hemorath_rib",
+            () -> new HemorathRibItem(EnumBloodGourdTiers.RIB));
 
     // Flasks
     public static final DeferredHolder<Item, Item> blood_rock = BASEITEMS

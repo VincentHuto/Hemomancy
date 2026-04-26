@@ -58,7 +58,8 @@ public final class HemoCapabilityRegistrar {
                 ItemInit.blood_gourd_white.get(),
                 ItemInit.blood_gourd_red.get(),
                 ItemInit.blood_gourd_black.get(),
-                ItemInit.curved_horn.get());
+                ItemInit.curved_horn.get(),
+                ItemInit.hemorath_rib.get());
 
         // ── IScar item capabilities — register each item that implements IScar ──
         for (Item item : BuiltInRegistries.ITEM) {

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item;
 
 public enum EnumBloodGourdTiers {
 
-	SIMPLE(1, 500, 8), CRIMSON(2, 1500, 12), ASHEN(3, 2500, 20), HORN(4, 5000, 5);
+	SIMPLE(1, 500, 8), CRIMSON(2, 1500, 12), ASHEN(3, 2500, 20), HORN(4, 3500, 5), RIB(5, 5000, 5);
 
 	private final int tierLevel;
 	private final float maxVolume;

@@ -1,14 +1,14 @@
 {
-  "sea_level": -20,
+  "sea_level": 20,
   "disable_mob_generation": false,
   "aquifers_enabled": false,
-  "ore_veins_enabled": true,
+  "ore_veins_enabled": false,
   "legacy_random_source": true,
   "default_block": {
     "Name": "hemomancy:venous_stone"
   },
   "default_fluid": {
-    "Name": "minecraft:water",
+    "Name": "hemomancy:morphic_nectar_block",
     "Properties": {
       "level": "0"
     }
@@ -17,7 +17,7 @@
     "min_y": -64,
     "height": 320,
     "size_horizontal": 1,
-    "size_vertical": 2
+    "size_vertical":4
   },
   "noise_router": {
     "barrier": 0,
