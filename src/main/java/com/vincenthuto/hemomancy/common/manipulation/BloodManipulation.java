@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPuritySt
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
@@ -27,7 +28,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BloodManipulation  {
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
@@ -303,7 +303,7 @@ public class BloodManipulation  {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);
 						volume.addBloodSpend(effectiveCost);
-						com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity
+						HollowVesselEntity
 								.onPlayerBloodSpend(player, effectiveCost);
 						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 						getAction(player, world, heldItemMainhand, position);

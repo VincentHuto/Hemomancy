@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.HollowVesselModel;
-import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;

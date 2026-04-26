@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

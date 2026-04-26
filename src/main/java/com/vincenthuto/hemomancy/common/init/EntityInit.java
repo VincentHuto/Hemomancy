@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.animal.VenousStriderEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
-import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.putriciel.PutricielEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.velorum.VelorumEntity;

@@ -248,8 +248,8 @@ public class AnnettaKnowlesEntity extends Monster {
         if (result && getPhase() == 2 && target instanceof Player player
                 && !this.level().isClientSide) {
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-                if (vol.isActive() && vol.getBlood() >= BLOOD_SPEAR_DRAIN) {
-                    vol.setBlood(vol.getBlood() - BLOOD_SPEAR_DRAIN);
+                if (vol.isActive() && vol.getBloodVolume() >= BLOOD_SPEAR_DRAIN) {
+                    vol.setBloodVolume(vol.getBloodVolume() - BLOOD_SPEAR_DRAIN);
                 }
             });
         }

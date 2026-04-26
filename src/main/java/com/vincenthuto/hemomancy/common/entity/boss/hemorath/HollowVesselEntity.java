@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.entity.boss;
+package com.vincenthuto.hemomancy.common.entity.boss.hemorath;
 
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;

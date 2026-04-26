@@ -214,7 +214,7 @@ public class PutricielEntity extends Monster {
                 new AABB(this.blockPosition()).inflate(radius))) {
             player.hurt(this.damageSources().magic(), ROT_NOVA_DAMAGE);
             player.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, witherAmp, false, true));
-            player.setSecondsOnFire(3);
+            player.igniteForSeconds(3);
         }
     }
 

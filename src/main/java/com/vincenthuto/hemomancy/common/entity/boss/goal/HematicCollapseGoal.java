@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.goal;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.EnumSet;
 
-import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;

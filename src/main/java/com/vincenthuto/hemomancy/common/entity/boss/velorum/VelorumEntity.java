@@ -247,8 +247,8 @@ public class VelorumEntity extends Monster {
         for (Player player : server.getEntitiesOfClass(Player.class,
                 new AABB(this.blockPosition()).inflate(SILENCE_DRAIN_RADIUS))) {
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-                if (vol.isActive() && vol.getBlood() >= SILENCE_BLOOD_DRAIN) {
-                    vol.setBlood(vol.getBlood() - SILENCE_BLOOD_DRAIN);
+                if (vol.isActive() && vol.getBloodVolume() >= SILENCE_BLOOD_DRAIN) {
+                    vol.setBloodVolume(vol.getBloodVolume() - SILENCE_BLOOD_DRAIN);
                 }
             });
         }
