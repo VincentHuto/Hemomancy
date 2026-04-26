@@ -93,6 +93,21 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		};
 	}
 
+	/** Maps an Unstained progression level (1–8) to its stage name for error messages. */
+	private static String getUnstainedLevelName(int level) {
+		return switch (level) {
+			case 1  -> "Begun";
+			case 2  -> "Tainted";
+			case 3  -> "Cleansing";
+			case 4  -> "Absolved";
+			case 5  -> "Purified";
+			case 6  -> "Discerning";
+			case 7  -> "Vigilant";
+			case 8  -> "Enlightened";
+			default -> "Unknown";
+		};
+	}
+
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodCraftingKeyPressPacket(ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
@@ -300,9 +315,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
 			BlockPattern.BlockPatternMatch match = bp.find(sLevel, searchStart);
 			if (match != null) {
-				// ── Tier degree check (Harbinger rites only) ──
-				// Unstained rites use riteType for duration/size, not Harbinger degree gating.
+				// ── Tier progression check ──
 				if (!recipe.isUnstained()) {
+					// Harbinger: check Hematic Order degree
 					int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 					int requiredDegree = recipe.getRequiredDegree() >= 0
 							? recipe.getRequiredDegree()
@@ -317,6 +332,24 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
 										.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
 												.withStyle(ChatFormatting.RED)),
+								false);
+						return;
+					}
+				} else {
+					// Unstained: check purity/clarity progression level (0–8)
+					int playerLevel = HemoCapabilityAccess.getPlayerUnstainedLevel(player);
+					int requiredLevel = recipe.getRequiredDegree() >= 0
+							? recipe.getRequiredDegree()
+							: getRequiredDegreeForRite(recipe.getRiteType());
+					if (playerLevel < requiredLevel) {
+						String stageName = getUnstainedLevelName(requiredLevel);
+						player.displayClientMessage(
+								Component.literal("This rite demands ")
+										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+										.append(Component.literal(stageName)
+												.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD))
+										.append(Component.literal(" purity (Stage " + requiredLevel + ")")
+												.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)),
 								false);
 						return;
 					}
