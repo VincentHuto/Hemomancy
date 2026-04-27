@@ -59,11 +59,11 @@ public final class LiberEntryDefinitions {
 		register(ORDER_BELIEFS, DiscoverySource.DEGREE, DiscoverySource.RITE);
 		register(HISTORICAL_RECORD, DiscoverySource.DEGREE, DiscoverySource.RITE);
 		register(BLOOD_MEMORIES, DiscoverySource.ITEM_PICKUP, DiscoverySource.RITE);
-		register(HYPHAE, DiscoverySource.ITEM_PICKUP, DiscoverySource.DIALOGUE);
-		register(ENTITY, DiscoverySource.DEGREE, DiscoverySource.RITE, DiscoverySource.DIALOGUE, DiscoverySource.ITEM_PICKUP);
-		register(TRUTH, DiscoverySource.DEGREE, DiscoverySource.DIALOGUE);
+		register(HYPHAE, DiscoverySource.MEMO, DiscoverySource.ITEM_PICKUP, DiscoverySource.DIALOGUE);
+		register(ENTITY, DiscoverySource.MEMO, DiscoverySource.DEGREE, DiscoverySource.RITE, DiscoverySource.DIALOGUE, DiscoverySource.ITEM_PICKUP);
+		register(TRUTH, DiscoverySource.MEMO, DiscoverySource.DEGREE, DiscoverySource.DIALOGUE);
 		register(BLOOD_MOONS, DiscoverySource.RITE, DiscoverySource.ADVANCEMENT);
-		register(QLIPHOTH, DiscoverySource.RITE, DiscoverySource.DEGREE, DiscoverySource.ITEM_PICKUP);
+		register(QLIPHOTH, DiscoverySource.MEMO, DiscoverySource.RITE, DiscoverySource.DEGREE, DiscoverySource.ITEM_PICKUP);
 		register(SAINTS, DiscoverySource.ITEM_PICKUP, DiscoverySource.RITE);
 		register(HEMORATH, DiscoverySource.ITEM_PICKUP);
 		register(UNSTAINED_REJECTION, DiscoverySource.RITE, DiscoverySource.ADVANCEMENT);

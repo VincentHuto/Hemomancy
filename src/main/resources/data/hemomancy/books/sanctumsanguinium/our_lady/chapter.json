@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:chapter",
-  "ordinality": 4,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "color": "0.4,0,0",
-  "title": "Our Lady",
-  "subtitle": "She Who Absolves",
-  "icon": "hemomancy:hemolytic_solution"
-}

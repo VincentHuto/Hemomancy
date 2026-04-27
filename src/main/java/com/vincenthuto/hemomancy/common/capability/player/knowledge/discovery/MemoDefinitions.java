@@ -22,6 +22,36 @@ public final class MemoDefinitions {
 			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
 			MemoDefinition.MemoPath.UNSTAINED));
 
+	public static final MemoDefinition FUNGAL_WHISPER_ADEPT = register(new MemoDefinition(
+			Hemomancy.rloc("fungal_whisper_adept"),
+			LiberEntryDefinitions.HYPHAE,
+			MemoDefinition.MemoPath.HARBINGER));
+
+	public static final MemoDefinition FUNGAL_WHISPER_ILLUMINATUS = register(new MemoDefinition(
+			Hemomancy.rloc("fungal_whisper_illuminatus"),
+			LiberEntryDefinitions.HYPHAE,
+			MemoDefinition.MemoPath.HARBINGER));
+
+	public static final MemoDefinition FUNGAL_WHISPER_SANCTIFIED = register(new MemoDefinition(
+			Hemomancy.rloc("fungal_whisper_sanctified"),
+			LiberEntryDefinitions.ENTITY,
+			MemoDefinition.MemoPath.HARBINGER));
+
+	public static final MemoDefinition FUNGAL_WHISPER_ARCHON = register(new MemoDefinition(
+			Hemomancy.rloc("fungal_whisper_archon"),
+			LiberEntryDefinitions.ENTITY,
+			MemoDefinition.MemoPath.HARBINGER));
+
+	public static final MemoDefinition FUNGAL_WHISPER_TRUTH = register(new MemoDefinition(
+			Hemomancy.rloc("fungal_whisper_truth"),
+			LiberEntryDefinitions.TRUTH,
+			MemoDefinition.MemoPath.HARBINGER));
+
+	public static final MemoDefinition QLIPHOTH_COMMUNION = register(new MemoDefinition(
+			Hemomancy.rloc("qliphoth_communion"),
+			LiberEntryDefinitions.QLIPHOTH,
+			MemoDefinition.MemoPath.HARBINGER));
+
 	private MemoDefinitions() {
 	}
 

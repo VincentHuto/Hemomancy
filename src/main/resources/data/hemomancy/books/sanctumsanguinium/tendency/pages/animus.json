@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 9,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Animus",
-  "subtitle": "The animating force",
-  "text": "Animus — the soul, the animating force, in the old alchemical tongue. The oldest name for the Vivacious tendency: the latent power of life itself, of growth, of the relentless upward pressure of living things. It was the first tendency the early Hemomancers documented, because it was the first one they understood. Blood carrying Animus remembers healing as instinct. Life wants to live. That is not complicated.",
-  "icon": "hemomancy:vivacious_enzyme"
-}
