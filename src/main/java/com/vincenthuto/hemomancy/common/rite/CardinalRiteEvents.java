@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
@@ -806,6 +807,7 @@ public class CardinalRiteEvents {
 
 		// Award rite completion milestone (first rite + tiered)
 		SkillPointGainEvents.onRiteCompleted(caster);
+		LiberKnowledgeHelper.unlockForRite(caster, ritePath);
 
 		// Check if this rite grants an initiatory degree
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
@@ -821,6 +823,7 @@ public class CardinalRiteEvents {
 
 					// Grant Harbinger degree advancement(s) for the new rank
 					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
+					LiberKnowledgeHelper.unlockForDegree(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {

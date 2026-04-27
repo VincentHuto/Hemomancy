@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -116,6 +118,8 @@ public final class HarbingerHermitDialogueTrees {
 				.addNode(new DialogueNode("hint", List.of(
 						"hemomancy.hermit.neophyte.hint"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.memo.make_note", null,
+								MemoHelper.memoEvent(MemoDefinitions.FIRST_RITE_NOTES.id())),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("manip_lore", List.of(

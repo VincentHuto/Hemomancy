@@ -41,6 +41,8 @@ public final class HemoCapabilityRegistrar {
                 (player, ctx) -> player.getData(HemoAttachmentTypes.EQUIPPED_MORPHLING));
         event.registerEntity(HemoCapabilityKeys.KNOWN_MANIPULATIONS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.KNOWN_MANIPULATIONS));
+        event.registerEntity(HemoCapabilityKeys.LIBER_KNOWLEDGE, EntityType.PLAYER,
+                (player, ctx) -> player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE));
         event.registerEntity(HemoCapabilityKeys.WHITE_HUMOR_VOLUME, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.WHITE_HUMOR_VOLUME));
         event.registerEntity(HemoCapabilityKeys.VISCERAL_ORGANS, EntityType.PLAYER,

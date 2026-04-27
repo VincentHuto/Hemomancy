@@ -5,6 +5,7 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 
 /**
  * Utility class for programmatically granting Hemomancy Harbinger-path
@@ -79,6 +80,7 @@ public final class HarbingerAdvancementGranter {
 		for (int i = 1; i <= degree && i <= DEGREE_ADVANCEMENTS.length; i++) {
 			grantIfNotDone(player, DEGREE_ADVANCEMENTS[i - 1]);
 		}
+		LiberKnowledgeHelper.unlockForDegree(player, degree);
 	}
 
 	/**
@@ -89,6 +91,7 @@ public final class HarbingerAdvancementGranter {
 	 * @param id     The ResourceLocation of the advancement to grant.
 	 */
 	public static void grantIfNotDone(ServerPlayer player, ResourceLocation id) {
+		LiberKnowledgeHelper.unlockForAdvancement(player, id);
 		AdvancementHolder advancement = player.server.getAdvancements().get(id);
 		if (advancement == null) return;
 

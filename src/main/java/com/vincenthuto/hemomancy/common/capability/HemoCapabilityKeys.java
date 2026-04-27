@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
@@ -38,6 +39,9 @@ public final class HemoCapabilityKeys {
 
     public static final EntityCapability<IKnownManipulations, Void> KNOWN_MANIPULATIONS =
             EntityCapability.createVoid(Hemomancy.rloc("known_manipulations"), IKnownManipulations.class);
+
+    public static final EntityCapability<ILiberKnowledge, Void> LIBER_KNOWLEDGE =
+            EntityCapability.createVoid(Hemomancy.rloc("liber_knowledge"), ILiberKnowledge.class);
 
     public static final EntityCapability<IWhiteHumorVolume, Void> WHITE_HUMOR_VOLUME =
             EntityCapability.createVoid(Hemomancy.rloc("white_humor_volume"), IWhiteHumorVolume.class);

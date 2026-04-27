@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
@@ -117,6 +118,22 @@ public static IKnownManipulations requireKnownManipulations(Player player) {
 
 public static IKnownManipulations requireKnownManipulations(Entity entity) {
     return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<ILiberKnowledge> getLiberKnowledge(Player player) {
+    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.LIBER_KNOWLEDGE));
+}
+
+public static Optional<ILiberKnowledge> getLiberKnowledge(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.LIBER_KNOWLEDGE));
+}
+
+public static ILiberKnowledge requireLiberKnowledge(Player player) {
+    return getLiberKnowledge(player).orElseThrow(IllegalStateException::new);
+}
+
+public static ILiberKnowledge requireLiberKnowledge(Entity entity) {
+    return getLiberKnowledge(entity).orElseThrow(IllegalStateException::new);
 }
 
 // ── Initiatory Degree ─────────────────────────────────────────────────────

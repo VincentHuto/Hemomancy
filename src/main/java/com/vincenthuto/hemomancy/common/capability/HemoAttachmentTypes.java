@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphling;
@@ -50,6 +51,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<KnownManipulations>> KNOWN_MANIPULATIONS =
             ATTACHMENT_TYPES.register("known_manipulations",
                     () -> AttachmentType.serializable(KnownManipulations::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LiberKnowledge>> LIBER_KNOWLEDGE =
+            ATTACHMENT_TYPES.register("liber_knowledge",
+                    () -> AttachmentType.serializable(LiberKnowledge::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<WhiteHumorVolume>> WHITE_HUMOR_VOLUME =
             ATTACHMENT_TYPES.register("white_humor_volume",

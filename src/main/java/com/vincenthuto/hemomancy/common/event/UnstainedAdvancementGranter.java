@@ -5,6 +5,7 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 
 /**
  * Utility class for programmatically granting Hemomancy Unstained-path
@@ -51,6 +52,7 @@ public final class UnstainedAdvancementGranter {
 	 * @param id     The ResourceLocation of the advancement to grant.
 	 */
 	public static void grantIfNotDone(ServerPlayer player, ResourceLocation id) {
+		LiberKnowledgeHelper.unlockForAdvancement(player, id);
 		AdvancementHolder advancement = player.server.getAdvancements().get(id);
 		if (advancement == null) return;
 

@@ -138,6 +138,10 @@ public class ItemInit {
             () -> new RiteHintItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> blood_structure_hint = BASEITEMS.register("blood_structure_hint",
             () -> new BloodStructureHintItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> field_notes = BASEITEMS.register("field_notes",
+            () -> new FieldNotesItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
+            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> foul_paste = BASEITEMS.register("foul_paste",
             () -> new FoulPasteItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",

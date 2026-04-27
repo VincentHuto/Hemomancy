@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
@@ -190,6 +191,7 @@ public class PacketHandler {
 
         // ── Degree / Unstained progress ───────────────────────────────────────
         net.playToClient(PacketSyncDegree.TYPE, PacketSyncDegree.STREAM_CODEC, PacketSyncDegree::handle);
+        net.playToClient(PacketSyncLiberKnowledge.TYPE, PacketSyncLiberKnowledge.STREAM_CODEC, PacketSyncLiberKnowledge::handle);
         net.playToClient(PacketSyncUnstainedProgress.TYPE, PacketSyncUnstainedProgress.STREAM_CODEC, PacketSyncUnstainedProgress::handle);
         net.playToServer(PacketToggleUnstainedBonus.TYPE, PacketToggleUnstainedBonus.STREAM_CODEC, PacketToggleUnstainedBonus::handle);
 

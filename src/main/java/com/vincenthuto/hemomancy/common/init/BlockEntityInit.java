@@ -115,6 +115,10 @@ public class BlockEntityInit {
 			.register("mnemonic_reliquary", () -> BlockEntityType.Builder
 					.of(MnemonicReliquaryBlockEntity::new, BlockInit.mnemonic_reliquary.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DictationTableBlockEntity>> dictation_table = TILES
+			.register("dictation_table", () -> BlockEntityType.Builder
+					.of(DictationTableBlockEntity::new, BlockInit.dictation_table.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaintSarcophagusBlockEntity>> saint_sarcophagus = TILES
 			.register("saint_sarcophagus", () -> BlockEntityType.Builder
 					.of(SaintSarcophagusBlockEntity::new, BlockInit.saint_sarcophagus.get()).build(null));

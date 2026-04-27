@@ -442,6 +442,7 @@ public class ClientEvents {
 					SomaticLoomRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.qliphoth_bloom.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.QliphothBloomBlockRenderer::new);

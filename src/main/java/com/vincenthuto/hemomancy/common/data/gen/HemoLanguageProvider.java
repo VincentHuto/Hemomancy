@@ -42,6 +42,24 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 		add("fluid.hemomancy.blood", "Blood");
 
+		add("item.hemomancy.field_notes.tooltip.memos", "%s memos written, %s blank pages remain");
+		add("item.hemomancy.field_notes.tooltip.use", "Right-click with Hematic Field Ink in your inventory to refresh the blank pages.");
+		add("item.hemomancy.liber_sanguinum.tooltip.memos", "%s memos written in blood");
+		add("item.hemomancy.liber_immaculatus.tooltip.memos", "%s pale notes preserved");
+		add("message.hemomancy.memo.invalid", "The whisper cannot be kept.");
+		add("message.hemomancy.memo.no_field_notes", "You need Field Notes to keep this memo.");
+		add("message.hemomancy.memo.already_noted", "This memo is already in your Field Notes.");
+		add("message.hemomancy.memo.field_notes_full", "Your Field Notes have no blank pages.");
+		add("message.hemomancy.memo.noted", "You make a note before it fades.");
+		add("message.hemomancy.memo.no_memos", "There are no memos to dictate.");
+		add("message.hemomancy.memo.no_new_memos", "The Liber already knows these memos.");
+		add("message.hemomancy.memo.not_enough_blood", "Dictation requires %s blood.");
+		add("message.hemomancy.memo.dictated", "%s memos become written in blood. Cost: %s blood.");
+		add("message.hemomancy.memo.field_notes_refilled", "The Field Notes drink the ink.");
+		add("message.hemomancy.memo.liber_placed", "You place the Liber on the Dictation Table.");
+		add("message.hemomancy.memo.liber_removed", "You take the Liber from the Dictation Table.");
+		add("hemomancy.dialogue.memo.make_note", "[Make a field note before it fades.]");
+
 		for (DeferredHolder<EntityType<?>, ? extends EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
 			addEntityType(e,
 					HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));

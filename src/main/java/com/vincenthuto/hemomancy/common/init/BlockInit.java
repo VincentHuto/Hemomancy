@@ -239,6 +239,8 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
 			MnemonicReliquaryBlock::new);
+	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
+			DictationTableBlock::new);
 
 	// Plants
 
