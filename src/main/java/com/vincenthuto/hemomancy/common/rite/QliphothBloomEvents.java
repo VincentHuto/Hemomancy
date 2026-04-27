@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.rite;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -164,7 +165,7 @@ public class QliphothBloomEvents {
 
 		// â”€â”€ Notify the bloom owner via Fungal Whisper dialogue â”€â”€
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(bloom.ownerUUID());
-		if (owner != null) {
+		if (owner != null && FungalWhisperDialogueTrees.shouldOfferMemoWhisper(owner, MemoDefinitions.QLIPHOTH_COMMUNION)) {
 			PacketHandler.sendToPlayer(owner, new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped)));
 		}
 	}

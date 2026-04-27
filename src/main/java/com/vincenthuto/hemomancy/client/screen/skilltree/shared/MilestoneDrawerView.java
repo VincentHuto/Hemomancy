@@ -15,21 +15,28 @@ public final class MilestoneDrawerView {
     static final int TAB_H         = 50;
     private static final int HOME_BTN_SIZE = 16;
     private static final int HOME_BTN_PAD  = 4;
+    private static final int DRAWER_SHADOW = 0xAA000000;
+    private static final float DRAWER_Z = 700.0F;
 
     public static void draw(GuiGraphics gfx, ProgressScreenContext ctx, MilestoneDrawerState state, int mouseX, int mouseY) {
         int drawerX = ctx.guiLeft() + HOME_BTN_PAD;
         int drawerY = ctx.guiTop() + HOME_BTN_PAD + HOME_BTN_SIZE + 4;
         boolean tabHovered = isOverToggle(ctx, state, mouseX, mouseY);
 
+        var pose = gfx.pose();
+        pose.pushPose();
+        pose.translate(0.0F, 0.0F, DRAWER_Z);
         if (!state.open) {
             drawToggleTab(gfx, ctx, drawerX, drawerY, false, tabHovered);
+            pose.popPose();
             return;
         }
 
         int drawerW = DRAWER_W;
         int drawerH = ctx.guiHeight() - (drawerY - ctx.guiTop()) - 4;
 
-        gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + drawerH, 0xCC1A0505);
+        gfx.fill(drawerX - 2, drawerY - 2, drawerX + drawerW + 2, drawerY + drawerH + 2, DRAWER_SHADOW);
+        gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + drawerH, 0xFF1A0505);
 
         int borderCol = 0xFF332222;
         gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + 1, borderCol);
@@ -95,6 +102,7 @@ public final class MilestoneDrawerView {
         if (state.scrollOffset > maxScroll) state.scrollOffset = maxScroll;
 
         gfx.disableScissor();
+        pose.popPose();
     }
 
     private static void drawToggleTab(GuiGraphics gfx, ProgressScreenContext ctx, int tabX, int tabY, boolean expanded, boolean hovered) {

@@ -106,6 +106,8 @@ public class UnstainedProgressScreen extends Screen {
 	private static final int SIDEBAR_WIDTH = 170;
 	private static final int SIDEBAR_TAB_W = 14;  // collapsed tab width
 	private static final int SIDEBAR_TAB_H = 50;  // collapsed tab height
+	private static final int SIDEBAR_SHADOW = 0xAA000000;
+	private static final float SIDEBAR_Z = 700.0F;
 	private boolean sidebarVisible = true;
 
 	// ── Bonus toggle panel (right side) ──
@@ -952,9 +954,13 @@ animTime += 0.016f; // ~60 FPS approximation
 		int sideY = guiTop + 22;
 		boolean tabHovered = isOverSidebarToggle(mouseX, mouseY);
 
+		var pose = gfx.pose();
+		pose.pushPose();
+		pose.translate(0.0F, 0.0F, SIDEBAR_Z);
 		if (!sidebarVisible) {
 			// ── Collapsed: draw only the toggle tab ──
 			drawSidebarToggleTab(gfx, sideX, sideY, false, tabHovered);
+			pose.popPose();
 			return;
 		}
 
@@ -962,8 +968,9 @@ animTime += 0.016f; // ~60 FPS approximation
 		int sideW = SIDEBAR_WIDTH;
 		int sideH = guiHeight - 28;
 
-		// Semi-transparent panel background
-		gfx.fill(sideX, sideY, sideX + sideW, sideY + sideH, 0xCC0C1020);
+		// Solid overlay backing; stage nodes and item icons use their own GUI depth.
+		gfx.fill(sideX - 2, sideY - 2, sideX + sideW + 2, sideY + sideH + 2, SIDEBAR_SHADOW);
+		gfx.fill(sideX, sideY, sideX + sideW, sideY + sideH, 0xFF0C1020);
 
 		// Panel border
 		int borderCol = 0xFF203050;
@@ -1029,6 +1036,7 @@ animTime += 0.016f; // ~60 FPS approximation
 				"Pets Healed", mPetsHealed, 15, 0xFFA0D0B0);
 
 		gfx.disableScissor();
+		pose.popPose();
 	}
 
 	/**

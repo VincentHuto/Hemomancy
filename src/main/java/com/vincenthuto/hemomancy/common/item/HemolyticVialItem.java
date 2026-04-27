@@ -18,6 +18,8 @@ import net.minecraft.world.level.Level;
 
 public class HemolyticVialItem extends Item {
 
+    private static final int HEMOLYTIC_VIAL_COOLDOWN_TICKS = 20;
+
     public HemolyticVialItem(Properties props) {
         super(props);
     }
@@ -43,8 +45,10 @@ public class HemolyticVialItem extends Item {
         if (!level.isClientSide) {
             HemolyticVialEntity vial = new HemolyticVialEntity(level, player);
             vial.setItem(stack.copyWithCount(1));
-            vial.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 1.0f);
+            // Match vanilla throwable vial behavior more closely: slower speed + lobbed arc.
+            vial.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0f, 0.5f, 1.0f);
             level.addFreshEntity(vial);
+            player.getCooldowns().addCooldown(this, HEMOLYTIC_VIAL_COOLDOWN_TICKS);
         }
 
         if (!player.getAbilities().instabuild) {

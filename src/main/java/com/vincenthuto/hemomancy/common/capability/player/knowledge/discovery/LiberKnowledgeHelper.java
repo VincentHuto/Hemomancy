@@ -93,4 +93,10 @@ public final class LiberKnowledgeHelper {
 				.map(knowledge -> knowledge.hasEntry(entryId))
 				.orElse(false);
 	}
+
+	public static boolean knowsMemo(Player player, ResourceLocation memoId) {
+		return HemoCapabilityAccess.getLiberKnowledge(player)
+				.map(knowledge -> knowledge.knowsMemo(memoId))
+				.orElse(false);
+	}
 }

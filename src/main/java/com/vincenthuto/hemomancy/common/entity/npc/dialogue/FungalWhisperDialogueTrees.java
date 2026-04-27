@@ -3,11 +3,13 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinition;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the
@@ -57,6 +59,21 @@ public final class FungalWhisperDialogueTrees {
 	}
 
 	// ── Degree 4 — Adept whispers: subliminal intrusions, barely perceptible ──
+
+	public static MemoDefinition memoForDegree(int degree, int variant) {
+		return switch (degree) {
+			case 4 -> MemoDefinitions.FUNGAL_WHISPER_ADEPT;
+			case 5 -> MemoDefinitions.FUNGAL_WHISPER_ILLUMINATUS;
+			case 6 -> MemoDefinitions.FUNGAL_WHISPER_SANCTIFIED;
+			default -> variant == 2
+					? MemoDefinitions.FUNGAL_WHISPER_TRUTH
+					: MemoDefinitions.FUNGAL_WHISPER_ARCHON;
+		};
+	}
+
+	public static boolean shouldOfferMemoWhisper(Player player, MemoDefinition definition) {
+		return definition != null && !LiberKnowledgeHelper.knowsMemo(player, definition.id());
+	}
 
 	private static DialogueTree adeptWhisper(int variant) {
 		return switch (variant) {

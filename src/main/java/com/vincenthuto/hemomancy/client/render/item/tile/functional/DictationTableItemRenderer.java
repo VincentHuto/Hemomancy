@@ -40,10 +40,11 @@ public class DictationTableItemRenderer extends BlockEntityWithoutLevelRenderer 
         }
 
         poseStack.pushPose();
-        poseStack.translate(0.5, 1, 0.5);
+        poseStack.translate(0.5, .9, 0.5);
         poseStack.scale(0.5f, 0.5f, 0.5f);
-        poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+        poseStack.mulPose(new Quaternion(Vector3.XN, 150, true).toMoj());
         poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+        poseStack.mulPose(new Quaternion(Vector3.ZP, 0, true).toMoj());
         tableModel.renderToBuffer(poseStack, buffer.getBuffer(tableModel.renderType(TEXTURE)), combinedLight,
                 OverlayTexture.NO_OVERLAY, -1);
         poseStack.popPose();

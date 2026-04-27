@@ -78,6 +78,8 @@ public class FungalWhisperEvents {
 
 		// Choose a variant based on the player's tick count for variety
 		int variant = (int) ((player.tickCount / interval) % VARIANT_COUNT);
+		var memo = FungalWhisperDialogueTrees.memoForDegree(degree, variant);
+		if (!FungalWhisperDialogueTrees.shouldOfferMemoWhisper(player, memo)) return;
 
 		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, variant);
 
