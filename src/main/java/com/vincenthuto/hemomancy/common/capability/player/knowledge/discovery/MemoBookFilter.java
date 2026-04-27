@@ -46,8 +46,7 @@ public final class MemoBookFilter {
 					chapter.getIcon());
 			List<BookDataTemplate> pages = new ArrayList<>();
 			for (BookDataTemplate page : chapter.getPages()) {
-				ResourceLocation pageId = page.getId();
-				if (gatedEntries.contains(pageId) && unlockedEntries.contains(pageId)) {
+				if (isPageVisible(page.getId(), gatedEntries, unlockedEntries)) {
 					pages.add(page);
 				}
 			}
@@ -58,5 +57,18 @@ public final class MemoBookFilter {
 		}
 		filtered.setChapters(chapters);
 		return filtered;
+	}
+
+	/**
+	 * A page is visible when:
+	 * <ul>
+	 *   <li>it has no ID (e.g. a title or decorative page), or</li>
+	 *   <li>its ID is not tracked by {@link LiberEntryDefinitions} (ungated content), or</li>
+	 *   <li>it is a tracked entry that the player has already unlocked.</li>
+	 * </ul>
+	 */
+	private static boolean isPageVisible(ResourceLocation pageId,
+			Set<ResourceLocation> gatedEntries, Set<ResourceLocation> unlockedEntries) {
+		return pageId == null || !gatedEntries.contains(pageId) || unlockedEntries.contains(pageId);
 	}
 }

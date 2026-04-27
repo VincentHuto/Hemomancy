@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -21,26 +24,56 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncLiberKnowledge> STREAM_CODEC =
 			StreamCodec.of(PacketSyncLiberKnowledge::encode, PacketSyncLiberKnowledge::decode);
 
-	private final Set<ResourceLocation> entries;
+	private final Map<ResourceLocation, Set<DiscoverySource>> entrySources;
 	private final Set<ResourceLocation> memos;
 
 	public PacketSyncLiberKnowledge(ILiberKnowledge knowledge) {
-		this.entries = new LinkedHashSet<>(knowledge.getUnlockedEntries());
+		Map<ResourceLocation, Set<DiscoverySource>> copy = new LinkedHashMap<>();
+		knowledge.getEntrySources().forEach((entry, sources) ->
+				copy.put(entry, sources.isEmpty()
+						? EnumSet.noneOf(DiscoverySource.class)
+						: EnumSet.copyOf(sources)));
+		this.entrySources = copy;
 		this.memos = new LinkedHashSet<>(knowledge.getKnownMemos());
 	}
 
-	private PacketSyncLiberKnowledge(Set<ResourceLocation> entries, Set<ResourceLocation> memos) {
-		this.entries = entries;
+	private PacketSyncLiberKnowledge(Map<ResourceLocation, Set<DiscoverySource>> entrySources, Set<ResourceLocation> memos) {
+		this.entrySources = entrySources;
 		this.memos = memos;
 	}
 
 	public static void encode(FriendlyByteBuf buf, PacketSyncLiberKnowledge msg) {
-		writeIds(buf, msg.entries);
+		buf.writeVarInt(msg.entrySources.size());
+		for (Map.Entry<ResourceLocation, Set<DiscoverySource>> e : msg.entrySources.entrySet()) {
+			buf.writeResourceLocation(e.getKey());
+			Set<DiscoverySource> sources = e.getValue();
+			buf.writeVarInt(sources.size());
+			for (DiscoverySource source : sources) {
+				buf.writeUtf(source.name());
+			}
+		}
 		writeIds(buf, msg.memos);
 	}
 
 	public static PacketSyncLiberKnowledge decode(FriendlyByteBuf buf) {
-		return new PacketSyncLiberKnowledge(readIds(buf), readIds(buf));
+		int entryCount = buf.readVarInt();
+		Map<ResourceLocation, Set<DiscoverySource>> entrySources = new LinkedHashMap<>();
+		for (int i = 0; i < entryCount; i++) {
+			ResourceLocation key = buf.readResourceLocation();
+			int sourceCount = buf.readVarInt();
+			Set<DiscoverySource> sources = EnumSet.noneOf(DiscoverySource.class);
+			for (int j = 0; j < sourceCount; j++) {
+				try {
+					sources.add(DiscoverySource.valueOf(buf.readUtf()));
+				} catch (IllegalArgumentException e) {
+					// Unknown source name — could be a server/client version mismatch.
+					// Log and skip so the rest of the packet can still be applied.
+					Hemomancy.LOGGER.warn("[LiberKnowledge] Unknown DiscoverySource in sync packet: {}", e.getMessage());
+				}
+			}
+			entrySources.put(key, sources);
+		}
+		return new PacketSyncLiberKnowledge(entrySources, readIds(buf));
 	}
 
 	public static void handle(PacketSyncLiberKnowledge msg, IPayloadContext ctx) {
@@ -51,9 +84,15 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			}
 			HemoCapabilityAccess.getLiberKnowledge(mc.player).ifPresent(knowledge -> {
 				LiberKnowledge synced = new LiberKnowledge();
-				for (ResourceLocation entry : msg.entries) {
-					synced.unlockEntry(entry, DiscoverySource.OTHER);
-				}
+				msg.entrySources.forEach((entry, sources) -> {
+					if (sources.isEmpty()) {
+						synced.unlockEntry(entry, DiscoverySource.OTHER);
+					} else {
+						for (DiscoverySource source : sources) {
+							synced.unlockEntry(entry, source);
+						}
+					}
+				});
 				for (ResourceLocation memo : msg.memos) {
 					synced.recordMemo(memo);
 				}
