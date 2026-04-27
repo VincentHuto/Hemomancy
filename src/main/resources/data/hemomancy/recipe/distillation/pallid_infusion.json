@@ -1,0 +1,15 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:pale_humor_flask"
+  },
+  "catalyst": {
+    "item": "hemomancy:ghost_pipe"
+  },
+  "result": "hemomancy:pallid_infusion",
+  "count": 1,
+  "experience": 0.75,
+  "cookingtime": 180,
+  "pallid": true,
+  "id": "hemomancy:distillation/pallid_infusion"
+}

@@ -295,7 +295,11 @@ public class ItemInit {
             () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
 
     // Unstained â€” Our Lady of Still Waters materials
-    public static final DeferredHolder<Item, Item> lethean_dew = BASEITEMS.register("lethean_dew",
+    public static final DeferredHolder<Item, Item> draught_of_still_waters = BASEITEMS.register(“draught_of_still_waters”,
+            () -> new DraughtOfStillWatersItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> pallid_infusion = BASEITEMS.register(“pallid_infusion”,
+            () -> new PallidInfusionItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> lethean_dew = BASEITEMS.register(“lethean_dew”,
             () -> new LetheanDewItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> lethean_brew = BASEITEMS.register("lethean_brew",
             () -> new LetheanBrewItem(new Item.Properties()));
@@ -494,6 +498,8 @@ public class ItemInit {
             () -> new BloodyFlaskItem(new Item.Properties(), 2500));
     public static final DeferredHolder<Item, Item> bloody_jug = BASEITEMS.register("bloody_jug",
             () -> new BloodyFlaskItem(new Item.Properties(), 5000));
+    public static final DeferredHolder<Item, Item> pale_humor_flask = BASEITEMS.register("pale_humor_flask",
+            () -> new PaleHumorFlaskItem(new Item.Properties(), 500));
 
 
     public static final DeferredHolder<Item, Item> bloody_vial = SPECIALITEMS.register("bloody_vial",

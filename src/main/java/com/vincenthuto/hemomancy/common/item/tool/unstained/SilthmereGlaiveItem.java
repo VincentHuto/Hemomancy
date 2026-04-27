@@ -3,13 +3,20 @@ package com.vincenthuto.hemomancy.common.item.tool.unstained;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.item.PaleHumorFlaskItem;
+
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -86,6 +93,12 @@ public class SilthmereGlaiveItem extends SwordItem {
 
 		for (LivingEntity cleaveTarget : cleaveTargets) {
 			cleaveTarget.hurt(source, cleaveDamage);
+		}
+
+		// Apply hemolysis to primary target if coated
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		if (tag.getBoolean(PaleHumorFlaskItem.TAG_WHITE_HUMOR_COATED)) {
+			target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 120, 0, false, true, true));
 		}
 
 		return hit;
