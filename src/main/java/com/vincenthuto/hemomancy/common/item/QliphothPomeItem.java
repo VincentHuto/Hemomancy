@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
 import net.minecraft.ChatFormatting;
@@ -85,6 +86,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	private static final int DARKNESS_DURATION_TICKS = 140;
 	private static final int DARKNESS_TAINTED_DURATION_TICKS = 300;
 	private static final long EMPOWERMENT_DURATION_TICKS = 3600L;
+	private static final long CREATIVE_TEST_BLOOM_ORIGIN = Long.MIN_VALUE;
 	private static final String POME_MESSAGE_KEY_BASE = "message.hemomancy.qliphoth_pome.consume.";
 
 	/** The nine Qliphoth husk names in consumption order (indices 0–8). */
@@ -224,10 +226,11 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				.ifPresent(d -> d.incrementTotalPomesConsumed());
 
 		// ── Per-bloom communion tracking (Apotheos gate) ──
-		if (itemTag.contains(BLOOM_ORIGIN_KEY)) {
-			long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);
-			trackCommunionProgress((ServerPlayer) player, bloomOrigin);
-		}
+		long bloomOrigin = itemTag.contains(BLOOM_ORIGIN_KEY)
+				? itemTag.getLong(BLOOM_ORIGIN_KEY)
+				: CREATIVE_TEST_BLOOM_ORIGIN;
+		trackCommunionProgress((ServerPlayer) player, bloomOrigin);
+		syncPomeProgress((ServerPlayer) player);
 	}
 
 	/**
@@ -245,6 +248,13 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 						FungalWhisperDialogueTrees.qliphothCommunion()));
 			}
 		});
+	}
+
+	private static void syncPomeProgress(ServerPlayer player) {
+		int progress = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> degree.isQliphothCommunionDone() ? 9 : degree.getTotalPomesConsumed())
+				.orElse(0);
+		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(progress));
 	}
 
 	/** Returns the English ordinal string for a number 1–9 (e.g. "First", "Second"). */

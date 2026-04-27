@@ -50,6 +50,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -492,6 +493,7 @@ public class CardinalRiteEvents {
 	private static final int LETHEAN_FONT_EFFECT_TICKS = 72000;
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
+	private static final String APOTHEOS_RITE_PATH = "cardinal_rite/apotheos_rite";
 
 	static {
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_initiation", 1); // Neophyte of the Crimson Veil
@@ -501,12 +503,20 @@ public class CardinalRiteEvents {
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/archon_rite", 7);          // Archon of the Hematic Order
-		DEGREE_RITE_PATHS.put("cardinal_rite/apotheos_rite", 8);        // Apotheos of the Hematic Order
+		DEGREE_RITE_PATHS.put(APOTHEOS_RITE_PATH, 8);                   // Apotheos of the Hematic Order
 	}
 
 	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return;
+
+		if (isApotheosRite(recipe.getId()) && !hasQliphothCommunion(caster)) {
+			caster.displayClientMessage(
+					Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
+							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
 
 		// Drain blood cost
 		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
@@ -1720,6 +1730,16 @@ public class CardinalRiteEvents {
 					caster.getX(), caster.getY() + 1.0, caster.getZ(),
 					50, 1.0, 1.5, 1.0, 0.02);
 		});
+	}
+
+	private static boolean isApotheosRite(ResourceLocation recipeId) {
+		return recipeId != null && APOTHEOS_RITE_PATH.equals(recipeId.getPath());
+	}
+
+	private static boolean hasQliphothCommunion(ServerPlayer player) {
+		return HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> degree.isQliphothCommunionDone())
+				.orElse(false);
 	}
 
 	/**

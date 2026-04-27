@@ -129,7 +129,7 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
 | 7 | Archon of the Hematic Order | `archon_rite` |
-| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion flag — gate enforced in `BloodCraftingKeyPressPacket` before rite start, checks `hemomancy:qliphoth_communion` on player persistent data)* |
+| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion — gate enforced in `BloodCraftingKeyPressPacket` before rite start and re-checked in `CardinalRiteEvents` before completion, using the player's `IInitiatoryDegree` capability)* |
 
 Cardinal Rites have:
 - A blood cost
@@ -330,20 +330,24 @@ The `QliphothBloomRenderer` reads `bloom.getPomesDropped()` and passes it as a `
 Implementation: `trunkHeightFrac(stage)`, `rootLengthFrac(stage)`, `branchLengthFrac(stage)` in `QliphothBloomRenderer`. The `pomesDropped` count is stored in `QliphothBloomClientData.BloomEntry` and synced via `PacketSyncQliphothBlooms`.
 
 **Stage 4 — Qliphoth Communion Achieved**
-`QliphothPomeItem.trackCommunionProgress()` tracks per-bloom consumption in `hemomancy:pome_communion_progress` (CompoundTag keyed by bloom origin Long). When the ninth pome from a single bloom is consumed:
-- `hemomancy:qliphoth_communion = true` is stamped on the player's persistent data
+`QliphothPomeItem.trackCommunionProgress()` tracks per-bloom consumption in the player's `IInitiatoryDegree` capability (`pome_communion_progress`, keyed by bloom origin Long). When the ninth pome from a single bloom is consumed:
+- `IInitiatoryDegree#setQliphothCommunionDone(true)` is set on the player
 - `FungalWhisperDialogueTrees.qliphothCommunion()` fires the nine-shell completion whisper
+- HUD pome progress is immediately synced with `PacketSyncPomeProgress`
+
+Creative-spawned / untagged pomes do not have a real bloom origin, so they use a synthetic test origin and still advance the same capability path. This keeps creative testing aligned with survival behavior without reintroducing player persistent-data storage.
 
 **Stage 5 — Rite of Apotheos Unlocked**
-`BloodCraftingKeyPressPacket` (server-side rite activation) checks `hemomancy:qliphoth_communion` before allowing the `apotheos_rite` to begin. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree ≥ 7), the rite proceeds normally.
+`BloodCraftingKeyPressPacket` (server-side rite activation) checks `IInitiatoryDegree#isQliphothCommunionDone()` before allowing the `apotheos_rite` to begin. `CardinalRiteEvents.completeRite()` repeats the same check before granting Degree 8, so old active rites or alternate completion paths cannot bypass the gate. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree ≥ 7), the rite proceeds normally.
 
-**Key NBT flags on player persistent data:**
+**Key fields serialized inside the player's `IInitiatoryDegree` capability:**
 
 | Key | Type | Meaning |
 |-----|------|---------|
-| `hemomancy:qliphoth_communion` | Boolean | Communion completed; Apotheos rite now accessible |
-| `hemomancy:pome_communion_progress` | CompoundTag | Per-bloom pome consumption counters (keys = bloom origin Long as String) |
-| `hemomancy:pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
+| `pome_communion_done` | Boolean | Communion completed; Apotheos rite now accessible |
+| `pome_communion_progress` | CompoundTag | Per-bloom pome consumption counters (keys = bloom origin Long as String) |
+| `pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
+| `pome_total_consumed` | Int | Total pome counter for HUD display, capped at 9 |
 | `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` — set when Archon resolves the Fungal Dimension choice fork |
 
 ---
