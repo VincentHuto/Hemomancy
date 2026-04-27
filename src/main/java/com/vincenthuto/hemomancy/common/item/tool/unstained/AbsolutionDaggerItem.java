@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.item.PaleHumorFlaskItem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -72,6 +74,12 @@ public class AbsolutionDaggerItem extends SwordItem {
 		if (!attacker.level().isClientSide && attacker instanceof Player player) {
 			// Always apply Weakness I for 2 seconds
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, false, true, true));
+
+			// Apply hemolysis if coated with white humor
+			CompoundTag coatTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			if (coatTag.getBoolean(PaleHumorFlaskItem.TAG_WHITE_HUMOR_COATED)) {
+				target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 120, 0, false, true, true));
+			}
 			float maxHealth = target.getMaxHealth();
 			if (maxHealth > 0.0F) {
 				float missingHealthRatio = 1.0F - (target.getHealth() / maxHealth);

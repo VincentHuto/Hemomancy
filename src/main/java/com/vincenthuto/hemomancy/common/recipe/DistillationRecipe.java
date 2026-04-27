@@ -38,9 +38,20 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 	private final ItemStack result;
 	private final float experience;
 	private final int cookingTime;
+	/**
+	 * White humor drained from the Pallid Retort's tank when this recipe completes.
+	 * 0 means the recipe generates white humor instead of consuming it.
+	 */
+	private final int whiteHumorCost;
 
 	public DistillationRecipe(ResourceLocation id, String group, Ingredient ingredient,
 			Ingredient catalyst, boolean pallid, ItemStack result, float experience, int cookingTime) {
+		this(id, group, ingredient, catalyst, pallid, result, experience, cookingTime, 0);
+	}
+
+	public DistillationRecipe(ResourceLocation id, String group, Ingredient ingredient,
+			Ingredient catalyst, boolean pallid, ItemStack result, float experience, int cookingTime,
+			int whiteHumorCost) {
 		this.id = id;
 		this.group = group;
 		this.ingredient = ingredient;
@@ -49,6 +60,7 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 		this.result = result;
 		this.experience = experience;
 		this.cookingTime = cookingTime;
+		this.whiteHumorCost = whiteHumorCost;
 	}
 
 	// ---- Accessors ----
@@ -66,6 +78,8 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 
 	public float getExperience() { return experience; }
 	public int getCookingTime() { return cookingTime; }
+	/** White humor drained from the retort tank on completion; 0 = no cost (generates humor instead). */
+	public int getWhiteHumorCost() { return whiteHumorCost; }
 
 	/** Slot index of the catalyst in the Ghastly Alembic container. Must match GhastlyAlembicBlockEntity.SLOT_CATALYST. */
 	public static final int SLOT_CATALYST_INDEX = 3;

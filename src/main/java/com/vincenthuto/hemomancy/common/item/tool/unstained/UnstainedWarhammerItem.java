@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.item.PaleHumorFlaskItem;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -14,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.component.CustomData;
 
 /**
  * Unstained Warhammer — a blunt, heavy weapon for followers of the Path of the
@@ -48,6 +53,11 @@ public class UnstainedWarhammerItem extends DiggerItem {
 					false, true, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, CRIPPLE_DURATION, CRIPPLE_AMPLIFIER,
 					false, true, true));
+
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			if (tag.getBoolean(PaleHumorFlaskItem.TAG_WHITE_HUMOR_COATED)) {
+				target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 120, 0, false, true, true));
+			}
 
 			player.level().playSound(null, target.blockPosition(),
 					SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.4f, 1.2f);

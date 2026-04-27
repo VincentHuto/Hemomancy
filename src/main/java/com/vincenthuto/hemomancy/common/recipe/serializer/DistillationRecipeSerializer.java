@@ -29,11 +29,12 @@ RESULT_CODEC.fieldOf("result").forGetter(recipe -> Either.left(recipe.getResultI
 Codec.INT.optionalFieldOf("count", 1).forGetter(recipe -> recipe.getResultItemRaw().getCount()),
 Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(DistillationRecipe::getExperience),
 Codec.INT.optionalFieldOf("cookingtime", 100).forGetter(DistillationRecipe::getCookingTime),
-Codec.BOOL.optionalFieldOf("pallid", false).forGetter(DistillationRecipe::isPallid)).apply(instance,
-(id, group, ingredient, catalyst, resultEither, count, experience, cookingTime, pallid) -> {
+Codec.BOOL.optionalFieldOf("pallid", false).forGetter(DistillationRecipe::isPallid),
+Codec.INT.optionalFieldOf("white_humor_cost", 0).forGetter(DistillationRecipe::getWhiteHumorCost)).apply(instance,
+(id, group, ingredient, catalyst, resultEither, count, experience, cookingTime, pallid, whiteHumorCost) -> {
 ItemStack result = resultEither.map(ItemStack::copy,
 resultId -> new ItemStack(BuiltInRegistries.ITEM.get(resultId), count));
-return new DistillationRecipe(id, group, ingredient, catalyst, pallid, result, experience, cookingTime);
+return new DistillationRecipe(id, group, ingredient, catalyst, pallid, result, experience, cookingTime, whiteHumorCost);
 }));
 
 public static final StreamCodec<RegistryFriendlyByteBuf, DistillationRecipe> STREAM_CODEC = StreamCodec
@@ -50,7 +51,8 @@ boolean hasResult = buffer.readBoolean();
 ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(buffer) : ItemStack.EMPTY;
 float xp = buffer.readFloat();
 int time = buffer.readInt();
-return new DistillationRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
+int whiteHumorCost = buffer.readInt();
+return new DistillationRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time, whiteHumorCost);
 }
 
 private static void toNetwork(RegistryFriendlyByteBuf buffer, DistillationRecipe recipe) {
@@ -69,6 +71,7 @@ ItemStack.STREAM_CODEC.encode(buffer, result);
 }
 buffer.writeFloat(recipe.getExperience());
 buffer.writeInt(recipe.getCookingTime());
+buffer.writeInt(recipe.getWhiteHumorCost());
 }
 
 @Override
