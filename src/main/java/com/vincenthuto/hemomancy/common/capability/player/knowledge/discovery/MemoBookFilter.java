@@ -21,7 +21,8 @@ public final class MemoBookFilter {
 		if (source == null || player == null) {
 			return source;
 		}
-		if (!"sanctumsanguinium".equals(source.getResourceLocation().getPath())) {
+		String bookPath = source.getResourceLocation().getPath();
+		if (!"sanctumsanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath)) {
 			return source;
 		}
 

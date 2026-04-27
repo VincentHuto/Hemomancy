@@ -31,6 +31,7 @@ public final class MemoHelper {
 
 	private static final String TAG_REMAINING = "RemainingMemos";
 	private static final String TAG_MEMOS = "Memos";
+	private static final String TAG_INK_PATH = "InkPath";
 	private static final String TAG_KNOWN_MEMOS = "KnownMemos";
 	private static final String TAG_LIBER_ENTRIES = "UnlockedLiberEntries";
 	private static final int TAG_STRING = 8;
@@ -59,6 +60,19 @@ public final class MemoHelper {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_field_notes")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return CaptureResult.NO_FIELD_NOTES;
+		}
+		MemoDefinition definition = MemoDefinitions.get(memoId).orElse(null);
+		MemoDefinition.MemoPath memoPath = definition != null ? definition.path() : MemoDefinition.MemoPath.SHARED;
+		MemoDefinition.MemoPath notePath = getInkPath(notes);
+		if (notePath == null) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_ink_path")
+					.withStyle(ChatFormatting.GRAY), true);
+			return CaptureResult.NO_INK_PATH;
+		}
+		if (!pathsCompatible(notePath, memoPath)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.wrong_ink_path")
+					.withStyle(ChatFormatting.GRAY), true);
+			return CaptureResult.WRONG_INK_PATH;
 		}
 		if (hasMemo(notes, memoId)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.already_noted")
@@ -90,6 +104,17 @@ public final class MemoHelper {
 		if (!isLiber(liber)) {
 			return DictationResult.NO_LIBER;
 		}
+		MemoDefinition.MemoPath notePath = getInkPath(notes);
+		if (notePath == null) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_ink_path")
+					.withStyle(ChatFormatting.GRAY), true);
+			return DictationResult.NO_INK_PATH;
+		}
+		if (!canDictateInto(liber, notePath)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.wrong_liber")
+					.withStyle(ChatFormatting.GRAY), true);
+			return DictationResult.WRONG_LIBER;
+		}
 
 		ListTag memos = getMemoList(notes);
 		if (memos.isEmpty()) {
@@ -107,6 +132,14 @@ public final class MemoHelper {
 			ResourceLocation memoLocation = ResourceLocation.tryParse(memoId);
 			if (memoLocation == null) {
 				continue;
+			}
+			MemoDefinition.MemoPath memoPath = MemoDefinitions.get(memoLocation)
+					.map(MemoDefinition::path)
+					.orElse(MemoDefinition.MemoPath.SHARED);
+			if (!pathsCompatible(notePath, memoPath)) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.memo.mixed_notes")
+						.withStyle(ChatFormatting.GRAY), true);
+				return DictationResult.MIXED_NOTES;
 			}
 			if (!knowledge.knowsMemo(memoLocation)) {
 				newMemoCount++;
@@ -178,7 +211,7 @@ public final class MemoHelper {
 	public static int getRemainingMemos(ItemStack stack) {
 		CompoundTag tag = getCustomData(stack);
 		if (!tag.contains(TAG_REMAINING)) {
-			return MAX_FIELD_NOTES_MEMOS;
+			return 0;
 		}
 		return Math.max(0, Math.min(MAX_FIELD_NOTES_MEMOS, tag.getInt(TAG_REMAINING)));
 	}
@@ -187,10 +220,36 @@ public final class MemoHelper {
 		return getMemoList(stack).size();
 	}
 
-	public static void refillFieldNotes(ItemStack stack) {
+	public static RefillResult refillFieldNotes(ItemStack stack, ItemStack ink) {
+		MemoDefinition.MemoPath inkPath = pathForInk(ink);
+		if (inkPath == null) {
+			return RefillResult.NO_INK;
+		}
+		MemoDefinition.MemoPath currentPath = getInkPath(stack);
+		if (getMemoCount(stack) > 0 && currentPath != null && currentPath != inkPath) {
+			return RefillResult.WRONG_INK_PATH;
+		}
 		CompoundTag tag = getCustomData(stack);
 		tag.putInt(TAG_REMAINING, MAX_FIELD_NOTES_MEMOS);
+		tag.putString(TAG_INK_PATH, inkPath.name());
 		setCustomData(stack, tag);
+		return RefillResult.REFILLED;
+	}
+
+	public static MemoDefinition.MemoPath getInkPath(ItemStack stack) {
+		CompoundTag tag = getCustomData(stack);
+		if (!tag.contains(TAG_INK_PATH, TAG_STRING)) {
+			return null;
+		}
+		try {
+			return MemoDefinition.MemoPath.valueOf(tag.getString(TAG_INK_PATH));
+		} catch (IllegalArgumentException ignored) {
+			return null;
+		}
+	}
+
+	public static boolean isInk(ItemStack stack) {
+		return pathForInk(stack) != null;
 	}
 
 	public static boolean isFieldNotes(ItemStack stack) {
@@ -199,6 +258,19 @@ public final class MemoHelper {
 
 	public static boolean isLiber(ItemStack stack) {
 		return !stack.isEmpty() && (stack.is(ItemInit.liber_sanguinum.get()) || stack.is(ItemInit.liber_immaculatus.get()));
+	}
+
+	public static boolean canDictateInto(ItemStack liber, MemoDefinition.MemoPath path) {
+		if (path == MemoDefinition.MemoPath.SHARED) {
+			return isLiber(liber);
+		}
+		if (path == MemoDefinition.MemoPath.HARBINGER) {
+			return !liber.isEmpty() && liber.is(ItemInit.liber_sanguinum.get());
+		}
+		if (path == MemoDefinition.MemoPath.UNSTAINED) {
+			return !liber.isEmpty() && liber.is(ItemInit.liber_immaculatus.get());
+		}
+		return false;
 	}
 
 	private static ItemStack findFieldNotes(ServerPlayer player) {
@@ -245,6 +317,22 @@ public final class MemoHelper {
 				.orElse(id);
 	}
 
+	private static MemoDefinition.MemoPath pathForInk(ItemStack ink) {
+		if (ink.is(ItemInit.hematic_field_ink.get())) {
+			return MemoDefinition.MemoPath.HARBINGER;
+		}
+		if (ink.is(ItemInit.pale_field_ink.get())) {
+			return MemoDefinition.MemoPath.UNSTAINED;
+		}
+		return null;
+	}
+
+	private static boolean pathsCompatible(MemoDefinition.MemoPath notesPath, MemoDefinition.MemoPath memoPath) {
+		return notesPath == MemoDefinition.MemoPath.SHARED
+				|| memoPath == MemoDefinition.MemoPath.SHARED
+				|| notesPath == memoPath;
+	}
+
 	private static void migrateLegacyLiberStack(ItemStack liber, ILiberKnowledge knowledge) {
 		for (String memo : getLegacyKnownMemos(liber)) {
 			ResourceLocation memoId = ResourceLocation.tryParse(memo);
@@ -272,7 +360,15 @@ public final class MemoHelper {
 		CAPTURED,
 		ALREADY_NOTED,
 		NO_FIELD_NOTES,
-		FIELD_NOTES_FULL
+		FIELD_NOTES_FULL,
+		NO_INK_PATH,
+		WRONG_INK_PATH
+	}
+
+	public enum RefillResult {
+		REFILLED,
+		NO_INK,
+		WRONG_INK_PATH
 	}
 
 	public enum DictationResult {
@@ -281,6 +377,9 @@ public final class MemoHelper {
 		NO_LIBER,
 		NO_MEMOS,
 		NO_NEW_MEMOS,
-		NOT_ENOUGH_BLOOD
+		NOT_ENOUGH_BLOOD,
+		NO_INK_PATH,
+		WRONG_LIBER,
+		MIXED_NOTES
 	}
 }

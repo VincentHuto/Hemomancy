@@ -17,6 +17,11 @@ public final class MemoDefinitions {
 			LiberEntryDefinitions.FIRST_RITE_NOTES,
 			MemoDefinition.MemoPath.HARBINGER));
 
+	public static final MemoDefinition PALE_LADY_NOTES = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_notes"),
+			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
+			MemoDefinition.MemoPath.UNSTAINED));
+
 	private MemoDefinitions() {
 	}
 

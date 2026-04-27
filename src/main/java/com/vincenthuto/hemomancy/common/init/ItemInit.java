@@ -142,6 +142,8 @@ public class ItemInit {
             () -> new FieldNotesItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",
+            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> foul_paste = BASEITEMS.register("foul_paste",
             () -> new FoulPasteItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",

@@ -41,6 +41,12 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation UNSTAINED_REJECTION = entry("the_unstained_path/pages/the_rejection");
 	public static final ResourceLocation COPPER_AND_SILVER = entry("the_unstained_path/pages/copper_and_silver");
 	public static final ResourceLocation PURIFIED = entry("the_unstained_path/pages/the_purified");
+	public static final ResourceLocation IMMACULATUS_FIRST_STEPS = immaculatusEntry("intro/pages/first_steps");
+	public static final ResourceLocation IMMACULATUS_INFECTION = immaculatusEntry("intro/pages/the_infection");
+	public static final ResourceLocation IMMACULATUS_HEMOLYTIC_SOLUTION = immaculatusEntry("sacred_tools/pages/hemolytic_solution");
+	public static final ResourceLocation IMMACULATUS_COPPER_AND_SILVER = immaculatusEntry("sacred_tools/pages/copper_and_silver");
+	public static final ResourceLocation IMMACULATUS_SHE_WHO_LISTENS = immaculatusEntry("our_lady/pages/she_who_listens");
+	public static final ResourceLocation IMMACULATUS_CLARITY_PRICE = immaculatusEntry("our_lady/pages/clarity_and_its_price");
 
 	static {
 		register(FIRST_RITE_NOTES, DiscoverySource.MEMO);
@@ -63,6 +69,12 @@ public final class LiberEntryDefinitions {
 		register(UNSTAINED_REJECTION, DiscoverySource.RITE, DiscoverySource.ADVANCEMENT);
 		register(COPPER_AND_SILVER, DiscoverySource.RITE, DiscoverySource.ITEM_PICKUP);
 		register(PURIFIED, DiscoverySource.ADVANCEMENT, DiscoverySource.RITE);
+		register(IMMACULATUS_FIRST_STEPS, DiscoverySource.MEMO, DiscoverySource.RITE, DiscoverySource.DIALOGUE);
+		register(IMMACULATUS_INFECTION, DiscoverySource.MEMO, DiscoverySource.ITEM_PICKUP);
+		register(IMMACULATUS_HEMOLYTIC_SOLUTION, DiscoverySource.MEMO, DiscoverySource.ITEM_PICKUP);
+		register(IMMACULATUS_COPPER_AND_SILVER, DiscoverySource.MEMO, DiscoverySource.RITE, DiscoverySource.ITEM_PICKUP);
+		register(IMMACULATUS_SHE_WHO_LISTENS, DiscoverySource.MEMO, DiscoverySource.DIALOGUE);
+		register(IMMACULATUS_CLARITY_PRICE, DiscoverySource.MEMO, DiscoverySource.RITE);
 
 		registerRite("cardinal_rite/sanguine_initiation", HEMOMANCY);
 		registerRite("cardinal_rite/sanguine_initiation", THE_HARBINGERS);
@@ -76,8 +88,11 @@ public final class LiberEntryDefinitions {
 		registerRite("cardinal_rite/sanguine_eclipse", BLOOD_MOONS);
 		registerRite("cardinal_rite/bloom_of_qliphoth", QLIPHOTH);
 		registerRite("cardinal_rite/lethean_baptism", THE_UNSTAINED);
+		registerRite("cardinal_rite/lethean_baptism", IMMACULATUS_FIRST_STEPS);
 		registerRite("cardinal_rite/silver_veil", COPPER_AND_SILVER);
+		registerRite("cardinal_rite/silver_veil", IMMACULATUS_COPPER_AND_SILVER);
 		registerRite("cardinal_rite/clarity_ascension", PURIFIED);
+		registerRite("cardinal_rite/clarity_ascension", IMMACULATUS_CLARITY_PRICE);
 
 		registerAdvancement(HarbingerAdvancementGranter.ADV_DEGREE_1_NEOPHYTE, HEMOMANCY);
 		registerAdvancement(HarbingerAdvancementGranter.ADV_DEGREE_1_NEOPHYTE, THE_HARBINGERS);
@@ -104,6 +119,8 @@ public final class LiberEntryDefinitions {
 		registerItem("hallowed_residuum_hemorath", HEMORATH);
 		registerItem("consecrated_copper_ingot", COPPER_AND_SILVER);
 		registerItem("hemolytic_solution", THE_UNSTAINED);
+		registerItem("hemolytic_solution", IMMACULATUS_HEMOLYTIC_SOLUTION);
+		registerItem("consecrated_copper_ingot", IMMACULATUS_COPPER_AND_SILVER);
 
 		registerDialogue("hermit_first_rite", HERMITS);
 	}
@@ -144,6 +161,10 @@ public final class LiberEntryDefinitions {
 
 	private static ResourceLocation entry(String path) {
 		return Hemomancy.rloc("sanctumsanguinium/" + path);
+	}
+
+	private static ResourceLocation immaculatusEntry(String path) {
+		return Hemomancy.rloc("liberimmaculatus/" + path);
 	}
 
 	private static void register(ResourceLocation entryId, DiscoverySource... sources) {

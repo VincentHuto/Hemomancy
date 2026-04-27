@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:tears_of_silthmere"
+    },
+    {
+      "item": "hemomancy:pale_distillate"
+    },
+    {
+      "item": "minecraft:water_bottle"
+    },
+    {
+      "item": "minecraft:ink_sac"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:pale_field_ink"
+  }
+}
