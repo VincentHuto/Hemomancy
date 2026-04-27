@@ -7,7 +7,7 @@
   ],
   "key": {
     "S": {
-      "item": "hemomancy:sanguine_formation"
+      "item": "minecraft:dark_oak_log"
     },
     "B": {
       "item": "minecraft:book"
@@ -16,7 +16,7 @@
       "item": "minecraft:dark_oak_planks"
     },
     "I": {
-      "item": "hemomancy:hematic_iron_scrap"
+      "item": "minecraft:lectern"
     }
   },
   "result": {

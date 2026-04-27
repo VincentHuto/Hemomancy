@@ -60,7 +60,8 @@ public class FieldNotesItem extends Item {
 
 	@Override
 	public boolean isBarVisible(ItemStack stack) {
-		return MemoHelper.getRemainingMemos(stack) < MemoHelper.MAX_FIELD_NOTES_MEMOS;
+		return MemoHelper.getInkPath(stack) != null
+				|| MemoHelper.getRemainingMemos(stack) < MemoHelper.MAX_FIELD_NOTES_MEMOS;
 	}
 
 	@Override

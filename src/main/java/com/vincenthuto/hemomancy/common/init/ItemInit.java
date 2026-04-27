@@ -128,6 +128,11 @@ public class ItemInit {
     public static final  DeferredHolder<Item, Item>  liber_immaculatus = SPECIALITEMS.register("liber_immaculatus",
             () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_immaculatus.png")));
+    public static final  DeferredHolder<Item, Item>  field_notes = SPECIALITEMS.register("field_notes",
+            () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
+                    Hemomancy.rloc("textures/entity/field_notes.png")));
+//    public static final DeferredHolder<Item, Item> field_notes = BASEITEMS.register("field_notes",
+//            () -> new FieldNotesItem(new Item.Properties()));
 
     // Base Items
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
@@ -138,8 +143,7 @@ public class ItemInit {
             () -> new RiteHintItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> blood_structure_hint = BASEITEMS.register("blood_structure_hint",
             () -> new BloodStructureHintItem(new Item.Properties().fireResistant()));
-    public static final DeferredHolder<Item, Item> field_notes = BASEITEMS.register("field_notes",
-            () -> new FieldNotesItem(new Item.Properties()));
+
     public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",
