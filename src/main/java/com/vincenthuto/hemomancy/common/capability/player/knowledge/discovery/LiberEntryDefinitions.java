@@ -49,7 +49,7 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation IMMACULATUS_CLARITY_PRICE = immaculatusEntry("our_lady/pages/clarity_and_its_price");
 
 	static {
-		register(FIRST_RITE_NOTES, DiscoverySource.MEMO);
+		register(FIRST_RITE_NOTES, DiscoverySource.MEMO, DiscoverySource.RITE);
 		register(HEMOMANCY, DiscoverySource.ITEM_PICKUP, DiscoverySource.RITE, DiscoverySource.DIALOGUE);
 		register(ERYTHROMYCELIUM, DiscoverySource.ITEM_PICKUP, DiscoverySource.DIALOGUE);
 		register(THE_HARBINGERS, DiscoverySource.DEGREE, DiscoverySource.RITE, DiscoverySource.ADVANCEMENT);
@@ -78,6 +78,7 @@ public final class LiberEntryDefinitions {
 
 		registerRite("cardinal_rite/sanguine_initiation", HEMOMANCY);
 		registerRite("cardinal_rite/sanguine_initiation", THE_HARBINGERS);
+		registerRite("cardinal_rite/sanguine_initiation", FIRST_RITE_NOTES);
 		registerRite("cardinal_rite/votary_rite", DEGREES);
 		registerRite("cardinal_rite/initiate_rite", ORDER_BELIEFS);
 		registerRite("cardinal_rite/adept_rite", HISTORICAL_RECORD);

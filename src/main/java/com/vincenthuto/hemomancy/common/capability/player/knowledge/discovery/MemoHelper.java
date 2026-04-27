@@ -176,6 +176,13 @@ public final class MemoHelper {
 		return DictationResult.DICTATED;
 	}
 
+	/**
+	 * Blood cost for dictating a batch of new memos.
+	 * The cost scales on the total number of memos that will be known after
+	 * dictation (existing + new), so each subsequent dictation session costs more
+	 * as the player's record grows. This reflects the increasing complexity of
+	 * integrating deeper knowledge into the Liber.
+	 */
 	public static int getDictationBloodCost(int knownMemoCount, int newMemoCount) {
 		return DICTATION_BASE_BLOOD_COST + (knownMemoCount + newMemoCount) * DICTATION_BLOOD_COST_PER_MEMO;
 	}
@@ -334,18 +341,28 @@ public final class MemoHelper {
 	}
 
 	private static void migrateLegacyLiberStack(ItemStack liber, ILiberKnowledge knowledge) {
-		for (String memo : getLegacyKnownMemos(liber)) {
-			ResourceLocation memoId = ResourceLocation.tryParse(memo);
+		CompoundTag tag = getCustomData(liber);
+		boolean hadLegacyData = tag.contains(TAG_KNOWN_MEMOS) || tag.contains(TAG_LIBER_ENTRIES);
+		if (!hadLegacyData) {
+			return;
+		}
+		ListTag memoList = tag.getList(TAG_KNOWN_MEMOS, TAG_STRING);
+		for (int i = 0; i < memoList.size(); i++) {
+			ResourceLocation memoId = ResourceLocation.tryParse(memoList.getString(i));
 			if (memoId != null) {
 				knowledge.recordMemo(memoId);
 			}
 		}
-		for (String entry : getLegacyUnlockedLiberEntries(liber)) {
-			ResourceLocation entryId = ResourceLocation.tryParse(entry);
+		ListTag entryList = tag.getList(TAG_LIBER_ENTRIES, TAG_STRING);
+		for (int i = 0; i < entryList.size(); i++) {
+			ResourceLocation entryId = ResourceLocation.tryParse(entryList.getString(i));
 			if (entryId != null) {
 				knowledge.unlockEntry(entryId, DiscoverySource.OTHER);
 			}
 		}
+		tag.remove(TAG_KNOWN_MEMOS);
+		tag.remove(TAG_LIBER_ENTRIES);
+		setCustomData(liber, tag);
 	}
 
 	private static CompoundTag getCustomData(ItemStack stack) {
