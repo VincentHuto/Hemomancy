@@ -1226,6 +1226,7 @@
   "tooltip.hemomancy.chitinite_set_bonus": "Set Bonus (4): +2 Armor Toughness, 25% projectile reduction",
   "tooltip.hemomancy.unstained_set_bonus": "Set Bonus (4): Immunity to Blood Loss and Hemolysis",
   "tooltip.hemomancy.marrow_crown_bonus": "Artifact: +10% melee damage when blood > 50%",
+  "tooltip.hemomancy.hemorath_rib_bonus": "Artifact:  Acts as a blood reservoir, slowly refills itself overtime",
   "hemomancy.blood_moon.start": "§4§lA Blood Moon rises... Thirsters and Fargones stir in the darkness.",
   "hemomancy.blood_moon.end": "§7§oThe Blood Moon wanes. The darkness retreats.",
   "hemomancy.lethean_tide.end": "§b§lThe Lethean Tide sweeps the sky clean. The Blood Moon is gone.",
