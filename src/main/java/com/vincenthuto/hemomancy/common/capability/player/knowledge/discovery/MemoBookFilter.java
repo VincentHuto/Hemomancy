@@ -25,13 +25,18 @@ public final class MemoBookFilter {
 		if (!"sanctumsanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath)) {
 			return source;
 		}
+		final String entryPrefix = bookPath + "/";
 
 		Set<ResourceLocation> unlockedEntries = HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> knowledge.getUnlockedEntries())
+				.map(knowledge -> knowledge.getUnlockedEntries().stream()
+						.filter(entry -> entry.getPath().startsWith(entryPrefix))
+						.collect(java.util.stream.Collectors.toSet()))
 				.orElse(Set.of());
 		Set<ResourceLocation> gatedEntries = new HashSet<>();
 		for (LiberEntryDefinition definition : LiberEntryDefinitions.all()) {
-			gatedEntries.add(definition.entryId());
+			if (definition.entryId().getPath().startsWith(entryPrefix)) {
+				gatedEntries.add(definition.entryId());
+			}
 		}
 
 		BookCodeModel filtered = new BookCodeModel(source.getResourceLocation(), source.getTemplate());
@@ -63,12 +68,11 @@ public final class MemoBookFilter {
 	 * A page is visible when:
 	 * <ul>
 	 *   <li>it has no ID (e.g. a title or decorative page), or</li>
-	 *   <li>its ID is not tracked by {@link LiberEntryDefinitions} (ungated content), or</li>
-	 *   <li>it is a tracked entry that the player has already unlocked.</li>
+	 *   <li>it is tracked by {@link LiberEntryDefinitions} for the current book and unlocked by the player.</li>
 	 * </ul>
 	 */
 	private static boolean isPageVisible(ResourceLocation pageId,
 			Set<ResourceLocation> gatedEntries, Set<ResourceLocation> unlockedEntries) {
-		return pageId == null || !gatedEntries.contains(pageId) || unlockedEntries.contains(pageId);
+		return pageId == null || (gatedEntries.contains(pageId) && unlockedEntries.contains(pageId));
 	}
 }

@@ -232,7 +232,7 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
-            super.renderBackground(guiGraphics, i, i1, v);
+        // Drawn manually from render(); calling the container background here re-enters renderBg().
     }
 
     @Override

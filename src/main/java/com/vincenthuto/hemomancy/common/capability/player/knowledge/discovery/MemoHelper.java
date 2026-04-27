@@ -356,13 +356,24 @@ public final class MemoHelper {
 		ListTag entryList = tag.getList(TAG_LIBER_ENTRIES, TAG_STRING);
 		for (int i = 0; i < entryList.size(); i++) {
 			ResourceLocation entryId = ResourceLocation.tryParse(entryList.getString(i));
-			if (entryId != null) {
+			if (entryId != null && legacyEntryMatchesLiber(liber, entryId)) {
 				knowledge.unlockEntry(entryId, DiscoverySource.OTHER);
 			}
 		}
 		tag.remove(TAG_KNOWN_MEMOS);
 		tag.remove(TAG_LIBER_ENTRIES);
 		setCustomData(liber, tag);
+	}
+
+	private static boolean legacyEntryMatchesLiber(ItemStack liber, ResourceLocation entryId) {
+		String path = entryId.getPath();
+		if (path.startsWith("sanctumsanguinium/")) {
+			return liber.is(ItemInit.liber_sanguinum.get());
+		}
+		if (path.startsWith("liberimmaculatus/")) {
+			return liber.is(ItemInit.liber_immaculatus.get());
+		}
+		return true;
 	}
 
 	private static CompoundTag getCustomData(ItemStack stack) {

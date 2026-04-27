@@ -18,6 +18,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -52,6 +53,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
     /** Number of animated vein tendrils swimming across the background. */
     private static final int VEIN_COUNT = 28;
+    private static final float VEIN_ANIMATION_SPEED = 0.35f;
     /** Per-vein parameters: startX/Y ratio, angle, speed, amplitude, frequency, length, thickness, brightness */
     private float[][] veinParams;
 
@@ -96,7 +98,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         this.renderEffects(graphics, mouseX, mouseY);
-      //  this.renderBackground(graphics);
+        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         this.renderBg(graphics, partialTicks, mouseX, mouseY);
         this.renderTooltip(graphics, mouseX, mouseY);
         this.oldMouseX = mouseX;
@@ -131,6 +133,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
     // ───── Procedural Animated Vein Background ─────
     private float animTime = 0f;
+    private long lastAnimMillis = -1L;
 
     private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
         graphics.enableScissor(gx, gy, gx + gw, gy + gh);
@@ -153,9 +156,15 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         }
 
         // Layer 3: animated vein tendrils
-        animTime += 0.016f; // ~60 FPS approximation
+        long now = Util.getMillis();
+        if (lastAnimMillis >= 0L) {
+            float deltaSeconds = Math.min((now - lastAnimMillis) / 1000.0f, 0.05f);
+            animTime += deltaSeconds * VEIN_ANIMATION_SPEED;
+        }
+        lastAnimMillis = now;
 
-        float time = animTime;        if (veinParams != null) {
+        float time = animTime;
+        if (veinParams != null) {
             for (int i = 0; i < VEIN_COUNT; i++) {
                 drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
             }
@@ -325,7 +334,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
-            super.renderBackground(guiGraphics, i, i1, v);
+        // Drawn manually from render(); calling the container background here re-enters renderBg().
     }
 
 

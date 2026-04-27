@@ -1,11 +1,15 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +29,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  */
 public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 
+	private static final ResourceKey<Level> FUNGAL_GARDENS_DIMENSION = ResourceKey.create(Registries.DIMENSION,
+			Hemomancy.rloc("fungal_gardens"));
 	private static BlockState NECTAR;
 	private static BlockState SPORITE;
 	private static boolean resolved = false;
@@ -45,6 +51,10 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 		ensureResolved();
 
 		WorldGenLevel level = ctx.level();
+		if (!level.getLevel().dimension().equals(FUNGAL_GARDENS_DIMENSION)) {
+			return false;
+		}
+
 		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();
 
