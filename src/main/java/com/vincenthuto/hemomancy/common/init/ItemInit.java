@@ -500,6 +500,8 @@ public class ItemInit {
             () -> new BloodyFlaskItem(new Item.Properties(), 5000));
     public static final DeferredHolder<Item, Item> pale_humor_flask = BASEITEMS.register("pale_humor_flask",
             () -> new PaleHumorFlaskItem(new Item.Properties(), 500));
+    public static final DeferredHolder<Item, Item> hemolytic_vial = BASEITEMS.register("hemolytic_vial",
+            () -> new HemolyticVialItem(new Item.Properties().stacksTo(16)));
 
 
     public static final DeferredHolder<Item, Item> bloody_vial = SPECIALITEMS.register("bloody_vial",

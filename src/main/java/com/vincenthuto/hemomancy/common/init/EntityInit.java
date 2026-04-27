@@ -408,6 +408,12 @@ public class EntityInit {
                     .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20)
                     .build(Hemomancy.rloc("sanguis_lancea").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<HemolyticVialEntity>> hemolytic_vial_projectile = ENTITY_TYPES.register(
+            "hemolytic_vial_projectile",
+            () -> EntityType.Builder.<HemolyticVialEntity>of(HemolyticVialEntity::new, MobCategory.MISC).sized(0.25F, 0.25F)
+                    .clientTrackingRange(4).setUpdateInterval(10)
+                    .build(Hemomancy.rloc("hemolytic_vial_projectile").toString()));
+
     public static TagKey<EntityType<?>> createTag(String name) {
         return TagKey.create(Registries.ENTITY_TYPE, Hemomancy.rloc(name));
     }
