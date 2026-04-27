@@ -24,7 +24,6 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
-      //  HemoProgressionScreen.setupEntries();
 
 		// Jei
 		add("hemomancy.jei.memory_weaving", "Memory Weaving");
