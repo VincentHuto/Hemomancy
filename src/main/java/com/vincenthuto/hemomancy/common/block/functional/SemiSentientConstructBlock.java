@@ -143,8 +143,12 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock {
 				String memName = drudge.getEquippedMemory() != null
 						? drudge.getEquippedMemory().getProperName()
 						: "";
+				String customName = drudge.hasCustomName()
+						? drudge.getCustomName().getString()
+						: "";
 				entries.add(new DrudgeEntry(
 						memName,
+						customName,
 						drudge.isPassiveMode(),
 						drudge.getBloodCharge(),
 						DrudgeEntity.MAX_BLOOD_CHARGE,

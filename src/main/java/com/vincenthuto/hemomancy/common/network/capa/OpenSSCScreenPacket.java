@@ -46,12 +46,13 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
      *
      * @param memoryName  The result of {@code BloodManipulation.getProperName()},
      *                    or empty string if no memory is equipped.
+     * @param customName  The entity's custom name set via a name tag, or empty string if none.
      * @param passive     {@code true} if the drudge is in passive mode.
      * @param charge      Current blood charge, in mL.
      * @param maxCharge   Maximum blood charge, in mL.
      * @param rogue       {@code true} if the drudge has gone rogue.
      */
-    public record DrudgeEntry(String memoryName, boolean passive, float charge, float maxCharge, boolean rogue) {}
+    public record DrudgeEntry(String memoryName, String customName, boolean passive, float charge, float maxCharge, boolean rogue) {}
 
     // ── Constructor ──────────────────────────────────────────────────────────
 
@@ -71,6 +72,7 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
         buf.writeVarInt(msg.drudges.size());
         for (DrudgeEntry d : msg.drudges) {
             buf.writeUtf(d.memoryName());
+            buf.writeUtf(d.customName());
             buf.writeBoolean(d.passive());
             buf.writeFloat(d.charge());
             buf.writeFloat(d.maxCharge());
@@ -86,11 +88,12 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
         List<DrudgeEntry> drudges = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             String name = buf.readUtf();
+            String customName = buf.readUtf();
             boolean passive = buf.readBoolean();
             float charge = buf.readFloat();
             float maxCharge = buf.readFloat();
             boolean rogue = buf.readBoolean();
-            drudges.add(new DrudgeEntry(name, passive, charge, maxCharge, rogue));
+            drudges.add(new DrudgeEntry(name, customName, passive, charge, maxCharge, rogue));
         }
         return new OpenSSCScreenPacket(pos, sscBlood, sscMaxBlood, drudges);
     }

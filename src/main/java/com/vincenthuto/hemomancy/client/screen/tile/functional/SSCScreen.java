@@ -248,9 +248,16 @@ public class SSCScreen extends Screen {
         // Index
         gfx.drawString(font, "#" + (index + 1), textX, textY, TEXT_DIM, false);
 
-        // Memory name
-        String memText = d.memoryName().isEmpty() ? "§8none" : "§7" + d.memoryName();
-        gfx.drawString(font, Component.literal(memText), textX + 22, textY, 0xFFFFFFFF, false);
+        // Name: custom name (from name tag) takes priority over memory name
+        String displayName;
+        if (!d.customName().isEmpty()) {
+            displayName = "§e" + d.customName();
+        } else if (!d.memoryName().isEmpty()) {
+            displayName = "§7" + d.memoryName();
+        } else {
+            displayName = "§8none";
+        }
+        gfx.drawString(font, Component.literal(displayName), textX + 22, textY, 0xFFFFFFFF, false);
 
         // Mode badge (right-aligned relative to bar start)
         int modeColor;
