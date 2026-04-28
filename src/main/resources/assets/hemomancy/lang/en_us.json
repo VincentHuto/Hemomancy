@@ -291,6 +291,7 @@
   "item.hemomancy.living_syringe.loaded": "Loaded Rack: %s/%s empty",
   "item.hemomancy.living_syringe.no_rack": "No empty or partial vial rack in inventory.",
   "item.hemomancy.living_syringe.rack_full": "Rack is full; ejected.",
+  "item.hemomancy.drudge_electrode": "Drudge Electrode",
   "item.hemomancy.memory_activation_potential": "Memory Activation Potential",
   "item.hemomancy.memory_blood_absorption": "Memory Blood Absorption",
   "item.hemomancy.memory_blood_aneurysm": "Memory Blood Aneurysm",

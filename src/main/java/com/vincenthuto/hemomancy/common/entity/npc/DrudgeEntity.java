@@ -369,10 +369,14 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     /** Drops the currently equipped memory as an item near the drudge. */
     private void dropMemoryItem(@Nullable Player player) {
         if (equippedMemory == null) return;
-        // Find the BloodMemoryItem that matches this manipulation across all item registers
-        dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.BASEITEMS)
-            || dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.HANDHELDITEMS)
-            || dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.SPECIALITEMS);
+        // Find the BloodMemoryItem that matches this manipulation across all item registers.
+        // Short-circuits after the first successful match/drop.
+        boolean dropped = dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.BASEITEMS)
+                || dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.HANDHELDITEMS)
+                || dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.SPECIALITEMS);
+        if (!dropped && player != null) {
+            player.displayClientMessage(Component.literal("§8No matching memory item found."), true);
+        }
     }
 
     private boolean dropMemoryItemFromRegister(@Nullable Player player,
@@ -602,7 +606,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
 
             if (executed) {
                 // Drain blood charge and apply cooldown
-                float costMult = (float) HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER.get();
+                float costMult = HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER.get().floatValue();
                 drudge.drainBloodCharge((float) mem.getCost() * costMult);
                 int cooldownMult = HemoServerConfig.DRUDGE_COOLDOWN_MULTIPLIER.get();
                 drudge.memoryCooldownTicks = Math.max(20, mem.getCooldownTicks() * cooldownMult);
