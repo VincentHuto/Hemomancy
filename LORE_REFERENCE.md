@@ -2,10 +2,12 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-04-21 (recent systems + lore alignment pass)
+> **Last Updated:** 2026-04-28 (NeoForge port + Qliphoth/Blood Moon alignment pass)
 
-> **Current Lore-State Snapshot (2026-04-21 audit):**
+> **Current Lore-State Snapshot (2026-04-28 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
+> - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
+> - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain WIP in gameplay implementation: full Fungal Dimension progression, Saints encounters/chambers, and the Stained Priestess storyline boss arc.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
@@ -340,13 +342,13 @@ Blood Moons in Hemomancy are not just a gameplay event. They are a **manifestati
 When a Blood Moon rises, it is the Pale Lady expending a significant burst of her power to push back against the fungal infection for another cycle — a kind of cosmic immune response. She wins these small battles, which is why the world is not already a meatball of flesh. But each one costs her something. The night after a Blood Moon, the moon may appear new or very dim — she is recovering.
 
 From the player's perspective:
-- Blood Moons occur roughly **once every 60 nights** (intended to be rare)
-- Harbingers / Hemomancers receive **enhanced strength and regeneration**
+- Blood Moons are uncommon natural events; current gameplay checks once per night and may start one for the rest of that night
+- Harbingers / Hemomancers receive **enhanced strength and night vision**
 - Non-blood-magic users receive **weakness**
-- Hostile mobs spawn more rapidly
-- Special blood constructs and **Mosquito Boy** variants spawn
+- Thirsters and Fargones stir in the dark
+- The moon itself renders red, with fungal-vein sky forms intruding around it
 
-A ritual can trigger a Blood Moon manually, but it is intentionally very expensive — a single player triggering a worldwide event that affects everyone on the server is something that should be done sparingly.
+A ritual is still intended to trigger a Blood Moon manually in the future, but it should remain intentionally expensive — a single player triggering a worldwide event that affects everyone on the server is something that should be done sparingly.
 
 ---
 
@@ -410,7 +412,7 @@ The Qliphoth Tree:
 - Whispers through those fruits in a personal register — the voice naming the husk feels directed to the current bearer, not to the crowd at large.
 - **Must be summoned through ritual** — placed trees don't work, because you can't cheat god
 - Grows with slight random variation each time (no two trees are identical)
-- Can be removed by the **Rite of Cult Pruning**, which can be performed by either Hemomancers or the Unstained. If the Unstained prune a tree that still bears pomes, those pomes are severed from their source incorrectly — tainted pomes that bring weakness rather than power.
+- Cannot be felled by ordinary hands. It can only be removed cleanly by the **Rite of Cult Pruning**, which can be performed by either Hemomancers or the Unstained. If the Unstained prune a tree that still bears pomes, those pomes are severed from their source incorrectly — tainted pomes that bring weakness rather than power.
 
 ---
 

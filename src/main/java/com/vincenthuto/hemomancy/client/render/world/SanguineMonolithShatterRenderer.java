@@ -30,6 +30,9 @@ public class SanguineMonolithShatterRenderer {
 	private static final int PULSE_LIFETIME = 30;
 	private static final float PULSE_CORE_MAX_RADIUS = 1.15f;
 	private static final float PULSE_SHELL_MAX_RADIUS = 3.8f;
+	private static final int POME_PULSE_LIFETIME = 24;
+	private static final float POME_PULSE_CORE_MAX_RADIUS = 0.85f;
+	private static final float POME_PULSE_SHELL_MAX_RADIUS = 2.65f;
 	private static final int PULSE_RINGS = 10;
 	private static final int PULSE_SEGMENTS = 18;
 
@@ -37,7 +40,7 @@ public class SanguineMonolithShatterRenderer {
 	private static final List<Pulse> ACTIVE_PULSES = new ArrayList<>();
 
 	public static void spawnBurst(Vec3 center, RandomSource random) {
-		ACTIVE_PULSES.add(new Pulse(center));
+		ACTIVE_PULSES.add(new Pulse(center, PULSE_CORE_MAX_RADIUS, PULSE_SHELL_MAX_RADIUS, PULSE_LIFETIME));
 		for (int i = 0; i < BURST_COUNT; i++) {
 			Vec3 dir = randomDirection(random);
 			double speed = BASE_SPEED + random.nextDouble() * SPEED_VARIANCE;
@@ -73,6 +76,10 @@ public class SanguineMonolithShatterRenderer {
 		}
 	}
 
+	public static void spawnPomePulse(Vec3 center) {
+		ACTIVE_PULSES.add(new Pulse(center, POME_PULSE_CORE_MAX_RADIUS, POME_PULSE_SHELL_MAX_RADIUS, POME_PULSE_LIFETIME));
+	}
+
 	public static void render(PoseStack poseStack, float partialTick) {
 		if (ACTIVE_SHARDS.isEmpty() && ACTIVE_PULSES.isEmpty()) return;
 		Minecraft mc = Minecraft.getInstance();
@@ -85,7 +92,7 @@ public class SanguineMonolithShatterRenderer {
 
 		for (Pulse pulse : ACTIVE_PULSES) {
 			float age = pulse.age + partialTick;
-			float lifeCoeff = Math.min(1f, age / PULSE_LIFETIME);
+			float lifeCoeff = Math.min(1f, age / pulse.lifetime);
 			float shellEase = easeOutCubic(lifeCoeff);
 			float coreEase = easeOutCubic(Math.min(1f, lifeCoeff * 1.8f));
 			float shellAlpha = 0.62f * (1f - lifeCoeff) * (1f - lifeCoeff);
@@ -93,10 +100,10 @@ public class SanguineMonolithShatterRenderer {
 			Vec3 center = pulse.center.subtract(cam);
 
 			if (coreAlpha > 0.01f) {
-				drawSphere(vc, mat, center, 0.12f + PULSE_CORE_MAX_RADIUS * coreEase, coreAlpha);
+				drawSphere(vc, mat, center, 0.12f + pulse.coreMaxRadius * coreEase, coreAlpha);
 			}
 			if (shellAlpha > 0.01f) {
-				drawSphere(vc, mat, center, 0.25f + PULSE_SHELL_MAX_RADIUS * shellEase, shellAlpha);
+				drawSphere(vc, mat, center, 0.25f + pulse.shellMaxRadius * shellEase, shellAlpha);
 			}
 		}
 
@@ -221,10 +228,16 @@ public class SanguineMonolithShatterRenderer {
 
 	private static class Pulse {
 		private final Vec3 center;
+		private final float coreMaxRadius;
+		private final float shellMaxRadius;
+		private final int lifetime;
 		private int age;
 
-		private Pulse(Vec3 center) {
+		private Pulse(Vec3 center, float coreMaxRadius, float shellMaxRadius, int lifetime) {
 			this.center = center;
+			this.coreMaxRadius = coreMaxRadius;
+			this.shellMaxRadius = shellMaxRadius;
+			this.lifetime = lifetime;
 			this.age = 0;
 		}
 
@@ -233,7 +246,7 @@ public class SanguineMonolithShatterRenderer {
 		}
 
 		private boolean isDead() {
-			return age >= PULSE_LIFETIME;
+			return age >= lifetime;
 		}
 	}
 }

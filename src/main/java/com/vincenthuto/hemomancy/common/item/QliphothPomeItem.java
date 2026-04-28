@@ -29,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 /**
@@ -162,6 +163,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		if (!level.isClientSide && entity instanceof Player player) {
 			CompoundTag itemTag = getCustomData(stack);
 			boolean isTainted = itemTag.getBoolean(TAINTED_KEY);
+			spawnPomePulse(player);
 
 			if (isTainted) {
 				applyTaintedEffects(player);
@@ -171,6 +173,12 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		}
 
 		return result;
+	}
+
+	private static void spawnPomePulse(Player player) {
+		if (player.level() instanceof ServerLevel serverLevel) {
+			PacketHandler.sendPomePulse(player.position().add(0, player.getBbHeight() * 0.55, 0), 64.0, serverLevel);
+		}
 	}
 
 	private static void applyTaintedEffects(Player player) {

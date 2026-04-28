@@ -1,6 +1,6 @@
 # Hemomancy — Complete Mod Reference
 
-> **Minecraft Version:** 1.20.1 (Forge)
+> **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
 > **Last Updated:** 2026-04-28
 
 <!-- Texture base paths (relative from project root) -->
@@ -14,8 +14,12 @@
 
 Hemomancy is a blood magic mod built around the *quality* of blood manipulation rather than just quantity. It covers topics of gore, magic, exaggerated biology, fungi, secret societies, and cosmic horror. The power to control blood is the result of a **special fungal infection** — a sentient extraterrestrial fungus that deliberately broke off from a larger hive-mind organism (itself the physical manifestation of an outer-god-type entity) and landed on the Minecraft world, slowly taking hold.
 
-> **Current Gameplay State Snapshot (2026-04-21 audit):**
+> **Current Gameplay State Snapshot (2026-04-28 audit):**
 > - The Harbinger endgame loop is now explicitly wired through Qliphoth Communion + Apotheos gating, with the full Harbinger advancement chain implemented in data + programmatic grant flow.
+> - Cardinal Rite JSONs now carry a `rankup` boolean. Degree-advancement rites use it for red/gold rank-up highlighting in the Rites tab, and server activation prevents already-higher-rank players from redundantly starting rank-up rites.
+> - Blood Moon gameplay and client rendering are synchronized through `BloodMoonEvents`, `PacketSyncBloodMoon`, and `BloodMoonVeinSkyRenderer`: active nights show the red moon texture plus vein/tendril sky overlay while applying the event's gameplay effects.
+> - Qliphoth Communion is wired end-to-end: monolith shatter has black shards plus a black orb blast, Bloom of the Qliphoth drops all nine named pomes with owner whispers, creative-spawned pomes still use the current husk order, and `/hemo qliphoth pome reset` reseals the Communion gate.
+> - Qliphoth Bloom blocks and their filler shell cannot be broken by normal player mining; removal is intentionally routed through the Rite of Cult Pruning.
 > - Morphling support gameplay expanded with the new **Morphling Cradle** block entity (owner-bound hosted morphling, aura support, blood upkeep/leech behavior, and floor/wall/ceiling placement support).
 > - Blood extraction flow was modernized: **Living Syringe** now uses loadable **Vial Rack** storage (8-vial rack state), and the **Vial Centrifuge** can bulk-load sampled vials directly from racks.
 > - Bloodline administration now includes leader-side member expulsion in `BloodlinePoolScreen` + `PacketKickBloodlinePlayer`.
@@ -83,7 +87,7 @@ From here the player can pursue the **Harbinger Path** (blood magic) or eventual
 
 ## 2. Core Player Capabilities
 
-All player-attached Forge capabilities, registered in `CapabilityInit`:
+All player-attached NeoForge capabilities / attachments, registered in `CapabilityInit` and related init classes:
 
 | Capability | Interface | Purpose |
 |---|---|---|
@@ -135,7 +139,7 @@ Cardinal Rites have:
 - A blood cost
 - A rite type (`CardinalRiteType`)
 - A multiblock pattern
-- A `rankup` boolean on Harbinger degree-advancement rites, used by the Rites tab to highlight degree rites
+- A `rankup` boolean on Harbinger degree-advancement rites, used by the Rites tab to highlight degree rites with a slow red/gold name glow
 - An item result
 - A casting duration (tick-based, tracked via `ActiveCardinalRite`)
 - Boundary enforcement (player must stay in range)
@@ -148,6 +152,8 @@ Managed by `CardinalRiteEvents`:
 2. An `ActiveCardinalRite` is created, tracking the caster UUID, center position, recipe, duration, and rite size
 3. Each tick: particles spawn, boundary checked, sacrifices processed
 4. On completion: degree awarded, Unstained progress reset (if any), chat message sent
+
+`BloodCraftingKeyPressPacket` validates rank-up rites before activation. If a rite's `rankup` flag is true and the caster is already at or above the rank it grants, the server refuses to start the rite so players do not spend materials or time on redundant degree-up rituals. The same packet also accepts structure-spawner-placed rite structures by scanning the matched multiblock pattern rather than assuming the clicked block is the rite origin.
 
 ### 3.4 Harbinger NPC Dialogue System
 
@@ -294,7 +300,7 @@ There are **four Saints** in total; which one a player encounters first is parti
 Qliphoth Communion is the multi-step prerequisite chain that unlocks the Rite of Apotheos. It is **fully implemented**. The five stages are:
 
 **Stage 1 — Monolith Shatter**
-An Archon (Degree 7) interacts with their **Sanguine Monolith** twice (`SHATTER_INTERACTION_THRESHOLD = 2`). On the second interaction the monolith explodes, drops a **Qliphoth Seed** (`hemomancy:qliphoth_seed`), and fires `FungalWhisperDialogueTrees.postMonolithShatter()` — the Entity comments on what was hidden inside.
+An Archon (Degree 7) interacts with their **Sanguine Monolith** twice (`SHATTER_INTERACTION_THRESHOLD = 2`). On the second interaction the monolith explodes, drops a **Qliphoth Seed** (`hemomancy:qliphoth_seed`), and fires `FungalWhisperDialogueTrees.postMonolithShatter()` — the Entity comments on what was hidden inside. Clients receive `SpawnMonolithShatterBurstPacket`; `SanguineMonolithShatterRenderer` renders black triangular shards plus a fast black core/shell orb blast from the monolith center.
 
 **Stage 2 — Bloom of the Qliphoth Rite**
 The player places the Qliphoth Seed as a catalyst item within the multiblock pattern of the **Bloom of the Qliphoth** cardinal rite (Degree 7 Grand rite, blood cost 1200, uses `nether_wart_block`, `soul_soil`, `blood_wood_log`, `polished_venous_stone`, and `engram_block` as pattern blocks). The rite consumes the seed. On completion `CardinalRiteEvents.completeBloomOfQliphoth()`:
@@ -302,12 +308,14 @@ The player places the Qliphoth Seed as a catalyst item within the multiblock pat
 - Registers the bloom in `QliphothBloomSavedData` (overworld SavedData) with owner UUID, center position, dimension, and 3-chunk radius
 - Fires `FungalWhisperDialogueTrees.postBloom()`
 
+The bloom and its invisible filler shell are protected from ordinary player breaking. `QliphothBloomEvents` cancels break attempts against the bloom or any filler attached to it, and `FillerBlock` does not forward filler removal into destroying a Qliphoth Bloom. Intentional cleanup is via the Rite of Cult Pruning.
+
 **Stage 3 — Qliphoth Pome Drops (and Tree Growth)**
 `QliphothBloomEvents.onLevelTick()` runs every 40 ticks. Each tick it may attempt `trySpawnPome()` for each bloom (1-in-80 chance). Each pome is tagged:
 - `hemomancy:bloom_origin` (Long) — bloom center as `BlockPos.asLong()`
 - `hemomancy:husk_index` (Int, 0–8) — ordinal index of the nine Qliphoth husks
 
-The nine husks in order: *Nahemoth, Samael, Gamaliel, Harab Serapel, Golachab, Thagirion, A'arab Zaraq, Satariel, Ghagiel*. Each drop fires `FungalWhisperDialogueTrees.pomeDropped(huskIndex)` to the bloom owner. Pomes are invulnerable (fire/lava/void) and never despawn (`lifespan = Integer.MAX_VALUE`). A bloom produces exactly 9 pomes then ceases (`MAX_POMES_PER_BLOOM = 9` in `QliphothBloomSavedData`).
+The nine husks in order: *Nahemoth, Samael, Gamaliel, Harab Serapel, Golachab, Thagirion, A'arab Zaraq, Satariel, Ghagiel*. Each drop fires `FungalWhisperDialogueTrees.pomeDropped(huskIndex, offerMemo)` to the online bloom owner even if the Qliphoth Communion memo is already known; the memo capture option is only offered when appropriate. Pomes are invulnerable (fire/lava/void) and never despawn (`lifespan = Integer.MAX_VALUE`). A bloom produces exactly 9 pomes then ceases (`MAX_POMES_PER_BLOOM = 9` in `QliphothBloomSavedData`).
 
 After each `incrementPomesDropped()` call, `CardinalRiteEvents.syncQliphothBlooms()` is called so the client receives the updated `pomesDropped` count and can advance the tree's visual growth stage. The tree progresses through 9 visual stages tied to the pome count (see rendering below).
 
@@ -336,7 +344,7 @@ Implementation: `trunkHeightFrac(stage)`, `rootLengthFrac(stage)`, `branchLength
 - `FungalWhisperDialogueTrees.qliphothCommunion()` fires the nine-shell completion whisper
 - HUD pome progress is immediately synced with `PacketSyncPomeProgress`
 
-Creative-spawned / untagged pomes do not have a real bloom origin, so they use a synthetic test origin and still advance the same capability path. This keeps creative testing aligned with survival behavior without reintroducing player persistent-data storage.
+Creative-spawned / untagged pomes do not have a real bloom origin, so they use a synthetic test origin and still advance the same capability path. Their husk message is inferred from the player's current total pome count before consumption, so creative testing still displays the correct `[huskname]` message for the next pome in order.
 
 **Stage 5 — Rite of Apotheos Unlocked**
 `BloodCraftingKeyPressPacket` (server-side rite activation) checks `IInitiatoryDegree#isQliphothCommunionDone()` before allowing the `apotheos_rite` to begin. `CardinalRiteEvents.completeRite()` repeats the same check before granting Degree 8, so old active rites or alternate completion paths cannot bypass the gate. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree ≥ 7), the rite proceeds normally.
@@ -984,7 +992,7 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/vivianite_scalpel.png) Vivianite Scalpel | Vivianite-based tool |
 | ![](src/main/resources/assets/hemomancy/textures/item/fungal_spine.png) Fungal Spine | Fungal tool item (unstackable, Uncommon) |
 | **Qliphoth Seed** | Dropped by the Sanguine Monolith when shattered by a Degree-7 Archon (two interactions). Custom entity `EntityQliphothSeedItem`. Used as a placed catalyst inside the **Bloom of the Qliphoth** rite. One-time per monolith. |
-| **Qliphoth Pome** | Edible fruit dropped by the Qliphoth Bloom tree over time (9 total per bloom lifecycle). Each pome tagged with `hemomancy:bloom_origin` + `hemomancy:husk_index` (0–8). Grants +300 blood, Regeneration II (12 s), Darkness (7 s), 25% manip cost reduction (3 min). Consuming all nine from one bloom sets `hemomancy:qliphoth_communion = true` and fires the Communion whisper. See §3.9. |
+| **Qliphoth Pome** | Edible fruit dropped by the Qliphoth Bloom tree over time (9 total per bloom lifecycle). Each pome tagged with `hemomancy:bloom_origin` + `hemomancy:husk_index` (0–8). On consumption, emits a player-centered black pulse via `SpawnPomePulsePacket`, grants +300 blood, Regeneration II (12 s), Darkness (7 s), and 25% manip cost reduction (3 min). Consuming all nine from one bloom sets `hemomancy:qliphoth_communion = true` and fires the Communion whisper. See §3.9. |
 | ![](src/main/resources/assets/hemomancy/textures/item/sanguine_salve.png) Sanguine Salve | Heals 25 blood on use |
 | ![](src/main/resources/assets/hemomancy/textures/item/cleansing_hemolymph.png) Cleansing Hemolymph | Blue vial from Hemolymphopoda mobs |
 | ![](src/main/resources/assets/hemomancy/textures/item/structure_spawner.png) Structure Spawner | Debug/creative item for spawning structures |
@@ -1163,8 +1171,8 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](src/main/resources/assets/hemomancy/textures/ref doc images/morphling_incubator.png) 
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Portal to the Fungal Gardens dimension. Degree 2+ (Votary) required; costs 500 blood. Stores overworld return coordinates in player persistent data. Degree-7 Archons on first exit attempt see the `coreWitnessDialogue()` choice fork instead of teleporting home; subsequent uses proceed directly. See §3.6, §3.9.                                                                                                                                                                                                                                                                                                                                               |
-| **Sanguine Monolith**                | `SanguineMonolithBlockEntity`              | 1×2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated cryptic guidance (degrees 4–7). At Degree 7 an Archon may interact with it **twice** to shatter it — exploding into shards, dropping a **Qliphoth Seed**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Uses `SanguineMonolithDialogueTrees`. Custom animated model (`SanguineMonolithModel`). See §3.9.                                                                                                                                                                                                        |
-| **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1×1×8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime — one per Qliphoth husk (Nahemoth → Ghagiel). Registered and synced via `QliphothBloomSavedData`. Removing the block removes it from SavedData and stops effects. See §3.9.                                                                                                                                                                                                                       |
+| **Sanguine Monolith**                | `SanguineMonolithBlockEntity`              | 1×2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated cryptic guidance (degrees 4–7). At Degree 7 an Archon may interact with it **twice** to shatter it — rendering black shards plus a black orb blast client-side, dropping a **Qliphoth Seed**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Uses `SanguineMonolithDialogueTrees`. Custom animated model (`SanguineMonolithModel`). See §3.9.                                                                                                                                                                                                        |
+| **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1×1×8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime — one per Qliphoth husk (Nahemoth → Ghagiel), with owner whisper alerts on each drop. Registered and synced via `QliphothBloomSavedData`. Player breaking is canceled for the bloom and its filler shell; intended removal is the Rite of Cult Pruning. See §3.9.                                                                                                                                                                                                                       |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/ref doc images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Where Hemolytic Solution / Consecrated Copper are used for the Unstained path                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -1636,20 +1644,19 @@ The Fungal Gardens dimension uses a datapack `multi_noise` biome source in `data
 
 ### 22.1.1 Blood Moons
 
-Blood Moons are a world event distinct from normal nights, with their own moon texture phases (`blood_moon_phases.png`).
+Blood Moons are a world event distinct from normal nights, with their own moon texture phases (`blood_moon_phases.png`) and a client-side vein/tendril sky overlay.
 
-**Frequency:** Approximately once every **60 nights** (intended to be rare). A ritual can trigger one manually, but at great cost — triggering a server-wide event intentionally is meant to be an expensive decision.
+**Frequency:** Natural trigger checks once per night at tick 12542 and currently has a **1-in-7 chance** to start a 11900-tick Blood Moon. A command can force one for testing; manual ritual trigger remains planned.
 
 **Effects while active:**
-- Harbingers / active Hemomancers: **enhanced strength and enhanced blood regeneration**
+- Harbingers / active Hemomancers: **Strength II and Night Vision**
 - Non-blood-magic players: **weakness effect**
-- Hostile mob spawn rate is increased
-- Special hostile variants spawn more rapidly (Mosquito Boy variants and blood constructs)
-- Blood manipulation costs may be reduced for Harbingers (intended)
+- Thirsters and Fargones spawn near players within the Blood Moon encounter cap
+- Clients render the red Blood Moon phase texture and the `BloodMoonVeinSkyRenderer` tendril overlay when `PacketSyncBloodMoon` marks the event active
 
 **Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new — she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) §9 for the full cosmological explanation.
 
-> **RESOLVED (natural trigger):** `BloodMoonEvents` fully handles natural blood moons: 1-in-7 chance per night at tick 12542, 11900-tick duration, Thirster+Fargone spawns within 24 blocks (max 6), Harbinger Strength II + Night Vision, non-Harbinger Weakness I, client sync via `PacketSyncBloodMoon`. **Still WIP:** manual ritual trigger via Grand rite materials.
+> **RESOLVED (natural trigger + rendering sync):** `BloodMoonEvents` handles natural blood moons, login/dimension/respawn/periodic active sync, and command summon/cancel. `ClientEvents` renders the custom Blood Moon sky during `RenderLevelStageEvent.AFTER_SKY`. **Still WIP:** manual ritual trigger via Grand rite materials.
 
 ### 22.2 World Features
 
@@ -1691,7 +1698,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Snowy Hemopothecary** | Village structure | Hemopothecary villager house for snowy biome villages |
 | **Savanna Hemopothecary** | Village structure | Hemopothecary villager house for savanna biome villages |
 
-> Structure NBT files are in `data/hemomancy/structures/`. The Blood Temple and Unstained Church are registered as Forge structure features with template pools. The hemopothecary village variants are integrated via `HemopothecaryProcessor` and `VillageEvents`.
+> Structure NBT files are in `data/hemomancy/structures/`. The Blood Temple and Unstained Church are registered as worldgen structures with template pools. The hemopothecary village variants are integrated via `HemopothecaryProcessor` and `VillageEvents`.
 
 ---
 
@@ -1951,32 +1958,40 @@ All under the "Hemomancy" category:
 
 ## 29. Commands
 
-The `/hemomancy` command tree (via `HemoCommand`) provides:
+The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 
 **Blood Volume:**
-- `get blood` — show current blood
-- `set blood <amount>` — set blood volume
-- `fill blood` — fill to max
+- `blood get` — show current blood
+- `blood set <amount>` — set blood volume
+- `blood setmax <amount>` — set maximum blood volume
+- `blood fill` — fill to max
+- `blood activate` — toggle blood capability active state
 
 **Initiatory Degree:**
-- `get degree` — show current degree
-- `set degree <number>` — set degree (0–8)
+- `degree get` — show current degree
+- `degree set <number>` — set degree (0–8)
+- `qliphoth pome reset` — reset pome progress and reseal the Qliphoth Communion gate
 
 **Unstained Progress:**
-- `get unstained` — full overview (purity, clarity, stages)
-- `get purity` — show purity value + stage
-- `set purity <value>` — set purity (0–100)
-- `get clarity` — show clarity value + stage
-- `set clarity <value>` — set clarity (0–100)
-- `toggle clarity` — toggle clarity unlock
-- `reset unstained` — reset all unstained progress to zero
-- `max unstained` — max out all unstained progress
+- `unstained get` — full overview (purity, clarity, stages)
+- `unstained begin` — toggle begun purification
+- `unstained purity get` / `unstained purity set <value>` — read or set purity (0–100)
+- `unstained clarity unlock` — toggle clarity unlock
+- `unstained clarity get` / `unstained clarity set <value>` — read or set clarity (0–100)
+- `unstained reset` — reset all unstained progress to zero
+- `unstained max` — max out all unstained progress
+
+**Other Debug/Admin:**
+- `skills get` / `skills setpoints <amount>` / `skills reset`
+- `organs get` / `organs set <organ> <level>` / `organs reset`
+- `bloodmoon summon` / `bloodmoon cancel`
+- `slots get` / `slots equip <manip>` / `slots unequip <manip>`
 
 ---
 
 ## 30. Known WIP / Incomplete Systems
 
-- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by Forge convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
+- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum / Liber Immaculatus** — `HemoProgressionScreen.setupEntries()` is still commented out (Java renderer WIP). However, the HutosLib JSON book framework is wired: the `sanctumsanguinium` book folder now has normal lore/mechanics chapters, and the `liberimmaculatus` book folder has 4 chapters (intro, sacred_tools, our_lady, the_path) with 12 pages covering the full Unstained path. The Field Notes / memo slice is implemented: `memo_capture:<id>` dialogue events write memo IDs into Field Notes, and the Dictation Table dictates those IDs into the player's `LiberKnowledge` attachment rather than into the Liber item stack. Field Notes are now ink-bound: Hematic Field Ink captures Harbinger memos for Liber Sanguinum, while Pale Field Ink captures Unstained memos for Liber Immaculatus. `LiberKnowledge` stores `KnownMemos`, `UnlockedLiberEntries`, and per-entry discovery sources, syncs to clients with `PacketSyncLiberKnowledge`, and can be granted through `LiberKnowledgeHelper` by memos, advancements, rites, item pickups, degree changes, dialogue, or other future triggers. `LiberEntryDefinitions` is the central code-side page map: it lists visible book entries and maps initial rites, Harbinger degree advancements, Unstained milestones, selected item pickups, and `liber_unlock:<entry_id>` dialogue events to normal book page IDs. The Liber items now behave like personal viewers/keys: borrowed books show the reader's own unlocked pages, not the owner's. Legacy stack data is migrated into the player attachment when an old Liber is used or placed for dictation. `MemoBookFilter` treats `LiberEntryDefinitions` as the source of visible pages for both Liber books; pages not mapped by a definition remain hidden, and chapters with zero unlocked pages are omitted. Current memos include `first_rite_notes`, `pale_lady_notes`, and Harbinger fungal whisper memos (`fungal_whisper_adept`, `fungal_whisper_illuminatus`, `fungal_whisper_sanctified`, `fungal_whisper_archon`, `fungal_whisper_truth`, `qliphoth_communion`) that unlock the Hyphae, Entity, Truth, and Qliphoth Liber Sanguinum pages through Hematic Field Ink. Remaining WIP: re-enable `setupEntries()` if that older renderer is revived, move entry definitions to data-driven JSON if desired, and author more entry definitions across existing chapters.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
@@ -2002,14 +2017,14 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
 - **~~New Monster Mobs (WIP)~~** — **RESOLVED:** All 10 monster types (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer, and the 3 creature types Crimson Doe, Hemojelly, Venous Strider) have AI goals, spawn placements, biome modifier JSONs, and loot table JSONs implemented. Spawn rules, drops, and biome assignments are all present. GeckoLib animation state machines are stubs awaiting final model work.
 - **New NPC Entities Dialogue** — ~~Dialogue still being developed.~~ **RESOLVED:** Full dialogue trees are now implemented for all 5 NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, and **Harbinger Vicar**. All trees are degree/purity-stage gated. `DialogueEventHandler` handles gameplay consequences (rite hint drops, death of Hermit, chat messages). AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
-- **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index)` (per-husk drop announcement), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
+- **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index, offerMemo)` (per-husk drop announcement; always delivered to the online bloom owner, with memo capture only when still relevant), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
 - **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System (Partially Implemented)** — Four Saints. `PutricielEntity` (rot-fire, absolution-window victory) and `VelorumEntity` (frozen-dark, martyrdom resistance + silence drain) are now implemented and registered in `EntityInit`. `SeraphaeEntity` (containment integrity mechanic) is fully implemented. Hemorath boss fight and The Chain Saint boss AI remain WIP. Trial Chamber structure generation (arena rooms placed in world) is WIP for all four saints. Boss models/textures/GeckoLib animations are stub/placeholder. See §3.8.
 - **Founding Sanctum (Partially Implemented)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum. Buff application logic (`FoundingSanctumEvents`), Sanguine Quintessence item, catalyst requirement, and sanctum persistence (`FoundingSanctumSavedData`) are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §3.7.
-- **~~Blood Moon Mechanics (WIP)~~** — **RESOLVED:** `BloodMoonEvents` is fully implemented. Natural trigger fires 1-in-7 chance per night at tick 12542; duration 11900 ticks. Spawns Thirsters and Fargones within 24 blocks (up to 6). Harbingers receive Strength II + Night Vision; non-Harbingers receive Weakness I. Synced to clients via `PacketSyncBloodMoon`. Manual ritual trigger remains WIP. See §22.1.1.
+- **~~Blood Moon Mechanics (WIP)~~** — **RESOLVED:** `BloodMoonEvents` is implemented for natural trigger, commands, gameplay effects, mob spawning, and client sync. Natural trigger fires 1-in-7 chance per night at tick 12542; duration 11900 ticks. Spawns Thirsters and Fargones within 24 blocks (up to 6). Harbingers receive Strength II + Night Vision; non-Harbingers receive Weakness I. Synced to clients via `PacketSyncBloodMoon`; `BloodMoonVeinSkyRenderer` renders the red moon texture and vein/tendril overlay during the sky render stage. Manual ritual trigger remains WIP. See §22.1.1.
 - **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, and exit mechanics are in early development. ~~Player choice branching mechanics are WIP.~~ **RESOLVED (choice fork + morphic pool):** `FungalPodiumBlock.use()` now gates Degree-7 Archons on first exit — fires `coreWitnessDialogue()` fork ("silence" vs "Eighth Degree"). `DialogueEventHandler` stamps `hemomancy:archon_choice_made` and calls `performReturnTravel()`. See §3.6.
 - **Annetta Knowles / Stained Priestess** — ~~WIP~~ **AI implemented.** `AnnettaKnowlesEntity` in `entity/boss/annetta/` is registered in `EntityInit`. Phase 1 silver aura harms blood-active players; Phase 2 blood-spear drains blood on hit. Model/texture/GeckoLib animations still WIP. See §19.3.
 - **~~Chthonian Termite Mound~~** — Savanna structure with guaranteed queen spawn and loot chest. Wood-chewing behavior implemented for both logs and planks. Wooden tool degradation (5 damage per hit for Chthonian, 8 for Chthonian Queen) implemented. Spawn rate fixed (rarity_filter.chance increased from 32 to 200). Spawn placements now registered for Chthonian, Chthonian Queen, Thirster, Lump of Thought, Erythromycelium Eruptus, and Fungling. See §23.

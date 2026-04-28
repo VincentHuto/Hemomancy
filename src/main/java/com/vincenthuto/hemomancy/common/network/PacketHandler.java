@@ -45,6 +45,7 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnAvatarParticlesPac
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnMonolithShatterBurstPacket;
+import com.vincenthuto.hemomancy.common.network.particle.SpawnPomePulsePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
@@ -170,6 +171,7 @@ public class PacketHandler {
         net.playToClient(SpawnBloodClawParticlesPacket.TYPE, SpawnBloodClawParticlesPacket.STREAM_CODEC, SpawnBloodClawParticlesPacket::handle);
         net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
         net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
+        net.playToClient(SpawnPomePulsePacket.TYPE, SpawnPomePulsePacket.STREAM_CODEC, SpawnPomePulsePacket::handle);
         // HutosLib registers this payload in HLPacketHandler; re-registering here causes
         // "already registered" crashes for hutoslib:packet_spawn_lightning.
 
@@ -259,6 +261,11 @@ public class PacketHandler {
     public static void sendMonolithShatterBurst(Vec3 pos, double radius, ServerLevel level) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnMonolithShatterBurstPacket(pos));
+    }
+
+    public static void sendPomePulse(Vec3 pos, double radius, ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+                new SpawnPomePulsePacket(pos));
     }
 
     public static void sendClientElytraPacket() {
