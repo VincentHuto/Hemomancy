@@ -141,7 +141,7 @@ public class PacketHandler {
 
         // ── Known Manipulations ───────────────────────────────────────────────
         net.playBidirectional(KnownManipulationClientPacket.TYPE, KnownManipulationClientPacket.STREAM_CODEC, KnownManipulationClientPacket::handle);
-        net.playBidirectional(KnownManipulationServerPacket.TYPE, KnownManipulationServerPacket.STREAM_CODEC, KnownManipulationServerPacket::handle);
+        net.playToClient(KnownManipulationServerPacket.TYPE, KnownManipulationServerPacket.STREAM_CODEC, KnownManipulationServerPacket::handle);
         net.playBidirectional(DisplayKnownManipsPacket.TYPE, DisplayKnownManipsPacket.STREAM_CODEC, DisplayKnownManipsPacket::handle);
         net.playBidirectional(ChangeSelectedManipPacket.TYPE, ChangeSelectedManipPacket.STREAM_CODEC, ChangeSelectedManipPacket::handle);
         net.playBidirectional(UseQuickManipKeyPacket.TYPE, UseQuickManipKeyPacket.STREAM_CODEC, UseQuickManipKeyPacket::handle);

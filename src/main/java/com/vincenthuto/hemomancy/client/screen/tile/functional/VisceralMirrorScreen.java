@@ -102,6 +102,12 @@ public class VisceralMirrorScreen extends Screen {
 				new VisceralMirrorScreen(pos, organLevels, hasEcho, bloodVolume, maxBloodVolume, degree));
 	}
 
+	public static void applyServerUpdate(VisceralMirrorUpdatePacket pkt) {
+		if (Minecraft.getInstance().screen instanceof VisceralMirrorScreen screen) {
+			screen.handleServerUpdate(pkt);
+		}
+	}
+
 	/**
 	 * Called by the S2C update packet to keep the screen in sync with the
 	 * server's ritual state.

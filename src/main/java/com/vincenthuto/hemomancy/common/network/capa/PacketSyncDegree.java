@@ -7,8 +7,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Server → Client packet: synchronises the player's current initiatory degree.
@@ -34,9 +34,9 @@ public class PacketSyncDegree implements CustomPacketPayload {
 
 	public static void handle(final PacketSyncDegree msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.player != null) {
-				HemoCapabilityAccess.getInitiatoryDegree(mc.player)
+			Player player = ctx.player();
+			if (player != null) {
+				HemoCapabilityAccess.getInitiatoryDegree(player)
 						.ifPresent(degree -> degree.setDegreeNumber(msg.degreeNumber));
 			}
 		});

@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.common.network.particle;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.world.SanguineMonolithShatterRenderer;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -33,8 +31,7 @@ public class SpawnPomePulsePacket implements CustomPacketPayload {
 	}
 
 	public static void handle(final SpawnPomePulsePacket msg, final IPayloadContext ctxSupplier) {
-		ClientLevel world = Minecraft.getInstance().level;
-		if (world == null) return;
+		if (ctxSupplier.player() == null) return;
 		ctxSupplier.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnPomePulse(msg.getPos()));
 	}
 

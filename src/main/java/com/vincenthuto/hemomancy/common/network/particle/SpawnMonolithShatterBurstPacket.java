@@ -7,8 +7,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.render.world.SanguineMonolithShatterRenderer;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
@@ -34,9 +32,9 @@ public class SpawnMonolithShatterBurstPacket implements CustomPacketPayload {
 	}
 
 	public static void handle(final SpawnMonolithShatterBurstPacket msg, final IPayloadContext ctxSupplier) {
-		ClientLevel world = Minecraft.getInstance().level;
-		if (world == null) return;
-		ctxSupplier.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random));
+		if (ctxSupplier.player() == null) return;
+		ctxSupplier.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnBurst(
+				msg.getPos(), ctxSupplier.player().level().random));
 	}
 
 	private Vec3 pos;

@@ -10,8 +10,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public class BloodVolumeServerPacket implements CustomPacketPayload {
 
@@ -36,9 +36,9 @@ public class BloodVolumeServerPacket implements CustomPacketPayload {
 	}
 	public static void handle(final BloodVolumeServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-
-			if (Minecraft.getInstance().player != null) {
-				IBloodVolume capa = HemoCapabilityAccess.getBloodVolume(Minecraft.getInstance().player)
+			Player player = ctx.player();
+			if (player != null) {
+				IBloodVolume capa = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);
 				capa.setActive(msg.active);
 				capa.setMaxBloodVolume(msg.max);

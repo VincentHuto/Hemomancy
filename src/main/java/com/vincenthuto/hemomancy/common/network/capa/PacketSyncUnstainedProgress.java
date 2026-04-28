@@ -9,8 +9,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Server → Client packet: synchronises the player's current Unstained progress.
@@ -111,9 +111,9 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
 
     public static void handle(final PacketSyncUnstainedProgress msg, final IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player != null) {
-                HemoCapabilityAccess.getUnstainedProgress(mc.player)
+            Player player = ctx.player();
+            if (player != null) {
+                HemoCapabilityAccess.getUnstainedProgress(player)
                         .ifPresent(progress -> {
                             progress.setBegunPurification(msg.begunPurification);
                             progress.setPurity(msg.purity);

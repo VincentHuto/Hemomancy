@@ -9,8 +9,6 @@ import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactor
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
@@ -40,11 +38,13 @@ public class SpawnLivingToolParticlesPacket implements CustomPacketPayload {
 	}
 
 	public static void handle(final SpawnLivingToolParticlesPacket msg, final IPayloadContext ctxSupplier) {
-		ClientLevel world = Minecraft.getInstance().level;
-		if (world == null) return;
+		if (ctxSupplier.player() == null) return;
 		for (int i = 0; i < 20; i++) {
-			world.addParticle(BloodCellParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y + 1,
-					msg.getPos().z, HLParticleUtils.inRange(-3, 3) * 0.015f, HLParticleUtils.inRange(-3, 3) * 0.015f,
+			ctxSupplier.player().level().addParticle(
+					BloodCellParticleFactory.createData(msg.getColor()),
+					msg.getPos().x, msg.getPos().y + 1, msg.getPos().z,
+					HLParticleUtils.inRange(-3, 3) * 0.015f,
+					HLParticleUtils.inRange(-3, 3) * 0.015f,
 					HLParticleUtils.inRange(-3, 3) * 0.015f);
 		}
 	}

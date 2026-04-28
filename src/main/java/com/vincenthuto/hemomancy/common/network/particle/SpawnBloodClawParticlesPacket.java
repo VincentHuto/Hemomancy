@@ -8,8 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodClawParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
@@ -39,10 +37,10 @@ public class SpawnBloodClawParticlesPacket implements CustomPacketPayload {
 	}
 
 	public static void handle(final SpawnBloodClawParticlesPacket msg, final IPayloadContext ctxSupplier) {
-		ClientLevel world = Minecraft.getInstance().level;
-		if (world == null) return;
-		world.addParticle(BloodClawParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y,
-				msg.getPos().z, 0f, 0, 0);
+		if (ctxSupplier.player() == null) return;
+		ctxSupplier.player().level().addParticle(
+				BloodClawParticleFactory.createData(msg.getColor()),
+				msg.getPos().x, msg.getPos().y, msg.getPos().z, 0f, 0, 0);
 	}
 
 	Vec3 pos;

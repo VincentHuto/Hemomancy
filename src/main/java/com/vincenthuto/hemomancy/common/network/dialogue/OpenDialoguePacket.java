@@ -7,7 +7,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 
 /**
@@ -35,8 +34,7 @@ public class OpenDialoguePacket implements CustomPacketPayload {
 
 	public static void handle(final OpenDialoguePacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			// Must be handled on the client render thread
-			if (Minecraft.getInstance().player != null) {
+			if (ctx.player() != null) {
 				com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen.open(msg.tree);
 			}
 		});

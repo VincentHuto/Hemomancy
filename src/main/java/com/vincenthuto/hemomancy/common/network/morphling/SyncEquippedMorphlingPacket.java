@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.UUID;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -45,8 +44,9 @@ public class SyncEquippedMorphlingPacket implements CustomPacketPayload {
 
 	public static void handle(final SyncEquippedMorphlingPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (Minecraft.getInstance().level == null) return;
-			Player target = Minecraft.getInstance().level.getPlayerByUUID(msg.playerUUID);
+			Player receiver = ctx.player();
+			if (receiver == null || receiver.level() == null) return;
+			Player target = receiver.level().getPlayerByUUID(msg.playerUUID);
 			if (target == null) return;
 			HemoCapabilityAccess.getEquippedMorphling(target)
 					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack));

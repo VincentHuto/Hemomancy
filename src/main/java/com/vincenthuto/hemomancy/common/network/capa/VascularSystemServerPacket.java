@@ -11,9 +11,9 @@ import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public class VascularSystemServerPacket implements CustomPacketPayload {
 
@@ -45,12 +45,12 @@ public class VascularSystemServerPacket implements CustomPacketPayload {
 	@SuppressWarnings("unused")
 	public static void handle(final VascularSystemServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.player == null) {
+			Player player = ctx.player();
+			if (player == null) {
 				return;
 			}
 
-			HemoCapabilityAccess.getVascularSystem(mc.player)
+			HemoCapabilityAccess.getVascularSystem(player)
 					.orElseThrow(IllegalStateException::new).setVascularSystem(msg.vascularSystem);
 
 		});
