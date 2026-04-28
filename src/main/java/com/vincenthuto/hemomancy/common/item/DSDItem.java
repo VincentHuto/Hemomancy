@@ -48,10 +48,12 @@ public class DSDItem extends Item {
 		if (target instanceof DrudgeEntity drudge) {
 			if (!player.level().isClientSide && player.isShiftKeyDown()) {
 				UUID ownerUUID = drudge.getOwnerUUID();
-				if (ownerUUID != null && ownerUUID.equals(player.getUUID())) {
+				boolean isOwner = ownerUUID != null && ownerUUID.equals(player.getUUID());
+				boolean isCreative = player.getAbilities().instabuild;
+				if (isOwner || isCreative) {
 					dissolve(player, drudge);
 					return InteractionResult.SUCCESS;
-				} else if (!player.getAbilities().instabuild) {
+				} else {
 					player.displayClientMessage(Component.literal("§cThis is not your construct."), true);
 					return InteractionResult.FAIL;
 				}

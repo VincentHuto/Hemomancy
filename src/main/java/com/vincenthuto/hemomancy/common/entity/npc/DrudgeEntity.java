@@ -78,6 +78,16 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     public static final float REFILL_RATE = 50f;
     /** Blood charge threshold below which the drudge heads home to refill */
     private static final float LOW_CHARGE_THRESHOLD = 200f;
+    /** Squared distance threshold used to decide when the drudge has "arrived" at the SSC (2 blocks). */
+    private static final double ARRIVED_DIST_SQ = 4.0;
+    /** Health ratio below which the Drudge heals itself when no player needs healing. */
+    private static final float SELF_HEAL_THRESHOLD = 0.6f;
+    /** Vertical search range (min) below the drudge's position for torch placement. */
+    private static final int TORCH_SCAN_Y_MIN = -2;
+    /** Vertical search range (max) above the drudge's position for torch placement. */
+    private static final int TORCH_SCAN_Y_MAX = 4;
+    /** Maximum block-light level at which the Lux tendency places a torch. */
+    private static final int MIN_LIGHT_FOR_TORCH = 10;
     /** Entity event byte for gore-particle death burst */
     private static final byte BURST_EVENT = 61;
 
@@ -283,7 +293,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             int rogueTimeout = HemoServerConfig.DRUDGE_ROGUE_TIMEOUT_TICKS.get();
             // Try to navigate home; if we've been stuck too long, go rogue
             double distSq = distanceToSqr(home.getX() + 0.5, home.getY() + 0.5, home.getZ() + 0.5);
-            if (distSq > 4.0 && rogueTimer > rogueTimeout) {
+            if (distSq > ARRIVED_DIST_SQ && rogueTimer > rogueTimeout) {
                 setRogue(true);
                 rogueTimer = 0;
             }
@@ -532,7 +542,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         private boolean isAtHome() {
             BlockPos home = drudge.getHomePos();
             if (home == null) return true;
-            return drudge.distanceToSqr(home.getX() + 0.5, home.getY() + 0.5, home.getZ() + 0.5) < 4.0;
+            return drudge.distanceToSqr(home.getX() + 0.5, home.getY() + 0.5, home.getZ() + 0.5) < ARRIVED_DIST_SQ;
         }
     }
 
@@ -648,7 +658,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                     }
                     if (target == null) {
                         // Heal self if below half health
-                        if (drudge.getHealth() < drudge.getMaxHealth() * 0.6f) {
+                        if (drudge.getHealth() < drudge.getMaxHealth() * SELF_HEAL_THRESHOLD) {
                             drudge.heal(3.0f);
                             return true;
                         }
@@ -664,7 +674,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                     if (!(world instanceof ServerLevel serverLevel)) return false;
                     BlockPos darkest = null;
                     int darkestLight = 15;
-                    for (BlockPos p : BlockPos.betweenClosed(centre.offset(-radius/2, -2, -radius/2), centre.offset(radius/2, 4, radius/2))) {
+                    for (BlockPos p : BlockPos.betweenClosed(centre.offset(-radius/2, TORCH_SCAN_Y_MIN, -radius/2), centre.offset(radius/2, TORCH_SCAN_Y_MAX, radius/2))) {
                         if (world.getBlockState(p).isAir() && !world.getBlockState(p.below()).isAir()) {
                             int light = world.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, p);
                             if (light < darkestLight) {
@@ -673,7 +683,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                             }
                         }
                     }
-                    if (darkest == null || darkestLight >= 10) return false;
+                    if (darkest == null || darkestLight >= MIN_LIGHT_FOR_TORCH) return false;
                     world.setBlockAndUpdate(darkest, net.minecraft.world.level.block.Blocks.TORCH.defaultBlockState());
                     return true;
                 }

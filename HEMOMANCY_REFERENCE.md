@@ -2248,3 +2248,117 @@ Registered in `ParticleInit`:
 *This document should be kept up to date as development continues. Each section maps directly to the codebase structure under `com.vincenthuto.hemomancy`.*
 
 *For world lore, faction backstories, character narratives, cosmological themes, and design philosophy, see [LORE_REFERENCE.md](LORE_REFERENCE.md).*
+
+---
+
+## 35. Drudge System
+
+*Last Updated: 2026-04-28*
+
+The Drudge is a persistent, player-owned semi-organic construct that holds a single **Blood Memory** (`BloodManipulation`) and executes it autonomously within a leash radius anchored to a **Semi-Sentient Construct (SSC)** block. Unlike the Blood Thrall (a transient courier), the Drudge is a long-term servant that "learns a job" and keeps doing it.
+
+### Entity: `DrudgeEntity`
+**Class:** `common/entity/npc/DrudgeEntity`  
+**Registry ID:** `hemomancy:drudge`  
+**Extends:** `PathfinderMob implements OwnableEntity`
+
+**Synched data (server→client):**
+| Field | Type | Purpose |
+|-------|------|---------|
+| `DATA_OWNER_UUID` | `Optional<UUID>` | UUID of the Harbinger who birthed this Drudge |
+| `DATA_HOME_POS` | `Optional<BlockPos>` | World position of the bound SSC |
+| `DATA_BLOOD_CHARGE` | `float` | Current internal blood reserve (0–3 000 mL) |
+| `DATA_IS_ROGUE` | `boolean` | Whether the Drudge has turned hostile |
+| `DATA_PASSIVE_MODE` | `boolean` | Passive = auto-fires; Commanded = electrode-only |
+
+**Attributes:**
+- Health: 20 HP, Speed: 0.22, Armor: 4, Attack: 3, Follow Range: 32
+
+**Blood economy:** The Drudge has an internal blood pool (`bloodCharge`, max 3 000 mL). The SSC refills it at 50 mL/tick when the Drudge is within 3 blocks of the SSC. The Drudge does **not** draw from the player's `IBloodVolume` cap in real time.
+
+**Action cost:** Each manipulation fires at `cost × DRUDGE_ACTION_COST_MULTIPLIER` (default 1.5×) and a cooldown of `cooldown × DRUDGE_COOLDOWN_MULTIPLIER` (default 2×).
+
+### AI Goal Stack
+
+| Priority | Goal | Condition |
+|----------|------|-----------|
+| 1 | `DrudgeReturnToSSCGoal` | Blood charge below threshold OR outside leash range |
+| 2 | `DrudgeExecuteMemoryGoal` | Has memory + sufficient charge + (Passive or electrode signal) |
+| 3 | `MeleeAttackGoal` | Rogue mode only |
+| 4 | `WaterAvoidingRandomStrollGoal` | Not rogue, within leash range |
+| 5 | `RandomLookAroundGoal` | Always |
+
+### Tendency-Based Execute Behavior
+
+The `DrudgeExecuteMemoryGoal` uses the memory's `EnumBloodTendency` to pick a target and apply a simplified effect (no `Player` reference required):
+
+| Tendency | Behavior |
+|----------|----------|
+| MORTEM, FLAMMEUS, CONGEATIO | Attacks nearest hostile mob within work radius (Melee damage × 2) |
+| DUCTILIS, ANIMUS | Heals nearest damaged player (4 HP), or self if below 60% HP |
+| LUX | Places a torch at the darkest air block within work radius |
+| FERRIC | Applies Haste I (20 s) to all players in work radius |
+| TENEBRIS | Applies Invisibility (30 s) to self |
+
+### Rogue State
+
+A Drudge goes Rogue when:
+1. Blood charge reaches 0 and it cannot reach its SSC within `DRUDGE_ROGUE_TIMEOUT_TICKS` (default 200 ticks = 10 s).
+2. It drifts more than `leashRadius + 6` blocks from its SSC home.
+
+In Rogue state: targets players (priority) then monsters; the equipped memory is **dropped on death** so it is not lost.
+
+### Interaction Summary
+
+| Action | Result |
+|--------|--------|
+| Right-click Drudge (empty hand) | Toggle Passive/Commanded mode + status readout |
+| Right-click Drudge (with Blood Memory) | Install the memory |
+| Shift+right-click Drudge (empty hand) | Retrieve installed memory |
+| DSD shift+right-click on Drudge | Dissolve the Drudge, refund 1 500 mL to player |
+| Drudge Electrode (ON mode) + attack swing | Send "fire now" signal to all owned Drudges within 16 blocks |
+| Drudge Electrode (ON mode) + right-click SSC | Birth a new Drudge (degree gate + 3 000 mL cost) |
+
+### Acquisition: Birthing via SSC + Electrode
+
+1. Place an SSC with blood available.
+2. Hold the Drudge Electrode in ON mode and right-click the SSC.
+3. Degree gate: player must be Illuminatus (Degree ≥ 3, configurable).
+4. Blood cost: 3 000 mL drained from player.
+5. SSC cap: max 3 Drudges per SSC (configurable). Attempt beyond cap returns a flavour message.
+6. Spawns a Drudge at the SSC position, bound to it, at half charge.
+
+### SSC as Hub: `SemiSentientConstructBlockEntity`
+
+The SSC now implements `IBloodTile` so it can hold its own blood volume (max 30 000 mL, refillable by Dendritic Distributors or other sources). Every 10 ticks it scans for nearby Drudges whose `homePos` matches its position and refills their `bloodCharge` at 50 mL per tick-scan (= 500 mL per second at 20 TPS).
+
+Right-clicking the SSC with an empty hand now displays the status of all bound Drudges and the SSC's own blood level.
+
+### Config Keys (`HemoServerConfig`, section `drudge`)
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `drudgeLeashRadius` | 24 | Max blocks from SSC before Drudge returns |
+| `drudgeMaxPerSSC` | 3 | Max Drudges per SSC |
+| `drudgeBirthCost` | 3000.0 | mL cost to birth a Drudge |
+| `drudgeRogueTimeoutTicks` | 200 | Ticks stuck before going Rogue |
+| `drudgeActionCostMultiplier` | 1.5 | Blood cost multiplier for Drudge actions |
+| `drudgeCooldownMultiplier` | 2 | Cooldown multiplier for Drudge actions |
+| `drudgeRequiredDegree` | 3 | Minimum degree to birth a Drudge |
+| `drudgeWorkRadius` | 12 | Radius (blocks) for target scanning |
+
+### Textures
+
+Located in `assets/hemomancy/textures/entity/drudge/`:
+- `model_drudge_grey.png` — Default (tame) texture
+- `model_drudge_red.png` — Rogue texture (applied when `isRogue() == true`)
+- Additional palette variants: purple, green, yellow, blue, brown (available for future use)
+
+### Items Involved
+
+| Item | Role |
+|------|------|
+| `drudge_electrode` (`DrudgeElectrodeItem`) | ON mode + SSC click = birth; ON mode + swing = signal |
+| `dsd` (`DSDItem`) | Shift+right-click Drudge = dissolve + 1 500 mL refund |
+| Blood Memory items (`BloodMemoryItem`) | Install into Drudge to assign its task |
+

@@ -212,9 +212,11 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock {
 		DrudgeEntity drudge = EntityInit.drudge.get().create(worldIn);
 		if (drudge == null) return ItemInteractionResult.FAIL;
 
+		// New Drudges start at half charge — enough for a few actions before needing a refill.
+		final float INITIAL_CHARGE_RATIO = 0.5f;
 		drudge.setOwnerUUID(player.getUUID());
 		drudge.setHomePos(pos);
-		drudge.setBloodCharge(DrudgeEntity.MAX_BLOOD_CHARGE * 0.5f); // starts at half charge
+		drudge.setBloodCharge(DrudgeEntity.MAX_BLOOD_CHARGE * INITIAL_CHARGE_RATIO);
 		drudge.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 0f, 0f);
 
 		worldIn.addFreshEntity(drudge);
