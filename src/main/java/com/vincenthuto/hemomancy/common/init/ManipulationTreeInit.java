@@ -112,15 +112,19 @@ public class ManipulationTreeInit {
 		int ex = lx + COL_GAP + 160;  // gap after LUX
 
 		// ── CONGEATIO (blue / cold) ──
-		// Row 0 (top) — MEDIOCRITAS
-		register("glacial_bastion",      ex + 40,    TREE_TOP_Y,             "glacial_grasp", "cryogenic_pulse");
+		// Row 0 (top) — SUMMA
+		register("osseous_bloom",        ex + 40,    TREE_TOP_Y,             "glacial_bastion");
 
-		// Row 1 (bottom) — HUMILIS
-		register("glacial_grasp",        ex,         TREE_TOP_Y + ROW_GAP);
-		register("cryogenic_pulse",      ex + COL_GAP, TREE_TOP_Y + ROW_GAP);
+		// Row 1 (middle) — MEDIOCRITAS
+		register("glacial_bastion",      ex + 40,    TREE_TOP_Y + ROW_GAP,   "glacial_grasp", "cryogenic_pulse");
+
+		// Row 2 (bottom) — HUMILIS
+		register("glacial_grasp",        ex,         TREE_TOP_Y + ROW_GAP * 2);
+		register("cryogenic_pulse",      ex + COL_GAP, TREE_TOP_Y + ROW_GAP * 2, "glacial_circulation");
+		register("glacial_circulation",  ex + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
 
 		// ── FLAMMEUS (orange / fire) ──
-		int fmx = ex + COL_GAP * 2 + 80;  // gap after CONGEATIO
+		int fmx = ex + COL_GAP * 3 + 80;  // gap after CONGEATIO (now wider)
 
 		// Row 0 (top) — SUMMA
 		register("vitric_combustion",    fmx + 40,   TREE_TOP_Y,             "pyretic_forge", "sanguine_ignition");

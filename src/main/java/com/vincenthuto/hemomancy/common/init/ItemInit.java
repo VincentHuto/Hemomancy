@@ -386,6 +386,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cryogenic_pulse));
     public static final DeferredHolder<Item, Item> memory_glacial_bastion = BASEITEMS.register("memory_glacial_bastion",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_bastion));
+    public static final DeferredHolder<Item, Item> memory_glacial_circulation = BASEITEMS.register("memory_glacial_circulation",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_circulation));
+    public static final DeferredHolder<Item, Item> memory_osseous_bloom = BASEITEMS.register("memory_osseous_bloom",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.osseous_bloom));
     public static final DeferredHolder<Item, Item> memory_sanguine_ignition = BASEITEMS.register("memory_sanguine_ignition",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ignition));
     public static final DeferredHolder<Item, Item> memory_vitric_combustion = BASEITEMS.register("memory_vitric_combustion",

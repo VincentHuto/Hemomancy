@@ -1,6 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -9,29 +14,86 @@ import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
+/**
+ * Blood Aneurysm — a T3 (SUMMA) ANIMUS quick manipulation that ruptures the
+ * blood vessels of the nearest enemy, launching them skyward and detonating a
+ * haematic burst that damages all entities around them.
+ *
+ * <p>The primary target takes heavy magic damage and is launched upward.
+ * All other living entities within the burst radius of the primary target
+ * take secondary splash damage. Both values scale with Crimson Mastery.
+ */
 public class BloodAneurysmManip extends BloodManipulation {
 
-	public BloodAneurysmManip(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
+	private static final double TARGET_RADIUS = 10.0;
+	private static final float DIRECT_DAMAGE = 8.0f;
+	private static final double BURST_RADIUS = 4.0;
+	private static final float BURST_DAMAGE = 3.0f;
+	private static final float LAUNCH_FORCE = 1.2f;
+
+	public BloodAneurysmManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		ServerLevel sLevel = (ServerLevel) world;
-		BlockPos pos = player.blockPosition();
-		RandomSource random = player.level().random;
-		for (int i = 0; i < 30; i++) {
-			sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255 * random.nextFloat(), 0, 0)),
-					pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
-					pos.getZ() + random.nextDouble(), 3, 0f, 0.2f, 0f, sLevel.random.nextInt(3) * 0.015f);
-		}
-	}
+		if (!(world instanceof ServerLevel sLevel)) return;
 
+		AABB searchBox = new AABB(player.blockPosition()).inflate(TARGET_RADIUS);
+		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
+				e -> e != player && e.isAlive());
+
+		Optional<LivingEntity> targetOpt = nearby.stream()
+				.filter(e -> e.distanceTo(player) <= TARGET_RADIUS)
+				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
+
+		if (targetOpt.isEmpty()) {
+			player.displayClientMessage(Component.literal("§8No vessel within reach."), true);
+			return;
+		}
+
+		LivingEntity target = targetOpt.get();
+		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier();
+
+		target.hurt(world.damageSources().magic(), DIRECT_DAMAGE * masteryMult);
+		Vec3 current = target.getDeltaMovement();
+		target.setDeltaMovement(current.x, LAUNCH_FORCE, current.z);
+		target.hurtMarked = true;
+
+		// Secondary burst damages entities around the target
+		Vec3 tPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
+		AABB burstBox = new AABB(target.blockPosition()).inflate(BURST_RADIUS);
+		world.getEntitiesOfClass(LivingEntity.class, burstBox,
+				e -> e != player && e != target && e.isAlive()
+						&& e.position().distanceTo(tPos) <= BURST_RADIUS)
+				.forEach(e -> e.hurt(world.damageSources().magic(), BURST_DAMAGE * masteryMult));
+
+		RandomSource random = world.random;
+		for (int i = 0; i < 50; i++) {
+			sLevel.sendParticles(
+					GlowParticleFactory.createData(new ParticleColor(
+							180 + random.nextFloat() * 75, 0, 0)),
+					tPos.x + (random.nextDouble() - 0.5) * BURST_RADIUS,
+					tPos.y + random.nextDouble() * 1.5,
+					tPos.z + (random.nextDouble() - 0.5) * BURST_RADIUS,
+					1, (random.nextDouble() - 0.5) * 0.3, random.nextDouble() * 0.25,
+					(random.nextDouble() - 0.5) * 0.3, 0.04f);
+		}
+
+		world.playSound(null, target.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5f, 1.8f);
+		world.playSound(null, target.blockPosition(), SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.6f, 0.7f);
+	}
 }
