@@ -20,7 +20,9 @@ import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.CryogenicPulseManip;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialBastionManip;
+import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialCirculationManip;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialGraspManip;
+import com.vincenthuto.hemomancy.common.manipulation.congeatio.OsseousBloomManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.ActivationPotentialManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.CrimsonHarvestManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.SanguineWardManip;
@@ -205,10 +207,20 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
 					.setCooldownTicks(30));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_circulation = MANIPS.register("glacial_circulation",
+			() -> new GlacialCirculationManip("glacial_circulation", 175, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
+					.setCooldownTicks(100));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_bastion = MANIPS.register("glacial_bastion",
 			() -> new GlacialBastionManip("glacial_bastion", 350, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.LEFTARM)
 					.setCooldownTicks(50));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> osseous_bloom = MANIPS.register("osseous_bloom",
+			() -> new OsseousBloomManip("osseous_bloom", 600, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
+					.setCooldownTicks(60));
 
 	// ── FLAMMEUS — expanded tendencies ──
 
