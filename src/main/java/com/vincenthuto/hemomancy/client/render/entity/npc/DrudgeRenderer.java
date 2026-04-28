@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.RougeDrudgeModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.DrudgeModel;
+import com.vincenthuto.hemomancy.client.render.layer.mob.DrudgeMemoryLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -23,6 +24,7 @@ public class DrudgeRenderer extends MobRenderer<DrudgeEntity, DrudgeModel<Drudge
 
     public DrudgeRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new DrudgeModel<>(ctx.bakeLayer(DrudgeModel.LAYER_LOCATION)), 0.4F);
+        this.addLayer(new DrudgeMemoryLayer(this));
     }
 
     @Override

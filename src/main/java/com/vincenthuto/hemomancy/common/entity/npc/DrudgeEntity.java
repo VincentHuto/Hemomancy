@@ -67,6 +67,8 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             SynchedEntityData.defineId(DrudgeEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_PASSIVE_MODE =
             SynchedEntityData.defineId(DrudgeEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<String> DATA_MEMORY_NAME =
+            SynchedEntityData.defineId(DrudgeEntity.class, EntityDataSerializers.STRING);
 
     // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -166,6 +168,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         builder.define(DATA_BLOOD_CHARGE, MAX_BLOOD_CHARGE);
         builder.define(DATA_IS_ROGUE, false);
         builder.define(DATA_PASSIVE_MODE, true);
+        builder.define(DATA_MEMORY_NAME, "");
     }
 
     // ── Accessors ─────────────────────────────────────────────────────────────
@@ -241,6 +244,8 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     public void setEquippedMemory(@Nullable BloodManipulation manip) {
         this.equippedMemory = manip;
         memoryCooldownTicks = 0;
+        // Sync the name to the client so the renderer can resolve the ItemStack
+        this.entityData.set(DATA_MEMORY_NAME, manip != null ? manip.getName() : "");
         if (!level().isClientSide) {
             if (manip != null) {
                 setCustomName(Component.literal("[" + manip.getProperName() + "]").withStyle(ChatFormatting.DARK_RED));
@@ -250,6 +255,11 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                 setCustomNameVisible(false);
             }
         }
+    }
+
+    /** Returns the synced equipped-memory name, or an empty string if none. Client-safe. */
+    public String getEquippedMemoryName() {
+        return this.entityData.get(DATA_MEMORY_NAME);
     }
 
     /** Called by the Drudge Electrode to queue a one-shot fire. */
