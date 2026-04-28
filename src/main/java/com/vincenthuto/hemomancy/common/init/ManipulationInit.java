@@ -253,7 +253,7 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						target.setSecondsOnFire(6);
+						target.igniteForSeconds(6);
 						return true;
 					}, "Sets nearest hostile on fire"));
 
@@ -381,7 +381,7 @@ public class ManipulationInit {
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
 						mobs.forEach(m -> {
-							m.setSecondsOnFire(10);
+							m.igniteForSeconds(10);
 							m.hurt(world.damageSources().onFire(), 3.0f);
 						});
 						return true;
@@ -485,7 +485,7 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						target.setSecondsOnFire(8);
+						target.igniteForSeconds(8);
 						target.hurt(world.damageSources().onFire(), 2.0f);
 						return true;
 					}, "Sets nearest hostile on fire"));
@@ -500,7 +500,7 @@ public class ManipulationInit {
 						if (mobs.isEmpty()) return false;
 						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f;
 						mobs.forEach(m -> {
-							m.setSecondsOnFire(12);
+							m.igniteForSeconds(12);
 							m.hurt(world.damageSources().onFire(), dmg);
 						});
 						return true;
