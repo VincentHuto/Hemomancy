@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.functional.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -14,6 +13,7 @@ import com.vincenthuto.hemomancy.common.item.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.RiteHintItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.util.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
@@ -129,9 +129,9 @@ public class DialogueEventHandler {
 			case "archon_choice_silence" -> {
 				// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
 				player.getPersistentData().putString(
-						FungalPodiumBlock.ARCHON_CHOICE_KEY,
-						FungalPodiumBlock.ARCHON_CHOICE_SILENCE);
-				FungalPodiumBlock.performReturnTravel(player);
+						FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
+						FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
+				FungalGardenTravelHelper.performReturnTravel(player);
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.archon_choice_silence")
 								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
@@ -140,9 +140,9 @@ public class DialogueEventHandler {
 			case "archon_choice_eighth_degree" -> {
 				// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
 				player.getPersistentData().putString(
-						FungalPodiumBlock.ARCHON_CHOICE_KEY,
-						FungalPodiumBlock.ARCHON_CHOICE_APOTHEOS);
-				FungalPodiumBlock.performReturnTravel(player);
+						FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
+						FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS);
+				FungalGardenTravelHelper.performReturnTravel(player);
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.archon_choice_eighth_degree")
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),

@@ -4,6 +4,7 @@
   "riteType": "minor",
   "riteName": "Rite of the Votary",
   "riteDescription": "The second rite of the Hematic Order, binding the practitioner deeper into the Covenant.",
+  "rankup": true,
   "pattern": [
     ["EBE"],
     ["BPB"],

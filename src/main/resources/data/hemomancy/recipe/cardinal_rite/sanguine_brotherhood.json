@@ -4,6 +4,7 @@
   "riteType": "lesser",
   "riteName": "Rite of the Sanguine Brotherhood",
   "riteDescription": "The fourth rite of the Hematic Order, proving mastery of the foundational blood arts.",
+  "rankup": true,
   "pattern": [
     ["H C H", " V V ", "  P  ", " V V ", "H C H"],
     ["     ", " H H ", " HBH ", " H H ", "     "],

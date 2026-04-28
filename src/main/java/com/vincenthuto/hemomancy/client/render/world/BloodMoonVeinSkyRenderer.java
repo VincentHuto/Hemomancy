@@ -10,10 +10,12 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -28,15 +30,18 @@ import org.joml.Matrix4f;
  * rim, wiggles outward, and fades to transparent at the tip. The ribbon
  * geometry follows the actual squiggled path so it never looks blocky.
  *
- * Called from MixinLevelRenderer BEFORE getMoonPhase(), so the poseStack is
- * already in moon-local space (Y = -100 is the moon plane).
+ * Called from the AFTER_SKY render stage with the vanilla sky moon transform
+ * already applied (Y = -100 is the moon plane).
  */
 @OnlyIn(Dist.CLIENT)
 public class BloodMoonVeinSkyRenderer {
 
+	private static final ResourceLocation BLOOD_MOON_PHASES = Hemomancy.rloc("textures/environment/blood_moon_phases.png");
+
 	private static final int   TENDRIL_COUNT  = 14;
 	private static final float MOON_PLANE_Y   = -100.0F;
-	private static final float MOON_RADIUS    = 8;  // slightly inside the vanilla 40×40 moon quad
+	private static final float MOON_RADIUS    =5;  // slightly inside the vanilla 40×40 moon quad
+	private static final float MOON_QUAD_SIZE = 20.0F;
 	private static final int   STEPS          = 90;
 	private static final float STEP_LEN       = 1.1F;
 	private static final float TENDRIL_WIDTH  = 0.55F;  // half-width of ribbon
@@ -70,7 +75,12 @@ public class BloodMoonVeinSkyRenderer {
 		float weatherFade = 1.0F - level.getRainLevel(partialTick);
 		if (weatherFade <= 0.01F) return;
 
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.disableCull();
 		RenderSystem.enableBlend();
+		drawBloodMoonFace(poseStack, level, weatherFade);
+
 		// Additive blend: tendrils glow/add to the sky rather than replace it.
 		// Prevents overlapping roots from creating a dark ring around the moon.
 		RenderSystem.blendFuncSeparate(
@@ -101,6 +111,35 @@ public class BloodMoonVeinSkyRenderer {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.disableBlend();
+		RenderSystem.enableCull();
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+	}
+
+	private static void drawBloodMoonFace(PoseStack poseStack, ClientLevel level, float weatherFade) {
+		int phase = level.getMoonPhase();
+		int phaseX = phase % 4;
+		int phaseY = phase / 4 % 2;
+		float u0 = phaseX / 4.0F;
+		float v0 = phaseY / 2.0F;
+		float u1 = (phaseX + 1) / 4.0F;
+		float v1 = (phaseY + 1) / 2.0F;
+
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+		RenderSystem.setShaderTexture(0, BLOOD_MOON_PHASES);
+		RenderSystem.blendFuncSeparate(
+			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
+		);
+
+		int alpha = (int) Mth.clamp(235.0F * weatherFade, 0.0F, 255.0F);
+		Matrix4f mat = poseStack.last().pose();
+		BufferBuilder buf = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+		buf.addVertex(mat, -MOON_QUAD_SIZE, MOON_PLANE_Y,  MOON_QUAD_SIZE).setUv(u1, v1).setColor(255, 255, 255, alpha);
+		buf.addVertex(mat,  MOON_QUAD_SIZE, MOON_PLANE_Y,  MOON_QUAD_SIZE).setUv(u0, v1).setColor(255, 255, 255, alpha);
+		buf.addVertex(mat,  MOON_QUAD_SIZE, MOON_PLANE_Y, -MOON_QUAD_SIZE).setUv(u0, v0).setColor(255, 255, 255, alpha);
+		buf.addVertex(mat, -MOON_QUAD_SIZE, MOON_PLANE_Y, -MOON_QUAD_SIZE).setUv(u1, v0).setColor(255, 255, 255, alpha);
+		BufferUploader.drawWithShader(buf.buildOrThrow());
 	}
 
 	private static void drawTendril(BufferBuilder buf, Matrix4f mat,

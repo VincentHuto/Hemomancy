@@ -4,6 +4,7 @@
   "riteType": "greater",
   "riteName": "Rite of the Bloodline Covenant",
   "riteDescription": "The sixth rite of the Hematic Order, consecrating the practitioner fully to the Bloodline Covenant.",
+  "rankup": true,
   "pattern": [
     ["HGVGVGH", "G     G", "V     V", "G  V  G", "V     V", "G     G", "HGVGVGH"],
     ["       ", " HHHHH ", " H   H ", " H G H ", " H   H ", " HHHHH ", "       "],

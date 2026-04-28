@@ -22,6 +22,46 @@ public final class MemoDefinitions {
 			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
 			MemoDefinition.MemoPath.UNSTAINED));
 
+	public static final MemoDefinition PALE_LADY_TAINTED = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_tainted"),
+			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_CLEANSING = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_cleansing"),
+			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_ABSOLVED = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_absolved"),
+			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_PURIFIED = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_purified"),
+			LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_DISCERNING = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_discerning"),
+			LiberEntryDefinitions.IMMACULATUS_CLARITY_PRICE,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_VIGILANT = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_vigilant"),
+			LiberEntryDefinitions.IMMACULATUS_CLARITY_PRICE,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_RESOLUTE = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_resolute"),
+			LiberEntryDefinitions.IMMACULATUS_CLARITY_PRICE,
+			MemoDefinition.MemoPath.UNSTAINED));
+
+	public static final MemoDefinition PALE_LADY_ENLIGHTENED = register(new MemoDefinition(
+			Hemomancy.rloc("pale_lady_enlightened"),
+			LiberEntryDefinitions.IMMACULATUS_CLARITY_PRICE,
+			MemoDefinition.MemoPath.UNSTAINED));
+
 	public static final MemoDefinition FUNGAL_WHISPER_ADEPT = register(new MemoDefinition(
 			Hemomancy.rloc("fungal_whisper_adept"),
 			LiberEntryDefinitions.HYPHAE,

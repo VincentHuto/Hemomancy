@@ -263,6 +263,38 @@ public final class FungalWhisperDialogueTrees {
 
 	// ── One-shot event whispers ──
 
+	public static DialogueTree spineGrowth(int degree) {
+		String langKey = switch (degree) {
+			case 5 -> "hemomancy.whisper.spine_growth.degree5";
+			case 6 -> "hemomancy.whisper.spine_growth.degree6";
+			case 7 -> "hemomancy.whisper.spine_growth.degree7";
+			case 8 -> "hemomancy.whisper.spine_growth.degree8";
+			default -> "hemomancy.whisper.spine_growth.degree5";
+		};
+
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(langKey), List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+				)))
+				.build();
+	}
+
+	public static DialogueTree fungalSpineEmerged() {
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.whisper.spine_emerged.line1",
+						"hemomancy.whisper.spine_emerged.line2",
+						"hemomancy.whisper.spine_emerged.line3"
+				), List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
+						new DialogueOption("hemomancy.whisper.option.i_am_listening", null, null)
+				)))
+				.build();
+	}
+
 	/**
 	 * Fires when a degree-7 Archon interacts with the morphic pool (fungal podium)
 	 * in the Fungal Gardens for the first time. The Entity's voice presents the

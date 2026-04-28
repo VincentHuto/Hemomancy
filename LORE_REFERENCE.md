@@ -76,7 +76,7 @@ The Entity's existence is not entirely self-contained. If a player aligned with 
 
 ## 3. The Fungal Dimension (The Flesh Beyond)
 
-At the peak of the Harbinger path — after reaching Archon (Degree 7) and experiencing 3–5 Fungal Whispers — the player is given a **Fungal Spine** that buds out of their hand. Using it transports them to what appears to be a separate dimension.
+At the peak of the Harbinger path — after reaching Archon (Degree 7), completing Qliphoth Communion by eating all nine pomes from one bloom, and completing the Rite of Apotheos — the player receives a **Fungal Spine** that tears free from their back. Using it transports them to what appears to be a separate dimension.
 
 ### 3.1 What It Is
 
@@ -93,7 +93,7 @@ Everything here is hostile, even to an Archon. The player is a babe in the woods
 
 ### 3.2 Return and Choice
 
-The player keeps their Fungal Spine and can use it to return. There may also be natural exits — **morphic pools** that, if jumped into, connect back to the world. If the player digs to the very bottom of the space and "punctures" through the core, it severs their connection temporarily (as though they harmed the Entity's surface), ejecting them.
+The player keeps their Fungal Spine and can use it to return. There may also be natural exits or anchored places of transit, but the spine is the personal return-thread. If the player digs to the very bottom of the space and "punctures" through the core, it severs their connection temporarily (as though they harmed the Entity's surface), ejecting them.
 
 Upon returning, the player faces a choice: **stay silent and remain an Archon**, or **continue deeper into the eldritch truth** and pursue the true 8th degree. This choice is the mod's deepest opt-in.
 
@@ -406,7 +406,7 @@ Hemomancy draws on this concept not as good-versus-evil but as complementary for
 
 The Qliphoth Tree:
 - Provides **blood volume regeneration** and enhanced regen auras in its area
-- Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system; eating all nine from a single bloom is the unnamed act that precedes the Eighth Degree.
+- Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system; eating all nine from a single bloom is the unnamed act that prepares the Eighth Degree, and Apotheosis forces the Fungal Spine from the player's body.
 - Whispers through those fruits in a personal register — the voice naming the husk feels directed to the current bearer, not to the crowd at large.
 - **Must be summoned through ritual** — placed trees don't work, because you can't cheat god
 - Grows with slight random variation each time (no two trees are identical)

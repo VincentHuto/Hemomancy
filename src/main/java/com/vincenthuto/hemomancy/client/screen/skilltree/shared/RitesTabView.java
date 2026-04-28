@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -52,6 +53,43 @@ public final class RitesTabView {
 			case GREATER -> 3;
 			case GRAND   -> 5;
 		};
+	}
+
+	private static int rankupTextColor() {
+		float pulse = (Mth.sin((System.currentTimeMillis() % 4000L) / 4000.0F * (float) (Math.PI * 2.0)) + 1.0F) * 0.5F;
+		return lerpArgb(0xFFFF3030, 0xFFFFD45A, pulse);
+	}
+
+	private static int lerpArgb(int from, int to, float amount) {
+		int a = Mth.lerpInt(amount, from >>> 24, to >>> 24);
+		int r = Mth.lerpInt(amount, from >> 16 & 0xFF, to >> 16 & 0xFF);
+		int g = Mth.lerpInt(amount, from >> 8 & 0xFF, to >> 8 & 0xFF);
+		int b = Mth.lerpInt(amount, from & 0xFF, to & 0xFF);
+		return a << 24 | r << 16 | g << 8 | b;
+	}
+
+	private static int withAlpha(int argb, int alpha) {
+		return alpha << 24 | argb & 0x00FFFFFF;
+	}
+
+	private static void drawScrollingTitle(GuiGraphics gfx, ProgressScreenContext ctx,
+										   String title, int x, int y, int width, int color) {
+		Component styledTitle = Component.literal(title)
+				.withStyle(s -> s.withColor(color).withBold(true));
+		int titleWidth = ctx.font().width(title);
+		if (titleWidth <= width) {
+			gfx.drawString(ctx.font(), styledTitle, x, y, 0);
+			return;
+		}
+
+		int gap = 24;
+		int travel = width + titleWidth + gap;
+		float scroll = (System.currentTimeMillis() % (travel * 45L)) / 45.0F;
+		int drawX = x + width - Mth.floor(scroll);
+		gfx.enableScissor(x, y - 2, x + width, y + 12);
+		gfx.drawString(ctx.font(), styledTitle, drawX, y, 0);
+		gfx.drawString(ctx.font(), styledTitle, drawX + travel, y, 0);
+		gfx.disableScissor();
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -206,6 +244,14 @@ public final class RitesTabView {
 					}
 					recName = ScreenDrawUtils.truncateText(ctx.font(), recName, sw - 16);
 					int recCol = recSel ? state.nameColor : 0xFF888888;
+					if (r.isRankup()) {
+						recCol = rankupTextColor();
+						int glowCol = withAlpha(recCol, 0x70);
+						gfx.drawString(ctx.font(), recName, sx + 7, sy + 4, glowCol, false);
+						gfx.drawString(ctx.font(), recName, sx + 9, sy + 4, glowCol, false);
+						gfx.drawString(ctx.font(), recName, sx + 8, sy + 3, glowCol, false);
+						gfx.drawString(ctx.font(), recName, sx + 8, sy + 5, glowCol, false);
+					}
 					gfx.drawString(ctx.font(), recName, sx + 8, sy + 4, recCol, false);
 					sy += 18;
 				}
@@ -339,11 +385,8 @@ public final class RitesTabView {
 			if (p.contains("/")) p = p.substring(p.lastIndexOf('/') + 1);
 			name = HLTextUtils.toProperCase(p.replace("_", " "));
 		}
-		for (String line : ScreenDrawUtils.wrapText(ctx.font(), name, panelW)) {
-			gfx.drawString(ctx.font(), Component.literal(line)
-					.withStyle(s -> s.withColor(state.nameColor).withBold(true)), panelX, y, 0);
-			y += lineH;
-		}
+		drawScrollingTitle(gfx, ctx, name, panelX, y, panelW-17, state.nameColor);
+		y += lineH;
 		y += 4;
 		gfx.fill(panelX, y, panelX + panelW, y + 1, state.separatorColor);
 		y += 6;
@@ -473,7 +516,7 @@ public final class RitesTabView {
 			if (p.contains("/")) p = p.substring(p.lastIndexOf('/') + 1);
 			name = HLTextUtils.toProperCase(p.replace("_", " "));
 		}
-		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH + 4 + 1 + 6;
+		y += lineH + 4 + 1 + 6;
 
 		String desc = rite.getRiteDescription();
 		if (desc != null && !desc.isEmpty())

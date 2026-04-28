@@ -67,6 +67,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -500,7 +501,7 @@ public class CardinalRiteEvents {
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_initiation", 1); // Neophyte of the Crimson Veil
 		DEGREE_RITE_PATHS.put("cardinal_rite/votary_rite", 2);          // Votary of the Hematic Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Scarlet Sanctum
-		DEGREE_RITE_PATHS.put("cardinal_rite/adept_rite", 4);           // Adept of the Sanguine Brotherhood
+		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_brotherhood", 4); // Adept of the Sanguine Brotherhood
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/archon_rite", 7);          // Archon of the Hematic Order
@@ -862,6 +863,7 @@ public class CardinalRiteEvents {
 												.withStyle(ChatFormatting.DARK_RED)),
 								false);
 					}
+					triggerSpineProgressionWhisper(sLevel, caster, targetDegree);
 				}
 			});
 		}
@@ -1737,6 +1739,37 @@ public class CardinalRiteEvents {
 
 	private static boolean isApotheosRite(ResourceLocation recipeId) {
 		return recipeId != null && APOTHEOS_RITE_PATH.equals(recipeId.getPath());
+	}
+
+	private static void triggerSpineProgressionWhisper(ServerLevel level, ServerPlayer player, int targetDegree) {
+		if (targetDegree < 5 || targetDegree > 8) {
+			return;
+		}
+
+		if (targetDegree == 8) {
+			popFungalSpineFromBack(level, player);
+			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.fungalSpineEmerged()));
+			return;
+		}
+
+		PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.spineGrowth(targetDegree)));
+	}
+
+	private static void popFungalSpineFromBack(ServerLevel level, ServerPlayer player) {
+		ItemStack spine = new ItemStack(ItemInit.fungal_spine.get());
+		Vec3 look = player.getLookAngle();
+		double x = player.getX() - look.x * 0.55;
+		double y = player.getY() + 1.15;
+		double z = player.getZ() - look.z * 0.55;
+
+		level.playSound(null, player.blockPosition(), SoundEvents.SLIME_BLOCK_BREAK, SoundSource.PLAYERS, 1.8f, 0.55f);
+		level.playSound(null, player.blockPosition(), SoundEvents.HONEY_BLOCK_BREAK, SoundSource.PLAYERS, 1.5f, 0.65f);
+		level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.7f, 0.8f);
+
+		ItemEntity drop = new ItemEntity(level, x, y, z, spine);
+		drop.setDeltaMovement(-look.x * 0.18, 0.18, -look.z * 0.18);
+		drop.setPickUpDelay(10);
+		level.addFreshEntity(drop);
 	}
 
 	private static boolean hasQliphothCommunion(ServerPlayer player) {

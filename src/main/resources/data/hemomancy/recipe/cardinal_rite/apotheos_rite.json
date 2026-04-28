@@ -5,6 +5,7 @@
   "requiredDegree": 7,
   "riteName": "Rite of Apotheos",
   "riteDescription": "The Eighth Degree rite. The practitioner crosses beyond Archon after completing Qliphoth Communion, accepting the final hush behind the Order's mask.",
+  "rankup": true,
   "pattern": [
     ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   C   H", "G       G", "H       H", "G       G", "HGHGHGHGH"],
     ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  E  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],

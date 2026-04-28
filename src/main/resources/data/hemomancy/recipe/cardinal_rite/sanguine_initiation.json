@@ -4,6 +4,7 @@
   "riteType": "minor",
   "riteName": "Rite of Sanguine Initiation",
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
+  "rankup": true,
   "pattern": [
     ["ECE"],
     ["EPE"],

@@ -109,6 +109,10 @@ public class OurLadyWhisperEvents {
 			if ((player.tickCount + stagger) % interval != 0) return;
 
 			int variant = (int) ((player.tickCount / interval) % VARIANT_COUNT);
+			var memo = useClarity
+					? OurLadyWhisperDialogueTrees.memoForClarityStage(stageLevel, variant)
+					: OurLadyWhisperDialogueTrees.memoForPurityStage(stageLevel, variant);
+			if (!OurLadyWhisperDialogueTrees.shouldOfferMemoWhisper(player, memo)) return;
 
 			DialogueTree tree = useClarity
 					? OurLadyWhisperDialogueTrees.forClarityStage(stageLevel, variant)

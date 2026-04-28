@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
@@ -68,6 +69,7 @@ import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPa
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
+import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemArmBanner;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemGuideBook;
@@ -257,6 +259,10 @@ public class ClientEvents {
 
 	@SubscribeEvent
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
+			renderBloodMoonSky(event);
+		}
+
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
 			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
@@ -267,6 +273,20 @@ public class ClientEvents {
 			BloodBallRenderer.render(event.getPoseStack(), partialTick);
 			SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
 		}
+	}
+
+	private static void renderBloodMoonSky(RenderLevelStageEvent event) {
+		if (!BloodMoonClientState.isActive()) return;
+
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || mc.level.effects().skyType() != DimensionSpecialEffects.SkyType.NORMAL) return;
+
+		float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
+		PoseStack moonPose = new PoseStack();
+		moonPose.mulPose(event.getModelViewMatrix());
+		moonPose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+		moonPose.mulPose(Axis.XP.rotationDegrees(mc.level.getTimeOfDay(partialTick) * 360.0F));
+		BloodMoonVeinSkyRenderer.renderInSky(moonPose, mc.level, partialTick);
 	}
 
 	@SuppressWarnings("deprecation")

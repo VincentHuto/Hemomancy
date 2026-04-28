@@ -4,6 +4,7 @@
   "riteType": "lesser",
   "riteName": "Rite of the Scarlet Sanctum",
   "riteDescription": "The third rite of the Hematic Order, granting formal entry into the Scarlet Sanctum.",
+  "rankup": true,
   "pattern": [
     ["E C E", " V V ", "  P  ", " V V ", "E C E"],
     ["     ", " E E ", " EBE ", " E E ", "     "],

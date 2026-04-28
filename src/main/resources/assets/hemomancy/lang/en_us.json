@@ -1022,6 +1022,13 @@
   "hemomancy.dialogue.event.whisper_truth_acknowledged": "§4A deep, fungal awareness settles into your bones. You cannot unhear what has been spoken.",
 
   "hemomancy.whisper.option.i_am_listening": "[Listen]",
+  "hemomancy.whisper.spine_growth.degree5": "§8§o[There is a small itch between your shoulder blades. Probably nothing. The skin there feels warm for a moment, then forgets itself.]",
+  "hemomancy.whisper.spine_growth.degree6": "§5§o[A tingle crawls up your spine, slow and deliberate, as if something inside you has learned the shape of your back.]",
+  "hemomancy.whisper.spine_growth.degree7": "§4§o[Something in your spine strains against the meat. Your neck is stiff. Your back barely wants to bend. It is not ready. It is almost ready.]",
+  "hemomancy.whisper.spine_growth.degree8": "§4§o[Your spine flowers open. The hidden stalk has finished learning how to leave you.]",
+  "hemomancy.whisper.spine_emerged.line1": "§4§o[Wet cartilage splits with a loud, living crack.]",
+  "hemomancy.whisper.spine_emerged.line2": "§4§oThere. Your return-thread has grown teeth.",
+  "hemomancy.whisper.spine_emerged.line3": "§4§oTake it up. Draw it when you must descend into the dreaming root, or claw your way back from it.",
   "hemomancy.whisper.post_shatter.line1": "§4§o[A voice rises from the space where the crystal stood, as if it had been waiting inside all along...]",
   "hemomancy.whisper.post_shatter.line2": "§4§oIt was always hollow. The crystal was the shell. What was inside is now in your pocket.",
   "hemomancy.whisper.post_bloom.line1": "§4§o[Something vast stirs at the root of the world, briefly, with satisfaction...]",

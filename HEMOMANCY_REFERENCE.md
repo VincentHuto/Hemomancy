@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-26
+> **Last Updated:** 2026-04-28
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -125,7 +125,7 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 | 1 | Neophyte of the Crimson Veil | `sanguine_initiation` |
 | 2 | Votary of the Hematic Covenant | `votary_rite` |
 | 3 | Initiate of the Scarlet Sanctum | `initiate_rite` |
-| 4 | Adept of the Sanguine Brotherhood | `adept_rite` |
+| 4 | Adept of the Sanguine Brotherhood | `sanguine_brotherhood` |
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
 | 7 | Archon of the Hematic Order | `archon_rite` |
@@ -135,6 +135,7 @@ Cardinal Rites have:
 - A blood cost
 - A rite type (`CardinalRiteType`)
 - A multiblock pattern
+- A `rankup` boolean on Harbinger degree-advancement rites, used by the Rites tab to highlight degree rites
 - An item result
 - A casting duration (tick-based, tracked via `ActiveCardinalRite`)
 - Boundary enforcement (player must stay in range)
@@ -212,7 +213,7 @@ At Archon (Degree 7), **3–5 Fungal Whispers** fire before the Fungal Spine eve
 
 ### 3.6 The Fungal Spine and The Realm Beyond
 
-After reaching Archon and receiving the requisite Fungal Whispers, a **Fungal Spine** item buds out of the player's hand. Using it transports the player's consciousness to the Fungal Dimension.
+After completing Qliphoth Communion by eating all nine pomes from a single bloom and then completing the Rite of Apotheos, a **Fungal Spine** item tears free from the player's back and drops into the world. Using it transports the player's consciousness to the Fungal Dimension.
 
 **The Fungal Dimension:**
 - A vast sphere of flesh, meat, and pulsing biology — the local "surface" of the fourth-dimensional Fungal Entity
@@ -223,12 +224,12 @@ After reaching Archon and receiving the requisite Fungal Whispers, a **Fungal Sp
 - Fungal Whispers occur almost constantly, nearly harassing in frequency
 - The player keeps their Fungal Spine and can use it to return to the overworld
 - Digging to the bottom of the space and "puncturing" the core severs the connection temporarily (ejecting the player)
-- May contain **morphic pools** as alternate exits — **RESOLVED:** The existing `FungalPodiumBlock` serves as the morphic pool exit. See §3.9 for the Archon choice fork behaviour.
+- May contain **morphic pools** or podiums as place-based anchors, but the portable **Fungal Spine** is the primary player-owned travel key. See §3.9 for the Archon choice fork behaviour.
 
 **Player Choice at the End:**
 - Stay silent and simply return; remain an Archon and tell no one — choice stamped as `hemomancy:archon_choice_made = "silent"` in persistent data
 - Continue deeper into the eldritch truth toward the true 8th Degree (transcendence) — choice stamped as `hemomancy:archon_choice_made = "apotheos"`; `apotheos_rite` is now unblocked in combination with the Qliphoth Communion flag
-- The Archon may draw a Fungal Spine at any time to return or revisit
+- The Archon may draw a Fungal Spine at any time to return or revisit; the podium delegates to the same helper but is no longer the core dependency
 
 > ~~**Partially implemented:** Terrain generation and player choice mechanics are still in early development. Spawn placement is fixed — both `FungalPodiumBlock.findSafePos()` and `FungalSpineItem.findSafePos()` use `MOTION_BLOCKING_NO_LEAVES` heightmap with a solid-ground upward scan fallback, preventing placement in water. Dimension-exclusive mob population is implemented: `AbhorentThought` (fungal_gardens, fungal_isles, hemorrhagic_plateau), `LumpOfThought` (fungal_isles), and `ErythromyceliumEruptus` (mycelial_depths) are all registered with `SpawnPlacements.ON_GROUND` and `checkMonsterSpawnRules` that gate spawning to `!isInWaterOrBubble()`. Remaining WIP: player choice branching mechanics and morphic-pool alternate exits.~~
 > **RESOLVED (morphic pool + choice fork):** Spawn placement and mob population remain as described above. `FungalPodiumBlock.use()` now gates Degree-7 Archons: on first exit attempt (when `hemomancy:archon_choice_made` is absent) the pool fires `FungalWhisperDialogueTrees.coreWitnessDialogue()` instead of teleporting. The two-option fork ("Carry the truth in silence" / "I seek the Eighth Degree") stamps the choice key and then calls `FungalPodiumBlock.performReturnTravel()`. All players with an existing choice proceed directly to the overworld on subsequent uses. Remaining WIP: terrain feature population depth.
@@ -339,6 +340,8 @@ Creative-spawned / untagged pomes do not have a real bloom origin, so they use a
 
 **Stage 5 — Rite of Apotheos Unlocked**
 `BloodCraftingKeyPressPacket` (server-side rite activation) checks `IInitiatoryDegree#isQliphothCommunionDone()` before allowing the `apotheos_rite` to begin. `CardinalRiteEvents.completeRite()` repeats the same check before granting Degree 8, so old active rites or alternate completion paths cannot bypass the gate. If absent, the player receives: *"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom."* If present (and degree ≥ 7), the rite proceeds normally.
+
+When degree rites actually advance the player to Degrees 5, 6, and 7, `FungalWhisperDialogueTrees.spineGrowth(degree)` fires one-shot bodily hints that the Fungal Spine is growing. On successful Degree 8 advancement, `CardinalRiteEvents` plays wet flesh sounds, drops `fungal_spine` behind the player, and opens `FungalWhisperDialogueTrees.fungalSpineEmerged()` with usage guidance.
 
 **Key fields serialized inside the player's `IInitiatoryDegree` capability:**
 
@@ -1320,7 +1323,7 @@ An in-world system: build a specific block structure, then hit a particular bloc
 
 Specific cardinal rite recipes include degree advancement rites (section 3.2) plus utility rites. Rites come in four tiers based on complexity and cost:
 
-**Degree Advancement Rites:**
+**Degree Advancement Rites:** These recipe JSONs set `"rankup": true`, which lets client UI and tooling distinguish degree rites from utility rites.
 
 | Rite | Blood Cost | Tier | Degree → | Description |
 |------|-----------|------|----------|-------------|

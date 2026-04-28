@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -24,6 +25,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -51,6 +53,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
+	private static final java.util.Map<String, Integer> RANKUP_RITE_TARGET_DEGREES = java.util.Map.of(
+			"cardinal_rite/sanguine_initiation", 1,
+			"cardinal_rite/votary_rite", 2,
+			"cardinal_rite/initiate_rite", 3,
+			"cardinal_rite/sanguine_brotherhood", 4,
+			"cardinal_rite/illuminatus_rite", 5,
+			"cardinal_rite/sanctified_rite", 6,
+			"cardinal_rite/archon_rite", 7,
+			"cardinal_rite/apotheos_rite", 8);
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
 	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
@@ -311,9 +322,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 		for (CardinalRiteRecipe recipe : CardinalRiteRecipe.getAllRecipes(player.level())) {
 			BlockPattern bp = recipe.getPattern().getBlockPattern();
-			int maxDim = Math.max(Math.max(bp.getWidth(), bp.getHeight()), bp.getDepth());
-			BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
-			BlockPattern.BlockPatternMatch match = bp.find(sLevel, searchStart);
+			BlockPattern.BlockPatternMatch match = findPatternNearBlock(bp, sLevel, hitPos);
 			if (match != null) {
 				// ── Tier progression check ──
 				if (!recipe.isUnstained()) {
@@ -334,6 +343,22 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 												.withStyle(ChatFormatting.RED)),
 								false);
 						return;
+					}
+					if (recipe.isRankup()) {
+						Integer targetDegree = RANKUP_RITE_TARGET_DEGREES.get(recipe.getId().getPath());
+						if (targetDegree != null && playerDegree >= targetDegree) {
+							EnumInitiatoryDegree current = EnumInitiatoryDegree.byNumber(playerDegree);
+							String currentName = current != null ? current.getTitle() : "Degree " + playerDegree;
+							player.displayClientMessage(
+									Component.literal("You have already attained ")
+											.withStyle(ChatFormatting.DARK_RED)
+											.append(Component.literal(currentName)
+													.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+											.append(Component.literal(". This rank rite has no further hold on you.")
+													.withStyle(ChatFormatting.DARK_RED)),
+									false);
+							return;
+						}
 					}
 				} else {
 					// Unstained: check purity/clarity progression level (0–8)
@@ -445,6 +470,25 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				return;
 			}
 		}
+	}
+
+	private static BlockPattern.BlockPatternMatch findPatternNearBlock(
+			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
+		int maxDim = Math.max(Math.max(
+				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
+		int radius = maxDim - 1;
+		for (BlockPos candidate : BlockPos.betweenClosed(
+				hitPos.offset(-radius, -radius, -radius),
+				hitPos.offset(radius, radius, radius))) {
+			for (Direction finger : Direction.values()) {
+				for (Direction thumb : Direction.values()) {
+					if (thumb == finger || thumb == finger.getOpposite()) continue;
+					BlockPattern.BlockPatternMatch match = blockPattern.matches(level, candidate, finger, thumb);
+					if (match != null) return match;
+				}
+			}
+		}
+		return null;
 	}
 
 	private static boolean consumeCenterCatalyst(ServerLevel level, BlockPos centerPos, Item requiredItem) {
