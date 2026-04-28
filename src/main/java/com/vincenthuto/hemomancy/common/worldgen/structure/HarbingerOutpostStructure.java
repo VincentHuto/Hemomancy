@@ -53,9 +53,7 @@ public class HarbingerOutpostStructure extends Structure {
 				.apply(instance, HarbingerOutpostStructure::new));
 
 	private static boolean extraSpawningChecks(Structure.GenerationContext context) {
-		ChunkPos chunkpos = context.chunkPos();
-		return context.chunkGenerator().getFirstOccupiedHeight(chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, context.heightAccessor(), context.randomState()) < 150;
+		return StructurePlacementChecks.isSuitableLandChunk(context);
 	}
 
 	private final Holder<StructureTemplatePool> startPool;

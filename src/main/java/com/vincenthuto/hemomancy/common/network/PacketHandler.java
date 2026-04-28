@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
@@ -27,6 +28,7 @@ import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.scars.*;
+import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
@@ -44,15 +46,16 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnAvatarParticlesPac
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnMonolithShatterBurstPacket;
+import com.vincenthuto.hemomancy.common.network.particle.SpawnPomePulsePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
-import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
+import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -139,7 +142,7 @@ public class PacketHandler {
 
         // ── Known Manipulations ───────────────────────────────────────────────
         net.playBidirectional(KnownManipulationClientPacket.TYPE, KnownManipulationClientPacket.STREAM_CODEC, KnownManipulationClientPacket::handle);
-        net.playBidirectional(KnownManipulationServerPacket.TYPE, KnownManipulationServerPacket.STREAM_CODEC, KnownManipulationServerPacket::handle);
+        net.playToClient(KnownManipulationServerPacket.TYPE, KnownManipulationServerPacket.STREAM_CODEC, KnownManipulationServerPacket::handle);
         net.playBidirectional(DisplayKnownManipsPacket.TYPE, DisplayKnownManipsPacket.STREAM_CODEC, DisplayKnownManipsPacket::handle);
         net.playBidirectional(ChangeSelectedManipPacket.TYPE, ChangeSelectedManipPacket.STREAM_CODEC, ChangeSelectedManipPacket::handle);
         net.playBidirectional(UseQuickManipKeyPacket.TYPE, UseQuickManipKeyPacket.STREAM_CODEC, UseQuickManipKeyPacket::handle);
@@ -169,6 +172,7 @@ public class PacketHandler {
         net.playToClient(SpawnBloodClawParticlesPacket.TYPE, SpawnBloodClawParticlesPacket.STREAM_CODEC, SpawnBloodClawParticlesPacket::handle);
         net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
         net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
+        net.playToClient(SpawnPomePulsePacket.TYPE, SpawnPomePulsePacket.STREAM_CODEC, SpawnPomePulsePacket::handle);
         // HutosLib registers this payload in HLPacketHandler; re-registering here causes
         // "already registered" crashes for hutoslib:packet_spawn_lightning.
 
@@ -190,6 +194,7 @@ public class PacketHandler {
 
         // ── Degree / Unstained progress ───────────────────────────────────────
         net.playToClient(PacketSyncDegree.TYPE, PacketSyncDegree.STREAM_CODEC, PacketSyncDegree::handle);
+        net.playToClient(PacketSyncLiberKnowledge.TYPE, PacketSyncLiberKnowledge.STREAM_CODEC, PacketSyncLiberKnowledge::handle);
         net.playToClient(PacketSyncUnstainedProgress.TYPE, PacketSyncUnstainedProgress.STREAM_CODEC, PacketSyncUnstainedProgress::handle);
         net.playToServer(PacketToggleUnstainedBonus.TYPE, PacketToggleUnstainedBonus.STREAM_CODEC, PacketToggleUnstainedBonus::handle);
 
@@ -218,6 +223,9 @@ public class PacketHandler {
         net.playToServer(VisceralMirrorExtractPacket.TYPE, VisceralMirrorExtractPacket.STREAM_CODEC, VisceralMirrorExtractPacket::handle);
         net.playToServer(VisceralMirrorCancelPacket.TYPE, VisceralMirrorCancelPacket.STREAM_CODEC, VisceralMirrorCancelPacket::handle);
         net.playToClient(VisceralMirrorUpdatePacket.TYPE, VisceralMirrorUpdatePacket.STREAM_CODEC, VisceralMirrorUpdatePacket::handle);
+
+        // ── Semi-Sentient Construct screen ────────────────────────────────────
+        net.playToClient(OpenSSCScreenPacket.TYPE, OpenSSCScreenPacket.STREAM_CODEC, OpenSSCScreenPacket::handle);
 
         // ── Ledger ────────────────────────────────────────────────────────────
         net.playToServer(PacketLedgerAction.TYPE, PacketLedgerAction.STREAM_CODEC, PacketLedgerAction::handle);
@@ -257,6 +265,11 @@ public class PacketHandler {
     public static void sendMonolithShatterBurst(Vec3 pos, double radius, ServerLevel level) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnMonolithShatterBurstPacket(pos));
+    }
+
+    public static void sendPomePulse(Vec3 pos, double radius, ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+                new SpawnPomePulsePacket(pos));
     }
 
     public static void sendClientElytraPacket() {

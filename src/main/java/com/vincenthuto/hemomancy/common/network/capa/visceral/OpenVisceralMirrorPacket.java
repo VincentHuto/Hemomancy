@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -68,7 +67,7 @@ public class OpenVisceralMirrorPacket implements CustomPacketPayload {
 
 	public static void handle(final OpenVisceralMirrorPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (Minecraft.getInstance().player != null) {
+			if (ctx.player() != null) {
 				VisceralMirrorScreen.open(
 						msg.pos, msg.organLevels, msg.hasEcho,
 						msg.bloodVolume, msg.maxBloodVolume, msg.degree);

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
@@ -57,9 +58,12 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScree
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.item.HemoItemProperties;
+import com.vincenthuto.hemomancy.common.item.VialRackItem;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.tool.StructureScannerItem;
+import com.vincenthuto.hemomancy.common.item.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseManipKeyPacket;
@@ -68,6 +72,7 @@ import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPa
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
+import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemArmBanner;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemGuideBook;
@@ -77,6 +82,7 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -84,14 +90,25 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -257,6 +274,10 @@ public class ClientEvents {
 
 	@SubscribeEvent
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
+			renderBloodMoonSky(event);
+		}
+
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
 			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
@@ -267,6 +288,20 @@ public class ClientEvents {
 			BloodBallRenderer.render(event.getPoseStack(), partialTick);
 			SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
 		}
+	}
+
+	private static void renderBloodMoonSky(RenderLevelStageEvent event) {
+		if (!BloodMoonClientState.isActive()) return;
+
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || mc.level.effects().skyType() != DimensionSpecialEffects.SkyType.NORMAL) return;
+
+		float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
+		PoseStack moonPose = new PoseStack();
+		moonPose.mulPose(event.getModelViewMatrix());
+		moonPose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+		moonPose.mulPose(Axis.XP.rotationDegrees(mc.level.getTimeOfDay(partialTick) * 360.0F));
+		BloodMoonVeinSkyRenderer.renderInSky(moonPose, mc.level, partialTick);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -379,6 +414,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
 			event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
 			event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
+			event.registerEntityRenderer(EntityInit.hemolytic_vial_projectile.get(), ThrownItemRenderer::new);
 			event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
 			event.registerEntityRenderer(EntityInit.unstained_zealot.get(), UnstainedZealotRenderer::new);
 			event.registerEntityRenderer(EntityInit.unstained_guardian.get(), UnstainedGuardianRenderer::new);
@@ -386,6 +422,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
+			event.registerEntityRenderer(EntityInit.drudge.get(), com.vincenthuto.hemomancy.client.render.entity.npc.DrudgeRenderer::new);
 			event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
 			event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
 			event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
@@ -442,6 +479,7 @@ public class ClientEvents {
 					SomaticLoomRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.qliphoth_bloom.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.QliphothBloomBlockRenderer::new);
@@ -451,6 +489,119 @@ public class ClientEvents {
 					com.vincenthuto.hemomancy.client.render.tile.functional.AltarOfCleansingRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.sanguine_monolith.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineMonolithRenderer::new);
+		}
+
+		@SuppressWarnings("deprecation")
+		@SubscribeEvent
+		public static void registerItemPropertyOverrides(FMLClientSetupEvent event) {
+			event.enqueueWork(() -> {
+				ItemProperties.register(ItemInit.unsigned_ancestral_ledger.get(), Hemomancy.rloc("unsigned"),
+						HemoItemProperties.booleanTag("state"));
+
+				ItemProperties.register(ItemInit.bloody_vial.get(), Hemomancy.rloc("state"),
+						HemoItemProperties.booleanTag("state"));
+
+				ItemProperties.register(ItemInit.vial_rack.get(), Hemomancy.rloc("state"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) -> {
+							int emptyCount = VialRackItem.countEmptyVials(stack);
+							if (emptyCount == VialRackItem.MAX_VIALS) {
+								return 0.0F;
+							}
+							if (emptyCount == 0) {
+								return 2.0F;
+							}
+							return 1.0F;
+						});
+
+				ItemProperties.register(ItemInit.barbed_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
+								ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F);
+
+				ItemProperties.register(ItemInit.chitinite_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
+								ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F);
+
+				ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("pull"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) -> {
+							if (ent == null) {
+								return 0.0F;
+							}
+							return LivingCrossbowItem.isCharged(stack) ? 0.0F
+									: (float) (stack.getUseDuration(ent) - ent.getUseItemRemainingTicks())
+									/ (float) LivingCrossbowItem.getChargeTime(stack);
+						});
+				ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("pulling"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
+								ent != null && ent.isUsingItem() && ent.getUseItem() == stack
+										&& !LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F);
+				ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("charged"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
+								stack != null && LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F);
+				ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("firework"),
+						(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
+								ent != null && LivingCrossbowItem.isCharged(stack)
+										&& LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F);
+
+				ItemProperties.register(ItemInit.living_syringe.get(), Hemomancy.rloc("open"),
+						HemoItemProperties.booleanTag("state"));
+				ItemProperties.register(ItemInit.curved_horn.get(), Hemomancy.rloc("open"),
+						HemoItemProperties.booleanTag("state"));
+				ItemProperties.register(ItemInit.blood_gourd_white.get(), Hemomancy.rloc("open"),
+						HemoItemProperties.booleanTag("state"));
+				ItemProperties.register(ItemInit.blood_gourd_red.get(), Hemomancy.rloc("open"),
+						HemoItemProperties.booleanTag("state"));
+				ItemProperties.register(ItemInit.blood_gourd_black.get(), Hemomancy.rloc("open"),
+						HemoItemProperties.booleanTag("state"));
+				ItemProperties.register(ItemInit.morphling_jar.get(), Hemomancy.rloc("size"),
+						HemoItemProperties.intTag("size"));
+
+				ItemProperties.register(ItemInit.drudge_electrode.get(), Hemomancy.rloc("mode"),
+						HemoItemProperties.booleanTag(com.vincenthuto.hemomancy.common.item.tool.DrudgeElectrodeItem.TAG_MODE));
+
+				ItemProperties.register(ItemInit.living_staff.get(), Hemomancy.rloc("morph"), new ItemPropertyFunction() {
+					@Override
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) {
+						if (!stack.has(DataComponents.CUSTOM_DATA)) {
+							return 0.0F;
+						}
+						CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+						CompoundTag items = (CompoundTag) tag.get("Inventory");
+						if (items == null || !items.contains("Items", 9)) {
+							return 0.0F;
+						}
+
+						ItemStack selectedStack = ItemStack.parseOptional(
+								world != null ? world.registryAccess() : RegistryAccess.EMPTY,
+								((ListTag) items.get("Items")).getCompound(0));
+						if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
+							return 1.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
+							return 2.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {
+							return 3.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
+							return 4.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
+							return 5.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
+							return 6.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_moth.get()) {
+							return 7.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
+							return 8.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_centipede.get()) {
+							return 9.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_bat.get()) {
+							return 10.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_urchin.get()) {
+							return 11.0F;
+						} else if (selectedStack.getItem() == ItemInit.morphling_mole.get()) {
+							return 12.0F;
+						}
+						return 0.0F;
+					}
+				});
+			});
 		}
 
 		@SubscribeEvent

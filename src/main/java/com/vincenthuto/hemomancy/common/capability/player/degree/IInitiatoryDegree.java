@@ -71,6 +71,9 @@ public interface IInitiatoryDegree {
 	 */
 	void syncTotalPomesConsumed(int count);
 
+	/** Clears pome counters, per-bloom progress, and the Communion completion flag. */
+	void resetPomeCommunion();
+
 	// ── Qliphoth Pome empowerment ──────────────────────────────────────────────
 
 	/**

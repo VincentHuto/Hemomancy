@@ -19,6 +19,8 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
+import java.util.Optional;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -68,6 +70,13 @@ public class BloodManipulation  {
 	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
 
 	int cooldownTicks;
+
+	/**
+	 * Transient — set at registration time via {@link #setDrudgeAction(DrudgeAction, String)}.
+	 * Not serialized to NBT; must be resolved to the registry instance after loading.
+	 */
+	private transient DrudgeAction drudgeAction = null;
+	private transient String drudgeDescription = null;
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -128,6 +137,38 @@ public class BloodManipulation  {
 	public BloodManipulation setCooldownTicks(int cooldownTicks) {
 		this.cooldownTicks = cooldownTicks;
 		return this;
+	}
+
+	/**
+	 * Registers the drudge-specific behavior for this manipulation.
+	 *
+	 * @param action      the {@link DrudgeAction} lambda; use
+	 *                    {@link DrudgeAction#DRUDGE_UNSUPPORTED} to mark the
+	 *                    manipulation as incompatible with Drudges
+	 * @param description a short player-facing description shown in the Memory
+	 *                    item tooltip (e.g. {@code "Slows all hostiles in area"})
+	 * @return {@code this} for fluent chaining
+	 */
+	public BloodManipulation setDrudgeAction(DrudgeAction action, String description) {
+		this.drudgeAction = action;
+		this.drudgeDescription = description;
+		return this;
+	}
+
+	/**
+	 * Returns the registered {@link DrudgeAction} for this manipulation, or an
+	 * empty Optional if none has been registered yet.
+	 */
+	public Optional<DrudgeAction> getDrudgeAction() {
+		return Optional.ofNullable(drudgeAction);
+	}
+
+	/**
+	 * Returns the short drudge-behavior description string, or empty if none was
+	 * set.
+	 */
+	public Optional<String> getDrudgeDescription() {
+		return Optional.ofNullable(drudgeDescription);
 	}
 
 	public boolean isOnCooldown(Player player) {
@@ -387,6 +428,34 @@ public class BloodManipulation  {
 	@Override
 	public String toString() {
 		return HLTextUtils.convertInitToLang(name);
+	}
+
+	/**
+	 * Executes this manipulation on behalf of a Drudge entity rather than a
+	 * player. Bypasses all player-specific checks (purity, degree, MnA combos)
+	 * and draws from the drudge's internal blood charge instead.
+	 *
+	 * <p>Cost is multiplied by {@code HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER}.
+	 * Returns {@code true} if the action was executed, {@code false} if the drudge
+	 * had insufficient blood charge or no {@link DrudgeAction} is registered.
+	 *
+	 * @deprecated Prefer letting {@code DrudgeExecuteMemoryGoal} handle dispatch.
+	 *             This helper is provided for external callers that need a one-shot
+	 *             invocation without going through the goal scheduler.
+	 */
+	@Deprecated
+	public boolean performDrudgeAction(com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity drudge, Level world, BlockPos position) {
+		if (world.isClientSide) return false;
+		DrudgeAction action = getDrudgeAction().orElse(null);
+		if (action == null || action == DrudgeAction.DRUDGE_UNSUPPORTED) return false;
+		double costMult = com.vincenthuto.hemomancy.config.HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER.get();
+		double effectiveCost = cost * costMult;
+		if (drudge.getBloodCharge() < effectiveCost) return false;
+		boolean fired = action.execute(drudge, world, position, com.vincenthuto.hemomancy.config.HemoServerConfig.DRUDGE_WORK_RADIUS.get());
+		if (fired) {
+			drudge.drainBloodCharge((float) effectiveCost);
+		}
+		return fired;
 	}
 
 }

@@ -18,24 +18,7 @@ import com.vincenthuto.hemomancy.common.block.functional.*;
 import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.plant.*;
-import com.vincenthuto.hemomancy.common.item.tile.ScarStationBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.AltarOfCleansingBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.PallidRetortBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.MorphlingCradleBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.SaintSarcophagusBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.SanguineMonolithBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.MnemonicReliquaryBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.MortalDisplayBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.SomaticLoomBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.SuspendedBloodCrystalBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.SuspendedCleansedBloodCrystalBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.SuspendedVivianiteBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.VialCentrifugeBlockItem;
-import com.vincenthuto.hemomancy.common.item.tile.VisceralMirrorBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.*;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
@@ -239,6 +222,8 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
 			MnemonicReliquaryBlock::new);
+	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
+			DictationTableBlock::new);
 
 	// Plants
 
@@ -543,6 +528,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.mnemonic_reliquary.get()) {
 			return Pair.of(block.getSecond(), new MnemonicReliquaryBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.dictation_table.get()) {
+			return Pair.of(block.getSecond(), new DictationTableBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.earthen_vein.get()) {
 			return Pair.of(block.getSecond(), new EarthenVeinBlockItem(b, new Item.Properties()));

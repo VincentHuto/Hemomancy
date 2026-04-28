@@ -9,7 +9,9 @@ import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
 import net.minecraft.ChatFormatting;
@@ -19,6 +21,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 /**
@@ -85,6 +89,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	private static final int DARKNESS_DURATION_TICKS = 140;
 	private static final int DARKNESS_TAINTED_DURATION_TICKS = 300;
 	private static final long EMPOWERMENT_DURATION_TICKS = 3600L;
+	private static final long CREATIVE_TEST_BLOOM_ORIGIN = Long.MIN_VALUE;
 	private static final String POME_MESSAGE_KEY_BASE = "message.hemomancy.qliphoth_pome.consume.";
 
 	/** The nine Qliphoth husk names in consumption order (indices 0–8). */
@@ -128,16 +133,16 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				int huskIdx = tag.getInt(HUSK_INDEX_KEY);
 				if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
 					int ordinal = huskIdx + 1;
-					tooltip.add(Component.literal(ordinalString(ordinal) + " of nine. Sweet in the way that the color black is sweet.")
+					tooltip.add(Component.literal(ordinalString(ordinal) + " of nine. Sweet in the way that tv static and silence is sweet.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 					tooltip.add(Component.literal("[" + HUSK_NAMES[huskIdx] + "]")
 							.withStyle(ChatFormatting.DARK_PURPLE));
 				} else {
-					tooltip.add(Component.literal("One of nine. Sweet in the way that the color black is sweet.")
+					tooltip.add(Component.literal("One of nine. Sweet in the way that tv static and silence is sweet.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 				}
 			} else {
-				tooltip.add(Component.literal("One of nine. Sweet in the way that the color black is sweet.")
+				tooltip.add(Component.literal("One of nine. Sweet in the way that tv static and silence is sweet.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 			}
 			tooltip.add(Component.literal("+300 Blood Volume")
@@ -160,15 +165,31 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		if (!level.isClientSide && entity instanceof Player player) {
 			CompoundTag itemTag = getCustomData(stack);
 			boolean isTainted = itemTag.getBoolean(TAINTED_KEY);
+			spawnPomePulse(player);
 
 			if (isTainted) {
 				applyTaintedEffects(player);
+				playPomeSound(player, false);
 			} else {
 				applyNormalEffects(player, level, itemTag);
 			}
 		}
 
 		return result;
+	}
+
+	private static void spawnPomePulse(Player player) {
+		if (player.level() instanceof ServerLevel serverLevel) {
+			PacketHandler.sendPomePulse(player.position().add(0, player.getBbHeight() * 0.55, 0), 64.0, serverLevel);
+		}
+	}
+
+	private static void playPomeSound(Player player, boolean communion) {
+		if (player.level() instanceof ServerLevel serverLevel) {
+			serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+					communion ? SoundInit.ITEM_QLIPHOPH_POME_COMMUNION.get() : SoundInit.ITEM_QLIPHOPH_POME_EAT.get(),
+					SoundSource.PLAYERS, communion ? 1.25F : 0.9F, communion ? 0.82F : 1.0F);
+		}
 	}
 
 	private static void applyTaintedEffects(Player player) {
@@ -207,16 +228,19 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				.ifPresent(d -> d.setPomeEmpowermentExpiry(expiryTick));
 
 		// Husk-flavoured eat message (localized, one line per pome 1-9)
-		String consumeMessageKey = POME_MESSAGE_KEY_BASE + "default";
-		if (itemTag.contains(HUSK_INDEX_KEY)) {
-			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
-			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
-				consumeMessageKey = POME_MESSAGE_KEY_BASE + (huskIdx + 1);
-			}
+		int huskIdx = resolveHuskIndex(player, itemTag);
+		String consumeMessageKey = huskIdx >= 0
+				? POME_MESSAGE_KEY_BASE + (huskIdx + 1)
+				: POME_MESSAGE_KEY_BASE + "default";
+		Component consumeMessage = Component.translatable(consumeMessageKey)
+				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
+		if (huskIdx >= 0) {
+			consumeMessage = consumeMessage.copy()
+					.append(Component.literal(" [" + HUSK_NAMES[huskIdx] + "]")
+							.withStyle(ChatFormatting.DARK_PURPLE));
 		}
 		player.displayClientMessage(
-				Component.translatable(consumeMessageKey)
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+				consumeMessage,
 				true);
 
 		// ── Total pome counter (drives the HUD tracker) ──
@@ -224,10 +248,25 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				.ifPresent(d -> d.incrementTotalPomesConsumed());
 
 		// ── Per-bloom communion tracking (Apotheos gate) ──
-		if (itemTag.contains(BLOOM_ORIGIN_KEY)) {
-			long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);
-			trackCommunionProgress((ServerPlayer) player, bloomOrigin);
+		long bloomOrigin = itemTag.contains(BLOOM_ORIGIN_KEY)
+				? itemTag.getLong(BLOOM_ORIGIN_KEY)
+				: CREATIVE_TEST_BLOOM_ORIGIN;
+		boolean completedCommunion = trackCommunionProgress((ServerPlayer) player, bloomOrigin);
+		playPomeSound(player, completedCommunion);
+		syncPomeProgress((ServerPlayer) player);
+	}
+
+	private static int resolveHuskIndex(Player player, CompoundTag itemTag) {
+		if (itemTag.contains(HUSK_INDEX_KEY)) {
+			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
+			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
+				return huskIdx;
+			}
 		}
+
+		return HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> Math.max(0, Math.min(HUSK_NAMES.length - 1, degree.getTotalPomesConsumed())))
+				.orElse(0);
 	}
 
 	/**
@@ -235,16 +274,25 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	 * When the count reaches nine, fires the Qliphoth Communion whisper and
 	 * sets the permanent communion flag on the InitiatoryDegree capability.
 	 */
-	private static void trackCommunionProgress(ServerPlayer player, long bloomOrigin) {
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			if (degree.isQliphothCommunionDone()) return;
+	private static boolean trackCommunionProgress(ServerPlayer player, long bloomOrigin) {
+		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
+			if (degree.isQliphothCommunionDone()) return false;
 			int count = degree.recordPomeConsumed(bloomOrigin);
 			if (count >= 9) {
 				degree.setQliphothCommunionDone(true);
 				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(
 						FungalWhisperDialogueTrees.qliphothCommunion()));
+				return true;
 			}
-		});
+			return false;
+		}).orElse(false);
+	}
+
+	private static void syncPomeProgress(ServerPlayer player) {
+		int progress = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> degree.isQliphothCommunionDone() ? 9 : degree.getTotalPomesConsumed())
+				.orElse(0);
+		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(progress));
 	}
 
 	/** Returns the English ordinal string for a number 1–9 (e.g. "First", "Second"). */

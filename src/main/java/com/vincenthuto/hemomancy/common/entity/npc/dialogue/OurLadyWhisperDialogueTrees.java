@@ -1,10 +1,19 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinition;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Static factory producing {@link DialogueTree} instances for Our Lady of Still
@@ -23,8 +32,54 @@ public final class OurLadyWhisperDialogueTrees {
 
 	private static final ResourceLocation LADY_ICON = Hemomancy.rloc("textures/gui/mystery_speaker.png");
 	private static final String SPEAKER = "hemomancy.lady.speaker_name";
+	private static final String MAKE_NOTE = "hemomancy.dialogue.memo.make_note";
 
 	private OurLadyWhisperDialogueTrees() {}
+
+	public static MemoDefinition memoForPurityStage(int purityLevel, int variant) {
+		return switch (purityLevel) {
+			case 1 -> MemoDefinitions.PALE_LADY_TAINTED;
+			case 2 -> MemoDefinitions.PALE_LADY_CLEANSING;
+			case 3 -> MemoDefinitions.PALE_LADY_ABSOLVED;
+			default -> MemoDefinitions.PALE_LADY_PURIFIED;
+		};
+	}
+
+	public static MemoDefinition memoForClarityStage(int clarityLevel, int variant) {
+		return switch (clarityLevel) {
+			case 1 -> MemoDefinitions.PALE_LADY_DISCERNING;
+			case 2 -> MemoDefinitions.PALE_LADY_VIGILANT;
+			case 3 -> MemoDefinitions.PALE_LADY_RESOLUTE;
+			default -> MemoDefinitions.PALE_LADY_ENLIGHTENED;
+		};
+	}
+
+	public static boolean shouldOfferMemoWhisper(Player player, MemoDefinition definition) {
+		return definition != null && !LiberKnowledgeHelper.knowsMemo(player, definition.id());
+	}
+
+	private static List<DialogueOption> noteOptions(MemoDefinition definition, DialogueOption... options) {
+		ArrayList<DialogueOption> withMemo = new ArrayList<>(options.length + 1);
+		withMemo.add(memoOption(definition));
+		withMemo.addAll(Arrays.asList(options));
+		return List.copyOf(withMemo);
+	}
+
+	private static DialogueOption memoOption(MemoDefinition definition) {
+		return new DialogueOption(MAKE_NOTE, null, MemoHelper.memoEvent(definition.id()));
+	}
+
+	private static DialogueTree withStartMemo(DialogueTree tree, MemoDefinition definition) {
+		DialogueNode start = tree.getStartNode();
+		if (start == null) {
+			return tree;
+		}
+		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), noteOptions(definition,
+				start.options().toArray(DialogueOption[]::new))));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes, tree.entityId(),
+				tree.theme());
+	}
 
 	// ════════════════════════════════════════════════════════════
 	//  PURITY WHISPERS  (Phase 1 — before clarity is unlocked)
@@ -39,12 +94,13 @@ public final class OurLadyWhisperDialogueTrees {
 	 * @param variant      A variant index (0–2) for message variety.
 	 */
 	public static DialogueTree forPurityStage(int purityLevel, int variant) {
-		return switch (purityLevel) {
+		DialogueTree tree = switch (purityLevel) {
 			case 1 -> taintedWhisper(variant);
 			case 2 -> cleansingWhisper(variant);
 			case 3 -> absolvedWhisper(variant);
 			default -> purifiedWhisper(variant); // level 4+
 		};
+		return withStartMemo(tree, memoForPurityStage(purityLevel, variant));
 	}
 
 	// ── TAINTED (purity 25–49) — faint, barely audible, like distant water ──
@@ -239,12 +295,13 @@ public final class OurLadyWhisperDialogueTrees {
 	 * @param variant      A variant index (0–2) for variety.
 	 */
 	public static DialogueTree forClarityStage(int clarityLevel, int variant) {
-		return switch (clarityLevel) {
+		DialogueTree tree = switch (clarityLevel) {
 			case 1 -> discerningWhisper(variant);
 			case 2 -> vigilantWhisper(variant);
 			case 3 -> resoluteWhisper(variant);
 			default -> enlightenedWhisper(variant); // level 4+
 		};
+		return withStartMemo(tree, memoForClarityStage(clarityLevel, variant));
 	}
 
 	// ── DISCERNING clarity (25–49) — relief, warmth, early revelations ──

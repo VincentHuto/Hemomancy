@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
@@ -8,6 +10,7 @@ import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +22,6 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class BloodyBookItem extends ItemGuideBook {
-
     public BloodyBookItem(Properties prop, ResourceLocation loc) {
         super(prop, loc);
     }
@@ -82,8 +84,12 @@ public class BloodyBookItem extends ItemGuideBook {
         BookPlaceboReloadListener test = BookPlaceboReloadListener.INSTANCE;
         BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("sanctumsanguinium"));
 
+        if (!lvl.isClientSide && p_41433_ instanceof ServerPlayer serverPlayer) {
+            MemoHelper.migrateLegacyLiberStack(serverPlayer, p_41433_.getItemInHand(p_41434_));
+        }
+
         if (lvl.isClientSide) {
-            HLGuiGuideTitlePage.openScreenViaItem(book);
+            HLGuiGuideTitlePage.openScreenViaItem(MemoBookFilter.filterForPlayer(book, p_41433_));
         }
 
         return super.use(lvl, p_41433_, p_41434_);

@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScr
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -68,9 +67,8 @@ public class VisceralMirrorUpdatePacket implements CustomPacketPayload {
 
 	public static void handle(final VisceralMirrorUpdatePacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.screen instanceof VisceralMirrorScreen screen) {
-				screen.handleServerUpdate(msg);
+			if (ctx.player() != null) {
+				VisceralMirrorScreen.applyServerUpdate(msg);
 			}
 		});
 	}

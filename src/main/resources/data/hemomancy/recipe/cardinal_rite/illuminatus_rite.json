@@ -5,6 +5,7 @@
   "riteName": "Rite of the Crimson Lodge",
   "riteDescription": "The fifth rite of the Hematic Order, illuminating the inner secrets of the Crimson Lodge.",
   "breakBlocksOnCreation": false,
+  "rankup": true,
   "pattern": [
     ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"],
     ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],

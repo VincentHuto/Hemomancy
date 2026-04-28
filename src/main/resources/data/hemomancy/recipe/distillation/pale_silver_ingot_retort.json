@@ -1,0 +1,13 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:consecrated_copper_ingot"
+  },
+  "result": "hemomancy:pale_silver_ingot",
+  "count": 2,
+  "experience": 1.5,
+  "cookingtime": 400,
+  "pallid": true,
+  "white_humor_cost": 200,
+  "id": "hemomancy:distillation/pale_silver_ingot_retort"
+}

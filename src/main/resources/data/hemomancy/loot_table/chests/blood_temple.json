@@ -4,22 +4,22 @@
     {
       "rolls": {
         "type": "minecraft:uniform",
-        "min": 4,
-        "max": 8
+        "min": 3,
+        "max": 6
       },
       "bonus_rolls": 0,
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 40,
-          "name": "minecraft:obsidian",
+          "weight": 35,
+          "name": "minecraft:bone",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1,
-                "max": 2
+                "min": 2,
+                "max": 6
               },
               "add": false
             }
@@ -27,8 +27,56 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 40,
+          "weight": 30,
+          "name": "minecraft:string",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 5
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 30,
           "name": "minecraft:flint",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 3
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "name": "minecraft:iron_nugget",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 3,
+                "max": 9
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 20,
+          "name": "minecraft:coal",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -43,132 +91,47 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 40,
-          "name": "minecraft:iron_nugget",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 9,
-                "max": 18
-              },
-              "add": false
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 40,
-          "name": "minecraft:flint_and_steel"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 40,
-          "name": "minecraft:fire_charge"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:golden_apple"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:gold_nugget",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 4,
-                "max": 24
-              },
-              "add": false
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:golden_sword",
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:golden_boots",
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 15,
-          "name": "minecraft:golden_chestplate",
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 5,
-          "name": "minecraft:glistering_melon_slice",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 4,
-                "max": 12
-              },
-              "add": false
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 5,
-          "name": "minecraft:golden_horse_armor"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 5,
-          "name": "minecraft:gold_ingot",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 2,
-                "max": 8
-              },
-              "add": false
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:enchanted_golden_apple"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:gold_block",
+          "weight": 18,
+          "name": "minecraft:candle",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
                 "min": 1,
-                "max": 2
+                "max": 3
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 15,
+          "name": "minecraft:paper",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 4
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "minecraft:gold_nugget",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 7
               },
               "add": false
             }
@@ -186,8 +149,8 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 30,
-          "name": "hemomancy:sanguine_formation",
+          "weight": 35,
+          "name": "hemomancy:blood_rock",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -203,14 +166,14 @@
         {
           "type": "minecraft:item",
           "weight": 30,
-          "name": "hemomancy:befouling_ash",
+          "name": "hemomancy:hematic_iron_scrap",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4,
-                "max": 12
+                "min": 1,
+                "max": 3
               },
               "add": false
             }
@@ -218,7 +181,7 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 25,
+          "weight": 24,
           "name": "hemomancy:gourd_seeds",
           "functions": [
             {
@@ -226,7 +189,7 @@
               "count": {
                 "type": "minecraft:uniform",
                 "min": 1,
-                "max": 3
+                "max": 2
               },
               "add": false
             }
@@ -234,8 +197,13 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 25,
-          "name": "hemomancy:bloody_flask",
+          "weight": 18,
+          "name": "hemomancy:bloody_flask"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 16,
+          "name": "hemomancy:sanguine_formation",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -250,15 +218,15 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 20,
-          "name": "hemomancy:hematic_iron_scrap",
+          "weight": 12,
+          "name": "hemomancy:befouling_ash",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
                 "min": 2,
-                "max": 6
+                "max": 5
               },
               "add": false
             }
@@ -266,15 +234,15 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 20,
+          "weight": 10,
           "name": "hemomancy:smouldering_ash",
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4,
-                "max": 8
+                "min": 2,
+                "max": 4
               },
               "add": false
             }
@@ -282,33 +250,7 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 15,
-          "name": "hemomancy:blood_stained_stone",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 2
-              },
-              "add": false
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "name": "hemomancy:recycled_enzyme"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "name": "hemomancy:blood_tendency_gauge"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
+          "weight": 8,
           "name": "hemomancy:vivianite_cluster",
           "functions": [
             {
@@ -316,7 +258,7 @@
               "count": {
                 "type": "minecraft:uniform",
                 "min": 1,
-                "max": 3
+                "max": 2
               },
               "add": false
             }
@@ -330,42 +272,27 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 8,
+          "weight": 6,
           "name": "hemomancy:memory_blood_shot"
         },
         {
           "type": "minecraft:item",
-          "weight": 8,
+          "weight": 6,
           "name": "hemomancy:memory_blood_rush"
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
+          "weight": 4,
           "name": "hemomancy:memory_blood_needle"
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
+          "weight": 4,
           "name": "hemomancy:memory_blood_absorption"
         },
         {
-          "type": "minecraft:item",
-          "weight": 3,
-          "name": "hemomancy:memory_sanguine_ward"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 3,
-          "name": "hemomancy:memory_deadly_gaze"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 2,
-          "name": "hemomancy:marrow_crown"
-        },
-        {
           "type": "minecraft:empty",
-          "weight": 16
+          "weight": 28
         }
       ]
     }

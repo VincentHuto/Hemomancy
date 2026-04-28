@@ -40,3 +40,6 @@ repo/
 !**/src/**/repo/
 /libs/
 /net/
+/docs/GAMEPLAY_DISCOVERY_LOOPS.md
+/docs/GAMEPLAY_DISCOVERY_ROADMAP_MERGED.md
+/docs/MEMOS_FIELD_NOTES_IMPLEMENTATION_GUIDE.md

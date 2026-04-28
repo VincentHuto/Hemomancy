@@ -27,10 +27,20 @@ public class SanguineMonolithShatterRenderer {
 	private static final double DRAG = 0.93;
 	private static final double GRAVITY = 0.015;
 	private static final double ZERO_LENGTH_THRESHOLD = 1.0e-5;
+	private static final int PULSE_LIFETIME = 30;
+	private static final float PULSE_CORE_MAX_RADIUS = 1.15f;
+	private static final float PULSE_SHELL_MAX_RADIUS = 3.8f;
+	private static final int POME_PULSE_LIFETIME = 24;
+	private static final float POME_PULSE_CORE_MAX_RADIUS = 0.85f;
+	private static final float POME_PULSE_SHELL_MAX_RADIUS = 2.65f;
+	private static final int PULSE_RINGS = 10;
+	private static final int PULSE_SEGMENTS = 18;
 
 	private static final List<Shard> ACTIVE_SHARDS = new ArrayList<>();
+	private static final List<Pulse> ACTIVE_PULSES = new ArrayList<>();
 
 	public static void spawnBurst(Vec3 center, RandomSource random) {
+		ACTIVE_PULSES.add(new Pulse(center, PULSE_CORE_MAX_RADIUS, PULSE_SHELL_MAX_RADIUS, PULSE_LIFETIME));
 		for (int i = 0; i < BURST_COUNT; i++) {
 			Vec3 dir = randomDirection(random);
 			double speed = BASE_SPEED + random.nextDouble() * SPEED_VARIANCE;
@@ -55,10 +65,23 @@ public class SanguineMonolithShatterRenderer {
 				it.remove();
 			}
 		}
+
+		Iterator<Pulse> pulseIt = ACTIVE_PULSES.iterator();
+		while (pulseIt.hasNext()) {
+			Pulse pulse = pulseIt.next();
+			pulse.tick();
+			if (pulse.isDead()) {
+				pulseIt.remove();
+			}
+		}
+	}
+
+	public static void spawnPomePulse(Vec3 center) {
+		ACTIVE_PULSES.add(new Pulse(center, POME_PULSE_CORE_MAX_RADIUS, POME_PULSE_SHELL_MAX_RADIUS, POME_PULSE_LIFETIME));
 	}
 
 	public static void render(PoseStack poseStack, float partialTick) {
-		if (ACTIVE_SHARDS.isEmpty()) return;
+		if (ACTIVE_SHARDS.isEmpty() && ACTIVE_PULSES.isEmpty()) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 
@@ -66,6 +89,23 @@ public class SanguineMonolithShatterRenderer {
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.MONOLITH_SHATTER_TRIANGLES);
 		Matrix4f mat = poseStack.last().pose();
+
+		for (Pulse pulse : ACTIVE_PULSES) {
+			float age = pulse.age + partialTick;
+			float lifeCoeff = Math.min(1f, age / pulse.lifetime);
+			float shellEase = easeOutCubic(lifeCoeff);
+			float coreEase = easeOutCubic(Math.min(1f, lifeCoeff * 1.8f));
+			float shellAlpha = 0.62f * (1f - lifeCoeff) * (1f - lifeCoeff);
+			float coreAlpha = 0.82f * Math.max(0f, 1f - lifeCoeff * 1.35f);
+			Vec3 center = pulse.center.subtract(cam);
+
+			if (coreAlpha > 0.01f) {
+				drawSphere(vc, mat, center, 0.12f + pulse.coreMaxRadius * coreEase, coreAlpha);
+			}
+			if (shellAlpha > 0.01f) {
+				drawSphere(vc, mat, center, 0.25f + pulse.shellMaxRadius * shellEase, shellAlpha);
+			}
+		}
 
 		for (Shard shard : ACTIVE_SHARDS) {
 			float age = shard.age + partialTick;
@@ -99,6 +139,46 @@ public class SanguineMonolithShatterRenderer {
 			}
 		}
 		return new Vec3(0, 1, 0);
+	}
+
+	private static void drawSphere(VertexConsumer vc, Matrix4f mat, Vec3 center, float radius, float alpha) {
+		for (int ring = 0; ring < PULSE_RINGS; ring++) {
+			double phi1 = -Math.PI / 2.0 + Math.PI * ring / PULSE_RINGS;
+			double phi2 = -Math.PI / 2.0 + Math.PI * (ring + 1) / PULSE_RINGS;
+			for (int segment = 0; segment < PULSE_SEGMENTS; segment++) {
+				double theta1 = Math.PI * 2.0 * segment / PULSE_SEGMENTS;
+				double theta2 = Math.PI * 2.0 * (segment + 1) / PULSE_SEGMENTS;
+
+				Vec3 p1 = spherePoint(center, radius, phi1, theta1);
+				Vec3 p2 = spherePoint(center, radius, phi2, theta1);
+				Vec3 p3 = spherePoint(center, radius, phi2, theta2);
+				Vec3 p4 = spherePoint(center, radius, phi1, theta2);
+
+				vertex(vc, mat, p1, alpha);
+				vertex(vc, mat, p2, alpha);
+				vertex(vc, mat, p3, alpha);
+				vertex(vc, mat, p1, alpha);
+				vertex(vc, mat, p3, alpha);
+				vertex(vc, mat, p4, alpha);
+			}
+		}
+	}
+
+	private static Vec3 spherePoint(Vec3 center, float radius, double phi, double theta) {
+		double cosPhi = Math.cos(phi);
+		return center.add(
+				radius * cosPhi * Math.cos(theta),
+				radius * Math.sin(phi),
+				radius * cosPhi * Math.sin(theta));
+	}
+
+	private static void vertex(VertexConsumer vc, Matrix4f mat, Vec3 pos, float alpha) {
+		vc.addVertex(mat, (float) pos.x, (float) pos.y, (float) pos.z).setColor(0f, 0f, 0f, alpha);
+	}
+
+	private static float easeOutCubic(float value) {
+		float inverse = 1f - value;
+		return 1f - inverse * inverse * inverse;
 	}
 
 	private static Vec3 rotate(Vec3 v, Vec3 axis, float angle) {
@@ -138,6 +218,30 @@ public class SanguineMonolithShatterRenderer {
 			prevPos = pos;
 			pos = pos.add(vel);
 			vel = vel.scale(DRAG).add(0, -GRAVITY, 0);
+			age++;
+		}
+
+		private boolean isDead() {
+			return age >= lifetime;
+		}
+	}
+
+	private static class Pulse {
+		private final Vec3 center;
+		private final float coreMaxRadius;
+		private final float shellMaxRadius;
+		private final int lifetime;
+		private int age;
+
+		private Pulse(Vec3 center, float coreMaxRadius, float shellMaxRadius, int lifetime) {
+			this.center = center;
+			this.coreMaxRadius = coreMaxRadius;
+			this.shellMaxRadius = shellMaxRadius;
+			this.lifetime = lifetime;
+			this.age = 0;
+		}
+
+		private void tick() {
 			age++;
 		}
 

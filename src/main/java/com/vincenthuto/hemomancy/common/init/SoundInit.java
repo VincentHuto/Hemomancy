@@ -14,6 +14,14 @@ public class SoundInit {
 		return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Hemomancy.rloc(name)));
 	}
 
+
+	//Items
+	//Qliphoph
+	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_QLIPHOPH_POME_EAT = registerSoundEvent(
+			"item.qliphoth_pome.eat");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_QLIPHOPH_POME_COMMUNION= registerSoundEvent(
+			"item.qliphoth_pome.communion");
+
 	// ===== Abhorent Thought (psychic nightmare) =====
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORENT_THOUGHT_AMBIENT = registerSoundEvent(
 			"entity.abhorent_thought.ambient");

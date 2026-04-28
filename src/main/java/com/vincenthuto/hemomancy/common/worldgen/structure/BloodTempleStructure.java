@@ -50,9 +50,7 @@ public class BloodTempleStructure extends Structure {
 				.apply(instance, BloodTempleStructure::new));
 
 	private static boolean extraSpawningChecks(Structure.GenerationContext context) {
-		ChunkPos chunkpos = context.chunkPos();
-		return context.chunkGenerator().getFirstOccupiedHeight(chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, context.heightAccessor(), context.randomState()) < 150;
+		return StructurePlacementChecks.isSuitableLandChunk(context);
 	}
 	private final Holder<StructureTemplatePool> startPool;
 	private final Optional<ResourceLocation> startJigsawName;

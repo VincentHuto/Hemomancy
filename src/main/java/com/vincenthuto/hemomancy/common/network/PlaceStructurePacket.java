@@ -87,11 +87,14 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 
 				// Find bounding box
 				int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+				int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
 				int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
 				for (BlockPosBlockPair pair : blockPairs) {
 					BlockPos pos = pair.getPos();
 					minX = Math.min(minX, pos.getX());
 					maxX = Math.max(maxX, pos.getX());
+					minY = Math.min(minY, pos.getY());
+					maxY = Math.max(maxY, pos.getY());
 					minZ = Math.min(minZ, pos.getZ());
 					maxZ = Math.max(maxZ, pos.getZ());
 				}
@@ -107,19 +110,22 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				// depend on them (e.g. befouling ash trails need a solid block below).
 				blockPairs.sort(java.util.Comparator.comparingInt(p -> p.getPos().getY()));
 
-				// Pre-pass: clear the entire structure volume to air so that positions
-				// marked as spaces in the pattern are guaranteed to be air (required
-				// by the block pattern matcher).
-				for (BlockPosBlockPair pair : blockPairs) {
-					BlockPos relativePos = pair.getPos();
+				// Pre-pass: clear the entire structure volume to air so positions marked
+				// as spaces in the pattern are guaranteed to match. Some pattern helpers
+				// only expose non-air blocks, so iterating blockPairs is not enough for
+				// large hollow structures like the Crimson Lodge.
+				for (int x = minX; x <= maxX; x++) {
+					for (int y = minY; y <= maxY; y++) {
+						for (int z = minZ; z <= maxZ; z++) {
+							BlockPos relativePos = new BlockPos(x, y, z);
 					BlockPos worldPos = playerPos.offset(
 							relativePos.getX() - centerX,
 							relativePos.getY(),
 							relativePos.getZ() - centerZ
 					);
-					if (pair.getBlock() == null || pair.getBlock() == net.minecraft.world.level.block.Blocks.AIR) {
-						level.setBlock(worldPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
-								Block.UPDATE_CLIENTS);
+							level.setBlock(worldPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+									Block.UPDATE_CLIENTS);
+						}
 					}
 				}
 

@@ -75,6 +75,14 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	public void syncTotalPomesConsumed(int count) { totalPomesConsumed = Math.min(9, count); }
 
 	@Override
+	public void resetPomeCommunion() {
+		pomeCommunionProgress.clear();
+		qliphothCommunionDone = false;
+		pomeEmpowermentExpiry = 0L;
+		totalPomesConsumed = 0;
+	}
+
+	@Override
 	public long getPomeEmpowermentExpiry() { return pomeEmpowermentExpiry; }
 
 	@Override

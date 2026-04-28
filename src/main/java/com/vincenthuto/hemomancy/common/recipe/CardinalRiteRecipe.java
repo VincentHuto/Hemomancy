@@ -77,6 +77,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected int requiredDegree;
 	protected boolean breakBlocksOnCreation;
 	protected boolean unstained;
+	protected boolean rankup;
 
 	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
@@ -98,6 +99,13 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree, boolean breakBlocksOnCreation, boolean unstained) {
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, breakBlocksOnCreation,
+				unstained, false);
+	}
+
+	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
+			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
+			int requiredDegree, boolean breakBlocksOnCreation, boolean unstained, boolean rankup) {
 		super(CraftingBookCategory.MISC);
 		this.id = pId;
 		this.bloodCost = bloodCost;
@@ -109,6 +117,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		this.requiredDegree = requiredDegree;
 		this.breakBlocksOnCreation = breakBlocksOnCreation;
 		this.unstained = unstained;
+		this.rankup = rankup;
 	}
 
 	public ResourceLocation getId() { return id; }
@@ -237,6 +246,17 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setUnstained(boolean unstained) {
 		this.unstained = unstained;
+	}
+
+	/**
+	 * Returns whether this rite advances a player through the Harbinger degrees.
+	 */
+	public boolean isRankup() {
+		return rankup;
+	}
+
+	public void setRankup(boolean rankup) {
+		this.rankup = rankup;
 	}
 
 	@Override

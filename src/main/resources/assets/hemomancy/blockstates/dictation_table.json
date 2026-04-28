@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/dictation_table",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "hemomancy:block/dictation_table",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "hemomancy:block/dictation_table"
+    },
+    "facing=west": {
+      "model": "hemomancy:block/dictation_table",
+      "y": 90
+    }
+  }
+}

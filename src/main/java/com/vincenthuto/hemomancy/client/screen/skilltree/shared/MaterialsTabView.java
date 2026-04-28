@@ -57,6 +57,7 @@ public final class MaterialsTabView {
 
 	// Node rendering colours (common across both screens)
 	private static final int COL_NODE_BG = 0xCC0C0808;
+	private static final int INFO_PANEL_SHADOW = 0xAA000000;
 
 	private MaterialsTabView() {}
 
@@ -297,8 +298,15 @@ public final class MaterialsTabView {
 
 		int panelH = 6 + nameRowH + 12 + 1 + 5 + descLines.size() * 10 + recipeSection + 8;
 
-		// Background
-		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, bgColor);
+		int solidBg = 0xFF000000 | (bgColor & 0x00FFFFFF);
+
+		var pose = gfx.pose();
+		pose.pushPose();
+		pose.translate(0.0F, 0.0F, 400.0F);
+		// Background. This must be opaque and above the pan/zoom material canvas
+		// because item renders and labels can carry their own GUI depth.
+		gfx.fill(panelX - 2, panelY - 2, panelX + panelW + 2, panelY + panelH + 2, INFO_PANEL_SHADOW);
+		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, solidBg);
 
 		// Border
 		ScreenDrawUtils.drawSimpleBorder(gfx, panelX, panelY, panelW, panelH, accentColor);
@@ -344,6 +352,7 @@ public final class MaterialsTabView {
 			ty += 4;
 			MiniRecipeRenderer.draw(gfx, font, foundRecipe, tx, ty, maxW, accentColor, recipeTheme);
 		}
+		pose.popPose();
 	}
 
 	/**

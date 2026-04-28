@@ -3,8 +3,13 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinition;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the
@@ -32,6 +37,7 @@ public final class FungalWhisperDialogueTrees {
 
 	private static final ResourceLocation MYSTERY_ICON = Hemomancy.rloc("textures/gui/mystery_speaker.png");
 	private static final String SPEAKER = "hemomancy.whisper.speaker_name";
+	private static final String MAKE_NOTE = "hemomancy.dialogue.memo.make_note";
 
 	private FungalWhisperDialogueTrees() {}
 
@@ -54,6 +60,21 @@ public final class FungalWhisperDialogueTrees {
 
 	// ── Degree 4 — Adept whispers: subliminal intrusions, barely perceptible ──
 
+	public static MemoDefinition memoForDegree(int degree, int variant) {
+		return switch (degree) {
+			case 4 -> MemoDefinitions.FUNGAL_WHISPER_ADEPT;
+			case 5 -> MemoDefinitions.FUNGAL_WHISPER_ILLUMINATUS;
+			case 6 -> MemoDefinitions.FUNGAL_WHISPER_SANCTIFIED;
+			default -> variant == 2
+					? MemoDefinitions.FUNGAL_WHISPER_TRUTH
+					: MemoDefinitions.FUNGAL_WHISPER_ARCHON;
+		};
+	}
+
+	public static boolean shouldOfferMemoWhisper(Player player, MemoDefinition definition) {
+		return definition != null && !LiberKnowledgeHelper.knowsMemo(player, definition.id());
+	}
+
 	private static DialogueTree adeptWhisper(int variant) {
 		return switch (variant) {
 			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
@@ -61,6 +82,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.adept.v0.line1"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ADEPT),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -75,6 +97,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("follow", List.of(
 							"hemomancy.whisper.adept.v1.follow"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ADEPT),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -83,6 +106,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.adept.v2.line1"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ADEPT),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -105,6 +129,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("follow", List.of(
 							"hemomancy.whisper.illuminatus.v0.follow"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ILLUMINATUS),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -114,6 +139,7 @@ public final class FungalWhisperDialogueTrees {
 							"hemomancy.whisper.illuminatus.v1.line1",
 							"hemomancy.whisper.illuminatus.v1.line2"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ILLUMINATUS),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -128,6 +154,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("reveal", List.of(
 							"hemomancy.whisper.illuminatus.v2.reveal"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ILLUMINATUS),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -150,6 +177,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("follow", List.of(
 							"hemomancy.whisper.sanctified.v0.follow"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_SANCTIFIED),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -165,6 +193,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("follow", List.of(
 							"hemomancy.whisper.sanctified.v1.follow"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_SANCTIFIED),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -174,6 +203,7 @@ public final class FungalWhisperDialogueTrees {
 							"hemomancy.whisper.sanctified.v2.line1",
 							"hemomancy.whisper.sanctified.v2.line2"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_SANCTIFIED),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -196,6 +226,7 @@ public final class FungalWhisperDialogueTrees {
 					.addNode(new DialogueNode("follow", List.of(
 							"hemomancy.whisper.archon.v0.follow"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ARCHON),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -206,6 +237,7 @@ public final class FungalWhisperDialogueTrees {
 							"hemomancy.whisper.archon.v1.line2",
 							"hemomancy.whisper.archon.v1.line3"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_ARCHON),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 					)))
 					.build();
@@ -222,6 +254,7 @@ public final class FungalWhisperDialogueTrees {
 							"hemomancy.whisper.archon.v2.truth1",
 							"hemomancy.whisper.archon.v2.truth2"
 					), List.of(
+							memoOption(MemoDefinitions.FUNGAL_WHISPER_TRUTH),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, "whisper_truth_acknowledged")
 					)))
 					.build();
@@ -229,6 +262,38 @@ public final class FungalWhisperDialogueTrees {
 	}
 
 	// ── One-shot event whispers ──
+
+	public static DialogueTree spineGrowth(int degree) {
+		String langKey = switch (degree) {
+			case 5 -> "hemomancy.whisper.spine_growth.degree5";
+			case 6 -> "hemomancy.whisper.spine_growth.degree6";
+			case 7 -> "hemomancy.whisper.spine_growth.degree7";
+			case 8 -> "hemomancy.whisper.spine_growth.degree8";
+			default -> "hemomancy.whisper.spine_growth.degree5";
+		};
+
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(langKey), List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+				)))
+				.build();
+	}
+
+	public static DialogueTree fungalSpineEmerged() {
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.whisper.spine_emerged.line1",
+						"hemomancy.whisper.spine_emerged.line2",
+						"hemomancy.whisper.spine_emerged.line3"
+				), List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
+						new DialogueOption("hemomancy.whisper.option.i_am_listening", null, null)
+				)))
+				.build();
+	}
 
 	/**
 	 * Fires when a degree-7 Archon interacts with the morphic pool (fungal podium)
@@ -247,6 +312,7 @@ public final class FungalWhisperDialogueTrees {
 						"hemomancy.whisper.core_witness.line2",
 						"hemomancy.whisper.core_witness.line3"
 				), List.of(
+						memoOption(MemoDefinitions.FUNGAL_WHISPER_TRUTH),
 						new DialogueOption("hemomancy.whisper.core_witness.option.silence",
 								null, "archon_choice_silence"),
 						new DialogueOption("hemomancy.whisper.core_witness.option.eighth_degree",
@@ -262,6 +328,10 @@ public final class FungalWhisperDialogueTrees {
 	 * @param huskIndex  The sequential husk index (0–8).
 	 */
 	public static DialogueTree pomeDropped(int huskIndex) {
+		return pomeDropped(huskIndex, true);
+	}
+
+	public static DialogueTree pomeDropped(int huskIndex, boolean offerMemo) {
 		/** Lang key suffixes for each husk pome-drop whisper, in consumption order (0–8). */
 		final String[] POME_DROP_LANG_KEYS = {
 				"hemomancy.whisper.pome_drop.nahemoth",
@@ -277,11 +347,14 @@ public final class FungalWhisperDialogueTrees {
 		String langKey = (huskIndex >= 0 && huskIndex < POME_DROP_LANG_KEYS.length)
 				? POME_DROP_LANG_KEYS[huskIndex]
 				: "hemomancy.whisper.pome_drop.nahemoth";
+		List<DialogueOption> options = offerMemo
+				? List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null))
+				: List.of(new DialogueOption("hemomancy.whisper.option.dismiss", null, null));
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
 				.theme(DialogueTheme.FUNGAL)
-				.addNode(new DialogueNode("root", List.of(langKey), List.of(
-						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
-				)))
+				.addNode(new DialogueNode("root", List.of(langKey), options))
 				.build();
 	}
 
@@ -296,6 +369,7 @@ public final class FungalWhisperDialogueTrees {
 						"hemomancy.whisper.post_shatter.line1",
 						"hemomancy.whisper.post_shatter.line2"
 				), List.of(
+						memoOption(MemoDefinitions.FUNGAL_WHISPER_TRUTH),
 						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 				)))
 				.build();
@@ -312,6 +386,7 @@ public final class FungalWhisperDialogueTrees {
 						"hemomancy.whisper.post_bloom.line1",
 						"hemomancy.whisper.post_bloom.line2"
 				), List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
 						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
 				)))
 				.build();
@@ -331,10 +406,15 @@ public final class FungalWhisperDialogueTrees {
 						"hemomancy.whisper.communion.line2",
 						"hemomancy.whisper.communion.line3"
 				), List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
 						new DialogueOption("hemomancy.whisper.option.i_am_listening", null,
 								"qliphoth_communion_done")
 				)))
 				.build();
+	}
+
+	private static DialogueOption memoOption(MemoDefinition definition) {
+		return new DialogueOption(MAKE_NOTE, null, MemoHelper.memoEvent(definition.id()));
 	}
 }
 

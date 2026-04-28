@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketSyncPomeProgress implements CustomPacketPayload {
@@ -31,8 +31,9 @@ public class PacketSyncPomeProgress implements CustomPacketPayload {
 
 	public static void handle(PacketSyncPomeProgress msg, IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (Minecraft.getInstance().player != null) {
-				HemoCapabilityAccess.getInitiatoryDegree(Minecraft.getInstance().player)
+			Player player = ctx.player();
+			if (player != null) {
+				HemoCapabilityAccess.getInitiatoryDegree(player)
 						.ifPresent(degree -> degree.syncTotalPomesConsumed(msg.progress));
 			}
 		});

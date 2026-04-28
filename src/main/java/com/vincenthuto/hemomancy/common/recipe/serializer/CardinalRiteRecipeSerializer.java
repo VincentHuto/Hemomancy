@@ -129,8 +129,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
 		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
+		boolean rankup = GsonHelper.getAsBoolean(pJson, "rankup", false);
 		return new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
-				riteDescription, requiredDegree, breakBlocksOnCreation, unstained);
+				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----
@@ -139,7 +140,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
 			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
-					"result", "requiredDegree", "breakBlocksOnCreation", "unstained").map(ops::createString);
+					"result", "requiredDegree", "breakBlocksOnCreation", "unstained", "rankup").map(ops::createString);
 		}
 
 		@Override
@@ -168,6 +169,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("requiredDegree", ops.createInt(recipe.getRequiredDegree()));
 			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
+			prefix.add("rankup", ops.createBoolean(recipe.isRankup()));
 			return prefix;
 		}
 	};
@@ -211,8 +213,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		int requiredDegree = pBuffer.readInt();
 		boolean breakBlocksOnCreation = pBuffer.readBoolean();
 		boolean unstained = pBuffer.readBoolean();
+		boolean rankup = pBuffer.readBoolean();
 		return new CardinalRiteRecipe(id, cost, riteType, mbPattern, result, riteName,
-				riteDescription, requiredDegree, breakBlocksOnCreation, unstained);
+				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 	}
 
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, CardinalRiteRecipe pRecipe) {
@@ -240,5 +243,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 		pBuffer.writeBoolean(pRecipe.isUnstained());
+		pBuffer.writeBoolean(pRecipe.isRankup());
 	}
 }

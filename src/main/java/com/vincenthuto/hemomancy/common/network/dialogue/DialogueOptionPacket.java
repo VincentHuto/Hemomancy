@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -43,6 +45,13 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			if (player instanceof ServerPlayer sender && msg.eventId != null && !msg.eventId.isEmpty()) {
+				if (MemoHelper.isMemoEvent(msg.eventId)) {
+					MemoHelper.handleMemoEvent(sender, msg.eventId);
+					return;
+				}
+				if (LiberKnowledgeHelper.handleDialogueEvent(sender, msg.eventId)) {
+					return;
+				}
 				if (msg.entityId == 0) {
 					// Disembodied voice (e.g. fungal whispers) — no entity to validate
 					NeoForge.EVENT_BUS.post(

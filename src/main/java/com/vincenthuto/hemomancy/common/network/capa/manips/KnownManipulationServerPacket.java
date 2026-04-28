@@ -15,9 +15,9 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public class KnownManipulationServerPacket implements CustomPacketPayload {
 
@@ -115,8 +115,11 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	}
 	public static void handle(final KnownManipulationServerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			
-			IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(Minecraft.getInstance().player);
+			Player player = ctx.player();
+			if (player == null) {
+				return;
+			}
+			IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
 			known.setKnownManips(msg.known);
 			known.setSelectedManip(msg.selected);
 			known.setVeinList(msg.veinList);

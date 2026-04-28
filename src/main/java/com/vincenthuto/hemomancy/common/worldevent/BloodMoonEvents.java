@@ -77,6 +77,9 @@ public class BloodMoonEvents {
 	/** How often (ticks) ambient effects are reapplied. */
 	private static final int EFFECT_INTERVAL_TICKS = 40;
 
+	/** How often (ticks) clients are reminded that the Blood Moon is active. */
+	private static final int CLIENT_SYNC_INTERVAL_TICKS = 200;
+
 	// ---------------------------------------------------------------------------
 	// Public query API (used by BloodManipulation)
 	// ---------------------------------------------------------------------------
@@ -101,9 +104,19 @@ public class BloodMoonEvents {
 	@SubscribeEvent
 	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		ServerLevel overworld = player.server.overworld();
-		boolean active = BloodMoonSavedData.get(overworld).isActive();
-		PacketHandler.sendToPlayer(player, new PacketSyncBloodMoon(active));
+		syncPlayerBloodMoon(player);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		syncPlayerBloodMoon(player);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		syncPlayerBloodMoon(player);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -142,6 +155,10 @@ public class BloodMoonEvents {
 		}
 
 		if (!data.isActive()) return;
+
+		if (gameTime % CLIENT_SYNC_INTERVAL_TICKS == 0) {
+			syncToAllPlayers(sLevel, true);
+		}
 
 		// Apply ambient player effects every EFFECT_INTERVAL_TICKS
 		// Harbingers (degree >= 1) are empowered; uninitiated players are weakened.
@@ -260,5 +277,11 @@ public class BloodMoonEvents {
 	private static void syncToAllPlayers(ServerLevel sLevel, boolean active) {
 		PacketSyncBloodMoon packet = new PacketSyncBloodMoon(active);
 		PacketDistributor.sendToAllPlayers(packet);
+	}
+
+	private static void syncPlayerBloodMoon(ServerPlayer player) {
+		ServerLevel overworld = player.server.overworld();
+		boolean active = BloodMoonSavedData.get(overworld).isActive();
+		PacketHandler.sendToPlayer(player, new PacketSyncBloodMoon(active));
 	}
 }

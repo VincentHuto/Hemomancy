@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactor
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
@@ -25,6 +26,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
@@ -49,6 +51,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -64,6 +67,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -491,21 +495,30 @@ public class CardinalRiteEvents {
 	private static final int LETHEAN_FONT_EFFECT_TICKS = 72000;
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
+	private static final String APOTHEOS_RITE_PATH = "cardinal_rite/apotheos_rite";
 
 	static {
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_initiation", 1); // Neophyte of the Crimson Veil
 		DEGREE_RITE_PATHS.put("cardinal_rite/votary_rite", 2);          // Votary of the Hematic Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Scarlet Sanctum
-		DEGREE_RITE_PATHS.put("cardinal_rite/adept_rite", 4);           // Adept of the Sanguine Brotherhood
+		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_brotherhood", 4); // Adept of the Sanguine Brotherhood
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/archon_rite", 7);          // Archon of the Hematic Order
-		DEGREE_RITE_PATHS.put("cardinal_rite/apotheos_rite", 8);        // Apotheos of the Hematic Order
+		DEGREE_RITE_PATHS.put(APOTHEOS_RITE_PATH, 8);                   // Apotheos of the Hematic Order
 	}
 
 	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return;
+
+		if (isApotheosRite(recipe.getId()) && !hasQliphothCommunion(caster)) {
+			caster.displayClientMessage(
+					Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
+							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
 
 		// Drain blood cost
 		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
@@ -806,6 +819,7 @@ public class CardinalRiteEvents {
 
 		// Award rite completion milestone (first rite + tiered)
 		SkillPointGainEvents.onRiteCompleted(caster);
+		LiberKnowledgeHelper.unlockForRite(caster, ritePath);
 
 		// Check if this rite grants an initiatory degree
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
@@ -821,6 +835,7 @@ public class CardinalRiteEvents {
 
 					// Grant Harbinger degree advancement(s) for the new rank
 					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
+					LiberKnowledgeHelper.unlockForDegree(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
@@ -848,6 +863,7 @@ public class CardinalRiteEvents {
 												.withStyle(ChatFormatting.DARK_RED)),
 								false);
 					}
+					triggerSpineProgressionWhisper(sLevel, caster, targetDegree);
 				}
 			});
 		}
@@ -1431,7 +1447,9 @@ public class CardinalRiteEvents {
 				false);
 
 		// Fire the post-bloom Fungal Whisper so the Entity acknowledges the fruiting
-		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(FungalWhisperDialogueTrees.postBloom()));
+		if (FungalWhisperDialogueTrees.shouldOfferMemoWhisper(caster, MemoDefinitions.QLIPHOTH_COMMUNION)) {
+			PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(FungalWhisperDialogueTrees.postBloom()));
+		}
 	}
 
 	/**
@@ -1717,6 +1735,47 @@ public class CardinalRiteEvents {
 					caster.getX(), caster.getY() + 1.0, caster.getZ(),
 					50, 1.0, 1.5, 1.0, 0.02);
 		});
+	}
+
+	private static boolean isApotheosRite(ResourceLocation recipeId) {
+		return recipeId != null && APOTHEOS_RITE_PATH.equals(recipeId.getPath());
+	}
+
+	private static void triggerSpineProgressionWhisper(ServerLevel level, ServerPlayer player, int targetDegree) {
+		if (targetDegree < 5 || targetDegree > 8) {
+			return;
+		}
+
+		if (targetDegree == 8) {
+			popFungalSpineFromBack(level, player);
+			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.fungalSpineEmerged()));
+			return;
+		}
+
+		PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.spineGrowth(targetDegree)));
+	}
+
+	private static void popFungalSpineFromBack(ServerLevel level, ServerPlayer player) {
+		ItemStack spine = new ItemStack(ItemInit.fungal_spine.get());
+		Vec3 look = player.getLookAngle();
+		double x = player.getX() - look.x * 0.55;
+		double y = player.getY() + 1.15;
+		double z = player.getZ() - look.z * 0.55;
+
+		level.playSound(null, player.blockPosition(), SoundEvents.SLIME_BLOCK_BREAK, SoundSource.PLAYERS, 1.8f, 0.55f);
+		level.playSound(null, player.blockPosition(), SoundEvents.HONEY_BLOCK_BREAK, SoundSource.PLAYERS, 1.5f, 0.65f);
+		level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 0.7f, 0.8f);
+
+		ItemEntity drop = new ItemEntity(level, x, y, z, spine);
+		drop.setDeltaMovement(-look.x * 0.18, 0.18, -look.z * 0.18);
+		drop.setPickUpDelay(10);
+		level.addFreshEntity(drop);
+	}
+
+	private static boolean hasQliphothCommunion(ServerPlayer player) {
+		return HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> degree.isQliphothCommunionDone())
+				.orElse(false);
 	}
 
 	/**

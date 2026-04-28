@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
 
@@ -127,6 +128,13 @@ public class HemoCommand {
 														IntegerArgumentType.getInteger(ctx, "degree")))))))
 
 				// ── Skill Points (global static state, not per-player) ──
+				.then(Commands.literal("qliphoth")
+						.then(Commands.literal("pome")
+								.then(Commands.literal("reset")
+										.executes(ctx -> resetPomeProgress(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> resetPomeProgress(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))))
+
 				.then(Commands.literal("skills")
 						.then(Commands.literal("get")
 								.executes(ctx -> getSkills(ctx.getSource())))
@@ -341,6 +349,20 @@ public class HemoCommand {
 	}
 
 	// ═══════════════════ Skill Points ═══════════════════
+
+	private static int resetPomeProgress(CommandSourceStack source, ServerPlayer player) {
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.orElseThrow(IllegalStateException::new);
+		degree.resetPomeCommunion();
+		degree.setQliphothCommunionDone(false);
+		InitiatoryDegreeEvents.syncDegree(player, degree);
+		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
+		source.sendSuccess(() -> Component.literal("Reset ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" Qliphoth pome progress and Communion gate.").withStyle(ChatFormatting.DARK_PURPLE)),
+				true);
+		return 1;
+	}
 
 	private static int getSkills(CommandSourceStack source) {
 		source.sendSuccess(() -> Component.literal("Skill Points: ")
