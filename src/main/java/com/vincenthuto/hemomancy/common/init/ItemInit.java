@@ -306,6 +306,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(16)));
 
     // Hematic Memories
+    public static final DeferredHolder<Item, Item> drudge_electrode = BASEITEMS.register("drudge_electrode",
+            () -> new DrudgeElectrodeItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
+            () -> new DrudgeSubmissionDeviceItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> fervent_husk = BASEITEMS.register("fervent_husk",
             () -> new FerventHuskItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_memory = BASEITEMS.register("hematic_memory",

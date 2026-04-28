@@ -52,6 +52,16 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
 	public static ModConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
 
+	// ===== Drudge System =====
+	public static ModConfigSpec.IntValue DRUDGE_LEASH_RADIUS;
+	public static ModConfigSpec.IntValue DRUDGE_MAX_PER_SSC;
+	public static ModConfigSpec.DoubleValue DRUDGE_BIRTH_COST;
+	public static ModConfigSpec.IntValue DRUDGE_ROGUE_TIMEOUT_TICKS;
+	public static ModConfigSpec.DoubleValue DRUDGE_ACTION_COST_MULTIPLIER;
+	public static ModConfigSpec.IntValue DRUDGE_COOLDOWN_MULTIPLIER;
+	public static ModConfigSpec.IntValue DRUDGE_REQUIRED_DEGREE;
+	public static ModConfigSpec.IntValue DRUDGE_WORK_RADIUS;
+
 	public static void registerServerConfig(Builder builder) {
 		// ───── Blood Volume ─────
 		builder.comment("Blood Volume Settings").push("blood_volume");
@@ -206,6 +216,43 @@ public class HemoServerConfig {
 		MORPHLING_CRADLE_LEECH_TARGET_PLAYERS = builder
 				.comment("Whether Leech Morphling Cradles can target non-owner players.")
 				.define("morphlingCradleLeechTargetPlayers", false);
+
+		builder.pop();
+
+		// ───── Drudge System ─────
+		builder.comment("Drudge System Settings").push("drudge");
+
+		DRUDGE_LEASH_RADIUS = builder
+				.comment("Maximum distance (in blocks) a Drudge may wander from its bound SSC before returning.")
+				.defineInRange("drudgeLeashRadius", 24, 4, 128);
+
+		DRUDGE_MAX_PER_SSC = builder
+				.comment("Maximum number of Drudges that can be bound to a single SSC.")
+				.defineInRange("drudgeMaxPerSSC", 3, 1, 10);
+
+		DRUDGE_BIRTH_COST = builder
+				.comment("Blood cost (mL) to birth a new Drudge from an SSC using the Drudge Electrode.")
+				.defineInRange("drudgeBirthCost", 3000.0, 100.0, 20000.0);
+
+		DRUDGE_ROGUE_TIMEOUT_TICKS = builder
+				.comment("Ticks a Drudge will try to pathfind back to its SSC before going rogue (200 = 10 seconds).")
+				.defineInRange("drudgeRogueTimeoutTicks", 200, 20, 6000);
+
+		DRUDGE_ACTION_COST_MULTIPLIER = builder
+				.comment("Blood cost multiplier applied when a Drudge executes a manipulation (1.5 = 50% more expensive).")
+				.defineInRange("drudgeActionCostMultiplier", 1.5, 0.5, 5.0);
+
+		DRUDGE_COOLDOWN_MULTIPLIER = builder
+				.comment("Cooldown multiplier applied when a Drudge executes a manipulation (2 = twice as long).")
+				.defineInRange("drudgeCooldownMultiplier", 2, 1, 10);
+
+		DRUDGE_REQUIRED_DEGREE = builder
+				.comment("Minimum Initiatory Degree required to birth a Drudge (3 = Illuminatus).")
+				.defineInRange("drudgeRequiredDegree", 3, 0, 8);
+
+		DRUDGE_WORK_RADIUS = builder
+				.comment("Radius (blocks) within which the Drudge scans for targets to apply its memory.")
+				.defineInRange("drudgeWorkRadius", 12, 2, 48);
 
 		builder.pop();
 	}

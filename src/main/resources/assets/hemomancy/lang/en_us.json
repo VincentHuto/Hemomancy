@@ -64,6 +64,7 @@
   "block.hemomancy.saint_sarcophagus": "Saint Sarcophagus",
   "block.hemomancy.sanguine_monolith": "Sanguine Monolith",
   "block.hemomancy.semi_sentient_construct": "Semi Sentient Construct",
+  "screen.hemomancy.ssc_status": "Semi-Sentient Construct",
   "block.hemomancy.serpentine_idol": "Serpentine Idol",
   "block.hemomancy.smouldering_ash_trail": "Smouldering Ash ",
   "block.hemomancy.stinkhorn_fungus": "Stinkhorn Fungus",
@@ -291,6 +292,8 @@
   "item.hemomancy.living_syringe.loaded": "Loaded Rack: %s/%s empty",
   "item.hemomancy.living_syringe.no_rack": "No empty or partial vial rack in inventory.",
   "item.hemomancy.living_syringe.rack_full": "Rack is full; ejected.",
+  "item.hemomancy.drudge_electrode": "Drudge Electrode",
+  "item.hemomancy.drudge_submission_device": "Drudge Submission Device",
   "item.hemomancy.memory_activation_potential": "Memory Activation Potential",
   "item.hemomancy.memory_blood_absorption": "Memory Blood Absorption",
   "item.hemomancy.memory_blood_aneurysm": "Memory Blood Aneurysm",
@@ -1486,5 +1489,6 @@
   "hemomancy.dialogue.memo.make_note": "[Make a field note before it fades.]",
   "subtitle.hemomancy.item.qliphoth_pome.eat": "Qliphoth pome opens",
   "subtitle.hemomancy.item.qliphoth_pome.communion": "Qliphoth communion completes",
-  "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar"
+  "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar",
+  "hemomancy.drudge.memory_unsupported": "This memory cannot be installed in a Drudge."
 }

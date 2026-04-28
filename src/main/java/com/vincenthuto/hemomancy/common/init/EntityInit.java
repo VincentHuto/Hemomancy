@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedAcolyteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedGuardianEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedZealotEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
@@ -204,6 +205,12 @@ public class EntityInit {
                     () -> EntityType.Builder.<BloodThrallEntity>of(BloodThrallEntity::new, MobCategory.CREATURE)
                             .sized(0.6F, 0.7F)
                             .build(Hemomancy.rloc("blood_thrall").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<DrudgeEntity>> drudge = ENTITY_TYPES
+            .register("drudge",
+                    () -> EntityType.Builder.<DrudgeEntity>of(DrudgeEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.5F)
+                            .build(Hemomancy.rloc("drudge").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EnthralledDollEntity>> enthralled_doll = ENTITY_TYPES
             .register("enthralled_doll",
@@ -516,6 +523,7 @@ public class EntityInit {
         event.put(EntityInit.morphling_polyp.get(), MorphlingPolypEntity.setAttributes().build());
         event.put(EntityInit.enthralled_doll.get(), EnthralledDollEntity.setAttributes().build());
         event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());
+        event.put(EntityInit.drudge.get(), DrudgeEntity.setAttributes().build());
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.unstained_guardian.get(), UnstainedGuardianEntity.setAttributes().build());
         event.put(EntityInit.unstained_acolyte.get(), UnstainedAcolyteEntity.setAttributes().build());
