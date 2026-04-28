@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
+import java.util.List;
+
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -8,12 +10,15 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -22,14 +27,19 @@ import net.minecraft.world.level.Level;
  * Unclosing Eye — Canon Memory of Saint Seraphae.
  * Doctrine: Witness / Light
  *
- * See all entities and structures through walls (glowing effect on nearby entities).
- * However, the player is also revealed — enemies gain heightened awareness.
+ * <p>Seraphae's gaze strips concealment from every living thing within range —
+ * invisibility is dissolved, all entities glow, and the caster is revealed too.
+ * There is no hiding from a witness this complete.
  *
- * Imprinted, not learned. The player uses it uncomfortably.
+ * <p>Unlike Crimson Sight (which scouts enemies while the caster stays dark),
+ * the Unclosing Eye creates total mutual exposure. It is an anti-stealth weapon,
+ * not a scouting tool.
  */
 public class UnclosingEyeManip extends BloodManipulation {
 
-	private static final int DURATION_TICKS = 400; // 20 seconds
+	private static final int GLOWING_DURATION = 600;  // 30 seconds
+	private static final int NIGHT_VISION_DURATION = 600;
+	private static final double SCAN_RADIUS = 32.0;
 
 	public UnclosingEyeManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -39,32 +49,44 @@ public class UnclosingEyeManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Grant glowing to nearby entities so the player can see them through walls
-		world.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
-				player.getBoundingBox().inflate(32.0), e -> e != player)
-				.forEach(entity -> {
-					entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, DURATION_TICKS, 0, false, false));
-				});
+		// Apply Glowing to ALL living entities in range, including players — and strip
+		// Invisibility from any target that currently has it.
+		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class,
+				player.getBoundingBox().inflate(SCAN_RADIUS), e -> e != player && e.isAlive());
 
-		// The player is also revealed — grant glowing to self
-		player.addEffect(new MobEffectInstance(MobEffects.GLOWING, DURATION_TICKS, 0, false, true));
+		int stripped = 0;
+		for (LivingEntity target : targets) {
+			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0, false, false));
+			if (target.hasEffect(MobEffects.INVISIBILITY)) {
+				target.removeEffect(MobEffects.INVISIBILITY);
+				stripped++;
+			}
+		}
 
-		// Night vision for the player to complement the sight
-		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, DURATION_TICKS, 0, false, true));
+		// The caster is also revealed — this is not a tool for hiding
+		player.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0, false, true));
+		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_DURATION, 0, false, false, true));
 
-		player.displayClientMessage(
-				net.minecraft.network.chat.Component.literal(
-						"Seraphae's eye opens within you. All is laid bare — including yourself.")
-						.withStyle(net.minecraft.ChatFormatting.YELLOW, net.minecraft.ChatFormatting.ITALIC),
-				true);
+		String msg = stripped > 0
+				? "Seraphae's eye opens. Nothing is hidden. " + stripped + " concealment(s) dissolved."
+				: "Seraphae's eye opens. All is laid bare — including yourself.";
+		player.displayClientMessage(Component.literal(msg).withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC), true);
 
 		world.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
 
 		if (world instanceof ServerLevel sLevel) {
-			sLevel.sendParticles(
-					GlowParticleFactory.createData(new ParticleColor(255, 255, 200)),
-					player.getX(), player.getY() + 1.8, player.getZ(),
-					30, 0.5, 0.3, 0.5, 0.05);
+			// Expanding ring of gold-white light from the caster
+			BlockPos pos = player.blockPosition();
+			for (int i = 0; i < 50; i++) {
+				double angle = (i / 50.0) * Math.PI * 2;
+				double dist = 1.5 + (i % 3) * 0.4;
+				sLevel.sendParticles(
+						GlowParticleFactory.createData(new ParticleColor(255, 240, 180)),
+						pos.getX() + 0.5 + Math.cos(angle) * dist,
+						pos.getY() + 1.8,
+						pos.getZ() + 0.5 + Math.sin(angle) * dist,
+						1, 0f, 0.08f, 0f, 0.02f);
+			}
 		}
 	}
 }
