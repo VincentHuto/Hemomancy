@@ -41,7 +41,7 @@ public class DrudgeMemoryLayer extends RenderLayer<DrudgeEntity, DrudgeModel<Dru
 
         // The brain's top surface sits at approximately 0.93 blocks above entity feet.
         // Shift to center over the brain (which is +0.5/16 in X, -1/16 in Z from entity origin).
-        poseStack.translate(0.03125D, 0.93D, -0.0625D);
+        poseStack.translate(-0.03125D, .5D, -0.125D);
 
         // Lay the item flat (face up) by rotating -90° around X
         poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0F));

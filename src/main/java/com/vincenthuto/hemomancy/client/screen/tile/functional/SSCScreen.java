@@ -118,9 +118,10 @@ public class SSCScreen extends Screen {
     @Override
     public boolean isPauseScreen() { return false; }
 
-    /** Prevent NeoForge from applying the depth-of-field blur shader over the viewport. */
     @Override
-    public boolean shouldBlurBackground() { return false; }
+    protected void renderBlurredBackground(float partialTick) {
+        //super.renderBlurredBackground(partialTick);
+    }
 
     // ── Render ───────────────────────────────────────────────────────────────
 
