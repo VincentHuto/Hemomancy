@@ -422,6 +422,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
+			event.registerEntityRenderer(EntityInit.drudge.get(), com.vincenthuto.hemomancy.client.render.entity.npc.DrudgeRenderer::new);
 			event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
 			event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
 			event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);

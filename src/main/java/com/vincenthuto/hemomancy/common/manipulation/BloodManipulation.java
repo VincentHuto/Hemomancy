@@ -389,4 +389,22 @@ public class BloodManipulation  {
 		return HLTextUtils.convertInitToLang(name);
 	}
 
+	/**
+	 * Executes this manipulation on behalf of a Drudge entity rather than a
+	 * player. Bypasses all player-specific checks (purity, degree, MnA combos)
+	 * and draws from the drudge's internal blood charge instead.
+	 *
+	 * <p>Cost is multiplied by {@code HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER}.
+	 * Returns {@code true} if the action was executed, {@code false} if the drudge
+	 * had insufficient blood charge.
+	 */
+	public boolean performDrudgeAction(com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity drudge, Level world, BlockPos position) {
+		if (world.isClientSide) return false;
+		double costMult = com.vincenthuto.hemomancy.config.HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER.get();
+		double effectiveCost = cost * costMult;
+		if (drudge.getBloodCharge() < effectiveCost) return false;
+		drudge.drainBloodCharge((float) effectiveCost);
+		return true;
+	}
+
 }
