@@ -33,7 +33,7 @@ public class SSCScreen extends Screen {
     // ── Layout ──────────────────────────────────────────────────────────────
 
     private static final int PANEL_W     = 260;
-    private static final int HEADER_H    = 46;   // title + blood bar
+    private static final int HEADER_H    = 66;   // title + coords + vertical blood bar
     private static final int ROW_H       = 26;
     private static final int ROW_PADDING = 3;
     private static final int FOOTER_PAD  = 8;
@@ -53,7 +53,6 @@ public class SSCScreen extends Screen {
     private static final int TEXT_CMD     = 0xFFCCAA55;
     private static final int BAR_BG       = 0xFF0D0303;
     private static final int BAR_BORDER   = 0xFF331010;
-    private static final int BLOOD_FILL   = 0xFFAA2020;
     private static final int CHARGE_FILL  = 0xFF882020;
     private static final int ROW_BG       = 0xCC100404;
     private static final int ROW_ROGUE_BG = 0xCC250606;
@@ -155,12 +154,8 @@ public class SSCScreen extends Screen {
         int cw = font.width(coords);
         gfx.drawString(font, coords, px + (PANEL_W - cw) / 2, py + 15, TEXT_DIM, false);
 
-        // ── SSC Blood bar ─────────────────────────────────────────────────────
-        int barX  = px + 12;
-        int barY  = py + 27;
-        int barW  = PANEL_W - 24;
-        int barH  = 9;
-        renderBloodBar(gfx, barX, barY, barW, barH, sscBlood, sscMaxBlood, BLOOD_FILL, "SSC Blood");
+        // ── SSC Blood bar (vertical, left side of header) ────────────────────
+        renderVerticalBloodBar(gfx);
 
         // Separator
         gfx.fill(px + 6, py + HEADER_H - 2, px + PANEL_W - 6, py + HEADER_H - 1, SEP);
@@ -180,36 +175,58 @@ public class SSCScreen extends Screen {
         }
     }
 
-    // ── Blood / charge bar ───────────────────────────────────────────────────
+    // ── Vertical blood bar (SSC reservoir, left side of header) ─────────────
 
-    private void renderBloodBar(GuiGraphics gfx, int x, int y, int w, int h,
-                                double current, double max,
-                                int fillColor, String label) {
-        // Background
-        gfx.fill(x - 1, y - 1, x + w + 1, y + h + 1, BAR_BORDER);
-        gfx.fill(x, y, x + w, y + h, BAR_BG);
+    private void renderVerticalBloodBar(GuiGraphics gfx) {
+        int barW = 10;
+        int barH = 34;
+        int barX = px + 14;
+        int barY = py + 26;
 
-        // Fill
-        if (max > 0) {
-            float ratio = (float) (current / max);
-            int filled = (int) (w * ratio);
-            if (filled > 0) {
-                // Pulsing brightness
-                float pulse = 0.80f + 0.20f * Mth.sin(animTime * 2.5f);
-                int r = (int) (((fillColor >> 16) & 0xFF) * pulse);
-                int g = (int) (((fillColor >> 8)  & 0xFF) * pulse);
-                int b = (int) ( (fillColor & 0xFF) * pulse);
-                int fc = (0xFF << 24) | (r << 16) | (g << 8) | b;
-                gfx.fill(x, y, x + filled, y + h, fc);
+        double ratio = sscMaxBlood > 0 ? Mth.clamp(sscBlood / sscMaxBlood, 0, 1) : 0;
+        float time = animTime;
+
+        // Double border
+        gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BAR_BORDER);
+        gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, 0xFF1A0404);
+
+        // Dark background
+        gfx.fill(barX, barY, barX + barW, barY + barH, BAR_BG);
+
+        // Fill from bottom up with vertical gradient
+        int fillH = (int) (barH * ratio);
+        if (fillH > 0) {
+            int fillTop = barY + barH - fillH;
+            for (int row = 0; row < fillH; row++) {
+                float rowT  = (float) row / fillH;
+                float pulse = 0.75f + 0.25f * Mth.sin(time * 2.5f + row * 0.08f);
+                int r = (int) Mth.clamp((100 + 80 * rowT) * pulse, 0, 255);
+                int g = (int) Mth.clamp((5  + 15 * rowT) * pulse, 0, 255);
+                int b = (int) Mth.clamp((8  + 10 * rowT) * pulse, 0, 255);
+                gfx.fill(barX, fillTop + row, barX + barW, fillTop + row + 1,
+                         (0xEE << 24) | (r << 16) | (g << 8) | b);
+            }
+
+            // Meniscus highlight
+            float mp = 0.6f + 0.4f * Mth.sin(time * 3f);
+            int mAlpha = (int) (200 * mp);
+            gfx.fill(barX, fillTop, barX + barW, fillTop + 1,
+                     (mAlpha << 24) | (0xCC << 16) | (0x20 << 8) | 0x18);
+
+            // Specular strip on the left edge
+            for (int row = 0; row < fillH; row++) {
+                float fade = 0.3f + 0.15f * Mth.sin(time * 1.5f + row * 0.15f);
+                gfx.fill(barX + 1, fillTop + row, barX + 2, fillTop + row + 1,
+                         ((int)(80 * fade) << 24) | (0xFF << 16) | (0x60 << 8) | 0x50);
             }
         }
 
-        // Label: "SSC Blood: 1234 / 30000 mL"
-        String text = label + ": " + (int) current + " / " + (int) max + " mL";
-        int tw = font.width(text);
-        // White outline effect
-        gfx.drawString(font, text, x + (w - tw) / 2 + 1, y + 1, 0xFF000000, false);
-        gfx.drawString(font, text, x + (w - tw) / 2,     y + 1, TEXT_BRIGHT, false);
+        // Text label to the right of the bar
+        int labelX = barX + barW + 8;
+        int midY   = barY + barH / 2 - 8;
+        gfx.drawString(font, "SSC Blood", labelX, midY,     TEXT_DIM,   false);
+        String vol = (int) sscBlood + " / " + (int) sscMaxBlood + " mL";
+        gfx.drawString(font, vol,          labelX, midY + 10, TEXT_BRIGHT, false);
     }
 
     // ── Drudge row ───────────────────────────────────────────────────────────
@@ -268,9 +285,10 @@ public class SSCScreen extends Screen {
             gfx.fill(cBarX, cBarY, cBarX + filled, cBarY + cBarH,
                     (0xFF << 24) | (r << 16) | (green << 8) | b);
         }
-        // Charge text
+        // Charge text — centered on the bar
         String chargeText = (int) d.charge() + "/" + (int) d.maxCharge() + " mL";
-        gfx.drawString(font, chargeText, cBarX + cBarW + 4, cBarY, TEXT_DIM, false);
+        int ctw = font.width(chargeText);
+        gfx.drawString(font, chargeText, cBarX + (cBarW - ctw) / 2, cBarY - 1, TEXT_DIM, false);
     }
 
     // ── Vein animation ───────────────────────────────────────────────────────
