@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.item.tool.DrudgeElectrodeItem;
+import com.vincenthuto.hemomancy.common.item.tool.DrudgeSubmissionDeviceItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.SemiSentientConstructBlockEntity;
@@ -250,6 +251,10 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock {
 			Player player, InteractionHand handIn, BlockHitResult result) {
 		if (stack.getItem() instanceof DrudgeElectrodeItem) {
 			return handleElectrode(stack, worldIn, pos, player);
+		}
+		if (stack.getItem() instanceof DrudgeSubmissionDeviceItem device) {
+			device.recallDrudges(worldIn, pos, player);
+			return ItemInteractionResult.SUCCESS;
 		}
 		handleInteraction(worldIn, pos, player);
 		return ItemInteractionResult.SUCCESS;
