@@ -51,7 +51,7 @@ public class FerricTransmutationManip extends BloodManipulation {
 
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
 				DURATION_TICKS, STRENGTH_AMPLIFIER, false, true));
-		player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon.get(),
+		player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon,
 				DURATION_TICKS, SIPHON_AMPLIFIER, false, true));
 
 		BlockPos pos = player.blockPosition();
