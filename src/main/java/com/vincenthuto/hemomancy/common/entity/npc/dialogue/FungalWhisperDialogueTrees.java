@@ -328,6 +328,10 @@ public final class FungalWhisperDialogueTrees {
 	 * @param huskIndex  The sequential husk index (0–8).
 	 */
 	public static DialogueTree pomeDropped(int huskIndex) {
+		return pomeDropped(huskIndex, true);
+	}
+
+	public static DialogueTree pomeDropped(int huskIndex, boolean offerMemo) {
 		/** Lang key suffixes for each husk pome-drop whisper, in consumption order (0–8). */
 		final String[] POME_DROP_LANG_KEYS = {
 				"hemomancy.whisper.pome_drop.nahemoth",
@@ -343,12 +347,14 @@ public final class FungalWhisperDialogueTrees {
 		String langKey = (huskIndex >= 0 && huskIndex < POME_DROP_LANG_KEYS.length)
 				? POME_DROP_LANG_KEYS[huskIndex]
 				: "hemomancy.whisper.pome_drop.nahemoth";
+		List<DialogueOption> options = offerMemo
+				? List.of(
+						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null))
+				: List.of(new DialogueOption("hemomancy.whisper.option.dismiss", null, null));
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
 				.theme(DialogueTheme.FUNGAL)
-				.addNode(new DialogueNode("root", List.of(langKey), List.of(
-						memoOption(MemoDefinitions.QLIPHOTH_COMMUNION),
-						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
-				)))
+				.addNode(new DialogueNode("root", List.of(langKey), options))
 				.build();
 	}
 

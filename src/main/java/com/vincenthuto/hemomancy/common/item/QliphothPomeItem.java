@@ -209,16 +209,19 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				.ifPresent(d -> d.setPomeEmpowermentExpiry(expiryTick));
 
 		// Husk-flavoured eat message (localized, one line per pome 1-9)
-		String consumeMessageKey = POME_MESSAGE_KEY_BASE + "default";
-		if (itemTag.contains(HUSK_INDEX_KEY)) {
-			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
-			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
-				consumeMessageKey = POME_MESSAGE_KEY_BASE + (huskIdx + 1);
-			}
+		int huskIdx = resolveHuskIndex(player, itemTag);
+		String consumeMessageKey = huskIdx >= 0
+				? POME_MESSAGE_KEY_BASE + (huskIdx + 1)
+				: POME_MESSAGE_KEY_BASE + "default";
+		Component consumeMessage = Component.translatable(consumeMessageKey)
+				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
+		if (huskIdx >= 0) {
+			consumeMessage = consumeMessage.copy()
+					.append(Component.literal(" [" + HUSK_NAMES[huskIdx] + "]")
+							.withStyle(ChatFormatting.DARK_PURPLE));
 		}
 		player.displayClientMessage(
-				Component.translatable(consumeMessageKey)
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+				consumeMessage,
 				true);
 
 		// ── Total pome counter (drives the HUD tracker) ──
@@ -231,6 +234,19 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				: CREATIVE_TEST_BLOOM_ORIGIN;
 		trackCommunionProgress((ServerPlayer) player, bloomOrigin);
 		syncPomeProgress((ServerPlayer) player);
+	}
+
+	private static int resolveHuskIndex(Player player, CompoundTag itemTag) {
+		if (itemTag.contains(HUSK_INDEX_KEY)) {
+			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
+			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
+				return huskIdx;
+			}
+		}
+
+		return HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> Math.max(0, Math.min(HUSK_NAMES.length - 1, degree.getTotalPomesConsumed())))
+				.orElse(0);
 	}
 
 	/**

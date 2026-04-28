@@ -354,6 +354,7 @@ public class HemoCommand {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.orElseThrow(IllegalStateException::new);
 		degree.resetPomeCommunion();
+		degree.setQliphothCommunionDone(false);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
 		source.sendSuccess(() -> Component.literal("Reset ")

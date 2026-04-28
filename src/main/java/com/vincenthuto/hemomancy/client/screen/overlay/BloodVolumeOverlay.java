@@ -99,6 +99,16 @@ public class BloodVolumeOverlay {
         double maxVol = bloodCap.getMaxBloodVolume();
         double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
+        // Pome corruption — 0 pomes = pure crimson, 9 pomes = pitch black
+        int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player)
+                .map(d -> d.getTotalPomesConsumed())
+                .orElse(0);
+        float bloodCorruption = Mth.clamp(pomeProgress / 9f, 0f, 1f);
+
+        // Apotheos (rank 8) — barber-pole / double-helix swirl of crimson and void-black
+        int degreeNumber = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+        boolean isApotheos = degreeNumber >= 8;
+
         int barX = posX;
         int barY = posY + 12; // leave room for label above
 
@@ -124,27 +134,70 @@ public class BloodVolumeOverlay {
         if (fillH > 0) {
             int fillTop = barY + BAR_H - fillH;
             for (int row = 0; row < fillH; row++) {
-                float rowT = (float) row / fillH; // 0 at top of fill, 1 at bottom
-                float pulse = 0.75f + 0.25f * Mth.sin(time * .3f + row * 0.08f);
-                // Gradient: lighter crimson at bottom → darker at meniscus
-                int r = (int) (Mth.clamp((100 + 80 * rowT) * pulse, 0, 255));
-                int g = (int) (Mth.clamp((5 + 15 * rowT) * pulse, 0, 255));
-                int b = (int) (Mth.clamp((8 + 10 * rowT) * pulse, 0, 255));
-                int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-                gfx.fill(barX, fillTop + row, barX + BAR_W, fillTop + row + 1, color);
+                if (isApotheos) {
+                    // ── Rank-8 Apotheos: organic writhing helix of crimson and void-black ──
+                    // Three overlapping sine waves warp the stripe path so it looks like
+                    // ropy veins coiling rather than rigid diagonals.
+                    for (int px = 0; px < BAR_W; px++) {
+                        // Low-frequency sway of the whole stripe column
+                        float warp0 = Mth.sin(row * 0.2f + time * 0.15f) * 2.8f;
+                        // Mid-frequency ripple — varies per column
+                        float warp1 = Mth.sin(row * 0.09f - time * 0.55f + px * 0.42f) * 2.1f;
+                        // High-frequency tremor — tight kinks along the stripe
+                        float warp2 = Mth.sin(px * 0.1f + row * .38f + time * 1.35f) *1.5f;
+                        float totalWarp = warp0 + warp1 + warp2;
+
+                        float stripePhase = ((px + row * 0.48f + totalWarp - time * 15f) % 10f + 10f) % 10f;
+                        // Slightly breathing stripe width so edges aren't crisp
+                        float stripeWidth = 4.6f + 0.7f * Mth.sin(row * 0.11f + time * 0.65f + px * 0.22f);
+
+                        float pulse = 0.38f + 0.12f * Mth.sin(time * 2.6f + row * 0.13f + px * 0.18f);
+                        int color;
+                        if (stripePhase < stripeWidth) {
+                            // Crimson vein — deep red with light pulsing sheen
+                            int r = (int) Mth.clamp(158 * pulse, 0, 255);
+                            int g = (int) Mth.clamp(10 * pulse, 0, 255);
+                            int b = (int) Mth.clamp(13 * pulse, 0, 255);
+                            color = (0xEE << 24) | (r << 16) | (g << 8) | b;
+                        } else {
+                            // Void-black — barely-there dark tint so it isn't dead flat
+                            int r = (int) Mth.clamp(7 * pulse, 0, 255);
+                            color = (0xEE << 24) | (r << 16);
+                        }
+                        gfx.fill(barX + px, fillTop + row, barX + px + 1, fillTop + row + 1, color);
+                    }
+                } else {
+                    float rowT = (float) row / fillH; // 0 at top of fill, 1 at bottom
+                    float pulse = 0.75f + 0.25f * Mth.sin(time * .3f + row * 0.08f);
+                    // Gradient: lighter crimson at bottom → darker at meniscus, tinted black by pome corruption
+                    float fade = (1f - bloodCorruption);
+                    int r = (int) (Mth.clamp((100 + 80 * rowT) * pulse * fade, 0, 255));
+                    int g = (int) (Mth.clamp((5 + 15 * rowT) * pulse * fade, 0, 255));
+                    int b = (int) (Mth.clamp((8 + 10 * rowT) * pulse * fade, 0, 255));
+                    int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
+                    gfx.fill(barX, fillTop + row, barX + BAR_W, fillTop + row + 1, color);
+                }
             }
 
             // Meniscus highlight — organic wobble at the top of the fill
             float wobble = Mth.sin(time * 2.2f) * 0.8f;
             float meniscusPulse = 0.6f + 0.4f * Mth.sin(time * 3f + wobble);
             int mAlpha = (int) (200 * meniscusPulse);
-            int meniscusColor = (mAlpha << 24) | (0xCC << 16) | (0x20 << 8) | 0x18;
+            int meniscusColor;
+            if (isApotheos) {
+                // Dark swirling meniscus — near-black with faint crimson shimmer
+                meniscusColor = (mAlpha << 24) | (0x44 << 16) | (0x03 << 8) | 0x04;
+            } else {
+                float mFade = (1f - bloodCorruption);
+                meniscusColor = (mAlpha << 24) | ((int)(0xCC * mFade) << 16) | ((int)(0x20 * mFade) << 8) | (int)(0x18 * mFade);
+            }
             gfx.fill(barX, fillTop, barX + BAR_W, fillTop + 1, meniscusColor);
             // Secondary dimmer meniscus line for organic depth
             if (fillTop + 1 < barY + BAR_H) {
                 int m2Alpha = (int) (100 * meniscusPulse);
+                float mFade2 = isApotheos ? 0.15f : (1f - bloodCorruption);
                 gfx.fill(barX, fillTop + 1, barX + BAR_W, fillTop + 2,
-                        (m2Alpha << 24) | (0x90 << 16) | (0x15 << 8) | 0x10);
+                        (m2Alpha << 24) | ((int)(0x90 * mFade2) << 16) | ((int)(0x15 * mFade2) << 8) | (int)(0x10 * mFade2));
             }
 
             // Specular highlight — thin bright strip on the left side
@@ -204,9 +257,6 @@ public class BloodVolumeOverlay {
 
         // ── Pome communion tracker — 9 items alongside the bar ──
         int orbColX = (posX > screenWidth / 2) ? barX - 10 : barX + BAR_W + 3;
-        int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(d -> d.getTotalPomesConsumed())
-                .orElse(0);
         renderPomeTracker(gfx, orbColX, barY, pomeProgress);
         renderEquippedGourd(gfx, player, barX, barY, screenWidth, mc.getWindow().getGuiScaledHeight(), time);
 

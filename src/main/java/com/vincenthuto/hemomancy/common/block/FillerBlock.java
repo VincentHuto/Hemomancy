@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -122,6 +123,9 @@ public class FillerBlock extends BaseEntityBlock {
             if (mainPos != null && !level.isClientSide) {
                 BlockState mainState = level.getBlockState(mainPos);
                 if (mainState.getBlock() instanceof IMultiBlock) {
+                    if (mainState.is(BlockInit.qliphoth_bloom.get())) {
+                        return;
+                    }
                     level.destroyBlock(mainPos, true);
                 }
             }
@@ -140,6 +144,9 @@ public class FillerBlock extends BaseEntityBlock {
         if (mainPos != null && !level.isClientSide) {
             BlockState mainState = level.getBlockState(mainPos);
             if (mainState.getBlock() instanceof IMultiBlock) {
+                if (mainState.is(BlockInit.qliphoth_bloom.get())) {
+                    return;
+                }
                 level.destroyBlock(mainPos, dropBlock);
             }
         }

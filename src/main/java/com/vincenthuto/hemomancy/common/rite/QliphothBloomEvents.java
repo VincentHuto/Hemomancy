@@ -6,14 +6,18 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -22,7 +26,11 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -59,6 +67,17 @@ public class QliphothBloomEvents {
 	private static final int POME_MAX_NEARBY = 3;
 	/** Radius (blocks) around the bloom center to check for existing pome item entities. */
 	private static final double POME_SEARCH_RADIUS = 8.0;
+
+	@SubscribeEvent
+	public static void onQliphothBloomBreak(BreakEvent event) {
+		if (!isProtectedQliphothPart(event.getLevel(), event.getPos(), event.getState())) return;
+
+		event.setCanceled(true);
+		if (event.getPlayer() instanceof ServerPlayer player) {
+			player.displayClientMessage(Component.literal("The Qliphoth will not yield to ordinary hands.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+		}
+	}
 
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
@@ -165,8 +184,9 @@ public class QliphothBloomEvents {
 
 		// â”€â”€ Notify the bloom owner via Fungal Whisper dialogue â”€â”€
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(bloom.ownerUUID());
-		if (owner != null && FungalWhisperDialogueTrees.shouldOfferMemoWhisper(owner, MemoDefinitions.QLIPHOTH_COMMUNION)) {
-			PacketHandler.sendToPlayer(owner, new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped)));
+		if (owner != null) {
+			boolean offerMemo = FungalWhisperDialogueTrees.shouldOfferMemoWhisper(owner, MemoDefinitions.QLIPHOTH_COMMUNION);
+			PacketHandler.sendToPlayer(owner, new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped, offerMemo)));
 		}
 	}
 
@@ -179,5 +199,20 @@ public class QliphothBloomEvents {
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = player.level().dimension().location().toString();
 		return data.isInBloomRange(player.blockPosition(), dimension);
+	}
+
+	private static boolean isProtectedQliphothPart(LevelAccessor level, BlockPos pos, BlockState state) {
+		if (state.is(BlockInit.qliphoth_bloom.get())) {
+			return true;
+		}
+		if (!state.is(BlockInit.filler_block.get())) {
+			return false;
+		}
+
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		if (blockEntity instanceof FillerBlockEntity filler && filler.getMainBlockPos() != null) {
+			return level.getBlockState(filler.getMainBlockPos()).is(BlockInit.qliphoth_bloom.get());
+		}
+		return false;
 	}
 }
