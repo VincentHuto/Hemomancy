@@ -8,7 +8,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -30,7 +29,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -46,7 +44,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 
 /**
  * The Drudge — a persistent, player-owned semi-organic construct that holds a
@@ -80,14 +77,6 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     private static final float LOW_CHARGE_THRESHOLD = 200f;
     /** Squared distance threshold used to decide when the drudge has "arrived" at the SSC (2 blocks). */
     private static final double ARRIVED_DIST_SQ = 4.0;
-    /** Health ratio below which the Drudge heals itself when no player needs healing. */
-    private static final float SELF_HEAL_THRESHOLD = 0.6f;
-    /** Vertical search range (min) below the drudge's position for torch placement. */
-    private static final int TORCH_SCAN_Y_MIN = -2;
-    /** Vertical search range (max) above the drudge's position for torch placement. */
-    private static final int TORCH_SCAN_Y_MAX = 4;
-    /** Maximum block-light level at which the Lux tendency places a torch. */
-    private static final int MIN_LIGHT_FOR_TORCH = 10;
     /** Entity event byte for gore-particle death burst */
     private static final byte BURST_EVENT = 61;
 
@@ -344,6 +333,14 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
 
         // Right-click with a Blood Memory → equip it
         if (!held.isEmpty() && held.getItem() instanceof com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem memItem) {
+            com.vincenthuto.hemomancy.common.manipulation.DrudgeAction da =
+                    memItem.getManip().getDrudgeAction().orElse(null);
+            if (da == null || da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
+                player.displayClientMessage(
+                        Component.translatable("hemomancy.drudge.memory_unsupported")
+                                .withStyle(net.minecraft.ChatFormatting.RED), true);
+                return InteractionResult.FAIL;
+            }
             setEquippedMemory(memItem.getManip());
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
@@ -478,7 +475,11 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         if (tag.contains("EquippedMemory")) {
             CompoundTag memTag = tag.getCompound("EquippedMemory");
             BloodManipulation loaded = BloodManipulation.deserialize(memTag);
-            setEquippedMemory(loaded);
+            if (loaded != null) {
+                // Resolve to the registered instance so transient fields (drudgeAction, etc.) are populated
+                BloodManipulation registered = com.vincenthuto.hemomancy.common.init.ManipulationInit.getByName(loaded.getName());
+                setEquippedMemory(registered != null ? registered : loaded);
+            }
         }
         if (tag.contains("BloodCharge")) setBloodCharge(tag.getFloat("BloodCharge"));
         if (tag.contains("IsRogue")) setRogue(tag.getBoolean("IsRogue"));
@@ -551,9 +552,9 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     }
 
     /**
-     * The core goal that executes the equipped blood memory. Determines a work
-     * target based on the manipulation's {@link EnumBloodTendency}, drains
-     * {@code bloodCharge}, then applies a tendency-specific effect.
+     * The core goal that executes the equipped blood memory.  Dispatches to the
+     * manipulation's registered {@link com.vincenthuto.hemomancy.common.manipulation.DrudgeAction},
+     * drains {@code bloodCharge}, then applies the cooldown.
      *
      * <p>Passive mode: fires automatically when cooldown expires.
      * Commanded mode: only fires when an electrode signal is queued.
@@ -601,8 +602,11 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             // Determine work position: centre of the drudge + work radius scan
             int workRadius = HemoServerConfig.DRUDGE_WORK_RADIUS.get();
             BlockPos workPos = drudge.blockPosition();
+            Level world = drudge.level();
 
-            boolean executed = executeTendencyBehavior(mem, workPos, workRadius);
+            boolean executed = mem.getDrudgeAction()
+                    .map(a -> a.execute(drudge, world, workPos, workRadius))
+                    .orElse(false);
 
             if (executed) {
                 // Drain blood charge and apply cooldown
@@ -618,111 +622,5 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             }
         }
 
-        /**
-         * Applies a tendency-based simplified effect rather than calling the
-         * manipulation's full {@code getAction()} (which requires a {@link Player}).
-         *
-         * @return {@code true} if the effect was fired (blood has been charged).
-         */
-        private boolean executeTendencyBehavior(BloodManipulation mem, BlockPos centre, int radius) {
-            Level world = drudge.level();
-            EnumBloodTendency tendency = mem.getTend();
-            AABB area = new AABB(centre).inflate(radius);
-
-            switch (tendency) {
-                case MORTEM:
-                case FLAMMEUS:
-                case CONGEATIO: {
-                    // Attack nearest hostile mob
-                    List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-                    if (mobs.isEmpty()) return false;
-                    Monster target = mobs.get(0);
-                    double best = Double.MAX_VALUE;
-                    for (Monster m : mobs) {
-                        double d = drudge.distanceToSqr(m);
-                        if (d < best) { best = d; target = m; }
-                    }
-                    drudge.setTarget(target);
-                    target.hurt(world.damageSources().mobAttack(drudge),
-                            (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2);
-                    return true;
-                }
-
-                case DUCTILIS:
-                case ANIMUS: {
-                    // Heal nearest damaged player (or self)
-                    List<Player> players = world.getEntitiesOfClass(Player.class, area);
-                    Player target = null;
-                    float lowestHp = Float.MAX_VALUE;
-                    for (Player p : players) {
-                        if (p.getHealth() < p.getMaxHealth() && p.getHealth() < lowestHp) {
-                            lowestHp = p.getHealth();
-                            target = p;
-                        }
-                    }
-                    if (target == null) {
-                        // Heal self if below half health
-                        if (drudge.getHealth() < drudge.getMaxHealth() * SELF_HEAL_THRESHOLD) {
-                            drudge.heal(3.0f);
-                            return true;
-                        }
-                        return false;
-                    }
-                    target.heal(4.0f);
-                    spawnHealParticles(target);
-                    return true;
-                }
-
-                case LUX: {
-                    // Place a torch-equivalent glow at the darkest nearby air block (simplified)
-                    if (!(world instanceof ServerLevel serverLevel)) return false;
-                    BlockPos darkest = null;
-                    int darkestLight = 15;
-                    for (BlockPos p : BlockPos.betweenClosed(centre.offset(-radius/2, TORCH_SCAN_Y_MIN, -radius/2), centre.offset(radius/2, TORCH_SCAN_Y_MAX, radius/2))) {
-                        if (world.getBlockState(p).isAir() && !world.getBlockState(p.below()).isAir()) {
-                            int light = world.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, p);
-                            if (light < darkestLight) {
-                                darkestLight = light;
-                                darkest = p.immutable();
-                            }
-                        }
-                    }
-                    if (darkest == null || darkestLight >= MIN_LIGHT_FOR_TORCH) return false;
-                    world.setBlockAndUpdate(darkest, net.minecraft.world.level.block.Blocks.TORCH.defaultBlockState());
-                    return true;
-                }
-
-                case FERRIC: {
-                    // Provide a passive mining haste aura — apply Haste effect to nearby players
-                    List<Player> players = world.getEntitiesOfClass(Player.class, area);
-                    if (players.isEmpty()) return false;
-                    for (Player p : players) {
-                        p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                                net.minecraft.world.effect.MobEffects.DIG_SPEED, 400, 0, false, true));
-                    }
-                    return true;
-                }
-
-                case TENEBRIS: {
-                    // Apply stealth effect (Invisibility) to self
-                    drudge.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                            net.minecraft.world.effect.MobEffects.INVISIBILITY, 600, 0, false, false));
-                    return true;
-                }
-
-                default:
-                    return false;
-            }
-        }
-
-        private void spawnHealParticles(LivingEntity target) {
-            for (int i = 0; i < 6; i++) {
-                double dx = (drudge.random.nextDouble() - 0.5) * 0.8;
-                double dy = drudge.random.nextDouble() * 0.5 + 0.5;
-                double dz = (drudge.random.nextDouble() - 0.5) * 0.8;
-                target.level().addParticle(net.minecraft.core.particles.ParticleTypes.HEART,
-                        target.getX() + dx, target.getY() + dy, target.getZ() + dz, 0, 0.05, 0);
-            }
-        }
     }
 }

@@ -41,6 +41,14 @@ public class BloodMemoryItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (getManip() != null) {
 			tooltip.add(Component.literal(getManip().getProperName()));
+			getManip().getDrudgeAction().ifPresentOrElse(da -> {
+				if (da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
+					tooltip.add(Component.literal("§cNot usable by Drudges"));
+				} else {
+					getManip().getDrudgeDescription().ifPresent(desc ->
+							tooltip.add(Component.literal("§7Drudge: " + desc)));
+				}
+			}, () -> { /* no DrudgeAction registered yet — show nothing */ });
 		}
 	}
 

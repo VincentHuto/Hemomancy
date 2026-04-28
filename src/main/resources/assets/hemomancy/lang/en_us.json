@@ -1487,5 +1487,6 @@
   "hemomancy.dialogue.memo.make_note": "[Make a field note before it fades.]",
   "subtitle.hemomancy.item.qliphoth_pome.eat": "Qliphoth pome opens",
   "subtitle.hemomancy.item.qliphoth_pome.communion": "Qliphoth communion completes",
-  "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar"
+  "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar",
+  "hemomancy.drudge.memory_unsupported": "This memory cannot be installed in a Drudge."
 }
