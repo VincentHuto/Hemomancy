@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -12,6 +13,8 @@ import com.vincenthuto.hemomancy.common.item.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.tool.DrudgeSubmissionDeviceItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket;
+import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket.DrudgeEntry;
 import com.vincenthuto.hemomancy.common.tile.functional.SemiSentientConstructBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
@@ -122,45 +125,43 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock {
 	}
 
 	/**
-	 * Handles a bare right-click (no held item) — shows the status of all Drudges
-	 * bound to this SSC.
+	 * Handles a bare right-click (no held item) — opens the SSC status screen.
+	 * Gathers current drudge snapshots and blood data on the server, then sends
+	 * {@link OpenSSCScreenPacket} to the player so the client can open the GUI.
 	 */
 	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player) {
 		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
 
-		if (!worldIn.isClientSide) {
-			// Display status of bound drudges
+		if (!worldIn.isClientSide && player instanceof ServerPlayer sp) {
+			// Collect drudge snapshots
 			AABB searchBox = new AABB(pos).inflate(64.0);
 			List<DrudgeEntity> drudges = worldIn.getEntitiesOfClass(DrudgeEntity.class, searchBox,
 					d -> pos.equals(d.getHomePos()));
 
-			if (drudges.isEmpty()) {
-				player.displayClientMessage(Component.literal("§8No constructs are bound to this station."), false);
-			} else {
-				player.displayClientMessage(Component.literal("§7=== SSC Status ==="), false);
-				for (DrudgeEntity drudge : drudges) {
-					String memStr = drudge.getEquippedMemory() != null
-							? "§c" + drudge.getEquippedMemory().getProperName()
-							: "§8none";
-					String modeStr = drudge.isPassiveMode() ? "§aPassive" : "§eCommanded";
-					String stateStr = drudge.isRogue() ? "§4ROGUE" : modeStr;
-					player.displayClientMessage(Component.literal(
-							"§7Construct — Memory: " + memStr
-							+ " §7| Mode: " + stateStr
-							+ " §7| Charge: §c" + (int) drudge.getBloodCharge()
-							+ "/" + (int) DrudgeEntity.MAX_BLOOD_CHARGE + " mL"), false);
-				}
+			List<DrudgeEntry> entries = new ArrayList<>(drudges.size());
+			for (DrudgeEntity drudge : drudges) {
+				String memName = drudge.getEquippedMemory() != null
+						? drudge.getEquippedMemory().getProperName()
+						: "";
+				entries.add(new DrudgeEntry(
+						memName,
+						drudge.isPassiveMode(),
+						drudge.getBloodCharge(),
+						DrudgeEntity.MAX_BLOOD_CHARGE,
+						drudge.isRogue()));
 			}
 
-			// Also show SSC blood level
+			// Collect SSC blood
+			double sscBlood = 0, sscMax = SemiSentientConstructBlockEntity.MAX_BLOOD;
 			if (worldIn.getBlockEntity(pos) instanceof SemiSentientConstructBlockEntity ssc) {
 				IBloodVolume sscVol = HemoCapabilityAccess.getBloodVolume(ssc).orElse(null);
 				if (sscVol != null) {
-					player.displayClientMessage(Component.literal(
-							"§7SSC Blood: §c" + (int) sscVol.getBloodVolume()
-							+ "§7/§c" + (int) sscVol.getMaxBloodVolume() + " mL"), false);
+					sscBlood = sscVol.getBloodVolume();
+					sscMax   = sscVol.getMaxBloodVolume();
 				}
 			}
+
+			PacketHandler.sendToPlayer(sp, new OpenSSCScreenPacket(pos, sscBlood, sscMax, entries));
 		}
 
 		return InteractionResult.SUCCESS;

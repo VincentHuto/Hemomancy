@@ -51,10 +51,11 @@ import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
-import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
+import com.vincenthuto.hemomancy.common.network.capa.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
+import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -222,6 +223,9 @@ public class PacketHandler {
         net.playToServer(VisceralMirrorExtractPacket.TYPE, VisceralMirrorExtractPacket.STREAM_CODEC, VisceralMirrorExtractPacket::handle);
         net.playToServer(VisceralMirrorCancelPacket.TYPE, VisceralMirrorCancelPacket.STREAM_CODEC, VisceralMirrorCancelPacket::handle);
         net.playToClient(VisceralMirrorUpdatePacket.TYPE, VisceralMirrorUpdatePacket.STREAM_CODEC, VisceralMirrorUpdatePacket::handle);
+
+        // ── Semi-Sentient Construct screen ────────────────────────────────────
+        net.playToClient(OpenSSCScreenPacket.TYPE, OpenSSCScreenPacket.STREAM_CODEC, OpenSSCScreenPacket::handle);
 
         // ── Ledger ────────────────────────────────────────────────────────────
         net.playToServer(PacketLedgerAction.TYPE, PacketLedgerAction.STREAM_CODEC, PacketLedgerAction::handle);
