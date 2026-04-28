@@ -20,19 +20,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * Void Shroud — a T1 (HUMILIS) TENEBRIS quick manipulation that bends the
- * caster's blood into a light-absorbing veil, rendering them invisible for
+ * Void Shroud — a T1 (HUMILIS) TENEBRIS quick manipulation that folds the
+ * caster's blood into darkness, granting invisibility and shadow-speed for
  * 5 seconds.
  *
- * <p>The shroud is dispelled immediately if the player attacks, uses an item
- * that interacts with the world, or receives damage (all standard Invisibility
- * behaviour). Subtle dark particles mark where the caster stands, giving
- * attentive opponents a faint clue.
+ * <p>Unlike a pure stealth effect, the Shroud is a repositioning tool:
+ * Speed II lets the caster dash while hidden, and Night Vision lets them
+ * read the terrain they're hiding in. The invisibility breaks on attack
+ * or damage (standard behaviour), so the window is short.
+ *
+ * <p>Pairs with UmbralStep — shroud first to close distance unseen,
+ * then step through shadows to appear at a new position.
  */
 public class VoidShroudManip extends BloodManipulation {
 
-	/** Duration of invisibility in ticks (5 seconds). */
-	private static final int INVISIBILITY_TICKS = 100;
+	private static final int DURATION_TICKS = 100; // 5 seconds
 
 	public VoidShroudManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -44,25 +46,25 @@ public class VoidShroudManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
-		// Refresh (or apply) the Invisibility effect
-		player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
-				INVISIBILITY_TICKS, 0, false, false));
+		player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, DURATION_TICKS, 0, false, false));
+		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, DURATION_TICKS, 1, false, false));
+		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, DURATION_TICKS, 0, false, false));
 
 		world.playSound(null, player.blockPosition(),
 				SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.8f);
 
 		RandomSource random = world.random;
 		BlockPos pos = player.blockPosition();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 25; i++) {
 			sLevel.sendParticles(
 					GlowParticleFactory.createData(new ParticleColor(
 							40 + random.nextFloat() * 30,
 							0,
 							60 + random.nextFloat() * 50)),
-					pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
+					pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.8,
 					pos.getY() + random.nextDouble() * 2.0,
-					pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.6,
-					1, 0f, -0.05f, 0f, 0.01f);
+					pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.8,
+					1, (random.nextDouble() - 0.5) * 0.1, -0.03f, (random.nextDouble() - 0.5) * 0.1, 0.01f);
 		}
 	}
 }
