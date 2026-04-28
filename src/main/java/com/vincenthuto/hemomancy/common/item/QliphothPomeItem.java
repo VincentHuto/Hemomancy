@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -20,6 +21,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -167,6 +169,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 
 			if (isTainted) {
 				applyTaintedEffects(player);
+				playPomeSound(player, false);
 			} else {
 				applyNormalEffects(player, level, itemTag);
 			}
@@ -178,6 +181,14 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	private static void spawnPomePulse(Player player) {
 		if (player.level() instanceof ServerLevel serverLevel) {
 			PacketHandler.sendPomePulse(player.position().add(0, player.getBbHeight() * 0.55, 0), 64.0, serverLevel);
+		}
+	}
+
+	private static void playPomeSound(Player player, boolean communion) {
+		if (player.level() instanceof ServerLevel serverLevel) {
+			serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+					communion ? SoundInit.ITEM_QLIPHOPH_POME_COMMUNION.get() : SoundInit.ITEM_QLIPHOPH_POME_EAT.get(),
+					SoundSource.PLAYERS, communion ? 1.25F : 0.9F, communion ? 0.82F : 1.0F);
 		}
 	}
 
@@ -240,7 +251,8 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		long bloomOrigin = itemTag.contains(BLOOM_ORIGIN_KEY)
 				? itemTag.getLong(BLOOM_ORIGIN_KEY)
 				: CREATIVE_TEST_BLOOM_ORIGIN;
-		trackCommunionProgress((ServerPlayer) player, bloomOrigin);
+		boolean completedCommunion = trackCommunionProgress((ServerPlayer) player, bloomOrigin);
+		playPomeSound(player, completedCommunion);
 		syncPomeProgress((ServerPlayer) player);
 	}
 
@@ -262,16 +274,18 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	 * When the count reaches nine, fires the Qliphoth Communion whisper and
 	 * sets the permanent communion flag on the InitiatoryDegree capability.
 	 */
-	private static void trackCommunionProgress(ServerPlayer player, long bloomOrigin) {
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			if (degree.isQliphothCommunionDone()) return;
+	private static boolean trackCommunionProgress(ServerPlayer player, long bloomOrigin) {
+		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
+			if (degree.isQliphothCommunionDone()) return false;
 			int count = degree.recordPomeConsumed(bloomOrigin);
 			if (count >= 9) {
 				degree.setQliphothCommunionDone(true);
 				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(
 						FungalWhisperDialogueTrees.qliphothCommunion()));
+				return true;
 			}
-		});
+			return false;
+		}).orElse(false);
 	}
 
 	private static void syncPomeProgress(ServerPlayer player) {

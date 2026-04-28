@@ -1484,5 +1484,7 @@
   "message.hemomancy.memo.liber_placed": "You place the Liber on the Dictation Table.",
   "message.hemomancy.memo.liber_removed": "You take the Liber from the Dictation Table.",
   "hemomancy.dialogue.memo.make_note": "[Make a field note before it fades.]",
+  "subtitle.hemomancy.item.qliphoth_pome.eat": "Qliphoth pome opens",
+  "subtitle.hemomancy.item.qliphoth_pome.communion": "Qliphoth communion completes",
   "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar"
 }

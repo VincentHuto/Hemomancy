@@ -766,5 +766,17 @@
       "hemomancy:entity/tooth_pecks/death"
     ],
     "subtitle": "subtitle.hemomancy.entity.tooth_pecks.death"
+  },
+  "item.qliphoth_pome.eat": {
+    "sounds": [
+      "hemomancy:item/qliphoth_pome/eat"
+    ],
+    "subtitle": "subtitle.hemomancy.item.qliphoth_pome.eat"
+  },
+  "item.qliphoth_pome.communion": {
+    "sounds": [
+      "hemomancy:item/qliphoth_pome/communion"
+    ],
+    "subtitle": "subtitle.hemomancy.item.qliphoth_pome.communion"
   }
 }
