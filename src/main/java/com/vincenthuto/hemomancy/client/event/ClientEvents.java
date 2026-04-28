@@ -555,6 +555,9 @@ public class ClientEvents {
 				ItemProperties.register(ItemInit.morphling_jar.get(), Hemomancy.rloc("size"),
 						HemoItemProperties.intTag("size"));
 
+				ItemProperties.register(ItemInit.drudge_electrode.get(), Hemomancy.rloc("mode"),
+						HemoItemProperties.booleanTag(com.vincenthuto.hemomancy.common.item.tool.DrudgeElectrodeItem.TAG_MODE));
+
 				ItemProperties.register(ItemInit.living_staff.get(), Hemomancy.rloc("morph"), new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int seed) {

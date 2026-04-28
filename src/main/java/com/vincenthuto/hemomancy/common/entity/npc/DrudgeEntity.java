@@ -131,7 +131,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
-                return !isRogue() && getHomePos() != null && super.canUse();
+                return !isRogue() && getHomePos() != null && equippedMemory != null && super.canUse();
             }
         });
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
