@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.item.*;
@@ -34,17 +31,11 @@ import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -54,16 +45,12 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ItemInit {
     public static final DeferredRegister<Item> BASEITEMS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
@@ -544,22 +531,22 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> blood_lust_helm = BASEITEMS.register("blood_lust_helm",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    EnumBloodLustMaskTypes.NONE));
+                    BloodLustArmorItem.MaskType.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_helm_tengu = BASEITEMS.register("blood_lust_helm_tengu",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    EnumBloodLustMaskTypes.TENGU));
+                    BloodLustArmorItem.MaskType.TENGU));
     public static final DeferredHolder<Item, Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    EnumBloodLustMaskTypes.HORNED));
+                    BloodLustArmorItem.MaskType.HORNED));
     public static final DeferredHolder<Item, Item> blood_lust_chest = BASEITEMS.register("blood_lust_chest",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
-                    EnumBloodLustMaskTypes.NONE));
+                    BloodLustArmorItem.MaskType.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_legs = BASEITEMS.register("blood_lust_legs",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
-                    EnumBloodLustMaskTypes.NONE));
+                    BloodLustArmorItem.MaskType.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
-                    EnumBloodLustMaskTypes.NONE));
+                    BloodLustArmorItem.MaskType.NONE));
 
     // Barbed/Barbed
     public static final DeferredHolder<Item, Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
@@ -977,135 +964,5 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem>  spawn_egg_tooth_pecks = SPAWNEGGS.register(
             "spawn_egg_tooth_pecks",
             () -> new DeferredSpawnEggItem(EntityInit.tooth_pecks, 0xF0EAD6, 0x8B0000, new Item.Properties()));
-
-    // Item Property Override
-    @SuppressWarnings("deprecation")
-    @SubscribeEvent
-    public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
-
-        ItemProperties.register(unsigned_ancestral_ledger.get(), Hemomancy.rloc("unsigned"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(bloody_vial.get(), Hemomancy.rloc("state"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(vial_rack.get(), Hemomancy.rloc("state"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    int emptyCount = VialRackItem.countEmptyVials(stack);
-                    if (emptyCount == VialRackItem.MAX_VIALS) {
-                        return 0.0F;
-                    }
-                    if (emptyCount == 0) {
-                        return 2.0F;
-                    }
-                    return 1.0F;
-                });
-
-        ItemProperties.register(barbed_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
-                });
-
-        ItemProperties.register(chitinite_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
-                });
-
-        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("pull"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    if (ent == null) {
-                        return 0.0F;
-                    } else {
-                        return LivingCrossbowItem.isCharged(stack) ? 0.0F
-                                    : (float) (stack.getUseDuration(ent) - ent.getUseItemRemainingTicks())
-                                / (float) LivingCrossbowItem.getChargeTime(stack);
-                    }
-                });
-        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("pulling"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    return ent != null && ent.isUsingItem() && ent.getUseItem() == stack
-                            && !LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
-                });
-        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("charged"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    return stack != null && LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
-                });
-        ItemProperties.register(ItemInit.living_crossbow.get(), ResourceLocation.withDefaultNamespace("firework"),
-                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-                    return ent != null && LivingCrossbowItem.isCharged(stack)
-                            && LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
-                });
-
-        ItemProperties.register(living_syringe.get(), Hemomancy.rloc("open"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(curved_horn.get(), Hemomancy.rloc("open"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(blood_gourd_white.get(), Hemomancy.rloc("open"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(blood_gourd_red.get(), Hemomancy.rloc("open"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(blood_gourd_black.get(), Hemomancy.rloc("open"),
-                HemoItemProperties.booleanTag("state"));
-
-        ItemProperties.register(morphling_jar.get(), Hemomancy.rloc("size"),
-                HemoItemProperties.intTag("size"));
-
-        ItemProperties.register(living_staff.get(), Hemomancy.rloc("morph"), new ItemPropertyFunction() {
-
-            @Override
-            public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-                if (stack.has(DataComponents.CUSTOM_DATA)) {
-                    CompoundTag CompoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-                    CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-                    if (items != null) {
-                        if (items.contains("Items", 9)) {
-                            @SuppressWarnings("static-access")
-                            ItemStack selectedStack = ItemStack.parseOptional(world != null ? world.registryAccess() : RegistryAccess.EMPTY, ((ListTag) items.get("Items")).getCompound(0));
-                            if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
-                                return 1;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
-                                return 2;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {
-                                return 3;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
-                                return 4;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
-                                return 5;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
-                                return 6;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_moth.get()) {
-                                return 7;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
-                                return 8;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_centipede.get()) {
-                                return 9;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_bat.get()) {
-                                return 10;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_urchin.get()) {
-                                return 11;
-                            } else if (selectedStack.getItem() == ItemInit.morphling_mole.get()) {
-                                return 12;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    } else {
-                        return 0;
-
-                    }
-
-                } else {
-                    return 0;
-
-                }
-                return 0;
-            }
-        });
-
-    }
 
 }

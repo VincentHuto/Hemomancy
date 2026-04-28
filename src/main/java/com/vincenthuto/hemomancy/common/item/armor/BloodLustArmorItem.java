@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
-import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.ChatFormatting;
@@ -27,14 +26,20 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 
-	EnumBloodLustMaskTypes maskType;
+	public enum MaskType {
+		NONE,
+		TENGU,
+		HORNED
+	}
 
-	public BloodLustArmorItem(Holder<ArmorMaterial> materialIn, Type slot, EnumBloodLustMaskTypes maskType) {
+	MaskType maskType;
+
+	public BloodLustArmorItem(Holder<ArmorMaterial> materialIn, Type slot, MaskType maskType) {
 		super(materialIn, slot, new Item.Properties());
 		this.maskType = maskType;
 	}
 
-	public EnumBloodLustMaskTypes getMaskType() {
+	public MaskType getMaskType() {
 		return maskType;
 	}
 
@@ -87,7 +92,7 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 		return false;
 	}
 
-	public void setMaskType(EnumBloodLustMaskTypes maskType) {
+	public void setMaskType(MaskType maskType) {
 		this.maskType = maskType;
 	}
 
