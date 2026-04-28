@@ -119,12 +119,16 @@ public class SSCScreen extends Screen {
     @Override
     public boolean isPauseScreen() { return false; }
 
+    /** Prevent NeoForge from applying the depth-of-field blur shader over the viewport. */
+    @Override
+    public boolean shouldBlurBackground() { return false; }
+
     // ── Render ───────────────────────────────────────────────────────────────
 
     @Override
     public void render(GuiGraphics gfx, int mx, int my, float partialTick) {
-        // Dark scene background
-        this.renderBackground(gfx, mx, my, partialTick);
+        // Paint a semi-transparent dark overlay ourselves (no blur shader).
+        gfx.fill(0, 0, this.width, this.height, 0x88000000);
         renderPanel(gfx);
         super.render(gfx, mx, my, partialTick);
     }
