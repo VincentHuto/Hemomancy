@@ -171,7 +171,7 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     // ── Interaction ────────────────────────────────────────────────────────────
