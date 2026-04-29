@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.memories.HematicMemoryItem;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the Harbinger
@@ -55,6 +60,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.purifying.i_know", "power_warning", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.purifying.i_chose_this", "chosen_path", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("power_warning", List.of(
@@ -64,6 +70,11 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("chosen_path", List.of(
 						"hemomancy.vicar.purifying.chosen_path"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -79,6 +90,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.who_are_harbingers", "harbinger_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_is_outpost", "outpost_lore", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("harbinger_lore", List.of(
@@ -89,6 +101,11 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("outpost_lore", List.of(
 						"hemomancy.vicar.uninitiated.outpost_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -104,6 +121,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_covenant", "covenant_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("covenant_lore", List.of(
@@ -114,6 +132,11 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
 						"hemomancy.vicar.neophyte.degree_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -128,6 +151,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_tendencies", "tendency_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("tendency_lore", List.of(
@@ -137,6 +161,11 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
 						"hemomancy.vicar.votary.degree_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -152,6 +181,7 @@ public final class HarbingerVicarDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_sanctum", "sanctum_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("sanctum_lore", List.of(
@@ -171,6 +201,11 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
 				.build();
 	}
 
@@ -183,6 +218,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_brotherhood", "brotherhood_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("brotherhood_lore", List.of(
@@ -192,6 +228,11 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
 						"hemomancy.vicar.adept.degree_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -223,6 +264,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.illuminatus.lodge_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("founding_sanctum_lore", List.of(
@@ -254,6 +296,11 @@ public final class HarbingerVicarDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
 				.build();
 	}
 
@@ -279,6 +326,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.sanctified.hematic_order_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
@@ -292,6 +340,11 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.build();
 	}
@@ -316,6 +369,7 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("final_truth", List.of(
 						"hemomancy.vicar.archon.final_truth"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
@@ -324,6 +378,11 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.build();
 	}
@@ -339,6 +398,131 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.archon.pome_empowered.line1",
 						"hemomancy.vicar.archon.pome_empowered.line2"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Item inquiry — responds to Harbinger items held by the player. Unstained items
+	 * and unrecognised items receive a cold dismissal with no mention of Unstained NPCs.
+	 *
+	 * @param item     The ItemStack the player is holding.
+	 * @param degree   The player's current initiatory degree.
+	 * @param entityId The entity id of the vicar.
+	 */
+	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
+		Item it = item.getItem();
+		if (it == ItemInit.rite_hint.get()) {
+			return riteHintInquiry(degree, entityId);
+		} else if (it == ItemInit.blood_structure_hint.get()) {
+			return bloodStructureInquiry(entityId);
+		} else if (it == ItemInit.qliphoth_pome.get() || it == ItemInit.qliphoth_seed.get()) {
+			return qliphothInquiry(entityId);
+		} else if (it == BlockInit.sanguine_monolith.get().asItem()) {
+			return monolithInquiry(entityId);
+		} else if (item.getItem() instanceof HematicMemoryItem) {
+			return memoryInquiry(entityId);
+		} else if (it == ItemInit.hallowed_residuum_hemorath.get()
+				|| it == ItemInit.hallowed_residuum_seraphae.get()
+				|| it == ItemInit.hallowed_residuum_putriciel.get()
+				|| it == ItemInit.hallowed_residuum_velorum.get()) {
+			return residuumInquiry(entityId);
+		} else {
+			return vicarUnknownInquiry(entityId);
+		}
+	}
+
+	private static DialogueTree riteHintInquiry(int degree, int entityId) {
+		String hintKey = degree <= 1 ? "low" : degree <= 4 ? "mid" : "high";
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.rite_hint." + hintKey + ".line1",
+						"hemomancy.vicar.item_inquiry.rite_hint." + hintKey + ".line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree bloodStructureInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.blood_structure.line1",
+						"hemomancy.vicar.item_inquiry.blood_structure.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree qliphothInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.qliphoth.line1",
+						"hemomancy.vicar.item_inquiry.qliphoth.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree monolithInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.monolith.line1",
+						"hemomancy.vicar.item_inquiry.monolith.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree memoryInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.hematic_memory.line1",
+						"hemomancy.vicar.item_inquiry.hematic_memory.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree residuumInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.hallowed_residuum.line1",
+						"hemomancy.vicar.item_inquiry.hallowed_residuum.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree vicarUnknownInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.unknown"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.build();
@@ -365,6 +549,7 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("reflection", List.of(
 						"hemomancy.vicar.apotheos.reflection"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
@@ -373,6 +558,11 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.build();
 	}

@@ -3,8 +3,12 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Static factory that produces the {@link DialogueTree} variants used by
@@ -35,6 +39,7 @@ public final class ZealotDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.zealot.option.how_craft_hemolytic", "craft_hemolytic", null),
 						new DialogueOption("hemomancy.dialogue.zealot.option.accept_purification", null, "zealot_accept_purification"),
 						new DialogueOption("hemomancy.dialogue.zealot.option.accept_church", null, "zealot_accept_church"),
+      new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("craft_hemolytic", List.of(
@@ -47,6 +52,11 @@ public final class ZealotDialogueTrees {
 				)))
 				.addNode(new DialogueNode("reject", List.of(
 						"hemomancy.dialogue.zealot.reject_response"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.zealot.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
@@ -67,9 +77,15 @@ public final class ZealotDialogueTrees {
 							"hemomancy.zealot.enlightened.line1",
 							"hemomancy.zealot.enlightened.line2"
 					), List.of(
+       new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
-					.build();
+					.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.zealot.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+				)))
+				.build();
 		}
 
 		if (clarityUnlocked) {
@@ -80,11 +96,17 @@ public final class ZealotDialogueTrees {
 							"hemomancy.zealot.clarity_phase.line2"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null),
+       new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
 					.addNode(new DialogueNode("verdigris_info", List.of(
 							"hemomancy.zealot.verdigris_info.line1",
 							"hemomancy.zealot.verdigris_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("item_hint", List.of(
+							"hemomancy.zealot.item_hint"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
@@ -99,11 +121,17 @@ public final class ZealotDialogueTrees {
 							"hemomancy.zealot.absolved.line2"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.about_clarity_rite", "clarity_rite_info", null),
+       new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
 					.addNode(new DialogueNode("clarity_rite_info", List.of(
 							"hemomancy.zealot.clarity_rite_info.line1",
 							"hemomancy.zealot.clarity_rite_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("item_hint", List.of(
+							"hemomancy.zealot.item_hint"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
@@ -118,11 +146,17 @@ public final class ZealotDialogueTrees {
 							"hemomancy.zealot.cleansing.line2"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.about_altar", "altar_info", null),
+       new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
 					.addNode(new DialogueNode("altar_info", List.of(
 							"hemomancy.zealot.altar_info.line1",
 							"hemomancy.zealot.altar_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("item_hint", List.of(
+							"hemomancy.zealot.item_hint"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
@@ -137,11 +171,17 @@ public final class ZealotDialogueTrees {
 							"hemomancy.zealot.tainted.line2"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.about_silver_ward", "silver_ward_info", null),
+       new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
 					.addNode(new DialogueNode("silver_ward_info", List.of(
 							"hemomancy.zealot.silver_ward_info.line1",
 							"hemomancy.zealot.silver_ward_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("item_hint", List.of(
+							"hemomancy.zealot.item_hint"
 					), List.of(
 							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 					)))
@@ -154,6 +194,7 @@ public final class ZealotDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.already_on_path"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
 				.build();
@@ -165,6 +206,12 @@ public final class ZealotDialogueTrees {
 				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.no_blood"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.zealot.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
@@ -178,6 +225,12 @@ public final class ZealotDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.too_early"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.zealot.item_hint"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
 				.build();
@@ -190,8 +243,121 @@ public final class ZealotDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.uninitiated"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.zealot.item_hint"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
 				.build();
+	}
+
+	/**
+	 * Item inquiry for the Zealot. Responds to Unstained-path items. Some items are
+	 * purity-gated (pallid_infusion requires 75+). Harbinger items and unknowns are
+	 * dismissed with no mention of Harbinger NPCs.
+	 */
+	public static DialogueTree itemInquiry(ItemStack item, int entityId, float purity, boolean clarityUnlocked) {
+		Item it = item.getItem();
+		if (it == ItemInit.hemolytic_vial.get()) return zealotHemolyticInquiry(entityId);
+		if (it == ItemInit.draught_of_still_waters.get()) return draughtInquiry(entityId);
+		if (it == ItemInit.pale_humor_flask.get()) return paleHumorInquiry(entityId);
+		if (it == ItemInit.pallid_infusion.get()) return pallidInfusionInquiry(purity, entityId);
+		if (it == BlockInit.altar_of_cleansing.get().asItem()) return altarInquiry(entityId);
+		if (it == ItemInit.lethean_dew.get() || it == ItemInit.lethean_brew.get()) return letheanInquiry(entityId);
+		if (it == ItemInit.unstained_helm.get() || it == ItemInit.unstained_chestplate.get()
+				|| it == ItemInit.unstained_leggings.get() || it == ItemInit.unstained_boots.get())
+			return unstainedArmorInquiry(entityId);
+		if (it == ItemInit.hallowed_residuum_hemorath.get() || it == ItemInit.hallowed_residuum_seraphae.get()
+				|| it == ItemInit.hallowed_residuum_putriciel.get() || it == ItemInit.hallowed_residuum_velorum.get())
+			return zealotResiduumInquiry(entityId);
+		return zealotUnknownInquiry(entityId);
+	}
+
+	private static DialogueTree zealotHemolyticInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.hemolytic_vial.line1",
+						"hemomancy.zealot.item_inquiry.hemolytic_vial.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree draughtInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.draught_of_still_waters.line1",
+						"hemomancy.zealot.item_inquiry.draught_of_still_waters.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree paleHumorInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.pale_humor_flask.line1",
+						"hemomancy.zealot.item_inquiry.pale_humor_flask.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree pallidInfusionInquiry(float purity, int entityId) {
+		if (purity < 75f) {
+			return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+					.addNode(new DialogueNode("root", List.of("hemomancy.zealot.item_inquiry.pallid_infusion.not_yet"),
+       new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+							List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+		}
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.pallid_infusion.line1",
+						"hemomancy.zealot.item_inquiry.pallid_infusion.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree altarInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.altar_of_cleansing.line1",
+						"hemomancy.zealot.item_inquiry.altar_of_cleansing.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree letheanInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.lethean.line1",
+						"hemomancy.zealot.item_inquiry.lethean.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree unstainedArmorInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.unstained_armor.line1",
+						"hemomancy.zealot.item_inquiry.unstained_armor.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree zealotResiduumInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.zealot.item_inquiry.hallowed_residuum.line1",
+						"hemomancy.zealot.item_inquiry.hallowed_residuum.line2"
+    new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+				), List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
+	}
+
+	private static DialogueTree zealotUnknownInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId).theme(DialogueTheme.UNSTAINED)
+				.addNode(new DialogueNode("root", List.of("hemomancy.zealot.item_inquiry.unknown"),
+      new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+						List.of(new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)))).build();
 	}
 }

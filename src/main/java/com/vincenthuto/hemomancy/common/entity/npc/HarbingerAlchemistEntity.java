@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -87,9 +88,14 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
+            int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+            ItemStack held = player.getMainHandItem();
             DialogueTree tree;
 
-            if (hasClarityUnlocked(player)) {
+            if (!held.isEmpty()) {
+                // Alchemist explains their craft to anyone — clinical, even to clarity-bearing players
+                tree = HarbingerAlchemistDialogueTrees.itemInquiry(held, degree, this.getId());
+            } else if (hasClarityUnlocked(player)) {
                 // Clarity-bearing players are ignored — cold shoulder, no engagement
                 tree = HarbingerAlchemistDialogueTrees.clarity(this.getId());
             } else if (isPurifying(player)) {

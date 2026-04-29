@@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -145,9 +146,12 @@ public class HarbingerVicarEntity extends PathfinderMob {
             }
 
             int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+            ItemStack held = player.getMainHandItem();
             DialogueTree tree;
 
-            if (isPurifying(player)) {
+            if (!held.isEmpty()) {
+                tree = HarbingerVicarDialogueTrees.itemInquiry(held, degree, this.getId());
+            } else if (isPurifying(player)) {
                 // Purifying players receive a stern Harbinger warning
                 tree = HarbingerVicarDialogueTrees.purifying(this.getId());
             } else if (degree >= 7 && hasPomeEmpowerment(player)) {
