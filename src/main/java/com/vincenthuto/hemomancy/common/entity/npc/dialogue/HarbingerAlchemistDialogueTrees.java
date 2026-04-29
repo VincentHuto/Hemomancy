@@ -132,7 +132,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.build();
 	}
 
-	/** Degree 2 — Votary. Explains the Vial Centrifuge and blood tendency separation. */
+	/** Degree 2 — Votary. Explains the Vial Centrifuge, blood tendency separation, and introduces blood structure crafting. */
 	public static DialogueTree votary(int entityId) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
@@ -141,6 +141,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures", "blood_structure_intro", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("centrifuge_lore", List.of(
@@ -158,6 +159,11 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.neophyte.alembic_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("blood_structure_intro", List.of(
+						"hemomancy.alchemist.votary.blood_structure_intro"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();

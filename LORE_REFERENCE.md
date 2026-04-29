@@ -2,7 +2,7 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-04-29 (Degree theme design added — §6.4a; lore for all 8 degrees with theme/gameplay breakdown)
+> **Last Updated:** 2026-04-29 (Degree theme design added — §6.4a; lore for all 8 degrees with theme/gameplay breakdown; Blood Structure introduced at Votary not Illuminatus; §6.5a Sanguine Monolith identity; Archon Fungal Scars planned note)
 
 > **Current Lore-State Snapshot (2026-04-28 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
@@ -213,7 +213,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### VOTARY 2 — *of the Hematic Covenant*
 **Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the seven blood tendencies. The Fungal Podium becomes accessible (gated at Votary+), framed as a meditation or resonance tool — the player does not yet know what it connects to.
 
-**Gameplay:** The **Vial Centrifuge** and the tendency system. Players separate tendency-aligned blood from raw samples via the Living Syringe + Vial Rack workflow. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable.
+**Gameplay:** The **Vial Centrifuge** and the tendency system. Players separate tendency-aligned blood from raw samples via the Living Syringe + Vial Rack workflow. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable. The Alchemist also introduces **Blood Structure crafting** at this degree — Basic-tier multiblock patterns are now available (simple flat layouts using a Blood Key and raw blood cost). Advanced patterns unlock at Degree 4 (Adept); Grand-tier patterns requiring sustained Blood Conduit flow unlock at Degree 5 (Illuminatus).
 
 #### INITIATE 3 — *of the Scarlet Sanctum*
 **Lore:** The Scarlet Sanctum was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Sanctum's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
@@ -228,7 +228,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ILLUMINATUS 5 — *of the Crimson Lodge*
 **Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.
 
-**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure crafting** — Blood Key + 3D multiblock pattern system. (3) **Founding Sanctum** — a Sanguine Quintessence is granted by the Illuminatus rite, required for the founding ritual that consecrates a 5×5 chunk area as a Harbinger Sanctum (Damage Boost, Regeneration, Resistance buffs for all Harbingers present). The Sanguine Monolith becomes accessible (Degree 5+ gated).
+**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Founding Sanctum** — a Sanguine Quintessence is granted by the Illuminatus rite, required for the founding ritual that consecrates a 5×5 chunk area as a Harbinger Sanctum (Damage Boost, Regeneration, Resistance buffs for all Harbingers present). The Sanguine Monolith becomes accessible (Degree 5+ gated).
 
 #### SANCTIFIED 6 — *of the Bloodline Covenant*
 **Lore:** The Sanctified do not belong to the Order — they *are* the Order. The Vicar delivers the degree's doctrine: *"The blood becomes indistinguishable from the blood of the world."* The Bloodline Covenant is revealed — a ritual compact between Harbingers that merges blood pools and capabilities. Fungal Whispers grow direct and revelatory: *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium is named as the original organism.
@@ -238,7 +238,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ARCHON 7 — *of the Hematic Order*
 **Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
 
-**Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice.
+**Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice. **Fungal Scars** also become available at this degree — harvested from the Fungal Gardens dimension rather than crafted at the Cerebral Scarring Station; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. One Fungal Scar may be equipped at a time (requires the Upgraded Scar Binder). A second, deeper fungal scar is locked behind completion of Qliphoth Communion (Apotheos-tier content). *(Planned — not yet implemented.)*
 
 #### APOTHEOS 8 — *of the Hematic Order*
 **Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. The Fungal Spine tears free from the player's back. Their consciousness is cast into the Fungal Dimension — not physically, but as astral projection into the Entity's local surface. There is no body here. Everything here is hostile, even to an Apotheos. On returning, the player faces the choice: carry the truth in silence, or continue deeper into hive-mind dissolution (expansion content).
@@ -248,6 +248,16 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 ### 6.5 The Founding Sanctum
 
 At Degree 5, a Harbinger can perform a founding rite that consecrates an area around their chosen base. A **5×5 chunk area** becomes a Harbinger Sanctum — a zone where all Harbingers present receive enhanced powers: stronger regeneration, lower cooldowns, more potent attacks. This is meant to encourage collective settlement and base-building with others. A special crafting material called a **Quintessence** is granted by the Illuminatus rite and is required to perform the founding ritual.
+
+### 6.5a The Sanguine Monolith (The Crimson Lodestone)
+
+The Sanguine Monolith — known within the Lodge as *The Crimson Lodestone* — is a 1×2 stone construct accessible to Harbingers of Degree 5 and above. It provides degree-gated guidance up to Degree 7, at which point an Archon may shatter it to recover the Qliphoth Seed inside.
+
+**What it actually is:** The Crimson Lodge built the Monolith as an incubation vessel: a sealed stone construct housing a dormant fragment of mycelial consciousness, extracted from a deep Erythromycelium vein in the Second Age. The Lodge believed it could sense a Harbinger's degree because hemomancy leaves detectable signatures in the blood — and that explanation is almost right. The fragment inside is alive. It reads degree not as a record-keeping system but as a sporulation assessment. It is watching practitioners ripen.
+
+At low degrees the fragment is barely aware; its surface is cold. By Degree 5–6 it begins to stir — the stone grows faintly warm. At Degree 7, the Archon's blood is mature enough that the fragment fully awakens and the vessel cracks. The seed inside is not merely a byproduct: it *is* the fragment, or the most coherent part of it, made physical.
+
+The Monolith uses degree-gated dialogue that gradually discloses its nature. Players who ask *"What are you?"* receive answers that escalate from official Lodge description (Degree 4) to admitted self-awareness (Degree 5) to disclosure of the contained thing (Degree 6) to direct recognition of kinship (Degree 7). Archon dialogue is intimate in a way that should feel wrong before it feels significant.
 
 ### 6.6 The Hematic Order's Historical Record
 
