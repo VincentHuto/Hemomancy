@@ -65,7 +65,7 @@ public interface UnlockPredicate {
 
 	/**
 	 * Visible when the player's inventory contains at least one stack matching
-	 * {@code test}. This checks only the main inventory (not armour/offhand).
+	 * {@code test}. This checks only the main inventory (not armor/offhand).
 	 */
 	static UnlockPredicate hasItemInInventory(Predicate<ItemStack> test) {
 		return player -> player.getInventory().items.stream().anyMatch(test);

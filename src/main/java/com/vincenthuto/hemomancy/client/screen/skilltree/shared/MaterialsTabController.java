@@ -52,6 +52,7 @@ public class MaterialsTabController implements IProgressTab {
                                    int tabColor, int nodeTransparentColor, int nodeAccentColor,
                                    int panelSeparatorColor, int panelBgColor,
                                    MiniRecipeRenderer.Theme renderer) {
+        // entries starts as the full list; onInit() replaces it with the filtered view.
         this.entries              = entries;
         this.rawEntries           = entries;
         this.nodeShape            = nodeShape;
