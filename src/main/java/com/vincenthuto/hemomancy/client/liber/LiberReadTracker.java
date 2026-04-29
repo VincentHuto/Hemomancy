@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
  *
  * <p>Entries that were unlocked while the player was offline will therefore
  * always appear as "unread" during the first session where they open the book,
- * which is the intended behaviour.
+ * which is the intended behavior.
  */
 public final class LiberReadTracker {
 

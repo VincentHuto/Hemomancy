@@ -702,8 +702,8 @@ public class ClientEvents {
 					if (!LiberReadTracker.hasUnread(mc.player.getUUID(), knowledge, prefix)) {
 						return false;
 					}
-					// Draw a 4x4 gold dot at the top-right corner of the item icon,
-					// with the corner pixels removed so it looks like a small circle.
+					// Draw a 3x4 gold badge at the top-right corner of the item icon,
+					// with corner pixels on the left removed so it looks like a small circle.
 					int dotX = itemX + 12;
 					int dotY = itemY;
 					int color = 0xFFFFD700;
