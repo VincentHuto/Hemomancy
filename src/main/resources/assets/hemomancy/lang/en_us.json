@@ -1532,5 +1532,13 @@
   "block.hemomancy.consecrated_bloodwell.withdrew": "Withdrew %s blood. Well: %s / %s",
   "block.hemomancy.consecrated_bloodwell.deposited": "Deposited %s blood. Well: %s / %s",
   "block.hemomancy.consecrated_bloodwell.empty_or_full": "Nothing to withdraw — well is empty or you are full.",
-  "block.hemomancy.consecrated_bloodwell.cannot_deposit": "Cannot deposit — well is full or you have no blood. Well: %s / %s"
+  "block.hemomancy.consecrated_bloodwell.cannot_deposit": "Cannot deposit — well is full or you have no blood. Well: %s / %s",
+
+  "block.hemomancy.covenant_throne": "Covenant Throne",
+  "block.hemomancy.covenant_throne.not_progenitor": "Only the Progenitor of a bloodline may commune with the Throne.",
+  "block.hemomancy.covenant_throne.respawn_set": "The Throne accepts your blood-oath. You will return here.",
+  "block.hemomancy.covenant_throne.trance_cooldown": "The blood has not yet settled. The Trance is available in %s seconds.",
+  "block.hemomancy.covenant_throne.no_blood": "Your blood is not yet awakened.",
+  "block.hemomancy.covenant_throne.insufficient_blood": "The Covenant demands %s blood for the Trance. You cannot afford it.",
+  "block.hemomancy.covenant_throne.trance_entered": "The Covenant Trance takes hold. The blood sings."
 }

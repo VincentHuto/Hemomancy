@@ -438,6 +438,11 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
 
+	public static final DeferredHolder<Block, Block> covenant_throne = MODELEDBLOCKS.register("covenant_throne",
+			() -> new com.vincenthuto.hemomancy.common.block.functional.CovenantThroneBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
 			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
