@@ -495,7 +495,7 @@ public class ManipulationsTabController implements IProgressTab {
         int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
 
         ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
-        RecipeLookup.FoundRecipe foundRecipe = (memoryStack != null && !memoryStack.isEmpty())
+        RecipeLookup.FoundRecipe foundRecipe = (!rankLocked && memoryStack != null && !memoryStack.isEmpty())
                 ? RecipeLookup.find(memoryStack) : null;
         int recipeH = MiniRecipeRenderer.estimateHeight(foundRecipe);
         int recipeSection = recipeH > 0 ? recipeH + 12 : 0;

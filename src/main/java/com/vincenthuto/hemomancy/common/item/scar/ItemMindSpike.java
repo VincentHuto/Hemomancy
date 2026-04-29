@@ -18,6 +18,9 @@ public class ItemMindSpike extends Item {
 	private static final int SCAR_SLOT_MIN = 1;
 	private static final int SCAR_SLOT_MAX = 4;
 
+	/** Minimum initiatory degree required to use the Mind Spike. */
+	private static final int MIN_DEGREE = 4;
+
 	public ItemMindSpike(Properties properties) {
 		super(properties);
 	}
@@ -27,6 +30,15 @@ public class ItemMindSpike extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 
 		if (!level.isClientSide) {
+			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+			if (degree < MIN_DEGREE) {
+				player.displayClientMessage(
+						Component.literal("Your blood has not yet reached the understanding to wield this.")
+								.withStyle(ChatFormatting.DARK_PURPLE),
+						false);
+				return InteractionResultHolder.fail(stack);
+			}
+
 			HemoCapabilityAccess.getScars(player).ifPresent((IScarsItemHandler scars) -> {
 				boolean wasUnlocked = scars.isScarsUnlocked();
 				scars.setScarsUnlocked(!wasUnlocked);
