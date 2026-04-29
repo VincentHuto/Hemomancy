@@ -19,9 +19,6 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 	private boolean autoDrawEnabled = false;
 	private double autoDrawThreshold = 0.25;
 
-	// ── One-time drops ──
-	private boolean firstFormationDropped = false;
-
 	/***
 	 * only use if you want to explicitly bypass max volume limits
 	 */
@@ -229,18 +226,6 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 		this.autoDrawThreshold = threshold;
 	}
 
-	// ── One-time drops ──
-
-	@Override
-	public boolean isFirstFormationDropped() {
-		return firstFormationDropped;
-	}
-
-	@Override
-	public void setFirstFormationDropped(boolean dropped) {
-		this.firstFormationDropped = dropped;
-	}
-
 	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag entry = new CompoundTag();
@@ -252,7 +237,6 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 		entry.putDouble("TrickleRate", trickleRate);
 		entry.putBoolean("AutoDrawEnabled", autoDrawEnabled);
 		entry.putDouble("AutoDrawThreshold", autoDrawThreshold);
-		entry.putBoolean("FirstFormationDropped", firstFormationDropped);
 		return entry;
 	}
 
@@ -268,7 +252,6 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 			trickleRate = entry.getDouble("TrickleRate");
 			autoDrawEnabled = entry.getBoolean("AutoDrawEnabled");
 			autoDrawThreshold = entry.getDouble("AutoDrawThreshold");
-			firstFormationDropped = entry.getBoolean("FirstFormationDropped");
 		}
 	}
 

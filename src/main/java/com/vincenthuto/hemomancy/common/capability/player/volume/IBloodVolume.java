@@ -74,12 +74,4 @@ public interface IBloodVolume {
 
 	public void setAutoDrawThreshold(double threshold);
 
-	// ── First Sanguine Formation Drop ──
-
-	/** Returns true if the one-time sanguine formation drop has already fired. */
-	public boolean isFirstFormationDropped();
-
-	/** Marks the one-time sanguine formation drop as having fired. */
-	public void setFirstFormationDropped(boolean dropped);
-
 }

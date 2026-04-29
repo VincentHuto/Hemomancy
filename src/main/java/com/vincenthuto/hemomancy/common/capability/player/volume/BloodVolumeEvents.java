@@ -200,13 +200,13 @@ public class BloodVolumeEvents {
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				}
 
-				// ── One-time first sanguine formation drop ──
-				// When the player first takes a meaningful hit after blood becomes active,
-				// a sanguine formation crystallises from the wound and falls at their feet.
+				// ── Sanguine formation drop while mastery is still rough (degree 1–3) ──
+				// Blood still crystallises unpredictably during early Harbinger ascent.
+				// 8% chance per qualifying hit (≥3 hearts / 6 HP) until the player reaches degree 4.
 				// 6.0f = 3 hearts (Minecraft damage: 1 heart = 2 HP).
-				if (!volume.isFirstFormationDropped() && damage >= 6.0f) {
-					volume.setFirstFormationDropped(true);
-					syncVolume((ServerPlayer) player, volume);
+				int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+				if (degree >= 1 && degree <= 3 && damage >= 6.0f
+						&& player.level().getRandom().nextFloat() < 0.08f) {
 					ItemStack formation = new ItemStack(ItemInit.sanguine_formation.get());
 					ItemEntity drop = new ItemEntity(player.level(),
 							player.getX(), player.getY(), player.getZ(), formation);

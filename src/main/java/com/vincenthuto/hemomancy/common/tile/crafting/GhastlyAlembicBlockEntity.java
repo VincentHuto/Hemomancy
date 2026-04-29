@@ -676,10 +676,13 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	// ---- Alembic Leak ----
 
 	/**
-	 * If the block directly below the alembic is a pointed dripstone tip pointing
-	 * downward, drain blood from the tank on a configurable interval and advance
-	 * the {@link com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock} growing
-	 * below the dripstone tip (or place one if that space is empty and has a solid floor).
+	 * If the block directly below the alembic is a venous stone (any variant) or a
+	 * {@link net.minecraft.world.level.block.Blocks#BONE_BLOCK}, drain blood from
+	 * the tank on a configurable interval. Blood seeps through the porous material
+	 * and crystallises two blocks below the alembic (beneath the trigger block), growing
+	 * a {@link com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock} there.
+	 * <p>
+	 * Layout: {@code [Alembic] / [venous_stone or bone_block] / [bud grows here] / [solid floor]}
 	 */
 	private static void tryLeakBloodOntoDripstone(Level level, BlockPos pos,
 			GhastlyAlembicBlockEntity te, IBloodVolume vol) {
@@ -691,25 +694,20 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		double leakRate = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_RATE_PER_TICK.get();
 		if (vol.getBloodVolume() < leakRate) return;
 
-		// Check for a downward-pointing dripstone tip directly below the alembic
-		BlockPos dripPos = pos.below();
-		BlockState dripState = level.getBlockState(dripPos);
-		if (!dripState.is(net.minecraft.world.level.block.Blocks.POINTED_DRIPSTONE)) return;
+		// The block directly below the alembic must be a venous stone variant or bone block
+		BlockPos basePos = pos.below();
+		BlockState baseState = level.getBlockState(basePos);
+		boolean isVenous = baseState.is(BlockInit.venous_stone.get())
+				|| baseState.is(BlockInit.polished_venous_stone.get())
+				|| baseState.is(BlockInit.gilded_venous_stone.get());
+		boolean isBoneBlock = baseState.is(net.minecraft.world.level.block.Blocks.BONE_BLOCK);
+		if (!isVenous && !isBoneBlock) return;
 
-		// Dripstone must be pointing downward (tip at the bottom)
-		net.minecraft.world.level.block.state.properties.DripstoneThickness thickness =
-				dripState.getValue(net.minecraft.world.level.block.PointedDripstoneBlock.THICKNESS);
-		net.minecraft.core.Direction tipDir =
-				dripState.getValue(net.minecraft.world.level.block.PointedDripstoneBlock.TIP_DIRECTION);
-		if (tipDir != net.minecraft.core.Direction.DOWN) return;
-		if (thickness != net.minecraft.world.level.block.state.properties.DripstoneThickness.TIP
-				&& thickness != net.minecraft.world.level.block.state.properties.DripstoneThickness.TIP_MERGE) return;
-
-		// The blood drips to the block two positions below the alembic (below the dripstone tip)
-		BlockPos budPos = dripPos.below();
+		// Blood seeps through the trigger block and crystallises one block below it
+		BlockPos budPos = basePos.below();
 		BlockState budState = level.getBlockState(budPos);
 
-		// If a blood crystal bud is already there, try to grow it
+		// If a bud is already there, advance its growth stage
 		if (budState.is(BlockInit.blood_crystal_bud.get())) {
 			com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock bud =
 					(com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock) BlockInit.blood_crystal_bud.get();
@@ -719,7 +717,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			return;
 		}
 
-		// If the space is clear, place a new bud (requires a solid block below to stand on)
+		// Place a new bud if the space is clear and has a solid floor below
 		if (budState.canBeReplaced() || budState.isAir()) {
 			BlockState belowBud = level.getBlockState(budPos.below());
 			if (belowBud.isFaceSturdy(level, budPos.below(), net.minecraft.core.Direction.UP)) {
