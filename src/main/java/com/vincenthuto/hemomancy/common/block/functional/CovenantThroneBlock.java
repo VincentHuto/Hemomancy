@@ -75,10 +75,10 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
     /** Blood cost to trigger the Covenant Trance. */
     public static final double TRANCE_BLOOD_COST = 2500.0;
 
-    /** Duration of Covenant Trance effects in ticks (600 s = 10 min). */
+    /** Duration of Covenant Trance effects in ticks (10 min = 600 s = 12,000 ticks). */
     public static final int TRANCE_DURATION_TICKS = 12_000;
 
-    /** Cooldown between trances in ticks (10 min). */
+    /** Cooldown between trances in ticks (10 min = 12,000 ticks). */
     public static final int TRANCE_COOLDOWN_TICKS = 12_000;
 
     public CovenantThroneBlock(Properties properties) {
@@ -201,7 +201,7 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
         }
 
         if (player.isShiftKeyDown()) {
-            triggerCovenanTrance(level, pos, serverPlayer);
+            triggerCovenantTrance(level, pos, serverPlayer);
         } else {
             claimRespawn(level, pos, serverPlayer);
         }
@@ -219,7 +219,7 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
 
     // ── Covenant Trance ────────────────────────────────────────────────────────
 
-    private static void triggerCovenanTrance(Level level, BlockPos pos, ServerPlayer player) {
+    private static void triggerCovenantTrance(Level level, BlockPos pos, ServerPlayer player) {
         if (!(level.getBlockEntity(pos) instanceof CovenantThroneBlockEntity throne)) return;
 
         long now = level.getGameTime();
