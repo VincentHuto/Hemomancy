@@ -595,10 +595,10 @@ public class BlockInit {
 				.map(BlockInit::createItemBlock);
 		b.forEach(item -> {
 			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
-					|| item.getSecond().getBlock() != BlockInit.filler_block.get()
-					|| item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
+					&& item.getSecond().getBlock() != BlockInit.gourd_stem.get()
+					&& item.getSecond().getBlock() != BlockInit.engram_block.get()
+					&& item.getSecond().getBlock() != BlockInit.filler_block.get()
+					&& item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
 				registerBlockItem(event, item);
 			}
 		});
