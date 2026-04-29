@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class MaterialsTabController implements IProgressTab {
@@ -15,7 +17,10 @@ public class MaterialsTabController implements IProgressTab {
     private static final int NODE_SIZE = 26;
 
     // ── Theme (Harbinger defaults) ────────────────────────────────
-    private final List<MaterialEntry> entries;
+    /** All entries provided at construction time (before unlock filtering). */
+    private final List<MaterialEntry> rawEntries;
+    /** Entries visible to the current player — rebuilt in {@link #onInit}. */
+    private List<MaterialEntry> entries;
     private final EnumNodeShape nodeShape;
     private final int tabColor;
     private final int nodeTransparentColor;
@@ -48,6 +53,7 @@ public class MaterialsTabController implements IProgressTab {
                                    int panelSeparatorColor, int panelBgColor,
                                    MiniRecipeRenderer.Theme renderer) {
         this.entries              = entries;
+        this.rawEntries           = entries;
         this.nodeShape            = nodeShape;
         this.tabColor             = tabColor;
         this.nodeTransparentColor = nodeTransparentColor;
@@ -59,6 +65,17 @@ public class MaterialsTabController implements IProgressTab {
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            entries = new ArrayList<>();
+            for (MaterialEntry e : rawEntries) {
+                if (e.unlockPredicate().isUnlocked(mc.player)) {
+                    entries.add(e);
+                }
+            }
+        } else {
+            entries = new ArrayList<>(rawEntries);
+        }
         int[] bounds = new int[2];
         MaterialsTabView.buildLayout(entries, positions, bounds, NODE_SIZE);
         contentW = bounds[0];

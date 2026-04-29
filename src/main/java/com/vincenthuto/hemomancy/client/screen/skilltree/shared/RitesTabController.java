@@ -44,9 +44,14 @@ public class RitesTabController implements IProgressTab {
     public void onInit(ProgressScreenContext ctx) {
         Minecraft mc = Minecraft.getInstance();
         state.riteRecipes.clear();
-        if (mc.player != null && mc.level != null)
-            for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(mc.level))
-                if (r.isUnstained() == unstained) state.riteRecipes.add(r);
+        if (mc.player != null && mc.level != null) {
+            for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(mc.level)) {
+                if (r.isUnstained() == unstained
+                        && RiteUnlockRegistry.get(r.getId()).isUnlocked(mc.player)) {
+                    state.riteRecipes.add(r);
+                }
+            }
+        }
         state.rebuildTierMap();
         state.autoSelectFirstTier(ctx.playerDegree());
     }

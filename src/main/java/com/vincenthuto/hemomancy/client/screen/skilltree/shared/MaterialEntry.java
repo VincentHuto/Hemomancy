@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.UnlockPredicate;
+
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -9,12 +11,14 @@ import net.minecraft.world.item.ItemStack;
  * "Materials &amp; Processes" tab on either the Skill Tree or Unstained
  * Progress screen.
  *
- * @param name        Registry-style name used for the translation key
- * @param displayName Human-readable display name
- * @param description Short description shown in the tooltip
- * @param category    Grouping category (e.g. "Blocks", "Materials", "Equipment")
- * @param iconStack   Supplier for the ItemStack to render inside the node
- * @param hasRecipe   Whether clicking should attempt to show a crafting recipe
+ * @param name             Registry-style name used for the translation key
+ * @param displayName      Human-readable display name
+ * @param description      Short description shown in the tooltip
+ * @param category         Grouping category (e.g. "Blocks", "Materials", "Equipment")
+ * @param iconStack        Supplier for the ItemStack to render inside the node
+ * @param hasRecipe        Whether clicking should attempt to show a crafting recipe
+ * @param unlockPredicate  Condition that must be true for this entry to appear;
+ *                         defaults to {@link UnlockPredicate#always()}
  */
 public record MaterialEntry(
 		String name,
@@ -22,11 +26,18 @@ public record MaterialEntry(
 		String description,
 		String category,
 		Supplier<ItemStack> iconStack,
-		boolean hasRecipe
+		boolean hasRecipe,
+		UnlockPredicate unlockPredicate
 ) {
-	/** Convenience constructor without recipe. */
+	/** Convenience constructor: no recipe flag, always visible. */
 	public MaterialEntry(String name, String displayName, String description,
 						 String category, Supplier<ItemStack> iconStack) {
-		this(name, displayName, description, category, iconStack, true);
+		this(name, displayName, description, category, iconStack, true, UnlockPredicate.always());
+	}
+
+	/** Convenience constructor: explicit recipe flag, always visible. */
+	public MaterialEntry(String name, String displayName, String description,
+						 String category, Supplier<ItemStack> iconStack, boolean hasRecipe) {
+		this(name, displayName, description, category, iconStack, hasRecipe, UnlockPredicate.always());
 	}
 }
