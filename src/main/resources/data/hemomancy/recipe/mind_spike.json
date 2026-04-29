@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "minecraft:crafting_shaped",
   "pattern": [
     " S ",
@@ -10,10 +10,10 @@
       "item": "hemomancy:sanguine_formation"
     },
     "I": {
-      "item": "hemomancy:hematic_iron_scrap"
+      "item": "hemomancy:morphling_chitinite"
     },
     "N": {
-      "item": "minecraft:stick"
+      "item": "hemomancy:hematic_iron_scrap"
     }
   },
   "result": {

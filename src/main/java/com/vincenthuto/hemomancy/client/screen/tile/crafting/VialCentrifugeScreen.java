@@ -318,7 +318,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 	/** Advances animTime by one frame's worth. Called once per render. */
 	private void tickAnimTime() {
-		animTime += 0.016f; // ~60 FPS approximation
+		animTime += 0.004f; // ~60 FPS approximation, slowed to 1/4 speed
 	}
 
 	private void renderBloodBar(GuiGraphics gfx, int gx, int gy) {

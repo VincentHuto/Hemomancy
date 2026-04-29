@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_redstone": {
+    "has_morphling_chitinite": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "minecraft:redstone"
+            "items": "hemomancy:morphling_chitinite"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_redstone",
+      "has_morphling_chitinite",
       "has_the_recipe"
     ]
   ]
