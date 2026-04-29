@@ -53,6 +53,11 @@ public class BlockEntityInit {
 			.register("dendritic_distributor", () -> BlockEntityType.Builder
 					.of(DendriticDistributorBlockEntity::new, BlockInit.dendritic_distributor.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity>> consecrated_bloodwell = TILES
+			.register("consecrated_bloodwell", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity::new,
+							BlockInit.consecrated_bloodwell.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SerpentineIdolBlockEntity>> serpentine_idol = TILES
 			.register("serpentine_idol", () -> BlockEntityType.Builder
 					.of(SerpentineIdolBlockEntity::new, BlockInit.serpentine_idol.get()).build(null));

@@ -433,6 +433,11 @@ public class BlockInit {
 			() -> new DendriticDistributorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
+	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
+			() -> new com.vincenthuto.hemomancy.common.block.functional.ConsecratedBloodwellBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
+
 	public static final DeferredHolder<Block, Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
 			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));

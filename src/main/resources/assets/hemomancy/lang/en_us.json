@@ -1524,5 +1524,13 @@
   "subtitle.hemomancy.item.qliphoth_pome.eat": "Qliphoth pome opens",
   "subtitle.hemomancy.item.qliphoth_pome.communion": "Qliphoth communion completes",
   "fluid_type.hemomancy.morphic_nectar": "Morphic Nectar",
-  "hemomancy.drudge.memory_unsupported": "This memory cannot be installed in a Drudge."
+  "hemomancy.drudge.memory_unsupported": "This memory cannot be installed in a Drudge.",
+
+  "block.hemomancy.consecrated_bloodwell": "Consecrated Bloodwell",
+  "block.hemomancy.consecrated_bloodwell.inactive": "Your blood is not yet awakened.",
+  "block.hemomancy.consecrated_bloodwell.not_in_sanctum": "You must be within your own sanctum to withdraw.",
+  "block.hemomancy.consecrated_bloodwell.withdrew": "Withdrew %s blood. Well: %s / %s",
+  "block.hemomancy.consecrated_bloodwell.deposited": "Deposited %s blood. Well: %s / %s",
+  "block.hemomancy.consecrated_bloodwell.empty_or_full": "Nothing to withdraw — well is empty or you are full.",
+  "block.hemomancy.consecrated_bloodwell.cannot_deposit": "Cannot deposit — well is full or you have no blood. Well: %s / %s"
 }
