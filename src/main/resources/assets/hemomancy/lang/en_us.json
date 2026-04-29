@@ -1540,5 +1540,13 @@
   "block.hemomancy.covenant_throne.trance_cooldown": "The blood has not yet settled. The Trance is available in %s seconds.",
   "block.hemomancy.covenant_throne.no_blood": "Your blood is not yet awakened.",
   "block.hemomancy.covenant_throne.insufficient_blood": "The Covenant demands %s blood for the Trance. You cannot afford it.",
-  "block.hemomancy.covenant_throne.trance_entered": "The Covenant Trance takes hold. The blood sings."
+  "block.hemomancy.covenant_throne.trance_entered": "The Covenant Trance takes hold. The blood sings.",
+
+  "block.hemomancy.sanguine_vigil": "Sanguine Vigil",
+  "block.hemomancy.sanguine_vigil.inactive": "Your blood is not yet awakened.",
+  "block.hemomancy.sanguine_vigil.status": "Vigil blood: %s / %s — %s",
+  "block.hemomancy.sanguine_vigil.status.active": "watching",
+  "block.hemomancy.sanguine_vigil.status.dormant": "dormant",
+  "block.hemomancy.sanguine_vigil.fuelled": "Fuelled with %s blood. Vigil: %s / %s",
+  "block.hemomancy.sanguine_vigil.full_or_empty": "Cannot deposit — vigil is full or you have no blood. Vigil: %s / %s"
 }
