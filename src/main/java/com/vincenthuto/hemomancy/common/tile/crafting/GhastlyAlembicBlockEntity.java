@@ -47,6 +47,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -250,6 +251,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 		// Fill blood from bloody flasks (independent of cooking)
 		tryFillBloodFromFlask(te);
+
+		// Alembic leak — drip blood onto pointed dripstone below, grow blood crystal buds
+		tryLeakBloodOntoDripstone(level, pos, te, vol);
 
 		if (dirty) {
 			setChanged(level, pos, state);
@@ -667,6 +671,63 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
 		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		setChanged();
+	}
+
+	// ---- Alembic Leak ----
+
+	/**
+	 * If the block directly below the alembic is a pointed dripstone tip pointing
+	 * downward, drain blood from the tank on a configurable interval and advance
+	 * the {@link com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock} growing
+	 * below the dripstone tip (or place one if that space is empty and has a solid floor).
+	 */
+	private static void tryLeakBloodOntoDripstone(Level level, BlockPos pos,
+			GhastlyAlembicBlockEntity te, IBloodVolume vol) {
+		if (level.isClientSide) return;
+
+		int interval = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_INTERVAL_TICKS.get();
+		if (level.getGameTime() % interval != 0) return;
+
+		double leakRate = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_RATE_PER_TICK.get();
+		if (vol.getBloodVolume() < leakRate) return;
+
+		// Check for a downward-pointing dripstone tip directly below the alembic
+		BlockPos dripPos = pos.below();
+		BlockState dripState = level.getBlockState(dripPos);
+		if (!dripState.is(net.minecraft.world.level.block.Blocks.POINTED_DRIPSTONE)) return;
+
+		// Dripstone must be pointing downward (tip at the bottom)
+		net.minecraft.world.level.block.state.properties.DripstoneThickness thickness =
+				dripState.getValue(net.minecraft.world.level.block.PointedDripstoneBlock.THICKNESS);
+		net.minecraft.core.Direction tipDir =
+				dripState.getValue(net.minecraft.world.level.block.PointedDripstoneBlock.TIP_DIRECTION);
+		if (tipDir != net.minecraft.core.Direction.DOWN) return;
+		if (thickness != net.minecraft.world.level.block.state.properties.DripstoneThickness.TIP
+				&& thickness != net.minecraft.world.level.block.state.properties.DripstoneThickness.TIP_MERGE) return;
+
+		// The blood drips to the block two positions below the alembic (below the dripstone tip)
+		BlockPos budPos = dripPos.below();
+		BlockState budState = level.getBlockState(budPos);
+
+		// If a blood crystal bud is already there, try to grow it
+		if (budState.is(BlockInit.blood_crystal_bud.get())) {
+			com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock bud =
+					(com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock) BlockInit.blood_crystal_bud.get();
+			bud.tryGrow(level, budPos, budState, level.getRandom());
+			vol.drain(leakRate);
+			te.sendUpdates();
+			return;
+		}
+
+		// If the space is clear, place a new bud (requires a solid block below to stand on)
+		if (budState.canBeReplaced() || budState.isAir()) {
+			BlockState belowBud = level.getBlockState(budPos.below());
+			if (belowBud.isFaceSturdy(level, budPos.below(), net.minecraft.core.Direction.UP)) {
+				level.setBlock(budPos, BlockInit.blood_crystal_bud.get().defaultBlockState(), Block.UPDATE_ALL);
+				vol.drain(leakRate);
+				te.sendUpdates();
+			}
+		}
 	}
 
 }

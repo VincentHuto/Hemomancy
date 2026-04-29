@@ -1,0 +1,22 @@
+{
+  "parent": "block/block",
+  "render_type": "translucent",
+  "textures": {
+    "all": "hemomancy:block/sanguine_tran_pane",
+    "particle": "hemomancy:block/sanguine_tran_pane"
+  },
+  "elements": [
+    {
+      "from": [5, 0, 5],
+      "to": [11, 3, 11],
+      "faces": {
+        "north": { "uv": [5, 13, 11, 16], "texture": "#all" },
+        "south": { "uv": [5, 13, 11, 16], "texture": "#all" },
+        "east":  { "uv": [5, 13, 11, 16], "texture": "#all" },
+        "west":  { "uv": [5, 13, 11, 16], "texture": "#all" },
+        "up":    { "uv": [5, 5, 11, 11],  "texture": "#all" },
+        "down":  { "uv": [5, 5, 11, 11],  "texture": "#all" }
+      }
+    }
+  ]
+}

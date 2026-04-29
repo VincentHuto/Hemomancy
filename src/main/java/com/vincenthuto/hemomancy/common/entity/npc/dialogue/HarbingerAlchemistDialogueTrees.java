@@ -136,6 +136,12 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
 								null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.alembic_leak", "alembic_leak", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("alembic_leak", List.of(
+						"hemomancy.alchemist.neophyte.alembic_leak"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("blood_gourd_basics", List.of(

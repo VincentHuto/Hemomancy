@@ -349,6 +349,16 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> memory_crimson_flame_conjuration = BASEITEMS.register(
             "memory_crimson_flame_conjuration",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
+    // Crude Memory Shards — pre-Somatic-Loom HUMILIS teaching items
+    public static final DeferredHolder<Item, Item> crude_memory_blood_shot = BASEITEMS.register(
+            "crude_memory_blood_shot",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.blood_shot));
+    public static final DeferredHolder<Item, Item> crude_memory_blood_rush = BASEITEMS.register(
+            "crude_memory_blood_rush",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.blood_rush));
+    public static final DeferredHolder<Item, Item> crude_memory_deadly_gaze = BASEITEMS.register(
+            "crude_memory_deadly_gaze",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.deadly_gaze));
     // Organ Echoes (Visceral Mirror system)
     public static final DeferredHolder<Item, Item> echo_of_spleen = SPECIALITEMS.register("echo_of_spleen",
             () -> new OrganEchoItem(new Item.Properties(), EnumOrgan.SPLEEN));

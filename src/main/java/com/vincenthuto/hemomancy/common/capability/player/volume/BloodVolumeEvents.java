@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +18,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -195,6 +198,23 @@ public class BloodVolumeEvents {
 					player.displayClientMessage(
 							Component.literal("Your blood runs thin...")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				}
+
+				// ── One-time first sanguine formation drop ──
+				// When the player first takes a meaningful hit after blood becomes active,
+				// a sanguine formation crystallises from the wound and falls at their feet.
+				if (!volume.isFirstFormationDropped() && damage >= 6.0f) {
+					volume.setFirstFormationDropped(true);
+					syncVolume((ServerPlayer) player, volume);
+					ItemStack formation = new ItemStack(ItemInit.sanguine_formation.get());
+					ItemEntity drop = new ItemEntity(player.level(),
+							player.getX(), player.getY(), player.getZ(), formation);
+					drop.setDefaultPickUpDelay();
+					player.level().addFreshEntity(drop);
+					player.displayClientMessage(
+							Component.literal("Something crystalline falls from the wound.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
 				}
 			}
 		});

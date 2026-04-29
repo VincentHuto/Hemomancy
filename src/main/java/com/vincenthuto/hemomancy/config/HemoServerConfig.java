@@ -52,6 +52,10 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
 	public static ModConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
 
+	// ===== Ghastly Alembic Leak =====
+	public static ModConfigSpec.IntValue ALEMBIC_LEAK_INTERVAL_TICKS;
+	public static ModConfigSpec.DoubleValue ALEMBIC_LEAK_RATE_PER_TICK;
+
 	// ===== Drudge System =====
 	public static ModConfigSpec.IntValue DRUDGE_LEASH_RADIUS;
 	public static ModConfigSpec.IntValue DRUDGE_MAX_PER_SSC;
@@ -216,6 +220,20 @@ public class HemoServerConfig {
 		MORPHLING_CRADLE_LEECH_TARGET_PLAYERS = builder
 				.comment("Whether Leech Morphling Cradles can target non-owner players.")
 				.define("morphlingCradleLeechTargetPlayers", false);
+
+		builder.pop();
+
+		// ───── Ghastly Alembic Leak ─────
+		builder.comment("Ghastly Alembic Leak Settings").push("alembic_leak");
+
+		ALEMBIC_LEAK_INTERVAL_TICKS = builder
+				.comment("How many ticks between each alembic leak tick. 20 ticks = 1 second. "
+						+ "Each tick, blood is drained and the crystal bud below is advanced if enough ticks have accumulated.")
+				.defineInRange("alembicLeakIntervalTicks", 200, 20, 6000);
+
+		ALEMBIC_LEAK_RATE_PER_TICK = builder
+				.comment("Blood drained from the alembic per leak interval when a dripstone is directly below.")
+				.defineInRange("alembicLeakRatePerTick", 50.0, 1.0, 2000.0);
 
 		builder.pop();
 
