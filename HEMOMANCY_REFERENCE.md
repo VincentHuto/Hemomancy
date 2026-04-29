@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
-> **Last Updated:** 2026-04-28
+> **Last Updated:** 2026-04-29 (Degree theme implementation: Apotheos dialogue trees for all 3 NPCs; Saints + Founding Sanctum branches in Vicar trees; degree_hint restored to Illuminatus/Sanctified; dialogue tables updated; Blood Structure tiered gating — intro at Votary, Grand tier at D5; Monolith identity + Crimson Lodestone dialogue overhaul; §12.4 Fungal Scars planned; Tier 3 scar gate planned D6; **Sanguine Conduit block form gated to Degree 5** — `SanguineConduitBlock` added in `NOITEMBLOCKS`, `ItemSanguineConduit.useOn()` gates placement, degree-gated tooltip added; **Conduit block click opens HarbingerProgressScreen**; **SanguineConduitBlockEntity + BER** for pulsing crimson oath-rings; **Ash trail NOITEMBLOCKS migration** — `smouldering_ash_trail`, `befouling_ash_trail`, `active_smouldering_ash_trail`, `active_befouling_ash_trail` moved to NOITEMBLOCKS, `active_*_ash` items removed; **3 Grand-tier Blood Structure recipe drafts** added)
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -172,6 +172,7 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Degree 5 Illuminatus | Reveals Bloodline Covenant system; hints toward Bloodline Covenant rite |
 | Degree 6 Sanctified | Final hint — points toward the Rite of the Hematic Order |
 | Degree 7 Archon | Kneels before the player: "Archon of the Hematic Order. You are the blood incarnate." |
+| Degree 8 Apotheos | Speechless reverence; final words from the keeper who was never given instructions beyond the seventh degree |
 
 **Harbinger Alchemist** (`HarbingerAlchemistDialogueTrees`) — found at Harbinger Outposts. Focuses on machines and crafting systems; dismisses purifying players coldly.
 
@@ -179,12 +180,13 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 |---|---|
 | Uninitiated | Politely refuses: machines require initiation |
 | Neophyte | Introduces the Ghastly Alembic; overview of the Outpost machine chain |
-| Votary | Explains the Vial Centrifuge and blood tendency separation |
+| Votary | Explains the Vial Centrifuge and blood tendency separation; **introduces Blood Structure crafting** (basic-tier patterns now available) |
 | Initiate | Reveals the Somatic Loom and explains memory weaving |
 | Adept | Introduces the Cerebral Scarring Station (surgical instrument) and Chisel Station (rune encoding) |
-| Illuminatus | Reveals blood crafting (blood key + 3D block pattern) and Morphling Incubator lore |
+| Illuminatus | Reveals Blood Structure **Grand tier** — Blood Conduit pipeline becomes mandatory for complex patterns; and Morphling Incubator lore |
 | Sanctified | Describes the "final synthesis" — all machines as one unified process |
 | Archon | Defers to the player's mastery; "I have nothing left to teach" |
+| Apotheos | Awe and vertigo: "I built machines to process blood. The machines were always pointing at something. I understand now." Reflects that the player was the product the machines were building toward |
 | Purifying | Cold dismissal: "I have no time to teach someone who won't make use of my knowledge" |
 | Clarity | Ignores the player entirely |
 
@@ -195,11 +197,12 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Uninitiated | Who the Harbingers are; purpose of the Outpost |
 | Neophyte | The Hematic Covenant as a body of rites/wisdom; Votary degree hints |
 | Votary | Seven blood tendencies (Fungal, Umbral, Incandescent, Ferric, Vivacious, Ruinous, Neurotic) and their role |
-| Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age |
+| Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age; **Saints lore branch** — directs player toward Trial Chambers and Hallowed Residuum extraction |
 | Adept | History of the **Sanguine Brotherhood** — shared blood pools born from war necessity |
-| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently" |
-| Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world" |
+| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently"; **Founding Sanctum branch** — explains Sanguine Quintessence and sanctum consecration; degree hint toward Bloodline Covenant rite |
+| Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world"; degree hint toward Archon rite |
 | Archon | Hidden lore: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* |
+| Apotheos | Speechless reverence; the Covenant was "always meant to be outlived — it is a ladder; what you have become is what was always at the top of it" |
 | Purifying | Stern warning; grieves the loss of blood power; urges return before path completes |
 
 ### 3.5 Fungal Whisper Events
@@ -831,7 +834,7 @@ Scars are organized in **three tiers** by `deepenAmount` — how strongly they s
 | Scar of the Anvil | Ferric |
 | Scar of the Veil | Tenebris |
 
-**Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5:**
+**Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5 (planned: move gate to Degree 6):**
 
 | Scar | Tendency |
 |------|----------|
@@ -884,6 +887,25 @@ One for each tendency:
 ![](src/main/resources/assets/hemomancy/textures/item/umbral_spores.png) Umbral,
 ![](src/main/resources/assets/hemomancy/textures/item/frigid_spores.png) Frigid.
 
+### 12.4 Fungal Scars (Planned — Degree 7–8, not yet implemented)
+
+A fourth scar tier, qualitatively different from standard scars: they do not deepen tendency alignment. Instead they alter the player's relationship to the mycelial network. Designed as Archon (Degree 7) and Apotheos (Degree 8) content.
+
+**Acquisition:** Not crafted at the Cerebral Scarring Station. Harvested from specific fungal formations in the Fungal Gardens dimension using a **Mycorrhizal Extractor** (new tool item). The scar grows onto the player rather than being surgically inscribed — framing that the player has crossed a threshold from practising blood magic to being partly consumed by it.
+
+**Restrictions:** Requires the Upgraded Scar Binder; only one Fungal Scar may be equipped at a time. They cannot be placed in the standard Scar Binder.
+
+**Planned effects (thematic set):**
+
+| Scar | Effect |
+|------|--------|
+| Scar of the Hyphae | Passive hyphae-linked regeneration while standing on mycelium-type blocks or inside a Founding Sanctum |
+| Scar of the Corpus | Blood manipulation cost reductions from Qliphoth Pomes last 25% longer |
+| Scar of the Sporulation | Brief spore-emission particle effect on high-cost manipulations; nearby enemies receive a Fungal Whisper debuff (Slowness + Blindness) |
+| Scar of the Network | While two or more Bloodline members are in range, manipulation cooldowns reduce as if Scar Resonance were one level higher |
+
+A second, deeper Fungal Scar gated behind completion of Qliphoth Communion (Apotheos-tier) is also planned.
+
 ---
 
 ## 13. Items & Materials
@@ -903,7 +925,7 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/neutralizing_gasket.png) Neutralizing Gasket | Anti-blood component |
 | ![](src/main/resources/assets/hemomancy/textures/item/foul_paste.png) Foul Paste | Crafting ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_rock.png) Blood Rock | Crafting ingredient |
-| ![](src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient |
+| ![](src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient / covenant anchor. **Block form gated behind Degree 5 (Illuminatus).** Right-clicking a surface places the block only when `IInitiatoryDegree.getDegreeNumber() >= 5`; the attempt is silently blocked below that degree. In-air right-click opens the Harbinger skill tree at any degree. **Right-clicking the placed block also opens the Harbinger skill tree.** The placed block has a minimal `SanguineConduitBlockEntity` whose BER (`SanguineConduitBlockRenderer`) draws a slow, dim pulsing crimson ring expanding outward — a quiet mark of covenant presence. Registered in `ItemInit` (`ItemSanguineConduit`); the placed block (`SanguineConduitBlock`) is in `BlockInit.NOITEMBLOCKS` to avoid duplicate item registration. Tooltip changes at Degree 5 to reveal the planting mechanic. |
 | ![](src/main/resources/assets/hemomancy/textures/item/serpent_scale.png) Serpent Scale | Mob drop |
 | ![](src/main/resources/assets/hemomancy/textures/item/swollen_leech.png) Swollen / ![](src/main/resources/assets/hemomancy/textures/item/dried_leech.png) Dried Leech | Mob drops |
 | ![](src/main/resources/assets/hemomancy/textures/item/chitinous_husk.png) Chitinous Husk | Mob drop |
@@ -1177,7 +1199,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](src/main/resources/assets/hemomancy/textures/ref doc images/morphling_incubator.png) 
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Portal to the Fungal Gardens dimension. Degree 2+ (Votary) required; costs 500 blood. Stores overworld return coordinates in player persistent data. Degree-7 Archons on first exit attempt see the `coreWitnessDialogue()` choice fork instead of teleporting home; subsequent uses proceed directly. See §3.6, §3.9.                                                                                                                                                                                                                                                                                                                                               |
-| **Sanguine Monolith**                | `SanguineMonolithBlockEntity`              | 1×2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated cryptic guidance (degrees 4–7). At Degree 7 an Archon may interact with it **twice** to shatter it — rendering black shards plus a black orb blast client-side, dropping a **Qliphoth Seed**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Uses `SanguineMonolithDialogueTrees`. Custom animated model (`SanguineMonolithModel`). See §3.9.                                                                                                                                                                                                        |
+| **Sanguine Monolith** (*The Crimson Lodestone*) | `SanguineMonolithBlockEntity` | 1×2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated guidance (degrees 4–7) via `SanguineMonolithDialogueTrees`. The dialogue speaker is displayed as **"The Crimson Lodestone"** (`hemomancy.monolith.lodestone_name`). Each degree includes a `what_are_you` branch that progressively discloses the Monolith's nature: a sealed incubation vessel containing a dormant mycelial fragment built by the Crimson Lodge. At Degree 7 the player can press further for the pre-shatter warning (`press_again` node). At Degree 7 an Archon may interact with it **twice** to shatter it — rendering black shards plus a black orb blast client-side, dropping a **Qliphoth Seed**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Custom animated model (`SanguineMonolithModel`). See §3.9 and LORE_REFERENCE §6.5a. |
 | **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1×1×8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime — one per Qliphoth husk (Nahemoth → Ghagiel), with owner whisper alerts on each drop. Registered and synced via `QliphothBloomSavedData`. Player breaking is canceled for the bloom and its filler shell; intended removal is the Rite of Cult Pruning. See §3.9.                                                                                                                                                                                                                       |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/ref doc images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -1322,6 +1344,14 @@ All applicable flowers have **potted** variants.
 
 An in-world system: build a specific block structure, then hit a particular block with a catalyst item while spending blood. The structure transforms into the desired output.
 
+Blood structure crafting is introduced at **Degree 2 (Votary)** — the Alchemist explains the system at this degree. Recipes are graduated across tiers:
+- **Basic tier** (degree gate 0): simple flat-layout patterns, low blood cost — available from the start
+- **Advanced tier** (degree gate 2): introduces the Blood Key mechanic fully; 3D patterns begin
+- **Expert tier** (degree gate 4): complex multiblock patterns requiring Sanguine Formation catalyst
+- **Grand tier** (degree gate 5–6, drafted): structures that require the Sanguine Conduit as catalyst or hit-block, reflecting the Founding Sanctum's claim over the land. Three draft recipes exist: **Consecrated Bloodwell** (`consecrated_bloodwell.json`, cost 5000, uses sanguine_conduit as heldItem — 3-layer cubic arrangement of pillars, polished venous stone, conscious mass, and sanguine glass), **Vascular Effigy** (`vascular_effigy.json`, cost 6500, 4-layer humanoid profile of hematic iron, summoning a Semi-Sentient Construct), and **Covenant Throne** (`covenant_throne.json`, cost 8000, requires a Sanguine Monolith at center — upgrades the monolith within a ring of chiseled iron and conscious mass into a sanctified seat).
+
+The Liber Sanguinum sidebar groups recipes as Basic/Advanced/Expert with the 0/2/4 degree gating displayed. Grand-tier gating is a planned addition.
+
 | Recipe | Blood Cost | Held Item | Hit Block | Result |
 |--------|-----------|-----------|-----------|--------|
 | Liber Sanguinum | 100 | Sanguine Formation | Bookshelf | Liber Sanguinum |
@@ -1330,6 +1360,9 @@ An in-world system: build a specific block structure, then hit a particular bloc
 | Morphling Incubator | 200 | Morphling Polyp | Hematic Iron Block | Morphling Incubator |
 | Semi-Sentient Construct | 250 | Befouling Ash | Conscious Mass | Semi-Sentient Construct |
 | Unstained Podium | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
+| *(Grand)* Consecrated Bloodwell | 5000 | Sanguine Conduit | Conscious Mass | Dendritic Distributor *(placeholder result — own block TBD)* |
+| *(Grand)* Vascular Effigy | 6500 | Sanguine Formation | Hematic Iron Block | Semi-Sentient Construct *(placeholder — dedicated construct upgrade TBD)* |
+| *(Grand)* Covenant Throne | 8000 | Sanguine Formation | Sanguine Monolith | Sanguine Monolith *(placeholder — dedicated throne block TBD)* |
 
 > Recipes are in `data/hemomancy/recipes/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, and `result`.
 
@@ -2259,7 +2292,7 @@ Registered in `ParticleInit`:
 
 ## 35. Drudge System
 
-*Last Updated: 2026-04-28*
+*Last Updated: 2026-04-29*
 
 The Drudge is a persistent, player-owned semi-organic construct that holds a single **Blood Memory** (`BloodManipulation`) and executes it autonomously within a leash radius anchored to a **Semi-Sentient Construct (SSC)** block. Unlike the Blood Thrall (a transient courier), the Drudge is a long-term servant that "learns a job" and keeps doing it.
 

@@ -53,6 +53,21 @@ public class BlockEntityInit {
 			.register("dendritic_distributor", () -> BlockEntityType.Builder
 					.of(DendriticDistributorBlockEntity::new, BlockInit.dendritic_distributor.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity>> consecrated_bloodwell = TILES
+			.register("consecrated_bloodwell", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity::new,
+							BlockInit.consecrated_bloodwell.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity>> covenant_throne = TILES
+			.register("covenant_throne", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity::new,
+							BlockInit.covenant_throne.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.SanguineVigilBlockEntity>> sanguine_vigil = TILES
+			.register("sanguine_vigil", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.functional.SanguineVigilBlockEntity::new,
+							BlockInit.sanguine_vigil.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SerpentineIdolBlockEntity>> serpentine_idol = TILES
 			.register("serpentine_idol", () -> BlockEntityType.Builder
 					.of(SerpentineIdolBlockEntity::new, BlockInit.serpentine_idol.get()).build(null));
@@ -126,6 +141,10 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SanguineMonolithBlockEntity>> sanguine_monolith = TILES
 			.register("sanguine_monolith", () -> BlockEntityType.Builder
 					.of(SanguineMonolithBlockEntity::new, BlockInit.sanguine_monolith.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SanguineConduitBlockEntity>> sanguine_conduit = TILES
+			.register("sanguine_conduit", () -> BlockEntityType.Builder
+					.of(SanguineConduitBlockEntity::new, BlockInit.sanguine_conduit.get()).build(null));
 
 	// Puzzle block entities — Hemorath encounter
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodBasinBlockEntity>> blood_basin = TILES

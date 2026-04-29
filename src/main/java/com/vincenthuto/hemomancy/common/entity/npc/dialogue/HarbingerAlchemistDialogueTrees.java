@@ -37,7 +37,8 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline);
 			case 6 -> sanctified(entityId, hasBloodline);
-			default -> archon(entityId, hasBloodline); // degree 7+
+			case 7 -> archon(entityId, hasBloodline);
+			default -> apotheos(entityId, hasBloodline); // degree 8+
 		};
 	}
 
@@ -131,7 +132,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.build();
 	}
 
-	/** Degree 2 — Votary. Explains the Vial Centrifuge and blood tendency separation. */
+	/** Degree 2 — Votary. Explains the Vial Centrifuge, blood tendency separation, and introduces blood structure crafting. */
 	public static DialogueTree votary(int entityId) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
@@ -140,6 +141,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures", "blood_structure_intro", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("centrifuge_lore", List.of(
@@ -157,6 +159,11 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.neophyte.alembic_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("blood_structure_intro", List.of(
+						"hemomancy.alchemist.votary.blood_structure_intro"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
@@ -286,6 +293,35 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.archon.line1",
 						"hemomancy.alchemist.archon.line2"
 				), greetingOptions))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.alchemist.consider",
+						"hemomancy.dialogue.recruit.alchemist.accept"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 8 — Apotheos. The alchemist witnesses something beyond their framework. */
+	public static DialogueTree apotheos(int entityId, boolean hasBloodline) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_do_you_see", "reflection", null));
+		if (hasBloodline) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.apotheos.line1",
+						"hemomancy.alchemist.apotheos.line2"
+				), greetingOptions))
+				.addNode(new DialogueNode("reflection", List.of(
+						"hemomancy.alchemist.apotheos.reflection"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"

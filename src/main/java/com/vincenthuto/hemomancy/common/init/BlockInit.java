@@ -76,6 +76,22 @@ public class BlockInit {
 	public static final DeferredRegister<Block> LIQUIDBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
 
+	/**
+	 * Blocks whose item form is managed entirely by {@link ItemInit} (or has no
+	 * item form at all). Excluded from the auto block-item registration stream in
+	 * {@link #getAllBlockEntriesAsStream()}.
+	 */
+	public static final DeferredRegister<Block> NOITEMBLOCKS = DeferredRegister.create(Registries.BLOCK,
+			Hemomancy.MOD_ID);
+
+	/**
+	 * The placed form of the Sanguine Conduit. The corresponding item (registered
+	 * in {@link ItemInit}) gates placement behind Initiatory Degree ≥ 5 and handles
+	 * item consumption, so no separate BlockItem is auto-registered here.
+	 */
+	public static final DeferredHolder<Block, Block> sanguine_conduit = NOITEMBLOCKS.register("sanguine_conduit",
+			SanguineConduitBlock::new);
+
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
 			() -> new LiquidBlock(
@@ -95,17 +111,18 @@ public class BlockInit {
 	private static final ResourceKey<Block> ATTACHED_GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("attached_gourd_stem"));
 	private static final ResourceKey<Item> GOURD_SEED_ITEM_KEY = ResourceKey.create(Registries.ITEM, Hemomancy.rloc("gourd_seeds"));
 
-	// Ash
-	public static final DeferredHolder<Block, Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
+	// Ash — base trail blocks still need items (registered explicitly in ItemInit);
+	// active-state and plain trail blocks have no item form and live in NOITEMBLOCKS.
+	public static final DeferredHolder<Block, Block> smouldering_ash_trail = NOITEMBLOCKS.register("smouldering_ash_trail",
 			() -> new SmoulderingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
-	public static final DeferredHolder<Block, Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
+	public static final DeferredHolder<Block, Block> befouling_ash_trail = NOITEMBLOCKS.register("befouling_ash_trail",
 			() -> new BefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
-	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = SPECIALBLOCKS.register(
+	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = NOITEMBLOCKS.register(
 			"active_smouldering_ash_trail",
 			() -> new ActiveSmoulderingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
-	public static final DeferredHolder<Block, Block> active_befouling_ash_trail = SPECIALBLOCKS.register(
+	public static final DeferredHolder<Block, Block> active_befouling_ash_trail = NOITEMBLOCKS.register(
 			"active_befouling_ash_trail",
 			() -> new ActiveBefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
@@ -416,6 +433,21 @@ public class BlockInit {
 			() -> new DendriticDistributorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
+	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
+			() -> new com.vincenthuto.hemomancy.common.block.functional.ConsecratedBloodwellBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
+
+	public static final DeferredHolder<Block, Block> covenant_throne = MODELEDBLOCKS.register("covenant_throne",
+			() -> new com.vincenthuto.hemomancy.common.block.functional.CovenantThroneBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> sanguine_vigil = MODELEDBLOCKS.register("sanguine_vigil",
+			() -> new com.vincenthuto.hemomancy.common.block.functional.SanguineVigilBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(3.0F, 8.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 6).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
 			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
@@ -578,12 +610,10 @@ public class BlockInit {
 				.map(BlockInit::createItemBlock);
 		b.forEach(item -> {
 			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
-					|| item.getSecond().getBlock() != BlockInit.filler_block.get()
-					|| item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
+					&& item.getSecond().getBlock() != BlockInit.gourd_stem.get()
+					&& item.getSecond().getBlock() != BlockInit.engram_block.get()
+					&& item.getSecond().getBlock() != BlockInit.filler_block.get()
+					&& item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
 				registerBlockItem(event, item);
 			}
 		});

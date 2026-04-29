@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/covenant_throne", "y": 180 },
+    "facing=south": { "model": "hemomancy:block/covenant_throne" },
+    "facing=west":  { "model": "hemomancy:block/covenant_throne", "y": 270 },
+    "facing=east":  { "model": "hemomancy:block/covenant_throne", "y": 90 }
+  }
+}
