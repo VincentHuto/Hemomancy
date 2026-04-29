@@ -679,7 +679,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	 * If the block directly below the alembic is a venous stone (any variant) or a
 	 * {@link net.minecraft.world.level.block.Blocks#BONE_BLOCK}, drain blood from
 	 * the tank on a configurable interval. Blood seeps through the porous material
-	 * and crystallises two blocks below the alembic (beneath the trigger block), growing
+	 * and crystallizes two blocks below the alembic (beneath the trigger block), growing
 	 * a {@link com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock} there.
 	 * <p>
 	 * Layout: {@code [Alembic] / [venous_stone or bone_block] / [bud grows here] / [solid floor]}
@@ -703,7 +703,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		boolean isBoneBlock = baseState.is(net.minecraft.world.level.block.Blocks.BONE_BLOCK);
 		if (!isVenous && !isBoneBlock) return;
 
-		// Blood seeps through the trigger block and crystallises one block below it
+		// Blood seeps through the trigger block and crystallizes one block below it
 		BlockPos budPos = basePos.below();
 		BlockState budState = level.getBlockState(budPos);
 

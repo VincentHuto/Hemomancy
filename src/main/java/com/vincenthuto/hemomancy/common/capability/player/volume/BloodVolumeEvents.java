@@ -201,7 +201,7 @@ public class BloodVolumeEvents {
 				}
 
 				// ── Sanguine formation drop while mastery is still rough (degree 1–3) ──
-				// Blood still crystallises unpredictably during early Harbinger ascent.
+				// Blood still crystallizes unpredictably during early Harbinger ascent.
 				// 8% chance per qualifying hit (≥3 hearts / 6 HP) until the player reaches degree 4.
 				// 6.0f = 3 hearts (Minecraft damage: 1 heart = 2 HP).
 				int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);

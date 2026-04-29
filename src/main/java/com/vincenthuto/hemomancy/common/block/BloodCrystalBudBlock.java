@@ -19,7 +19,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A blood crystal bud that grows upward from a surface. Placed by the
- * Ghastly Alembic leak mechanism when blood drips onto pointed dripstone.
+ * Ghastly Alembic leak mechanism when blood seeps through a venous stone
+ * variant or bone block placed directly beneath the alembic.
  *
  * <p>Grows through 4 stages (AGE 0–3). Stages 0–2 are indestructible without
  * Silk Touch and yield nothing.  Stage 3 (mature) drops
