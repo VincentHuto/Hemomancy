@@ -23,9 +23,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
  * breathes.</p>
  *
  * <p>Two passes are drawn (core then glow) using
- * {@link RenderTypeInit#RITE_BOUNDARY_CORE} and
- * {@link RenderTypeInit#RITE_BOUNDARY_GLOW} so the ball integrates cleanly with
- * the existing translucent pipeline.</p>
+ * {@link RenderTypeInit#RITE_BOUNDARY_GLOW} for both passes, which writes only
+ * colour (not depth) so the sphere's {@code NO_CULL} inner faces do not corrupt
+ * the depth buffer and produce xray artefacts in the surrounding terrain.</p>
  */
 public class SanguineConduitBlockRenderer implements BlockEntityRenderer<SanguineConduitBlockEntity> {
 
@@ -90,7 +90,10 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 		float pulse = PULSE_BASE + PULSE_AMP * (float) Math.sin(time * PULSE_SPEED + jiggle);
 		Matrix4f mat = poseStack.last().pose();
 
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		// Use RITE_BOUNDARY_GLOW (COLOR_WRITE, no depth write) for both passes so
+		// the sphere's NO_CULL back-faces do not corrupt the depth buffer and cause
+		// the xray see-through-floor artefact.
+		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		renderSphere(coreVC, mat, BASE_RADIUS * pulse, time, jiggle,
 				CORE_R, CORE_G, CORE_B, CORE_A);
 

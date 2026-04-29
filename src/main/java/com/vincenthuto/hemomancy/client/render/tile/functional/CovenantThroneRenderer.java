@@ -300,6 +300,11 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	 * face — a watching crimson iris behind a dark pupil, ringing with slow spokes.
 	 * Much simpler than the monolith's three-eye arrangement; just one deep-set eye
 	 * staring out from the darkness.
+	 *
+	 * <p>Scale {@code sc=0.30} gives an iris ~0.24 blocks wide — clearly visible at
+	 * typical interaction distance but not overwhelming on a 0.75-block-wide
+	 * backrest.  All colours are vivid blood-red so the eye reads against the
+	 * near-black throne geometry.</p>
 	 */
 	private static void renderBloodEye(MultiBufferSource buf, Matrix4f mat, float time) {
 		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
@@ -312,9 +317,10 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		float pulse = 0.70f + 0.30f * Mth.sin(time * 0.052f);
 		float beat  = 0.55f + 0.45f * Mth.sin(time * 0.11f + 0.8f);
 
-		float sc = 0.065f; // overall eye scale
+		// sc=0.30 → iris ~0.24 wide; was 0.065 (microscopic).
+		float sc = 0.30f;
 
-		// ── Outer diffuse glow ──
+		// ── Outer diffuse glow ring ──
 		int SEGS = 20;
 		float rIn = sc * 1.15f, rOut = sc * 1.70f;
 		for (int s = 0; s < SEGS; s++) {
@@ -322,23 +328,28 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 			double a1 = Math.PI * 2 * (s + 1) / SEGS;
 			float c0 = (float)Math.cos(a0), s0 = (float)Math.sin(a0);
 			float c1 = (float)Math.cos(a1), s1 = (float)Math.sin(a1);
-			int ga = (int)(25 * pulse);
-			vc.addVertex(mat, cx + c0 * rIn, cy + s0 * rIn * 1.5f, cz).setColor(100, 5, 5, ga);
-			vc.addVertex(mat, cx + c0 * rOut, cy + s0 * rOut * 1.5f, cz).setColor(55, 2, 2, 0);
-			vc.addVertex(mat, cx + c1 * rOut, cy + s1 * rOut * 1.5f, cz).setColor(55, 2, 2, 0);
-			vc.addVertex(mat, cx + c1 * rIn, cy + s1 * rIn * 1.5f, cz).setColor(100, 5, 5, ga);
+			int ga = (int)(85 * pulse); // was 25 — barely visible; now clearly glows
+			vc.addVertex(mat, cx + c0 * rIn,  cy + s0 * rIn  * 1.5f, cz).setColor(165, 14, 8, ga);
+			vc.addVertex(mat, cx + c0 * rOut, cy + s0 * rOut * 1.5f, cz).setColor( 80,  4, 2, 0);
+			vc.addVertex(mat, cx + c1 * rOut, cy + s1 * rOut * 1.5f, cz).setColor( 80,  4, 2, 0);
+			vc.addVertex(mat, cx + c1 * rIn,  cy + s1 * rIn  * 1.5f, cz).setColor(165, 14, 8, ga);
 		}
 
 		// ── Iris (filled ellipse via fan quads) ──
+		// Previously (130,6,6) — indistinguishable from near-black throne; now vivid.
 		float irX = sc * 0.80f, irY = sc * 1.25f;
 		for (int s = 0; s < SEGS; s++) {
 			double a0 = Math.PI * 2 * s / SEGS;
 			double a1 = Math.PI * 2 * (s + 1) / SEGS;
-			int ia = (int)(200 * pulse);
-			vc.addVertex(mat, cx, cy, cz + 0.001f).setColor(150, 8, 8, ia);
-			vc.addVertex(mat, cx + (float)Math.cos(a0) * irX, cy + (float)Math.sin(a0) * irY, cz + 0.001f).setColor(130, 6, 6, ia);
-			vc.addVertex(mat, cx + (float)Math.cos(a1) * irX, cy + (float)Math.sin(a1) * irY, cz + 0.001f).setColor(130, 6, 6, ia);
-			vc.addVertex(mat, cx, cy, cz + 0.001f).setColor(150, 8, 8, ia); // repeated to complete quad
+			int ia = (int)(220 * pulse);
+			vc.addVertex(mat, cx, cy, cz + 0.001f)
+					.setColor(230, 18, 12, ia);
+			vc.addVertex(mat, cx + (float)Math.cos(a0) * irX, cy + (float)Math.sin(a0) * irY, cz + 0.001f)
+					.setColor(200, 12, 8, ia);
+			vc.addVertex(mat, cx + (float)Math.cos(a1) * irX, cy + (float)Math.sin(a1) * irY, cz + 0.001f)
+					.setColor(200, 12, 8, ia);
+			vc.addVertex(mat, cx, cy, cz + 0.001f)
+					.setColor(230, 18, 12, ia); // degenerate 4th vertex — completes the fan triangle
 		}
 
 		// ── Iris spokes ──
@@ -352,11 +363,11 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 			float len = Mth.sqrt(dx * dx + dy * dy);
 			if (len < 1e-6f) continue;
 			float nx = -dy / len * spkHW, ny = dx / len * spkHW;
-			int sa2 = (int)(140 * pulse);
-			vc.addVertex(mat, ix + nx, iy + ny, cz + 0.002f).setColor(200, 15, 10, sa2);
-			vc.addVertex(mat, ix - nx, iy - ny, cz + 0.002f).setColor(200, 15, 10, sa2);
-			vc.addVertex(mat, ox - nx, oy - ny, cz + 0.002f).setColor(200, 15, 10, sa2);
-			vc.addVertex(mat, ox + nx, oy + ny, cz + 0.002f).setColor(200, 15, 10, sa2);
+			int sa2 = (int)(190 * pulse); // was 140
+			vc.addVertex(mat, ix + nx, iy + ny, cz + 0.002f).setColor(245, 22, 14, sa2);
+			vc.addVertex(mat, ix - nx, iy - ny, cz + 0.002f).setColor(245, 22, 14, sa2);
+			vc.addVertex(mat, ox - nx, oy - ny, cz + 0.002f).setColor(245, 22, 14, sa2);
+			vc.addVertex(mat, ox + nx, oy + ny, cz + 0.002f).setColor(245, 22, 14, sa2);
 		}
 
 		// ── Dark pupil ──
