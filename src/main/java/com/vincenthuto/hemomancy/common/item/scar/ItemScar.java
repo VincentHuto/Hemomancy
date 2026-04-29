@@ -131,10 +131,11 @@ public class ItemScar extends Item implements IScar {
 				if (maxBloodModifier != 0.0) {
 					HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {
 						if (v.isActive()) {
+							double absAmount = Math.abs(maxBloodModifier);
 							if (maxBloodModifier > 0) {
-								v.addMaxBloodVolume(maxBloodModifier);
+								v.addMaxBloodVolume(absAmount);
 							} else {
-								v.subtractMaxBloodVolume(-maxBloodModifier);
+								v.subtractMaxBloodVolume(absAmount);
 							}
 						}
 					});
@@ -171,10 +172,12 @@ public class ItemScar extends Item implements IScar {
 				if (maxBloodModifier != 0.0) {
 					HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {
 						if (v.isActive()) {
+							// Reverse the equip operation
+							double absAmount = Math.abs(maxBloodModifier);
 							if (maxBloodModifier > 0) {
-								v.subtractMaxBloodVolume(maxBloodModifier);
+								v.subtractMaxBloodVolume(absAmount);
 							} else {
-								v.addMaxBloodVolume(-maxBloodModifier);
+								v.addMaxBloodVolume(absAmount);
 							}
 						}
 					});
