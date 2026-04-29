@@ -180,22 +180,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 										break;
 									}
 									// ── Path alignment gate ──
-									boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
-									boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
-											.map(u -> u.hasBegunPurification()).orElse(false);
-									if (targetPattern.isUnstained() && playerIsInitiated) {
-										player.displayClientMessage(
-												Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
-														.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-												false);
-										handled = true;
-										break;
-									}
-									if (!targetPattern.isUnstained() && playerIsUnstained) {
-										player.displayClientMessage(
-												Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
-														.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-												false);
+									net.minecraft.network.chat.Component alignError = checkPathAlignment(player, targetPattern);
+									if (alignError != null) {
+										player.displayClientMessage(alignError, false);
 										handled = true;
 										break;
 									}
@@ -301,19 +288,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 										false);
 							} else {
 								// Path alignment check
-								boolean isInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
-								boolean isUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
-										.map(u -> u.hasBegunPurification()).orElse(false);
-								if (recipe.isUnstained() && isInitiated) {
-									player.displayClientMessage(
-											Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
-													.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-											false);
-								} else if (!recipe.isUnstained() && isUnstained) {
-									player.displayClientMessage(
-											Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
-													.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-											false);
+								net.minecraft.network.chat.Component alignError = checkPathAlignment(player, recipe);
+								if (alignError != null) {
+									player.displayClientMessage(alignError, false);
 								} else {
 									player.displayClientMessage(
 											Component.literal("This formation requires you to hold: ")
@@ -591,6 +568,26 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			}
 		}
 		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
+	}
+
+	/**
+	 * Checks Harbinger / Unstained path alignment for a blood structure recipe.
+	 * Returns an error {@link Component} if the player is on the wrong path, or
+	 * {@code null} if the recipe is accessible.
+	 */
+	private static net.minecraft.network.chat.Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
+		boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
+		boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(u -> u.hasBegunPurification()).orElse(false);
+		if (recipe.isUnstained() && playerIsInitiated) {
+			return Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
+		}
+		if (!recipe.isUnstained() && playerIsUnstained) {
+			return Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
+					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
+		}
+		return null;
 	}
 
 	public ItemStack heldStack;
