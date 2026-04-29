@@ -114,6 +114,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(CleansingAltarModel.LAYER_LOCATION, CleansingAltarModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerSaintSarcophagusModel.LAYER_LOCATION, HarbingerSaintSarcophagusModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineMonolithModel.LAYER_LOCATION, SanguineMonolithModel::createBodyLayer);
+		event.registerLayerDefinition(CovenantThroneModel.LAYER_LOCATION, CovenantThroneModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);
 		event.registerLayerDefinition(IronWallModel.iron_wall, IronWallModel::createBodyLayer);

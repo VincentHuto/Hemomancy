@@ -499,6 +499,8 @@ public class ClientEvents {
 					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineMonolithRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.sanguine_conduit.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineConduitBlockRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.covenant_throne.get(),
+					com.vincenthuto.hemomancy.client.render.tile.functional.CovenantThroneRenderer::new);
 		}
 
 		@SuppressWarnings("deprecation")

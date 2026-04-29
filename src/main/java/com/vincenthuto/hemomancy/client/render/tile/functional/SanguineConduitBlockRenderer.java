@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.tile.functional;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -7,33 +9,60 @@ import com.vincenthuto.hemomancy.common.tile.functional.SanguineConduitBlockEnti
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
-import org.joml.Matrix4f;
-
 /**
- * Block entity renderer for the {@link SanguineConduitBlockEntity}. Draws a
- * slow, dim pulsing ring that expands outward from the conduit's center —
- * visually suggesting the covenant reach of the anchor without the full
- * grandeur of a Qliphoth Bloom.
- * <p>
- * Uses the same geometry technique as {@link com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer}
- * but with a single ring, slower pulse, and reduced opacity so the effect
- * reads as a quiet, persistent claim rather than an active rite.
+ * Block entity renderer for the {@link SanguineConduitBlockEntity}.
+ *
+ * <p>Renders a stationary glowing pulsing ball of living blood hovering at the
+ * center of the block.  The sphere uses the same latitude/longitude quad-band
+ * geometry and layered-sine undulation as
+ * {@link com.vincenthuto.hemomancy.client.render.world.BloodBallRenderer}, but
+ * without any motion, drop, squish, or stretch behaviour — it simply sits and
+ * breathes.</p>
+ *
+ * <p>Two passes are drawn (core then glow) using
+ * {@link RenderTypeInit#RITE_BOUNDARY_CORE} and
+ * {@link RenderTypeInit#RITE_BOUNDARY_GLOW} so the ball integrates cleanly with
+ * the existing translucent pipeline.</p>
  */
 public class SanguineConduitBlockRenderer implements BlockEntityRenderer<SanguineConduitBlockEntity> {
 
-	// ── Ring parameters (subdued compared to QliphothBloom) ──
-	private static final int RING_SEGMENTS = 64;
-	private static final float RING_CORE_WIDTH = 0.05f;
-	private static final float RING_GLOW_WIDTH = 0.18f;
-	/** The ring expands from 0.8 to RING_MAX_RADIUS and then resets. */
-	private static final float RING_START_RADIUS = 0.8f;
-	private static final float RING_MAX_RADIUS = 4.5f;
-	/** Slower pulse speed than the Bloom (0.005 → 0.0018). */
-	private static final double RING_PULSE_SPEED = 0.0018;
+	// ── Sphere geometry ──
+	private static final int LAT_BANDS = 16;
+	private static final int LON_BANDS = 24;
+	private static final float BASE_RADIUS = 0.22f;
+	private static final float GLOW_EXTRA = 0.06f;
+
+	// ── Surface undulation — layered sine waves ──
+	private static final float A1 = 0.04f;
+	private static final double N1 = 3.0;
+	private static final double W1 = 0.06;
+
+	private static final float A2 = 0.025f;
+	private static final double N2 = 5.0;
+	private static final double W2 = 0.04;
+
+	private static final float A3 = 0.015f;
+	private static final double W3 = 0.09;
+
+	// ── Global pulse ──
+	private static final float PULSE_BASE = 0.92f;
+	private static final float PULSE_AMP  = 0.08f;
+	private static final double PULSE_SPEED = 0.05;
+
+	// ── Core colour (deep crimson) ──
+	private static final float CORE_R = 0.85f;
+	private static final float CORE_G = 0.04f;
+	private static final float CORE_B = 0.04f;
+	private static final float CORE_A = 0.90f;
+
+	// ── Glow colour (translucent dark red) ──
+	private static final float GLOW_R = 0.55f;
+	private static final float GLOW_G = 0.02f;
+	private static final float GLOW_B = 0.02f;
+	private static final float GLOW_A = 0.22f;
 
 	public SanguineConduitBlockRenderer(BlockEntityRendererProvider.Context context) {
 	}
@@ -45,139 +74,84 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 		if (mc.level == null) return;
 
 		float time = mc.level.getGameTime() + partialTick;
-		drawConduitRing(poseStack, buffer, time);
+
+		// A slow per-block jiggle phase so nearby conduits don't pulse in sync
+		long seed = be.getBlockPos().asLong();
+		float jiggle = (float) ((seed & 0xFFF) * (Math.PI * 2.0 / 0xFFF));
+
+		poseStack.pushPose();
+		// Center the ball in the block, slightly above center so it appears to hover
+		poseStack.translate(0.5, 0.55, 0.5);
+
+		float pulse = PULSE_BASE + PULSE_AMP * (float) Math.sin(time * PULSE_SPEED + jiggle);
+		Matrix4f mat = poseStack.last().pose();
+
+		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		renderSphere(coreVC, mat, BASE_RADIUS * pulse, time, jiggle,
+				CORE_R, CORE_G, CORE_B, CORE_A);
+
+		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
+		renderSphere(glowVC, mat, (BASE_RADIUS + GLOW_EXTRA) * pulse, time, jiggle,
+				GLOW_R, GLOW_G, GLOW_B, GLOW_A);
+
+		poseStack.popPose();
 	}
 
-	private static void drawConduitRing(PoseStack stack, MultiBufferSource buffer, float time) {
-		stack.pushPose();
-		try {
-			// Offset to block center at a slight elevation above ground
-			stack.translate(0.5, 0.08, 0.5);
+	// ── Sphere geometry ──────────────────────────────────────────────────────────
 
-			Matrix4f mat = stack.last().pose();
+	private static void renderSphere(VertexConsumer vc, Matrix4f mat,
+			float baseRadius, float time, float jiggle,
+			float r, float g, float b, float a) {
 
-			// Slow sine pulse controlling opacity
-			double pulse = (Math.sin(time * 0.04) + 1.0) * 0.5;
+		for (int lat = 0; lat < LAT_BANDS; lat++) {
+			double theta0 = Math.PI * lat / LAT_BANDS;
+			double theta1 = Math.PI * (lat + 1) / LAT_BANDS;
 
-			// Single outward-expanding ring
-			double phase = (time * RING_PULSE_SPEED) % 1.0;
-			float ringRadius = (float) (RING_START_RADIUS + phase * (RING_MAX_RADIUS - RING_START_RADIUS));
+			double sinT0 = Math.sin(theta0), cosT0 = Math.cos(theta0);
+			double sinT1 = Math.sin(theta1), cosT1 = Math.cos(theta1);
 
-			// Fade out as the ring approaches max radius
-			float fadeAlpha = (float) (1.0 - phase * phase);
-			if (fadeAlpha < 0.015f) {
-				return;
+			for (int lon = 0; lon < LON_BANDS; lon++) {
+				double phi0 = 2.0 * Math.PI * lon / LON_BANDS;
+				double phi1 = 2.0 * Math.PI * (lon + 1) / LON_BANDS;
+
+				double cosP0 = Math.cos(phi0), sinP0 = Math.sin(phi0);
+				double cosP1 = Math.cos(phi1), sinP1 = Math.sin(phi1);
+
+				float r00 = baseRadius + undulation(theta0, phi0, time, jiggle);
+				float r10 = baseRadius + undulation(theta1, phi0, time, jiggle);
+				float r11 = baseRadius + undulation(theta1, phi1, time, jiggle);
+				float r01 = baseRadius + undulation(theta0, phi1, time, jiggle);
+
+				vc.addVertex(mat,
+						(float)(sinT0 * cosP0) * r00, (float)cosT0 * r00, (float)(sinT0 * sinP0) * r00)
+						.setColor(r, g, b, a);
+				vc.addVertex(mat,
+						(float)(sinT1 * cosP0) * r10, (float)cosT1 * r10, (float)(sinT1 * sinP0) * r10)
+						.setColor(r, g, b, a);
+				vc.addVertex(mat,
+						(float)(sinT1 * cosP1) * r11, (float)cosT1 * r11, (float)(sinT1 * sinP1) * r11)
+						.setColor(r, g, b, a);
+				vc.addVertex(mat,
+						(float)(sinT0 * cosP1) * r01, (float)cosT0 * r01, (float)(sinT0 * sinP1) * r01)
+						.setColor(r, g, b, a);
 			}
-
-			float coreAlpha = (float) (0.30 + 0.14 * pulse) * fadeAlpha;
-			float glowAlpha = (float) (0.06 + 0.06 * pulse) * fadeAlpha;
-
-			// Deep crimson — slightly darker than the Bloom to feel "quieter"
-			float coreR = (float) Math.min(1.0, 0.70 + 0.12 * pulse);
-			float coreG = 0.03f;
-			float coreB = 0.03f;
-			float glowR = (float) Math.min(1.0, 0.40 + 0.15 * pulse);
-			float glowG = 0.01f;
-			float glowB = 0.01f;
-
-			// Pass 1: glow (do not interleave with core on shared BufferSource builders)
-			for (int i = 0; i < RING_SEGMENTS; i++) {
-				double a1 = Math.toRadians((360.0 / RING_SEGMENTS) * i);
-				double a2 = Math.toRadians((360.0 / RING_SEGMENTS) * (i + 1));
-
-				float undulate1 = (float) (Math.sin(a1 * 5.0 + time * 0.03) * 0.06);
-				float undulate2 = (float) (Math.sin(a2 * 5.0 + time * 0.03) * 0.06);
-
-				float r1 = ringRadius + undulate1;
-				float r2 = ringRadius + undulate2;
-
-				float cos1 = (float) Math.cos(a1);
-				float sin1 = (float) Math.sin(a1);
-				float cos2 = (float) Math.cos(a2);
-				float sin2 = (float) Math.sin(a2);
-
-				float iGlow1 = r1 - RING_GLOW_WIDTH - RING_CORE_WIDTH * 0.5f;
-				float iCore1 = r1 - RING_CORE_WIDTH * 0.5f;
-				float oCore1 = r1 + RING_CORE_WIDTH * 0.5f;
-				float oGlow1 = r1 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
-
-				float iGlow2 = r2 - RING_GLOW_WIDTH - RING_CORE_WIDTH * 0.5f;
-				float iCore2 = r2 - RING_CORE_WIDTH * 0.5f;
-				float oCore2 = r2 + RING_CORE_WIDTH * 0.5f;
-				float oGlow2 = r2 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
-
-				// Inner glow
-				emitQuad(buffer, RenderTypeInit.RITE_BOUNDARY_GLOW, mat,
-						cos1 * iGlow1, 0f, sin1 * iGlow1, glowR, glowG, glowB, 0f,
-						cos1 * iCore1, 0f, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
-						cos2 * iCore2, 0f, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
-						cos2 * iGlow2, 0f, sin2 * iGlow2, glowR, glowG, glowB, 0f);
-
-				// Outer glow
-				emitQuad(buffer, RenderTypeInit.RITE_BOUNDARY_GLOW, mat,
-						cos1 * oCore1, 0f, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
-						cos1 * oGlow1, 0f, sin1 * oGlow1, glowR, glowG, glowB, 0f,
-						cos2 * oGlow2, 0f, sin2 * oGlow2, glowR, glowG, glowB, 0f,
-						cos2 * oCore2, 0f, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
-			}
-
-			// Pass 2: core
-			for (int i = 0; i < RING_SEGMENTS; i++) {
-				double a1 = Math.toRadians((360.0 / RING_SEGMENTS) * i);
-				double a2 = Math.toRadians((360.0 / RING_SEGMENTS) * (i + 1));
-
-				float undulate1 = (float) (Math.sin(a1 * 5.0 + time * 0.03) * 0.06);
-				float undulate2 = (float) (Math.sin(a2 * 5.0 + time * 0.03) * 0.06);
-
-				float r1 = ringRadius + undulate1;
-				float r2 = ringRadius + undulate2;
-
-				float cos1 = (float) Math.cos(a1);
-				float sin1 = (float) Math.sin(a1);
-				float cos2 = (float) Math.cos(a2);
-				float sin2 = (float) Math.sin(a2);
-
-				float iCore1 = r1 - RING_CORE_WIDTH * 0.5f;
-				float oCore1 = r1 + RING_CORE_WIDTH * 0.5f;
-
-				float iCore2 = r2 - RING_CORE_WIDTH * 0.5f;
-				float oCore2 = r2 + RING_CORE_WIDTH * 0.5f;
-
-				emitQuad(buffer, RenderTypeInit.RITE_BOUNDARY_CORE, mat,
-						cos1 * iCore1, 0f, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
-						cos1 * oCore1, 0f, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
-						cos2 * oCore2, 0f, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
-						cos2 * iCore2, 0f, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
-			}
-
-		} catch (Exception e) {
-			// Log the error but don't crash
-			System.err.println("Error rendering Sanguine Conduit ring: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			stack.popPose();
 		}
 	}
 
-	private static void emitQuad(MultiBufferSource buffer, RenderType type, Matrix4f mat,
-			float x0, float y0, float z0, float r0, float g0, float b0, float a0,
-			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
-			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
-			float x3, float y3, float z3, float r3, float g3, float b3, float a3) {
-		VertexConsumer vc = buffer.getBuffer(type);
-		vc.addVertex(mat, x0, y0, z0).setColor(r0, g0, b0, a0);
-		vc.addVertex(mat, x1, y1, z1).setColor(r1, g1, b1, a1);
-		vc.addVertex(mat, x2, y2, z2).setColor(r2, g2, b2, a2);
-		vc.addVertex(mat, x3, y3, z3).setColor(r3, g3, b3, a3);
+	private static float undulation(double theta, double phi, float time, float jiggle) {
+		double w1 = A1 * Math.sin(N1 * theta + W1 * time + jiggle);
+		double w2 = A2 * Math.cos(N2 * phi  + W2 * time);
+		double w3 = A3 * Math.sin(W3 * time);
+		return (float)(w1 + w2 + w3);
 	}
 
 	@Override
 	public int getViewDistance() {
-		return 128;
+		return 64;
 	}
 
 	@Override
 	public boolean shouldRenderOffScreen(SanguineConduitBlockEntity be) {
-		return true;
+		return false;
 	}
 }
