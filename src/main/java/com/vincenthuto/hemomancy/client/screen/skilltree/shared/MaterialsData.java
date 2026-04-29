@@ -250,109 +250,105 @@ public final class MaterialsData {
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder_upgraded.get())));
 
 		list.add(new MaterialEntry("scar_transcendence", "Scar of Transcendence",
-				"Lux-aligned scar. Opens pathways to luminous perception.",
+				"Lux-aligned scar (Tier III). The light becomes a weight; stillness becomes its price.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_transcendence.get())));
 
 		list.add(new MaterialEntry("scar_sol", "Scar of Sol",
-				"Flammeus-aligned scar. Kindles the inner fire of conviction.",
+				"Flammeus-aligned scar (Tier II). The inner fire burns brighter — and burns away the armour.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_sol.get())));
 
 		list.add(new MaterialEntry("scar_heart", "Scar of the Heart",
-				"Animus-aligned scar. Strengthens the vital bond between body and will.",
+				"Animus-aligned scar (Tier I). More life in the veins, less blood to spare.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_heart.get())));
 
 		list.add(new MaterialEntry("scar_descendence", "Scar of Descendence",
-				"Mortem-aligned scar. Carves a pathway toward the threshold of endings.",
+				"Congeatio-aligned scar (Tier III). The fastest practitioner is the one who never swings.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_descendence.get())));
 
 		list.add(new MaterialEntry("scar_moon", "Scar of the Moon",
-				"Congeatio-aligned scar. Chills the blood, clarifying dormant instincts.",
+				"Tenebris-aligned scar (Tier II). Shadow-swift, but the strike grows lighter.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_moon.get())));
 
 		list.add(new MaterialEntry("scar_eye", "Scar of the Eye",
-				"Ductilis-aligned scar. Sharpens the inner sight to perceive hidden connections.",
+				"Tenebris-aligned scar (Tier III). The eyes never close. They never stop drinking.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_eye.get())));
 
 		list.add(new MaterialEntry("scar_feral", "Scar of the Feral",
-				"Ductilis-aligned scar. Awakens primal nervous pathways long dormant.",
+				"Ductilis-aligned scar (Tier I). Awakens primal nervous pathways — but the skin thins.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_feral.get())));
 
-		// ── Tier 1 Scars (new) ──
+		// ── Tier 1 Scars ──
 
 		list.add(new MaterialEntry("scar_thorn", "Scar of the Thorn",
-				"Ferric-aligned scar. Draws iron from the blood to harden resolve.",
+				"Ferric-aligned scar (Tier I). Iron hardens the blood; iron slows the feet.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_thorn.get())));
 
 		list.add(new MaterialEntry("scar_shade", "Scar of the Shade",
-				"Tenebris-aligned scar. Cloaks the bearer in the penumbra between worlds.",
+				"Tenebris-aligned scar (Tier I). The shadow quickens; the fist quiets.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_shade.get())));
 
 		// ── Tier 2 Scars ──
 
 		list.add(new MaterialEntry("scar_pyre", "Scar of the Pyre",
-				"Flammeus-aligned scar. Stokes the cremation fire that purifies sanguine impurities.",
+				"Flammeus-aligned scar (Tier I). Conviction sharpens the edge — and strips away the guard.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_pyre.get())));
 
 		list.add(new MaterialEntry("scar_marrow", "Scar of Marrow",
-				"Animus-aligned scar. Taps the deep marrow where new blood is forged.",
+				"Animus-aligned scar (Tier II). Deep reserves of life, at the cost of blood and speed.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_marrow.get())));
 
 		list.add(new MaterialEntry("scar_blight", "Scar of Blight",
-				"Mortem-aligned scar. Channels the rot that consumes living tissue.",
+				"Mortem-aligned scar (Tier I). Channels rot outward — but the toxin does not always obey.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_blight.get())));
 
 		list.add(new MaterialEntry("scar_rime", "Scar of Rime",
-				"Congeatio-aligned scar. Crystallizes the blood into protective frost lattices.",
+				"Congeatio-aligned scar (Tier I). Frost in the legs, frost in the hands.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_rime.get())));
 
 		list.add(new MaterialEntry("scar_flux", "Scar of Flux",
-				"Ductilis-aligned scar. Loosens the boundaries of form, permitting adaptation.",
+				"Ductilis-aligned scar (Tier II). The strike accelerates; the skin thins further.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_flux.get())));
 
 		list.add(new MaterialEntry("scar_halo", "Scar of the Halo",
-				"Lux-aligned scar. Projects an aureole of purified sanguine radiance.",
+				"Lux-aligned scar (Tier I). Radiance hardens the body; it weighs upon the step.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_halo.get())));
 
 		list.add(new MaterialEntry("scar_anvil", "Scar of the Anvil",
-				"Ferric-aligned scar. Tempers the blood's iron into an unyielding lattice.",
+				"Ferric-aligned scar (Tier II). The blood's iron thickens the shell — and the pace.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_anvil.get())));
 
 		list.add(new MaterialEntry("scar_veil", "Scar of the Veil",
-				"Tenebris-aligned scar. Parts the membrane between the seen and unseen.",
+				"Lux-aligned scar (Tier II). Light-forged toughness, purchased with sluggish feet.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_veil.get())));
 
 		// ── Tier 3 Scars ──
 
 		list.add(new MaterialEntry("scar_phoenix", "Scar of the Phoenix",
-				"Flammeus-aligned scar. Inscribes the cycle of immolation and rebirth into the bloodline.",
+				"Animus-aligned scar (Tier III). Immolation and rebirth — the blood pays the fare.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_phoenix.get())));
 
-		list.add(new MaterialEntry("scar_ichor", "Scar of Ichor",
-				"Animus-aligned scar. Awakens the primordial ichor that flows beneath mortal blood.",
-				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_ichor.get())));
-
 		list.add(new MaterialEntry("scar_wither", "Scar of Withering",
-				"Mortem-aligned scar. Accelerates entropy within the vital humours.",
+				"Mortem-aligned scar (Tier II). Entropy flows outward at the cost of the vessel's own vitality.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_wither.get())));
 
 		list.add(new MaterialEntry("scar_glacier", "Scar of the Glacier",
-				"Congeatio-aligned scar. Invokes the stillness of primordial ice to arrest all change.",
+				"Congeatio-aligned scar (Tier II). Commanding the ice is slow work.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_glacier.get())));
 
 		list.add(new MaterialEntry("scar_chimera", "Scar of the Chimera",
-				"Ductilis-aligned scar. Grafts disparate essences into a single protean bloodline.",
+				"Ductilis-aligned scar (Tier III). Protean speed and lethal chains — but flesh and HP bleed away.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_chimera.get())));
 
 		list.add(new MaterialEntry("scar_corona", "Scar of the Corona",
-				"Lux-aligned scar. Crowns the bearer in blinding sanguine luminescence.",
+				"Flammeus-aligned scar (Tier III). The blood runs so hot the armour blisters off.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_corona.get())));
 
 		list.add(new MaterialEntry("scar_crucible", "Scar of the Crucible",
-				"Ferric-aligned scar. Subjects the blood's metals to the ultimate forge-trial.",
+				"Ferric-aligned scar (Tier III). The ultimate forge-trial leaves the body immovable.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_crucible.get())));
 
 		list.add(new MaterialEntry("scar_oblivion", "Scar of Oblivion",
-				"Tenebris-aligned scar. Opens a void that consumes memory and substance alike.",
+				"Mortem-aligned scar (Tier III). The void consumes both enemies and the practitioner's own blood.",
 				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_oblivion.get())));
 
 		return Collections.unmodifiableList(list);
