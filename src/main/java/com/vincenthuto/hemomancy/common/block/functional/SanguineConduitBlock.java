@@ -74,8 +74,7 @@ public class SanguineConduitBlock extends BaseEntityBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		// The block has a regular cube model; the BER only adds the ring overlay.
-		return RenderShape.MODEL;
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	// ── Interaction: open the Harbinger skill-tree screen ────────────────────
