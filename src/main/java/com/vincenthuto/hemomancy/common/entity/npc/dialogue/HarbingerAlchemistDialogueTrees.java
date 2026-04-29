@@ -57,10 +57,16 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.purifying.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.purifying.i_can_explain", "explain", null),
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("explain", List.of(
 						"hemomancy.alchemist.purifying.explain"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -76,6 +82,12 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.clarity.line1"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
@@ -89,10 +101,16 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.uninitiated.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.what_machines", "machines_locked", null),
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("machines_locked", List.of(
 						"hemomancy.alchemist.uninitiated.machines_locked"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -110,6 +128,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
 								null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_machines", "machines_overview", null),
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("alembic_lore", List.of(
@@ -133,6 +152,11 @@ public final class HarbingerAlchemistDialogueTrees {
 								null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.build();
 	}
 
@@ -146,6 +170,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures", "blood_structure_intro", null),
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("centrifuge_lore", List.of(
@@ -170,6 +195,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.build();
 	}
 
@@ -181,6 +211,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_loom", "loom_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.what_is_memory_weaving", "memory_weaving", null),
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("loom_lore", List.of(
@@ -191,6 +222,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				)))
 				.addNode(new DialogueNode("memory_weaving", List.of(
 						"hemomancy.alchemist.initiate.memory_weaving"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -206,6 +242,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_scar_station", "scar_station_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station", "chisel_lore", null),
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("scar_station_lore", List.of(
@@ -216,6 +253,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				)))
 				.addNode(new DialogueNode("chisel_lore", List.of(
 						"hemomancy.alchemist.adept.chisel_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -239,6 +281,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("blood_crafting_lore", List.of(
 						"hemomancy.alchemist.illuminatus.blood_crafting_lore"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("incubator_lore", List.of(
@@ -252,6 +295,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
 	}
@@ -272,6 +320,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("final_machines", List.of(
 						"hemomancy.alchemist.sanctified.final_machines"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
@@ -280,6 +329,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
 	}
@@ -304,6 +358,11 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
+.addNode(new DialogueNode("item_hint", List.of(
+		"hemomancy.alchemist.item_hint"
+), List.of(
+		new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+)))
 				.build();
 	}
 
@@ -344,7 +403,13 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.enzyme_" + tendency + ".line1",
 						"hemomancy.alchemist.item_inquiry.enzyme_" + tendency + ".line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.build();
 	}
 
@@ -353,6 +418,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.recycled_enzyme.line1",
 						"hemomancy.alchemist.item_inquiry.recycled_enzyme.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -362,6 +428,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.blood_vial.line1",
 						"hemomancy.alchemist.item_inquiry.blood_vial.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -371,6 +438,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.blood_gourd.line1",
 						"hemomancy.alchemist.item_inquiry.blood_gourd.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -380,6 +448,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.foul_paste.line1",
 						"hemomancy.alchemist.item_inquiry.foul_paste.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -389,6 +458,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.ghastly_alembic.line1",
 						"hemomancy.alchemist.item_inquiry.ghastly_alembic.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -398,6 +468,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.vial_centrifuge.line1",
 						"hemomancy.alchemist.item_inquiry.vial_centrifuge.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -406,6 +477,7 @@ public final class HarbingerAlchemistDialogueTrees {
 		if (degree < 3) {
 			return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 					.addNode(new DialogueNode("root", List.of("hemomancy.alchemist.item_inquiry.somatic_loom.locked"),
+       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 							List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 					.build();
 		}
@@ -413,6 +485,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.somatic_loom.line1",
 						"hemomancy.alchemist.item_inquiry.somatic_loom.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -421,6 +494,7 @@ public final class HarbingerAlchemistDialogueTrees {
 		if (degree < 4) {
 			return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 					.addNode(new DialogueNode("root", List.of("hemomancy.alchemist.item_inquiry.scar_station.locked"),
+       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 							List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 					.build();
 		}
@@ -428,6 +502,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.scar_station.line1",
 						"hemomancy.alchemist.item_inquiry.scar_station.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -436,6 +511,7 @@ public final class HarbingerAlchemistDialogueTrees {
 		if (degree < 5) {
 			return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 					.addNode(new DialogueNode("root", List.of("hemomancy.alchemist.item_inquiry.morphling_incubator.locked"),
+       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 							List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 					.build();
 		}
@@ -443,6 +519,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.morphling_incubator.line1",
 						"hemomancy.alchemist.item_inquiry.morphling_incubator.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -452,6 +529,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.hemolytic_vial.line1",
 						"hemomancy.alchemist.item_inquiry.hemolytic_vial.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -461,6 +539,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line1",
 						"hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line2"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -469,6 +548,7 @@ public final class HarbingerAlchemistDialogueTrees {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.alchemist.item_inquiry.unknown"
+    new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.build();
 	}
@@ -490,6 +570,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.addNode(new DialogueNode("reflection", List.of(
 						"hemomancy.alchemist.apotheos.reflection"
 				), List.of(
+      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
@@ -498,6 +579,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
 	}
