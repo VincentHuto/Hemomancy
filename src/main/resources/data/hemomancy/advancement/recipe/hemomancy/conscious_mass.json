@@ -2,16 +2,16 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "hemomancy:mind_spike"
+      "hemomancy:conscious_mass"
     ]
   },
   "criteria": {
-    "has_morphling_chitinite": {
+    "has_rotten_flesh": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "hemomancy:morphling_chitinite"
+            "items": "minecraft:rotten_flesh"
           }
         ]
       }
@@ -19,13 +19,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "hemomancy:mind_spike"
+        "recipe": "hemomancy:conscious_mass"
       }
     }
   },
   "requirements": [
     [
-      "has_morphling_chitinite",
+      "has_rotten_flesh",
       "has_the_recipe"
     ]
   ]

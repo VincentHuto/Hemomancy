@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +18,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -195,6 +198,24 @@ public class BloodVolumeEvents {
 					player.displayClientMessage(
 							Component.literal("Your blood runs thin...")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				}
+
+				// ── Sanguine formation drop while mastery is still rough (degree 1–3) ──
+				// Blood still crystallizes unpredictably during early Harbinger ascent.
+				// 8% chance per qualifying hit (≥3 hearts / 6 HP) until the player reaches degree 4.
+				// 6.0f = 3 hearts (Minecraft damage: 1 heart = 2 HP).
+				int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+				if (degree >= 1 && degree <= 3 && damage >= 6.0f
+						&& player.level().getRandom().nextFloat() < 0.08f) {
+					ItemStack formation = new ItemStack(ItemInit.sanguine_formation.get());
+					ItemEntity drop = new ItemEntity(player.level(),
+							player.getX(), player.getY(), player.getZ(), formation);
+					drop.setDefaultPickUpDelay();
+					player.level().addFreshEntity(drop);
+					player.displayClientMessage(
+							Component.literal("Something crystalline falls from the wound.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
 				}
 			}
 		});

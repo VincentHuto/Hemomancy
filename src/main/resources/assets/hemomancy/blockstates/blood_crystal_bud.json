@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "age=0": { "model": "hemomancy:block/blood_crystal_bud_stage0" },
+    "age=1": { "model": "hemomancy:block/blood_crystal_bud_stage1" },
+    "age=2": { "model": "hemomancy:block/blood_crystal_bud_stage2" },
+    "age=3": { "model": "hemomancy:block/blood_crystal_bud_stage3" }
+  }
+}

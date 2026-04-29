@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "item": "hemomancy:vivacious_enzyme"
+    },
+    {
+      "item": "hemomancy:neurotic_enzyme"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:conscious_mass"
+  }
+}

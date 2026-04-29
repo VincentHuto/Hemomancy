@@ -47,6 +47,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -250,6 +251,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 		// Fill blood from bloody flasks (independent of cooking)
 		tryFillBloodFromFlask(te);
+
+		// Alembic leak — drip blood onto pointed dripstone below, grow blood crystal buds
+		tryLeakBloodOntoDripstone(level, pos, te, vol);
 
 		if (dirty) {
 			setChanged(level, pos, state);
@@ -667,6 +671,72 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
 		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		setChanged();
+	}
+
+	// ---- Alembic Leak ----
+
+	/**
+	 * Scans the 3×3 floor area one block below the alembic for a venous stone
+	 * (any variant) or a {@link net.minecraft.world.level.block.Blocks#BONE_BLOCK}.
+	 * When found, blood seeps through that block and grows a
+	 * {@link com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock} on the
+	 * block immediately below it.
+	 * <p>
+	 * The wider scan avoids the fire / magma block that is typically placed directly
+	 * under the alembic for heating. The first matching trigger found (scanning
+	 * row-by-row) is used each tick; once a bud exists under a trigger tile it is
+	 * advanced rather than a new one placed.
+	 * <p>
+	 * Layout per trigger tile:
+	 * {@code [venous_stone or bone_block at alembic Y-1] / [bud at alembic Y-2] / [solid floor]}
+	 */
+	private static void tryLeakBloodOntoDripstone(Level level, BlockPos pos,
+			GhastlyAlembicBlockEntity te, IBloodVolume vol) {
+		if (level.isClientSide) return;
+
+		int interval = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_INTERVAL_TICKS.get();
+		if (level.getGameTime() % interval != 0) return;
+
+		double leakRate = com.vincenthuto.hemomancy.config.HemoServerConfig.ALEMBIC_LEAK_RATE_PER_TICK.get();
+		if (vol.getBloodVolume() < leakRate) return;
+
+		// Scan the 3×3 ring at Y-1 (the floor row directly below the alembic).
+		// This intentionally skips the centre (0,0) last so the fire/magma block
+		// directly beneath the alembic is only matched if nothing else qualifies.
+		for (int dz = -1; dz <= 1; dz++) {
+			for (int dx = -1; dx <= 1; dx++) {
+				BlockPos basePos = pos.offset(dx, -1, dz);
+				BlockState baseState = level.getBlockState(basePos);
+				boolean isVenous = baseState.is(BlockInit.venous_stone.get())
+						|| baseState.is(BlockInit.polished_venous_stone.get())
+						|| baseState.is(BlockInit.gilded_venous_stone.get());
+				boolean isBoneBlock = baseState.is(net.minecraft.world.level.block.Blocks.BONE_BLOCK);
+				if (!isVenous && !isBoneBlock) continue;
+
+				// Found a trigger tile — try to grow/place a bud one block below it
+				BlockPos budPos = basePos.below();
+				BlockState budState = level.getBlockState(budPos);
+
+				if (budState.is(BlockInit.blood_crystal_bud.get())) {
+					com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock bud =
+							(com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock) BlockInit.blood_crystal_bud.get();
+					bud.tryGrow(level, budPos, budState, level.getRandom());
+					vol.drain(leakRate);
+					te.sendUpdates();
+					return;
+				}
+
+				if (budState.canBeReplaced() || budState.isAir()) {
+					BlockState belowBud = level.getBlockState(budPos.below());
+					if (belowBud.isFaceSturdy(level, budPos.below(), net.minecraft.core.Direction.UP)) {
+						level.setBlock(budPos, BlockInit.blood_crystal_bud.get().defaultBlockState(), Block.UPDATE_ALL);
+						vol.drain(leakRate);
+						te.sendUpdates();
+						return;
+					}
+				}
+			}
+		}
 	}
 
 }

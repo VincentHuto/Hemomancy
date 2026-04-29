@@ -1,6 +1,6 @@
 ﻿{
   "type": "hemomancy:blood_structure_recipe",
-  "bloodCost": 75,
+  "bloodCost": 500,
   "heldItem": "hemomancy:sanguine_formation",
   "hitBlock": "hemomancy:infested_venous_stone",
   "pattern": [

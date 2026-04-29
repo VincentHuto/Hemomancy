@@ -72,8 +72,13 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
 	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
 
-	/** Returns the minimum initiatory degree required for a blood structure recipe based on its blood cost. */
+	/** Returns the minimum initiatory degree required for a blood structure recipe.
+	 *  Uses the per-recipe {@code requiredDegree} when set (>= 0); otherwise falls
+	 *  back to the cost-tier table. */
 	private static int getRequiredDegreeForRecipe(BloodStructureRecipe recipe) {
+		if (recipe.getRequiredDegree() >= 0) {
+			return recipe.getRequiredDegree();
+		}
 		double cost = recipe.getBloodCost();
 		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
 			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
@@ -171,6 +176,13 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 														.append(Component.literal(" tier (Degree " + requiredDegree + ")")
 																.withStyle(ChatFormatting.RED)),
 												false);
+										handled = true;
+										break;
+									}
+									// ── Path alignment gate ──
+									net.minecraft.network.chat.Component alignError = checkPathAlignment(player, targetPattern);
+									if (alignError != null) {
+										player.displayClientMessage(alignError, false);
 										handled = true;
 										break;
 									}
@@ -275,12 +287,18 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 														.withStyle(ChatFormatting.RED)),
 										false);
 							} else {
-								player.displayClientMessage(
-										Component.literal("This formation requires you to hold: ")
-												.withStyle(ChatFormatting.RED)
-												.append(recipe.getHeldItem().getHoverName().copy()
-														.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)),
-										false);
+								// Path alignment check
+								net.minecraft.network.chat.Component alignError = checkPathAlignment(player, recipe);
+								if (alignError != null) {
+									player.displayClientMessage(alignError, false);
+								} else {
+									player.displayClientMessage(
+											Component.literal("This formation requires you to hold: ")
+													.withStyle(ChatFormatting.RED)
+													.append(recipe.getHeldItem().getHoverName().copy()
+															.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)),
+											false);
+								}
 							}
 							handled = true;
 							break;
@@ -550,6 +568,26 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			}
 		}
 		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
+	}
+
+	/**
+	 * Checks Harbinger / Unstained path alignment for a blood structure recipe.
+	 * Returns an error {@link Component} if the player is on the wrong path, or
+	 * {@code null} if the recipe is accessible.
+	 */
+	private static net.minecraft.network.chat.Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
+		boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
+		boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(u -> u.hasBegunPurification()).orElse(false);
+		if (recipe.isUnstained() && playerIsInitiated) {
+			return Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
+		}
+		if (!recipe.isUnstained() && playerIsUnstained) {
+			return Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
+					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
+		}
+		return null;
 	}
 
 	public ItemStack heldStack;
