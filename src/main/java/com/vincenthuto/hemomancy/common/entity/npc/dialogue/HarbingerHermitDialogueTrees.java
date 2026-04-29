@@ -39,7 +39,8 @@ public final class HarbingerHermitDialogueTrees {
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId);
 			case 6 -> sanctified(entityId);
-			default -> archon(entityId); // degree 7+
+			case 7 -> archon(entityId);
+			default -> apotheos(entityId); // degree 8+
 		};
 	}
 
@@ -250,6 +251,24 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.archon.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.share_wisdom", null, "hermit_archon_wisdom"),
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 8 — Apotheos. The hermit has no words for what stands before them. */
+	public static DialogueTree apotheos(int entityId) {
+		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.hermit.apotheos.line1",
+						"hemomancy.hermit.apotheos.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_remains_for_you", "final_words", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("final_words", List.of(
+						"hemomancy.hermit.apotheos.final_words"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.build();

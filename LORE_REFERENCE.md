@@ -2,7 +2,7 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-04-28 (NeoForge port + Qliphoth/Blood Moon alignment pass)
+> **Last Updated:** 2026-04-29 (Degree theme design added — §6.4a; lore for all 8 degrees with theme/gameplay breakdown)
 
 > **Current Lore-State Snapshot (2026-04-28 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
@@ -200,6 +200,50 @@ Most Harbingers — most outposts, most individual groups — only ever reach **
 | 6 | Sanctified of the Bloodline Covenant |
 | 7 | Archon of the Hematic Order |
 | — | (The Silence — no formal title) |
+
+### 6.4a Degree Themes
+
+Each degree carries a **lore theme** — the historical/metaphysical institution the player is entering — and a **gameplay theme** — the primary system or tool that opens at that rank. The escalation traces a straight line: from "blood as a personal resource" at Neophyte to "blood as a cosmic reproductive strategy" at Apotheos.
+
+#### NEOPHYTE 1 — *of the Crimson Veil*
+**Lore:** The Crimson Veil is the membrane between ordinary life and the world the Order inhabits. The player has just torn through it. The Hermit greets them as a first tentative step. The Order is not a secret society to them yet — it is a rumour. The Rite of Sanguine Initiation *is* the degree-granting event: performing the ritual is the first step.
+
+**Gameplay:** Blood as a living resource. The **Ghastly Alembic** is introduced — entry-level machine for blood-product creation (Befouling Ash, Sanguine Formations, early ingredient items). First Humilis-rank blood manipulations become unlockable. The Liber Sanguinum is obtained. Core loop: fill blood, spend blood, cast manipulations.
+
+#### VOTARY 2 — *of the Hematic Covenant*
+**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the seven blood tendencies. The Fungal Podium becomes accessible (gated at Votary+), framed as a meditation or resonance tool — the player does not yet know what it connects to.
+
+**Gameplay:** The **Vial Centrifuge** and the tendency system. Players separate tendency-aligned blood from raw samples via the Living Syringe + Vial Rack workflow. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable.
+
+#### INITIATE 3 — *of the Scarlet Sanctum*
+**Lore:** The Scarlet Sanctum was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Sanctum's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
+
+**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their Trial Chambers, extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom alongside tendency-aligned enzyme configurations to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
+
+#### ADEPT 4 — *of the Sanguine Brotherhood*
+**Lore:** The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the earliest form of the Bloodline system. An Adept has moved beyond solo practice into understanding blood as communal inheritance. Simultaneously, the first **Fungal Whispers** begin — subliminal and barely perceptible. Just seeds of doubt.
+
+**Gameplay:** **Scars** and the **Cerebral Scarring Station**. Scar crafting requires minimum Degree 4 (wired in code). Players gain access to the Cerebral Scarring Station (surgical encoding of venous/neural pathways) and the Chisel Station (rune encoding). Scars equip in the Scar Binder and grant passive bonuses, skill amplification, or manipulation modifiers. Visceral Organ extraction via the Visceral Mirror ritual also becomes Adept-tier content.
+
+#### ILLUMINATUS 5 — *of the Crimson Lodge*
+**Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.
+
+**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure crafting** — Blood Key + 3D multiblock pattern system. (3) **Founding Sanctum** — a Sanguine Quintessence is granted by the Illuminatus rite, required for the founding ritual that consecrates a 5×5 chunk area as a Harbinger Sanctum (Damage Boost, Regeneration, Resistance buffs for all Harbingers present). The Sanguine Monolith becomes accessible (Degree 5+ gated).
+
+#### SANCTIFIED 6 — *of the Bloodline Covenant*
+**Lore:** The Sanctified do not belong to the Order — they *are* the Order. The Vicar delivers the degree's doctrine: *"The blood becomes indistinguishable from the blood of the world."* The Bloodline Covenant is revealed — a ritual compact between Harbingers that merges blood pools and capabilities. Fungal Whispers grow direct and revelatory: *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium is named as the original organism.
+
+**Gameplay:** **Bloodline Covenant system** fully unlocked — players ritually bind capabilities into a shared Covenant: linked blood reserves, tendency bonuses that amplify between members, blood-link combat synergies. The Bloodline leader can ritually sever members (reinforcing the covenant-as-chosen-family framing). The Alchemist describes this degree as "final synthesis" — all machines working as one unified process.
+
+#### ARCHON 7 — *of the Hematic Order*
+**Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
+
+**Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice.
+
+#### APOTHEOS 8 — *of the Hematic Order*
+**Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. The Fungal Spine tears free from the player's back. Their consciousness is cast into the Fungal Dimension — not physically, but as astral projection into the Entity's local surface. There is no body here. Everything here is hostile, even to an Apotheos. On returning, the player faces the choice: carry the truth in silence, or continue deeper into hive-mind dissolution (expansion content).
+
+**Gameplay:** **Fungal Dimension** access via the Fungal Spine item. On first exit attempt from the dimension, the Fungal Podium fires the core witness dialogue and the two-option choice fork (stamped as `archon_choice_made`). Post-return, the Apotheos retains full Qliphoth Pome empowerment (reduced manipulation costs), maximum blood capacity, and unique cosmetic effects reflecting the fungal transformation.
 
 ### 6.5 The Founding Sanctum
 

@@ -37,7 +37,8 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline);
 			case 6 -> sanctified(entityId, hasBloodline);
-			default -> archon(entityId, hasBloodline); // degree 7+
+			case 7 -> archon(entityId, hasBloodline);
+			default -> apotheos(entityId, hasBloodline); // degree 8+
 		};
 	}
 
@@ -286,6 +287,35 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.archon.line1",
 						"hemomancy.alchemist.archon.line2"
 				), greetingOptions))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.alchemist.consider",
+						"hemomancy.dialogue.recruit.alchemist.accept"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 8 — Apotheos. The alchemist witnesses something beyond their framework. */
+	public static DialogueTree apotheos(int entityId, boolean hasBloodline) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_do_you_see", "reflection", null));
+		if (hasBloodline) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.apotheos.line1",
+						"hemomancy.alchemist.apotheos.line2"
+				), greetingOptions))
+				.addNode(new DialogueNode("reflection", List.of(
+						"hemomancy.alchemist.apotheos.reflection"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"

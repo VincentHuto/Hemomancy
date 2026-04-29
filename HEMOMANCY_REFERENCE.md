@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
-> **Last Updated:** 2026-04-28
+> **Last Updated:** 2026-04-29 (Degree theme implementation: Apotheos dialogue trees for all 3 NPCs; Saints + Founding Sanctum branches in Vicar trees; degree_hint restored to Illuminatus/Sanctified; dialogue tables updated)
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -172,6 +172,7 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Degree 5 Illuminatus | Reveals Bloodline Covenant system; hints toward Bloodline Covenant rite |
 | Degree 6 Sanctified | Final hint — points toward the Rite of the Hematic Order |
 | Degree 7 Archon | Kneels before the player: "Archon of the Hematic Order. You are the blood incarnate." |
+| Degree 8 Apotheos | Speechless reverence; final words from the keeper who was never given instructions beyond the seventh degree |
 
 **Harbinger Alchemist** (`HarbingerAlchemistDialogueTrees`) — found at Harbinger Outposts. Focuses on machines and crafting systems; dismisses purifying players coldly.
 
@@ -185,6 +186,7 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Illuminatus | Reveals blood crafting (blood key + 3D block pattern) and Morphling Incubator lore |
 | Sanctified | Describes the "final synthesis" — all machines as one unified process |
 | Archon | Defers to the player's mastery; "I have nothing left to teach" |
+| Apotheos | Awe and vertigo: "I built machines to process blood. The machines were always pointing at something. I understand now." Reflects that the player was the product the machines were building toward |
 | Purifying | Cold dismissal: "I have no time to teach someone who won't make use of my knowledge" |
 | Clarity | Ignores the player entirely |
 
@@ -195,11 +197,12 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Uninitiated | Who the Harbingers are; purpose of the Outpost |
 | Neophyte | The Hematic Covenant as a body of rites/wisdom; Votary degree hints |
 | Votary | Seven blood tendencies (Fungal, Umbral, Incandescent, Ferric, Vivacious, Ruinous, Neurotic) and their role |
-| Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age |
+| Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age; **Saints lore branch** — directs player toward Trial Chambers and Hallowed Residuum extraction |
 | Adept | History of the **Sanguine Brotherhood** — shared blood pools born from war necessity |
-| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently" |
-| Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world" |
+| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently"; **Founding Sanctum branch** — explains Sanguine Quintessence and sanctum consecration; degree hint toward Bloodline Covenant rite |
+| Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world"; degree hint toward Archon rite |
 | Archon | Hidden lore: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* |
+| Apotheos | Speechless reverence; the Covenant was "always meant to be outlived — it is a ladder; what you have become is what was always at the top of it" |
 | Purifying | Stern warning; grieves the loss of blood power; urges return before path completes |
 
 ### 3.5 Fungal Whisper Events
@@ -2259,7 +2262,7 @@ Registered in `ParticleInit`:
 
 ## 35. Drudge System
 
-*Last Updated: 2026-04-28*
+*Last Updated: 2026-04-29*
 
 The Drudge is a persistent, player-owned semi-organic construct that holds a single **Blood Memory** (`BloodManipulation`) and executes it autonomously within a leash radius anchored to a **Semi-Sentient Construct (SSC)** block. Unlike the Blood Thrall (a transient courier), the Drudge is a long-term servant that "learns a job" and keeps doing it.
 

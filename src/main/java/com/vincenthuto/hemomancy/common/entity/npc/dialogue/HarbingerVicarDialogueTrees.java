@@ -37,7 +37,8 @@ public final class HarbingerVicarDialogueTrees {
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline);
 			case 6 -> sanctified(entityId, hasBloodline);
-			default -> archon(entityId, hasBloodline); // degree 7+
+			case 7 -> archon(entityId, hasBloodline);
+			default -> apotheos(entityId, hasBloodline); // degree 8+
 		};
 	}
 
@@ -142,19 +143,27 @@ public final class HarbingerVicarDialogueTrees {
 				.build();
 	}
 
-	/** Degree 3 — Initiate. The vicar reveals the history of the Scarlet Sanctum. */
+	/** Degree 3 — Initiate. The vicar reveals the history of the Scarlet Sanctum and directs the player toward the Saints. */
 	public static DialogueTree initiate(int entityId) {
 		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.initiate.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_sanctum", "sanctum_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("sanctum_lore", List.of(
 						"hemomancy.vicar.initiate.sanctum_lore"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("saints_lore", List.of(
+						"hemomancy.vicar.initiate.saints_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
@@ -190,15 +199,17 @@ public final class HarbingerVicarDialogueTrees {
 	}
 
 	/**
-	 * Degree 5 — Illuminatus. The vicar reveals the legend of the Crimson Lodge and
-	 * shares vague rumors of an ancient rite harbingers of old used to ascend further.
-	 * They hand the player an old parchment fragment ({@code BloodStructureHintItem}).
-	 * The Vicar knows nothing of the specifics — only that the knowledge was lost.
+	 * Degree 5 — Illuminatus. The vicar reveals the legend of the Crimson Lodge,
+	 * shares vague rumors of an ancient rite harbingers of old used to ascend further
+	 * (handing the player a parchment fragment), explains the Founding Sanctum and
+	 * Quintessence, and offers the degree-advancement hint toward Sanctified.
 	 */
 	public static DialogueTree illuminatus(int entityId, boolean hasBloodline) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
 		if (hasBloodline) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
@@ -210,6 +221,12 @@ public final class HarbingerVicarDialogueTrees {
 				), greetingOptions))
 				.addNode(new DialogueNode("lodge_lore", List.of(
 						"hemomancy.vicar.illuminatus.lodge_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("founding_sanctum_lore", List.of(
+						"hemomancy.vicar.illuminatus.founding_sanctum_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -225,6 +242,11 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("degree_hint", List.of(
+						"hemomancy.vicar.illuminatus.degree_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.vicar.consider",
 						"hemomancy.dialogue.recruit.vicar.accept"
@@ -237,11 +259,13 @@ public final class HarbingerVicarDialogueTrees {
 
 	/**
 	 * Degree 6 — Sanctified. The vicar shares ancient doctrine about the Hematic Order.
-	 * The Monolith guides the player from here; the Vicar no longer hints at the next step.
+	 * The Monolith guides the player from here; the Vicar offers the final degree hint
+	 * toward Archon as the last piece of active counsel they can give.
 	 */
 	public static DialogueTree sanctified(int entityId, boolean hasBloodline) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_hematic_order", "hematic_order_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
 		if (hasBloodline) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
@@ -253,6 +277,12 @@ public final class HarbingerVicarDialogueTrees {
 				), greetingOptions))
 				.addNode(new DialogueNode("hematic_order_lore", List.of(
 						"hemomancy.vicar.sanctified.hematic_order_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("degree_hint", List.of(
+						"hemomancy.vicar.sanctified.degree_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -310,6 +340,39 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.archon.pome_empowered.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Degree 8 — Apotheos. The Vicar has no doctrine left to offer. They bear witness
+	 * to what the player has become and can only reflect on what the Covenant was always
+	 * pointing toward — without understanding it fully themselves.
+	 */
+	public static DialogueTree apotheos(int entityId, boolean hasBloodline) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_do_you_make_of_this", "reflection", null));
+		if (hasBloodline) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.vicar.apotheos.line1",
+						"hemomancy.vicar.apotheos.line2"
+				), greetingOptions))
+				.addNode(new DialogueNode("reflection", List.of(
+						"hemomancy.vicar.apotheos.reflection"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.vicar.consider",
+						"hemomancy.dialogue.recruit.vicar.accept"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
 				.build();
 	}
