@@ -47,6 +47,10 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 	private static final float A3 = 0.015f;
 	private static final double W3 = 0.09;
 
+	/** Bit-mask used to extract a 12-bit sub-value from a block-pos seed,
+	 *  producing a per-conduit phase offset in the range [0, 2π). */
+	private static final int PHASE_SEED_MASK = 0xFFF;
+
 	// ── Global pulse ──
 	private static final float PULSE_BASE = 0.92f;
 	private static final float PULSE_AMP  = 0.08f;
@@ -77,7 +81,7 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 
 		// A slow per-block jiggle phase so nearby conduits don't pulse in sync
 		long seed = be.getBlockPos().asLong();
-		float jiggle = (float) ((seed & 0xFFF) * (Math.PI * 2.0 / 0xFFF));
+		float jiggle = (float) ((seed & PHASE_SEED_MASK) * (Math.PI * 2.0 / PHASE_SEED_MASK));
 
 		poseStack.pushPose();
 		// Center the ball in the block, slightly above center so it appears to hover
