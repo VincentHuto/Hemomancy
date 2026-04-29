@@ -82,7 +82,13 @@ public class BlockInit {
 	 * item consumption, so no separate BlockItem is auto-registered here.
 	 */
 	public static final DeferredHolder<Block, Block> sanguine_conduit = BASEBLOCKS.register("sanguine_conduit",
-				() -> new SanguineConduitBlock());
+				() -> new SanguineConduitBlock(BlockBehaviour.Properties.of()
+						.mapColor(MapColor.COLOR_RED)
+						.requiresCorrectToolForDrops()
+						.strength(3.0f, 6.0f)
+						.sound(SoundType.BONE_BLOCK)
+						.lightLevel(state -> 4)
+						.noOcclusion()));
 
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
