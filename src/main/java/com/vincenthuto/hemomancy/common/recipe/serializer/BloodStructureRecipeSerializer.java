@@ -140,7 +140,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
-		return new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained);
+		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
+		return new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree);
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----
@@ -148,7 +149,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	private static final MapCodec<BloodStructureRecipe> CODEC = new MapCodec<BloodStructureRecipe>() {
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained")
+			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "requiredDegree")
 					.map(ops::createString);
 		}
 
@@ -176,6 +177,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
+			prefix.add("requiredDegree", ops.createInt(recipe.getRequiredDegree()));
 			return prefix;
 		}
 	};
@@ -216,7 +218,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		boolean hasResult = pBuffer.readBoolean();
 		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		boolean unstained = pBuffer.readBoolean();
-		return new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained);
+		int requiredDegree = pBuffer.readInt();
+		return new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree);
 	}
 
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
@@ -241,5 +244,6 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			ItemStack.STREAM_CODEC.encode(pBuffer, result);
 		}
 		pBuffer.writeBoolean(pRecipe.isUnstained());
+		pBuffer.writeInt(pRecipe.getRequiredDegree());
 	}
 }

@@ -79,6 +79,13 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	protected boolean unstained;
 
+	/**
+	 * Minimum initiatory degree (Harbinger) or Unstained stage required to perform
+	 * this structure craft. A value of {@code -1} means "derive from blood cost
+	 * tiers" (legacy behaviour, kept for backwards-compatibility).
+	 */
+	protected int requiredDegree;
+
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result) {
 		this(pId, bloodCost, pattern, heldItem, hitBlock, result, false);
@@ -86,6 +93,11 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result, boolean unstained) {
+		this(pId, bloodCost, pattern, heldItem, hitBlock, result, unstained, -1);
+	}
+
+	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
+			Block hitBlock, ItemStack result, boolean unstained, int requiredDegree) {
 		super(CraftingBookCategory.MISC);
 		this.id = pId;
 		this.bloodCost = bloodCost;
@@ -94,6 +106,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 		this.hitBlock = hitBlock;
 		this.result = result;
 		this.unstained = unstained;
+		this.requiredDegree = requiredDegree;
 	}
 
 	public ResourceLocation getId() { return id; }
@@ -194,6 +207,18 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public void setUnstained(boolean unstained) {
 		this.unstained = unstained;
+	}
+
+	/**
+	 * Returns the per-recipe degree / stage requirement, or {@code -1} if the
+	 * default cost-tier fallback should be used.
+	 */
+	public int getRequiredDegree() {
+		return requiredDegree;
+	}
+
+	public void setRequiredDegree(int requiredDegree) {
+		this.requiredDegree = requiredDegree;
 	}
 
 	@Override

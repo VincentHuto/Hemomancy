@@ -72,8 +72,13 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
 	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
 
-	/** Returns the minimum initiatory degree required for a blood structure recipe based on its blood cost. */
+	/** Returns the minimum initiatory degree required for a blood structure recipe.
+	 *  Uses the per-recipe {@code requiredDegree} when set (>= 0); otherwise falls
+	 *  back to the cost-tier table. */
 	private static int getRequiredDegreeForRecipe(BloodStructureRecipe recipe) {
+		if (recipe.getRequiredDegree() >= 0) {
+			return recipe.getRequiredDegree();
+		}
 		double cost = recipe.getBloodCost();
 		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
 			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
@@ -170,6 +175,26 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 																.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
 														.append(Component.literal(" tier (Degree " + requiredDegree + ")")
 																.withStyle(ChatFormatting.RED)),
+												false);
+										handled = true;
+										break;
+									}
+									// ── Path alignment gate ──
+									boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
+									boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
+											.map(u -> u.hasBegunPurification()).orElse(false);
+									if (targetPattern.isUnstained() && playerIsInitiated) {
+										player.displayClientMessage(
+												Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+														.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+												false);
+										handled = true;
+										break;
+									}
+									if (!targetPattern.isUnstained() && playerIsUnstained) {
+										player.displayClientMessage(
+												Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
+														.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 												false);
 										handled = true;
 										break;
@@ -275,12 +300,28 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 														.withStyle(ChatFormatting.RED)),
 										false);
 							} else {
-								player.displayClientMessage(
-										Component.literal("This formation requires you to hold: ")
-												.withStyle(ChatFormatting.RED)
-												.append(recipe.getHeldItem().getHoverName().copy()
-														.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)),
-										false);
+								// Path alignment check
+								boolean isInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
+								boolean isUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
+										.map(u -> u.hasBegunPurification()).orElse(false);
+								if (recipe.isUnstained() && isInitiated) {
+									player.displayClientMessage(
+											Component.literal("Those who have sworn blood to the Hematic Order cannot walk the Unstained path.")
+													.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+											false);
+								} else if (!recipe.isUnstained() && isUnstained) {
+									player.displayClientMessage(
+											Component.literal("One who has begun the purification cannot invoke the formations of the Hematic Order.")
+													.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+											false);
+								} else {
+									player.displayClientMessage(
+											Component.literal("This formation requires you to hold: ")
+													.withStyle(ChatFormatting.RED)
+													.append(recipe.getHeldItem().getHoverName().copy()
+															.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)),
+											false);
+								}
 							}
 							handled = true;
 							break;
