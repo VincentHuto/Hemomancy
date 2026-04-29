@@ -76,6 +76,22 @@ public class BlockInit {
 	public static final DeferredRegister<Block> LIQUIDBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
 
+	/**
+	 * Blocks whose item form is managed entirely by {@link ItemInit} (or has no
+	 * item form at all). Excluded from the auto block-item registration stream in
+	 * {@link #getAllBlockEntriesAsStream()}.
+	 */
+	public static final DeferredRegister<Block> NOITEMBLOCKS = DeferredRegister.create(Registries.BLOCK,
+			Hemomancy.MOD_ID);
+
+	/**
+	 * The placed form of the Sanguine Conduit. The corresponding item (registered
+	 * in {@link ItemInit}) gates placement behind Initiatory Degree ≥ 5 and handles
+	 * item consumption, so no separate BlockItem is auto-registered here.
+	 */
+	public static final DeferredHolder<Block, Block> sanguine_conduit = NOITEMBLOCKS.register("sanguine_conduit",
+			SanguineConduitBlock::new);
+
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
 			() -> new LiquidBlock(
