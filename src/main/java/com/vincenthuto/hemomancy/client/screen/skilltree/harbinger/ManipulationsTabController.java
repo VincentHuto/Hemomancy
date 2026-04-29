@@ -520,7 +520,7 @@ public class ManipulationsTabController implements IProgressTab {
         int tx = panelX + 6;
         int ty = panelY + 6;
 
-        if (memoryStack != null && !memoryStack.isEmpty()) gfx.renderItem(memoryStack, tx, ty);
+        if (!rankLocked && memoryStack != null && !memoryStack.isEmpty()) gfx.renderItem(memoryStack, tx, ty);
         int nameCol = rankLocked ? 0xFF555555 : tendCol;
         for (int li = 0; li < nameLines.size(); li++) {
             int nx = li == 0 ? tx + 20 : tx + 4;
