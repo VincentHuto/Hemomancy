@@ -1,0 +1,83 @@
+EACH DEGREE NEEDS SOME KIND OF THEME, both lore/thematically and something they learn gameplay wise, wheter new tools, devices, saints,machines, etc
+	NEOPHYTE 1:
+		Lore:
+		Gameplay:
+	VOTARY 2:
+		Lore:
+		Gameplay:
+	INITIATE 3:
+		Lore:
+		Gameplay:
+	ADEPT 4:
+		Lore:
+		Gameplay:
+	ILLUMINATUS 5:
+		Lore:
+		Gameplay:
+	SANCTIFIED 6:
+		Lore:
+		Gameplay:
+	ARCHON 7:
+		Lore:
+		Gameplay:
+	APOTHEOS 8:
+		Lore:
+		Gameplay:
+
+Unstained need another worldgen building
+
+
+Bugs:
+fix centrifuge screen background being too fast
+player shouldnt be able to see the RECIPe for the locked manipulations in the progress screen
+it says its 'locked' which is good but still displays the recipe
+
+
+Recipes:
+How to first get sanguine formation
+Gameplay:Drops out of the player when early on <degree 2(votary) when hurt/damaged rarley
+Lore: the player literally sheds this as they learn to control their new found awarness, your blood seems to have a new found mind of its own
+
+Gameplay:Simillarly maybe have hematic iron scrap break off the player when hurt while wearing iron armor
+	or tools 
+Lore: the injured players blood seeps into the material and it seems to reject its mudnane whole
+
+
+How should player learn about liber and field notes
+Gameplay:Have vicar point to player about potentially crafting a liber as the recipe is unlocked in their conduit
+	 Hint at field notes being made of simple materials but special ink
+
+
+
+Mind spike needs to be like Degree 4 not 1
+
+Same with dendritic distributor, thats proably late game
+
+
+craft concious mass with rotten flesh, vivacious enzyme and neurotic enzyme 
+
+Add a way to grow blood crystals 
+Gameplay:dripping blood on dripstone/ameythyst or something similar, maybe have alembics have a 'leaky' side 
+Lore: Have the alchemist hint that 'they are good tools..but tend to leak, if only there was something to do with the waste...'
+
+how to have player learn/craft memories/manips early beofre a somatic loom
+
+Add a way to have the vicar/alchemist query an item in your inventory to give lore on it, like a terraria guide, If one doesnt know, hint at the other(lore items vs crafting/alchemy items, 
+if neither know, say so
+Gameplay: Have a 'query' window in the npcs dialogue options of all queryable items, that way 
+even if they dont know they can learn who does, maybe grey it out if they current npc doesnt know?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

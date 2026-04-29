@@ -77,20 +77,12 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 
 	/**
-	 * Blocks whose item form is managed entirely by {@link ItemInit} (or has no
-	 * item form at all). Excluded from the auto block-item registration stream in
-	 * {@link #getAllBlockEntriesAsStream()}.
-	 */
-	public static final DeferredRegister<Block> NOITEMBLOCKS = DeferredRegister.create(Registries.BLOCK,
-			Hemomancy.MOD_ID);
-
-	/**
 	 * The placed form of the Sanguine Conduit. The corresponding item (registered
 	 * in {@link ItemInit}) gates placement behind Initiatory Degree ≥ 5 and handles
 	 * item consumption, so no separate BlockItem is auto-registered here.
 	 */
-	public static final DeferredHolder<Block, Block> sanguine_conduit = NOITEMBLOCKS.register("sanguine_conduit",
-			SanguineConduitBlock::new);
+	public static final DeferredHolder<Block, Block> sanguine_conduit = BASEBLOCKS.register("sanguine_conduit",
+				() -> new SanguineConduitBlock());
 
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
@@ -111,18 +103,17 @@ public class BlockInit {
 	private static final ResourceKey<Block> ATTACHED_GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("attached_gourd_stem"));
 	private static final ResourceKey<Item> GOURD_SEED_ITEM_KEY = ResourceKey.create(Registries.ITEM, Hemomancy.rloc("gourd_seeds"));
 
-	// Ash — base trail blocks still need items (registered explicitly in ItemInit);
-	// active-state and plain trail blocks have no item form and live in NOITEMBLOCKS.
-	public static final DeferredHolder<Block, Block> smouldering_ash_trail = NOITEMBLOCKS.register("smouldering_ash_trail",
+	// Ash
+	public static final DeferredHolder<Block, Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
 			() -> new SmoulderingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
-	public static final DeferredHolder<Block, Block> befouling_ash_trail = NOITEMBLOCKS.register("befouling_ash_trail",
+	public static final DeferredHolder<Block, Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
 			() -> new BefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
-	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = NOITEMBLOCKS.register(
+	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = SPECIALBLOCKS.register(
 			"active_smouldering_ash_trail",
 			() -> new ActiveSmoulderingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
-	public static final DeferredHolder<Block, Block> active_befouling_ash_trail = NOITEMBLOCKS.register(
+	public static final DeferredHolder<Block, Block> active_befouling_ash_trail = SPECIALBLOCKS.register(
 			"active_befouling_ash_trail",
 			() -> new ActiveBefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
@@ -168,8 +159,8 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> venous_stone_slab = SLABBLOCKS.register("venous_stone_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final DeferredHolder<Block, Block> venous_stone_stairs = BASEBLOCKS.register(("venous_stone_stairs"),
-			() -> new StairBlock(venous_stone.get().defaultBlockState(),
-					BlockBehaviour.Properties.ofFullCopy(venous_stone.get())));
+			() -> new StairBlock(Blocks.STONE.defaultBlockState(),
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
 	public static final DeferredHolder<Block, Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -179,8 +170,8 @@ public class BlockInit {
 			"polished_venous_stone_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final DeferredHolder<Block, Block> polished_venous_stone_stairs = STAIRBLOCKS.register(
-			("polished_venous_stone_stairs"), () -> new StairBlock(venous_stone.get().defaultBlockState(),
-					BlockBehaviour.Properties.ofFullCopy(venous_stone.get())));
+			("polished_venous_stone_stairs"), () -> new StairBlock(Blocks.STONE.defaultBlockState(),
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> chiseled_polished_venous_stone = BASEBLOCKS.register(
 			"chiseled_polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -191,8 +182,8 @@ public class BlockInit {
 			"polished_venous_stone_brick_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final DeferredHolder<Block, Block> polished_venous_stone_brick_stairs = STAIRBLOCKS.register(
-			("polished_venous_stone_brick_stairs"), () -> new StairBlock(venous_stone.get().defaultBlockState(),
-					BlockBehaviour.Properties.ofFullCopy(venous_stone.get())));
+			("polished_venous_stone_brick_stairs"), () -> new StairBlock(Blocks.STONE.defaultBlockState(),
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> cracked_polished_venous_stone_bricks = BASEBLOCKS.register(
 			"cracked_polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -610,10 +601,12 @@ public class BlockInit {
 				.map(BlockInit::createItemBlock);
 		b.forEach(item -> {
 			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
-					&& item.getSecond().getBlock() != BlockInit.gourd_stem.get()
-					&& item.getSecond().getBlock() != BlockInit.engram_block.get()
-					&& item.getSecond().getBlock() != BlockInit.filler_block.get()
-					&& item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
+					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
+					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
+					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
+					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
+					|| item.getSecond().getBlock() != BlockInit.filler_block.get()
+					|| item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
 				registerBlockItem(event, item);
 			}
 		});

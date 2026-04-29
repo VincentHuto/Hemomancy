@@ -102,7 +102,6 @@ public class Hemomancy {
         FluidInit.FLUID_TYPES.register(modEventBus);
         FluidInit.FLUIDS.register(modEventBus);
         BlockInit.LIQUIDBLOCKS.register(modEventBus);
-        BlockInit.NOITEMBLOCKS.register(modEventBus);
         CREATIVETABS.register(modEventBus);
         RecipeInit.SERIALIZERS.register(modEventBus);
         RecipeInit.RECIPE_TYPES.register(modEventBus);

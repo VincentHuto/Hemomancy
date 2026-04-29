@@ -23,7 +23,6 @@ public class SanguineConduitBlockEntity extends BlockEntity {
 	 * Expand the render AABB so the ring geometry (which extends several blocks
 	 * outward) is never frustum-culled while the block itself is visible.
 	 */
-	@Override
 	public AABB getRenderBoundingBox() {
 		BlockPos c = getBlockPos();
 		return new AABB(c.getX() - 8, c.getY() - 1, c.getZ() - 8,

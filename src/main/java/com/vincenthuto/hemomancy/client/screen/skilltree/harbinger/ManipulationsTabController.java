@@ -31,7 +31,7 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
     private static final float TENDENCY_VALUE_DISTANCE_DIVISOR = 1.75f;
-    private static final int TENDENCY_VALUE_VERTICAL_OFFSET = 18;
+    private static final int TENDENCY_VALUE_VERTICAL_OFFSET = 0;
     private static final int COL_LINE_LOCKED = 0x88444444;
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;

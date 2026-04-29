@@ -90,7 +90,7 @@ public class SanguineVigilBlockEntity extends BlockEntity implements IBloodTile 
         for (Mob mob : hostiles) {
             if (storage.getBloodVolume() < BLOOD_PER_APPLICATION) break;
             mob.addEffect(new MobEffectInstance(
-                    EffectInit.blood_binding.getHolder().get(),
+                    EffectInit.blood_binding,
                     BINDING_DURATION_TICKS, 0, false, true, true));
             storage.subtractBloodVolume(BLOOD_PER_APPLICATION);
         }

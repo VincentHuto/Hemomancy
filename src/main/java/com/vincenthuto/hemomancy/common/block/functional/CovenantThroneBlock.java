@@ -257,11 +257,11 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
         PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(blood));
 
         // Apply Covenant Trance effects
-        player.addEffect(new MobEffectInstance(EffectInit.blood_rush.getHolder().get(),
+        player.addEffect(new MobEffectInstance(EffectInit.blood_rush,
                 TRANCE_DURATION_TICKS, 1, false, true, true));
-        player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon.getHolder().get(),
+        player.addEffect(new MobEffectInstance(EffectInit.sanguine_siphon,
                 TRANCE_DURATION_TICKS, 0, false, true, true));
-        player.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending.getHolder().get(),
+        player.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending,
                 TRANCE_DURATION_TICKS, 0, false, true, true));
 
         player.sendSystemMessage(Component.translatable(
