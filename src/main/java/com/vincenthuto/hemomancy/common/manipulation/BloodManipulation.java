@@ -285,6 +285,19 @@ public class BloodManipulation  {
 				return;
 			}
 
+			// Qliphoth Pome Corruption: at 9 pomes the blood is no longer the player's own;
+			// for 1–8 pomes the variable is reused below inside volume.isActive() to scale cost
+			int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(player)
+					.map(d -> d.getTotalPomesConsumed())
+					.orElse(0);
+			if (pomesConsumed >= 9) {
+				player.displayClientMessage(
+						Component.literal("Your blood no longer answers to you. It belongs to the void now.")
+								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+						true);
+				return;
+			}
+
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
@@ -338,6 +351,11 @@ public class BloodManipulation  {
 				// Blood Moon: 25% cost reduction while the blood moon is active
 				if (com.vincenthuto.hemomancy.common.worldevent.BloodMoonEvents.isBloodMoonActive(world)) {
 					effectiveCost *= 0.75;
+				}
+
+				// Qliphoth Pome Corruption: each pome consumed increases cost by 12% (1–8 pomes)
+				if (pomesConsumed > 0) {
+					effectiveCost *= (1.0 + pomesConsumed * 0.12);
 				}
 
 				if (volume.getBloodVolume() > effectiveCost) {

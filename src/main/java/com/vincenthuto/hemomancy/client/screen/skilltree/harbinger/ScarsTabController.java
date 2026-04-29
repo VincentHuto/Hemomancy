@@ -15,8 +15,13 @@ public class ScarsTabController implements IProgressTab {
     public void onInit(ProgressScreenContext ctx) {
         Minecraft mc = Minecraft.getInstance();
         state.scarRecipes.clear();
-        if (mc.player != null && mc.level != null)
-            state.scarRecipes.addAll(ScarRecipe.getAllRecipes(mc.level));
+        if (mc.player != null && mc.level != null) {
+            for (ScarRecipe r : ScarRecipe.getAllRecipes(mc.level)) {
+                if (ScarUnlockRegistry.get(r.getId()).isUnlocked(mc.player)) {
+                    state.scarRecipes.add(r);
+                }
+            }
+        }
         state.rebuildTierMap();
         state.autoSelectFirstTier(ctx.playerDegree());
     }

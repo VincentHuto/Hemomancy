@@ -38,6 +38,7 @@ import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -515,6 +516,20 @@ public class CardinalRiteEvents {
 		if (isApotheosRite(recipe.getId()) && !hasQliphothCommunion(caster)) {
 			caster.displayClientMessage(
 					Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
+							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Qliphoth Pome Corruption: at 9 pomes only the Pruning and Apotheosis rites may be cast
+		int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(caster)
+				.map(d -> d.getTotalPomesConsumed())
+				.orElse(0);
+		if (pomesConsumed >= 9
+				&& !PRUNING_OF_QLIPHOTH_RITE.equals(recipe.getId().getPath())
+				&& !isApotheosRite(recipe.getId())) {
+			caster.displayClientMessage(
+					Component.literal("The void has claimed your will \u2014 only one path remains, and one way back.")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 					false);
 			return;
@@ -1510,6 +1525,17 @@ public class CardinalRiteEvents {
 			// Sync updated bloom list to all clients
 			syncQliphothBlooms(sLevel.getServer());
 
+			// Harbinger pome communion reset — pruning severs the void's claim and scars the pruner
+			if (!prunerIsUnstained[0]) {
+				HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
+					if (degree.getTotalPomesConsumed() > 0) {
+						degree.resetPomeCommunion();
+						PacketHandler.sendToPlayer(caster, new PacketSyncPomeProgress(0));
+						grantScarOnPruning(caster);
+					}
+				});
+			}
+
 			caster.displayClientMessage(
 					Component.literal("The Qliphoth withers... the dark tree has been pruned.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
@@ -1521,6 +1547,33 @@ public class CardinalRiteEvents {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 		}
+	}
+
+	/**
+	 * Grants a Scar of Transcendence to a Harbinger player who pruned their own bloom.
+	 * Places it in the first empty SCAR slot (1–4); otherwise drops it at the player's feet.
+	 */
+	private static void grantScarOnPruning(ServerPlayer player) {
+		ItemStack scar = new ItemStack(ItemInit.scar_transcendence.get());
+		boolean placed = false;
+		var scarsOpt = HemoCapabilityAccess.getScars(player);
+		if (scarsOpt.isPresent()) {
+			var scars = scarsOpt.get();
+			for (int slot = 1; slot <= 4; slot++) {
+				if (scars.getStackInSlot(slot).isEmpty()) {
+					scars.setStackInSlot(slot, scar);
+					placed = true;
+					break;
+				}
+			}
+		}
+		if (!placed) {
+			player.drop(scar, false);
+		}
+		player.displayClientMessage(
+				Component.literal("You pull free of the void\u2019s grasp. The communion is undone \u2014 but the Qliphoth does not forget you.")
+						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+				false);
 	}
 
 	/**
