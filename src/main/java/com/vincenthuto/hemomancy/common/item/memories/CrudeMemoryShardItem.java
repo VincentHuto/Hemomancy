@@ -57,9 +57,9 @@ public class CrudeMemoryShardItem extends Item {
 				"An echo scraped from the wall of a Harbinger chamber. The pattern is rough but legible\u2014someone has done this before.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		if (getManip() != null) {
-			tooltip.add(Component.literal("\u00a77Encodes: \u00a4" + getManip().getProperName())
+			tooltip.add(Component.literal(getManip().getProperName())
 					.withStyle(ChatFormatting.DARK_RED));
-			tooltip.add(Component.literal("\u00a77Blood cost to absorb: " + (int) BLOOD_COST + " mL")
+			tooltip.add(Component.literal("Blood cost to absorb: " + (int) BLOOD_COST + " mL")
 					.withStyle(ChatFormatting.DARK_RED));
 		}
 	}

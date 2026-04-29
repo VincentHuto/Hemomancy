@@ -203,6 +203,7 @@ public class BloodVolumeEvents {
 				// ── One-time first sanguine formation drop ──
 				// When the player first takes a meaningful hit after blood becomes active,
 				// a sanguine formation crystallises from the wound and falls at their feet.
+				// 6.0f = 3 hearts (Minecraft damage: 1 heart = 2 HP).
 				if (!volume.isFirstFormationDropped() && damage >= 6.0f) {
 					volume.setFirstFormationDropped(true);
 					syncVolume((ServerPlayer) player, volume);
