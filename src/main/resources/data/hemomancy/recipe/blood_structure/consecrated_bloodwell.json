@@ -1,0 +1,20 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 5000,
+  "heldItem": "hemomancy:sanguine_conduit",
+  "hitBlock": "hemomancy:conscious_mass",
+  "pattern": [
+    ["PVP", "VCV", "PVP"],
+    ["VCV", "CWC", "VCV"],
+    ["PVP", "VCV", "PVP"]
+  ],
+  "key": {
+    "P": {"block": "hemomancy:hematic_iron_pillar"},
+    "V": {"block": "hemomancy:polished_venous_stone"},
+    "C": {"block": "hemomancy:conscious_mass"},
+    "W": {"block": "hemomancy:sanguine_glass"}
+  },
+  "result": {
+    "id": "hemomancy:dendritic_distributor"
+  }
+}

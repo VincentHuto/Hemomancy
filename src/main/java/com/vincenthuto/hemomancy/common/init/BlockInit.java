@@ -111,17 +111,18 @@ public class BlockInit {
 	private static final ResourceKey<Block> ATTACHED_GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("attached_gourd_stem"));
 	private static final ResourceKey<Item> GOURD_SEED_ITEM_KEY = ResourceKey.create(Registries.ITEM, Hemomancy.rloc("gourd_seeds"));
 
-	// Ash
-	public static final DeferredHolder<Block, Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
+	// Ash — base trail blocks still need items (registered explicitly in ItemInit);
+	// active-state and plain trail blocks have no item form and live in NOITEMBLOCKS.
+	public static final DeferredHolder<Block, Block> smouldering_ash_trail = NOITEMBLOCKS.register("smouldering_ash_trail",
 			() -> new SmoulderingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
-	public static final DeferredHolder<Block, Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
+	public static final DeferredHolder<Block, Block> befouling_ash_trail = NOITEMBLOCKS.register("befouling_ash_trail",
 			() -> new BefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
-	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = SPECIALBLOCKS.register(
+	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = NOITEMBLOCKS.register(
 			"active_smouldering_ash_trail",
 			() -> new ActiveSmoulderingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
-	public static final DeferredHolder<Block, Block> active_befouling_ash_trail = SPECIALBLOCKS.register(
+	public static final DeferredHolder<Block, Block> active_befouling_ash_trail = NOITEMBLOCKS.register(
 			"active_befouling_ash_trail",
 			() -> new ActiveBefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
@@ -595,8 +596,6 @@ public class BlockInit {
 		b.forEach(item -> {
 			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
 					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
 					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
 					|| item.getSecond().getBlock() != BlockInit.filler_block.get()
 					|| item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {

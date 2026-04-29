@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
-> **Last Updated:** 2026-04-29 (Degree theme implementation: Apotheos dialogue trees for all 3 NPCs; Saints + Founding Sanctum branches in Vicar trees; degree_hint restored to Illuminatus/Sanctified; dialogue tables updated; Blood Structure tiered gating — intro at Votary, Grand tier at D5; Monolith identity + Crimson Lodestone dialogue overhaul; §12.4 Fungal Scars planned; Tier 3 scar gate planned D6; **Sanguine Conduit block form gated to Degree 5** — `SanguineConduitBlock` added in `NOITEMBLOCKS`, `ItemSanguineConduit.useOn()` gates placement, degree-gated tooltip added)
+> **Last Updated:** 2026-04-29 (Degree theme implementation: Apotheos dialogue trees for all 3 NPCs; Saints + Founding Sanctum branches in Vicar trees; degree_hint restored to Illuminatus/Sanctified; dialogue tables updated; Blood Structure tiered gating — intro at Votary, Grand tier at D5; Monolith identity + Crimson Lodestone dialogue overhaul; §12.4 Fungal Scars planned; Tier 3 scar gate planned D6; **Sanguine Conduit block form gated to Degree 5** — `SanguineConduitBlock` added in `NOITEMBLOCKS`, `ItemSanguineConduit.useOn()` gates placement, degree-gated tooltip added; **Conduit block click opens HarbingerProgressScreen**; **SanguineConduitBlockEntity + BER** for pulsing crimson oath-rings; **Ash trail NOITEMBLOCKS migration** — `smouldering_ash_trail`, `befouling_ash_trail`, `active_smouldering_ash_trail`, `active_befouling_ash_trail` moved to NOITEMBLOCKS, `active_*_ash` items removed; **3 Grand-tier Blood Structure recipe drafts** added)
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -925,7 +925,7 @@ A second, deeper Fungal Scar gated behind completion of Qliphoth Communion (Apot
 | ![](src/main/resources/assets/hemomancy/textures/item/neutralizing_gasket.png) Neutralizing Gasket | Anti-blood component |
 | ![](src/main/resources/assets/hemomancy/textures/item/foul_paste.png) Foul Paste | Crafting ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_rock.png) Blood Rock | Crafting ingredient |
-| ![](src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient / covenant anchor. **Block form gated behind Degree 5 (Illuminatus).** Right-clicking a surface places the block only when `IInitiatoryDegree.getDegreeNumber() >= 5`; the attempt is silently blocked below that degree. In-air right-click opens the Harbinger skill tree at any degree. Registered in `ItemInit` (`ItemSanguineConduit`); the placed block (`SanguineConduitBlock`) is in `BlockInit.NOITEMBLOCKS` to avoid duplicate item registration. Tooltip changes at Degree 5 to reveal the planting mechanic. |
+| ![](src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient / covenant anchor. **Block form gated behind Degree 5 (Illuminatus).** Right-clicking a surface places the block only when `IInitiatoryDegree.getDegreeNumber() >= 5`; the attempt is silently blocked below that degree. In-air right-click opens the Harbinger skill tree at any degree. **Right-clicking the placed block also opens the Harbinger skill tree.** The placed block has a minimal `SanguineConduitBlockEntity` whose BER (`SanguineConduitBlockRenderer`) draws a slow, dim pulsing crimson ring expanding outward — a quiet mark of covenant presence. Registered in `ItemInit` (`ItemSanguineConduit`); the placed block (`SanguineConduitBlock`) is in `BlockInit.NOITEMBLOCKS` to avoid duplicate item registration. Tooltip changes at Degree 5 to reveal the planting mechanic. |
 | ![](src/main/resources/assets/hemomancy/textures/item/serpent_scale.png) Serpent Scale | Mob drop |
 | ![](src/main/resources/assets/hemomancy/textures/item/swollen_leech.png) Swollen / ![](src/main/resources/assets/hemomancy/textures/item/dried_leech.png) Dried Leech | Mob drops |
 | ![](src/main/resources/assets/hemomancy/textures/item/chitinous_husk.png) Chitinous Husk | Mob drop |
@@ -1348,7 +1348,7 @@ Blood structure crafting is introduced at **Degree 2 (Votary)** — the Alchemis
 - **Basic tier** (degree gate 0): simple flat-layout patterns, low blood cost — available from the start
 - **Advanced tier** (degree gate 2): introduces the Blood Key mechanic fully; 3D patterns begin
 - **Expert tier** (degree gate 4): complex multiblock patterns requiring Sanguine Formation catalyst
-- **Grand tier** (degree gate 5–6, planned): structures that require a Blood Conduit pipe within range carrying sustained blood flow — the pipeline network becomes mandatory, not optional
+- **Grand tier** (degree gate 5–6, drafted): structures that require the Sanguine Conduit as catalyst or hit-block, reflecting the Founding Sanctum's claim over the land. Three draft recipes exist: **Consecrated Bloodwell** (`consecrated_bloodwell.json`, cost 5000, uses sanguine_conduit as heldItem — 3-layer cubic arrangement of pillars, polished venous stone, conscious mass, and sanguine glass), **Vascular Effigy** (`vascular_effigy.json`, cost 6500, 4-layer humanoid profile of hematic iron, summoning a Semi-Sentient Construct), and **Covenant Throne** (`covenant_throne.json`, cost 8000, requires a Sanguine Monolith at center — upgrades the monolith within a ring of chiseled iron and conscious mass into a sanctified seat).
 
 The Liber Sanguinum sidebar groups recipes as Basic/Advanced/Expert with the 0/2/4 degree gating displayed. Grand-tier gating is a planned addition.
 
@@ -1360,6 +1360,9 @@ The Liber Sanguinum sidebar groups recipes as Basic/Advanced/Expert with the 0/2
 | Morphling Incubator | 200 | Morphling Polyp | Hematic Iron Block | Morphling Incubator |
 | Semi-Sentient Construct | 250 | Befouling Ash | Conscious Mass | Semi-Sentient Construct |
 | Unstained Podium | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
+| *(Grand)* Consecrated Bloodwell | 5000 | Sanguine Conduit | Conscious Mass | Dendritic Distributor *(placeholder result — own block TBD)* |
+| *(Grand)* Vascular Effigy | 6500 | Sanguine Formation | Hematic Iron Block | Semi-Sentient Construct *(placeholder — dedicated construct upgrade TBD)* |
+| *(Grand)* Covenant Throne | 8000 | Sanguine Formation | Sanguine Monolith | Sanguine Monolith *(placeholder — dedicated throne block TBD)* |
 
 > Recipes are in `data/hemomancy/recipes/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, and `result`.
 

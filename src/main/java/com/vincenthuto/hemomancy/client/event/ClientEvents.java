@@ -497,6 +497,8 @@ public class ClientEvents {
 					com.vincenthuto.hemomancy.client.render.tile.functional.AltarOfCleansingRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.sanguine_monolith.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineMonolithRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.sanguine_conduit.get(),
+					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineConduitBlockRenderer::new);
 		}
 
 		@SuppressWarnings("deprecation")

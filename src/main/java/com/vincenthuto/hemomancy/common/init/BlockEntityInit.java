@@ -127,6 +127,10 @@ public class BlockEntityInit {
 			.register("sanguine_monolith", () -> BlockEntityType.Builder
 					.of(SanguineMonolithBlockEntity::new, BlockInit.sanguine_monolith.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SanguineConduitBlockEntity>> sanguine_conduit = TILES
+			.register("sanguine_conduit", () -> BlockEntityType.Builder
+					.of(SanguineConduitBlockEntity::new, BlockInit.sanguine_conduit.get()).build(null));
+
 	// Puzzle block entities — Hemorath encounter
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodBasinBlockEntity>> blood_basin = TILES
 			.register("blood_basin", () -> BlockEntityType.Builder
