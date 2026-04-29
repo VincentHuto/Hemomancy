@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -92,7 +93,11 @@ public class UnstainedZealotEntity extends PathfinderMob {
             }
 
             DialogueTree tree;
-            if (hasBegunPurification) {
+            ItemStack held = player.getMainHandItem();
+            if (!held.isEmpty()) {
+                // Item inquiry available at any purity stage
+                tree = ZealotDialogueTrees.itemInquiry(held, this.getId(), purity, clarityUnlocked);
+            } else if (hasBegunPurification) {
                 tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), purity, clarityUnlocked, enlightened);
             } else if (volume == null || !volume.isActive()) {
                 tree = ZealotDialogueTrees.noBlood(this.getId());
