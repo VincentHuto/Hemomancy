@@ -115,7 +115,7 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 					final int count = newEntries;
 					Minecraft mc = Minecraft.getInstance();
 					if (mc != null && mc.getToasts() != null) {
-						showNewEntriestoast(mc, count);
+						showNewEntriesNotification(mc, count);
 					}
 				}
 			});
@@ -123,10 +123,10 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	private static void showNewEntriestoast(Minecraft mc, int count) {
+	private static void showNewEntriesNotification(Minecraft mc, int count) {
 		SystemToast.addOrUpdate(
 				mc.getToasts(),
-				SystemToast.SystemToastId.NARRATOR_TOGGLE,
+				SystemToast.SystemToastId.TUTORIAL_HINT,
 				Component.translatable("toast.hemomancy.liber_new_entries.title"),
 				Component.translatable("toast.hemomancy.liber_new_entries.body", count));
 	}
