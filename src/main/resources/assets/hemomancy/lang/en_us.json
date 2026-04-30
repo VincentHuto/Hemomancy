@@ -1660,5 +1660,7 @@
   "hemomancy.zealot.item_inquiry.unstained_armor.line1": "Unstained armor. Pale silver alloy throughout — forged to resist blood-corruption on contact. A practitioner well along the path can wear this without it interfering with their purification.",
   "hemomancy.zealot.item_inquiry.unstained_armor.line2": "The set holds a blessing when worn complete. Our Lady's protection is strongest around those who have clothed themselves in her metal. It is a statement of commitment.",
   "hemomancy.zealot.item_inquiry.hallowed_residuum.line1": "Hallowed residuum. What remains when a Saint is overcome — the distilled echo of a being whose blood potency bordered on the divine.",
-  "hemomancy.zealot.item_inquiry.hallowed_residuum.line2": "To us it is a reminder of what is being cleansed. The Saints held enormous blood power — and in the end, that power was what made them vulnerable to what we are purging. The residuum is proof that blood-mastery is not permanence."
+  "hemomancy.zealot.item_inquiry.hallowed_residuum.line2": "To us it is a reminder of what is being cleansed. The Saints held enormous blood power — and in the end, that power was what made them vulnerable to what we are purging. The residuum is proof that blood-mastery is not permanence.",
+  "toast.hemomancy.liber_new_entries.title": "New Liber Entries",
+  "toast.hemomancy.liber_new_entries.body": "%s new page(s) unlocked in your Liber."
 }

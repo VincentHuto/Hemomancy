@@ -12,11 +12,16 @@ import com.vincenthuto.hemomancy.common.capability.player.knowledge.DiscoverySou
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledge;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketSyncLiberKnowledge implements CustomPacketPayload {
@@ -83,6 +88,10 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 				return;
 			}
 			HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge -> {
+				// Count entries the player already has before applying the sync so we
+				// can detect genuinely new unlocks and show a toast notification.
+				int previousEntryCount = knowledge.getUnlockedEntries().size();
+
 				LiberKnowledge synced = new LiberKnowledge();
 				msg.entrySources.forEach((entry, sources) -> {
 					if (sources.isEmpty()) {
@@ -97,8 +106,29 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 					synced.recordMemo(memo);
 				}
 				knowledge.setFrom(synced);
+
+				// Only show the toast when there are NEW entries relative to what the
+				// player had before this sync, and they already had at least one entry
+				// previously (to avoid spamming on first login).
+				int newEntries = knowledge.getUnlockedEntries().size() - previousEntryCount;
+				if (newEntries > 0 && previousEntryCount > 0) {
+					final int count = newEntries;
+					Minecraft mc = Minecraft.getInstance();
+					if (mc != null && mc.getToasts() != null) {
+						showNewEntriestoast(mc, count);
+					}
+				}
 			});
 		});
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private static void showNewEntriestoast(Minecraft mc, int count) {
+		SystemToast.addOrUpdate(
+				mc.getToasts(),
+				SystemToast.SystemToastId.NARRATOR_TOGGLE,
+				Component.translatable("toast.hemomancy.liber_new_entries.title"),
+				Component.translatable("toast.hemomancy.liber_new_entries.body", count));
 	}
 
 	private static void writeIds(FriendlyByteBuf buf, Set<ResourceLocation> ids) {
