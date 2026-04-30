@@ -243,9 +243,15 @@ public class Hemomancy {
 
     /**
      * Registers all Hemomancy item and advancement → Liber Sanguinum entry
-     * unlock mappings with HutosLib's {@link BookEntryRegistry}. These are then
-     * picked up automatically by HutosLib's {@code BookDiscoveryEvents} listeners,
-     * removing the need for Hemomancy-side event handlers for these two trigger types.
+     * unlock mappings with HutosLib's {@link BookEntryRegistry}. This shared
+     * registry is used by two consumers:
+     * <ol>
+     *   <li>HutosLib's own {@code BookDiscoveryEvents}, which writes unlocks
+     *       into HutosLib's internal {@code BookKnowledge} attachment.</li>
+     *   <li>Hemomancy's {@link com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberDiscoveryEvents},
+     *       which reads from the same registry and writes into Hemomancy's own
+     *       {@code ILiberKnowledge} capability.</li>
+     * </ol>
      *
      * <p>Rite-based and dialogue-based unlocks remain in
      * {@link LiberEntryDefinitions} and are triggered programmatically from
