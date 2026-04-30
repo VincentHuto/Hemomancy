@@ -8,8 +8,10 @@ import com.vincenthuto.hemomancy.client.model.tile.functional.DictationTableMode
 import com.vincenthuto.hemomancy.common.block.functional.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.DictationTableBlockEntity;
+import com.vincenthuto.hutoslib.common.item.BookAnimState;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -53,9 +55,15 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 			return;
 		}
 
-		// Render book using animation state stored on the ItemGuideBook item
-		ItemGuideBook item = (ItemGuideBook) liber.getItem();
-		float f3 = Mth.lerp(1.0F, item.oFlip, item.flip);
+		if (!(liber.getItem() instanceof ItemGuideBook item)) {
+			return;
+		}
+
+		// HutosLib now keeps book animation state per entity instead of on the item
+		// singleton, so sample the local client's cached state for page flip motion.
+		BookAnimState state = ItemGuideBook.getOrCreateState(
+				Minecraft.getInstance().player != null ? Minecraft.getInstance().player.getUUID() : null);
+		float f3 = Mth.lerp(partialTicks, state.oFlip, state.flip);
 		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
 		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
 
@@ -66,7 +74,7 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 		poseStack.mulPose(Axis.ZP.rotationDegrees(80.0F));
 		poseStack.scale(1, 1F, 1F);
 		// The book is always shown open on the table (close = 1.0F); page-flip angles
-		// come from the item's animation fields updated while the book was last held.
+		// come from the local client's cached guidebook animation state.
 		bookModel.setupAnim(0.0F, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), 1.0F);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(bookModel.renderType(texture));
 		bookModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
