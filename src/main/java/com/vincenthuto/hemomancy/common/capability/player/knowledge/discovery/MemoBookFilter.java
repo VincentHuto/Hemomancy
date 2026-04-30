@@ -5,19 +5,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hutoslib.common.book.filter.IBookPageFilter;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookDataTemplate;
 import com.vincenthuto.hutoslib.common.data.book.ChapterTemplate;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public final class MemoBookFilter {
-	private MemoBookFilter() {
-	}
+/**
+ * Implements {@link IBookPageFilter} to hide Liber Sanguinum and Liber
+ * Immaculatus pages that the player has not yet unlocked. Pages without an ID
+ * (title / decorative pages) are always visible.
+ *
+ * <p>Set this on a book model via
+ * {@link BookCodeModel#setPageFilter(IBookPageFilter)} so the screen applies
+ * it automatically at open time.
+ */
+public final class MemoBookFilter implements IBookPageFilter {
 
-	public static BookCodeModel filterForPlayer(BookCodeModel source, Player player) {
+	@Override
+	public BookCodeModel filter(BookCodeModel source, Player player) {
 		if (source == null || player == null) {
 			return source;
 		}

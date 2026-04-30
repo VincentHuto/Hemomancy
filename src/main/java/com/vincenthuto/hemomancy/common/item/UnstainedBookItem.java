@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.item;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.liber.LiberReadTracker;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
+import com.vincenthuto.hutoslib.client.book.BookReadTracker;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
+import com.vincenthuto.hutoslib.common.book.BookTheme;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
@@ -44,7 +45,7 @@ public class UnstainedBookItem extends ItemGuideBook {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
         HemoCapabilityAccess.getLiberKnowledge(mc.player).ifPresent(knowledge -> {
-            int unread = LiberReadTracker.countUnread(mc.player.getUUID(), knowledge, "liberimmaculatus/");
+            int unread = BookReadTracker.countUnread(mc.player.getUUID(), knowledge, "liberimmaculatus/");
             if (unread > 0) {
                 tooltip.add(Component.literal(ChatFormatting.GOLD + "⬤ " + unread
                         + " unread entr" + (unread == 1 ? "y" : "ies")));
@@ -109,9 +110,14 @@ public class UnstainedBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide) {
-            HLGuiGuideTitlePage.openScreenViaItem(MemoBookFilter.filterForPlayer(book, p_41433_));
+            book.setPageFilter(new MemoBookFilter());
+            book.setTheme(new BookTheme(
+                    Hemomancy.rloc("textures/gui/guide/book.png"),
+                    0x88AACC,
+                    Hemomancy.rloc("textures/gui/guide/hemo_overlay.png")));
+            HLGuiGuideTitlePage.openScreenViaItem(book);
             HemoCapabilityAccess.getLiberKnowledge(p_41433_)
-                    .ifPresent(k -> LiberReadTracker.acknowledge(p_41433_.getUUID(), k.getUnlockedEntries()));
+                    .ifPresent(k -> BookReadTracker.acknowledge(p_41433_.getUUID(), k.getUnlockedEntries()));
         }
 
         return super.use(lvl, p_41433_, p_41434_);
