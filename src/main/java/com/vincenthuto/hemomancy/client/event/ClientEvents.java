@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.liber.LiberReadTracker;
+import com.vincenthuto.hutoslib.client.book.BookReadTracker;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
@@ -271,7 +271,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
         if (event.getPlayer() != null) {
-            LiberReadTracker.clear(event.getPlayer().getUUID());
+            BookReadTracker.clear(event.getPlayer().getUUID());
         }
     }
 
@@ -705,7 +705,7 @@ public class ClientEvents {
                         return HemoCapabilityAccess.getLiberKnowledge(mc.player).map(knowledge -> {
                             boolean isSanguinum = stack.is(ItemInit.liber_sanguinum.get());
                             String prefix = isSanguinum ? "sanctumsanguinium/" : "liberimmaculatus/";
-                            if (!LiberReadTracker.hasUnread(mc.player.getUUID(), knowledge, prefix)) {
+                            if (!BookReadTracker.hasUnread(mc.player.getUUID(), knowledge, prefix)) {
                                 return false;
                             }
                             // Draw a 3x4 gold badge at the top-right corner of the item icon,
