@@ -56,21 +56,21 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 		}
 	//Render book
 		ItemGuideBook item = (ItemGuideBook)liber.getItem();
-		float f = (float)item.ticks + 1.0F;
-
-		float f1;
-		for(f1 = item.nextPageAngle - item.pageAngle; f1 >= (float)Math.PI; f1 -= ((float)Math.PI * 2F)) {
-		}
-
-		while(f1 < -(float)Math.PI) {
-			f1 += ((float)Math.PI * 2F);
-		}
-
-		float f2 = item.pageAngle + f1;
-		float f3 = Mth.lerp(1.0F, item.oFlip, item.flip);
-		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
-		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
-		this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), item.close);
+//		float f = (float)item.ticks + 1.0F;
+//
+//		float f1;
+//		for(f1 = item.nextPageAngle - item.pageAngle; f1 >= (float)Math.PI; f1 -= ((float)Math.PI * 2F)) {
+//		}
+//
+//		while(f1 < -(float)Math.PI) {
+//			f1 += ((float)Math.PI * 2F);
+//		}
+//
+//		float f2 = item.pageAngle + f1;
+//		float f3 = Mth.lerp(1.0F, item.oFlip, item.flip);
+//		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
+//		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
+//		this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), item.close);
 		ResourceLocation texture = liber.getItem() instanceof ItemGuideBook guideBook && guideBook.getTexture() != null
 				? guideBook.getTexture()
 				: FALLBACK_TEXTURE;
