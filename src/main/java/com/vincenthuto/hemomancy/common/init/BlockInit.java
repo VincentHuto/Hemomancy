@@ -253,7 +253,7 @@ public class BlockInit {
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
-			() -> new BleedingHeartBlock(MobEffects.ABSORPTION.value(), 12,
+			() -> new BleedingHeartBlock(MobEffects.ABSORPTION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_bleeding_heart = POTTEDBLOCKS.register("potted_bleeding_heart",
@@ -261,7 +261,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of()));
 
 	public static final DeferredHolder<Block, Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
-			() -> new InfectedFungusBlock(MobEffects.CONFUSION.value(), 12,
+			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
@@ -269,7 +269,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final DeferredHolder<Block, Block> puffball_fungus = MODELEDBLOCKS.register("puffball_fungus",
-			() -> new PuffballFungusBlock(MobEffects.SATURATION.value(), 12,
+			() -> new PuffballFungusBlock(MobEffects.SATURATION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_puffball_fungus = POTTEDBLOCKS.register("potted_puffball_fungus",
@@ -277,7 +277,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final DeferredHolder<Block, Block> stinkhorn_fungus = CROSSBLOCKS.register("stinkhorn_fungus",
-			() -> new InfectedFungusBlock(MobEffects.CONFUSION.value(), 12,
+			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> potted_stinkhorn_fungus = POTTEDBLOCKS.register("potted_stinkhorn_fungus",
@@ -285,11 +285,11 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final DeferredHolder<Block, Block> devils_tooth = CROSSBLOCKS.register("devils_tooth",
-			() -> new DevilsToothBlock(MobEffects.CONFUSION.value(), 12,
+			() -> new DevilsToothBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> lethean_poppy = CROSSBLOCKS.register("lethean_poppy",
-			() -> new LetheanPoppyBlock(MobEffects.REGENERATION.value(), 8,
+			() -> new LetheanPoppyBlock(MobEffects.REGENERATION, 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
 	public static final DeferredHolder<Block, Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
@@ -323,15 +323,15 @@ public class BlockInit {
 	// Myco-heterotrophic Plants
 
 	public static final DeferredHolder<Block, Block> ghost_pipe = CROSSBLOCKS.register("ghost_pipe",
-			() -> new GhostPipeBlock(MobEffects.NIGHT_VISION.value(), 10,
+			() -> new GhostPipeBlock(MobEffects.NIGHT_VISION, 10,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
 	public static final DeferredHolder<Block, Block> sarcodes = CROSSBLOCKS.register("sarcodes",
-			() -> new SarcodesBlock(MobEffects.REGENERATION.value(), 8,
+			() -> new SarcodesBlock(MobEffects.REGENERATION, 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final DeferredHolder<Block, Block> rafflesia = CROSSBLOCKS.register("rafflesia",
-			() -> new RafflesiaBlock(MobEffects.CONFUSION.value(), 12,
+			() -> new RafflesiaBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
 	public static final DeferredHolder<Block, Block> potted_ghost_pipe = POTTEDBLOCKS.register("potted_ghost_pipe",

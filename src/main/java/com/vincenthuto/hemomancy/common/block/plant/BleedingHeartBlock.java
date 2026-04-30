@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FlowerBlock;
@@ -13,8 +13,8 @@ import net.neoforged.neoforge.common.util.TriState;
 
 public class BleedingHeartBlock extends FlowerBlock {
 
-	public BleedingHeartBlock(MobEffect effect, int effectDuration, Properties properties) {
-		super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
+	public BleedingHeartBlock(Holder<MobEffect> effect, int effectDuration, Properties properties) {
+		super(effect, effectDuration, properties);
 	}
 
 	@Override

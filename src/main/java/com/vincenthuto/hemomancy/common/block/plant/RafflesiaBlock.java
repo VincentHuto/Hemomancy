@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class RafflesiaBlock extends FlowerBlock {
 
-	public RafflesiaBlock(MobEffect effect, int effectDuration, Properties properties) {
-		super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
+	public RafflesiaBlock(Holder<MobEffect> effect, int effectDuration, Properties properties) {
+		super(effect, effectDuration, properties);
 	}
 
 	@Override

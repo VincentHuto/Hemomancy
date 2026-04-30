@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.block.plant;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,8 +28,8 @@ public class LetheanPoppyBlock extends FlowerBlock {
 	public static final int BLOOMED = 0;
 	public static final int DORMANT = 1;
 
-	public LetheanPoppyBlock(MobEffect effect, int effectDuration, Properties properties) {
-		super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
+	public LetheanPoppyBlock(Holder<MobEffect> effect, int effectDuration, Properties properties) {
+		super(effect, effectDuration, properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(STATE, BLOOMED));
 	}
 

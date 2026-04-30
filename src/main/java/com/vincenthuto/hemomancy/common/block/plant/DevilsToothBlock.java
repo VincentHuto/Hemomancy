@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.plant;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.LevelReader;
@@ -12,8 +12,8 @@ import net.neoforged.neoforge.common.util.TriState;
 
 public class DevilsToothBlock extends FlowerBlock {
 
-    public DevilsToothBlock(MobEffect effect, int effectDuration, Properties properties) {
-        super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
+    public DevilsToothBlock(Holder<MobEffect> effect, int effectDuration, Properties properties) {
+        super(effect, effectDuration, properties);
     }
 
     @Override

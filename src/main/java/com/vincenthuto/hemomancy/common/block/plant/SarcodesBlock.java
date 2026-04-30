@@ -7,7 +7,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.Level;
@@ -25,8 +25,8 @@ import net.neoforged.neoforge.common.util.TriState;
  */
 public class SarcodesBlock extends FlowerBlock {
 
-	public SarcodesBlock(MobEffect effect, int effectDuration, Properties properties) {
-		super(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect), effectDuration, properties);
+	public SarcodesBlock(Holder<MobEffect> effect, int effectDuration, Properties properties) {
+		super(effect, effectDuration, properties);
 	}
 
 	@Override
