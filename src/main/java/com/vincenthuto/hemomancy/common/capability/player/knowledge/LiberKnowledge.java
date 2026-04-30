@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.vincenthuto.hutoslib.common.book.knowledge.BookKnowledge;
+import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
 
 import net.minecraft.resources.ResourceLocation;
@@ -19,17 +20,22 @@ public class LiberKnowledge extends BookKnowledge implements ILiberKnowledge {
 	// ── BookKnowledge overrides ───────────────────────────────────────────────
 
 	/**
-	 * Re-hydrates a persisted source name as a {@link DiscoverySource}.
-	 * Falls back to empty (skipped) for unknown names, which covers forward-
-	 * compat (new server sending a source the client doesn't know yet).
+	 * Re-hydrates a persisted source name as an {@link IDiscoverySource}.
+	 * Tries {@link HemomancyDiscoverySource} first (Hemomancy-specific), then
+	 * {@link CommonDiscoverySource} (shared HutosLib sources). Falls back to
+	 * empty (skipped) for unknown names, covering forward-compat scenarios.
 	 */
 	@Override
 	protected Optional<IDiscoverySource> lookupSource(String name) {
 		try {
-			return Optional.of(DiscoverySource.valueOf(name));
-		} catch (IllegalArgumentException e) {
-			return Optional.empty();
+			return Optional.of(HemomancyDiscoverySource.valueOf(name));
+		} catch (IllegalArgumentException ignored) {
 		}
+		try {
+			return Optional.of(CommonDiscoverySource.valueOf(name));
+		} catch (IllegalArgumentException ignored) {
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -45,11 +51,11 @@ public class LiberKnowledge extends BookKnowledge implements ILiberKnowledge {
 
 	/**
 	 * Records {@code memoId} and simultaneously unlocks the associated
-	 * {@code entryId} with a {@link DiscoverySource#MEMO} source tag.
+	 * {@code entryId} with a {@link HemomancyDiscoverySource#MEMO} source tag.
 	 */
 	@Override
 	public boolean unlockMemo(ResourceLocation memoId, ResourceLocation entryId) {
 		boolean changed = memoId != null && recordMemo(memoId);
-		return unlockEntry(entryId, DiscoverySource.MEMO) || changed;
+		return unlockEntry(entryId, HemomancyDiscoverySource.MEMO) || changed;
 	}
 }
