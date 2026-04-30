@@ -13,8 +13,23 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public final class MemoBookFilter {
+/**
+ * Filters a {@link BookCodeModel} so only pages whose Liber entry has been
+ * unlocked by the player are shown. Implements {@link IBookPageFilter} so it
+ * can be injected wherever a filter is needed without coupling callers to this
+ * specific implementation.
+ */
+public final class MemoBookFilter implements IBookPageFilter {
+
+	/** Shared singleton — stateless, so safe to reuse. */
+	public static final MemoBookFilter INSTANCE = new MemoBookFilter();
+
 	private MemoBookFilter() {
+	}
+
+	@Override
+	public BookCodeModel filter(BookCodeModel source, Player player) {
+		return filterForPlayer(source, player);
 	}
 
 	public static BookCodeModel filterForPlayer(BookCodeModel source, Player player) {

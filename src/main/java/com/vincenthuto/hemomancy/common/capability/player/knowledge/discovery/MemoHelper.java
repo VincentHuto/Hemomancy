@@ -9,7 +9,9 @@ import com.vincenthuto.hemomancy.common.capability.player.knowledge.DiscoverySou
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.FieldInkItem;
+import com.vincenthuto.hemomancy.common.item.FieldNotesBookItem;
+import com.vincenthuto.hemomancy.common.item.ILiberBook;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -260,22 +262,26 @@ public final class MemoHelper {
 	}
 
 	public static boolean isFieldNotes(ItemStack stack) {
-		return !stack.isEmpty() && stack.is(ItemInit.field_notes.get());
+		return !stack.isEmpty() && stack.getItem() instanceof FieldNotesBookItem;
 	}
 
 	public static boolean isLiber(ItemStack stack) {
-		return !stack.isEmpty() && (stack.is(ItemInit.liber_sanguinum.get()) || stack.is(ItemInit.liber_immaculatus.get()));
+		return !stack.isEmpty() && stack.getItem() instanceof ILiberBook;
 	}
 
 	public static boolean canDictateInto(ItemStack liber, MemoDefinition.MemoPath path) {
-		if (path == MemoDefinition.MemoPath.SHARED) {
-			return isLiber(liber);
+		if (!isLiber(liber)) {
+			return false;
 		}
+		if (path == MemoDefinition.MemoPath.SHARED) {
+			return true;
+		}
+		String bookPath = ((ILiberBook) liber.getItem()).getBookPath();
 		if (path == MemoDefinition.MemoPath.HARBINGER) {
-			return !liber.isEmpty() && liber.is(ItemInit.liber_sanguinum.get());
+			return "sanctumsanguinium".equals(bookPath);
 		}
 		if (path == MemoDefinition.MemoPath.UNSTAINED) {
-			return !liber.isEmpty() && liber.is(ItemInit.liber_immaculatus.get());
+			return "liberimmaculatus".equals(bookPath);
 		}
 		return false;
 	}
@@ -325,13 +331,7 @@ public final class MemoHelper {
 	}
 
 	private static MemoDefinition.MemoPath pathForInk(ItemStack ink) {
-		if (ink.is(ItemInit.hematic_field_ink.get())) {
-			return MemoDefinition.MemoPath.HARBINGER;
-		}
-		if (ink.is(ItemInit.pale_field_ink.get())) {
-			return MemoDefinition.MemoPath.UNSTAINED;
-		}
-		return null;
+		return FieldInkItem.getPathFromStack(ink);
 	}
 
 	private static boolean pathsCompatible(MemoDefinition.MemoPath notesPath, MemoDefinition.MemoPath memoPath) {
@@ -366,12 +366,16 @@ public final class MemoHelper {
 	}
 
 	private static boolean legacyEntryMatchesLiber(ItemStack liber, ResourceLocation entryId) {
-		String path = entryId.getPath();
-		if (path.startsWith("sanctumsanguinium/")) {
-			return liber.is(ItemInit.liber_sanguinum.get());
+		if (!(liber.getItem() instanceof ILiberBook liberBook)) {
+			return true;
 		}
-		if (path.startsWith("liberimmaculatus/")) {
-			return liber.is(ItemInit.liber_immaculatus.get());
+		String bookPath = liberBook.getBookPath();
+		String entryPath = entryId.getPath();
+		if (entryPath.startsWith("sanctumsanguinium/")) {
+			return "sanctumsanguinium".equals(bookPath);
+		}
+		if (entryPath.startsWith("liberimmaculatus/")) {
+			return "liberimmaculatus".equals(bookPath);
 		}
 		return true;
 	}
