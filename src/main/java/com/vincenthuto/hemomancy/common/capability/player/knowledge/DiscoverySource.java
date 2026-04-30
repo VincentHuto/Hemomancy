@@ -1,13 +1,14 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge;
 
-import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
-
-public enum DiscoverySource implements IDiscoverySource {
-	MEMO,
-	ADVANCEMENT,
-	RITE,
-	ITEM_PICKUP,
-	DEGREE,
-	DIALOGUE,
-	OTHER
+/**
+ * @deprecated Use {@link HemomancyDiscoverySource} for Hemomancy-specific
+ *             sources (MEMO, RITE, DEGREE, DIALOGUE) or
+ *             {@code CommonDiscoverySource} from HutosLib for generic ones
+ *             (ADVANCEMENT, ITEM_PICKUP, ENTITY_KILL, BIOME_ENTER,
+ *             STRUCTURE_DISCOVER, OTHER).
+ */
+@Deprecated
+public final class DiscoverySource {
+	private DiscoverySource() {
+	}
 }

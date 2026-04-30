@@ -5,7 +5,6 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 
 /**
  * Utility class for programmatically granting Hemomancy Harbinger-path
@@ -87,11 +86,15 @@ public final class HarbingerAdvancementGranter {
 	 * Grants the advancement identified by {@code id} to the player if it has
 	 * not already been completed. Safe to call repeatedly.
 	 *
+	 * <p>Book-knowledge unlocks for this advancement are handled automatically
+	 * by HutosLib's {@code BookDiscoveryEvents.onAdvancementEarned}, which
+	 * consults the mappings registered in {@code BookEntryRegistry}. No
+	 * explicit {@code LiberKnowledgeHelper} call is needed here.
+	 *
 	 * @param player The server-side player to receive the advancement.
 	 * @param id     The ResourceLocation of the advancement to grant.
 	 */
 	public static void grantIfNotDone(ServerPlayer player, ResourceLocation id) {
-		LiberKnowledgeHelper.unlockForAdvancement(player, id);
 		AdvancementHolder advancement = player.server.getAdvancements().get(id);
 		if (advancement == null) return;
 

@@ -7,8 +7,9 @@ import java.util.Set;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.DiscoverySource;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledge;
+import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
 
@@ -64,17 +65,34 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			Set<IDiscoverySource> sources = new LinkedHashSet<>();
 			for (int j = 0; j < sourceCount; j++) {
 				String name = buf.readUtf();
-				try {
-					sources.add(DiscoverySource.valueOf(name));
-				} catch (IllegalArgumentException e) {
-					// Unknown source name — could be a server/client version mismatch.
-					// Log and skip so the rest of the packet can still be applied.
-					Hemomancy.LOGGER.warn("[LiberKnowledge] Unknown DiscoverySource in sync packet: {}", name);
+				IDiscoverySource source = decodeSource(name);
+				if (source != null) {
+					sources.add(source);
+				} else {
+					Hemomancy.LOGGER.warn("[LiberKnowledge] Unknown IDiscoverySource in sync packet: {}", name);
 				}
 			}
 			entrySources.put(key, sources);
 		}
 		return new PacketSyncLiberKnowledge(entrySources, readIds(buf));
+	}
+
+	/**
+	 * Resolves a source name to an {@link IDiscoverySource}, trying
+	 * {@link HemomancyDiscoverySource} first (Hemomancy-specific), then
+	 * {@link CommonDiscoverySource} (shared HutosLib sources). Returns
+	 * {@code null} for unknown names so the caller can decide how to handle them.
+	 */
+	private static IDiscoverySource decodeSource(String name) {
+		try {
+			return HemomancyDiscoverySource.valueOf(name);
+		} catch (IllegalArgumentException ignored) {
+		}
+		try {
+			return CommonDiscoverySource.valueOf(name);
+		} catch (IllegalArgumentException ignored) {
+		}
+		return null;
 	}
 
 	public static void handle(PacketSyncLiberKnowledge msg, IPayloadContext ctx) {
@@ -87,7 +105,7 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 				LiberKnowledge synced = new LiberKnowledge();
 				msg.entrySources.forEach((entry, sources) -> {
 					if (sources.isEmpty()) {
-						synced.unlockEntry(entry, DiscoverySource.OTHER);
+						synced.unlockEntry(entry, CommonDiscoverySource.OTHER);
 					} else {
 						for (IDiscoverySource source : sources) {
 							synced.unlockEntry(entry, source);

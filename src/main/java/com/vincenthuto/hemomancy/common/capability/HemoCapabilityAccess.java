@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
+import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
@@ -120,19 +120,19 @@ public static IKnownManipulations requireKnownManipulations(Entity entity) {
     return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
 }
 
-public static Optional<ILiberKnowledge> getLiberKnowledge(Player player) {
+public static Optional<IBookKnowledge> getLiberKnowledge(Player player) {
     return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.LIBER_KNOWLEDGE));
 }
 
-public static Optional<ILiberKnowledge> getLiberKnowledge(Entity entity) {
+public static Optional<IBookKnowledge> getLiberKnowledge(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.LIBER_KNOWLEDGE));
 }
 
-public static ILiberKnowledge requireLiberKnowledge(Player player) {
+public static IBookKnowledge requireLiberKnowledge(Player player) {
     return getLiberKnowledge(player).orElseThrow(IllegalStateException::new);
 }
 
-public static ILiberKnowledge requireLiberKnowledge(Entity entity) {
+public static IBookKnowledge requireLiberKnowledge(Entity entity) {
     return getLiberKnowledge(entity).orElseThrow(IllegalStateException::new);
 }
 

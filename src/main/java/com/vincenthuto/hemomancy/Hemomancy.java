@@ -10,6 +10,10 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.config.HemoConfig;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hutoslib.common.book.knowledge.BookEntryRegistry;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -234,6 +238,116 @@ public class Hemomancy {
         SkillPointInit.init();
         ManipulationTreeInit.init();
         initUnstainedStageIcons();
+        initLiberBookUnlocks();
+    }
+
+    /**
+     * Registers all Hemomancy item and advancement → Liber Sanguinum entry
+     * unlock mappings with HutosLib's {@link BookEntryRegistry}. This shared
+     * registry is used by two consumers:
+     * <ol>
+     *   <li>HutosLib's own {@code BookDiscoveryEvents}, which writes unlocks
+     *       into HutosLib's internal {@code BookKnowledge} attachment.</li>
+     *   <li>Hemomancy's {@link com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberDiscoveryEvents},
+     *       which reads from the same registry and writes into Hemomancy's own
+     *       {@code IBookKnowledge} capability.</li>
+     * </ol>
+     *
+     * <p>Rite-based and dialogue-based unlocks remain in
+     * {@link LiberEntryDefinitions} and are triggered programmatically from
+     * {@link com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper}.
+     */
+    private void initLiberBookUnlocks() {
+        // ── Item pickup → page unlocks ────────────────────────────────────────
+        BookEntryRegistry.registerItemUnlock(rloc("blood_stained_stone"),  LiberEntryDefinitions.HEMOMANCY);
+        BookEntryRegistry.registerItemUnlock(rloc("bloody_vial"),           LiberEntryDefinitions.HEMOMANCY);
+        BookEntryRegistry.registerItemUnlock(rloc("blood_crystal_shard"),   LiberEntryDefinitions.HEMOMANCY);
+        BookEntryRegistry.registerItemUnlock(rloc("blood_rock"),            LiberEntryDefinitions.HEMOMANCY);
+
+        BookEntryRegistry.registerItemUnlock(rloc("bleeding_bulb"),         LiberEntryDefinitions.ERYTHROMYCELIUM);
+        BookEntryRegistry.registerItemUnlock(rloc("dicentra_sap"),          LiberEntryDefinitions.ERYTHROMYCELIUM);
+        BookEntryRegistry.registerItemUnlock(rloc("talaromyces_minus"),     LiberEntryDefinitions.ERYTHROMYCELIUM);
+        BookEntryRegistry.registerItemUnlock(rloc("blood_gourd_red"),       LiberEntryDefinitions.ERYTHROMYCELIUM);
+
+        BookEntryRegistry.registerItemUnlock(rloc("blood_tendency_gauge"),  LiberEntryDefinitions.THE_HARBINGERS);
+        BookEntryRegistry.registerItemUnlock(rloc("barbed_blade"),          LiberEntryDefinitions.THE_HARBINGERS);
+
+        BookEntryRegistry.registerItemUnlock(rloc("fungal_spine"),          LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("spore_sac"),             LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("chitinous_husk"),        LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("desiccated_membrane"),   LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("fervent_husk"),          LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("foul_paste"),            LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("serpent_scale"),         LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("ferric_spores"),         LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("vivacious_spores"),      LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("fervent_spores"),        LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("frigid_spores"),         LiberEntryDefinitions.HYPHAE);
+        BookEntryRegistry.registerItemUnlock(rloc("umbral_spores"),         LiberEntryDefinitions.HYPHAE);
+
+        BookEntryRegistry.registerItemUnlock(rloc("sanguine_formation"),         LiberEntryDefinitions.BLOOD_MEMORIES);
+        BookEntryRegistry.registerItemUnlock(rloc("hematic_memory"),             LiberEntryDefinitions.BLOOD_MEMORIES);
+        BookEntryRegistry.registerItemUnlock(rloc("engram_stamp"),               LiberEntryDefinitions.BLOOD_MEMORIES);
+        BookEntryRegistry.registerItemUnlock(rloc("unsigned_ancestral_ledger"),  LiberEntryDefinitions.BLOOD_MEMORIES);
+
+        BookEntryRegistry.registerItemUnlock(rloc("abyssal_ichor"),  LiberEntryDefinitions.ENTITY);
+        BookEntryRegistry.registerItemUnlock(rloc("void_ichor"),     LiberEntryDefinitions.ENTITY);
+
+        BookEntryRegistry.registerItemUnlock(rloc("qliphoth_seed"),  LiberEntryDefinitions.QLIPHOTH);
+        BookEntryRegistry.registerItemUnlock(rloc("qliphoth_pome"),  LiberEntryDefinitions.QLIPHOTH);
+
+        BookEntryRegistry.registerItemUnlock(rloc("silthmere_glaive"),            LiberEntryDefinitions.SAINTS);
+        BookEntryRegistry.registerItemUnlock(rloc("hallowed_residuum_hemorath"),  LiberEntryDefinitions.HEMORATH);
+        BookEntryRegistry.registerItemUnlock(rloc("hallowed_residuum_putriciel"), LiberEntryDefinitions.SAINTS);
+
+        BookEntryRegistry.registerItemUnlock(rloc("consecrated_copper_ingot"),  LiberEntryDefinitions.COPPER_AND_SILVER);
+        BookEntryRegistry.registerItemUnlock(rloc("silver_chalice"),            LiberEntryDefinitions.COPPER_AND_SILVER);
+        BookEntryRegistry.registerItemUnlock(rloc("vivianite_cluster"),         LiberEntryDefinitions.COPPER_AND_SILVER);
+
+        BookEntryRegistry.registerItemUnlock(rloc("hemolytic_solution"),  LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerItemUnlock(rloc("vivianite_scalpel"),   LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerItemUnlock(rloc("absolution_dagger"),   LiberEntryDefinitions.THE_UNSTAINED);
+
+        BookEntryRegistry.registerItemUnlock(rloc("cleansed_blood_crystal_shard"),  LiberEntryDefinitions.PURIFIED);
+
+        BookEntryRegistry.registerItemUnlock(rloc("hemolytic_solution"),     LiberEntryDefinitions.IMMACULATUS_HEMOLYTIC_SOLUTION);
+        BookEntryRegistry.registerItemUnlock(rloc("consecrated_syringe"),    LiberEntryDefinitions.IMMACULATUS_HEMOLYTIC_SOLUTION);
+        BookEntryRegistry.registerItemUnlock(rloc("cleansing_hemolymph"),    LiberEntryDefinitions.IMMACULATUS_HEMOLYTIC_SOLUTION);
+
+        BookEntryRegistry.registerItemUnlock(rloc("consecrated_copper_ingot"),  LiberEntryDefinitions.IMMACULATUS_COPPER_AND_SILVER);
+
+        BookEntryRegistry.registerItemUnlock(rloc("tears_of_silthmere"),  LiberEntryDefinitions.IMMACULATUS_SHE_WHO_LISTENS);
+
+        // ── Advancement → page unlocks ────────────────────────────────────────
+        // Harbinger degree chain
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_1_NEOPHYTE,  LiberEntryDefinitions.HEMOMANCY);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_1_NEOPHYTE,  LiberEntryDefinitions.THE_HARBINGERS);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY,    LiberEntryDefinitions.DEGREES);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_3_INITIATE,  LiberEntryDefinitions.ORDER_BELIEFS);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_4_ADEPT,     LiberEntryDefinitions.HISTORICAL_RECORD);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_5_ILLUMINATUS, LiberEntryDefinitions.HERMITS);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_6_SANCTIFIED, LiberEntryDefinitions.DEGREES);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_7_ARCHON,    LiberEntryDefinitions.ENTITY);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_8_APOTHEOS,  LiberEntryDefinitions.TRUTH);
+        // Harbinger milestone advancements
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_BLOOD_IS_BOUND,                LiberEntryDefinitions.BLOOD_MEMORIES);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED,     LiberEntryDefinitions.BLOOD_MEMORIES);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_FOUNDING_SANCTUM_ESTABLISHED,  LiberEntryDefinitions.BLOOD_MEMORIES);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_VOICES_IN_THE_VEIN,            LiberEntryDefinitions.ENTITY);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED,       LiberEntryDefinitions.TRUTH);
+        BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_SANGUINE_DOMAIN,               LiberEntryDefinitions.BLOOD_MEMORIES);
+        // Unstained purity stages
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_BLESSED_BY_ALTAR,  LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_TAINTED,           LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_CLEANSING,         LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_ABSOLVED,          LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_CLARITY_AWAKENED,  LiberEntryDefinitions.PURIFIED);
+        // Unstained clarity stages
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_DISCERNING,        LiberEntryDefinitions.IMMACULATUS_CLARITY_PRICE);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_VIGILANT,          LiberEntryDefinitions.IMMACULATUS_CLARITY_PRICE);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_RESOLUTE_STAGE,    LiberEntryDefinitions.PURIFIED);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_ENLIGHTENED_SEEKER, LiberEntryDefinitions.PURIFIED);
+        BookEntryRegistry.registerAdvancementUnlock(UnstainedAdvancementGranter.ADV_PURIFIED,          LiberEntryDefinitions.PURIFIED);
     }
 
     private void initUnstainedStageIcons() {
