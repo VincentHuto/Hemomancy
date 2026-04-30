@@ -32,26 +32,26 @@ public class BloodyBookItem extends ItemGuideBook {
         super(prop, loc);
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
-        appendUnreadLine(tooltip);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private static void appendUnreadLine(List<Component> tooltip) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
-        HemoCapabilityAccess.getLiberKnowledge(mc.player).ifPresent(knowledge -> {
-            int unread = BookReadTracker.countUnread(mc.player.getUUID(), knowledge, "sanctumsanguinium/");
-            if (unread > 0) {
-                tooltip.add(Component.literal(ChatFormatting.GOLD + "⬤ " + unread
-                        + " unread entr" + (unread == 1 ? "y" : "ies")));
-            }
-        });
-    }
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+//        super.appendHoverText(stack, context, tooltip, flagIn);
+//        tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
+//        appendUnreadLine(tooltip);
+//    }
+//
+//    @OnlyIn(Dist.CLIENT)
+//    private static void appendUnreadLine(List<Component> tooltip) {
+//        Minecraft mc = Minecraft.getInstance();
+//        if (mc.player == null) return;
+//        HemoCapabilityAccess.getLiberKnowledge(mc.player).ifPresent(knowledge -> {
+//            int unread = BookReadTracker.countUnread(mc.player.getUUID(), knowledge, "sanctumsanguinium/");
+//            if (unread > 0) {
+//                tooltip.add(Component.literal(ChatFormatting.GOLD + "⬤ " + unread
+//                        + " unread entr" + (unread == 1 ? "y" : "ies")));
+//            }
+//        });
+//    }
 
 //	@Override
 //	public boolean hurtEnemy(ItemStack stack, LivingEntity entity, @Nonnull LivingEntity attacker) {
