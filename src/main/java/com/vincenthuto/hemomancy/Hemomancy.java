@@ -250,7 +250,7 @@ public class Hemomancy {
      *       into HutosLib's internal {@code BookKnowledge} attachment.</li>
      *   <li>Hemomancy's {@link com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberDiscoveryEvents},
      *       which reads from the same registry and writes into Hemomancy's own
-     *       {@code ILiberKnowledge} capability.</li>
+     *       {@code IBookKnowledge} capability.</li>
      * </ol>
      *
      * <p>Rite-based and dialogue-based unlocks remain in

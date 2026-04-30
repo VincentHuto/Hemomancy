@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
+import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -123,7 +123,7 @@ public final class MemoHelper {
 			return DictationResult.NO_MEMOS;
 		}
 
-		ILiberKnowledge knowledge = HemoCapabilityAccess.requireLiberKnowledge(player);
+		IBookKnowledge knowledge = HemoCapabilityAccess.requireLiberKnowledge(player);
 		migrateLegacyLiberStack(liber, knowledge);
 
 		int newMemoCount = 0;
@@ -340,7 +340,7 @@ public final class MemoHelper {
 				|| notesPath == memoPath;
 	}
 
-	private static void migrateLegacyLiberStack(ItemStack liber, ILiberKnowledge knowledge) {
+	private static void migrateLegacyLiberStack(ItemStack liber, IBookKnowledge knowledge) {
 		CompoundTag tag = getCustomData(liber);
 		boolean hadLegacyData = tag.contains(TAG_KNOWN_MEMOS) || tag.contains(TAG_LIBER_ENTRIES);
 		if (!hadLegacyData) {

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 
 /**
  * Thin bridging handlers that read from HutosLib's {@link BookEntryRegistry}
- * and write the resulting unlocks into Hemomancy's own {@code ILiberKnowledge}
+ * and write the resulting unlocks into Hemomancy's own {@code IBookKnowledge}
  * capability via {@link LiberKnowledgeHelper}.
  *
  * <p>HutosLib's {@code BookDiscoveryEvents} mirrors the same events and writes

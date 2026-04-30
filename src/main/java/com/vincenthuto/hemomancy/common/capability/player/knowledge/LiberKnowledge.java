@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  * all NBT persistence and generic logic; overrides the two protected hooks so
  * discovery sources round-trip correctly through NBT.
  */
-public class LiberKnowledge extends BookKnowledge implements ILiberKnowledge {
+public class LiberKnowledge extends BookKnowledge {
 
 	// ── BookKnowledge overrides ───────────────────────────────────────────────
 
