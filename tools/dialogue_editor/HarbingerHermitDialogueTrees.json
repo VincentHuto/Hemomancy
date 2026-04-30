@@ -1,0 +1,605 @@
+{
+  "source_file": "HarbingerHermitDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\HarbingerHermitDialogueTrees.java",
+  "speaker": "entity.hemomancy.harbinger_hermit",
+  "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png",
+  "trees": [
+    {
+      "theme": "BLOOD",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.hermit.no_blood.line1",
+            "hemomancy.hermit.no_blood.line2",
+            "hemomancy.hermit.no_blood.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_heart",
+              "next": "heart_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.who_are_you",
+              "next": "hermit_duty",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "heart_lore",
+          "lines": [
+            "hemomancy.hermit.no_blood.heart_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.accept_heart",
+              "next": null,
+              "event": "hermit_heart_offered"
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hermit_duty",
+          "lines": [
+            "hemomancy.hermit.no_blood.duty.line1",
+            "hemomancy.hermit.no_blood.duty.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_heart",
+              "next": "heart_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "noBlood",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.uninitiated.line1",
+            "hemomancy.hermit.uninitiated.line2",
+            "hemomancy.hermit.uninitiated.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.how_do_i_begin",
+              "next": "guidance",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_is_this_place",
+              "next": "temple_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "guidance",
+          "lines": [
+            "hemomancy.hermit.uninitiated.guidance"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.accept_guidance",
+              "next": "farewell",
+              "event": "hermit_accept_guidance"
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "temple_lore",
+          "lines": [
+            "hemomancy.hermit.temple_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.how_do_i_begin",
+              "next": "guidance",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "farewell",
+          "lines": [
+            "hemomancy.hermit.uninitiated.farewell.line1",
+            "hemomancy.hermit.uninitiated.farewell.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.farewell",
+              "next": null,
+              "event": "hermit_farewell_die"
+            }
+          ]
+        }
+      ],
+      "method": "uninitiated",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.neophyte.line1",
+            "hemomancy.hermit.neophyte.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_next",
+              "next": "hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.tell_me_about_manipulations",
+              "next": "manip_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hint",
+          "lines": [
+            "hemomancy.hermit.neophyte.hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.memo.make_note",
+              "next": null,
+              "event": "MemoHelper.memoEvent(MemoDefinitions.FIRST_RITE_NOTES.id())"
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "manip_lore",
+          "lines": [
+            "hemomancy.hermit.manip_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "neophyte",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.votary.line1",
+            "hemomancy.hermit.votary.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_next",
+              "next": "hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.tell_me_about_tendencies",
+              "next": "tendency_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hint",
+          "lines": [
+            "hemomancy.hermit.votary.hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "tendency_lore",
+          "lines": [
+            "hemomancy.hermit.tendency_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "votary",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.initiate.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_next",
+              "next": "hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hint",
+          "lines": [
+            "hemomancy.hermit.initiate.hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "initiate",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.adept.line1",
+            "hemomancy.hermit.adept.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.tell_me_about_scars",
+              "next": "scar_intro",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_next",
+              "next": "hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "scar_intro",
+          "lines": [
+            "hemomancy.hermit.adept.scar_intro"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.how_do_scars_work",
+              "next": "scar_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "scar_lore",
+          "lines": [
+            "hemomancy.hermit.adept.scar_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.scar_crafting",
+              "next": "scar_crafting",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "scar_crafting",
+          "lines": [
+            "hemomancy.hermit.adept.scar_crafting"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hint",
+          "lines": [
+            "hemomancy.hermit.adept.hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.tell_me_about_scars",
+              "next": "scar_intro",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "adept",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.illuminatus.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_next",
+              "next": "hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hint",
+          "lines": [
+            "hemomancy.hermit.illuminatus.hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "illuminatus",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.sanctified.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_next",
+              "next": "hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hint",
+          "lines": [
+            "hemomancy.hermit.sanctified.hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "sanctified",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.archon.line1",
+            "hemomancy.hermit.archon.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.share_wisdom",
+              "next": null,
+              "event": "hermit_archon_wisdom"
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "archon",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.hermit.apotheos.line1",
+            "hemomancy.hermit.apotheos.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.what_remains_for_you",
+              "next": "final_words",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "final_words",
+          "lines": [
+            "hemomancy.hermit.apotheos.final_words"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.hermit.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "apotheos",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_hermit",
+      "icon": "hemomancy:textures/entity/harbinger_hermit/harbinger_hermit.png"
+    }
+  ]
+}

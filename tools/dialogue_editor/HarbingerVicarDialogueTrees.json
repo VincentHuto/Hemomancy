@@ -1,0 +1,1036 @@
+{
+  "source_file": "HarbingerVicarDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\HarbingerVicarDialogueTrees.java",
+  "speaker": "entity.hemomancy.harbinger_vicar",
+  "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png",
+  "trees": [
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.purifying.line1",
+            "hemomancy.vicar.purifying.line2",
+            "hemomancy.vicar.purifying.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.purifying.i_know",
+              "next": "power_warning",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.purifying.i_chose_this",
+              "next": "chosen_path",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "power_warning",
+          "lines": [
+            "hemomancy.vicar.purifying.power_warning"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "chosen_path",
+          "lines": [
+            "hemomancy.vicar.purifying.chosen_path"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "purifying",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.uninitiated.line1",
+            "hemomancy.vicar.uninitiated.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.who_are_harbingers",
+              "next": "harbinger_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_is_outpost",
+              "next": "outpost_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "harbinger_lore",
+          "lines": [
+            "hemomancy.vicar.uninitiated.harbinger_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_is_outpost",
+              "next": "outpost_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "outpost_lore",
+          "lines": [
+            "hemomancy.vicar.uninitiated.outpost_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "uninitiated",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.neophyte.line1",
+            "hemomancy.vicar.neophyte.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_covenant",
+              "next": "covenant_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "covenant_lore",
+          "lines": [
+            "hemomancy.vicar.covenant_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "degree_hint",
+          "lines": [
+            "hemomancy.vicar.neophyte.degree_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "neophyte",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.votary.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_tendencies",
+              "next": "tendency_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "tendency_lore",
+          "lines": [
+            "hemomancy.vicar.votary.tendency_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "degree_hint",
+          "lines": [
+            "hemomancy.vicar.votary.degree_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "votary",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.initiate.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_sanctum",
+              "next": "sanctum_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_the_saints",
+              "next": "saints_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "sanctum_lore",
+          "lines": [
+            "hemomancy.vicar.initiate.sanctum_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_the_saints",
+              "next": "saints_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "saints_lore",
+          "lines": [
+            "hemomancy.vicar.initiate.saints_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "degree_hint",
+          "lines": [
+            "hemomancy.vicar.initiate.degree_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "initiate",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.adept.line1",
+            "hemomancy.vicar.adept.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_brotherhood",
+              "next": "brotherhood_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "brotherhood_lore",
+          "lines": [
+            "hemomancy.vicar.adept.brotherhood_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "degree_hint",
+          "lines": [
+            "hemomancy.vicar.adept.degree_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "adept",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.illuminatus.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge",
+              "next": "lodge_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum",
+              "next": "founding_sanctum_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.about_the_monolith",
+              "next": "monolith_rumor",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "lodge_lore",
+          "lines": [
+            "hemomancy.vicar.illuminatus.lodge_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum",
+              "next": "founding_sanctum_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "founding_sanctum_lore",
+          "lines": [
+            "hemomancy.vicar.illuminatus.founding_sanctum_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "monolith_rumor",
+          "lines": [
+            "hemomancy.vicar.illuminatus.monolith_rumor.line1",
+            "hemomancy.vicar.illuminatus.monolith_rumor.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.take_the_scrap",
+              "next": "scrap_given",
+              "event": "give_blood_structure_hint"
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "scrap_given",
+          "lines": [
+            "hemomancy.vicar.illuminatus.scrap_given"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "degree_hint",
+          "lines": [
+            "hemomancy.vicar.illuminatus.degree_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.vicar.consider",
+            "hemomancy.dialogue.recruit.vicar.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "illuminatus",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.sanctified.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_hematic_order",
+              "next": "hematic_order_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "hematic_order_lore",
+          "lines": [
+            "hemomancy.vicar.sanctified.hematic_order_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_degree_next",
+              "next": "degree_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "degree_hint",
+          "lines": [
+            "hemomancy.vicar.sanctified.degree_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.vicar.consider",
+            "hemomancy.dialogue.recruit.vicar.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "sanctified",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.archon.line1",
+            "hemomancy.vicar.archon.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.tell_me_the_final_truth",
+              "next": "final_truth",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "final_truth",
+          "lines": [
+            "hemomancy.vicar.archon.final_truth"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.vicar.consider",
+            "hemomancy.dialogue.recruit.vicar.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "archon",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.archon.pome_empowered.line1",
+            "hemomancy.vicar.archon.pome_empowered.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "archonPomeEmpowered",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.vicar.apotheos.line1",
+            "hemomancy.vicar.apotheos.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.what_do_you_make_of_this",
+              "next": "reflection",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "reflection",
+          "lines": [
+            "hemomancy.vicar.apotheos.reflection"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.vicar.consider",
+            "hemomancy.dialogue.recruit.vicar.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.vicar.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.vicar.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "apotheos",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_vicar",
+      "icon": "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png"
+    }
+  ]
+}

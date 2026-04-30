@@ -183,13 +183,13 @@ public class ManipulationsTabController implements IProgressTab {
     }
 
     private static int manipMinDegree(EnumManipulationRank rank) {
-        return switch (rank) {
-            case HUMILIS     -> 0;
-            case MEDIOCRITAS -> 1;
-            case SUMMA       -> 3;
-            case MAGISTER    -> 5;
-            case PERFECTUS   -> 6;
-        };
+        if (rank == null) return 0;
+        if (rank == EnumManipulationRank.HUMILIS) return 0;
+        if (rank == EnumManipulationRank.MEDIOCRITAS) return 1;
+        if (rank == EnumManipulationRank.SUMMA) return 3;
+        if (rank == EnumManipulationRank.MAGISTER) return 5;
+        if (rank == EnumManipulationRank.PERFECTUS) return 6;
+        return 0;
     }
 
     private boolean isManipRankLocked(BloodManipulation manip) {
@@ -377,13 +377,16 @@ public class ManipulationsTabController implements IProgressTab {
                     ScreenDrawUtils.renderScaledItem(gfx, memoryStack, nx, ny, hn);
                 } else {
                     String sym = "?";
-                    if (manip != null) {
-                        sym = switch (manip.getType()) {
-                            case QUICK      -> "\u26A1";
-                            case CONTINUOUS -> "\u221E";
-                            case PASSIVE    -> "\u25C6";
-                            case CHARGED    -> "\u25B2";
-                        };
+                    if (manip != null && manip.getType() != null) {
+                        if (manip.getType() == com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType.QUICK) {
+                            sym = "\u26A1";
+                        } else if (manip.getType() == com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType.CONTINUOUS) {
+                            sym = "\u221E";
+                        } else if (manip.getType() == com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType.PASSIVE) {
+                            sym = "\u25C6";
+                        } else if (manip.getType() == com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType.CHARGED) {
+                            sym = "\u25B2";
+                        }
                     }
                     int textCol = known ? 0xFFFFFFFF : 0xFF555555;
                     gfx.drawCenteredString(ctx.font(), sym, nx, ny - 4, textCol);

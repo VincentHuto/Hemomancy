@@ -1,0 +1,966 @@
+{
+  "source_file": "HarbingerAlchemistDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\HarbingerAlchemistDialogueTrees.java",
+  "speaker": "entity.hemomancy.harbinger_alchemist",
+  "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png",
+  "trees": [
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.purifying.line1",
+            "hemomancy.alchemist.purifying.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.purifying.i_can_explain",
+              "next": "explain",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "explain",
+          "lines": [
+            "hemomancy.alchemist.purifying.explain"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "purifying",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.clarity.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "clarity",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.uninitiated.line1",
+            "hemomancy.alchemist.uninitiated.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.what_machines",
+              "next": "machines_locked",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "machines_locked",
+          "lines": [
+            "hemomancy.alchemist.uninitiated.machines_locked"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "uninitiated",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.neophyte.line1",
+            "hemomancy.alchemist.neophyte.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
+              "next": "alembic_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds",
+              "next": "blood_gourd_basics",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_machines",
+              "next": "machines_overview",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "alembic_lore",
+          "lines": [
+            "hemomancy.alchemist.neophyte.alembic_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds",
+              "next": "blood_gourd_basics",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.alembic_leak",
+              "next": "alembic_leak",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "alembic_leak",
+          "lines": [
+            "hemomancy.alchemist.neophyte.alembic_leak"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "blood_gourd_basics",
+          "lines": [
+            "hemomancy.alchemist.neophyte.blood_gourd_basics"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_machines",
+              "next": "machines_overview",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "machines_overview",
+          "lines": [
+            "hemomancy.alchemist.machines_overview"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
+              "next": "alembic_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds",
+              "next": "blood_gourd_basics",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "neophyte",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.votary.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
+              "next": "centrifuge_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
+              "next": "gourd_upgrades",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
+              "next": "alembic_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures",
+              "next": "blood_structure_intro",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "centrifuge_lore",
+          "lines": [
+            "hemomancy.alchemist.votary.centrifuge_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
+              "next": "gourd_upgrades",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "gourd_upgrades",
+          "lines": [
+            "hemomancy.alchemist.votary.gourd_upgrades"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "alembic_lore",
+          "lines": [
+            "hemomancy.alchemist.neophyte.alembic_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
+              "next": "gourd_upgrades",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "blood_structure_intro",
+          "lines": [
+            "hemomancy.alchemist.votary.blood_structure_intro"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "votary",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.initiate.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_loom",
+              "next": "loom_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.what_is_memory_weaving",
+              "next": "memory_weaving",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "loom_lore",
+          "lines": [
+            "hemomancy.alchemist.initiate.loom_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.what_is_memory_weaving",
+              "next": "memory_weaving",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "memory_weaving",
+          "lines": [
+            "hemomancy.alchemist.initiate.memory_weaving"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "initiate",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.adept.line1",
+            "hemomancy.alchemist.adept.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_scar_station",
+              "next": "scar_station_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station",
+              "next": "chisel_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "scar_station_lore",
+          "lines": [
+            "hemomancy.alchemist.adept.scar_station_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station",
+              "next": "chisel_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "chisel_lore",
+          "lines": [
+            "hemomancy.alchemist.adept.chisel_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "adept",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.illuminatus.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_blood_crafting",
+              "next": "blood_crafting_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator",
+              "next": "incubator_lore",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "blood_crafting_lore",
+          "lines": [
+            "hemomancy.alchemist.illuminatus.blood_crafting_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "incubator_lore",
+          "lines": [
+            "hemomancy.alchemist.illuminatus.incubator_lore"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.alchemist.consider",
+            "hemomancy.dialogue.recruit.alchemist.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "illuminatus",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.sanctified.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.what_remains",
+              "next": "final_machines",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "final_machines",
+          "lines": [
+            "hemomancy.alchemist.sanctified.final_machines"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.alchemist.consider",
+            "hemomancy.dialogue.recruit.alchemist.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "sanctified",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.archon.line1",
+            "hemomancy.alchemist.archon.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.alchemist.consider",
+            "hemomancy.dialogue.recruit.alchemist.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "archon",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.alchemist.apotheos.line1",
+            "hemomancy.alchemist.apotheos.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.what_do_you_see",
+              "next": "reflection",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.pledge_blood",
+              "next": "recruit_offer",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.release_blood",
+              "next": null,
+              "event": "expel_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "reflection",
+          "lines": [
+            "hemomancy.alchemist.apotheos.reflection"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "recruit_offer",
+          "lines": [
+            "hemomancy.dialogue.recruit.alchemist.consider",
+            "hemomancy.dialogue.recruit.alchemist.accept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.recruit.option.confirm",
+              "next": null,
+              "event": "recruit_harbinger"
+            },
+            {
+              "text": "hemomancy.dialogue.recruit.option.not_yet",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.alchemist.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.alchemist.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "apotheos",
+      "params": [
+        "entityId",
+        "hasBloodline"
+      ],
+      "speaker": "entity.hemomancy.harbinger_alchemist",
+      "icon": "hemomancy:textures/entity/harbinger_alchemist/harbinger_alchemist.png"
+    }
+  ]
+}

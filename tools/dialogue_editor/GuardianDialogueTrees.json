@@ -1,0 +1,51 @@
+{
+  "source_file": "GuardianDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\GuardianDialogueTrees.java",
+  "speaker": "entity.hemomancy.unstained_guardian",
+  "icon": "unknown",
+  "trees": [
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.guardian.ambient.line1"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.guardian.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.guardian.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.guardian.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.guardian.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "ambient",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.unstained_guardian",
+      "icon": "unknown"
+    }
+  ]
+}

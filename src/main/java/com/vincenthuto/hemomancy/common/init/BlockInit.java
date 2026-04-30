@@ -546,7 +546,7 @@ public class BlockInit {
 		return combinedStream;
 	}
 
-	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
+	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<? extends Block, ResourceLocation> block) {
 		var b = block.getFirst();
 		if (b == BlockInit.mortal_display.get()) {
 			return Pair.of(block.getSecond(), new MortalDisplayBlockItem(b, new Item.Properties()));
@@ -605,6 +605,9 @@ public class BlockInit {
 		if (b == BlockInit.somatic_loom.get()) {
 			return Pair.of(block.getSecond(), new SomaticLoomBlockItem(b, new Item.Properties()));
 		}
+		if (b == BlockInit.covenant_throne.get()) {
+			return Pair.of(block.getSecond(), new CovenantThroneBlockItem(b, new Item.Properties()));
+		}
 		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
 	}
 
@@ -614,7 +617,7 @@ public class BlockInit {
 			return;
 		}
 
-		var b = getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId()))
+		Stream<Pair<ResourceLocation, BlockItem>> b = getAllBlockEntriesAsStream().map(m -> Pair.of(m.get(), m.getId()))
 				.map(BlockInit::createItemBlock);
 		b.forEach(item -> {
 			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()

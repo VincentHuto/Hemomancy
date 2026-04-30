@@ -285,12 +285,16 @@ public class BloodManipulation  {
 				return;
 			}
 
-			// Qliphoth Pome Corruption: at 9 pomes the blood is no longer the player's own;
-			// for 1–8 pomes the variable is reused below inside volume.isActive() to scale cost
-			int pomesConsumed = HemoCapabilityAccess.getInitiatoryDegree(player)
+			// Qliphoth Pome Corruption: at 9 pomes manipulations are disabled until Apotheos.
+			// for 1–8 pomes the variable is reused below inside volume.isActive() to scale cost.
+			var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
+			int pomesConsumed = degreeData
 					.map(d -> d.getTotalPomesConsumed())
 					.orElse(0);
-			if (pomesConsumed >= 9) {
+			boolean hasCompletedApotheos = degreeData
+					.map(d -> d.getDegreeNumber() >= 8)
+					.orElse(false);
+			if (pomesConsumed >= 9 && !hasCompletedApotheos) {
 				player.displayClientMessage(
 						Component.literal("Your blood no longer answers to you. It belongs to the void now.")
 								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),

@@ -23,6 +23,18 @@ python tools/dialogue_editor/export_to_json.py \
     vicar.json
 ```
 
+Windows drag-and-drop: you can drop a `*DialogueTrees.java` file directly onto
+`tools/dialogue_editor/export_to_json.py`; it now writes a sibling JSON file
+automatically (example: `AcolyteDialogueTrees.json`).
+
+If you want raw JSON in the terminal instead of writing a file:
+
+```bash
+python tools/dialogue_editor/export_to_json.py \
+    src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java \
+    --stdout
+```
+
 Repeat for any file you want to edit:
 - `HarbingerAlchemistDialogueTrees.java`
 - `ZealotDialogueTrees.java`

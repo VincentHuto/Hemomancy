@@ -7,8 +7,10 @@ in the visual editor (index.html).
 Usage
 -----
     python export_to_json.py <DialogueTrees.java> [output.json]
+    python export_to_json.py <DialogueTrees.java> --stdout
 
-If output.json is omitted, the JSON is written to stdout.
+If output.json is omitted, the script writes beside the input file as
+<DialogueTrees>.json. Use --stdout to print JSON to stdout.
 
 Notes
 -----
@@ -284,7 +286,7 @@ def parse_file(filepath: str) -> dict:
 
     # Match every  public static DialogueTree methodName(params) {
     method_re = re.compile(
-        r'^\tpublic static DialogueTree\s+(\w+)\s*\(([^)]*)\)\s*\{',
+        r'^\s*public\s+static\s+DialogueTree\s+(\w+)\s*\(([^)]*)\)\s*\{',
         re.MULTILINE
     )
 
@@ -330,24 +332,53 @@ def parse_file(filepath: str) -> dict:
     }
 
 
+def default_output_path(input_path: str) -> str:
+    """Create a default sibling JSON path for drag-and-drop use."""
+    root, _ = os.path.splitext(input_path)
+    return root + ".json"
+
+
 # ── Entry point ──────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    args = sys.argv[1:]
+    stdout_mode = "--stdout" in args
+    args = [a for a in args if a != "--stdout"]
+
+    if len(args) < 1:
         print(
-            "Usage: python export_to_json.py <DialogueTrees.java> [output.json]",
+            "Usage: python export_to_json.py <DialogueTrees.java> [output.json] [--stdout]",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    result = parse_file(sys.argv[1])
+    input_path = args[0]
+    if not os.path.isfile(input_path):
+        print(f"Input file not found: {input_path}", file=sys.stderr)
+        sys.exit(1)
+
+    output_path = None
+    if len(args) >= 2:
+        output_path = args[1]
+    elif not stdout_mode:
+        output_path = default_output_path(input_path)
+
+    if output_path:
+        if os.path.abspath(output_path) == os.path.abspath(input_path):
+            print("Refusing to overwrite input file; choose a different output path.", file=sys.stderr)
+            sys.exit(1)
+        output_dir = os.path.dirname(os.path.abspath(output_path))
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+
+    result = parse_file(input_path)
 
     json_str = json.dumps(result, indent=2, ensure_ascii=False)
 
-    if len(sys.argv) >= 3:
-        with open(sys.argv[2], "w", encoding="utf-8") as f:
+    if output_path:
+        with open(output_path, "w", encoding="utf-8") as f:
             f.write(json_str)
         tree_count = len(result["trees"])
-        print(f"✔ Wrote {sys.argv[2]}  ({tree_count} trees extracted)")
+        print(f"Wrote {output_path} ({tree_count} trees extracted)")
     else:
         print(json_str)

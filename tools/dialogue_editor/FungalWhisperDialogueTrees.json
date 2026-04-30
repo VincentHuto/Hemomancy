@@ -1,0 +1,177 @@
+{
+  "source_file": "FungalWhisperDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\FungalWhisperDialogueTrees.java",
+  "speaker": "hemomancy.whisper.speaker_name",
+  "icon": "hemomancy:textures/gui/mystery_speaker.png",
+  "trees": [
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [],
+          "options": [
+            {
+              "text": "hemomancy.whisper.option.dismiss",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "spineGrowth",
+      "params": [
+        "degree"
+      ],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    },
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.whisper.spine_emerged.line1",
+            "hemomancy.whisper.spine_emerged.line2",
+            "hemomancy.whisper.spine_emerged.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.whisper.option.i_am_listening",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "fungalSpineEmerged",
+      "params": [],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    },
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.whisper.core_witness.line1",
+            "hemomancy.whisper.core_witness.line2",
+            "hemomancy.whisper.core_witness.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.whisper.core_witness.option.silence",
+              "next": null,
+              "event": "archon_choice_silence"
+            },
+            {
+              "text": "hemomancy.whisper.core_witness.option.eighth_degree",
+              "next": null,
+              "event": "archon_choice_eighth_degree"
+            }
+          ]
+        }
+      ],
+      "method": "coreWitnessDialogue",
+      "params": [],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    },
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [],
+          "options": []
+        }
+      ],
+      "method": "pomeDropped",
+      "params": [
+        "huskIndex",
+        "offerMemo"
+      ],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    },
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.whisper.post_shatter.line1",
+            "hemomancy.whisper.post_shatter.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.whisper.option.dismiss",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "postMonolithShatter",
+      "params": [],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    },
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.whisper.post_bloom.line1",
+            "hemomancy.whisper.post_bloom.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.whisper.option.dismiss",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "postBloom",
+      "params": [],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    },
+    {
+      "theme": "FUNGAL",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.whisper.communion.line1",
+            "hemomancy.whisper.communion.line2",
+            "hemomancy.whisper.communion.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.whisper.option.i_am_listening",
+              "next": null,
+              "event": "qliphoth_communion_done"
+            }
+          ]
+        }
+      ],
+      "method": "qliphothCommunion",
+      "params": [],
+      "speaker": "hemomancy.whisper.speaker_name",
+      "icon": "hemomancy:textures/gui/mystery_speaker.png"
+    }
+  ]
+}

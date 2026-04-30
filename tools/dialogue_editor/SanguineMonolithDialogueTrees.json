@@ -1,0 +1,222 @@
+{
+  "source_file": "SanguineMonolithDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\SanguineMonolithDialogueTrees.java",
+  "speaker": "hemomancy.monolith.lodestone_name",
+  "icon": "hemomancy:textures/entity/model_sanguine_monolith.png",
+  "trees": [
+    {
+      "theme": "BLOOD",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.monolith.unworthy"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "unworthy",
+      "params": [],
+      "speaker": "hemomancy.monolith.lodestone_name",
+      "icon": "hemomancy:textures/entity/model_sanguine_monolith.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.monolith.guidance.adept.line1",
+            "hemomancy.monolith.guidance.adept.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.what_are_you",
+              "next": "what_are_you",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.monolith.option.understood",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "what_are_you",
+          "lines": [
+            "hemomancy.monolith.what_are_you.adept"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.understood",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "adept",
+      "params": [],
+      "speaker": "hemomancy.monolith.lodestone_name",
+      "icon": "hemomancy:textures/entity/model_sanguine_monolith.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.monolith.guidance.illuminatus.line1",
+            "hemomancy.monolith.guidance.illuminatus.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.what_are_you",
+              "next": "what_are_you",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.monolith.option.understood",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "what_are_you",
+          "lines": [
+            "hemomancy.monolith.what_are_you.illuminatus"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.understood",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "illuminatus",
+      "params": [],
+      "speaker": "hemomancy.monolith.lodestone_name",
+      "icon": "hemomancy:textures/entity/model_sanguine_monolith.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.monolith.guidance.sanctified.line1",
+            "hemomancy.monolith.guidance.sanctified.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.what_are_you",
+              "next": "what_are_you",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.monolith.option.understood",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "what_are_you",
+          "lines": [
+            "hemomancy.monolith.what_are_you.sanctified"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.understood",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "sanctified",
+      "params": [],
+      "speaker": "hemomancy.monolith.lodestone_name",
+      "icon": "hemomancy:textures/entity/model_sanguine_monolith.png"
+    },
+    {
+      "theme": "BLOOD",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.monolith.guidance.archon.line1",
+            "hemomancy.monolith.guidance.archon.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.what_are_you",
+              "next": "what_are_you",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.monolith.option.press_further",
+              "next": "press_again",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.monolith.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "what_are_you",
+          "lines": [
+            "hemomancy.monolith.what_are_you.archon"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.press_further",
+              "next": "press_again",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.monolith.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "press_again",
+          "lines": [
+            "hemomancy.monolith.archon.press_again"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.monolith.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "archon",
+      "params": [],
+      "speaker": "hemomancy.monolith.lodestone_name",
+      "icon": "hemomancy:textures/entity/model_sanguine_monolith.png"
+    }
+  ]
+}

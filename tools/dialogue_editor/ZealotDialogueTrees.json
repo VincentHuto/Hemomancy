@@ -1,0 +1,598 @@
+{
+  "source_file": "ZealotDialogueTrees.java",
+  "source_path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\java\\com\\vincenthuto\\hemomancy\\common\\entity\\npc\\dialogue\\ZealotDialogueTrees.java",
+  "speaker": "entity.hemomancy.unstained_zealot",
+  "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png",
+  "trees": [
+    {
+      "theme": "UNSTAINED",
+      "start_node": "greeting",
+      "nodes": [
+        {
+          "id": "greeting",
+          "lines": [
+            "hemomancy.zealot.plea.line1",
+            "hemomancy.zealot.plea.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.tell_me_more",
+              "next": "explain",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.not_interested",
+              "next": "reject",
+              "event": "zealot_reject_help"
+            }
+          ]
+        },
+        {
+          "id": "explain",
+          "lines": [
+            "hemomancy.zealot.plea.line3",
+            "hemomancy.zealot.plea.line4"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.how_craft_hemolytic",
+              "next": "craft_hemolytic",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.accept_purification",
+              "next": null,
+              "event": "zealot_accept_purification"
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.accept_church",
+              "next": null,
+              "event": "zealot_accept_church"
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "craft_hemolytic",
+          "lines": [
+            "hemomancy.zealot.craft_hemolytic.line1",
+            "hemomancy.zealot.craft_hemolytic.line2",
+            "hemomancy.zealot.craft_hemolytic.line3"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.accept_purification",
+              "next": null,
+              "event": "zealot_accept_purification"
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "reject",
+          "lines": [
+            "hemomancy.dialogue.zealot.reject_response"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "pleaDialogue",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.enlightened.line1",
+            "hemomancy.zealot.enlightened.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "alreadyOnPath",
+      "variant": 0,
+      "params": [
+        "entityId",
+        "purity",
+        "clarityUnlocked",
+        "enlightened"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.clarity_phase.line1",
+            "hemomancy.zealot.clarity_phase.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.about_verdigris",
+              "next": "verdigris_info",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "verdigris_info",
+          "lines": [
+            "hemomancy.zealot.verdigris_info.line1",
+            "hemomancy.zealot.verdigris_info.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "alreadyOnPath",
+      "variant": 1,
+      "params": [
+        "entityId",
+        "purity",
+        "clarityUnlocked",
+        "enlightened"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.absolved.line1",
+            "hemomancy.zealot.absolved.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.about_clarity_rite",
+              "next": "clarity_rite_info",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "clarity_rite_info",
+          "lines": [
+            "hemomancy.zealot.clarity_rite_info.line1",
+            "hemomancy.zealot.clarity_rite_info.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "alreadyOnPath",
+      "variant": 2,
+      "params": [
+        "entityId",
+        "purity",
+        "clarityUnlocked",
+        "enlightened"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.cleansing.line1",
+            "hemomancy.zealot.cleansing.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.about_altar",
+              "next": "altar_info",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "altar_info",
+          "lines": [
+            "hemomancy.zealot.altar_info.line1",
+            "hemomancy.zealot.altar_info.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "alreadyOnPath",
+      "variant": 3,
+      "params": [
+        "entityId",
+        "purity",
+        "clarityUnlocked",
+        "enlightened"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.tainted.line1",
+            "hemomancy.zealot.tainted.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.about_silver_ward",
+              "next": "silver_ward_info",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "silver_ward_info",
+          "lines": [
+            "hemomancy.zealot.silver_ward_info.line1",
+            "hemomancy.zealot.silver_ward_info.line2"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "alreadyOnPath",
+      "variant": 4,
+      "params": [
+        "entityId",
+        "purity",
+        "clarityUnlocked",
+        "enlightened"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.already_on_path"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "alreadyOnPath",
+      "variant": 5,
+      "params": [
+        "entityId",
+        "purity",
+        "clarityUnlocked",
+        "enlightened"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.no_blood"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "noBlood",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.too_early"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "tooEarly",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    },
+    {
+      "theme": "UNSTAINED",
+      "start_node": "root",
+      "nodes": [
+        {
+          "id": "root",
+          "lines": [
+            "hemomancy.zealot.uninitiated"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.ask_about_item",
+              "next": "item_hint",
+              "event": null
+            },
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        },
+        {
+          "id": "item_hint",
+          "lines": [
+            "hemomancy.zealot.item_hint"
+          ],
+          "options": [
+            {
+              "text": "hemomancy.dialogue.zealot.option.leave",
+              "next": null,
+              "event": null
+            }
+          ]
+        }
+      ],
+      "method": "uninitiated",
+      "params": [
+        "entityId"
+      ],
+      "speaker": "entity.hemomancy.unstained_zealot",
+      "icon": "hemomancy:textures/entity/unstained_zealot/unstained_zealot.png"
+    }
+  ]
+}

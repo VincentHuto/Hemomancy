@@ -102,7 +102,6 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 // Purifying players are dismissed — the Alchemist has no time for them
                 tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
             } else {
-                int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
             }
 

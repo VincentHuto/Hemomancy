@@ -115,6 +115,9 @@ body{display:flex;flex-direction:column;height:100vh;background:#110606;
   align-items:center;justify-content:center;pointer-events:none;color:#3a1a1a;
   font-size:14px;gap:8px}
 #empty-canvas p{font-size:12px;color:#2a1010}
+
+/* Keep file inputs off-screen but clickable by script in stricter browsers */
+.stealth-file{position:fixed;left:-10000px;top:auto;width:1px;height:1px;opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -128,8 +131,8 @@ body{display:flex;flex-direction:column;height:100vh;background:#110606;
   <button class="btn" id="btnAddNode" style="display:none">＋ Node</button>
   <button class="btn" id="btnRelayout" style="display:none">⟳ Relayout</button>
   <button class="btn green" id="btnExport" style="display:none">💾 Export JSON</button>
-  <input type="file" id="jsonInput" accept=".json" hidden>
-  <input type="file" id="langInput" accept=".json" hidden>
+  <input type="file" id="jsonInput" class="stealth-file" accept=".json">
+  <input type="file" id="langInput" class="stealth-file" accept=".json,.lang,.txt">
 </div>
 
 <div id="main">
@@ -173,11 +176,26 @@ const ROW_GAP  = 24;
 const MARGIN   = 30;
 
 // ── File loading ───────────────────────────────────────────────────────────
-document.getElementById('btnLoadJSON').onclick = () => document.getElementById('jsonInput').click();
-document.getElementById('btnLoadLang').onclick = () => document.getElementById('langInput').click();
+document.getElementById('btnLoadJSON').onclick = () => openPicker('json');
+document.getElementById('btnLoadLang').onclick = () => openPicker('lang');
 
-document.getElementById('jsonInput').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return;
+async function openPicker(kind) {
+  const inputId = kind === 'json' ? 'jsonInput' : 'langInput';
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  try {
+    // Single picker path avoids duplicate dialogs and cross-browser API quirks.
+    if (typeof input.showPicker === 'function') input.showPicker();
+    else input.click();
+  } catch (err) {
+    console.error('Unable to open file picker', err);
+    alert('Could not open file picker in this browser. Use a modern browser (Edge/Chrome/Firefox) and try again.');
+  }
+}
+
+function loadJsonFromFile(f) {
+  if (!f) return;
   const r = new FileReader();
   r.onload = ev => {
     try {
@@ -192,20 +210,78 @@ document.getElementById('jsonInput').addEventListener('change', e => {
     } catch(err) { alert('Bad JSON: ' + err.message); }
   };
   r.readAsText(f);
+}
+
+function loadLangFromFile(f) {
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const parsed = parseLangContent(ev.target.result);
+      applyLangMap(parsed);
+    } catch(err) { alert('Bad lang file (.json/.lang): ' + err.message); }
+  };
+  r.readAsText(f);
+}
+
+function parseLangContent(text) {
+  const src = (text || '').trim();
+  if (!src) return {};
+
+  // Supports modern JSON lang files.
+  if (src.startsWith('{')) {
+    const obj = JSON.parse(src);
+    return (obj && typeof obj === 'object') ? obj : {};
+  }
+
+  // Supports legacy key=value .lang files.
+  const out = {};
+  src.split(/\r?\n/).forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+    const eq = trimmed.indexOf('=');
+    if (eq <= 0) return;
+    const key = trimmed.slice(0, eq).trim();
+    const val = trimmed.slice(eq + 1).trim();
+    if (key) out[key] = val;
+  });
+  return out;
+}
+
+function applyLangMap(map) {
+  S.lang = map || {};
+  if (S.tidx >= 0) renderGraph();
+  if (S.sel) renderEditor();
+}
+
+async function attemptAutoLoadLang() {
+  const candidates = ['en_us.lang', 'en_us.json'];
+  for (const file of candidates) {
+    try {
+      const res = await fetch(file, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const text = await res.text();
+      const parsed = parseLangContent(text);
+      if (Object.keys(parsed).length > 0) {
+        applyLangMap(parsed);
+        console.info(`Loaded localization from ${file}`);
+        return;
+      }
+    } catch (_err) {
+      // Common when opened via file:// or stricter browser policies.
+    }
+  }
+}
+
+document.getElementById('jsonInput').addEventListener('change', e => {
+  const f = e.target.files[0];
+  loadJsonFromFile(f);
   e.target.value = '';
 });
 
 document.getElementById('langInput').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    try {
-      S.lang = JSON.parse(ev.target.result);
-      if (S.tidx >= 0) renderGraph();
-      if (S.sel) renderEditor();
-    } catch(err) { alert('Bad lang JSON: ' + err.message); }
-  };
-  r.readAsText(f);
+  const f = e.target.files[0];
+  loadLangFromFile(f);
   e.target.value = '';
 });
 
@@ -412,6 +488,9 @@ function renderEdges(tree) {
   const color = themeColor(tree.theme);
   const ahId  = themeArrow(tree.theme);
 
+  // Drag redraws happen frequently; keep render idempotent by removing old edges.
+  [...svg.children].forEach(c => { if (c.tagName !== 'defs') c.remove(); });
+
   nodes.forEach(nd => {
     const fp = S.pos[nd.id]; if (!fp) return;
     const fe = document.querySelector(`.dnode[data-id="${nd.id}"]`); if (!fe) return;
@@ -458,6 +537,16 @@ function makeSVG(tag) {
 
 // ── Drag ───────────────────────────────────────────────────────────────────
 let wasDragging = false, isDragging = false, dragId = null, dragOX = 0, dragOY = 0, dragEl = null;
+let edgeFramePending = false;
+
+function scheduleEdgeRedraw() {
+  if (edgeFramePending) return;
+  edgeFramePending = true;
+  requestAnimationFrame(() => {
+    edgeFramePending = false;
+    if (S.tidx >= 0 && S.data) renderEdges(S.data.trees[S.tidx]);
+  });
+}
 
 function startDrag(e, id, pos) {
   isDragging = true; wasDragging = false; dragId = id;
@@ -476,10 +565,14 @@ document.addEventListener('mousemove', e => {
   const y = Math.max(0, e.clientY - cr.top  + co.scrollTop  - dragOY);
   S.pos[dragId] = {x, y};
   dragEl.style.left = x + 'px'; dragEl.style.top = y + 'px';
-  if (S.tidx >= 0 && S.data) renderEdges(S.data.trees[S.tidx]);
+  scheduleEdgeRedraw();
 });
 
-document.addEventListener('mouseup', () => { isDragging = false; dragEl = null; });
+document.addEventListener('mouseup', () => {
+  isDragging = false;
+  dragEl = null;
+  edgeFramePending = false;
+});
 
 // ── Node selection ──────────────────────────────────────────────────────────
 function selectNode(id) {
@@ -545,7 +638,8 @@ function renderEditor() {
     el(`ot-${i}`)?.addEventListener('change', e => { o.text  = e.target.value; refreshEdges(); markDirty(); });
     el(`on-${i}`)?.addEventListener('change', e => { o.next  = e.target.value || null; refreshEdges(); markDirty(); });
     el(`oe-${i}`)?.addEventListener('change', e => { o.event = e.target.value || null; markDirty(); });
-    el(`od-${i}`)?.onclick = () => { nd.options.splice(i,1); refreshEditor(); markDirty(); };
+    const delBtn = el(`od-${i}`);
+    if (delBtn) delBtn.onclick = () => { nd.options.splice(i,1); refreshEditor(); markDirty(); };
   });
 
   document.getElementById('btn-delnode').onclick = deleteNode;
@@ -652,7 +746,7 @@ function refreshEditor() {
 }
 
 function refreshEdges() {
-  if (S.tidx>=0 && S.data) renderEdges(S.data.trees[S.tidx]);
+  scheduleEdgeRedraw();
 }
 
 // ── Export ──────────────────────────────────────────────────────────────────
@@ -675,6 +769,8 @@ function markDirty() {
 // ── Utilities ───────────────────────────────────────────────────────────────
 function trunc(s, n) { return s && s.length>n ? s.slice(0,n-1)+'…' : (s||''); }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+attemptAutoLoadLang();
 </script>
 </body>
 </html>

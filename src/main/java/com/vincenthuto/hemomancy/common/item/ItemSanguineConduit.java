@@ -35,10 +35,11 @@ public class ItemSanguineConduit extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level lvl, Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
 		if (lvl.isClientSide) {
 			HarbingerProgressScreen.openScreen();
 		}
-		return super.use(lvl, player, hand);
+		return InteractionResultHolder.sidedSuccess(stack, lvl.isClientSide());
 	}
 
 	// ── Right-click on surface: place the conduit block if degree ≥ 5 ─────────

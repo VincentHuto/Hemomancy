@@ -1,14 +1,38 @@
 package com.vincenthuto.hemomancy;
 
+import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
+import com.vincenthuto.hemomancy.config.HemoConfig;
+import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 // â”€â”€ Optional-dep compat imports (excluded from compilation when dep absent) â”€â”€â”€
 // MnA compat: re-enable when NeoForge 1.21.1 MnA build is published and the
 // compat/mna/** source exclusion is removed from build.gradle.
@@ -24,31 +48,8 @@ import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
 // import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
 // import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
 // import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
-import com.vincenthuto.hemomancy.config.HemoConfig;
 // import com.vincenthuto.hemomancy.config.HemoMnAConfig; // re-enable with MnA compat
-import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 // â”€â”€ NeoForge API imports (replaces net.minecraftforge.*) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(Hemomancy.MOD_ID)
 public class Hemomancy {
@@ -116,7 +117,7 @@ public class Hemomancy {
         HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         HemoCapabilityRegistrar.register(modEventBus);
 
-            // GeckoLib 4 on NeoForge initializes via mod loading; explicit bootstrap call removed.
+        // GeckoLib 4 on NeoForge initializes via mod loading; explicit bootstrap call removed.
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::buildContents);
@@ -194,18 +195,22 @@ public class Hemomancy {
 
     public void buildContents(BuildCreativeModeTabContentsEvent populator) {
         if (populator.getTabKey() == hemomancytab.getKey()) {
-            ItemInit.BASEITEMS.getEntries().forEach(i -> populator.accept(i.get()));
-            ItemInit.HANDHELDITEMS.getEntries().forEach(i -> populator.accept(i.get()));
-            ItemInit.SPECIALITEMS.getEntries().forEach(i -> populator.accept(i.get()));
-            ItemInit.SPAWNEGGS.getEntries().forEach(i -> populator.accept(i.get()));
-
-            var b = BlockInit.getAllBlockEntriesAsStream();
-            b.forEach(item -> {
-                if (item.get() != BlockInit.attached_gourd_stem.get() && item.get() != BlockInit.gourd_stem.get()
-                        && item.get() != BlockInit.active_befouling_ash_trail.get()
-                        && item.get() != BlockInit.active_smouldering_ash_trail.get()
-                        && item.get() != BlockInit.engram_block.get()) {
+            var i = ItemInit.getAllItemEntriesAsStream();
+            i.forEach(item -> {
+                if (item.get() != ItemInit.active_befouling_ash.get()
+                        && item.get() != ItemInit.active_smouldering_ash.get()) {
                     populator.accept(item.get());
+                }
+            });
+            var b = BlockInit.getAllBlockEntriesAsStream();
+            b.forEach(block -> {
+                if (block.get() != BlockInit.attached_gourd_stem.get() && block.get() != BlockInit.gourd_stem.get()
+                        && block.get() != BlockInit.active_befouling_ash_trail.get()
+                        && block.get() != BlockInit.active_smouldering_ash_trail.get()
+                        && block.get() != BlockInit.sanguine_conduit.get()
+                        && block.get() != BlockInit.filler_block.get()
+                        && block.get() != BlockInit.engram_block.get()) {
+                    populator.accept(block.get());
                 }
             });
         }
