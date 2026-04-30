@@ -5,11 +5,11 @@ import java.util.Set;
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.DiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.ILiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -357,7 +357,7 @@ public final class MemoHelper {
 		for (int i = 0; i < entryList.size(); i++) {
 			ResourceLocation entryId = ResourceLocation.tryParse(entryList.getString(i));
 			if (entryId != null && legacyEntryMatchesLiber(liber, entryId)) {
-				knowledge.unlockEntry(entryId, DiscoverySource.OTHER);
+				knowledge.unlockEntry(entryId, CommonDiscoverySource.OTHER);
 			}
 		}
 		tag.remove(TAG_KNOWN_MEMOS);
