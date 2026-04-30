@@ -93,7 +93,7 @@ public class QliphothBloomRenderer {
 			drawQliphothTree(poseStack, buffer, bloom, currentTime, cam);
 			drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
 		}
-
+		poseStack.translate(0,1,0);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 	}
