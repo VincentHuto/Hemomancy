@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge;
 
-import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -34,8 +33,8 @@ public class LiberKnowledge extends BookKnowledge implements ILiberKnowledge {
 	}
 
 	/**
-	 * Returns an {@link EnumSet}-backed mutable source set, avoiding boxing
-	 * overhead while still satisfying the {@code Set<IDiscoverySource>} contract.
+	 * Returns a mutable {@link LinkedHashSet} for source storage, preserving
+	 * insertion order (useful for deterministic NBT serialization).
 	 */
 	@Override
 	protected Set<IDiscoverySource> newSourceSet() {
