@@ -1,26 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge;
 
-import java.util.Map;
-import java.util.Set;
+import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 
-import net.minecraft.resources.ResourceLocation;
-
-public interface ILiberKnowledge {
-	boolean unlockEntry(ResourceLocation entryId, DiscoverySource source);
-
-	boolean unlockMemo(ResourceLocation memoId, ResourceLocation entryId);
-
-	boolean recordMemo(ResourceLocation memoId);
-
-	boolean knowsMemo(ResourceLocation memoId);
-
-	boolean hasEntry(ResourceLocation entryId);
-
-	Set<ResourceLocation> getUnlockedEntries();
-
-	Set<ResourceLocation> getKnownMemos();
-
-	Map<ResourceLocation, Set<DiscoverySource>> getEntrySources();
-
-	void setFrom(ILiberKnowledge other);
+/**
+ * Hemomancy-specific book-knowledge interface. All generic methods are
+ * inherited from {@link IBookKnowledge}; this interface exists as a typed
+ * handle so Hemomancy capability keys and accessors remain strongly typed
+ * to the mod's own attachment slot.
+ */
+public interface ILiberKnowledge extends IBookKnowledge {
 }

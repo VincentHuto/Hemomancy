@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge;
 
-public enum DiscoverySource {
+import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
+
+public enum DiscoverySource implements IDiscoverySource {
 	MEMO,
 	ADVANCEMENT,
 	RITE,
