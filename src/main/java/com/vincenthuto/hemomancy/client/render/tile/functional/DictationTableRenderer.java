@@ -4,14 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.functional.CleansingAltarModel;
 import com.vincenthuto.hemomancy.client.model.tile.functional.DictationTableModel;
 import com.vincenthuto.hemomancy.common.block.functional.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.DictationTableBlockEntity;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 
-import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -54,39 +52,25 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 		if (!MemoHelper.isLiber(liber)) {
 			return;
 		}
-	//Render book
-		ItemGuideBook item = (ItemGuideBook)liber.getItem();
-//		float f = (float)item.ticks + 1.0F;
-//
-//		float f1;
-//		for(f1 = item.nextPageAngle - item.pageAngle; f1 >= (float)Math.PI; f1 -= ((float)Math.PI * 2F)) {
-//		}
-//
-//		while(f1 < -(float)Math.PI) {
-//			f1 += ((float)Math.PI * 2F);
-//		}
-//
-//		float f2 = item.pageAngle + f1;
-//		float f3 = Mth.lerp(1.0F, item.oFlip, item.flip);
-//		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
-//		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
-//		this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), item.close);
-		ResourceLocation texture = liber.getItem() instanceof ItemGuideBook guideBook && guideBook.getTexture() != null
-				? guideBook.getTexture()
-				: FALLBACK_TEXTURE;
+
+		// Render book using animation state stored on the ItemGuideBook item
+		ItemGuideBook item = (ItemGuideBook) liber.getItem();
+		float f3 = Mth.lerp(1.0F, item.oFlip, item.flip);
+		float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
+		float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
+
+		ResourceLocation texture = item.getTexture() != null ? item.getTexture() : FALLBACK_TEXTURE;
 		poseStack.pushPose();
 		poseStack.translate(0.5D, 1.15D, 0.5D);
 		poseStack.mulPose(Axis.YP.rotationDegrees(rotationForFacing(facing) + 90.0F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(80.0F));
 		poseStack.scale(1, 1F, 1F);
-		bookModel.setupAnim(0.0F, 0.08F, 0.92F, 1.0F);
+		// The book is always shown open on the table (close = 1.0F); page-flip angles
+		// come from the item's animation fields updated while the book was last held.
+		bookModel.setupAnim(0.0F, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), 1.0F);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(bookModel.renderType(texture));
 		bookModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
-
-
-
-
 	}
 
 	private static float rotationForFacing(Direction facing) {
