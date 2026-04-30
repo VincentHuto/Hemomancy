@@ -110,12 +110,12 @@ public class BloodyBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide) {
-            book.setPageFilter(new MemoBookFilter());
-            book.setTheme(new BookTheme(
+            BookCodeModel filtered = new MemoBookFilter().filter(book, p_41433_);
+            filtered.setTheme(new BookTheme(
                     Hemomancy.rloc("textures/gui/guide/book.png"),
                     0xAA0000,
                     Hemomancy.rloc("textures/gui/guide/hemo_overlay.png")));
-            HLGuiGuideTitlePage.openScreenViaItem(book);
+            HLGuiGuideTitlePage.openScreenViaItem(filtered);
             HemoCapabilityAccess.getLiberKnowledge(p_41433_)
                     .ifPresent(k -> BookReadTracker.acknowledge(p_41433_.getUUID(), k.getUnlockedEntries()));
         }
