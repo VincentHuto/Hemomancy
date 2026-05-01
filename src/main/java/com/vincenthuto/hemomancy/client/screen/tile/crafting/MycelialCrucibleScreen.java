@@ -31,13 +31,13 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
     // ── Layout constants ──────────────────────────────────────────────────────
     private static final int CRAFT_AREA_HEIGHT = 96;
 
-    // ── Colour palette ────────────────────────────────────────────────────────
-    private static final int BG_BASE          = 0xFF070A04;  // near-black with fungal green tinge
-    private static final int BORDER_OUTER     = 0xFF1A2C0A;
-    private static final int BORDER_INNER     = 0xFF112005;
-    private static final int SLOT_BG          = 0xFF101807;
-    private static final int SLOT_BORDER_DARK = 0xFF090E03;
-    private static final int SLOT_BORDER_LITE = 0xFF223A0C;
+    // ── Colour palette (amber / orange — matching SporeImplantScreen) ─────────
+    private static final int BG_BASE          = 0xFF1A0D04;  // dark amber base
+    private static final int BORDER_OUTER     = 0xFFAA2200;  // red-orange outer border
+    private static final int BORDER_INNER     = 0xFF3A1208;  // darker inner border
+    private static final int SLOT_BG          = 0xFF2A1508;
+    private static final int SLOT_BORDER_DARK = 0xFF140A02;
+    private static final int SLOT_BORDER_LITE = 0xFF4A2A10;
 
     private static final int VEIN_COUNT       = 18;
 
@@ -87,7 +87,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
             double vol    = te.getBloodVolume();
             double maxVol = te.getMaxBloodVolume();
             gfx.renderTooltip(font, List.of(
-                    Component.literal(String.format("§2Blood: §a%.0f §2/ §a%.0f", vol, maxVol))
+                    Component.literal(String.format("§6Blood: §e%.0f §6/ §e%.0f", vol, maxVol))
             ), java.util.Optional.empty(), mouseX, mouseY);
         }
     }
@@ -127,7 +127,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
     @Override
     protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
-        gfx.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF4A6030, false);
+        gfx.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF886633, false);
         int mode = menu.getMode();
         if (mode == 1) {
             String txt = "Implanting...";
@@ -136,7 +136,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         } else if (mode == 2) {
             String txt = "Feeding...";
             gfx.drawString(font, txt, imageWidth - font.width(txt) - 4,
-                    CRAFT_AREA_HEIGHT - 10, 0xFF44AA33, false);
+                    CRAFT_AREA_HEIGHT - 10, 0xFFCC7722, false);
         }
     }
 
@@ -149,16 +149,17 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
         gfx.fill(x, y, x + w, y + h, BG_BASE);
 
-        // Radial amber-green glow
+        // Radial amber glow in centre
         int cx = x + w / 2, cy = y + h / 2;
         int glowR = Math.max(w, h) / 2;
         for (int ring = glowR; ring > 0; ring -= 4) {
             float t = (float) ring / glowR;
             int alpha = (int) (30 * (1f - t));
-            int green = (int) (35 * (1f - t));
-            int red   = (int) (12 * (1f - t));
+            int red   = (int) (60 * (1f - t));
+            int green = (int) (25 * (1f - t));
+            int blue  = (int) (5  * (1f - t));
             gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring,
-                    (alpha << 24) | (red << 16) | (green << 8));
+                    (alpha << 24) | (red << 16) | (green << 8) | blue);
         }
 
         // Mycelial tendrils
@@ -168,13 +169,14 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
             }
         }
 
-        // Spore speckles
+        // Warm amber spore speckles
         Random rand = new Random(99876L);
         for (int s = 0; s < 60; s++) {
             int sx = x + rand.nextInt(w), sy = y + rand.nextInt(h);
             int sa = 8 + rand.nextInt(20);
-            int sg = 10 + rand.nextInt(20);
-            gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sg << 8));
+            int sr = 15 + rand.nextInt(25);
+            int sg = 8  + rand.nextInt(15);
+            gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
         }
 
         RenderSystem.disableBlend();
@@ -191,8 +193,10 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         float amp = p[4], freq = p[5], bright = p[8];
         float timeOff = time * p[3] * 1.8f;
 
-        int baseG = (int) (25 + 45 * bright);
-        int baseR = (int) (5 + 12 * bright);
+        // Amber-red-yellow tendril palette (matching SporeImplantScreen)
+        int baseR = (int) (50 + 80 * bright);
+        int baseG = (int) (20 + 40 * bright);
+        int baseB = (int) (2  +  8 * bright);
 
         for (int step = 0; step < length; step++) {
             float sq = amp * Mth.sin(freq * step + timeOff)
@@ -210,7 +214,8 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
             int a = (int) Mth.clamp(fade * pulse * 160, 15, 180);
             int r = (int) Mth.clamp(baseR * pulse, 0, 255);
             int g = (int) Mth.clamp(baseG * pulse, 0, 255);
-            gfx.fill(ix, iy, ix + thick, iy + thick, (a << 24) | (r << 16) | (g << 8));
+            int b = (int) Mth.clamp(baseB * pulse, 0, 255);
+            gfx.fill(ix, iy, ix + thick, iy + thick, (a << 24) | (r << 16) | (g << 8) | b);
         }
     }
 
@@ -219,9 +224,10 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
     private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
         for (int row = 0; row < h; row++) {
             float t = (float) row / h;
-            int r = (int) (20 + 50 * t);
-            int g = (int) (30 + 60 * t);
-            int b = (int) (10 + 20 * t);
+            // Warm dark amber gradient (matching SporeImplantScreen)
+            int r = (int) (30 + 20 * t);
+            int g = (int) (16 + 12 * t);
+            int b = (int) (6  +  6 * t);
             gfx.fill(x, y + row, x + w, y + row + 1, (0xFF << 24) | (r << 16) | (g << 8) | b);
         }
     }
@@ -242,10 +248,10 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
             gfx.fill(sx, sy, sx + 16, sy + 16, 0x20AA5500);
         if (slotIndex == MycelialCrucibleMenu.FLASK_OUT_SLOT)
             gfx.fill(sx, sy, sx + 16, sy + 16, 0x20AA5500);
-        // Enzyme slots — subtle glow
+        // Enzyme slots — subtle amber glow
         if (slotIndex >= MycelialCrucibleMenu.ENZYME_SLOT_1
                 && slotIndex <= MycelialCrucibleMenu.ENZYME_SLOT_4)
-            gfx.fill(sx, sy, sx + 16, sy + 16, 0x20226644);
+            gfx.fill(sx, sy, sx + 16, sy + 16, 0x20885522);
     }
 
     // ── Craft progress ring ───────────────────────────────────────────────────

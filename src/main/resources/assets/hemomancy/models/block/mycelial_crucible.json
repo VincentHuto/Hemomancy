@@ -1,7 +1,6 @@
 {
-  "parent": "minecraft:block/mushroom_stem",
+  "parent": "block/block",
   "textures": {
-    "end":  "minecraft:block/mushroom_stem",
-    "side": "minecraft:block/mushroom_stem"
+    "particle": "hemomancy:entity/morphling_incubator_model"
   }
 }

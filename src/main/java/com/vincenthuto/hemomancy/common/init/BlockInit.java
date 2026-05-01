@@ -381,7 +381,7 @@ public class BlockInit {
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final DeferredHolder<Block, Block> mycelial_crucible = MODELEDBLOCKS.register("mycelial_crucible",
-			() -> new com.vincenthuto.hemomancy.common.block.functional.MycelialCrucibleBlock(
+			() -> new MycelialCrucibleBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(2.5F, 8.0F).sound(SoundType.FUNGUS).noOcclusion()));
 
