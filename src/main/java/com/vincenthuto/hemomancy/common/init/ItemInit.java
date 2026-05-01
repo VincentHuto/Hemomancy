@@ -17,10 +17,15 @@ import com.vincenthuto.hemomancy.common.item.scar.ItemMindSpike;
 import com.vincenthuto.hemomancy.common.item.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.scar.ItemSelfReflectionMirror;
+import com.vincenthuto.hemomancy.common.item.scar.functional.AnastocordycepsNexusItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.AntiphonomycesResonansItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.NoctiflyAgaricItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.NoctiluminaDevoransItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.RespergillusItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.SanguifloraeCadensItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.SaprovittaVestigiumItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.TalaromycesMinusItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.ThanomycesResurgensItem;
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.tool.*;
 import com.vincenthuto.hemomancy.common.item.tool.living.*;
@@ -602,6 +607,19 @@ public class ItemInit {
             () -> new NoctiluminaDevoransItem(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
     public static final DeferredHolder<Item, Item> noctifly_agaric = BASEITEMS.register("noctifly_agaric",
             () -> new NoctiflyAgaricItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+
+    // Archon-tier Fungal Scars
+    public static final DeferredHolder<Item, Item> antiphonomyces_resonans = BASEITEMS.register("antiphonomyces_resonans",
+            () -> new AntiphonomycesResonansItem(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+    public static final DeferredHolder<Item, Item> sanguiflora_cadens = BASEITEMS.register("sanguiflora_cadens",
+            () -> new SanguifloraeCadensItem(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
+    public static final DeferredHolder<Item, Item> thanomyces_resurgens = BASEITEMS.register("thanomyces_resurgens",
+            () -> new ThanomycesResurgensItem(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
+    public static final DeferredHolder<Item, Item> anastocordyceps_nexus = BASEITEMS.register("anastocordyceps_nexus",
+            () -> new AnastocordycepsNexusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
+    public static final DeferredHolder<Item, Item> saprovitta_vestigium = BASEITEMS.register("saprovitta_vestigium",
+            () -> new SaprovittaVestigiumItem(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
+
     public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
                     .withModifier(Attributes.MAX_HEALTH, "scar_heart_hp", 2.0,
