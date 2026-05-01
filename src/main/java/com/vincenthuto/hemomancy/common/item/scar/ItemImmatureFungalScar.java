@@ -83,10 +83,10 @@ public class ItemImmatureFungalScar extends Item {
 
     // ── Display ───────────────────────────────────────────────────────────────
 
-    @Override
-    public Rarity getRarity(ItemStack stack) {
-        return Rarity.UNCOMMON;
-    }
+//    @Override
+//    public Rarity getRarity(ItemStack stack) {
+//        return Rarity.UNCOMMON;
+//    }
 
     @Override
     public boolean isFoil(ItemStack stack) {

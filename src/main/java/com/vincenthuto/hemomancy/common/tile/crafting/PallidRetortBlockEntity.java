@@ -222,10 +222,10 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         }
 
         // Drain stored blood into flasks (independent of cooking)
-        tryDrainBloodIntoFlask(te);
+        tryDrainHumorIntoFlask(te);
 
         // Fill blood from bloody flasks (independent of cooking)
-        tryFillBloodFromFlask(te);
+        tryFillHumorFromFlask(te);
 
         if (dirty) {
             setChanged(level, pos, state);
@@ -236,17 +236,17 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
      * Called from serverTick — drains stored white humor into flasks in the flask slot,
      * one flask per tick if conditions are met.
      */
-    private static void tryDrainBloodIntoFlask(PallidRetortBlockEntity te) {
+    private static void tryDrainHumorIntoFlask(PallidRetortBlockEntity te) {
         ItemStack flaskStack = te.items.get(SLOT_FLASK);
         if (flaskStack.isEmpty() || flaskStack.getItem() != HLItemInit.cured_clay_flask.get()) return;
 
         IWhiteHumorVolume vol = te.resolveVolume();
         if (vol == null || vol.getWhiteHumorVolume() < 100) return;
 
-        ItemStack resultStack = te.items.get(SLOT_RESULT);
+        ItemStack resultStack = te.items.get(SLOT_FLASK_OUTPUT);
         if (resultStack.isEmpty()) {
             flaskStack.shrink(1);
-            te.items.set(SLOT_RESULT, new ItemStack(ItemInit.pale_humor_flask.get()));
+            te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(ItemInit.pale_humor_flask.get()));
             vol.drain(100);
             te.sendUpdates();
         } else if (resultStack.getItem() == ItemInit.pale_humor_flask.get()
@@ -264,7 +264,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
      * Called from serverTick — consumes pale humor flasks in the flask slot to fill
      * the white humor reservoir, outputting empty clay flasks to the flask output slot.
      */
-    private static void tryFillBloodFromFlask(PallidRetortBlockEntity te) {
+    private static void tryFillHumorFromFlask(PallidRetortBlockEntity te) {
         ItemStack flaskStack = te.items.get(SLOT_FLASK);
         if (flaskStack.isEmpty()) return;
         if (!(flaskStack.getItem() instanceof PaleHumorFlaskItem flask)) return;
@@ -280,7 +280,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         if (outputStack.isEmpty()
                 || (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
                 && outputStack.getCount() < outputStack.getMaxStackSize())) {
-            // Consume the bloody flask
+            // Consume the Humory flask
             flaskStack.shrink(1);
             vol.addWhiteHumorVolume(amount);
             // Output empty flask
@@ -298,7 +298,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         return HemoCapabilityAccess.getWhiteHumorVolume(this).orElse(null);
     }
 
-    // ---- Flask filling from stored blood ----
+    // ---- Flask filling from stored Humor ----
 
     private boolean canBurn(RegistryAccess registryAccess, @Nullable RecipeHolder<DistillationRecipe> recipeHolder, NonNullList<ItemStack> inv, int maxStack) {
         if (inv.get(SLOT_INPUT).isEmpty() || recipeHolder == null) return false;
@@ -380,7 +380,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         return Component.translatable("container.hemomancy.pallid_retort");
     }
 
-    // ---- Blood helpers ----
+    // ---- Humor helpers ----
 
     public IWhiteHumorVolume getWhiteHumorCapability() {
         IWhiteHumorVolume vol = resolveVolume();
