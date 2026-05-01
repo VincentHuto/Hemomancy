@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
@@ -15,6 +16,10 @@ import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.scar.ItemScar;
+import com.vincenthuto.hemomancy.common.item.scar.functional.AnastocordycepsNexusItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.SanguifloraeCadensItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.SaprovittaVestigiumItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.ThanomycesResurgensItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
@@ -29,6 +34,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,9 +43,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.Tags;
 
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -159,6 +167,27 @@ public class ScarEntityEventHandler {
 
 					event.setCanceled(true);
 				}
+
+				// Split Husk (Thanomyces resurgens) — death prevention in slot 0
+				if (!event.isCanceled()) {
+					ItemStack fungalSlot = scars.getStackInSlot(0);
+					if (fungalSlot.getItem() instanceof ThanomycesResurgensItem splitHusk) {
+						long gameTime = player.level().getGameTime();
+						if (splitHusk.isReady(fungalSlot, gameTime)) {
+							IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+							if (blood != null && blood.isActive() && blood.getBloodVolume() > 0) {
+								blood.drain(blood.getBloodVolume());
+								splitHusk.startCooldown(fungalSlot, gameTime);
+								player.setHealth(player.getMaxHealth() * ThanomycesResurgensItem.REFORM_FRACTION);
+								player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 4, true, false));
+								ServerLevel world = (ServerLevel) player.level();
+								world.playSound(player, player.getX(), player.getY(), player.getZ(),
+										SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS, 0.6f, 0.7f);
+								event.setCanceled(true);
+							}
+						}
+					}
+				}
 			});
 		}
 
@@ -204,6 +233,23 @@ public class ScarEntityEventHandler {
 		if (!player.level().isClientSide && player.tickCount % 20 == 0) {
 			checkScarSynergy(player);
 		}
+
+		// Feeding Wake (Saprovitta vestigium) — damaging blood-fungal trail while moving
+		if (!player.level().isClientSide && player.tickCount % SaprovittaVestigiumItem.TRAIL_INTERVAL_TICKS == 0) {
+			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
+				ItemStack fungalSlot = scars.getStackInSlot(0);
+				if (fungalSlot.getItem() instanceof SaprovittaVestigiumItem) {
+					double movSq = player.getDeltaMovement().horizontalDistanceSqr();
+					if (movSq > SaprovittaVestigiumItem.MOVEMENT_THRESHOLD_SQ) {
+						AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS);
+						List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area);
+						for (Monster mob : mobs) {
+							mob.hurt(player.damageSources().magic(), SaprovittaVestigiumItem.TRAIL_DAMAGE);
+						}
+					}
+				}
+			});
+		}
 	}
 
 	// --- Combat event handlers for scar effects ---
@@ -222,7 +268,20 @@ public class ScarEntityEventHandler {
 						scar.onPlayerAttack(player, harmed);
 					}
 				}
+
+				// Latching Vein (Anastocordyceps nexus) — tether struck enemy and nearby mobs
+				ItemStack fungalSlot = scars.getStackInSlot(0);
+				if (fungalSlot.getItem() instanceof AnastocordycepsNexusItem && harmed instanceof LivingEntity) {
+					LatchingVeinHandler.applyTether(player, harmed, player.level().getGameTime());
+				}
 			});
+		}
+
+		// Latching Vein echo: propagate a fraction of any damage to other tethered entities
+		if (!harmed.level().isClientSide) {
+			String sourceId = event.getContainer().getSource().getMsgId();
+			LatchingVeinHandler.onEntityDamaged(harmed, event.getContainer().getNewDamage(),
+					sourceId, harmed.level().getGameTime());
 		}
 
 		// Player is attacked by another entity
@@ -249,6 +308,23 @@ public class ScarEntityEventHandler {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
 						scar.onPlayerKill(player, killed);
+					}
+				}
+
+				// Vein Orchard (Sanguiflora cadens) — chance to drop blood resources at kill site
+				ItemStack fungalSlot = scars.getStackInSlot(0);
+				if (fungalSlot.getItem() instanceof SanguifloraeCadensItem
+						&& player.level().random.nextFloat() < SanguifloraeCadensItem.ORCHARD_CHANCE) {
+					double x = killed.getX(), y = killed.getY(), z = killed.getZ();
+					int sporeCount = 1 + player.level().random.nextInt(2);
+					for (int n = 0; n < sporeCount; n++) {
+						player.level().addFreshEntity(
+								new ItemEntity(player.level(), x, y, z, new ItemStack(ItemInit.spore_sac.get())));
+					}
+					if (player.level().random.nextFloat() < 0.4f) {
+						player.level().addFreshEntity(
+								new ItemEntity(player.level(), x, y, z,
+										new ItemStack(ItemInit.hematic_iron_scrap.get())));
 					}
 				}
 			});

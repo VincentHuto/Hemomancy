@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.scar.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
@@ -368,6 +369,9 @@ public class BloodManipulation  {
 								.onPlayerBloodSpend(player, effectiveCost);
 						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 						getAction(player, world, heldItemMainhand, position);
+
+						// Crawling Choir: chance to echo-cast at no additional blood cost
+						CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this);
 
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
 						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
