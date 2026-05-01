@@ -1,0 +1,13 @@
+{
+  "type": "hemomancy:fungal_scar_cultivation",
+  "tendency": "MORTEM",
+  "blood_cost_phase1": 2400,
+  "phase1_duration": 2400,
+  "maturation_threshold": 3000,
+  "immature_result": {
+    "id": "hemomancy:immature_sanguiflora_cadens"
+  },
+  "result": {
+    "id": "hemomancy:sanguiflora_cadens"
+  }
+}

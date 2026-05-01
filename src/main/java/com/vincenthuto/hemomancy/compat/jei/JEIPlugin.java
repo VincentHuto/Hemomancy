@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
+import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -39,6 +40,8 @@ public class JEIPlugin implements IModPlugin {
 			"chisel_station", ScarRecipe.class);
 	public static final RecipeType<IncubatorRecipe> incubator_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
 			"morphling_incubator", IncubatorRecipe.class);
+	public static final RecipeType<FungalScarCultivationRecipe> mycelial_crucible_recipe_type =
+			MycelialCrucibleRecipeCategory.JEI_TYPE;
 
 	@Nonnull
 	@Override
@@ -54,6 +57,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new MycelialCrucibleRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -65,6 +69,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.morphling_incubator.get()), incubator_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.mycelial_crucible.get()), mycelial_crucible_recipe_type);
 	}
 
 	@Override
@@ -82,6 +87,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));
+		registry.addRecipes(mycelial_crucible_recipe_type, FungalScarCultivationRecipe.getAllRecipes(world));
 
 	}
 

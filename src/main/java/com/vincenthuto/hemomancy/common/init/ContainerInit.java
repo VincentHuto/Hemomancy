@@ -4,9 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.*;
 
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
-import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
-
-import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.core.registries.Registries;

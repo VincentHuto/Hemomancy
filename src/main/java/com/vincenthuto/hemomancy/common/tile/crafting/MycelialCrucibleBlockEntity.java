@@ -370,7 +370,6 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         if (!center.isEmpty()) {
             CompoundTag tag = center.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
             if (tag.contains("PendingCultivationRecipe")) {
-                com.vincenthuto.hemomancy.common.init.RecipeInit.fungal_scar_cultivation_type.get();
                 String recipeId = tag.getString("PendingCultivationRecipe");
                 for (var holder : level.getRecipeManager().getAllRecipesFor(
                         com.vincenthuto.hemomancy.common.init.RecipeInit.fungal_scar_cultivation_type.get())) {

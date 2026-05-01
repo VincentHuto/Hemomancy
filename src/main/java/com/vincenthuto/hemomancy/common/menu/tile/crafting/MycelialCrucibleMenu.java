@@ -63,12 +63,12 @@ public class MycelialCrucibleMenu extends AbstractContainerMenu {
         checkContainerSize(te, SLOT_COUNT);
         checkContainerDataCount(data, DATA_COUNT);
 
-        // Center slot — accepts any non-output item
+        // Center slot — accepts ingredient items or immature scars, but not finished fungal scars
         this.addSlot(new Slot(te, CENTER_SLOT, 80, 40) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return !(stack.getItem() instanceof ItemFungalScar)
-                        || stack.getItem() instanceof ItemImmatureFungalScar;
+                // Allow anything except finished (non-immature) fungal scars
+                return !(stack.getItem() instanceof ItemFungalScar);
             }
         });
 

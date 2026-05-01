@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:spore_sac" },
+    { "item": "hemomancy:spore_sac" },
+    { "item": "hemomancy:hematic_iron_scrap" },
+    { "item": "minecraft:brown_mushroom_block" }
+  ],
+  "result": {
+    "id": "hemomancy:hyphal_substrate",
+    "count": 2
+  }
+}

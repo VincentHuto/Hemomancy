@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/mushroom_stem",
+  "textures": {
+    "end":  "minecraft:block/mushroom_stem",
+    "side": "minecraft:block/mushroom_stem"
+  }
+}
