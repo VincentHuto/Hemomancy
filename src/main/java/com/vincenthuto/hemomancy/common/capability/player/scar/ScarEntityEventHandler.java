@@ -205,11 +205,30 @@ public class ScarEntityEventHandler {
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onGlideTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
-		if (player.hasEffect(EffectInit.fungal_elytra)) {
-			AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
-			if (attributeInstance != null
-					&& !attributeInstance.hasModifier(AttributeInit.getElytraModifier().id()))
-				attributeInstance.addTransientModifier(AttributeInit.getElytraModifier());
+		if (!player.hasEffect(EffectInit.fungal_elytra)) return;
+
+		// Ensure FALL_FLYING attribute modifier is present so canFallFly() returns ALLOW
+		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
+		if (attributeInstance != null
+				&& !attributeInstance.hasModifier(AttributeInit.getElytraModifier().id()))
+			attributeInstance.addTransientModifier(AttributeInit.getElytraModifier());
+
+		// This runs AFTER vanilla updateFallFlying (which cancels fall-flying when no
+		// elytra is equipped). Re-enable elytra gliding every tick while the player is
+		// airborne and not using the creative-hover mode.
+		boolean airborne = !player.onGround() && !player.isInWater()
+				&& !player.hasEffect(net.minecraft.world.effect.MobEffects.LEVITATION);
+		boolean creativeHovering = player.getAbilities().flying;
+
+		if (airborne && !creativeHovering) {
+			double vertY = player.getDeltaMovement().y;
+			boolean alreadyGliding = player.isFallFlying();
+			// Maintain when already gliding, or initiate only when falling fast enough
+			// (threshold avoids triggering on normal jumps or 1-block step-downs).
+			boolean initiateGlide = vertY < -0.3;
+			if (alreadyGliding || initiateGlide) {
+				player.startFallFlying();
+			}
 		}
 	}
 	

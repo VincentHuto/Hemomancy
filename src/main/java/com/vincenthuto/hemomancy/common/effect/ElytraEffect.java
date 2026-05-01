@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.effect;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.vincenthuto.hemomancy.common.init.AttributeInit;
+
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -47,17 +49,16 @@ public class ElytraEffect extends MobEffect {
 
 	@Override
 	public boolean applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
-		// System.out.println("fef");
 		if (livingEntity instanceof Player player) {
-			setFlightEnabled(player, true);
-			if (!player.isCreative() && !player.isSpectator()) {
-				setFlySpeed(player, amplifier * 5 / 100f);
+			// Enable flight ability for hovering when not on ground
+			if (!player.onGround() && !player.isInWater()) {
+				setFlightEnabled(player, true);
 			} else {
-				setFlySpeed(player, 0.05F);
+				setFlightEnabled(player, false);
 			}
 
+			// Apply elytra gliding physics only when actively fall-flying
 			if (player.isFallFlying()) {
-
 				Vec3 look = player.getLookAngle();
 				Vec3 pos;
 				float maxLength;
@@ -94,8 +95,6 @@ public class ElytraEffect extends MobEffect {
 					}
 				}
 
-			} else {
-				player.stopFallFlying();
 			}
 		}
 	
@@ -103,8 +102,8 @@ public class ElytraEffect extends MobEffect {
 	}
 
 	@Override
-	public void removeAttributeModifiers(@NotNull AttributeMap attributemods) {
-		super.removeAttributeModifiers(attributemods);
+	public void removeAttributeModifiers(@NotNull AttributeMap attributeMap) {
+		super.removeAttributeModifiers(attributeMap);
 	}
 
 	@Override

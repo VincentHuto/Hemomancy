@@ -6,12 +6,14 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 
 public class ThanomycesResurgensItem extends ItemFungalScar {
 
@@ -32,19 +34,21 @@ public class ThanomycesResurgensItem extends ItemFungalScar {
 	 * The cooldown expiry is stored as an absolute world-time tick in the item's NBT.
 	 */
 	public boolean isReady(ItemStack stack, long currentGameTime) {
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (!tag.contains(TAG_COOLDOWN_EXPIRY)) return true;
 		return currentGameTime >= tag.getLong(TAG_COOLDOWN_EXPIRY);
 	}
 
 	/** Records the cooldown on this specific item stack. */
 	public void startCooldown(ItemStack stack, long currentGameTime) {
-		stack.getOrCreateTag().putLong(TAG_COOLDOWN_EXPIRY, currentGameTime + COOLDOWN_TICKS);
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putLong(TAG_COOLDOWN_EXPIRY, currentGameTime + COOLDOWN_TICKS);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
 	/** Remaining cooldown ticks, 0 if ready. */
 	public long remainingCooldown(ItemStack stack, long currentGameTime) {
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (!tag.contains(TAG_COOLDOWN_EXPIRY)) return 0L;
 		return Math.max(0L, tag.getLong(TAG_COOLDOWN_EXPIRY) - currentGameTime);
 	}

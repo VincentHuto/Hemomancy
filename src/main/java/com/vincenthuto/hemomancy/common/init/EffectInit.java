@@ -23,7 +23,10 @@ public class EffectInit {
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,
             Hemomancy.MOD_ID);
 
-    public static final DeferredHolder<MobEffect, MobEffect> fungal_elytra = EFFECTS.register("fungal_elytra", ElytraEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> fungal_elytra = EFFECTS.register("fungal_elytra",
+            () -> new ElytraEffect()
+                    .addAttributeModifier(AttributeInit.getFlightAttribute(), ResourceLocation.fromNamespaceAndPath("hemomancy", "elytra_fall_flying"),
+                            1.0D, AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<MobEffect, MobEffect> blood_binding = EFFECTS.register("blood_binding",
             () -> new BloodBindingEffect(MobEffectCategory.HARMFUL, 3735555));
