@@ -14,8 +14,8 @@ import net.minecraft.world.item.TooltipFlag;
 
 public class AntiphonomycesResonansItem extends ItemFungalScar {
 
-	/** Prevents the echo from triggering another echo. Set on the casting thread before re-invoking getAction. */
-	public static final ThreadLocal<Boolean> IS_ECHO_CAST = ThreadLocal.withInitial(() -> false);
+	/** Prevents the echo from triggering another echo within the same synchronous call stack. */
+	public static boolean IS_ECHO_CAST = false;
 
 	/** 20% chance to echo-cast on a successful manipulation use. */
 	public static final float ECHO_CHANCE = 0.20f;

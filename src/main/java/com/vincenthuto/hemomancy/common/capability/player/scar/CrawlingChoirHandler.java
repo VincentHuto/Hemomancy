@@ -25,7 +25,7 @@ public final class CrawlingChoirHandler {
 	 */
 	public static void tryEchoCast(Player player, Level world, ItemStack heldItem, BlockPos position,
 			BloodManipulation manip) {
-		if (AntiphonomycesResonansItem.IS_ECHO_CAST.get()) {
+		if (AntiphonomycesResonansItem.IS_ECHO_CAST) {
 			return;
 		}
 
@@ -36,11 +36,11 @@ public final class CrawlingChoirHandler {
 			}
 
 			if (world.random.nextFloat() < AntiphonomycesResonansItem.ECHO_CHANCE) {
-				AntiphonomycesResonansItem.IS_ECHO_CAST.set(true);
+				AntiphonomycesResonansItem.IS_ECHO_CAST = true;
 				try {
 					manip.getAction(player, world, heldItem, position);
 				} finally {
-					AntiphonomycesResonansItem.IS_ECHO_CAST.set(false);
+					AntiphonomycesResonansItem.IS_ECHO_CAST = false;
 				}
 			}
 		});
