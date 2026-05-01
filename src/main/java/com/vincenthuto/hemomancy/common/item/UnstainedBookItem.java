@@ -1,17 +1,15 @@
 package com.vincenthuto.hemomancy.common.item;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
-import com.vincenthuto.hutoslib.client.book.BookReadTracker;
+import com.vincenthuto.hemomancy.common.util.GuideBookTooltipHelper;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.book.BookTheme;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,21 +34,10 @@ public class UnstainedBookItem extends ItemGuideBook {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
-        tooltip.add(Component.literal(ChatFormatting.AQUA + "A guide to the Unstained and their ways."));
-        appendUnreadLine(tooltip);
-    }
 
-    @OnlyIn(Dist.CLIENT)
-    private static void appendUnreadLine(List<Component> tooltip) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
-        HemoCapabilityAccess.getLiberKnowledge(mc.player).ifPresent(knowledge -> {
-            int unread = BookReadTracker.countUnread(mc.player.getUUID(), knowledge, "liberimmaculatus/");
-            if (unread > 0) {
-                tooltip.add(Component.literal(ChatFormatting.GOLD + "⬤ " + unread
-                        + " unread entr" + (unread == 1 ? "y" : "ies")));
-            }
-        });
+        GuideBookTooltipHelper.appendFilteredUnreadEntryLine(Hemomancy.rloc("liberimmaculatus"), tooltip);
+
+        tooltip.add(Component.literal(ChatFormatting.AQUA + "A guide to the Unstained and their ways."));
     }
 
 //	@Override
@@ -109,15 +96,13 @@ public class UnstainedBookItem extends ItemGuideBook {
             MemoHelper.migrateLegacyLiberStack(serverPlayer, p_41433_.getItemInHand(p_41434_));
         }
 
-        if (lvl.isClientSide) {
+        if (lvl.isClientSide && book != null) {
             BookCodeModel filtered = new MemoBookFilter().filter(book, p_41433_);
             filtered.setTheme(new BookTheme(
                     Hemomancy.rloc("textures/gui/guide/book.png"),
                     0x88AACC,
                     Hemomancy.rloc("textures/gui/guide/hemo_overlay.png")));
             HLGuiGuideTitlePage.openScreenViaItem(filtered);
-            HemoCapabilityAccess.getLiberKnowledge(p_41433_)
-                    .ifPresent(k -> BookReadTracker.acknowledge(p_41433_.getUUID(), k.getUnlockedEntries()));
         }
 
         return super.use(lvl, p_41433_, p_41434_);

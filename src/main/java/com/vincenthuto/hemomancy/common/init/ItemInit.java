@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.item.*;
@@ -95,14 +96,18 @@ public class ItemInit {
                                     Component.literal("Creative mode only!").withStyle(ChatFormatting.RED))))));
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/liber_sanguinum.png")));
+                    Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
+                    .withBookPrefix("sanctumsanguinium/")
+                    .withKnowledgeProvider(HemoCapabilityAccess::getLiberKnowledge));
 
     // Book
     public static final DeferredHolder<Item, Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
             () -> new UnsignedLedgerItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> liber_immaculatus = SPECIALITEMS.register("liber_immaculatus",
             () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/liber_immaculatus.png")));
+                    Hemomancy.rloc("textures/entity/liber_immaculatus.png"))
+                    .withBookPrefix("liberimmaculatus/")
+                    .withKnowledgeProvider(HemoCapabilityAccess::getLiberKnowledge));
     public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
             () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/field_notes.png")));
