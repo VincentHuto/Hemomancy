@@ -617,19 +617,22 @@ public class BlockInit {
 			return;
 		}
 
-		Stream<Pair<ResourceLocation, BlockItem>> b = getAllBlockEntriesAsStream().map(m -> Pair.of(m.get(), m.getId()))
-				.map(BlockInit::createItemBlock);
-		b.forEach(item -> {
-			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
-					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
-					|| item.getSecond().getBlock() != BlockInit.filler_block.get()
-					|| item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
-				registerBlockItem(event, item);
-			}
-		});
+		getAllBlockEntriesAsStream()
+				.map(m -> Pair.of(m.get(), m.getId()))
+				.filter(block -> !shouldSkipAutoBlockItem(block.getFirst()))
+				.map(BlockInit::createItemBlock)
+				.forEach(item -> registerBlockItem(event, item));
+	}
+
+	private static boolean shouldSkipAutoBlockItem(Block block) {
+		return block == BlockInit.attached_gourd_stem.get()
+				|| block == BlockInit.gourd_stem.get()
+				|| block == BlockInit.active_befouling_ash_trail.get()
+				|| block == BlockInit.active_smouldering_ash_trail.get()
+				|| block == BlockInit.engram_block.get()
+				|| block == BlockInit.filler_block.get()
+				|| block == BlockInit.qliphoth_bloom.get()
+				|| block == BlockInit.sanguine_conduit.get();
 	}
 
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {

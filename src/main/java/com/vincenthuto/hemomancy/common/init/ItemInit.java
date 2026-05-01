@@ -156,7 +156,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> chitinous_husk = BASEITEMS.register("chitinous_husk",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
-            () -> new ItemSanguineConduit(new Item.Properties()));
+            () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> vitality_chalice = BASEITEMS.register("vitality_chalice",

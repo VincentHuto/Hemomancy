@@ -213,7 +213,8 @@ public class Hemomancy {
                         && block.get() != BlockInit.active_smouldering_ash_trail.get()
                         && block.get() != BlockInit.sanguine_conduit.get()
                         && block.get() != BlockInit.filler_block.get()
-                        && block.get() != BlockInit.engram_block.get()) {
+                        && block.get() != BlockInit.engram_block.get()
+                        && block.get() != BlockInit.qliphoth_bloom.get()) {
                     populator.accept(block.get());
                 }
             });
