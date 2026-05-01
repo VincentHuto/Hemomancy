@@ -4,6 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.*;
 
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
+
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.core.registries.Registries;
@@ -60,5 +63,8 @@ public class ContainerInit {
 
 	public static final DeferredHolder<MenuType<?>, MenuType<MnemonicReliquaryMenu>> mnemonic_reliquary = CONTAINERS
 			.register("mnemonic_reliquary", () -> IMenuTypeExtension.create(MnemonicReliquaryMenu::new));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<MycelialCrucibleMenu>> mycelial_crucible = CONTAINERS
+			.register("mycelial_crucible", () -> IMenuTypeExtension.create(MycelialCrucibleMenu::new));
 
 }
