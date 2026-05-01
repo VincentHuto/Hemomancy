@@ -99,11 +99,11 @@ public class MycelialCrucibleMenu extends AbstractContainerMenu {
         // Player inventory
         for (int i = 0; i < 3; ++i)
             for (int j = 0; j < 9; ++j)
-                this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 104 + i * 18));
+                this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 124 + i * 18));
 
         // Player hotbar
         for (int k = 0; k < 9; ++k)
-            this.addSlot(new Slot(playerInv, k, 8 + k * 18, 162));
+            this.addSlot(new Slot(playerInv, k, 8 + k * 18, 182));
 
         this.addDataSlots(data);
     }

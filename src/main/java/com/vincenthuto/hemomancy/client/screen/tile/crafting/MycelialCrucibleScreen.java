@@ -29,7 +29,7 @@ import net.minecraft.world.inventory.Slot;
 public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCrucibleMenu> {
 
     // ── Layout constants ──────────────────────────────────────────────────────
-    private static final int CRAFT_AREA_HEIGHT = 96;
+    private static final int CRAFT_AREA_HEIGHT = 116;
 
     // ── Colour palette (amber / orange — matching SporeImplantScreen) ─────────
     private static final int BG_BASE          = 0xFF1A0D04;  // dark amber base
@@ -52,7 +52,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         super(menu, inv, title);
         this.te          = menu.getTe();
         this.imageWidth  = 176;
-        this.imageHeight = 186;
+        this.imageHeight = 206;
         this.inventoryLabelY = CRAFT_AREA_HEIGHT + 2;
     }
 
