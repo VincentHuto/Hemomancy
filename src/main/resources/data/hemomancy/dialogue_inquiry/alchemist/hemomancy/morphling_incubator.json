@@ -1,0 +1,6 @@
+{
+  "conditions": [
+    { "min_degree": 5, "lines": ["hemomancy.alchemist.item_inquiry.morphling_incubator.line1", "hemomancy.alchemist.item_inquiry.morphling_incubator.line2"] },
+    { "lines": ["hemomancy.alchemist.item_inquiry.morphling_incubator.locked"] }
+  ]
+}

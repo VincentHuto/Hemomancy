@@ -1,0 +1,6 @@
+{
+  "conditions": [
+    { "min_degree": 3, "lines": ["hemomancy.alchemist.item_inquiry.somatic_loom.line1", "hemomancy.alchemist.item_inquiry.somatic_loom.line2"] },
+    { "lines": ["hemomancy.alchemist.item_inquiry.somatic_loom.locked"] }
+  ]
+}

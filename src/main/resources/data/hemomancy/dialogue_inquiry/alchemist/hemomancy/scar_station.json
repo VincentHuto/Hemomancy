@@ -1,0 +1,6 @@
+{
+  "conditions": [
+    { "min_degree": 4, "lines": ["hemomancy.alchemist.item_inquiry.scar_station.line1", "hemomancy.alchemist.item_inquiry.scar_station.line2"] },
+    { "lines": ["hemomancy.alchemist.item_inquiry.scar_station.locked"] }
+  ]
+}
