@@ -627,25 +627,11 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> hyphal_substrate = BASEITEMS.register("hyphal_substrate",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
 
-    // ── Immature fungal scars — produced by Phase 1 of the Mycelial Crucible ─
-    public static final DeferredHolder<Item, Item> immature_respergillus = BASEITEMS.register("immature_respergillus",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2000));
-    public static final DeferredHolder<Item, Item> immature_talaromyces_minus = BASEITEMS.register("immature_talaromyces_minus",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 2000));
-    public static final DeferredHolder<Item, Item> immature_lumina_devorans = BASEITEMS.register("immature_lumina_devorans",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 2000));
-    public static final DeferredHolder<Item, Item> immature_noctifly_agaric = BASEITEMS.register("immature_noctifly_agaric",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2000));
-    public static final DeferredHolder<Item, Item> immature_saprovitta_vestigium = BASEITEMS.register("immature_saprovitta_vestigium",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 2000));
-    public static final DeferredHolder<Item, Item> immature_antiphonomyces_resonans = BASEITEMS.register("immature_antiphonomyces_resonans",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 3000));
-    public static final DeferredHolder<Item, Item> immature_sanguiflora_cadens = BASEITEMS.register("immature_sanguiflora_cadens",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 3000));
-    public static final DeferredHolder<Item, Item> immature_thanomyces_resurgens = BASEITEMS.register("immature_thanomyces_resurgens",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 3000));
-    public static final DeferredHolder<Item, Item> immature_anastocordyceps_nexus = BASEITEMS.register("immature_anastocordyceps_nexus",
-            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 3000));
+    // ── Immature fungal scar — produced by Phase 1 of the Mycelial Crucible ──
+    // A single item; tendency, threshold, and target-scar identity are stored
+    // as custom NBT data so each cultivation run carries its own metadata.
+    public static final DeferredHolder<Item, Item> immature_fungal_scar = BASEITEMS.register("immature_fungal_scar",
+            () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1)));
 
     public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)

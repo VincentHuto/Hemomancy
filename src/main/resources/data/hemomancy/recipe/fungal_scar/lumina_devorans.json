@@ -5,7 +5,7 @@
   "phase1_duration": 1200,
   "maturation_threshold": 2000,
   "immature_result": {
-    "id": "hemomancy:immature_lumina_devorans"
+    "id": "hemomancy:immature_fungal_scar"
   },
   "result": {
     "id": "hemomancy:lumina_devorans"
