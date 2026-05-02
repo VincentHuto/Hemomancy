@@ -57,6 +57,10 @@ public class DialogueScreen extends Screen {
 	private static final int TEXTURE_HEAD_SIZE = 8;
 	private static final int TEXTURE_WIDTH = 64;
 	private static final int TEXTURE_HEIGHT = 64;
+	private static final String PNG_SUFFIX = ".png";
+	private static final String PORTRAIT_SUFFIX = "_portrait.png";
+	private static final int PORTRAIT_TEXTURE_WIDTH = 48;
+	private static final int PORTRAIT_TEXTURE_HEIGHT = 48;
 
 	// ── Particle counts ──
 	private static final int BLOOD_VEIN_COUNT = 14;
@@ -106,6 +110,8 @@ public class DialogueScreen extends Screen {
 	private final Palette palette;
 	private DialogueNode currentNode;
 	private final List<OptionRect> optionRects = new ArrayList<>();
+	private ResourceLocation resolvedPortraitIcon;
+	private boolean resolvedPortraitIsCompanion;
 
 	// Background animation data (allocated per-theme in init())
 	private float[][] bloodVeinParams;
@@ -140,6 +146,7 @@ public class DialogueScreen extends Screen {
 		super.init();
 		rebuildOptions();
 		initBackgroundParams();
+		resolvePortraitIcon();
 	}
 
 	private void initBackgroundParams() {
@@ -348,7 +355,8 @@ public class DialogueScreen extends Screen {
 	// ──────────────────────────────────────────────
 
 	private void renderPortrait(GuiGraphics gfx, int x, int y) {
-		ResourceLocation icon = tree.speakerIcon();
+		ResourceLocation icon = resolvedPortraitIcon != null ? resolvedPortraitIcon : tree.speakerIcon();
+		boolean fullPortrait = resolvedPortraitIsCompanion;
 		AbstractTexture portraitTexture = Minecraft.getInstance().getTextureManager().getTexture(icon);
 		portraitTexture.setBlurMipmap(false, false);
 
@@ -360,12 +368,48 @@ public class DialogueScreen extends Screen {
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, icon);
-		gfx.blit(icon, x, y, PORTRAIT_SIZE, PORTRAIT_SIZE,
-				(float) TEXTURE_HEAD_U, (float) TEXTURE_HEAD_V,
-				TEXTURE_HEAD_SIZE, TEXTURE_HEAD_SIZE,
-				TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if (fullPortrait) {
+			gfx.blit(icon, x, y, PORTRAIT_SIZE, PORTRAIT_SIZE,
+					0.0F, 0.0F,
+					PORTRAIT_SIZE, PORTRAIT_SIZE,
+					PORTRAIT_TEXTURE_WIDTH, PORTRAIT_TEXTURE_HEIGHT);
+		} else {
+			gfx.blit(icon, x, y, PORTRAIT_SIZE, PORTRAIT_SIZE,
+					(float) TEXTURE_HEAD_U, (float) TEXTURE_HEAD_V,
+					TEXTURE_HEAD_SIZE, TEXTURE_HEAD_SIZE,
+					TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		}
 		portraitTexture.restoreLastBlurMipmap();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+	}
+
+	private void resolvePortraitIcon() {
+		ResourceLocation baseIcon = tree.speakerIcon();
+		Minecraft minecraft = Minecraft.getInstance();
+
+		for (ResourceLocation candidate : companionPortraitCandidates(baseIcon)) {
+			if (minecraft.getResourceManager().getResource(candidate).isPresent()) {
+				this.resolvedPortraitIcon = candidate;
+				this.resolvedPortraitIsCompanion = true;
+				return;
+			}
+		}
+
+		this.resolvedPortraitIcon = baseIcon;
+		this.resolvedPortraitIsCompanion = false;
+	}
+
+	private List<ResourceLocation> companionPortraitCandidates(ResourceLocation baseTexture) {
+		String path = baseTexture.getPath();
+		if (path.endsWith(PNG_SUFFIX)) {
+			String basePath = path.substring(0, path.length() - PNG_SUFFIX.length());
+			return List.of(
+					ResourceLocation.fromNamespaceAndPath(baseTexture.getNamespace(), basePath + PORTRAIT_SUFFIX),
+					ResourceLocation.fromNamespaceAndPath(baseTexture.getNamespace(), basePath + "portrait" + PNG_SUFFIX)
+			);
+		}
+
+		return List.of(ResourceLocation.fromNamespaceAndPath(baseTexture.getNamespace(), path + "_portrait"));
 	}
 
 	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
