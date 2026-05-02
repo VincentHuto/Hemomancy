@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IFI",
+    "FSF",
+    "IFI"
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "F": {
+      "item": "hemomancy:spore_sac"
+    },
+    "S": {
+      "item": "hemomancy:hyphal_substrate"
+    }
+  },
+  "result": {
+    "id": "hemomancy:mycelial_crucible"
+  }
+}

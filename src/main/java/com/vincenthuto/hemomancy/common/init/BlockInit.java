@@ -380,6 +380,11 @@ public class BlockInit {
 			() -> new MorphlingCradleBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
+	public static final DeferredHolder<Block, Block> mycelial_crucible = MODELEDBLOCKS.register("mycelial_crucible",
+			() -> new MycelialCrucibleBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(2.5F, 8.0F).sound(SoundType.FUNGUS).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
@@ -589,6 +594,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.morphling_incubator.get()) {
 			return Pair.of(block.getSecond(), new MorphlingIncubatorBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.mycelial_crucible.get()) {
+			return Pair.of(block.getSecond(), new MycelialCrucibleBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.morphling_cradle.get()) {
 			return Pair.of(block.getSecond(), new MorphlingCradleBlockItem(b, new Item.Properties()));

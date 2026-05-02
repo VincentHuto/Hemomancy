@@ -49,6 +49,7 @@ import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.GhastlyAlembicScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.MorphlingIncubatorScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.crafting.MycelialCrucibleScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.PallidRetortScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.VialCentrifugeScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
@@ -469,6 +470,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.pallid_retort.get(), PallidRetortRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.mycelial_crucible.get(), MycelialCrucibleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_cradle.get(), MorphlingCradleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
@@ -633,6 +635,7 @@ public class ClientEvents {
             event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
             event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
             event.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
+            event.register(ContainerInit.mycelial_crucible.get(), MycelialCrucibleScreen::new);
             event.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
             event.register(ContainerInit.mnemonic_reliquary.get(), MnemonicReliquaryScreen::new);
         }

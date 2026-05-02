@@ -18,6 +18,8 @@ import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSeriali
 import com.vincenthuto.hemomancy.common.recipe.serializer.DistillationRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.MorphicNectarRecipeSerializer;
+import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
+import com.vincenthuto.hemomancy.common.recipe.serializer.FungalScarCultivationSerializer;
 
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -55,6 +57,9 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeType<?>, RecipeType<MorphicNectarRecipe>> morphic_nectar_recipe_type = RECIPE_TYPES
 			.register("morphic_nectar", () -> RecipeType.simple(Hemomancy.rloc("morphic_nectar")));
 
+	public static final DeferredHolder<RecipeType<?>, RecipeType<FungalScarCultivationRecipe>> fungal_scar_cultivation_type = RECIPE_TYPES
+			.register("fungal_scar_cultivation", () -> RecipeType.simple(Hemomancy.rloc("fungal_scar_cultivation")));
+
 	// Serialize
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
 			DistillationRecipeSerializer::new);
@@ -85,5 +90,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> morphic_nectar_serializer = SERIALIZERS
 			.register("morphic_nectar", MorphicNectarRecipeSerializer::new);
+
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> fungal_scar_cultivation_serializer = SERIALIZERS
+			.register("fungal_scar_cultivation", FungalScarCultivationSerializer::new);
 
 }

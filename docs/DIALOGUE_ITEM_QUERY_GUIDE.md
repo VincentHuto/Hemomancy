@@ -1,180 +1,245 @@
-# DIALOGUE_ITEM_QUERY_GUIDE.md
+# Hemomancy Held-Item NPC Dialogue Query Guide
 
-## Overview
+This guide explains how Harbinger NPCs decide what items they can answer questions about when the player right-clicks them while holding an item.
 
-When a player right-clicks an NPC while **holding an item in their main hand**, the NPC opens a specialized *item inquiry* dialogue instead of their normal conversation tree. This system is **fully data-driven**: you can add new item/block responses for any NPC without touching Java code.
+## Quick Summary
 
----
+Held-item dialogue is hard-coded in the NPC dialogue tree classes:
 
-## Which NPCs Support Item Inquiry?
+- Vicar mappings: `HarbingerVicarDialogueTrees.itemInquiry(...)`
+- Alchemist mappings: `HarbingerAlchemistDialogueTrees.itemInquiry(...)`
 
-| NPC Entity | NPC ID string | Context passed to JSON |
-|---|---|---|
-| Harbinger Vicar | `vicar` | `degree` (0–8+) |
-| Harbinger Alchemist | `alchemist` | `degree` (0–8+) |
-| Unstained Zealot | `zealot` | `purity` (0–100 float) |
-| Unstained Guardian | `guardian` | *(none — simple lookup)* |
+The visible dialogue text is stored in language keys in:
 
-> **HematicMemoryItem exception:** All `HematicMemoryItem` instances share one vicar response that is still hard-coded in Java (there is one response for all memory types). You do not need a JSON file for individual memory items.
+- `src/main/resources/assets/hemomancy/lang/en_us.json`
 
----
+`DialogueOption.java` only defines what a clickable option contains. It does **not** decide which held items are recognized.
 
-## File Location
+## Interaction Flow
 
-```
-data/<namespace>/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json
-```
+1. The player right-clicks an NPC.
+2. The NPC's `mobInteract(...)` method runs.
+3. The NPC checks that the interaction is server-side and uses the main hand.
+4. The NPC reads `player.getMainHandItem()`.
+5. If the main-hand item is not empty, the NPC opens an item-inquiry dialogue tree.
+6. The item-inquiry method checks the held item and returns a matching `DialogueTree`.
+7. If no known item matches, the NPC returns an unknown-item fallback dialogue.
 
-- `<namespace>` — your mod's namespace (or `hemomancy` for base-mod entries). Can be any loaded datapack namespace.
-- `<npc_id>` — one of: `vicar`, `alchemist`, `zealot`, `guardian`
-- `<item_namespace>/<item_path>` — the item's full registry ID, split on the colon.
+Relevant entity files:
 
-**Examples:**
-```
-data/hemomancy/dialogue_inquiry/vicar/hemomancy/rite_hint.json
-data/hemomancy/dialogue_inquiry/alchemist/hemomancy/somatic_loom.json
-data/hemomancy/dialogue_inquiry/zealot/hemomancy/pallid_infusion.json
-data/mymod/dialogue_inquiry/vicar/mymod/my_custom_item.json
-```
+- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/HarbingerVicarEntity.java`
+- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/HarbingerAlchemistEntity.java`
 
-> **Blocks used as items** (picked up from inventory) use their registry block path, e.g. `sanguine_monolith.json` for the Sanguine Monolith block.
+Relevant dialogue files:
 
----
+- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java`
+- `src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java`
 
-## JSON Formats
+## Where to Add Recognized Items
 
-### Simple (unconditional)
+### Vicar
 
-Use this when the NPC always gives the same response regardless of degree or purity.
+Add Vicar-recognized items in:
 
-```json
-{
-  "lines": [
-    "translation.key.line1",
-    "translation.key.line2"
-  ]
-}
+```java
+HarbingerVicarDialogueTrees.itemInquiry(ItemStack item, int degree, int entityId)
 ```
 
-- `lines` — an array of translation keys displayed as dialogue text.
-- You can have 1 or more lines; 1–2 is typical.
+Current pattern:
 
-### Conditional
-
-Use this when the response should differ based on the player's state (degree or purity). Branches are evaluated **top-to-bottom**; the first branch whose conditions all pass is used. The last branch typically has no conditions, making it the default fallback.
-
-```json
-{
-  "conditions": [
-    {
-      "min_degree": 3,
-      "lines": ["translation.key.unlocked.line1", "translation.key.unlocked.line2"]
-    },
-    {
-      "lines": ["translation.key.locked"]
+```java
+public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
+    Item it = item.getItem();
+    if (it == ItemInit.rite_hint.get()) {
+        return riteHintInquiry(degree, entityId);
+    } else if (it == ItemInit.blood_structure_hint.get()) {
+        return bloodStructureInquiry(entityId);
+    } else {
+        return vicarUnknownInquiry(entityId);
     }
-  ]
 }
 ```
 
-#### Supported condition fields
+### Alchemist
 
-| Field | Type | Description |
-|---|---|---|
-| `min_degree` | int | Minimum initiatory degree (inclusive). Only applies when NPC is `vicar` or `alchemist`. |
-| `max_degree` | int | Maximum initiatory degree (inclusive). |
-| `min_purity` | float | Minimum Unstained purity (0–100). Only applies when NPC is `zealot`. |
-| `max_purity` | float | Maximum Unstained purity (0–100). |
+Add Alchemist-recognized items in:
 
-All fields are optional. Omitting a field means that direction is unconstrained.
+```java
+HarbingerAlchemistDialogueTrees.itemInquiry(ItemStack item, int degree, int entityId)
+```
 
----
+The Alchemist already uses a helper called `basicItemInquiry(...)` for many simple responses. Prefer that helper unless the item needs custom logic or degree-gated text.
 
-## Examples
+## How to Add a New Vicar Item Query
 
-### Vicar — Degree-tiered response (rite_hint.json)
+### 1. Add the item mapping
+
+In `HarbingerVicarDialogueTrees.itemInquiry(...)`, add a new branch before the unknown fallback:
+
+```java
+} else if (it == ItemInit.some_item.get()) {
+    return someItemInquiry(entityId);
+} else {
+    return vicarUnknownInquiry(entityId);
+}
+```
+
+For block items, compare against `.asItem()`:
+
+```java
+} else if (it == BlockInit.some_block.get().asItem()) {
+    return someBlockInquiry(entityId);
+}
+```
+
+For item families/classes, use `instanceof`:
+
+```java
+} else if (item.getItem() instanceof HematicMemoryItem) {
+    return memoryInquiry(entityId);
+}
+```
+
+### 2. Add the dialogue tree helper
+
+Add a helper method in `HarbingerVicarDialogueTrees.java`:
+
+```java
+private static DialogueTree someItemInquiry(int entityId) {
+    return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+            .addNode(new DialogueNode("root", List.of(
+                    "hemomancy.vicar.item_inquiry.some_item.line1",
+                    "hemomancy.vicar.item_inquiry.some_item.line2"
+            ), List.of(
+                    new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+                    new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+            )))
+            .addNode(itemHintNode())
+            .build();
+}
+```
+
+Important: if an option points to `"item_hint"`, the tree must contain an `"item_hint"` node. The Vicar file has a shared `itemHintNode()` helper for this.
+
+### 3. Add language keys
+
+In `src/main/resources/assets/hemomancy/lang/en_us.json`, add matching text:
 
 ```json
-{
-  "conditions": [
-    { "max_degree": 1, "lines": ["hemomancy.vicar.item_inquiry.rite_hint.low.line1", "hemomancy.vicar.item_inquiry.rite_hint.low.line2"] },
-    { "max_degree": 4, "lines": ["hemomancy.vicar.item_inquiry.rite_hint.mid.line1", "hemomancy.vicar.item_inquiry.rite_hint.mid.line2"] },
-    {                   "lines": ["hemomancy.vicar.item_inquiry.rite_hint.high.line1", "hemomancy.vicar.item_inquiry.rite_hint.high.line2"] }
-  ]
+"hemomancy.vicar.item_inquiry.some_item.line1": "First vicar response line.",
+"hemomancy.vicar.item_inquiry.some_item.line2": "Second vicar response line."
+```
+
+Keep Vicar prose in the Harbinger tone: measured, ecclesiastical, Latinate, and morally gray.
+
+## How to Add a New Alchemist Item Query
+
+### Simple Alchemist response
+
+In `HarbingerAlchemistDialogueTrees.itemInquiry(...)`, add:
+
+```java
+} else if (it == ItemInit.some_reagent.get()) {
+    return basicItemInquiry(entityId,
+            "hemomancy.alchemist.item_inquiry.some_reagent.line1",
+            "hemomancy.alchemist.item_inquiry.some_reagent.line2");
 }
 ```
 
-### Alchemist — Machine locked behind degree (somatic_loom.json)
+Then add language keys:
 
 ```json
-{
-  "conditions": [
-    { "min_degree": 3, "lines": ["hemomancy.alchemist.item_inquiry.somatic_loom.line1", "hemomancy.alchemist.item_inquiry.somatic_loom.line2"] },
-    {                   "lines": ["hemomancy.alchemist.item_inquiry.somatic_loom.locked"] }
-  ]
+"hemomancy.alchemist.item_inquiry.some_reagent.line1": "First alchemist response line.",
+"hemomancy.alchemist.item_inquiry.some_reagent.line2": "Second alchemist response line."
+```
+
+### Degree-gated Alchemist response
+
+Use the `degree` parameter when the NPC should withhold details until the player reaches a certain Harbinger degree:
+
+```java
+} else if (it == BlockInit.some_advanced_station.get().asItem()) {
+    return someAdvancedStationInquiry(degree, entityId);
 }
 ```
 
-### Zealot — Purity-gated response (pallid_infusion.json)
+Helper example:
 
-```json
-{
-  "conditions": [
-    { "min_purity": 75, "lines": ["hemomancy.zealot.item_inquiry.pallid_infusion.line1", "hemomancy.zealot.item_inquiry.pallid_infusion.line2"] },
-    {                    "lines": ["hemomancy.zealot.item_inquiry.pallid_infusion.not_yet"] }
-  ]
+```java
+private static DialogueTree someAdvancedStationInquiry(int degree, int entityId) {
+    if (degree < 4) {
+        return basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.some_advanced_station.locked");
+    }
+    return basicItemInquiry(entityId,
+            "hemomancy.alchemist.item_inquiry.some_advanced_station.line1",
+            "hemomancy.alchemist.item_inquiry.some_advanced_station.line2");
 }
 ```
 
-### Guardian — Simple weapon response (unstained_warhammer.json)
+## Existing Key Naming Conventions
 
-```json
-{
-  "lines": [
-    "hemomancy.guardian.item_inquiry.warhammer.line1",
-    "hemomancy.guardian.item_inquiry.warhammer.line2"
-  ]
-}
+Vicar item inquiry keys:
+
+```text
+hemomancy.vicar.item_inquiry.<topic>.line1
+hemomancy.vicar.item_inquiry.<topic>.line2
 ```
 
----
+Alchemist item inquiry keys:
 
-## Adding a New Response (Step by Step)
-
-1. **Find the item's registry ID** — it's the `ResourceLocation` key, e.g. `mymod:my_widget`. Split on `:` to get namespace and path.
-2. **Choose the NPC** — which NPC should know about this item?
-3. **Create the JSON file** at the correct path under `data/<namespace>/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json`.
-4. **Add translation keys** to your `lang/en_us.json` (or whichever languages you support).
-5. **Reload** — entries are loaded as a server-side datapack reload listener, so `/reload` in-game applies changes without restarting.
-
----
-
-## For Other Mods / Datapack Authors
-
-Because the path uses your mod namespace (e.g. `data/mymod/dialogue_inquiry/vicar/mymod/my_sword.json`), you can add item responses for your own items without any dependency on other mods' JSON files. You can also **override** Hemomancy's default responses by placing a file at `data/mymod/dialogue_inquiry/vicar/hemomancy/rite_hint.json` — the last loaded file with that path wins (standard datapack priority).
-
-You can even register responses for vanilla Minecraft items:
-```
-data/mymod/dialogue_inquiry/vicar/minecraft/diamond.json
+```text
+hemomancy.alchemist.item_inquiry.<topic>.line1
+hemomancy.alchemist.item_inquiry.<topic>.line2
 ```
 
----
+Fallback keys:
 
-## Fallback Behavior
+```text
+hemomancy.vicar.item_inquiry.unknown
+hemomancy.alchemist.item_inquiry.unknown
+```
 
-If no JSON file is found for the held item, the NPC gives a generic "I don't recognize this" response:
-- Vicar: `hemomancy.vicar.item_inquiry.unknown`
-- Alchemist: `hemomancy.alchemist.item_inquiry.unknown`
-- Zealot: `hemomancy.zealot.item_inquiry.unknown`
-- Guardian: `hemomancy.guardian.item_inquiry.unknown`
+Shared hint keys:
 
-These are translation keys you can override in your resource pack if needed.
+```text
+hemomancy.vicar.item_hint
+hemomancy.alchemist.item_hint
+```
 
----
+Option keys:
 
-## Technical Notes
+```text
+hemomancy.dialogue.vicar.option.ask_about_item
+hemomancy.dialogue.alchemist.option.ask_about_item
+hemomancy.dialogue.vicar.option.leave
+hemomancy.dialogue.alchemist.option.leave
+```
 
-- **Loader class:** `com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader`
-- **Registry class:** `com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry`
-- Data is loaded via NeoForge's `AddReloadListenerEvent` — server-side only, reloads on `/reload`.
-- The item's registry key (`BuiltInRegistries.ITEM.getKey(item.getItem())`) is used for lookup; NBT/components are not considered.
+## Common Gotchas
+
+- Held-item query checks the **main hand** only.
+- Any non-empty main-hand item can route to item inquiry instead of normal dialogue.
+- Unknown items still produce a dialogue tree, usually the unknown-item response.
+- If a `DialogueOption` has `nextNodeId = "item_hint"`, the current tree must add an `"item_hint"` node.
+- Missing `item_hint` nodes cause the dialogue screen to become blank because the client switches to a node that does not exist.
+- Vicar logic checks some special states, such as Clarity, before item inquiry.
+- Alchemist logic currently routes held items before some other state checks.
+- Keep Java mappings and `en_us.json` keys in sync, or the player will see untranslated key text.
+
+## Testing Checklist
+
+After adding a new item query:
+
+1. Hold the item in the main hand.
+2. Right-click the intended NPC.
+3. Confirm the custom response appears.
+4. Click the "I have a question about something I found" option.
+5. Confirm the item-hint response appears.
+6. Confirm the leave option closes the dialogue.
+7. Test an unrelated item to confirm the unknown fallback still works.
+8. Run a compile check:
+
+```powershell
+.\gradlew.bat compileJava
+```
+

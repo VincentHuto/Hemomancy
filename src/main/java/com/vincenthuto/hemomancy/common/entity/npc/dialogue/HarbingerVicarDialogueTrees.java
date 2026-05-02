@@ -442,6 +442,74 @@ public final class HarbingerVicarDialogueTrees {
 	private static DialogueTree vicarUnknownInquiry(int entityId) {
 		return basicItemInquiry(entityId,
 				"hemomancy.vicar.item_inquiry.unknown");
+	private static DialogueTree riteHintInquiry(int degree, int entityId) {
+		String hintKey = degree <= 1 ? "low" : degree <= 4 ? "mid" : "high";
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.rite_hint." + hintKey + ".line1",
+						"hemomancy.vicar.item_inquiry.rite_hint." + hintKey + ".line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.vicar.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	private static DialogueTree bloodStructureInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.blood_structure.line1",
+						"hemomancy.vicar.item_inquiry.blood_structure.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(itemHintNode())
+				.build();
+	}
+
+	private static DialogueTree qliphothInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.qliphoth.line1",
+						"hemomancy.vicar.item_inquiry.qliphoth.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(itemHintNode())
+				.build();
+	}
+
+	private static DialogueTree monolithInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.monolith.line1",
+						"hemomancy.vicar.item_inquiry.monolith.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(itemHintNode())
+				.build();
+	}
+
+	private static DialogueTree memoryInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.hematic_memory.line1",
+						"hemomancy.vicar.item_inquiry.hematic_memory.line2"
+				), List.of(
+      new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(itemHintNode())
+				.build();
 	}
 
 	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
@@ -452,10 +520,27 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.vicar.item_hint"
+				.addNode(itemHintNode())
+				.build();
+	}
+
+	private static DialogueTree vicarUnknownInquiry(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.vicar.item_inquiry.unknown"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
+	}
+
+	private static DialogueNode itemHintNode() {
+		return new DialogueNode("item_hint", List.of(
+				"hemomancy.vicar.item_hint"
+		), List.of(
+				new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+		));
 	}
 
 	/**
