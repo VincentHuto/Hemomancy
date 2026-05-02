@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
 import java.util.EnumSet;
 
-import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.core.particles.ParticleTypes;

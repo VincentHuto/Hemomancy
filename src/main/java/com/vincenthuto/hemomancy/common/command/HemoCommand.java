@@ -25,7 +25,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
-import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;

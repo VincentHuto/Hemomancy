@@ -1,8 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.scar.functional.AntiphonomycesResonansItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AntiphonomycesResonansItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 
 import net.minecraft.core.BlockPos;

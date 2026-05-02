@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.SeraphaeWingGlowLayer;
-import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeEntity;
-import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeState;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeState;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;

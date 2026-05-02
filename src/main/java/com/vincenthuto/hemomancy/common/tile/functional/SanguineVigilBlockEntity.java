@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineVigilBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -22,7 +23,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 /**
- * Block entity for the {@link com.vincenthuto.hemomancy.common.block.functional.SanguineVigilBlock}.
+ * Block entity for the {@link SanguineVigilBlock}.
  *
  * <p>Blood is stored via the {@link IBloodTile} attachment up to
  * {@link #MAX_BLOOD} units.  Every {@link #WARD_TICK_INTERVAL} ticks the

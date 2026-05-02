@@ -6,7 +6,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;

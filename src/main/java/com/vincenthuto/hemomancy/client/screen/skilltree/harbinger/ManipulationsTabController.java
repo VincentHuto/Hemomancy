@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
@@ -173,7 +174,7 @@ public class ManipulationsTabController implements IProgressTab {
     private void buildManipMemoryItemLookup() {
         if (!manipMemoryItems.isEmpty()) return;
         for (Item item : net.minecraft.core.registries.BuiltInRegistries.ITEM) {
-            if (item instanceof com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem memItem) {
+            if (item instanceof BloodMemoryItem memItem) {
                 BloodManipulation manip = memItem.getManip();
                 if (manip != null && manip.getName() != null) {
                     manipMemoryItems.put(manip.getName(), new ItemStack(item));

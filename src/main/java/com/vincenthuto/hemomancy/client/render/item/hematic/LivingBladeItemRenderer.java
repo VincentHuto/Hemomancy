@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingBladeHandTameModel;
 import com.vincenthuto.hemomancy.client.model.item.LivingBladeUnleashedModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingBladeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingBladeItem;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -20,7 +20,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 
 public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 

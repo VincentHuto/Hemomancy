@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.MnemonicReliquaryModel;
-import com.vincenthuto.hemomancy.common.block.functional.MnemonicReliquaryBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.MnemonicReliquaryBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 

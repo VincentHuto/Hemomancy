@@ -3,12 +3,12 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.item.EnzymeItem;
-import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
-import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
-import com.vincenthuto.hemomancy.common.item.scar.ItemImmatureFungalScar;
-import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCatalystSlot;
 import com.vincenthuto.hemomancy.common.tile.crafting.MycelialCrucibleBlockEntity;
 

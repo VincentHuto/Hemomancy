@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedZealotModel;
-import com.vincenthuto.hemomancy.common.entity.npc.UnstainedZealotEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
@@ -12,7 +13,6 @@ import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteArrayTag;
@@ -134,9 +134,9 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	 */
 	public boolean tryLoadPatternFromSlot() {
 		ItemStack patternStack = this.getItem(4);
-		if (!patternStack.isEmpty() && patternStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern) {
-			com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern patternItem =
-					(com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern) patternStack.getItem();
+		if (!patternStack.isEmpty() && patternStack.getItem() instanceof ItemScarPattern) {
+			ItemScarPattern patternItem =
+					(ItemScarPattern) patternStack.getItem();
 			ScarRecipe patternRecipe = patternItem.getRecipe();
 			if (patternRecipe != null && patternRecipe.getPattern() != null) {
 				byte[][] recipePattern = patternRecipe.getPattern();

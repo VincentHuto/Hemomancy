@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.npc;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

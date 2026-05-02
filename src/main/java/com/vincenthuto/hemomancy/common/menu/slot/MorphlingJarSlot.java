@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.menu.slot;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
-import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;

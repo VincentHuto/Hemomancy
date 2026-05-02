@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
-import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
+import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

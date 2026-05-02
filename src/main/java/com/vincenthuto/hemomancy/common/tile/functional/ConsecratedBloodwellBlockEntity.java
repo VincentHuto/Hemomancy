@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
-import com.vincenthuto.hemomancy.common.block.functional.ConsecratedBloodwellBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.ConsecratedBloodwellBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

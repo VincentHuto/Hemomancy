@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginArmorTiers;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
-import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;

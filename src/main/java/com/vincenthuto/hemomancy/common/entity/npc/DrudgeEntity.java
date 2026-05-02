@@ -1,15 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -22,7 +19,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -342,7 +338,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         }
 
         // Right-click with a Blood Memory → equip it
-        if (!held.isEmpty() && held.getItem() instanceof com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem memItem) {
+        if (!held.isEmpty() && held.getItem() instanceof BloodMemoryItem memItem) {
             com.vincenthuto.hemomancy.common.manipulation.DrudgeAction da =
                     memItem.getManip().getDrudgeAction().orElse(null);
             if (da == null || da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
@@ -390,7 +386,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             net.neoforged.neoforge.registries.DeferredRegister<net.minecraft.world.item.Item> register) {
         if (equippedMemory == null) return false;
         for (var holder : register.getEntries()) {
-            if (holder.get() instanceof com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem bmi) {
+            if (holder.get() instanceof BloodMemoryItem bmi) {
                 if (bmi.getManip() != null && bmi.getManip().getName().equals(equippedMemory.getName())) {
                     spawnAtLocation(new net.minecraft.world.item.ItemStack(bmi));
                     setEquippedMemory(null);

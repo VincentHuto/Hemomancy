@@ -3,8 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.visceral;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;

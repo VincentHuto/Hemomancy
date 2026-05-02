@@ -8,8 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 

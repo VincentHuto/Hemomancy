@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingSyringeItem;
-import com.vincenthuto.hemomancy.common.itemhandler.LivingSyringeItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSyringeItem;
+import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.LivingSyringeSlot;
 
 import net.minecraft.core.BlockPos;

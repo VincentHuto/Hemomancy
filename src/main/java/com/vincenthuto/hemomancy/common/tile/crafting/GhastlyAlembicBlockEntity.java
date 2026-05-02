@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
-import com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBudBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
@@ -12,8 +12,8 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
-import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -680,7 +680,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	 * Scans the 3x3 floor area one block below the alembic for a venous stone
 	 * (any variant) or a {@link net.minecraft.world.level.block.Blocks#BONE_BLOCK}.
 	 * When found, blood seeps onto that block and grows a
-	 * {@link com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock} in the
+	 * {@link BloodCrystalBudBlock} in the
 	 * open space immediately above it.
 	 * <p>
 	 * The wider scan avoids the fire / magma block that is typically placed directly

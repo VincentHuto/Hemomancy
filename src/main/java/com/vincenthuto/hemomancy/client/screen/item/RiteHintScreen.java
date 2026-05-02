@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 /**
- * A read-only screen opened from a {@link com.vincenthuto.hemomancy.common.item.RiteHintItem}
+ * A read-only screen opened from a {@link RiteHintItem}
  * that displays a single cardinal rite's 3D structure and info panel — similar to the
  * RITES tab in {@link HarbingerProgressScreen},
  * but focused on a single rite without the tier sidebar.

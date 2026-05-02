@@ -9,9 +9,9 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
-import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
-import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

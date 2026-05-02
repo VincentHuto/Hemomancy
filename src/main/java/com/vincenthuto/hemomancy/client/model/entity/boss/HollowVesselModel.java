@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

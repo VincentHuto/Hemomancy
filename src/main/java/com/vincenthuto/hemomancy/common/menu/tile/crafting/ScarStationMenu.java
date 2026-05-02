@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarStationSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarPatternSlot;

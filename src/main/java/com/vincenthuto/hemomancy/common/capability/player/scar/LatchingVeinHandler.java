@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.scar;
 import java.util.List;
 import java.util.UUID;
 
-import com.vincenthuto.hemomancy.common.item.scar.functional.AnastocordycepsNexusItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AnastocordycepsNexusItem;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;

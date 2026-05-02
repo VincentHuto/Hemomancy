@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.menu.slot;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;

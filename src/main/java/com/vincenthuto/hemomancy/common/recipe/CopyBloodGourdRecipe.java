@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.recipe;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
-import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;

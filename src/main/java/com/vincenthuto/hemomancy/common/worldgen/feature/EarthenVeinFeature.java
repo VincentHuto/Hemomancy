@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.common.block.functional.EarthenVeinBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;

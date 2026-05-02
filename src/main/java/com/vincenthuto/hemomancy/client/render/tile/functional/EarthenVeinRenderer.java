@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
 import com.vincenthuto.hemomancy.client.model.tile.functional.FloatingEyeModel;
-import com.vincenthuto.hemomancy.common.block.functional.EarthenVeinBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;

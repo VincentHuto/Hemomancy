@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-import com.vincenthuto.hemomancy.common.block.BrazierBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 
@@ -12,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Block entity for the {@link com.vincenthuto.hemomancy.common.block.functional.CovenantThroneBlock}.
+ * Block entity for the {@link CovenantThroneBlock}.
  *
  * <p>Stores only the {@code lastTranceTime} field (the game tick at which the
  * Covenant Trance was last triggered), which drives the per-player cooldown

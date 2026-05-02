@@ -5,7 +5,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 
 import net.minecraft.network.FriendlyByteBuf;
 

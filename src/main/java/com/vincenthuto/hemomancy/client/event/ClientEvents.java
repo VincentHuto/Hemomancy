@@ -8,7 +8,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.common.util.GuideBookTooltipHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
+import com.vincenthuto.hemomancy.common.item.shared.GuideBookTooltipHelper;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
@@ -60,12 +61,12 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScree
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.common.init.*;
-import com.vincenthuto.hemomancy.common.item.HemoItemProperties;
-import com.vincenthuto.hemomancy.common.item.VialRackItem;
-import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.item.tool.StructureScannerItem;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingCrossbowItem;
+import com.vincenthuto.hemomancy.common.item.shared.HemoItemProperties;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseManipKeyPacket;
@@ -74,7 +75,7 @@ import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPa
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
-import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemArmBanner;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemGuideBook;
@@ -570,7 +571,7 @@ public class ClientEvents {
                         HemoItemProperties.intTag("size"));
 
                 ItemProperties.register(ItemInit.drudge_electrode.get(), Hemomancy.rloc("mode"),
-                        HemoItemProperties.booleanTag(com.vincenthuto.hemomancy.common.item.tool.DrudgeElectrodeItem.TAG_MODE));
+                        HemoItemProperties.booleanTag(DrudgeElectrodeItem.TAG_MODE));
 
                 ItemProperties.register(ItemInit.living_staff.get(), Hemomancy.rloc("morph"), new ItemPropertyFunction() {
                     @Override

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +29,7 @@ import net.minecraft.world.level.Level;
  *   <li>{@code phase1Duration}         — crafting ticks for Phase 1 implantation.</li>
  *   <li>{@code maturationThreshold}    — total enzyme-power needed in Phase 2.</li>
  *   <li>{@code immatureResult}         — the {@link ItemImmatureFungalScar} produced at Phase 1 end.</li>
- *   <li>{@code result}                 — the finished {@link com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar}.</li>
+ *   <li>{@code result}                 — the finished {@link ItemFungalScar}.</li>
  * </ul>
  */
 public class FungalScarCultivationRecipe extends CustomRecipe {

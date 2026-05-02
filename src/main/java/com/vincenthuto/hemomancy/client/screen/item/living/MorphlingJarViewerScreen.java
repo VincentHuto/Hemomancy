@@ -7,9 +7,9 @@ import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
-import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.morphling.PacketUpdateLivingStaffMorph;
 import com.vincenthuto.hutoslib.client.HLClientUtils;

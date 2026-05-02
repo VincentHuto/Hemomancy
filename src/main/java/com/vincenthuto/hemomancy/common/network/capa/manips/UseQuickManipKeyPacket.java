@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.item.tool.living.IDispellable;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;

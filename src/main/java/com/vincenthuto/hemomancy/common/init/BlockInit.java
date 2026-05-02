@@ -7,20 +7,33 @@ import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.*;
-import com.vincenthuto.hemomancy.common.block.BloodCrystalBudBlock;
-import com.vincenthuto.hemomancy.common.block.puzzle.*;
-import com.vincenthuto.hemomancy.common.block.crafting.ScarStationBlock;
-import com.vincenthuto.hemomancy.common.block.crafting.GhastlyAlembicBlock;
-import com.vincenthuto.hemomancy.common.block.crafting.PallidRetortBlock;
-import com.vincenthuto.hemomancy.common.block.crafting.SomaticLoomBlock;
-import com.vincenthuto.hemomancy.common.block.crafting.VialCentrifugeBlock;
-import com.vincenthuto.hemomancy.common.block.functional.*;
-import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
-import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
-import com.vincenthuto.hemomancy.common.block.plant.*;
-import com.vincenthuto.hemomancy.common.item.tile.*;
+import com.vincenthuto.hemomancy.common.block.harbinger.*;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.*;
+import com.vincenthuto.hemomancy.common.block.harbinger.plant.*;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodBasinBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodPylonBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodTrialAltarBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
+import com.vincenthuto.hemomancy.common.block.shared.DictationTableBlock;
+import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockHumaneIdol;
+import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockSerpentineIdol;
+import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.functional.AltarOfCleansingBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.functional.PaleSilverBellsBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.plant.GhostPipeBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.plant.LetheanPoppyBlock;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.*;
+import com.vincenthuto.hemomancy.common.item.shared.tile.DictationTableBlockItem;
 
+import com.vincenthuto.hemomancy.common.item.unstained.tile.AltarOfCleansingBlockItem;
+import com.vincenthuto.hemomancy.common.item.unstained.tile.PallidRetortBlockItem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
@@ -132,7 +145,7 @@ public class BlockInit {
 			() -> new FillerBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()));
 
 	public static final DeferredHolder<Block, Block> qliphoth_bloom = SPECIALBLOCKS.register("qliphoth_bloom",
-			() -> new com.vincenthuto.hemomancy.common.block.functional.QliphothBloomBlock(
+			() -> new QliphothBloomBlock(
 					BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
 							.lightLevel(state -> 7)));
 
@@ -439,17 +452,17 @@ public class BlockInit {
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
-			() -> new com.vincenthuto.hemomancy.common.block.functional.ConsecratedBloodwellBlock(
+			() -> new ConsecratedBloodwellBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
 
 	public static final DeferredHolder<Block, Block> covenant_throne = MODELEDBLOCKS.register("covenant_throne",
-			() -> new com.vincenthuto.hemomancy.common.block.functional.CovenantThroneBlock(
+			() -> new CovenantThroneBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> sanguine_vigil = MODELEDBLOCKS.register("sanguine_vigil",
-			() -> new com.vincenthuto.hemomancy.common.block.functional.SanguineVigilBlock(
+			() -> new SanguineVigilBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.0F, 8.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 6).noOcclusion()));
 

@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.menu.slot;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

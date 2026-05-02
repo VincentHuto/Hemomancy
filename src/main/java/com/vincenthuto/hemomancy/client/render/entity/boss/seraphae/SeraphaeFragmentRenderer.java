@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.seraphae;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeFragmentModel;
-import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeFragmentEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeFragmentEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;

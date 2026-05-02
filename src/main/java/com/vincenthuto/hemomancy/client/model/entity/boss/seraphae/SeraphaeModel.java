@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.seraphae;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

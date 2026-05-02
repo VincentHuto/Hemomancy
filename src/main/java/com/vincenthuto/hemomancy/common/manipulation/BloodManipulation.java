@@ -9,7 +9,8 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPuritySt
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.boss.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
@@ -352,7 +353,7 @@ public class BloodManipulation  {
 				}
 
 				// Blood Moon: 25% cost reduction while the blood moon is active
-				if (com.vincenthuto.hemomancy.common.worldevent.BloodMoonEvents.isBloodMoonActive(world)) {
+				if (BloodMoonEvents.isBloodMoonActive(world)) {
 					effectiveCost *= 0.75;
 				}
 

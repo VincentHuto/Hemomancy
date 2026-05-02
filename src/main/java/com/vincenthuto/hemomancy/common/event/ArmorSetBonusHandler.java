@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.item.armor.EnumModArmorTiers;
-import com.vincenthuto.hemomancy.common.item.armor.MarrowCrownArmorItem;
+import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;

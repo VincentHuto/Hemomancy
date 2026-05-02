@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.mojang.serialization.MapCodec;
 

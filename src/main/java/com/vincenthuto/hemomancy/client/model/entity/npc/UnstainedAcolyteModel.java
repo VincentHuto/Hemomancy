@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.npc;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.npc.UnstainedAcolyteEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

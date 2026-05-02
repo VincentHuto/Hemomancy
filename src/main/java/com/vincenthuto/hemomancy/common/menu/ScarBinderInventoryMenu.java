@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
-import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
+import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarBinderSlot;
 
 import net.minecraft.core.BlockPos;

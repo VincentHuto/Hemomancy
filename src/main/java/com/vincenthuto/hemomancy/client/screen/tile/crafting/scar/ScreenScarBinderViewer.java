@@ -7,9 +7,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
-import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 

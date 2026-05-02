@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.component.StructureScannerTooltipComponent;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.StructureScannerTooltipComponent;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;

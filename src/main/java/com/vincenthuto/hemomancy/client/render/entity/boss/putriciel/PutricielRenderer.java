@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.putriciel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.boss.putriciel.PutricielEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;

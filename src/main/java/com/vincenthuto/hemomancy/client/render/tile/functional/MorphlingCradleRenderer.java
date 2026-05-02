@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.MorphlingCradleModel;
-import com.vincenthuto.hemomancy.common.block.functional.MorphlingCradleBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.MorphlingCradleBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.MorphlingCradleBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.Util;

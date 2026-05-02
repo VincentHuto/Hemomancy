@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
@@ -33,7 +33,6 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 

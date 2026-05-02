@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineConduitBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 
 import net.minecraft.core.BlockPos;
@@ -8,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 /**
- * Minimal block entity for the {@link com.vincenthuto.hemomancy.common.block.functional.SanguineConduitBlock}.
+ * Minimal block entity for the {@link SanguineConduitBlock}.
  * Holds no persistent data; its sole purpose is to be the anchor for the BER
  * ({@link com.vincenthuto.hemomancy.client.render.tile.functional.SanguineConduitBlockRenderer})
  * that draws the pulsing blood-oath rings around the placed conduit.

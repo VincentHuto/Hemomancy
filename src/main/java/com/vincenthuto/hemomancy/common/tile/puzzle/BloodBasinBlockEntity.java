@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.puzzle;
 
-import com.vincenthuto.hemomancy.common.block.puzzle.OfferingGateBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.ChatFormatting;

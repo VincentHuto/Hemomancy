@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
-import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

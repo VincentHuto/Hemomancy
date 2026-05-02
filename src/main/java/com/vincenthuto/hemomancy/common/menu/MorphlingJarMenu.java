@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.MorphlingJarSlot;
 
 import net.minecraft.core.BlockPos;

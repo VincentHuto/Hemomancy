@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
-import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingPolyp;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

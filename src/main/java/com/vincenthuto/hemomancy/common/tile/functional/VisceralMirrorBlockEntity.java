@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrga
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
 
@@ -22,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Block entity for the Visceral Mirror — a ritualistic apparatus that allows
@@ -154,7 +154,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
 			ItemStack invStack = player.getInventory().getItem(i);
 			if (!invStack.isEmpty()
-					&& invStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.OrganEchoItem echoItem
+					&& invStack.getItem() instanceof OrganEchoItem echoItem
 					&& echoItem.getOrgan() == organ) {
 				sendStatusToPlayer(player, "An echo of this organ already lingers on your person.");
 				return false;
@@ -248,7 +248,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		boolean alreadyHasEcho = false;
 		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
 			ItemStack invStack = player.getInventory().getItem(i);
-			if (!invStack.isEmpty() && invStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.OrganEchoItem echoItem
+			if (!invStack.isEmpty() && invStack.getItem() instanceof OrganEchoItem echoItem
 					&& echoItem.getOrgan() == targetOrgan) {
 				alreadyHasEcho = true;
 				break;

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumo
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
-import com.vincenthuto.hemomancy.common.item.PaleHumorFlaskItem;
+import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.PallidRetortMenu;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;

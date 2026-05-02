@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
 import net.minecraft.network.FriendlyByteBuf;

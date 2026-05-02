@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
+import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
@@ -27,14 +29,14 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedD
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
-import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
-import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
-import com.vincenthuto.hemomancy.common.worldevent.FoundingSanctumSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
@@ -1426,8 +1428,8 @@ public class CardinalRiteEvents {
 
 		// Verify there is room for the 1Ã—1Ã—8 column
 		Block bloomBlock = BlockInit.qliphoth_bloom.get();
-		com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock =
-				(com.vincenthuto.hemomancy.common.block.IMultiBlock) bloomBlock;
+		IMultiBlock multiBlock =
+				(IMultiBlock) bloomBlock;
 		if (!multiBlock.canPlaceMultiBlock(sLevel, center.above(2))) {
 			caster.displayClientMessage(
 					Component.literal("There is not enough room for the Qliphoth to bloom here.")
@@ -1517,7 +1519,7 @@ public class CardinalRiteEvents {
 			// Destroy the physical bloom block and its fillers
 			BlockPos bloomPos = removed.center();
 			BlockState bloomState = sLevel.getBlockState(bloomPos);
-			if (bloomState.getBlock() instanceof com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock) {
+			if (bloomState.getBlock() instanceof IMultiBlock multiBlock) {
 				multiBlock.removeFillers(sLevel, bloomPos);
 			}
 			sLevel.removeBlock(bloomPos, false);
@@ -1656,7 +1658,7 @@ public class CardinalRiteEvents {
 	}
 
 	/**
-	 * Public helper called by {@link com.vincenthuto.hemomancy.common.block.functional.QliphothBloomBlock#onRemove}
+	 * Public helper called by {@link QliphothBloomBlock#onRemove}
 	 * when the bloom block is broken (directly or via filler destruction).
 	 * Removes the SavedData entry and syncs clients.
 	 */

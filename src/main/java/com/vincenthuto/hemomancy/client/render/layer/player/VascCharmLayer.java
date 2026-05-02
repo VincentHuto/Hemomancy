@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hutoslib.math.Vector3;
 

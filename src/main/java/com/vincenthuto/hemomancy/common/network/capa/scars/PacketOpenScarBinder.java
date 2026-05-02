@@ -7,7 +7,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.menu.ScarBinderInventoryMenu;
 
 import net.minecraft.network.FriendlyByteBuf;

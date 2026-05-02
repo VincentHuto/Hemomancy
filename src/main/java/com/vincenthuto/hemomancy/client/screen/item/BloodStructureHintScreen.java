@@ -6,6 +6,7 @@ import java.util.Map;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 
 /**
  * A read-only screen opened from a
- * {@link com.vincenthuto.hemomancy.common.item.BloodStructureHintItem} that
+ * {@link BloodStructureHintItem} that
  * displays a single blood structure recipe's 3D multiblock layout and info
  * panel — analogous to {@link RiteHintScreen} but for blood structure recipes
  * rather than cardinal rite recipes.

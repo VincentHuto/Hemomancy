@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 
 import net.minecraft.core.BlockPos;

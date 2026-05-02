@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.menu.slot;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.common.item.BloodVialItem;
-import com.vincenthuto.hemomancy.common.itemhandler.LivingSyringeItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
+import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;

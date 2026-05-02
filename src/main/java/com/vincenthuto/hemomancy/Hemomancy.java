@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy;
 
-import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;

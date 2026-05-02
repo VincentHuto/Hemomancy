@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
-import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

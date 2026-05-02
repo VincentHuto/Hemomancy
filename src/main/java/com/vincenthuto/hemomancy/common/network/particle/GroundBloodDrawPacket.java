@@ -10,11 +10,11 @@ import java.util.Arrays;
 
 import org.joml.Vector3d;
 
-import com.vincenthuto.hemomancy.common.block.EngramBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.BitLocation;

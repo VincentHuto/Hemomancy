@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.menu.tile.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
 

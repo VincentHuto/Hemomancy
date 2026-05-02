@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.MorphlingJarSlot;
 
 import net.minecraft.core.BlockPos;

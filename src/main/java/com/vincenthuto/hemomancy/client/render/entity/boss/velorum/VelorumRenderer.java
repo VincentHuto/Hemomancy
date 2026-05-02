@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.velorum;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.boss.velorum.VelorumEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;

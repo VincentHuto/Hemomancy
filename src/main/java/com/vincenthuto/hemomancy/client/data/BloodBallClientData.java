@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.data;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.item.cosmetic.SanguineBlobItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.SanguineBlobItem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;

@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.data.gen;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
-import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;

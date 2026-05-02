@@ -11,10 +11,10 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.item.EnzymeItem;
-import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
-import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;

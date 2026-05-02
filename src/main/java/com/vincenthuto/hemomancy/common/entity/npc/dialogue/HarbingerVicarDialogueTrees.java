@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
-import com.vincenthuto.hemomancy.common.item.memories.HematicMemoryItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.HematicMemoryItem;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

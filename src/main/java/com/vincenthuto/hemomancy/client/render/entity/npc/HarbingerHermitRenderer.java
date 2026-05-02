@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerHermitModel;
-import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;

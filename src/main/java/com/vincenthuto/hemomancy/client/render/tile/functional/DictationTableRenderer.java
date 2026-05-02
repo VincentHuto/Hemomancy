@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.DictationTableModel;
-import com.vincenthuto.hemomancy.common.block.functional.DictationTableBlock;
+import com.vincenthuto.hemomancy.common.block.shared.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.DictationTableBlockEntity;
 import com.vincenthuto.hutoslib.common.item.BookAnimState;

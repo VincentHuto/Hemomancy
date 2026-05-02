@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingPistolItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPistolItem;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
