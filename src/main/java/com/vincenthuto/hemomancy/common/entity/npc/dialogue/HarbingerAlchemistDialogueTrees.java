@@ -388,6 +388,12 @@ public final class HarbingerAlchemistDialogueTrees {
 	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("root", List.of(lines), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();

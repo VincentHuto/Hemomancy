@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,18 +80,30 @@ public class ItemInquiryLoader
 			ResourceLocation fileLocation = e.getKey();
 
 			// Expected path: dialogue_inquiry/<npc_id>/<item_ns>/<item_path>.json
+			// item_path may itself contain slashes for nested registry paths.
 			String path = fileLocation.getPath(); // e.g. dialogue_inquiry/vicar/hemomancy/bloody_vial.json
 			String afterFolder = path.substring(FOLDER.length() + 1); // vicar/hemomancy/bloody_vial.json
-			String[] segments = afterFolder.split("/", 3);
+			String[] segments = afterFolder.split("/");
 			if (segments.length < 3) {
-				LOGGER.warn("[ItemInquiryLoader] Skipping malformed path: {}", fileLocation);
+				LOGGER.warn("[ItemInquiryLoader] Skipping malformed path (need npc_id/item_ns/item_path): {}", fileLocation);
 				continue;
 			}
-			String npcId = segments[0];                               // vicar
-			String itemNs = segments[1];                              // hemomancy
-			String itemPath = segments[2].replace(".json", ""); // bloody_vial
+			String npcId = segments[0];   // vicar
+			String itemNs = segments[1];  // hemomancy
+			// Rejoin any remaining segments as the item path (supports nested paths)
+			String rawItemPath = String.join("/", Arrays.copyOfRange(segments, 2, segments.length));
+			String itemPath = rawItemPath.endsWith(".json")
+					? rawItemPath.substring(0, rawItemPath.length() - ".json".length())
+					: rawItemPath;
 
-			ResourceLocation itemId = ResourceLocation.fromNamespaceAndPath(itemNs, itemPath);
+			ResourceLocation itemId;
+			try {
+				itemId = ResourceLocation.fromNamespaceAndPath(itemNs, itemPath);
+			} catch (Exception ex) {
+				LOGGER.warn("[ItemInquiryLoader] Skipping invalid item ID '{}/{}' in: {} — {}",
+						itemNs, itemPath, fileLocation, ex.getMessage());
+				continue;
+			}
 
 			try (InputStream stream = e.getValue().open();
 				 InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
@@ -164,12 +177,34 @@ public class ItemInquiryLoader
 			return null;
 		}
 
-		int minDegree = obj.has("min_degree") ? obj.get("min_degree").getAsInt() : -1;
-		int maxDegree = obj.has("max_degree") ? obj.get("max_degree").getAsInt() : -1;
-		float minPurity = obj.has("min_purity") ? obj.get("min_purity").getAsFloat() : -1f;
-		float maxPurity = obj.has("max_purity") ? obj.get("max_purity").getAsFloat() : -1f;
+		int minDegree   = parseIntField(obj, "min_degree", -1, src);
+		int maxDegree   = parseIntField(obj, "max_degree", -1, src);
+		float minPurity = parseFloatField(obj, "min_purity", -1f, src);
+		float maxPurity = parseFloatField(obj, "max_purity", -1f, src);
 
 		return new ItemInquiryCondition(minDegree, maxDegree, minPurity, maxPurity, lines);
+	}
+
+	private static int parseIntField(JsonObject obj, String field, int def, ResourceLocation src) {
+		if (!obj.has(field)) return def;
+		try {
+			return obj.get(field).getAsInt();
+		} catch (Exception ex) {
+			LOGGER.warn("[ItemInquiryLoader] Field '{}' is not an integer in: {} — using default {}",
+					field, src, def);
+			return def;
+		}
+	}
+
+	private static float parseFloatField(JsonObject obj, String field, float def, ResourceLocation src) {
+		if (!obj.has(field)) return def;
+		try {
+			return obj.get(field).getAsFloat();
+		} catch (Exception ex) {
+			LOGGER.warn("[ItemInquiryLoader] Field '{}' is not a number in: {} — using default {}",
+					field, src, def);
+			return def;
+		}
 	}
 
 	private static List<String> parseLines(JsonArray arr) {

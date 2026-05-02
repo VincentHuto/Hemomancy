@@ -283,6 +283,12 @@ public final class ZealotDialogueTrees {
         return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
                 .theme(DialogueTheme.UNSTAINED)
                 .addNode(new DialogueNode("root", List.of(lineKeys), List.of(
+                        new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+                )))
+                .addNode(new DialogueNode("item_hint", List.of(
+                        "hemomancy.zealot.item_hint"
+                ), List.of(
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                 )))
                 .build();
