@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -26,9 +27,22 @@ public final class GuideBookTooltipHelper {
             return;
         }
 
+        int unread = countFilteredUnreadEntries(bookId, player);
+        if (unread > 0) {
+            tooltip.add(Component.literal(ChatFormatting.GOLD + "⬤ " + unread
+                    + " unread entr" + (unread == 1 ? "y" : "ies")));
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static int countFilteredUnreadEntries(ResourceLocation bookId, Player player) {
+        if (player == null) {
+            return 0;
+        }
+
         BookCodeModel book = BookPlaceboReloadListener.INSTANCE.getBookByTitle(bookId);
         if (book == null) {
-            return;
+            return 0;
         }
 
         BookCodeModel filtered = new MemoBookFilter().filter(book, player);
@@ -46,11 +60,7 @@ public final class GuideBookTooltipHelper {
             }
         }
 
-        int unread = BookReadTracker.countUnread(player.getUUID(), visiblePageIds);
-        if (unread > 0) {
-            tooltip.add(Component.literal(ChatFormatting.GOLD + "⬤ " + unread
-                    + " unread entr" + (unread == 1 ? "y" : "ies")));
-        }
+        return BookReadTracker.countUnread(player.getUUID(), visiblePageIds);
     }
 }
 

@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hutoslib.client.book.BookReadTracker;
+import com.vincenthuto.hemomancy.common.util.GuideBookTooltipHelper;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
@@ -271,9 +271,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
-        if (event.getPlayer() != null) {
-            BookReadTracker.clear(event.getPlayer().getUUID());
-        }
+        // HutosLib now retains read tracker state across disconnect/reload.
     }
 
     @SubscribeEvent
@@ -707,8 +705,10 @@ public class ClientEvents {
                         if (mc.player == null) return false;
                         return HemoCapabilityAccess.getLiberKnowledge(mc.player).map(knowledge -> {
                             boolean isSanguinum = stack.is(ItemInit.liber_sanguinum.get());
-                            String prefix = isSanguinum ? "sanctumsanguinium/" : "liberimmaculatus/";
-                            if (!BookReadTracker.hasUnread(mc.player.getUUID(), knowledge, prefix)) {
+                            int unread = GuideBookTooltipHelper.countFilteredUnreadEntries(
+                                    Hemomancy.rloc(isSanguinum ? "sanctumsanguinium" : "liberimmaculatus"),
+                                    mc.player);
+                            if (unread <= 0) {
                                 return false;
                             }
                             // Draw a 3x4 gold badge at the top-right corner of the item icon,
