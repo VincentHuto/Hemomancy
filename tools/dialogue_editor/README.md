@@ -1,118 +1,73 @@
-# Dialogue Tree Editor
+# Dialogue Workspace Editor
 
-A self-contained visual tool for viewing and editing Hemomancy NPC dialogue trees without touching Java directly.
+Java-first workspace editor for Hemomancy dialogue trees, translations,
+dialogue inquiry JSON, and dialogue event references.
 
-```
-tools/dialogue_editor/
-├── index.html          ← Open this in any browser — no server needed
-├── export_to_json.py   ← Java file → JSON (run once before editing)
-├── import_from_json.py ← JSON → Java (run after editing to write back)
-└── README.md           ← This file
-```
+The mod runtime still uses the Java `*DialogueTrees.java` files as the source
+of truth. This tool reads those files, builds an editable workspace model, and
+only writes repo files after you preview and apply a diff.
 
----
+## Quick Start
 
-## Quick start
-
-### 1 — Export a Java dialogue file to JSON
+From `tools/dialogue_editor`:
 
 ```bash
-# From the repo root:
-python tools/dialogue_editor/export_to_json.py \
-    src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java \
-    vicar.json
+npm install
+npm run dev
 ```
 
-Windows drag-and-drop: you can drop a `*DialogueTrees.java` file directly onto
-`tools/dialogue_editor/export_to_json.py`; it now writes a sibling JSON file
-automatically (example: `AcolyteDialogueTrees.json`).
+Open:
 
-If you want raw JSON in the terminal instead of writing a file:
+```text
+http://127.0.0.1:5174/workspace.html
+```
+
+The dev command starts:
+
+- Vite UI on port `5174`
+- Dialogue Workspace API on port `5175`
+
+## What The Workspace Edits
+
+- Dialogue builder chains in `src/main/java/.../npc/dialogue/*DialogueTrees.java`
+- Translation entries in `src/main/resources/assets/hemomancy/lang/en_us.json`
+- Item inquiry JSON in `src/main/resources/data/hemomancy/dialogue_inquiry/`
+- Event IDs handled by `DialogueEventHandler`
+- Memo-producing dialogue events as a read-only catalog from `MemoDefinitions`
+
+## Main Tabs
+
+- `Graph` - node graph preview and node/option selection.
+- `Translations` - inline text editing for keys used by the selected file.
+- `Events` - handled event catalog, memo event catalog, and new event stub queue.
+- `Item Inquiries` - editable inquiry line-key JSON files.
+- `Validation` - broken links, duplicate nodes, unknown events, missing lang keys.
+- `Diff` - generated patch preview before any file write happens.
+
+## Save Model
+
+1. Edit nodes, options, translation values, inquiry lines, or queue a new event.
+2. Click `Preview Diff`.
+3. Review generated Java/lang/JSON patches.
+4. Click `Apply Preview` only when the preview is valid.
+
+The preview step does not write files. The apply step only writes the exact
+validated preview currently shown.
+
+## Tests And Build
 
 ```bash
-python tools/dialogue_editor/export_to_json.py \
-    src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java \
-    --stdout
+npm test
+npm run build
 ```
 
-Repeat for any file you want to edit:
-- `HarbingerAlchemistDialogueTrees.java`
-- `ZealotDialogueTrees.java`
-- `GuardianDialogueTrees.java`
-- `HarbingerHermitDialogueTrees.java`
-- etc.
+The backend tests cover Java parsing, private helper tree discovery, memo event
+expression preservation, validation diagnostics, event/memo catalogs, and
+preview/apply safety.
 
-### 2 — Open the editor
+## Legacy JSON Tool
 
-Just open `tools/dialogue_editor/index.html` in your browser (double-click or drag onto a browser window).
-
-**Load JSON** → select the `.json` file you exported.  
-**Load lang** (optional) → select `src/main/resources/assets/hemomancy/lang/en_us.json` to see English translations inline.
-
-### 3 — Edit
-
-- **Left panel** — lists every tree (method) in the file; click to switch.
-- **Graph** — nodes shown as boxes with bezier arrows between them.  Drag nodes to rearrange.  Click a node to select it.
-- **Right panel** — edit the selected node: change its ID, add/remove/reorder lines and options, change where each option leads, set event IDs.
-- **⟳ Relayout** — resets automatic positioning based on tree structure.
-- **＋ Node** — adds a blank new node at the bottom.
-
-### 4 — Export and write back to Java
-
-Click **💾 Export JSON** to save the modified JSON, then:
-
-```bash
-python tools/dialogue_editor/import_from_json.py \
-    vicar.json \
-    src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java
-```
-
-The script backs up the original file as `*.bak` before writing.
-
----
-
-## Limitations
-
-| Situation | Behaviour |
-|---|---|
-| Method with multiple `if`-branches (e.g. `alreadyOnPath`) | Exported as `method__0`, `method__1` … one entry per branch. Import regenerates each branch independently. |
-| Options built via `List<DialogueOption>` variable | Fully resolved by the exporter — should round-trip cleanly. |
-| `itemInquiry` and similar switch-dispatch helpers | Exported and importable like any other tree. |
-| Conditional logic / Java control flow | **Never touched** — only the `.builder(...)...build()` chains are replaced. |
-
----
-
-## JSON format (reference)
-
-```json
-{
-  "source_file": "HarbingerVicarDialogueTrees.java",
-  "speaker":     "entity.hemomancy.harbinger_vicar",
-  "icon":        "hemomancy:textures/entity/harbinger_vicar/harbinger_vicar.png",
-  "trees": [
-    {
-      "method":     "uninitiated",
-      "params":     ["entityId"],
-      "theme":      "BLOOD",
-      "start_node": "greeting",
-      "speaker":    "entity.hemomancy.harbinger_vicar",
-      "icon":       "hemomancy:textures/...",
-      "nodes": [
-        {
-          "id":    "greeting",
-          "lines": ["hemomancy.vicar.uninitiated.line1"],
-          "options": [
-            {"text": "hemomancy.dialogue.vicar.option.leave", "next": null,          "event": null},
-            {"text": "hemomancy.dialogue.vicar.option.who",   "next": "some_node",   "event": null},
-            {"text": "hemomancy.dialogue.vicar.option.act",   "next": null,          "event": "my_event"}
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Theme** values: `BLOOD` (red/crimson), `UNSTAINED` (blue/white), `FUNGAL` (amber/orange).  
-**next**: node ID to navigate to, or `null` to end the conversation.  
-**event**: optional event key fired when the option is chosen (see `DialogueEventHandler`).
+The original self-contained editor is still available as `index.html`, with
+`export_to_json.py` and `import_from_json.py`. It is useful for quick visual
+checks or older JSON snapshots, but the workspace app is now the safer authoring
+flow for live repo files.

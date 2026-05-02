@@ -1,4 +1,4 @@
-### Gradle ###
+﻿### Gradle ###
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -44,3 +44,6 @@ repo/
 /docs/GAMEPLAY_DISCOVERY_ROADMAP_MERGED.md
 /docs/MEMOS_FIELD_NOTES_IMPLEMENTATION_GUIDE.md
 *.args
+/tools/dialogue_editor/node_modules/
+/tools/dialogue_editor/dist/
+/tools/
