@@ -1,0 +1,6 @@
+{
+  "conditions": [
+    { "min_purity": 75, "lines": ["hemomancy.zealot.item_inquiry.pallid_infusion.line1", "hemomancy.zealot.item_inquiry.pallid_infusion.line2"] },
+    { "lines": ["hemomancy.zealot.item_inquiry.pallid_infusion.not_yet"] }
+  ]
+}

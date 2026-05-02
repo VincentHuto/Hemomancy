@@ -1,0 +1,7 @@
+{
+  "conditions": [
+    { "max_degree": 1, "lines": ["hemomancy.vicar.item_inquiry.rite_hint.low.line1", "hemomancy.vicar.item_inquiry.rite_hint.low.line2"] },
+    { "max_degree": 4, "lines": ["hemomancy.vicar.item_inquiry.rite_hint.mid.line1", "hemomancy.vicar.item_inquiry.rite_hint.mid.line2"] },
+    { "lines": ["hemomancy.vicar.item_inquiry.rite_hint.high.line1", "hemomancy.vicar.item_inquiry.rite_hint.high.line2"] }
+  ]
+}

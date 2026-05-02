@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.config.HemoConfig;
@@ -30,6 +31,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -126,6 +128,7 @@ public class Hemomancy {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::buildContents);
         forgeBus.register(this);
+        forgeBus.addListener(this::onAddReloadListeners);
 
         // RegisterPayloadsEvent fires on the mod bus â€“ register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
@@ -224,6 +227,10 @@ public class Hemomancy {
     @SubscribeEvent
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
         EngramTextureCache.loadAll();
+    }
+
+    private void onAddReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(new ItemInquiryLoader());
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

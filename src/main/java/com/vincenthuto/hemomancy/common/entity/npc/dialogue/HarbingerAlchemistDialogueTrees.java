@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -373,133 +372,22 @@ public final class HarbingerAlchemistDialogueTrees {
 	}
 
 	/**
-	 * Item inquiry for the Alchemist. Responds to Harbinger crafting items and machines.
-	 * Hemolytic vial and cleansing hemolymph get clinical chemistry responses with no
-	 * mention of Unstained NPCs. Degree gates apply to Loom (3+), Scar Station (4+),
-	 * and Morphling Incubator (5+). Unknown/Unstained items dismissed professionally.
+	 * Item inquiry for the Alchemist. Degree gates apply to Loom (3+),
+	 * Scar Station (4+), and Morphling Incubator (5+) — these conditions are
+	 * expressed as {@code min_degree} fields in the JSON entries.
+	 * Unknown items receive a professional dismissal.
 	 */
 	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
-		Item it = item.getItem();
-		if (it == ItemInit.vivacious_enzyme.get()) return enzymeInquiry("vivacious", entityId);
-		if (it == ItemInit.fervent_enzyme.get()) return enzymeInquiry("fervent", entityId);
-		if (it == ItemInit.neurotic_enzyme.get()) return enzymeInquiry("neurotic", entityId);
-		if (it == ItemInit.incandescent_enzyme.get()) return enzymeInquiry("incandescent", entityId);
-		if (it == ItemInit.ruinous_enzyme.get()) return enzymeInquiry("ruinous", entityId);
-		if (it == ItemInit.frigid_enzyme.get()) return enzymeInquiry("frigid", entityId);
-		if (it == ItemInit.ferric_enzyme.get()) return enzymeInquiry("ferric", entityId);
-		if (it == ItemInit.umbral_enzyme.get()) return enzymeInquiry("umbral", entityId);
-		if (it == ItemInit.recycled_enzyme.get()) return recycledEnzymeInquiry(entityId);
-		if (it == ItemInit.bloody_vial.get()) return bloodVialInquiry(entityId);
-		if (it == ItemInit.blood_gourd_white.get()
-				|| it == ItemInit.blood_gourd_red.get()
-				|| it == ItemInit.blood_gourd_black.get()) return bloodGourdInquiry(entityId);
-		if (it == ItemInit.foul_paste.get()) return foulPasteInquiry(entityId);
-		if (it == BlockInit.ghastly_alembic.get().asItem()) return alembicItemInquiry(entityId);
-		if (it == BlockInit.vial_centrifuge.get().asItem()) return centrifugeItemInquiry(entityId);
-		if (it == BlockInit.somatic_loom.get().asItem()) return loomItemInquiry(degree, entityId);
-		if (it == BlockInit.scar_station.get().asItem()) return scarStationItemInquiry(degree, entityId);
-		if (it == BlockInit.morphling_incubator.get().asItem()) return incubatorItemInquiry(degree, entityId);
-		if (it == ItemInit.hemolytic_vial.get()) return alchemistHemolyticInquiry(entityId);
-		if (it == ItemInit.cleansing_hemolymph.get()) return cleansingHemolymphInquiry(entityId);
-		return alchemistUnknownInquiry(entityId);
-	}
-
-	private static DialogueTree enzymeInquiry(String tendency, int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.enzyme_" + tendency + ".line1",
-				"hemomancy.alchemist.item_inquiry.enzyme_" + tendency + ".line2");
-	}
-
-	private static DialogueTree recycledEnzymeInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.recycled_enzyme.line1",
-				"hemomancy.alchemist.item_inquiry.recycled_enzyme.line2");
-	}
-
-	private static DialogueTree bloodVialInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.blood_vial.line1",
-				"hemomancy.alchemist.item_inquiry.blood_vial.line2");
-	}
-
-	private static DialogueTree bloodGourdInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.blood_gourd.line1",
-				"hemomancy.alchemist.item_inquiry.blood_gourd.line2");
-	}
-
-	private static DialogueTree foulPasteInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.foul_paste.line1",
-				"hemomancy.alchemist.item_inquiry.foul_paste.line2");
-	}
-
-	private static DialogueTree alembicItemInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.ghastly_alembic.line1",
-				"hemomancy.alchemist.item_inquiry.ghastly_alembic.line2");
-	}
-
-	private static DialogueTree centrifugeItemInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.vial_centrifuge.line1",
-				"hemomancy.alchemist.item_inquiry.vial_centrifuge.line2");
-	}
-
-	private static DialogueTree loomItemInquiry(int degree, int entityId) {
-		if (degree < 3) {
-			return basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.somatic_loom.locked");
-		}
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.somatic_loom.line1",
-				"hemomancy.alchemist.item_inquiry.somatic_loom.line2");
-	}
-
-	private static DialogueTree scarStationItemInquiry(int degree, int entityId) {
-		if (degree < 4) {
-			return basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.scar_station.locked");
-		}
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.scar_station.line1",
-				"hemomancy.alchemist.item_inquiry.scar_station.line2");
-	}
-
-	private static DialogueTree incubatorItemInquiry(int degree, int entityId) {
-		if (degree < 5) {
-			return basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.morphling_incubator.locked");
-		}
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.morphling_incubator.line1",
-				"hemomancy.alchemist.item_inquiry.morphling_incubator.line2");
-	}
-
-	private static DialogueTree alchemistHemolyticInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.hemolytic_vial.line1",
-				"hemomancy.alchemist.item_inquiry.hemolytic_vial.line2");
-	}
-
-	private static DialogueTree cleansingHemolymphInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line1",
-				"hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line2");
-	}
-
-	private static DialogueTree alchemistUnknownInquiry(int entityId) {
-		return basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.unknown");
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
+		return ItemInquiryRegistry.INSTANCE
+				.resolve("alchemist", itemId, degree, 0f)
+				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
+				.orElseGet(() -> basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.unknown"));
 	}
 
 	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
-				.addNode(new DialogueNode("root", List.of(
-						lines
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("item_hint", List.of(
-						"hemomancy.alchemist.item_hint"
-				), List.of(
+				.addNode(new DialogueNode("root", List.of(lines), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
