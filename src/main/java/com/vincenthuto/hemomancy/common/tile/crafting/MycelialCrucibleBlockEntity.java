@@ -21,6 +21,7 @@ import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -390,7 +391,7 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         ItemStack immature = recipe.getImmatureResult();
         if (immature.getItem() instanceof ItemImmatureFungalScar immatureScarItem) {
             net.minecraft.resources.ResourceLocation targetId =
-                    net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(
+                    BuiltInRegistries.ITEM.getKey(
                             recipe.getResultItemStack().getItem());
             immatureScarItem.initThreshold(immature, recipe.getTendency(),
                     recipe.getMaturationThreshold(), targetId);
@@ -438,7 +439,7 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
                 com.vincenthuto.hemomancy.common.init.RecipeInit.fungal_scar_cultivation_type.get())) {
             FungalScarCultivationRecipe r = holder.value();
             net.minecraft.resources.ResourceLocation resultId =
-                    net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(
+                    BuiltInRegistries.ITEM.getKey(
                             r.getResultItemStack().getItem());
             if (resultId != null && resultId.toString().equals(targetScarId)) {
                 matchingRecipe = r;

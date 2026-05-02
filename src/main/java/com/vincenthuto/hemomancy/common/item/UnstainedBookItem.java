@@ -33,55 +33,9 @@ public class UnstainedBookItem extends ItemGuideBook {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-
         GuideBookTooltipHelper.appendFilteredUnreadEntryLine(Hemomancy.rloc("liberimmaculatus"), tooltip);
-
         tooltip.add(Component.literal(ChatFormatting.AQUA + "A guide to the Unstained and their ways."));
     }
-
-//	@Override
-//	public boolean hurtEnemy(ItemStack stack, LivingEntity entity, @Nonnull LivingEntity attacker) {
-//		if (!(entity instanceof Player) && entity != null) {
-//			double range = 8;
-//			List<LivingEntity> alreadyTargetedEntities = new ArrayList<>();
-//			int dmg = 5;
-//			long lightningSeed = entity.level.random.nextLong();
-//
-//			Predicate<Entity> selector = e -> e instanceof LivingEntity && !(e instanceof Player)
-//					&& !alreadyTargetedEntities.contains(e);
-//
-//			Random rand = new Random(lightningSeed);
-//			LivingEntity lightningSource = entity;
-//			int hops = entity.level.isThundering() ? 10 : 4;
-//			for (int i = 0; i < hops; i++) {
-//				List<Entity> entities = entity.level.getEntities(lightningSource,
-//						new AABB(lightningSource.getX() - range, lightningSource.getY() - range,
-//								lightningSource.getZ() - range, lightningSource.getX() + range,
-//								lightningSource.getY() + range, lightningSource.getZ() + range),
-//						selector);
-//				if (entities.isEmpty()) {
-//					break;
-//				}
-//
-//				LivingEntity target = (LivingEntity) entities.get(rand.nextInt(entities.size()));
-//				if (attacker instanceof Player player) {
-//					target.hurt(this.damageSources().playerAttack(player), dmg);
-//				} else {
-//					target.hurt(this.damageSources().mobAttack(attacker), dmg);
-//				}
-//
-//				HutosLib.proxy.lightningFX(VecHelper.fromEntityCenter(lightningSource),
-//						VecHelper.fromEntityCenter(target), 1, 0x0179C4, 0xAADFFF);
-//
-//				alreadyTargetedEntities.add(target);
-//				lightningSource = target;
-//				dmg--;
-//			}
-//		}
-//
-//		return super.hurtEnemy(stack, entity, attacker);
-//	}
 
     public Rarity getRarity(ItemStack par1ItemStack) {
         return Rarity.UNCOMMON;

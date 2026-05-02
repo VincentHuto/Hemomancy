@@ -100,6 +100,7 @@ public class ItemInit {
                                     Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
                                     Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
                                     Component.literal("Creative mode only!").withStyle(ChatFormatting.RED))))));
+
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
@@ -114,6 +115,7 @@ public class ItemInit {
                     Hemomancy.rloc("textures/entity/liber_immaculatus.png"))
                     .withBookPrefix("liberimmaculatus/")
                     .withKnowledgeProvider(HemoCapabilityAccess::getLiberKnowledge));
+
     public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
             () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/field_notes.png")));

@@ -1,23 +1,12 @@
  package com.vincenthuto.hemomancy.common.init;
 
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.vincenthuto.hemomancy.Hemomancy;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderTypeInit extends RenderType {
@@ -26,36 +15,6 @@ public class RenderTypeInit extends RenderType {
 	private final static ResourceLocation vine = Hemomancy.rloc("textures/misc/vine.png");
 	private final static ResourceLocation laserBeam2 = Hemomancy.rloc("textures/misc/laser2.png");
 	private final static ResourceLocation laserBeamGlow = Hemomancy.rloc("textures/misc/laser_glow.png");
-
-	public static final ParticleRenderType
-
-	ADDITIVE = new ParticleRenderType() {
-		public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-			Minecraft mc = Minecraft.getInstance();
-			RenderSystem.depthMask(false);
-			mc.gameRenderer.lightTexture().turnOnLightLayer();
-			RenderSystem.enableBlend();
-			RenderSystem.enableCull();
-			RenderSystem.enableDepthTest();
-			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA.value, DestFactor.ONE.value);
-			RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-			AbstractTexture tex = textureManager.getTexture(TextureAtlas.LOCATION_PARTICLES);
-			tex.setBlurMipmap(true, false);
-			return tesselator.begin(Mode.QUADS, DefaultVertexFormat.PARTICLE);
-		}
-
-		public void end(BufferBuilder bufferBuilder) {
-			BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-			Minecraft mc = Minecraft.getInstance();
-			mc.getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES).restoreLastBlurMipmap();
-			RenderSystem.disableBlend();
-			RenderSystem.depthMask(true);
-		}
-
-		public String toString() {
-			return "MNA_ADDITIVE";
-		}
-	};
 
 	static RenderType.CompositeState lightningState = RenderType.CompositeState.builder()
 			.setShaderState(POSITION_COLOR_SHADER).setTransparencyState(LIGHTNING_TRANSPARENCY)
