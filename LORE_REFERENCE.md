@@ -309,6 +309,8 @@ Their weapons are exclusively **blunt instruments**: maces, war hammers, staves.
 - Copper that has fully oxidized and stopped changing represents something that has "done its job" — absorbed all the blood and disease it could until it was saturated, and was then consecrated by that service.
 - A person carrying fully oxidized copper must have survived long enough for it to reach that state, meaning they successfully kept themselves pure throughout. The copper earned its patina by protecting them.
 
+**Virid Salis** is the Unstained's green salt-ash: a verdigris-colored ritual powder that borrows the holiness of patinated copper without pretending the copper is clean. It marks lines of warding and purification in the same practical spirit as ash trails, but its meaning is defensive and antiseptic rather than sanguine.
+
 **Silver** in this world does not spawn naturally. It is **consecrated copper** — copper that has been processed through a ritual of purification until it achieves a purer, refined state. Pale Silver Ingots are the primary high-tier Unstained material.
 
 ### 7.5 What Happens to the Purified

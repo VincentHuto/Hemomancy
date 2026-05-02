@@ -138,6 +138,8 @@ public class ItemInit {
             () -> new ItemNameBlockItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
             () -> new ItemNameBlockItem(BlockInit.befouling_ash_trail.get(), (new Item.Properties())));
+    public static final DeferredHolder<Item, Item> virid_salis = SPECIALITEMS.register("virid_salis",
+            () -> new ItemNameBlockItem(BlockInit.virid_salis_trail.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, Item> active_smouldering_ash = SPECIALITEMS.register("active_smouldering_ash",
             () -> new ItemNameBlockItem(BlockInit.active_smouldering_ash_trail.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, Item> active_befouling_ash = SPECIALITEMS.register("active_befouling_ash",

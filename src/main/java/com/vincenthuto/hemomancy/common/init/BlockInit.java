@@ -116,6 +116,8 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
 			() -> new BefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
+	public static final DeferredHolder<Block, Block> virid_salis_trail = SPECIALBLOCKS.register("virid_salis_trail",
+			() -> new ViridSalisTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
 	public static final DeferredHolder<Block, Block> active_smouldering_ash_trail = SPECIALBLOCKS.register(
 			"active_smouldering_ash_trail",

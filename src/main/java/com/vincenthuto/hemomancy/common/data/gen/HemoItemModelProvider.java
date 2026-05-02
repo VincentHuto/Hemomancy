@@ -41,6 +41,7 @@ public class HemoItemModelProvider extends ItemModelProvider {
 					&& block != BlockInit.active_befouling_ash_trail.get()
 					&& block != BlockInit.active_smouldering_ash_trail.get()
 					&& block != BlockInit.befouling_ash_trail.get()
+					&& block != BlockInit.virid_salis_trail.get()
 					&& block != BlockInit.smouldering_ash_trail.get()
 					&& block != BlockInit.engram_block.get()
 					&& block != BlockInit.filler_block.get()

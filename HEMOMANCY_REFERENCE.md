@@ -915,7 +915,7 @@ A second, deeper Fungal Scar gated behind completion of Qliphoth Communion (Apot
 | Item | Purpose |
 |------|---------|
 | ![](src/main/resources/assets/hemomancy/textures/item/sanguine_formation.png) Sanguine Formation | Catalyst for blood structure recipes |
-| ![](src/main/resources/assets/hemomancy/textures/item/befouling_ash.png) Befouling Ash / ![](src/main/resources/assets/hemomancy/textures/item/smouldering_ash.png) Smouldering Ash | Ash trails for rituals and recipes |
+| ![](src/main/resources/assets/hemomancy/textures/item/befouling_ash.png) Befouling Ash / ![](src/main/resources/assets/hemomancy/textures/item/smouldering_ash.png) Smouldering Ash / ![](src/main/resources/assets/hemomancy/textures/item/virid_salis.png) Virid Salis | Ash trails for rituals and recipes; Virid Salis is the Unstained-aligned green salt-ash |
 | ![](src/main/resources/assets/hemomancy/textures/item/active_befouling_ash.png) Active Befouling / ![](src/main/resources/assets/hemomancy/textures/item/active_smouldering_ash.png) Active Smouldering Ash | Active versions of ash trails |
 | ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_scrap.png) Hematic Iron Scrap | Blood-infused iron alloy ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_powder.png) Hematic Iron Powder | Extracted from blood via centrifuge |
@@ -1038,6 +1038,7 @@ A second, deeper Fungal Scar gated behind completion of Qliphoth Communion (Apot
 | Icon of Our Lady | A rare relic depicting Our Lady of Still Waters — carved from pale silver, grants her protection |
 | ![](src/main/resources/assets/hemomancy/textures/item/pale_silver_ingot.png) Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
 | The Pale Distillate | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
+| ![](src/main/resources/assets/hemomancy/textures/item/virid_salis.png) Virid Salis | Verdigris-colored salt-ash used as the Unstained counterpart to ritual ash trails |
 
 ### 13.7 Food Items
 
@@ -1258,6 +1259,7 @@ A full block family with variants:
 - ![](src/main/resources/assets/hemomancy/textures/block/hemolytic_plating_block.png) Hemolytic Plating Block
 - Cleansed Stone — pale, smooth stone found in Unstained temples
 - Pallid Lantern — softly glowing lantern sacred to Our Lady of Still Waters
+- Virid Salis Trail — green Unstained salt-ash trail block placed by `hemomancy:virid_salis` / `hemomancy:virid_salis_trail`
 
 ### 17.4 Glass & Panes
 
@@ -1312,12 +1314,13 @@ All applicable flowers have **potted** variants.
 
 ### 17.8 Ash Trails
 
-| | | | |
-|---|---|---|---|
-| ![](src/main/resources/assets/hemomancy/textures/item/smouldering_ash.png) Smouldering Ash | ![](src/main/resources/assets/hemomancy/textures/item/active_smouldering_ash.png) Active Smouldering | ![](src/main/resources/assets/hemomancy/textures/item/befouling_ash.png) Befouling Ash | ![](src/main/resources/assets/hemomancy/textures/item/active_befouling_ash.png) Active Befouling |
+| | | | | |
+|---|---|---|---|---|
+| ![](src/main/resources/assets/hemomancy/textures/item/smouldering_ash.png) Smouldering Ash | ![](src/main/resources/assets/hemomancy/textures/item/active_smouldering_ash.png) Active Smouldering | ![](src/main/resources/assets/hemomancy/textures/item/befouling_ash.png) Befouling Ash | ![](src/main/resources/assets/hemomancy/textures/item/active_befouling_ash.png) Active Befouling | ![](src/main/resources/assets/hemomancy/textures/item/virid_salis.png) Virid Salis |
 
 - Smouldering Ash Trail / Active Smouldering Ash Trail
 - Befouling Ash Trail / Active Befouling Ash Trail
+- Virid Salis Trail (Unstained-aligned; currently no active variant)
 
 ### 17.9 Misc
 

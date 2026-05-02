@@ -1,0 +1,7 @@
+{
+  "parent" : "hemomancy:block/virid_salis_side_alt",
+  "render_type" : "cutout",
+  "textures" : {
+    "line" : "hemomancy:block/virid_salis_line1"
+  }
+}
