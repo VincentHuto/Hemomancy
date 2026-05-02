@@ -327,7 +327,8 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
             return false;
         if (!inventory.get(SLOT_OUTPUT).isEmpty()) return false;
 
-        EnumBloodTendency scarTendency = immatureScar.getTendency();
+        EnumBloodTendency scarTendency = ItemImmatureFungalScar.getTendency(center);
+        if (scarTendency == null) return false;
 
         // Collect aligned enzymes
         int enzymeCount = 0;
@@ -388,7 +389,11 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         // Produce immature scar
         ItemStack immature = recipe.getImmatureResult();
         if (immature.getItem() instanceof ItemImmatureFungalScar immatureScarItem) {
-            immatureScarItem.initThreshold(immature);
+            net.minecraft.resources.ResourceLocation targetId =
+                    net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(
+                            recipe.getResultItemStack().getItem());
+            immatureScarItem.initThreshold(immature, recipe.getTendency(),
+                    recipe.getMaturationThreshold(), targetId);
         }
         inventory.set(SLOT_OUTPUT, immature);
     }
@@ -397,7 +402,8 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         ItemStack center = inventory.get(SLOT_CENTER);
         if (center.isEmpty() || !(center.getItem() instanceof ItemImmatureFungalScar immatureScar)) return;
 
-        EnumBloodTendency scarTendency = immatureScar.getTendency();
+        EnumBloodTendency scarTendency = ItemImmatureFungalScar.getTendency(center);
+        if (scarTendency == null) return;
         float totalEnzymePower = 0f;
 
         for (int i = SLOT_ENZYME_START; i <= SLOT_ENZYME_END; i++) {
@@ -423,14 +429,18 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
     private void finishPhase2Complete(ItemStack immatureStack,
             ItemImmatureFungalScar immatureScarItem) {
         if (level == null) return;
-        EnumBloodTendency scarTendency = immatureScarItem.getTendency();
+        CompoundTag tag = immatureStack.getOrDefault(DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        String targetScarId = tag.getString(ItemImmatureFungalScar.TAG_TARGET_SCAR_ID);
 
         FungalScarCultivationRecipe matchingRecipe = null;
         for (var holder : level.getRecipeManager().getAllRecipesFor(
                 com.vincenthuto.hemomancy.common.init.RecipeInit.fungal_scar_cultivation_type.get())) {
             FungalScarCultivationRecipe r = holder.value();
-            if (r.getTendency() == scarTendency
-                    && r.getImmatureResult().getItem() == immatureStack.getItem()) {
+            net.minecraft.resources.ResourceLocation resultId =
+                    net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(
+                            r.getResultItemStack().getItem());
+            if (resultId != null && resultId.toString().equals(targetScarId)) {
                 matchingRecipe = r;
                 break;
             }

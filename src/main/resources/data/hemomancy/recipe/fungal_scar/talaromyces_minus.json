@@ -5,7 +5,7 @@
   "phase1_duration": 1200,
   "maturation_threshold": 2000,
   "immature_result": {
-    "id": "hemomancy:immature_talaromyces_minus"
+    "id": "hemomancy:immature_fungal_scar"
   },
   "result": {
     "id": "hemomancy:talaromyces_minus"
