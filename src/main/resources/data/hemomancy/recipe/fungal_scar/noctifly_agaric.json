@@ -1,0 +1,13 @@
+{
+  "type": "hemomancy:fungal_scar_cultivation",
+  "tendency": "ANIMUS",
+  "blood_cost_phase1": 1200,
+  "phase1_duration": 1200,
+  "maturation_threshold": 2000,
+  "immature_result": {
+    "id": "hemomancy:immature_noctifly_agaric"
+  },
+  "result": {
+    "id": "hemomancy:noctifly_agaric"
+  }
+}

@@ -466,6 +466,7 @@ public final class HarbingerVicarDialogueTrees {
       new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
 	}
 
@@ -478,6 +479,7 @@ public final class HarbingerVicarDialogueTrees {
       new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
 	}
 
@@ -490,6 +492,7 @@ public final class HarbingerVicarDialogueTrees {
       new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
 	}
 
@@ -502,6 +505,7 @@ public final class HarbingerVicarDialogueTrees {
       new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
 	}
 
@@ -514,6 +518,7 @@ public final class HarbingerVicarDialogueTrees {
       new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
 	}
 
@@ -525,7 +530,16 @@ public final class HarbingerVicarDialogueTrees {
       new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(itemHintNode())
 				.build();
+	}
+
+	private static DialogueNode itemHintNode() {
+		return new DialogueNode("item_hint", List.of(
+				"hemomancy.vicar.item_hint"
+		), List.of(
+				new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+		));
 	}
 
 	/**
