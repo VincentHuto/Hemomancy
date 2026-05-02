@@ -428,13 +428,13 @@ Players are directed to seek the Saints around **Degree 3–4**, when they are s
 
 **Trial:** The player enters a locked chamber. Their blood is slowly sapped throughout the trial. Four basins must be filled to precisely the correct level — not overflowing, not empty — while blood-construct monsters spawn throughout. Filling all four basins correctly opens the sealed gates to the inner sarcophagus chamber.
 
-**Boss Mechanic:** Hemorath is described as tall, lanky, dry, and hollow-looking — a desiccated but still animate form. If the player attacks him with blood magic, he **absorbs it**, growing more powerful. The paradoxical solution: you must use blood magic *on* him repeatedly until he absorbs so much that he **bursts and exsanguinates** — killed by the very thing he sought to master. This is an intentional puzzle fight, not a straightforward damage race.
+**Boss Mechanic:** Hemorath is described as tall, lanky, dry, and hollow-looking — a desiccated but still animate form. His current fight hybridizes blood debt and overload: blood magic cast near him deepens the player's owed blood, especially once he weakens, while also filling Hemorath with absorbed blood. Reckless casting can collapse the player under their own debt, but enough absorbed blood overloads Hemorath until he bursts and exsanguinates — killed by the very thing he sought to master. This is an intentional puzzle fight, not a straightforward damage race.
 
-### 10.2 The Chain Saint — The Uncontrolled Healer
+### 10.2 Seraphae, the Chain Saint — Bound Radiance
 
-**Narrative (in development):** A nurse or healer who discovered she could heal people with a touch. As she healed, her veins began to glow. Plants grew rapidly around her. She could not stop — everything she touched bloomed and grew faster, then faster, until her vessels burned through and she became an uncontrolled force of raw life and creation. She had to be restrained and sealed away rather than killed, because she could not be killed in a conventional sense.
+**Narrative:** Seraphae is the final identity of the figure once called only the Chain Saint: a nurse or healer who discovered she could heal people with a touch. As she healed, her veins began to glow. Plants grew rapidly around her. She could not stop — everything she touched bloomed and grew faster, then faster, until her vessels burned through and she became an uncontrolled force of raw life and creation. She had to be restrained with chains and containment anchors rather than killed, because she could not be killed in a conventional sense.
 
-**Boss Mechanic:** The chamber floods with light she emits, which burns the player. The player must avoid her light and find a way to re-chain her — returning the room to darkness — rather than fighting her directly.
+**Boss Mechanic:** The chamber floods with light she emits, which burns the player. The player must avoid her light, bind her fragments, activate containment anchors, and strike during condensing windows to restore containment integrity. The victory condition is to chain Seraphae's radiance back into restraint — returning the room to darkness — rather than killing her directly.
 
 ---
 
@@ -453,6 +453,8 @@ Her sanity broke under the weight of this question. And in that fracture, the la
 **Her thematic domain:** Teeth, nails, hair — the biological materials that are *not* blood-connected (calcium, keratin) but are undeniably biological. These fall into neither the Harbinger (blood, iron, bone) nor the fully Unstained (copper, silver) domain. They are hers.
 
 > *She is not the Pale Lady.* Our Lady of Still Waters is a force of nature, non-physical and non-corporeal. Annetta is a person — a broken person with enormous and terrible power.
+
+**Implementation status:** Annetta is a separate Unstained boss arc, not a Saint. Her entity AI is implemented around a silver-aura first phase and a blood-spear second phase, but her encounter trigger, model, texture, GeckoLib animations, and the fuller teeth/nails/hair combat identity still need dedicated work.
 
 ---
 

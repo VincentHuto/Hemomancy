@@ -31,6 +31,8 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	private boolean isOpen = false;
 	private boolean isConsecrated = false;
 	private int offeringBloodVolume = 0;
+	private boolean saintTypeAssigned = false;
+	private boolean sampleYielded = false;
 
 	// Client-side animation
 	public float lidAngle = 0.0F;
@@ -58,6 +60,20 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 
 	public void setSaintType(EnumSaintType saintType) {
 		this.saintType = saintType;
+		this.saintTypeAssigned = true;
+		setChanged();
+	}
+
+	public boolean isSaintTypeAssigned() {
+		return saintTypeAssigned;
+	}
+
+	public boolean hasSampleYielded() {
+		return sampleYielded;
+	}
+
+	public void setSampleYielded(boolean sampleYielded) {
+		this.sampleYielded = sampleYielded;
 		setChanged();
 	}
 
@@ -131,6 +147,10 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	}
 
 	public void tick() {
+		if (level != null && !level.isClientSide && !saintTypeAssigned) {
+			EnumSaintType[] saints = EnumSaintType.values();
+			setSaintType(saints[level.random.nextInt(saints.length)]);
+		}
 		if (cooldownTicks > 0) {
 			cooldownTicks--;
 			setChanged();
@@ -148,6 +168,7 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		tag.putBoolean("IsConsecrated", isConsecrated);
 		tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
+		tag.putBoolean("SampleYielded", sampleYielded);
 		return tag;
 	}
 
@@ -166,6 +187,8 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		tag.putBoolean("IsOpen", isOpen);
 		tag.putBoolean("IsConsecrated", isConsecrated);
 		tag.putInt("OfferingBloodVolume", offeringBloodVolume);
+		tag.putBoolean("SaintTypeAssigned", saintTypeAssigned);
+		tag.putBoolean("SampleYielded", sampleYielded);
 	}
 
 	@Override
@@ -174,6 +197,7 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		if (tag.contains("SaintType")) {
 			try {
 				saintType = EnumSaintType.valueOf(tag.getString("SaintType"));
+				saintTypeAssigned = true;
 			} catch (IllegalArgumentException e) {
 				saintType = EnumSaintType.HEMORATH;
 			}
@@ -190,5 +214,9 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		isOpen = tag.getBoolean("IsOpen");
 		isConsecrated = tag.getBoolean("IsConsecrated");
 		offeringBloodVolume = tag.getInt("OfferingBloodVolume");
+		if (tag.contains("SaintTypeAssigned")) {
+			saintTypeAssigned = tag.getBoolean("SaintTypeAssigned");
+		}
+		sampleYielded = tag.getBoolean("SampleYielded");
 	}
 }

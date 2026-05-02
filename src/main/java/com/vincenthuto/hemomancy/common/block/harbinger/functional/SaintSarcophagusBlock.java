@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.encounter.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
@@ -72,6 +74,7 @@ public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING
 private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 14, 16);
 /** Blood cost per offering (drained from player's blood volume). */
 private static final double BLOOD_COST_PER_OFFERING = 100.0;
+private static final String TAG_SAINT_TYPE = "SaintType";
 
 /**
  * Base filler offsets defined for SOUTH facing.
@@ -238,6 +241,24 @@ public void setPlacedBy(Level level, BlockPos pos, BlockState state,
 		@Nullable LivingEntity placer, ItemStack stack) {
 	super.setPlacedBy(level, pos, state, placer, stack);
 	if (!level.isClientSide) {
+		BlockEntity be = level.getBlockEntity(pos);
+		if (be instanceof SaintSarcophagusBlockEntity sarcophagus) {
+			CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+			if (customData != null) {
+				CompoundTag tag = customData.copyTag();
+				if (tag.contains(TAG_SAINT_TYPE)) {
+					try {
+						sarcophagus.setSaintType(EnumSaintType.valueOf(tag.getString(TAG_SAINT_TYPE)));
+					} catch (IllegalArgumentException ignored) {
+						assignRandomSaint(level, sarcophagus);
+					}
+				} else {
+					assignRandomSaint(level, sarcophagus);
+				}
+			} else {
+				assignRandomSaint(level, sarcophagus);
+			}
+		}
 		placeFillers(level, pos, state);
 	}
 }
@@ -359,6 +380,20 @@ if (!(be instanceof SaintSarcophagusBlockEntity sarcophagus)) {
 return InteractionResult.PASS;
 }
 
+// Foul Paste is deliberate desecration: it forces the saint awake regardless of alignment.
+if (heldStack.is(ItemInit.foul_paste.get())) {
+	sarcophagus.setCorpusState(EnumCorpusState.AWAKENED);
+	if (!player.getAbilities().instabuild) {
+		heldStack.shrink(1);
+	}
+	player.displayClientMessage(
+		Component.literal("The paste blackens on the stone. The Saint remembers insult before mercy.")
+			.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+		false);
+	triggerSaintEncounter(worldIn, pos, player, sarcophagus);
+	return InteractionResult.CONSUME;
+}
+
 // ── Consecration gate ─────────────────────────────────────────────────────
 // The sarcophagus demands a blood offering poured into the bowl on its
 // northern face before the lid will yield. Blood is drawn from the player.
@@ -445,16 +480,8 @@ return InteractionResult.CONSUME;
 
 // If the corpus is AWAKENED, trigger combat encounter and consume block
 if (sarcophagus.getCorpusState() == EnumCorpusState.AWAKENED) {
-player.displayClientMessage(
-Component.literal("The corpus seethes with hostility. It will not receive you.")
-.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-false);
-if (worldIn instanceof ServerLevel serverLevel) {
-HarbingerSaintEncounterHooks.spawnSaintBoss(serverLevel, pos, player);
-}
-worldIn.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.2f);
-worldIn.removeBlock(pos, false);
-return InteractionResult.CONSUME;
+	triggerSaintEncounter(worldIn, pos, player, sarcophagus);
+	return InteractionResult.CONSUME;
 }
 
 // Check for cooldown
@@ -490,8 +517,25 @@ if (stack.getItem() instanceof BloodVialItem
 	if (handIn == null) {
 		return InteractionResult.PASS;
 	}
-consecrateVial(worldIn, pos, player, handIn, stack, sarcophagus);
-return InteractionResult.CONSUME;
+	if (sarcophagus.hasSampleYielded()) {
+		player.displayClientMessage(
+			Component.literal("The corpus has already yielded what it will give peacefully.")
+				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+			false);
+		return InteractionResult.CONSUME;
+	}
+	if (!isPlayerAlignedWithSaint(player, sarcophagus.getSaintType())) {
+		sarcophagus.incrementExtractionAttempts();
+		sarcophagus.setCorpusState(EnumCorpusState.AWAKENED);
+		player.displayClientMessage(
+			Component.literal("The corpus recoils from your blood. The Saint wakes in rejection.")
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+			false);
+		triggerSaintEncounter(worldIn, pos, player, sarcophagus);
+		return InteractionResult.CONSUME;
+	}
+	consecrateVial(worldIn, pos, player, handIn, stack, sarcophagus);
+	return InteractionResult.CONSUME;
 }
 
 return InteractionResult.PASS;
@@ -583,6 +627,7 @@ Component.literal("The corpus yields its blood. Process the Consecrated Syringe 
 false);
 worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.2f);
 spawnAmbienceParticles(worldIn, pos);
+sarcophagus.setSampleYielded(true);
 }
 
 private void spawnAmbienceParticles(Level worldIn, BlockPos pos) {
@@ -591,5 +636,41 @@ serverLevel.sendParticles(ParticleTypes.SOUL,
 pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
 15, 0.5, 0.5, 0.5, 0.02);
 }
+}
+
+private static void assignRandomSaint(Level level, SaintSarcophagusBlockEntity sarcophagus) {
+	EnumSaintType[] saints = EnumSaintType.values();
+	sarcophagus.setSaintType(saints[level.random.nextInt(saints.length)]);
+}
+
+private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType saint) {
+	IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player).orElse(null);
+	if (tendency == null) {
+		return false;
+	}
+	EnumBloodTendency dominant = null;
+	float dominantValue = 0.0F;
+	for (EnumBloodTendency candidate : EnumBloodTendency.values()) {
+		float value = tendency.getAlignmentByTendency(candidate);
+		if (value > dominantValue) {
+			dominant = candidate;
+			dominantValue = value;
+		}
+	}
+	return dominant != null && dominantValue > 0.0F && saint.isAligned(dominant);
+}
+
+private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player player,
+		SaintSarcophagusBlockEntity sarcophagus) {
+	player.displayClientMessage(
+		Component.literal("The corpus seethes with hostility. Saint " + sarcophagus.getSaintType().getDisplayName()
+			+ " will not receive you.")
+			.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+		false);
+	if (worldIn instanceof ServerLevel serverLevel) {
+		HarbingerSaintEncounterHooks.spawnSaintBoss(serverLevel, pos, player, sarcophagus.getSaintType());
+	}
+	worldIn.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.2f);
+	worldIn.removeBlock(pos, false);
 }
 }

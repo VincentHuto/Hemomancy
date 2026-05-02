@@ -64,12 +64,18 @@ public class HollowVesselEntity extends Monster {
 			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Integer> DATA_PHASE =
 			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Float> DATA_ABSORBED_BLOOD =
+			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.FLOAT);
 
 	private static final float PHASE_2_HEALTH_FRACTION = 0.5F;
 	private static final float SIPHON_HEAL_FRACTION = 0.35F;
 	private static final float HEMOPHAGY_HEAL_MULTIPLIER = 0.25F;
 	private static final double PHASE_2_BLOOD_SPEND_BONUS = 0.25D;
 	private static final double PHASE_2_DETECTION_RADIUS = 48.0D;
+	private static final float OVERLOAD_THRESHOLD = 3000.0F;
+	private static final float OVERLOAD_PHASE_2_MULTIPLIER = 1.35F;
+
+	private boolean overloaded;
 
 	public final AnimationState idleAnimationState = new AnimationState();
 	public final AnimationState collapseChargeAnimationState = new AnimationState();
@@ -114,6 +120,7 @@ public class HollowVesselEntity extends Monster {
 		super.defineSynchedData(builder);
 		builder.define(DATA_COLLAPSE_CHARGING, false);
 		builder.define(DATA_PHASE, 1);
+		builder.define(DATA_ABSORBED_BLOOD, 0.0F);
 	}
 
 	public boolean isCollapseCharging() {
@@ -130,6 +137,27 @@ public class HollowVesselEntity extends Monster {
 
 	public boolean isInPhase2() {
 		return getPhase() >= 2;
+	}
+
+	public float getAbsorbedBlood() {
+		return this.entityData.get(DATA_ABSORBED_BLOOD);
+	}
+
+	public void addAbsorbedBlood(Player source, double amount) {
+		if (this.level().isClientSide || overloaded || amount <= 0) {
+			return;
+		}
+		float gained = (float) (amount * (isInPhase2() ? OVERLOAD_PHASE_2_MULTIPLIER : 1.0F));
+		float absorbed = Math.min(OVERLOAD_THRESHOLD, getAbsorbedBlood() + gained);
+		this.entityData.set(DATA_ABSORBED_BLOOD, absorbed);
+		if (absorbed >= OVERLOAD_THRESHOLD) {
+			triggerOverload(source);
+		} else if (source instanceof ServerPlayer serverPlayer && absorbed >= OVERLOAD_THRESHOLD * 0.75F) {
+			serverPlayer.displayClientMessage(
+					Component.literal("Hemorath's hollow frame strains with stolen blood.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					true);
+		}
 	}
 
 	@Override
@@ -234,16 +262,7 @@ public class HollowVesselEntity extends Monster {
 	@Override
 	public void die(DamageSource source) {
 		if (!this.level().isClientSide && source.getEntity() instanceof Player player) {
-			ItemStack drop = new ItemStack(ItemInit.hallowed_residuum_hemorath.get());
-			if (!player.getInventory().add(drop)) {
-				player.drop(drop, false);
-			}
-			player.displayClientMessage(
-					Component.literal("The Vessel quiets. You carry the enzyme of Saint Hemorath.")
-							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
-					false);
-			HemoCapabilityAccess.getBloodVolume(player)
-					.ifPresent(IBloodVolume::resetBloodDebt);
+			awardResiduum(player);
 		}
 		super.die(source);
 	}
@@ -277,12 +296,50 @@ public class HollowVesselEntity extends Monster {
 		if (player.level().isClientSide) return;
 		for (HollowVesselEntity vessel : player.level().getEntitiesOfClass(
 				HollowVesselEntity.class, player.getBoundingBox().inflate(PHASE_2_DETECTION_RADIUS))) {
-			if (vessel.isAlive() && vessel.isInPhase2() && vessel.getTarget() == player) {
-				HemoCapabilityAccess.getBloodVolume(player)
-						.ifPresent(v -> v.addDamage(amount * PHASE_2_BLOOD_SPEND_BONUS));
+			if (vessel.isAlive() && vessel.getTarget() == player) {
+				vessel.addAbsorbedBlood(player, amount);
+				if (vessel.isInPhase2()) {
+					HemoCapabilityAccess.getBloodVolume(player)
+							.ifPresent(v -> v.addDamage(amount * PHASE_2_BLOOD_SPEND_BONUS));
+				}
 				return;
 			}
 		}
+	}
+
+	private void triggerOverload(Player source) {
+		overloaded = true;
+		if (this.level() instanceof ServerLevel server) {
+			server.playSound(null, this.getX(), this.getY(), this.getZ(),
+					SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 2.0F, 0.6F);
+			server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+					this.getX(), this.getY() + 1.0, this.getZ(),
+					80, 1.2, 1.2, 1.2, 0.18);
+			server.sendParticles(ParticleTypes.LARGE_SMOKE,
+					this.getX(), this.getY() + 1.0, this.getZ(),
+					50, 1.0, 1.0, 1.0, 0.12);
+		}
+		if (source != null) {
+			source.displayClientMessage(
+					Component.literal("Hemorath bursts, exsanguinated by the blood he refused to release.")
+							.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+					false);
+			awardResiduum(source);
+		}
+		this.discard();
+	}
+
+	private void awardResiduum(Player player) {
+		ItemStack drop = new ItemStack(ItemInit.hallowed_residuum_hemorath.get());
+		if (!player.getInventory().add(drop)) {
+			player.drop(drop, false);
+		}
+		player.displayClientMessage(
+				Component.literal("The Vessel quiets. You carry the enzyme of Saint Hemorath.")
+						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+				false);
+		HemoCapabilityAccess.getBloodVolume(player)
+				.ifPresent(IBloodVolume::resetBloodDebt);
 	}
 
 	/**

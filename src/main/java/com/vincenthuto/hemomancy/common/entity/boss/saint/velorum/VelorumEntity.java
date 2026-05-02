@@ -91,6 +91,7 @@ public class VelorumEntity extends Monster {
     public final AnimationState martyrdomAnimationState = new AnimationState();
 
     private boolean defeated = false;
+    private int martyrdomTimer = 0;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.hemomancy.velorum"),
@@ -176,6 +177,13 @@ public class VelorumEntity extends Monster {
         ServerLevel server = (ServerLevel) this.level();
 
         bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+
+        if (martyrdomTimer > 0) {
+            martyrdomTimer--;
+            if (martyrdomTimer == 0) {
+                setMartyrdom(false);
+            }
+        }
 
         // Frost nova
         if (this.tickCount % FROST_NOVA_INTERVAL == 0) {
@@ -265,7 +273,7 @@ public class VelorumEntity extends Monster {
                     MobEffects.DAMAGE_RESISTANCE, MARTYRDOM_RESISTANCE_DURATION,
                     MARTYRDOM_RESISTANCE_AMP, false, false));
             setMartyrdom(true);
-            // Schedule martyrdom flag off (approximated via effect duration)
+            martyrdomTimer = MARTYRDOM_RESISTANCE_DURATION;
         }
         return hurt;
     }

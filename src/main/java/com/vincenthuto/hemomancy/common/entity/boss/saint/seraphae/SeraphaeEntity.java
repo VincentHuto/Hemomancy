@@ -70,6 +70,8 @@ public class SeraphaeEntity extends Monster {
 	private static final float ANCHOR_CONTAIN_GAIN = 5.0F;
 	/** Large integrity burst during successful CONDENSING window. */
 	private static final float CONDENSE_BURST_GAIN = 20.0F;
+	/** Integrity gained from direct hits while the Chain Saint is condensing. */
+	private static final float CONDENSING_HIT_GAIN = 4.0F;
 
 	// ── state timing ──────────────────────────────────────────────────
 	/** Ticks Seraphae stays STABLE before fracturing. */
@@ -179,11 +181,29 @@ public class SeraphaeEntity extends Monster {
 	public boolean hurt(DamageSource source, float amount) {
 		// Seraphae cannot be conventionally killed — absorb damage but don't
 		// let health reach 0. Fragments are the mechanic, not DPS.
+		boolean condensingPlayerHit = !this.level().isClientSide && getSeraphaeState() == SeraphaeState.CONDENSING
+				&& source.getEntity() instanceof Player;
 		if (!this.level().isClientSide && this.getHealth() - amount <= 1.0F) {
+			if (condensingPlayerHit) {
+				recordCondensingHit();
+			}
 			this.setHealth(1.0F);
 			return false;
 		}
-		return super.hurt(source, amount);
+		boolean hurt = super.hurt(source, amount);
+		if (hurt && condensingPlayerHit) {
+			recordCondensingHit();
+		}
+		return hurt;
+	}
+
+	private void recordCondensingHit() {
+		setContainmentIntegrity(getContainmentIntegrity() + CONDENSING_HIT_GAIN);
+		if (this.level() instanceof ServerLevel server) {
+			server.sendParticles(ParticleTypes.END_ROD,
+					this.getX(), this.getY() + 1.5, this.getZ(),
+					8, 0.5, 0.8, 0.5, 0.03);
+		}
 	}
 
 	// ── main tick ─────────────────────────────────────────────────────
@@ -287,7 +307,7 @@ public class SeraphaeEntity extends Monster {
 				this.getX(), this.getY() + 1.0, this.getZ(),
 				40, 1.0, 1.2, 1.0, 0.15);
 
-		broadcastMessage("Seraphae fractures! Contain the fragments!", ChatFormatting.RED);
+		broadcastMessage("Seraphae, the Chain Saint, fractures! Bind the fragments!", ChatFormatting.RED);
 	}
 
 	private void enterDispersed(ServerLevel server) {
@@ -310,7 +330,7 @@ public class SeraphaeEntity extends Monster {
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
 				SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 2.0F, 0.8F);
 
-		broadcastMessage("Seraphae condenses — strike now for containment!", ChatFormatting.GREEN);
+		broadcastMessage("The chains draw Seraphae inward - strike now for containment!", ChatFormatting.GREEN);
 	}
 
 	// ── per-state tick behaviour ──────────────────────────────────────
@@ -475,7 +495,7 @@ public class SeraphaeEntity extends Monster {
 				this.getX(), this.getY() + 1.0, this.getZ(),
 				80, 2.0, 2.0, 2.0, 0.2);
 
-		broadcastMessage("Seraphae is bound. The radiance is contained.",
+		broadcastMessage("Seraphae is chained once more. The radiance is contained.",
 				ChatFormatting.GOLD);
 
 		// Drop reward to nearest player
@@ -561,7 +581,7 @@ public class SeraphaeEntity extends Monster {
 		super.startSeenByPlayer(player);
 		bossEvent.addPlayer(player);
 		player.displayClientMessage(
-				Component.literal("The Bound Radiance stirs. Maintain containment.")
+				Component.literal("Seraphae, the Chain Saint, stirs. Maintain containment.")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 				false);
 	}

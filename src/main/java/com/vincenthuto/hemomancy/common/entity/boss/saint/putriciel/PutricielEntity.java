@@ -245,22 +245,30 @@ public class PutricielEntity extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        boolean hurt = super.hurt(source, amount);
-        if (hurt && isAbsolved() && !this.level().isClientSide) {
+        if (!this.level().isClientSide && !isAbsolved() && this.getHealth() - amount <= 1.0F) {
+            this.setHealth(1.0F);
+            return false;
+        }
+        if (!this.level().isClientSide && isAbsolved()) {
             incrementAbsolution();
             if (getAbsolutionCount() >= ABSOLUTIONS_NEEDED) {
                 onTrialComplete((ServerLevel) this.level());
+                return true;
             }
+            if (this.getHealth() - amount <= 1.0F) {
+                amount = Math.max(0.0F, this.getHealth() - 1.0F);
+            }
+            return super.hurt(source, amount) || amount > 0.0F;
         }
-        return hurt;
+        return super.hurt(source, amount);
     }
 
     private void onTrialComplete(ServerLevel server) {
         defeated = true;
         broadcastMessage("The Saint finds rest.", ChatFormatting.GOLD);
-        this.discard();
         // Spawn Hallowed Residuum of Putriciel
         this.spawnAtLocation(new ItemStack(ItemInit.hallowed_residuum_putriciel.get(), 1));
+        this.discard();
     }
 
     // ── drops ─────────────────────────────────────────────────────────────
