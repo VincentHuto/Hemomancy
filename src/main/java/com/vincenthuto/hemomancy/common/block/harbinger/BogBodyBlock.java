@@ -135,6 +135,24 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
         return InteractionResult.SUCCESS;
       }
 
+      private InteractionResult harvestWithScalpel(BlockState state, Level worldIn, BlockPos pos, Player player) {
+        if (!state.getValue(HARVESTED)) {
+          BlockState newState = state.setValue(HARVESTED, true);
+          worldIn.setBlock(pos, newState, 10);
+
+          // Precision extraction — halved pain, doubled yield
+          player.hurt(player.damageSources().generic(), 0.5f);
+          if (!worldIn.isClientSide) {
+            HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
+                BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+            ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
+                new ItemStack(ItemInit.vivianite_cluster.get(), 2));
+            worldIn.addFreshEntity(spawn);
+          }
+        }
+        return InteractionResult.SUCCESS;
+      }
+
       @Override
       protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
           BlockHitResult result) {
@@ -144,7 +162,10 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
       @Override
       protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
           Player player, InteractionHand handIn, BlockHitResult result) {
-        return ItemInteractionResult.SUCCESS;
+        if (stack.getItem() == ItemInit.vivianite_scalpel.get()) {
+          return ItemInteractionResult.sidedSuccess(harvestWithScalpel(state, worldIn, pos, player) == InteractionResult.SUCCESS, worldIn.isClientSide);
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
       }
 
     @Override

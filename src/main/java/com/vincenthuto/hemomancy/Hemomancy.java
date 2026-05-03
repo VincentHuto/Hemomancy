@@ -310,10 +310,10 @@ public class Hemomancy {
 
         BookEntryRegistry.registerItemUnlock(rloc("consecrated_copper_ingot"),  LiberEntryDefinitions.COPPER_AND_SILVER);
         BookEntryRegistry.registerItemUnlock(rloc("silver_chalice"),            LiberEntryDefinitions.COPPER_AND_SILVER);
-        BookEntryRegistry.registerItemUnlock(rloc("vivianite_cluster"),         LiberEntryDefinitions.COPPER_AND_SILVER);
+        BookEntryRegistry.registerItemUnlock(rloc("vivianite_cluster"),         LiberEntryDefinitions.THE_HARBINGERS);
 
         BookEntryRegistry.registerItemUnlock(rloc("hemolytic_solution"),  LiberEntryDefinitions.THE_UNSTAINED);
-        BookEntryRegistry.registerItemUnlock(rloc("vivianite_scalpel"),   LiberEntryDefinitions.THE_UNSTAINED);
+        BookEntryRegistry.registerItemUnlock(rloc("vivianite_scalpel"),   LiberEntryDefinitions.BLOOD_MEMORIES);
         BookEntryRegistry.registerItemUnlock(rloc("absolution_dagger"),   LiberEntryDefinitions.THE_UNSTAINED);
 
         BookEntryRegistry.registerItemUnlock(rloc("cleansed_blood_crystal_shard"),  LiberEntryDefinitions.PURIFIED);

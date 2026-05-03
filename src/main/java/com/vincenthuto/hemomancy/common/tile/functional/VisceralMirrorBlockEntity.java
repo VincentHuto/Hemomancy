@@ -17,6 +17,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -133,6 +134,14 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 				.map(d -> d.getDegreeNumber()).orElse(0);
 		if (degree < REQUIRED_DEGREE) {
 			sendStatusToPlayer(player, "You lack the initiatory degree to peer into the visceral mirror.");
+			return false;
+		}
+
+		// Check that the player holds a vivianite scalpel in either hand
+		boolean hasScalpel = player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemInit.vivianite_scalpel.get()
+				|| player.getItemInHand(InteractionHand.OFF_HAND).getItem() == ItemInit.vivianite_scalpel.get();
+		if (!hasScalpel) {
+			sendStatusToPlayer(player, "A vivianite scalpel is required to perform organ extraction.");
 			return false;
 		}
 
