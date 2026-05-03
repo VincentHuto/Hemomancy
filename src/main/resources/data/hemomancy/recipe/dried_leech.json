@@ -3,7 +3,9 @@
   "ingredient": {
     "item": "hemomancy:swollen_leech"
   },
-  "result": "hemomancy:dried_leech",
+  "result": {
+    "id": "hemomancy:dried_leech"
+  },
   "experience": 1.0,
   "cookingtime": 200
 }
