@@ -4,7 +4,10 @@ import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -48,6 +51,14 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	/** How many valid reagents have been tossed in since the last reset. */
 	private int reagentsAccepted = 0;
 
+	/**
+	 * The organ that this reagent batch is tuned for.
+	 * Set on the first accepted reagent; subsequent reagents must match the same organ.
+	 * Null when the brazier is idle or freshly lit.
+	 */
+	@Nullable
+	private EnumOrgan lockedOrgan = null;
+
 	/** Server tick counter for the sanguine flame timeout. */
 	private int sanguineTicks = 0;
 
@@ -72,13 +83,26 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 	/**
 	 * Attempts to accept a reagent item thrown into the brazier by the player.
+	 * The first accepted reagent locks the brazier to a specific organ; subsequent
+	 * reagents must be of the same organ-resonant type.
 	 * @return true if the item was consumed as a valid reagent
 	 */
 	public boolean tryAcceptReagent(Player player, ItemStack stack, Level level, BlockPos pos, BlockState state) {
 		int phase = state.getValue(BrazierBlock.RITUAL_PHASE);
 		if (phase != 1) return false; // Must be in normal-lit state
 
-		if (!isValidReagent(stack)) return false;
+		EnumOrgan organForItem = organForReagent(stack);
+		if (organForItem == null) return false;
+
+		// On the first reagent, lock the organ; on subsequent ones, enforce it.
+		if (lockedOrgan == null) {
+			lockedOrgan = organForItem;
+		} else if (lockedOrgan != organForItem) {
+			msg(player, "The brazier is already attuned to the "
+					+ lockedOrgan.getName().toLowerCase() + ". Offer matching reagents.",
+					ChatFormatting.RED);
+			return false;
+		}
 
 		stack.shrink(1);
 		reagentsAccepted++;
@@ -88,7 +112,8 @@ public class IronBrazierBlockEntity extends BlockEntity {
 			// Transition to sanguine flame state
 			level.setBlock(pos, state.setValue(BrazierBlock.RITUAL_PHASE, 2), 3);
 			sanguineTicks = 0;
-			msg(player, "The brazier erupts with sanguine flames — offer an Echo to the fire.",
+			msg(player, "The brazier erupts with sanguine flames — offer the Echo of your "
+					+ lockedOrgan.getName().toLowerCase() + " to the fire.",
 					ChatFormatting.DARK_RED);
 		} else {
 			int remaining = REQUIRED_REAGENTS - reagentsAccepted;
@@ -100,6 +125,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 	/**
 	 * Attempts to accept an organ echo item to complete the upgrade ritual.
+	 * The offered echo must match the organ the brazier is currently attuned to.
 	 * @return true if the echo was consumed and the organ was upgraded
 	 */
 	public boolean tryAcceptEcho(Player player, ItemStack stack, Level level, BlockPos pos, BlockState state) {
@@ -109,6 +135,14 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (!(stack.getItem() instanceof OrganEchoItem echoItem)) return false;
 
 		EnumOrgan organ = echoItem.getOrgan();
+
+		// The echo must match the organ the reagents were attuned to.
+		if (lockedOrgan != null && lockedOrgan != organ) {
+			msg(player, "These flames were kindled for the "
+					+ lockedOrgan.getName().toLowerCase() + ". Offer the correct Echo.",
+					ChatFormatting.RED);
+			return false;
+		}
 
 		// Check and upgrade the organ on the player's capability
 		boolean[] success = { false };
@@ -148,14 +182,32 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 	// ========================== HELPERS ==========================
 
-	private boolean isValidReagent(ItemStack stack) {
-		return stack.getItem() == com.vincenthuto.hemomancy.common.init.ItemInit.blood_crystal_shard.get()
-				|| stack.getItem() == com.vincenthuto.hemomancy.common.init.ItemInit.vivianite_cluster.get();
+	/**
+	 * Maps a reagent item to the organ it is resonant with.
+	 * Returns {@code null} if the item is not a recognized brazier reagent.
+	 *
+	 * <ul>
+	 *   <li>Heart     → blood_crystal_shard   (pure life-force)</li>
+	 *   <li>Spleen    → vivianite_cluster      (mineral, blood-volume filtration)</li>
+	 *   <li>Lungs     → fervent_husk           (breath, combustion)</li>
+	 *   <li>Kidneys   → consecrated_copper_ingot (copper-salt filtration)</li>
+	 *   <li>Liver     → dicentra_sap           (fluid, alchemical cleansing)</li>
+	 * </ul>
+	 */
+	@Nullable
+	private static EnumOrgan organForReagent(ItemStack stack) {
+		if (stack.getItem() == ItemInit.blood_crystal_shard.get())    return EnumOrgan.HEART;
+		if (stack.getItem() == ItemInit.vivianite_cluster.get())       return EnumOrgan.SPLEEN;
+		if (stack.getItem() == ItemInit.fervent_husk.get())            return EnumOrgan.LUNGS;
+		if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) return EnumOrgan.KIDNEYS;
+		if (stack.getItem() == ItemInit.dicentra_sap.get())            return EnumOrgan.LIVER;
+		return null;
 	}
 
 	private void resetRitual(Level level, BlockPos pos, BlockState state) {
 		reagentsAccepted = 0;
 		sanguineTicks = 0;
+		lockedOrgan = null;
 		// Go back to normal lit (phase 1)
 		BlockState current = level.getBlockState(pos);
 		if (current.getValue(BrazierBlock.RITUAL_PHASE) == 2) {
@@ -179,6 +231,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 	public int getReagentsAccepted() { return reagentsAccepted; }
 	public int getSanguineTicks() { return sanguineTicks; }
+	@Nullable public EnumOrgan getLockedOrgan() { return lockedOrgan; }
 
 	// ========================== NBT ==========================
 
@@ -187,6 +240,9 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		super.saveAdditional(tag, provider);
 		tag.putInt("ReagentsAccepted", reagentsAccepted);
 		tag.putInt("SanguineTicks", sanguineTicks);
+		if (lockedOrgan != null) {
+			tag.putString("LockedOrgan", lockedOrgan.name());
+		}
 	}
 
 	@Override
@@ -194,6 +250,8 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		super.loadAdditional(tag, provider);
 		reagentsAccepted = tag.getInt("ReagentsAccepted");
 		sanguineTicks = tag.getInt("SanguineTicks");
+		String organName = tag.getString("LockedOrgan");
+		lockedOrgan = organName.isEmpty() ? null : EnumOrgan.byName(organName);
 	}
 
 	@Override
