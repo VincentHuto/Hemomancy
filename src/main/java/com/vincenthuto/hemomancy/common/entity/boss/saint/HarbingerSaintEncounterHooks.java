@@ -1,7 +1,6 @@
-package com.vincenthuto.hemomancy.common.encounter;
+package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

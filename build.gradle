@@ -166,9 +166,8 @@ dependencies {
     //implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     implementation files("libs/geckolib-neoforge-${minecraft_version}-${geckolib_version}.jar")
 
-    // ── HutosLib – requires NeoForge 1.21 recompile; use local libs/ until published ──
-  //  implementation "com.vincenthuto:hutoslib:7.0.0"
-    implementation files("libs/hutoslib-${hutoslib_version}.jar")
+    // ── HutosLib – use the local workspace build when available ─────────────────
+    implementation "com.vincenthuto.hutoslib:hutoslib:${hutoslib_version}"
 
     // ── Curios – DISABLED: awaiting NeoForge 1.21.1 build ────────────────────────
     // TODO: re-enable once top.theillusivec4.curios:curios-neoforge:1.21.1+X is released

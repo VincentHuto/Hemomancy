@@ -58,6 +58,9 @@ public final class MemoBookFilter implements IBookPageFilter {
 					chapter.getTitle(),
 					chapter.getSubtitle(),
 					chapter.getIcon());
+			if (chapter.getId() != null) {
+				chapterCopy.setId(chapter.getId());
+			}
 			List<BookDataTemplate> pages = new ArrayList<>();
 			for (BookDataTemplate page : chapter.getPages()) {
 				if (isPageVisible(page.getId(), gatedEntries, unlockedEntries)) {
@@ -70,6 +73,8 @@ public final class MemoBookFilter implements IBookPageFilter {
 			}
 		}
 		filtered.setChapters(chapters);
+		filtered.setPageFilter(source.getPageFilter());
+		filtered.setTheme(source.getTheme());
 		return filtered;
 	}
 
@@ -77,11 +82,22 @@ public final class MemoBookFilter implements IBookPageFilter {
 	 * A page is visible when:
 	 * <ul>
 	 *   <li>it has no ID (e.g. a title or decorative page), or</li>
-	 *   <li>it is tracked by {@link LiberEntryDefinitions} for the current book and unlocked by the player.</li>
+	 *   <li>it is registered in {@link LiberEntryDefinitions} for the current
+	 *       book <em>and</em> the player has unlocked it.</li>
 	 * </ul>
+	 *
+	 * <p>Pages that are not registered in {@link LiberEntryDefinitions} are
+	 * treated as gated-but-undefined and remain hidden. This matches the
+	 * design intent recorded in {@code HEMOMANCY_REFERENCE.md}: discoverable
+	 * pages must be explicitly registered with a discovery trigger before
+	 * they can appear.
 	 */
 	private static boolean isPageVisible(ResourceLocation pageId,
 			Set<ResourceLocation> gatedEntries, Set<ResourceLocation> unlockedEntries) {
-		return pageId == null || (gatedEntries.contains(pageId) && unlockedEntries.contains(pageId));
+		if (pageId == null) {
+			return true;
+		}
+		return gatedEntries.contains(pageId) && unlockedEntries.contains(pageId);
 	}
 }
+

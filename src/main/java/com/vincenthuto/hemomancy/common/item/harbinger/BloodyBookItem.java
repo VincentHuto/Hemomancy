@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
-import com.vincenthuto.hemomancy.common.item.shared.GuideBookTooltipHelper;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.book.BookTheme;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
@@ -31,7 +30,7 @@ public class BloodyBookItem extends ItemGuideBook {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        GuideBookTooltipHelper.appendFilteredUnreadEntryLine(Hemomancy.rloc("sanctumsanguinium"), tooltip);
+        super.appendHoverText(stack, context, tooltip, flagIn);
     }
 
     @Override
@@ -44,12 +43,25 @@ public class BloodyBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide && book != null) {
-            BookCodeModel filtered = new MemoBookFilter().filter(book, player);
-            filtered.setTheme(new BookTheme(
+            final BookCodeModel rawBook = book;
+            final BookTheme theme = new BookTheme(
                     Hemomancy.rloc("textures/gui/guide/book.png"),
                     0xAA0000,
-                    Hemomancy.rloc("textures/gui/guide/hemo_overlay.png")));
-            HLGuiGuideTitlePage.openScreenViaItem(filtered);
+                    Hemomancy.rloc("textures/gui/guide/hemo_overlay.png"));
+            BookCodeModel filtered = applyVisibilityFilters(rawBook, player);
+            filtered.setTheme(theme);
+            // Refresher: re-runs visibility filters against the player's current
+            // knowledge, so HLGuiGuideTitlePage.refreshIfOpen() can rebuild the
+            // visible chapter list when a sync packet arrives while the book is
+            // open. Recomputed lazily so it picks up the freshest capability state.
+            java.util.function.Supplier<BookCodeModel> refresher = () -> {
+                BookCodeModel r = applyVisibilityFilters(rawBook, player);
+                r.setTheme(theme);
+                return r;
+            };
+            HLGuiGuideTitlePage.openScreen(filtered, null, player.getUUID(),
+                    HemoCapabilityAccess.getLiberKnowledge(player).orElse(null),
+                    refresher);
         }
 
         return super.use(lvl, player, hand);

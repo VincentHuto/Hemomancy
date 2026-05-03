@@ -27,8 +27,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
  * through {@code BookEntryRegistry} rather than Hemomancy's own internal maps.
  *
  * <p>Item and advancement → entry mappings are registered during
- * {@code FMLCommonSetupEvent} in
- * {@link com.vincenthuto.hemomancy.Hemomancy#initLiberBookUnlocks()}.
+ * {@code FMLCommonSetupEvent} in {@code Hemomancy.initLiberBookUnlocks()}.
  *
  * <p>Rite-based and dialogue-based unlocks are not event-driven and are
  * triggered programmatically from {@link LiberKnowledgeHelper} directly.
@@ -58,3 +57,4 @@ public final class LiberDiscoveryEvents {
 		}
 	}
 }
+

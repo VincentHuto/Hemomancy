@@ -18,6 +18,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketSyncLiberKnowledge implements CustomPacketPayload {
@@ -27,20 +29,35 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 
 	private final Map<ResourceLocation, Set<IDiscoverySource>> entrySources;
 	private final Set<ResourceLocation> memos;
+	private final Set<ResourceLocation> markUnreadEntries;
 
 	public PacketSyncLiberKnowledge(IBookKnowledge knowledge) {
+		this(knowledge, Set.of());
+	}
+
+	public PacketSyncLiberKnowledge(IBookKnowledge knowledge, Set<ResourceLocation> markUnreadEntries) {
 		Map<ResourceLocation, Set<IDiscoverySource>> copy = new LinkedHashMap<>();
-		knowledge.getEntrySources().forEach((entry, sources) -> {
-			Set<IDiscoverySource> sourceCopy = new LinkedHashSet<>(sources);
+		Map<ResourceLocation, Set<IDiscoverySource>> sourcesByEntry = knowledge.getEntrySources();
+		for (ResourceLocation entry : knowledge.getUnlockedEntries()) {
+			Set<IDiscoverySource> sourceCopy = new LinkedHashSet<>(
+					sourcesByEntry.getOrDefault(entry, Set.of()));
 			copy.put(entry, sourceCopy);
+		}
+		// Preserve any legacy/inconsistent source records too, but do not let them
+		// be the only thing that defines the packet contents.
+		sourcesByEntry.forEach((entry, sources) -> {
+			copy.computeIfAbsent(entry, ignored -> new LinkedHashSet<>()).addAll(sources);
 		});
 		this.entrySources = copy;
 		this.memos = new LinkedHashSet<>(knowledge.getKnownMemos());
+		this.markUnreadEntries = new LinkedHashSet<>(markUnreadEntries);
 	}
 
-	private PacketSyncLiberKnowledge(Map<ResourceLocation, Set<IDiscoverySource>> entrySources, Set<ResourceLocation> memos) {
+	private PacketSyncLiberKnowledge(Map<ResourceLocation, Set<IDiscoverySource>> entrySources, Set<ResourceLocation> memos,
+			Set<ResourceLocation> markUnreadEntries) {
 		this.entrySources = entrySources;
 		this.memos = memos;
+		this.markUnreadEntries = markUnreadEntries;
 	}
 
 	public static void encode(FriendlyByteBuf buf, PacketSyncLiberKnowledge msg) {
@@ -54,6 +71,7 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			}
 		}
 		writeIds(buf, msg.memos);
+		writeIds(buf, msg.markUnreadEntries);
 	}
 
 	public static PacketSyncLiberKnowledge decode(FriendlyByteBuf buf) {
@@ -74,7 +92,9 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			}
 			entrySources.put(key, sources);
 		}
-		return new PacketSyncLiberKnowledge(entrySources, readIds(buf));
+		Set<ResourceLocation> memos = readIds(buf);
+		Set<ResourceLocation> markUnreadEntries = readIds(buf);
+		return new PacketSyncLiberKnowledge(entrySources, memos, markUnreadEntries);
 	}
 
 	/**
@@ -116,6 +136,13 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 					synced.recordMemo(memo);
 				}
 				knowledge.setFrom(synced);
+				// If the player currently has a Liber/guide screen open, rebuild
+				// its visible chapter list against the freshly-synced knowledge
+				// instead of waiting for them to close+reopen.
+				if (FMLEnvironment.dist == Dist.CLIENT) {
+					com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.markEntriesUnreadAndRefresh(
+							player.getUUID(), msg.markUnreadEntries);
+				}
 			});
 		});
 	}
@@ -141,3 +168,4 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 		return TYPE;
 	}
 }
+

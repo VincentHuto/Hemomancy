@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
-import com.vincenthuto.hemomancy.common.encounter.HarbingerSaintEncounterHooks;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;

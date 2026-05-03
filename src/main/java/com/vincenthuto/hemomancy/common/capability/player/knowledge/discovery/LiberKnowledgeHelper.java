@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledgeEvents;
@@ -18,7 +21,7 @@ public final class LiberKnowledgeHelper {
 				.map(knowledge -> {
 					boolean changed = knowledge.unlockEntry(entryId, source);
 					if (changed) {
-						LiberKnowledgeEvents.sync(player);
+						LiberKnowledgeEvents.sync(player, entryId != null ? Set.of(entryId) : Set.of());
 					}
 					return changed;
 				})
@@ -29,11 +32,15 @@ public final class LiberKnowledgeHelper {
 		return HemoCapabilityAccess.getLiberKnowledge(player)
 				.map(knowledge -> {
 					boolean changed = false;
+					Set<ResourceLocation> markUnreadEntries = new LinkedHashSet<>();
 					for (ResourceLocation entryId : entryIds) {
-						changed |= knowledge.unlockEntry(entryId, source);
+						if (knowledge.unlockEntry(entryId, source)) {
+							changed = true;
+							markUnreadEntries.add(entryId);
+						}
 					}
 					if (changed) {
-						LiberKnowledgeEvents.sync(player);
+						LiberKnowledgeEvents.sync(player, markUnreadEntries);
 					}
 					return changed;
 				})
@@ -68,7 +75,7 @@ public final class LiberKnowledgeHelper {
 				.map(knowledge -> {
 					boolean changed = knowledge.unlockMemo(memoId, entryId);
 					if (changed) {
-						LiberKnowledgeEvents.sync(player);
+						LiberKnowledgeEvents.sync(player, entryId != null ? Set.of(entryId) : Set.of());
 					}
 					return changed;
 				})

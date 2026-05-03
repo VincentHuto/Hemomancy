@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
@@ -114,7 +115,8 @@ public class ItemInit {
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
                     .withBookPrefix("sanctumsanguinium/")
-                    .withKnowledgeProvider(HemoCapabilityAccess::getLiberKnowledge));
+                    .withPageFilter(new MemoBookFilter())
+                    .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
     // Book
     public static final DeferredHolder<Item, Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
@@ -123,7 +125,8 @@ public class ItemInit {
             () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_immaculatus.png"))
                     .withBookPrefix("liberimmaculatus/")
-                    .withKnowledgeProvider(HemoCapabilityAccess::getLiberKnowledge));
+                    .withPageFilter(new MemoBookFilter())
+                    .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
     public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
             () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
