@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
-> **Last Updated:** 2026-04-30 (Sanguine Conduit item persistence fix: `ItemSanguineConduit` is now the real `BlockItem` for `BlockInit.sanguine_conduit`, and `BlockInit.shouldSkipAutoBlockItem()` skips the conduit so saved stacks reload with menu, tooltip, and Degree 5 placement gate intact. Previous 2026-04-29 update: Degree theme implementation; Apotheos dialogue trees for all 3 NPCs; Saints + Founding Sanctum branches in Vicar trees; degree_hint restored to Illuminatus/Sanctified; dialogue tables updated; Blood Structure tiered gating — intro at Votary, Grand tier at D5; Monolith identity + Crimson Lodestone dialogue overhaul; §12.4 Fungal Scars planned; Tier 3 scar gate planned D6; **Sanguine Conduit block form gated to Degree 5**; **Conduit block click opens HarbingerProgressScreen**; **SanguineConduitBlockEntity + BER** for pulsing crimson oath-rings; **3 Grand-tier Blood Structure recipe drafts** added)
+> **Last Updated:** 2026-05-03 (audit against recent `neo-1.21.1` commits: local HutosLib composite build via `settings.gradle`; item-inquiry dialogue JSON loader and 51 `data/hemomancy/dialogue_inquiry/**` entries; dedicated 48x48 NPC portrait textures; Virid Salis trail block/item; Saint package refactor and updated Saint boss AI; Mycelial Crucible + consolidated `immature_fungal_scar`; 9 fungal scar cultivation recipes; scar tier/effect table corrected; entity loot tables corrected to current 1.21 `data/hemomancy/loot_table/entities/` path. Previous 2026-04-30 update: Sanguine Conduit item persistence fix.)
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -23,6 +23,8 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - Morphling support gameplay expanded with the new **Morphling Cradle** block entity (owner-bound hosted morphling, aura support, blood upkeep/leech behavior, and floor/wall/ceiling placement support).
 > - Blood extraction flow was modernized: **Living Syringe** now uses loadable **Vial Rack** storage (8-vial rack state), and the **Vial Centrifuge** can bulk-load sampled vials directly from racks.
 > - Bloodline administration now includes leader-side member expulsion in `BloodlinePoolScreen` + `PacketKickBloodlinePlayer`.
+> - Fungal scar cultivation is implemented through the **Mycelial Crucible**: Phase 1 produces one consolidated `immature_fungal_scar` item with target scar metadata, and Phase 2 matures it with aligned enzymes into one of 9 finished fungal scars.
+> - NPC item inquiries moved out to datapack JSON under `data/hemomancy/dialogue_inquiry/<npc>/<item_namespace>/<item>.json`, loaded by `ItemInquiryLoader` with optional degree/purity conditions.
 > - Client progression UIs were modularized (`HarbingerProgressScreen` + shared tab controllers used by both Harbinger and Unstained screens), and manipulation star overlays now include numeric tendency values.
 
 ---
@@ -205,6 +207,8 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Apotheos | Speechless reverence; the Covenant was "always meant to be outlived — it is a ladder; what you have become is what was always at the top of it" |
 | Purifying | Stern warning; grieves the loss of blood power; urges return before path completes |
 
+**Item inquiry dialogue:** Detailed "ask about held item" responses are now data-driven through `ItemInquiryLoader`. Files live under `data/hemomancy/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json`; supported NPC IDs currently include `alchemist`, `vicar`, `zealot`, and `guardian`. Entries may be simple line lists or ordered conditional branches using `min_degree`, `max_degree`, `min_purity`, and `max_purity`. Current authored count: 51 inquiry entries. The dialogue UI also uses dedicated 48x48 portrait textures for Harbinger and Unstained NPCs (`*_portrait.png`) instead of deriving portraits from the full entity texture.
+
 ### 3.5 Fungal Whisper Events
 
 At higher degrees (4–7), the ancient fungal consciousness begins intruding into the player's mind. These are delivered via the `FungalWhisperDialogueTrees` + `FungalWhisperEvents` system — pop-up dialogues from the anonymous `???` speaker with the FUNGAL dialogue theme.
@@ -272,17 +276,19 @@ At around **Degree 3–4**, the Harbinger Vicar and/or the player's own research
 - Boss victories yield the matching Hallowed Residuum directly; peaceful samples become Hallowed Residuum through the Vial Centrifuge.
 
 **Reward (two output types):** Each saint yields two things from their blood:
-1. **Hallowed Residuum** (`hallowed_residuum_<saint>`) — extracted by processing a Consecrated Syringe in the Vial Centrifuge. Serves as the catalyst currency for both the Somatic Loom and the Morphling Incubator.
+1. **Hallowed Residuum** (`hallowed_residuum_<saint>`) — extracted by processing a Consecrated Syringe in the Vial Centrifuge. Serves as the catalyst currency for the Somatic Loom's Canon Memory recipes.
 2. **Canon Memory** (via Somatic Loom) — placing the Hallowed Residuum as the loom's catalyst and aligning the loom's tendencies to match the saint's pair unlocks that saint's unique SUMMA-rank blood manipulation.
 
-**Saint → Canon Memory → Incubator Fungal Scar (at-a-glance):**
+**Saint → Canon Memory → Fungal Scar Family (at-a-glance):**
 
-| Saint | Tendencies | Loom Recipe (mortem true etc.) | Canon Memory | Incubator Scar | Scar Catalysts |
-|-------|-----------|-------------------------------|--------------|----------------|----------------|
-| **Hemorath** | MORTEM + ANIMUS | `mortem: true`, `animus: true` + Residuum of Hemorath | Crimson Tithe | Talaromyces Minus | Hallowed Residuum of Hemorath + Vivianite Cluster + Spore Sac |
-| **Seraphae** | LUX + DUCTILIS | `lux: true`, `ductilis: true` + Residuum of Seraphae | Unclosing Eye | Noctifly Agaric | Hallowed Residuum of Seraphae + Phantom Membrane + Spore Sac |
-| **Putriciel** | MORTEM + FLAMMEUS | `mortem: true`, `flammeus: true` + Residuum of Putriciel | Bloom of Rot | Respergillus | Hallowed Residuum of Putriciel + Heart of the Sea + Spore Sac |
-| **Velorum** | CONGEATIO + TENEBRIS | `congeatio: true`, `tenebris: true` + Residuum of Velorum | Endless Hour | Lumina Devorans | Hallowed Residuum of Velorum + Echo Shard + Spore Sac |
+| Saint | Tendencies | Loom Recipe (mortem true etc.) | Canon Memory | Related Fungal Scar |
+|-------|-----------|-------------------------------|--------------|----------------------|
+| **Hemorath** | MORTEM + ANIMUS | `mortem: true`, `animus: true` + Residuum of Hemorath | Crimson Tithe | Talaromyces Minus |
+| **Seraphae** | LUX + DUCTILIS | `lux: true`, `ductilis: true` + Residuum of Seraphae | Unclosing Eye | Noctifly Agaric / Anastocordyceps nexus / Antiphonomyces resonans |
+| **Putriciel** | MORTEM + FLAMMEUS | `mortem: true`, `flammeus: true` + Residuum of Putriciel | Bloom of Rot | Respergillus / Sanguiflora cadens / Saprovitta vestigium |
+| **Velorum** | CONGEATIO + TENEBRIS | `congeatio: true`, `tenebris: true` + Residuum of Velorum | Endless Hour | Lumina Devorans / Thanomyces resurgens |
+
+> The older saint-residuum + vanilla-catalyst incubator recipes for fungal scars have been replaced by Mycelial Crucible cultivation recipes. Hallowed Residuum still matters for Canon Memories and Saint rewards; scar growth now keys off the recipe tendency, blood cost, and aligned enzymes.
 
 There are **four Saints** in total; which one a player encounters first is partially randomized.
 
@@ -805,74 +811,85 @@ The **Morphling Cradle** (`MorphlingCradleBlockEntity`) is an owner-bound suppor
 
 Scars are equippable items stored in a **Scar Binder** ![Scar Binder](src/main/resources/assets/hemomancy/textures/item/scar_binder.png) (18 slots) or **Scar Binder Upgraded** ![Scar Binder Upgraded](src/main/resources/assets/hemomancy/textures/item/scar_binder_upgraded.png) (27 slots). They are crafted at the **Cerebral Scarring Station**. Scar crafting requires **Initiatory Degree 4 (Adept)** minimum.
 
-Scars are organized in **three tiers** by `deepenAmount` — how strongly they shift tendency alignment per equipped slot:
+Scars are organized in **three tiers** by `deepenAmount` — how strongly they shift tendency alignment per equipped slot. The current NeoForge branch also gives standard scars real passive/combat effects through `ItemScar`: attribute modifiers, persistent effects, blood upkeep, max-blood modifiers, and event hooks for attack/defense/kill/tick behavior. `Scar Affinity` scales synergy modifiers, `Scar Resonance` increases effective combat slots, and `Scar Mastery` extends triggered scar effect durations.
 
 **Tier 1 Scars (deepenAmount = 1) — Basic, available at Degree 4:**
 
 | Scar | Tendency | Effect |
 |------|----------|--------|
-| ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_transcendence.png) Scar of Transcendence | Lux | Deepens Lux tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_sol.png) Scar of Sol | Flammeus | Deepens Flammeus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | Deepens Animus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_descendence.png) Scar of Descendence | Mortem | Deepens Mortem tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_moon.png) Scar of the Moon | Congeatio | Deepens Congeatio tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_eye.png) Scar of the Eye | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| Scar of the Thorn | Ferric | Deepens Ferric tendency alignment when equipped |
-| Scar of the Shade | Tenebris | Deepens Tenebris tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Legacy override scar / mind spike slot behavior |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | +2 Max Health |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_pyre.png) Scar of the Pyre | Flammeus | +1 Attack Damage, -1 Armor |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | +5% Attack Speed, -1 Armor |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_halo.png) Scar of the Halo | Lux | +1 Armor Toughness, -5% Movement Speed; blinds attackers |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_blight.png) Scar of Blight | Mortem | +1 Attack Damage; poison backtracks onto wearer after kills |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_rime.png) Scar of Rime | Congeatio | +5% Movement Speed, -5% Attack Speed; slows struck foes |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_thorn.png) Scar of the Thorn | Ferric | +1 Armor, -5% Movement Speed; reflects 1 thorns damage |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_shade.png) Scar of the Shade | Tenebris | +5% Movement Speed, -1 Attack Damage; invisibility in darkness |
 
 **Tier 2 Scars (deepenAmount = 2) — Advanced, available at Degree 4:**
 
-| Scar | Tendency |
-|------|----------|
-| Scar of the Pyre | Flammeus |
-| Scar of Marrow | Animus |
-| Scar of Blight | Mortem |
-| Scar of Rime | Congeatio |
-| Scar of Flux | Ductilis |
-| Scar of the Halo | Lux |
-| Scar of the Anvil | Ferric |
-| Scar of the Veil | Tenebris |
+| Scar | Tendency | Effect |
+|------|----------|--------|
+| Scar of Marrow | Animus | +4 Max Health, -5% Movement Speed; heals wearer on kill |
+| Scar of Sol | Flammeus | +2 Attack Damage, -2 Armor; briefly ignites attackers |
+| Scar of Flux | Ductilis | +10% Attack Speed, -2 Armor; grants Haste on kill |
+| Scar of the Veil | Lux | +2 Armor Toughness, -10% Movement Speed; blinds + marks attackers with Glowing |
+| Scar of Withering | Mortem | +2 Attack Damage, -2 Max Health; poisons struck foes |
+| Scar of the Glacier | Congeatio | +10% Movement Speed, -10% Attack Speed; slows struck and nearby foes |
+| Scar of the Anvil | Ferric | +2 Armor, +1 Armor Toughness, -10% Movement Speed; reflects 2 thorns damage |
+| Scar of the Moon | Tenebris | +10% Movement Speed, -2 Attack Damage; invisibility in darkness and when struck in darkness |
 
 **Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5 (planned: move gate to Degree 6):**
 
-| Scar | Tendency |
-|------|----------|
-| Scar of the Phoenix | Flammeus |
-| Scar of Ichor | Animus |
-| Scar of Withering | Mortem |
-| Scar of the Glacier | Congeatio |
-| Scar of the Chimera | Ductilis |
-| Scar of the Corona | Lux |
-| Scar of the Crucible | Ferric |
-| Scar of Oblivion | Tenebris |
+| Scar | Tendency | Effect |
+|------|----------|--------|
+| Scar of the Phoenix | Animus | +6 Max Health, -10% Movement Speed; heals on kill and regenerates when gravely wounded |
+| Scar of the Corona | Flammeus | +3 Attack Damage, +0.3 Knockback Resistance, -3 Armor; ignites attackers |
+| Scar of the Chimera | Ductilis | +15% Attack Speed, -3 Armor, -4 Max Health; Haste/Speed/Strength on kill |
+| Scar of Transcendence | Lux | +2 Armor Toughness, -15% Movement Speed; blinds/marks attackers and grants Resistance in bright light |
+| Scar of Oblivion | Mortem | +3 Attack Damage, -4 Max Health; withers struck foes |
+| Scar of Descendence | Congeatio | +15% Movement Speed, -15% Attack Speed, -2 Attack Damage; slows struck/nearby foes and grants slow fall |
+| Scar of the Crucible | Ferric | +3 Armor, +2 Armor Toughness, -15% Movement Speed, -5% Attack Speed; reflects 3 thorns damage |
+| Scar of the Eye | Tenebris | +15% Movement Speed, -3 Attack Damage; invisibility in darkness and when struck |
 
-> **Scar Mechanic:** All standard scars extend `ItemScar` and share the same core mechanic: when equipped in a Scar Binder slot, they deepen the player's Blood Tendency alignment toward their assigned tendency by a fixed amount (set per scar via `deepenAmount`). This shifts which manipulations the player has strongest affinity with. Individual gameplay bonuses beyond tendency alignment are not yet implemented for standard scars.
+> **Scar Mechanic:** All standard scars extend `ItemScar`; when equipped in a valid Scar Binder slot they deepen the player's Blood Tendency alignment and apply their configured modifiers/effects. A stale `scar_ichor` recipe/lang/model entry still exists in resources, but `ItemInit` does **not** currently register `scar_ichor`; the active Animus tier-3 scar is `scar_phoenix`.
 
 Each scar has a corresponding **Scar Pattern** item used in crafting.
 
-### 12.2 Functional Spores (Scar-type items)
+### 12.2 Functional Fungal Scars (Scar-type items)
 
-Special fungal scar items with active effects (extend `ItemFungalScar`). All four are **Degree 3–4 locked** and require **Hallowed Residuum** from a Saint's Preserved Corpus — they are crafted in the **Morphling Incubator**, not the Cerebral Scarring Station.
+Special fungal scar items with active effects extend `ItemFungalScar`, render as rotating 3D scar items on the player, have rare rarity/foil visuals, and occupy the dedicated fungal scar slot (`ScarType.FUNGAL`, slot 0). The current implementation uses the **Mycelial Crucible**, not the Morphling Incubator, and the old four-scar incubator plan has been superseded.
 
-| Item | Tendency | Active Effect | Saint Residuum Required | Other Catalysts |
-|------|----------|---------------|-------------------------|-----------------|
-| ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the `fungal_elytra` flight effect permanently while equipped | Seraphae | Phantom Membrane + Spore Sac |
-| ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Fungal spore — 3D equipped render (specific effect TBD) | Putriciel | Heart of the Sea + Spore Sac |
-| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste (Dig Speed) while equipped in Scar Binder | Hemorath | Vivianite Cluster + Spore Sac |
-| ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Fungal spore — 3D equipped render (specific effect TBD) | Velorum | Echo Shard + Spore Sac |
+The basic saint-linked set remains tuned at 1,200 blood / 1,200 ticks / 2,000 enzyme-power threshold:
 
-**Incubator recipe format** (all four share the same structure):
+| Item | Tendency | Active Effect |
+|------|----------|---------------|
+| ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the `fungal_elytra` effect while equipped; glide support is maintained by `ScarEntityEventHandler.onGlideTick()` |
+| ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Grants Water Breathing while equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste while worn and enables shift-mining ore vein mining through `VeinMinerHelper` |
+| ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Grants Night Vision, Strength, and Resistance while equipped |
+
+The new advanced set is also registered and has live event handlers for the non-tooltip effects:
+
+| Item | Tendency | Active Effect | Cultivation Cost |
+|------|----------|---------------|------------------|
+| **Saprovitta vestigium** | Flammeus | **Feeding Wake** — movement leaves a brief damaging blood-fungal trail (1.5 magic damage pulses every 6 ticks while moving) | 1,200 blood / 1,200 ticks / 2,000 enzyme power |
+| **Antiphonomyces resonans** | Ductilis | **Crawling Choir** — 20% chance for a successful blood manipulation to echo-cast at no extra blood cost | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Sanguiflora cadens** | Mortem | **Vein Orchard** — 30% chance on kill to bloom blood resources at the death site (Spore Sac, sometimes Hematic Iron Scrap) | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Thanomyces resurgens** | Congeatio | **Split Husk** — prevents death once, drains all active blood, reforms at 25% health, 15-minute per-stack cooldown | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Anastocordyceps nexus** | Lux | **Latching Vein** — striking an enemy tethers nearby foes for 6 seconds; tethered targets share 20% of damage taken | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+
+**Mycelial Crucible recipe format** (`data/hemomancy/recipe/fungal_scar/*.json`):
 ```json
 {
-  "type": "hemomancy:incubator",
-  "catalysts": [
-    { "item": "hemomancy:hallowed_residuum_<saint>" },
-    { "item": "<vanilla_catalyst>" },
-    { "item": "hemomancy:spore_sac" }
-  ],
-  "result": { "item": "hemomancy:<scar_id>" }
+  "type": "hemomancy:fungal_scar_cultivation",
+  "tendency": "LUX",
+  "blood_cost_phase1": 2400,
+  "phase1_duration": 2400,
+  "maturation_threshold": 3000,
+  "immature_result": { "id": "hemomancy:immature_fungal_scar" },
+  "result": { "id": "hemomancy:anastocordyceps_nexus" }
 }
 ```
 
@@ -888,24 +905,23 @@ One for each tendency:
 ![](src/main/resources/assets/hemomancy/textures/item/umbral_spores.png) Umbral,
 ![](src/main/resources/assets/hemomancy/textures/item/frigid_spores.png) Frigid.
 
-### 12.4 Fungal Scars (Planned — Degree 7–8, not yet implemented)
+### 12.4 Mycelial Crucible & Immature Fungal Scar Cultures
 
-A fourth scar tier, qualitatively different from standard scars: they do not deepen tendency alignment. Instead they alter the player's relationship to the mycelial network. Designed as Archon (Degree 7) and Apotheos (Degree 8) content.
+The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-scar cultivation station. It has 8 slots:
 
-**Acquisition:** Not crafted at the Cerebral Scarring Station. Harvested from specific fungal formations in the Fungal Gardens dimension using a **Mycorrhizal Extractor** (new tool item). The scar grows onto the player rather than being surgically inscribed — framing that the player has crossed a threshold from practising blood magic to being partly consumed by it.
+- Center (slot 0): finished fungal scar seed for Phase 1, or `immature_fungal_scar` for Phase 2
+- Enzyme slots (1–4): aligned `EnzymeItem` / `RecycledEnzymeItem`; only matching tendency contributes
+- Output (5): immature culture or finished scar
+- Blood input (6): Bloody Flask or Blood Gourd
+- Flask output (7): empty/cured flask return
 
-**Restrictions:** Requires the Upgraded Scar Binder; only one Fungal Scar may be equipped at a time. They cannot be placed in the standard Scar Binder.
+**Phase 1 — Implantation:** The center scar plus aligned enzymes start a timed cultivation run. The crucible deducts the recipe's flat blood cost, then drains 1.5 blood/tick for the recipe duration. On completion it consumes the center/enzymes and outputs the single consolidated `immature_fungal_scar`.
 
-**Planned effects (thematic set):**
+**Phase 2 — Maturation:** The immature culture stores `Tendency`, `MatureThreshold`, `MatureProgress`, and `TargetScarId` in `DataComponents.CUSTOM_DATA`. Feeding aligned enzymes advances `MatureProgress`; when progress reaches the threshold, the crucible converts it into the target `ItemFungalScar`. Progress is preserved on the item stack, and blood shortages pause the process rather than resetting it.
 
-| Scar | Effect |
-|------|--------|
-| Scar of the Hyphae | Passive hyphae-linked regeneration while standing on mycelium-type blocks or inside a Founding Sanctum |
-| Scar of the Corpus | Blood manipulation cost reductions from Qliphoth Pomes last 25% longer |
-| Scar of the Sporulation | Brief spore-emission particle effect on high-cost manipulations; nearby enemies receive a Fungal Whisper debuff (Slowness + Blindness) |
-| Scar of the Network | While two or more Bloodline members are in range, manipulation cooldowns reduce as if Scar Resonance were one level higher |
+`Hyphal Substrate` is registered as a supporting crafting ingredient, and `immature_fungal_scar` uses one model/texture with dynamic translated names such as `item.hemomancy.immature_scar.anastocordyceps_nexus`.
 
-A second, deeper Fungal Scar gated behind completion of Qliphoth Communion (Apotheos-tier) is also planned.
+> **Design status:** The extractor / harvested Fungal Gardens scar plan has been replaced for now by crucible cultivation. The deeper Apotheos-tier fungal scar concept remains open-ended design space, but the implemented fourth scar family is already live through `ItemFungalScar` + `MycelialCrucible`.
 
 ---
 
@@ -934,6 +950,7 @@ A second, deeper Fungal Scar gated behind completion of Qliphoth Communion (Apot
 | ![](src/main/resources/assets/hemomancy/textures/item/bleeding_bulb.png) Bleeding Bulb | Plant-based ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/dicentra_sap.png) Dicentra Sap | Plant-based ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/spore_sac.png) Spore Sac | Fungal ingredient |
+| ![](src/main/resources/assets/hemomancy/textures/item/hyphal_substrate.png) Hyphal Substrate | Mycelial Crucible support ingredient for fungal scar cultivation |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_crystal_shard.png) Blood Crystal Shard / ![](src/main/resources/assets/hemomancy/textures/item/cleansed_blood_crystal_shard.png) Cleansed Blood Crystal Shard | Crystal materials |
 | ![](src/main/resources/assets/hemomancy/textures/item/vivianite_cluster.png) Vivianite Cluster | Mineral material |
 | ![](src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) Gourd Seeds | Plantable, grows gourds |
@@ -1200,6 +1217,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 | **Cerebral Scarring Station**        | `ScarStationBlockEntity`                   | Crafts scars from patterns and blanks                    ![](src/main/resources/assets/hemomancy/textures/ref doc images/scar_station.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](src/main/resources/assets/hemomancy/textures/ref doc images/morphling_incubator.png) 
+| **Mycelial Crucible**                | `MycelialCrucibleBlockEntity`              | Cultivates fungal scars through `FungalScarCultivationRecipe`. Has 8 slots: center scar/immature culture, 4 aligned enzyme slots, output, blood flask/gourd input, and empty flask output. Phase 1 drains the recipe's flat blood cost plus 1.5/tick to produce the consolidated `immature_fungal_scar`; Phase 2 feeds aligned enzymes into the culture's custom-data progress until it matures into its stored target scar. See §12.4. |
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Portal to the Fungal Gardens dimension. Degree 2+ (Votary) required; costs 500 blood. Stores overworld return coordinates in player persistent data. Degree-7 Archons on first exit attempt see the `coreWitnessDialogue()` choice fork instead of teleporting home; subsequent uses proceed directly. See §3.6, §3.9.                                                                                                                                                                                                                                                                                                                                               |
 | **Sanguine Monolith** (*The Crimson Lodestone*) | `SanguineMonolithBlockEntity` | 1×2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated guidance (degrees 4–7) via `SanguineMonolithDialogueTrees`. The dialogue speaker is displayed as **"The Crimson Lodestone"** (`hemomancy.monolith.lodestone_name`). Each degree includes a `what_are_you` branch that progressively discloses the Monolith's nature: a sealed incubation vessel containing a dormant mycelial fragment built by the Crimson Lodge. At Degree 7 the player can press further for the pre-shatter warning (`press_again` node). At Degree 7 an Archon may interact with it **twice** to shatter it — rendering black shards plus a black orb blast client-side, dropping a **Qliphoth Seed**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Custom animated model (`SanguineMonolithModel`). See §3.9 and LORE_REFERENCE §6.5a. |
@@ -1337,7 +1355,8 @@ All applicable flowers have **potted** variants.
 | `scar_recipe` | `ScarRecipeSerializer` | Cerebral Scarring Station | Crafting scars |
 | `distillation_recipe` | `DistillationRecipeSerializer` | Ghastly Alembic / Pallid Retort | Shared distillation recipes. `pallid: true` targets Pallid Retort; omitted/false targets Ghastly Alembic. |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
-| `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (12 morphling recipes). **Also used for all 4 rare Functional Spore scars** (Noctifly Agaric, Respergillus, Talaromyces Minus, Lumina Devorans) which each require a saint Hallowed Residuum + vanilla catalyst + Spore Sac. JEI-integrated via `IncubatorRecipeCategory`. |
+| `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (13 morphling recipes). JEI-integrated via `IncubatorRecipeCategory`. Fungal scar crafting has moved out to the Mycelial Crucible. |
+| `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 9 finished `ItemFungalScar` variants. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
 | `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
@@ -1550,9 +1569,9 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0–7 dialogue (`HarbingerHermitDialogueTrees`). Drops Rite Hint item on farewell. Invulnerable until player chooses "Farewell" option. |
 | **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
 | **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
-| **Annetta Knowles (The Stained Priestess)** | | Boss | Separate Unstained boss arc, not part of the Saints. High-ranking Unstained cleric boss bitten by a Chthonian (which only seek the infected), causing her sanity to shatter and her long-suppressed blood power to erupt. **Phase 1** (100%→30% HP): silver aura pulses every 60 ticks dealing 3 magic damage + Weakness to blood-active (Harbinger) players within 6 blocks. **Phase 2** (≤30% HP): speed/attack boost, blood spear drains 250 blood per hit from blood-active players. Drops Pale Silver Ingot ×2 + Hematic Iron Scrap ×3 on death. Boss bar: purple NOTCHED_10. `AnnettaKnowlesEntity` in `entity/boss/annetta/`. Encounter trigger, model, texture, animations, and her fuller teeth/nails/hair combat identity still WIP. |
+| **Annetta Knowles (The Stained Priestess)** | | Boss | Separate Unstained boss arc, not part of the Saints. High-ranking Unstained cleric boss bitten by a Chthonian (which only seek the infected), causing her sanity to shatter and her long-suppressed blood power to erupt. **Phase 1** (100%→30% HP): silver aura pulses every 60 ticks dealing 3 magic damage + Weakness to blood-active (Harbinger) players within 6 blocks. **Phase 2** (≤30% HP): attack boost, blood spear drains 250 blood per hit from blood-active players. Drops Pale Silver Ingot ×2 + Hematic Iron Scrap ×3 on death. Boss bar: purple NOTCHED_10. `AnnettaKnowlesEntity` is registered in `EntityInit`; `AnnettaKnowlesRenderer` currently uses the vanilla humanoid model with `textures/entity/blank.png`. Encounter trigger, dedicated model/texture/animations, and her fuller teeth/nails/hair combat identity still WIP. |
 | **Spectral Companion** | | Misc | Spectral ally entity |
-| **Sanguilith** | | Misc (MnA) | Large (1.5×3.25), blood-themed summoned monster (requires MnA). Summoned via `ComponentSummonSanguilith` spell. Ownable, duration-limited, targets nearby hostiles with swinging melee attacks. Max 4 nearby. Registered in `MnAPluginEntityInit`. Has custom `SanguilithModel` and `SanguilithRenderer`. |
+| **Sanguilith** | | Misc (MnA, dormant) | Large (1.5×3.25), blood-themed summoned monster from the dormant MnA compat source. `ComponentSummonSanguilith` summons an ownable, duration-limited melee attacker with a max of 4 nearby. Authored in `MnAPluginEntityInit` with custom `SanguilithModel` and `SanguilithRenderer`, but not compiled/registered while MnA compat is excluded on the current NeoForge 1.21.1 branch. |
 
 ### 19.4 Entity Tags
 
@@ -1578,23 +1597,19 @@ Registered in `EntityInit.commonSetup`:
 
 ### 19.6 Entity Loot Tables
 
-> **⚠️ CRITICAL WIP:** All entity loot tables in `HemoEntityLootProvider` are **entirely commented out** and the entity loot provider is also commented out in `DataGeneration.java`. This means **no Hemomancy mob currently drops any items** when killed. The intended drops (from the commented code) are:
->
-> | Entity | Intended Drop |
-> |--------|--------------|
-> | Chitinite | Chitinous Husk |
-> | Chthonian | Chitinous Husk |
-> | Chthonian Queen | Chitinous Husk |
-> | Leech | Swollen Leech |
-> | Fargone | Sanguine Formation |
-> | Thirster | Sanguine Formation |
-> | Abhorent Thought | Sanguine Formation |
-> | Blood Drunk Puppeteer | Puppeteering Thread |
-> | Enthralled Doll | Bleeding Bulb |
-> | Lump of Thought | Spore Sac |
-> | Fungling | Infected Fungus |
->
-> All drops use `LootingEnchantFunction` and `LootItemKilledByPlayerCondition`. These need to be uncommented and the data generator re-enabled.
+> **Resolved in resources:** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **37 entity loot tables**.
+
+Notable implemented drop families:
+
+| Entity / Family | Drop Theme |
+|-----------------|------------|
+| Chitinite / Fervent Chitinite / Chthonian / Chthonian Queen | Chitinous Husk, with Chthonian Queen also rolling Ferric Enzyme |
+| Leech / Blood aquatic or arthropod mobs | Blood/hemolymph materials such as Swollen Leech or Cleansing Hemolymph |
+| Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob |
+| Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread / Bleeding Bulb |
+| Saint and boss entities | Direct/special boss rewards are handled in entity code or matching loot JSON depending on encounter |
+
+Do not re-enable `HemoEntityLootProvider` unless the current JSON values are first ported back into the provider.
 
 ---
 
@@ -1774,7 +1789,9 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 
 ### 25.1 Mana and Artifice (MnA)
 
-Full integration as a faction + spell system:
+> **Current NeoForge 1.21.1 status:** MnA compat source is preserved as the design/implementation target, but it is **not compiled or registered** in the current branch. `build.gradle` excludes `src/main/java/com/vincenthuto/hemomancy/compat/mna/**`, the MnA dependency is commented because no NeoForge 1.21.1 build is available, and the `Hemomancy.java` MnA imports/registration block are commented behind TODOs. Treat this section as planned/dormant compat until MnA publishes a compatible build and the source exclusion is removed.
+
+Designed integration as a faction + spell system:
 
 **Faction: The Harbingers**
 - `HarbingersFaction` — custom faction with blood-red manaweave (RGB 160,0,40) ![Faction Icon](src/main/resources/assets/hemomancy/textures/mna/faction_icon_harbinger.png)
@@ -1793,7 +1810,7 @@ Full integration as a faction + spell system:
 - ![](src/main/resources/assets/hemomancy/textures/mna/hemolysis.png) `ComponentHemolysis` — applies Hemolysis effect (blood destruction DoT) via spells. Duration 40–200t, Magnitude 1–4, HARMFUL
 - ![](src/main/resources/assets/hemomancy/textures/mna/summon_sanguilith.png) `ComponentSummonSanguilith` — "Conjure Sanguilith" — summons a Sanguilith at target location. Duration 200–600t (summon lifetime), Magnitude scales damage. Requires Harbinger faction. HARMFUL
 
-**Cross-System Mechanics (Implemented):**
+**Cross-System Mechanics (dormant until MnA compat is re-enabled):**
 - **Blood Tithe** (`BloodTitheHandler`): Harbinger faction members casting blood-affinity spells have a configurable percentage of mana cost converted to blood cost instead (default 25%). Blood drained at 5 blood per 1 mana replaced. Hooks into `CalculatingManaCostEvent`.
 - **Spell → Manipulation Combos** (`ManipComboHelper` + `BloodTitheHandler`): Casting blood-affinity MnA spells grants **Arcane Resonance** (reduces next manipulation's blood cost). Using Hemomancy manipulations grants **Sanguine Clarity** (reduces next spell's mana cost). Creates an alternating gameplay loop between both mod systems.
 
@@ -1838,19 +1855,23 @@ Full integration as a faction + spell system:
 - Hemomantic Wand Core, Arcane Living Staff, Mote of Mana — crafted via MnA systems (manaweaving, runeforging)
 - Hemomantic enchantments via MnA runeforging
 - Cross-mod advancements, JEI integration for MnA crafting recipes
-- Harbinger Mana HUD texture (`textures/mna/harbingers_resource_bars.png`) and resource hook (`HarbingersMana` implementing `ICastingResourceGuiProvider`) are implemented
+- Harbinger Mana HUD texture (`textures/mna/harbingers_resource_bars.png`) and resource hook (`HarbingersMana` implementing `ICastingResourceGuiProvider`) are authored in dormant compat source and should be treated as port targets until MnA is re-enabled
 
 ### 25.2 Curios
 
-Curios integration for the Charm of Vascularium and other equippable items (handled in `compat/curios`).
+Curios integration for the Charm of Vascularium and other equippable items is preserved in `compat/curios`, but the current NeoForge 1.21.1 branch does not compile/register it. `build.gradle` comments the Curios dependency and `Hemomancy.java` has the Curios registration block commented behind a TODO pending a compatible Curios NeoForge build.
 
 ### 25.3 JEI
 
-JEI recipe category support for:
+JEI is currently supplied by a local `libs/jei-1.21.1-neoforge-19.27.0.340.jar` while the old Maven dependency lines remain commented. Recipe category support exists/planned for:
 - Chisel Station recipes
 - Visceral Recaller recipes
 - Blood Structure Crafting recipes
 - Morphling Incubator recipes (`IncubatorRecipeCategory`)
+
+### 25.4 HutosLib
+
+HutosLib is still the required shared runtime library (`com.vincenthuto.hutoslib:hutoslib`, currently `7.3.5`), but local development now uses a Gradle composite build. `settings.gradle` includes `../HutosLib` and substitutes the Maven module with the local project, so Hemomancy builds directly against the workspace HutosLib source when that sibling checkout is present.
 
 ---
 
@@ -2035,7 +2056,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 
 ## 30. Known WIP / Incomplete Systems
 
-- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
+- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum / Liber Immaculatus** — `HemoProgressionScreen.setupEntries()` is still commented out (Java renderer WIP). However, the HutosLib JSON book framework is wired: the `sanctumsanguinium` book folder now has normal lore/mechanics chapters, and the `liberimmaculatus` book folder has 4 chapters (intro, sacred_tools, our_lady, the_path) with 12 pages covering the full Unstained path. The Field Notes / memo slice is implemented: `memo_capture:<id>` dialogue events write memo IDs into Field Notes, and the Dictation Table dictates those IDs into the player's `LiberKnowledge` attachment rather than into the Liber item stack. Field Notes are now ink-bound: Hematic Field Ink captures Harbinger memos for Liber Sanguinum, while Pale Field Ink captures Unstained memos for Liber Immaculatus. `LiberKnowledge` stores `KnownMemos`, `UnlockedLiberEntries`, and per-entry discovery sources, syncs to clients with `PacketSyncLiberKnowledge`, and can be granted through `LiberKnowledgeHelper` by memos, advancements, rites, item pickups, degree changes, dialogue, or other future triggers. `LiberEntryDefinitions` is the central code-side page map: it lists visible book entries and maps initial rites, Harbinger degree advancements, Unstained milestones, selected item pickups, and `liber_unlock:<entry_id>` dialogue events to normal book page IDs. The Liber items now behave like personal viewers/keys: borrowed books show the reader's own unlocked pages, not the owner's. Legacy stack data is migrated into the player attachment when an old Liber is used or placed for dictation. `MemoBookFilter` treats `LiberEntryDefinitions` as the source of visible pages for both Liber books; pages not mapped by a definition remain hidden, and chapters with zero unlocked pages are omitted. Current memos include `first_rite_notes`, `pale_lady_notes`, and Harbinger fungal whisper memos (`fungal_whisper_adept`, `fungal_whisper_illuminatus`, `fungal_whisper_sanctified`, `fungal_whisper_archon`, `fungal_whisper_truth`, `qliphoth_communion`) that unlock the Hyphae, Entity, Truth, and Qliphoth Liber Sanguinum pages through Hematic Field Ink. Remaining WIP: re-enable `setupEntries()` if that older renderer is revived, move entry definitions to data-driven JSON if desired, and author more entry definitions across existing chapters.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
@@ -2045,17 +2066,18 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 - **~~Visceral Organs System~~** — **RESOLVED:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: Spleen (+1000 max blood per level), Liver (remove Poison at level 2+, Wither at level 3+), Lungs (Water Breathing while underwater), Kidneys (Regeneration), Heart (Damage Resistance + blood drain cost per 2s). See §13.8.
 - **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
 - **~~Old Morphling Maturity~~** — All 12 morphlings now have named maturity-tier reactive abilities (Developing → Mature → Apex) and secondary tendencies defined. See §11.1.
-- **~~Scar Gameplay Effects~~** — All scars now have full triggered effect implementations: MORTEM (Wither/Poison on attack), CONGEATIO (Slowness on attack, slow nearby mobs at T3), FLAMMEUS (fire on hit at T2+), FERRIC (thorns at T1+), LUX (Resistance in bright light at T3, Blindness+Glowing on defend at T2+), TENEBRIS (Invisibility on defend, unconditional at T2+, darkness-gated at T1; Invisibility in dark at T3), ANIMUS (heal on kill, regen when wounded at T3), DUCTILIS (Haste+Speed on kill, Strength at T3). All effect durations respect `getScarMasteryDurationMultiplier()`.
+- **~~Scar Gameplay Effects~~** — All standard scars now have full triggered effect implementations: MORTEM (T2 Poison/T3 Wither on attack, T1 self-poison on kill), CONGEATIO (Slowness on attack, nearby-monster slow at T2+, Slow Falling at T3), FLAMMEUS (ignite attackers at T2+), FERRIC (thorns damage at T1+), LUX (Blindness on defend, Glowing at T2+, Resistance in bright sky light at T3), TENEBRIS (darkness invisibility on tick for all tiers, defend invisibility in darkness at T2 and unconditional at T3), ANIMUS (heal on kill at T2+, regeneration when wounded at T3), and DUCTILIS (Haste on kill at T2+, Speed + Strength at T3). Effect durations respect `getScarMasteryDurationMultiplier()`.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — All manipulations now have unique overlay textures (`textures/item/memories/memory_*_overlay.png`) for the layered memory item model system. The `HemoItemModelProvider` generates 2-layer models (base `memory_blank` + per-manipulation overlay) for all `BloodMemoryItem` instances.
-- **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipes/incubator/`.
+- **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipe/incubator/`.
+- **~~Fungal Scar Cultivation~~** — **IMPLEMENTED:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
 - **Mnemonic Reliquary** — New functional block with animated lid (open/close), custom 3D block entity renderer (`MnemonicReliquaryRenderer`), item renderer (`MnemonicReliquaryItemRenderer`), block model (`MnemonicReliquaryModel`), menu (`MnemonicReliquaryMenu`), and screen (`MnemonicReliquaryScreen`). Tracks open count and syncs lid angle via block events.
 - **Suspended Cleansed Blood Crystal** — Purified variant of the Suspended Blood Crystal with custom block, block entity (random time offset for desynchronized animations), block item with custom renderer, 3D model, and blockstate.
 - **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
 - **Debug Showcase Item** — Creative-mode testing tool (`DebugShowcaseItem`) that generates an organized showcase of all mod content in 4 sections: items in chests, blocks on platforms, mobs in fenced pens, and multiblock structures placed as patterns.
 - **Cardinal Rite Boundary Renderer** — Client-side visual renderer (`CardinalRiteBoundaryRenderer`) for cardinal rite boundaries during active rites.
 - **Morphling Item Textures** — All morphling types now have individual item textures and item models (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin).
-- **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Recently implemented: 5 new spell components (Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith, Blood-to-Mana), Blood Tithe handler, Spell ↔ Manipulation combo system, full cross-mod config. Still planned: spell shapes, rituals, faction enhancements, construct system, wand core, manaweaving recipes, runeforging enchantments.
+- **MnA Compatibility Expansion** — Extensive brainstorming and dormant compat source are documented in `MNA_COMPATIBILITY_BRAINSTORM.md` and `compat/mna/**`. Current NeoForge 1.21.1 branch excludes MnA compat from compilation because no compatible MnA build is available; `Hemomancy.java` registration is commented. Treat spell components, Blood Tithe, Spell ↔ Manipulation combo, and `HemoMnAConfig` as preserved design/port targets rather than active runtime features until compat is re-enabled.
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
 - **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
@@ -2064,7 +2086,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 - **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index, offerMemo)` (per-husk drop announcement; always delivered to the online bloom owner, with memo capture only when still relevant), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
 - **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
-- **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
+- **Scar Tier System** — All three standard tiers are registered through `ItemInit` with active gameplay effects. Current active set is Mind Spike + 24 standard scars (8 tendencies × 3 tiers) + 9 fungal scars. Resource cleanup still needed: `scar_ichor` recipe/lang/model data exists but the item is not registered in `ItemInit`.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System (Partially Implemented)** — Four canon Saints: Hemorath, Seraphae the Chain Saint, Putriciel, and Velorum. The shared sarcophagus spine now persists saint/sample state, supports aligned peaceful extraction, rejects unaligned extraction into saint-specific awakening, and lets Foul Paste force the matching boss after extraction. Hemorath's blood-debt + absorbed-blood overload fight is implemented; `SeraphaeEntity`, `PutricielEntity`, and `VelorumEntity` are implemented and registered in `EntityInit`. Hemorath's basin/altar/gate trial is the first complete trial flow; bespoke Trial Chamber rooms/world placement for Seraphae, Putriciel, and Velorum remain WIP. Boss models/textures/GeckoLib animations are stub/placeholder. See §3.8.
 - **Founding Sanctum (Partially Implemented)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum. Buff application logic (`FoundingSanctumEvents`), Sanguine Quintessence item, catalyst requirement, and sanctum persistence (`FoundingSanctumSavedData`) are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §3.7.
@@ -2104,7 +2126,7 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of St
 
 ## 31. Configuration
 
-Hemomancy has three config files plus a conditional MnA config.
+Hemomancy has three active config files. `HemoMnAConfig` remains in source as the conditional MnA config target, but it is not registered in the current NeoForge 1.21.1 branch while MnA compat is disabled.
 
 ### 31.1 Server Config (`HemoServerConfig`)
 
@@ -2180,7 +2202,7 @@ Hemomancy has three config files plus a conditional MnA config.
 
 ### 31.3 MnA Cross-Mod Config (`HemoMnAConfig`)
 
-Only registered when Mana and Artifice is present. See §25.1 for details on what each system does.
+Preserved for MnA compat, but **not currently registered** because the MnA dependency and `Hemomancy.java` registration block are commented out on the NeoForge 1.21.1 branch. See §25.1 for the dormant compat status.
 
 **Conversion** (`conversion`):
 
