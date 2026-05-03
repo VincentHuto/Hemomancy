@@ -1,0 +1,6 @@
+{
+  "conditions": [
+    { "min_degree": 4, "lines": ["hemomancy.vicar.item_inquiry.scar_blank.line1", "hemomancy.vicar.item_inquiry.scar_blank.line2"] },
+    { "lines": ["hemomancy.vicar.item_inquiry.scar_blank.locked"] }
+  ]
+}
