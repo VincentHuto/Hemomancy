@@ -67,8 +67,8 @@ public class ViridSalisTrailHandler {
         Level level = living.level();
         if (level.isClientSide()) return;
 
-        // Throttle to once per second; spread across the tick using entity id
-        if ((living.tickCount + living.getId()) % DAMAGE_INTERVAL != 0) return;
+        // Throttle to once per second; spread across the tick using a hash of entity id
+        if ((living.tickCount + living.getId() * 31) % DAMAGE_INTERVAL != 0) return;
 
         // Only affect targetable entities (monsters and blood-type mobs)
         if (!isTargetable(living)) return;
