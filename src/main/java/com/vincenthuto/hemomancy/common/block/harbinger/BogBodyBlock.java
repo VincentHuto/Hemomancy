@@ -135,7 +135,7 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
         return InteractionResult.SUCCESS;
       }
 
-      private InteractionResult harvestWithScalpel(BlockState state, Level worldIn, BlockPos pos, Player player) {
+      private void harvestWithScalpel(BlockState state, Level worldIn, BlockPos pos, Player player) {
         if (!state.getValue(HARVESTED)) {
           BlockState newState = state.setValue(HARVESTED, true);
           worldIn.setBlock(pos, newState, 10);
@@ -150,7 +150,6 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
             worldIn.addFreshEntity(spawn);
           }
         }
-        return InteractionResult.SUCCESS;
       }
 
       @Override
@@ -162,8 +161,9 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
       @Override
       protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
           Player player, InteractionHand handIn, BlockHitResult result) {
-        if (stack.getItem() == ItemInit.vivianite_scalpel.get()) {
-          return ItemInteractionResult.sidedSuccess(harvestWithScalpel(state, worldIn, pos, player) == InteractionResult.SUCCESS, worldIn.isClientSide);
+        if (stack.is(ItemInit.vivianite_scalpel.get())) {
+          harvestWithScalpel(state, worldIn, pos, player);
+          return ItemInteractionResult.sidedSuccess(true, worldIn.isClientSide);
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
       }

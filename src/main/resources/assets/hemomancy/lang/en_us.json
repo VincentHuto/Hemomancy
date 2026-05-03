@@ -629,7 +629,7 @@
   "gui.hemomancy.ghastly_alembic.requires_fire": "Requires fire below",
   "item.hemomancy.vivianite_cluster": "Vivianite Cluster",
   "item.hemomancy.vivianite_scalpel": "Vivianite Scalpel",
-  "item.hemomancy.vivianite_scalpel.tooltip1": "Precision extraction: hold over a Bog Body for doubled vivianite yield and halved blood cost.",
+  "item.hemomancy.vivianite_scalpel.tooltip1": "Precision extraction: hold over a Bog Body for doubled vivianite yield and halved damage.",
   "item.hemomancy.vivianite_scalpel.tooltip2": "Required to begin organ extraction at the Visceral Mirror."
   "screen.hemomancy.skill_tree": "Dendritic Skill Tree",
   "hemomancy.screen.morphling_viewer": "Morphling Jar",

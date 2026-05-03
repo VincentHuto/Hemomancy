@@ -138,8 +138,8 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		}
 
 		// Check that the player holds a vivianite scalpel in either hand
-		boolean hasScalpel = player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemInit.vivianite_scalpel.get()
-				|| player.getItemInHand(InteractionHand.OFF_HAND).getItem() == ItemInit.vivianite_scalpel.get();
+		boolean hasScalpel = player.getItemInHand(InteractionHand.MAIN_HAND).is(ItemInit.vivianite_scalpel.get())
+				|| player.getItemInHand(InteractionHand.OFF_HAND).is(ItemInit.vivianite_scalpel.get());
 		if (!hasScalpel) {
 			sendStatusToPlayer(player, "A vivianite scalpel is required to perform organ extraction.");
 			return false;
