@@ -32,9 +32,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  *
  * <h3>Oxidation ladder (downward)</h3>
  * <ul>
- *   <li>oxidized_* â†' weathered_*</li>
- *   <li>weathered_* â†' exposed_*</li>
- *   <li>exposed_* â†' base copper_* / cut_copper_*</li>
+ *   <li>oxidized_* -&gt; weathered_*</li>
+ *   <li>weathered_* -&gt; exposed_*</li>
+ *   <li>exposed_* -&gt; base copper_* / cut_copper_*</li>
  * </ul>
  *
  * Block-state properties (facing, half, shape, type, waterlogged) are
@@ -45,29 +45,27 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public class CopperBrushingHandler {
 
     /** Maps each scrape-eligible block to the block it degrades into. */
-    private static Map<Block, Block> DOWNGRADE;
+    private static final Map<Block, Block> DOWNGRADE = createDowngradeMap();
 
-    private static Map<Block, Block> getDowngrade() {
-        if (DOWNGRADE == null) {
-            DOWNGRADE = new HashMap<>();
-            // Plain copper
-            DOWNGRADE.put(Blocks.OXIDIZED_COPPER,               Blocks.WEATHERED_COPPER);
-            DOWNGRADE.put(Blocks.WEATHERED_COPPER,              Blocks.EXPOSED_COPPER);
-            DOWNGRADE.put(Blocks.EXPOSED_COPPER,                Blocks.COPPER_BLOCK);
-            // Cut copper
-            DOWNGRADE.put(Blocks.OXIDIZED_CUT_COPPER,           Blocks.WEATHERED_CUT_COPPER);
-            DOWNGRADE.put(Blocks.WEATHERED_CUT_COPPER,          Blocks.EXPOSED_CUT_COPPER);
-            DOWNGRADE.put(Blocks.EXPOSED_CUT_COPPER,            Blocks.CUT_COPPER);
-            // Cut copper stairs
-            DOWNGRADE.put(Blocks.OXIDIZED_CUT_COPPER_STAIRS,    Blocks.WEATHERED_CUT_COPPER_STAIRS);
-            DOWNGRADE.put(Blocks.WEATHERED_CUT_COPPER_STAIRS,   Blocks.EXPOSED_CUT_COPPER_STAIRS);
-            DOWNGRADE.put(Blocks.EXPOSED_CUT_COPPER_STAIRS,     Blocks.CUT_COPPER_STAIRS);
-            // Cut copper slabs
-            DOWNGRADE.put(Blocks.OXIDIZED_CUT_COPPER_SLAB,      Blocks.WEATHERED_CUT_COPPER_SLAB);
-            DOWNGRADE.put(Blocks.WEATHERED_CUT_COPPER_SLAB,     Blocks.EXPOSED_CUT_COPPER_SLAB);
-            DOWNGRADE.put(Blocks.EXPOSED_CUT_COPPER_SLAB,       Blocks.CUT_COPPER_SLAB);
-        }
-        return DOWNGRADE;
+    private static Map<Block, Block> createDowngradeMap() {
+        Map<Block, Block> map = new HashMap<>();
+        // Plain copper
+        map.put(Blocks.OXIDIZED_COPPER,               Blocks.WEATHERED_COPPER);
+        map.put(Blocks.WEATHERED_COPPER,              Blocks.EXPOSED_COPPER);
+        map.put(Blocks.EXPOSED_COPPER,                Blocks.COPPER_BLOCK);
+        // Cut copper
+        map.put(Blocks.OXIDIZED_CUT_COPPER,           Blocks.WEATHERED_CUT_COPPER);
+        map.put(Blocks.WEATHERED_CUT_COPPER,          Blocks.EXPOSED_CUT_COPPER);
+        map.put(Blocks.EXPOSED_CUT_COPPER,            Blocks.CUT_COPPER);
+        // Cut copper stairs
+        map.put(Blocks.OXIDIZED_CUT_COPPER_STAIRS,    Blocks.WEATHERED_CUT_COPPER_STAIRS);
+        map.put(Blocks.WEATHERED_CUT_COPPER_STAIRS,   Blocks.EXPOSED_CUT_COPPER_STAIRS);
+        map.put(Blocks.EXPOSED_CUT_COPPER_STAIRS,     Blocks.CUT_COPPER_STAIRS);
+        // Cut copper slabs
+        map.put(Blocks.OXIDIZED_CUT_COPPER_SLAB,      Blocks.WEATHERED_CUT_COPPER_SLAB);
+        map.put(Blocks.WEATHERED_CUT_COPPER_SLAB,     Blocks.EXPOSED_CUT_COPPER_SLAB);
+        map.put(Blocks.EXPOSED_CUT_COPPER_SLAB,       Blocks.CUT_COPPER_SLAB);
+        return map;
     }
 
     @SubscribeEvent
@@ -81,7 +79,7 @@ public class CopperBrushingHandler {
 
         BlockPos pos = event.getPos();
         BlockState oldState = level.getBlockState(pos);
-        Block targetBlock = getDowngrade().get(oldState.getBlock());
+        Block targetBlock = DOWNGRADE.get(oldState.getBlock());
         if (targetBlock == null) return;
 
         // Build the new state, copying matching block-state properties
