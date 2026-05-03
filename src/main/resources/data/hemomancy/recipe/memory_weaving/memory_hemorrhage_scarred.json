@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:scar_thorn"
+  },
+  "mortem": true,
+  "ferric": true,
+  "result": "hemomancy:memory_hemorrhage",
+  "count": 1
+}

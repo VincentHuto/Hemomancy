@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:scar_shade"
+  },
+  "tenebris": true,
+  "result": "hemomancy:memory_umbral_step",
+  "count": 1
+}
