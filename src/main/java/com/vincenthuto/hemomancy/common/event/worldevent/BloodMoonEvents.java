@@ -15,9 +15,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -70,6 +72,12 @@ public class BloodMoonEvents {
 
 	/** Block radius within which blood-moon mobs may spawn. */
 	private static final int SPAWN_RADIUS = 24;
+
+	/** Minimum distance from the player for ambient Blood Moon encounter spawns. */
+	private static final int MIN_SPAWN_DISTANCE = 8;
+
+	/** Placement attempts per requested Blood Moon mob. */
+	private static final int SPAWN_ATTEMPTS_PER_MOB = 40;
 
 	/** Duration of ambient effects applied every 2 seconds (50 ticks + buffer). */
 	private static final int EFFECT_DURATION = 60;
@@ -212,27 +220,37 @@ public class BloodMoonEvents {
 
 			// Attempt to spawn 1-2 mobs
 			int spawnCount = 1 + sLevel.random.nextInt(2);
-			for (int i = 0; i < spawnCount; i++) {
-				trySpawnOneMob(sLevel, playerPos);
+			int spawned = 0;
+			for (int i = 0; i < spawnCount && nearbyCount + spawned < MAX_NEARBY_MOBS; i++) {
+				if (trySpawnOneMob(sLevel, playerPos)) {
+					spawned++;
+				}
 			}
 		}
 	}
 
-	private static void trySpawnOneMob(ServerLevel sLevel, BlockPos playerPos) {
-		for (int attempt = 0; attempt < 10; attempt++) {
-			int dx = sLevel.random.nextInt(SPAWN_RADIUS * 2) - SPAWN_RADIUS;
-			int dz = sLevel.random.nextInt(SPAWN_RADIUS * 2) - SPAWN_RADIUS;
-			BlockPos spawnPos = sLevel.getHeightmapPos(
-					net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-					playerPos.offset(dx, 0, dz));
+	private static boolean trySpawnOneMob(ServerLevel sLevel, BlockPos playerPos) {
+		int minDistanceSqr = MIN_SPAWN_DISTANCE * MIN_SPAWN_DISTANCE;
+		int maxDistanceSqr = SPAWN_RADIUS * SPAWN_RADIUS;
 
-			// Only spawn in darkness (sky light â‰¤ 4 or night)
-			if (sLevel.getBrightness(LightLayer.SKY, spawnPos) > 4) continue;
-			if (!sLevel.getBlockState(spawnPos).isAir()) continue;
+		for (int attempt = 0; attempt < SPAWN_ATTEMPTS_PER_MOB; attempt++) {
+			int dx = sLevel.random.nextInt(SPAWN_RADIUS * 2 + 1) - SPAWN_RADIUS;
+			int dz = sLevel.random.nextInt(SPAWN_RADIUS * 2 + 1) - SPAWN_RADIUS;
+			int horizontalDistanceSqr = dx * dx + dz * dz;
+			if (horizontalDistanceSqr < minDistanceSqr || horizontalDistanceSqr > maxDistanceSqr) continue;
+
+			BlockPos spawnPos = sLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+					playerPos.offset(dx, 0, dz));
+			if (!sLevel.isLoaded(spawnPos) || !sLevel.getWorldBorder().isWithinBounds(spawnPos)) continue;
+
+			// Blood Moon encounters are event spawns: open sky still has high raw sky
+			// light at night, so only block light should suppress them.
+			if (sLevel.getBrightness(LightLayer.BLOCK, spawnPos) > 7) continue;
+			if (!isClearSpawnBlock(sLevel, spawnPos) || !isClearSpawnBlock(sLevel, spawnPos.above())) continue;
 			if (!sLevel.getBlockState(spawnPos.below()).isSolidRender(sLevel, spawnPos.below())) continue;
 
 			// Randomly pick thirster or fargone
-			net.minecraft.world.entity.Mob mob;
+			Mob mob;
 			if (sLevel.random.nextBoolean()) {
 				mob = EntityInit.thirster.get().create(sLevel);
 			} else {
@@ -240,12 +258,21 @@ public class BloodMoonEvents {
 			}
 			if (mob == null) continue;
 
-			mob.moveTo(spawnPos, sLevel.random.nextFloat() * 360f, 0f);
+			mob.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D,
+					sLevel.random.nextFloat() * 360f, 0f);
+			if (!sLevel.noCollision(mob) || !mob.checkSpawnObstruction(sLevel)) continue;
+
 			mob.finalizeSpawn(sLevel, sLevel.getCurrentDifficultyAt(spawnPos),
 					MobSpawnType.EVENT, null);
-			sLevel.addFreshEntity(mob);
-			break;
+			if (sLevel.addFreshEntity(mob)) {
+				return true;
+			}
 		}
+		return false;
+	}
+
+	private static boolean isClearSpawnBlock(ServerLevel sLevel, BlockPos pos) {
+		return sLevel.getBlockState(pos).getCollisionShape(sLevel, pos).isEmpty();
 	}
 
 	// ---------------------------------------------------------------------------

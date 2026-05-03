@@ -127,8 +127,10 @@ public class BloodMoonVeinSkyRenderer {
 
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.setShaderTexture(0, BLOOD_MOON_PHASES);
+		// blood_moon_phases.png is RGB-only; additive blending keeps its black
+		// background texels from dimming the dawn/dusk sky.
 		RenderSystem.blendFuncSeparate(
-			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
 		);
 

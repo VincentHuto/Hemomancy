@@ -24,6 +24,8 @@ public class AbhorentThoughtModel extends HierarchicalModel<AbhorentThoughtEntit
 	public static final ModelLayerLocation abhorent_thought = new ModelLayerLocation(
 			Hemomancy.rloc("abhorent_thought"), "main");
 
+	private static boolean animationDefinitionsAvailable = true;
+
 	private final ModelPart whole;
 
 	public AbhorentThoughtModel(ModelPart root) {
@@ -505,8 +507,15 @@ public class AbhorentThoughtModel extends HierarchicalModel<AbhorentThoughtEntit
 			float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
-		this.animate(entity.idleAnimationState, AbhorentThoughtAnimations.IDLE, ageInTicks);
-		this.animate(entity.walkAnimationState, AbhorentThoughtAnimations.WALK, ageInTicks);
+		if (animationDefinitionsAvailable) {
+			try {
+				this.animate(entity.idleAnimationState, AbhorentThoughtAnimations.IDLE, ageInTicks);
+				this.animate(entity.walkAnimationState, AbhorentThoughtAnimations.WALK, ageInTicks);
+			} catch (NoClassDefFoundError error) {
+				animationDefinitionsAvailable = false;
+				Hemomancy.LOGGER.warn("Abhorent Thought animation definitions were not available on the runtime classpath; rendering the entity without generated animations until the client is rebuilt.", error);
+			}
+		}
 
 	}
 

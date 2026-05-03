@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "hemomancy:befouling_ash_trail"
+        "recipe": "hemomancy:befouling_ash"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "hemomancy:befouling_ash_trail"
+      "hemomancy:befouling_ash"
     ]
   },
   "sends_telemetry_event": false
