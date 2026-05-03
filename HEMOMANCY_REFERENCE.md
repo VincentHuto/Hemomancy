@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
-> **Last Updated:** 2026-05-03 (audit against recent `neo-1.21.1` commits: local HutosLib composite build via `settings.gradle`; item-inquiry dialogue JSON loader and 51 `data/hemomancy/dialogue_inquiry/**` entries; dedicated 48x48 NPC portrait textures; Virid Salis trail block/item; Saint package refactor and updated Saint boss AI; Mycelial Crucible + consolidated `immature_fungal_scar`; 9 fungal scar cultivation recipes; scar tier/effect table corrected; entity loot tables corrected to current 1.21 `data/hemomancy/loot_table/entities/` path. Previous 2026-04-30 update: Sanguine Conduit item persistence fix.)
+> **Last Updated:** 2026-05-03 (audit against recent `neo-1.21.1` commits: local HutosLib composite build via `settings.gradle`; item-inquiry dialogue JSON loader and 51 `data/hemomancy/dialogue_inquiry/**` entries; dedicated 48x48 NPC portrait textures; Virid Salis trail block/item; Saint package refactor and updated Saint boss AI; Mycelial Crucible + consolidated `immature_fungal_scar`; 9 fungal scar cultivation recipes; scar tier/effect table corrected; entity loot tables corrected to current 1.21 `data/hemomancy/loot_table/entities/` path. Previous 2026-04-30 update: Sanguine Conduit item persistence fix.) **+** Copper Brushing mechanic: `CopperBrushingHandler` — brush unwaxed oxidized copper to strip one oxidation step and drop Virid Salis; documented in Liber Immaculatus `sacred_tools/virid_salis_brushing`.
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -1056,7 +1056,7 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 | Icon of Our Lady | A rare relic depicting Our Lady of Still Waters — carved from pale silver, grants her protection |
 | ![](src/main/resources/assets/hemomancy/textures/item/pale_silver_ingot.png) Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
 | The Pale Distillate | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
-| ![](src/main/resources/assets/hemomancy/textures/item/virid_salis.png) Virid Salis | Verdigris-colored salt-ash used as the Unstained counterpart to ritual ash trails |
+| ![](src/main/resources/assets/hemomancy/textures/item/virid_salis.png) Virid Salis | Verdigris-colored salt-ash used as the Unstained counterpart to ritual ash trails. **Harvested** by right-clicking any unwaxed oxidized/weathered/exposed copper block (plain, cut, stairs, or slab) with a vanilla brush — strips one oxidation step, drops 1 Virid Salis, costs 1 brush durability. Handled by `CopperBrushingHandler`. |
 
 ### 13.7 Food Items
 
