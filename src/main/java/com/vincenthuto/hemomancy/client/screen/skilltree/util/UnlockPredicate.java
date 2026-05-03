@@ -80,4 +80,25 @@ public interface UnlockPredicate {
 				.map(d -> d.getDegreeNumber() >= degree)
 				.orElse(false);
 	}
+
+	/**
+	 * Visible when the player's Unstained purity value is at least {@code purity}.
+	 * Returns {@code false} when the capability is absent (e.g. a non-Unstained
+	 * player or a player who has not begun the Unstained path).
+	 */
+	static UnlockPredicate minPurity(float purity) {
+		return player -> HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(up -> up.getPurity() >= purity)
+				.orElse(false);
+	}
+
+	/**
+	 * Visible when the player's Unstained clarity value is at least {@code clarity}.
+	 * Returns {@code false} when the capability is absent.
+	 */
+	static UnlockPredicate minClarity(float clarity) {
+		return player -> HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(up -> up.getClarity() >= clarity)
+				.orElse(false);
+	}
 }

@@ -1679,5 +1679,211 @@
   "hemomancy.zealot.item_inquiry.unstained_armor.line1": "Unstained armor. Pale silver alloy throughout — forged to resist blood-corruption on contact. A practitioner well along the path can wear this without it interfering with their purification.",
   "hemomancy.zealot.item_inquiry.unstained_armor.line2": "The set holds a blessing when worn complete. Our Lady's protection is strongest around those who have clothed themselves in her metal. It is a statement of commitment.",
   "hemomancy.zealot.item_inquiry.hallowed_residuum.line1": "Hallowed residuum. What remains when a Saint is overcome — the distilled echo of a being whose blood potency bordered on the divine.",
-  "hemomancy.zealot.item_inquiry.hallowed_residuum.line2": "To us it is a reminder of what is being cleansed. The Saints held enormous blood power — and in the end, that power was what made them vulnerable to what we are purging. The residuum is proof that blood-mastery is not permanence."
+  "hemomancy.zealot.item_inquiry.hallowed_residuum.line2": "To us it is a reminder of what is being cleansed. The Saints held enormous blood power — and in the end, that power was what made them vulnerable to what we are purging. The residuum is proof that blood-mastery is not permanence.",
+
+  "hemomancy.alchemist.item_inquiry.dendritic_distributor.line1": "The Dendritic Distributor. Interface for the Skill Tree — your personal record of blood-craft competencies. The Distributor reads your vascular state and presents the options available at your current degree.",
+  "hemomancy.alchemist.item_inquiry.dendritic_distributor.line2": "You can only open as many branches as your initiation permits. The skills available at Disciple are not the skills available at Adept. Keep returning as you advance.",
+
+  "hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary. This is where you load and manage your active blood manipulations. Place the memory crystals you have integrated — the Reliquary organises them into your active loadout.",
+  "hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line2": "Manipulations must be loaded before they can be cast. The Reliquary holds your selection; the vascular system holds the capacity. Do not confuse having a crystal with being able to use it.",
+
+  "hemomancy.alchemist.item_inquiry.sanguine_formation.line1": "Sanguine formation — crystallised blood mineral. Forms naturally in places where blood power has pooled for a long time. It is the base input for almost everything processed in the Alembic.",
+  "hemomancy.alchemist.item_inquiry.sanguine_formation.line2": "Smash clusters to obtain shards. Shards refine into formation. Formation feeds the Alembic. The process is straightforward. The challenge is sourcing enough of it.",
+
+  "hemomancy.alchemist.item_inquiry.hematic_iron_scrap.line1": "Hematic iron scrap. A by-product of smelting iron near prolonged blood-saturation. The iron absorbs trace blood compounds and acquires useful properties — fire resistance, tensile strength, slight conductivity to blood energy.",
+  "hemomancy.alchemist.item_inquiry.hematic_iron_scrap.line2": "Smelt the scrap into ingots before use. The scrap form is chemically unstable; the ingot is where the interesting properties stabilise.",
+
+  "hemomancy.alchemist.item_inquiry.blood_crystal_shard.line1": "Blood crystal shard. Fragments of crystallised sanguine energy — lower purity than a full formation, but still workable. Useful as lower-tier Alembic inputs or supplementary ingredients.",
+  "hemomancy.alchemist.item_inquiry.blood_crystal_shard.line2": "Do not discard them. The Alembic accepts them at reduced yield. Accumulate shards until you have enough to process a meaningful batch.",
+
+  "hemomancy.alchemist.item_inquiry.puppeteering_thread.line1": "Puppeteering thread. The physical medium used in the Somatic Loom for memory weaving. The thread carries tendency-imprinted fibres — the Loom reads those fibres and uses them as a template during crystal formation.",
+  "hemomancy.alchemist.item_inquiry.puppeteering_thread.line2": "The quality of your thread affects the precision of the weave. Damaged or low-quality thread increases the chance of a failed or misaligned memory crystal.",
+
+  "hemomancy.alchemist.item_inquiry.dicentra_sap.line1": "Dicentra sap — harvested from the Bleeding Heart plant. One of the cleanest Animus-tendency organic inputs available. The sap's chemistry is naturally rich in the volatile compounds the Alembic strips for life-force concentration.",
+  "hemomancy.alchemist.item_inquiry.dicentra_sap.line2": "Renders especially good yield on Vivacious Enzyme processing. If you are focusing Animus tendency, Bleeding Heart cultivation is worth the investment.",
+
+  "hemomancy.alchemist.item_inquiry.spore_sac.line1": "Spore sac. Collected from Infected Fungus or from fungal creatures. The sac concentrates the spore mass used in several crafting processes — notably fungal implantation and certain Somatic Loom weave recipes.",
+  "hemomancy.alchemist.item_inquiry.spore_sac.line2": "Spores are biologically active even when dried. The Alembic neutralises the active compounds during processing; raw spore sacs in open storage are mildly hazardous.",
+
+  "hemomancy.alchemist.item_inquiry.scar_blank.locked": "Blank scar plates serve no purpose at your current degree. The Cerebral Scarring Station is not accessible until you have reached the fourth degree.",
+  "hemomancy.alchemist.item_inquiry.scar_blank.line1": "Blank scar plate. This is what you bring to the Cerebral Scarring Station. The Station receives the blank and your knapper tool — you carve a pattern into the plate, and when worn, the scar opens specific venous and neural pathways.",
+  "hemomancy.alchemist.item_inquiry.scar_blank.line2": "The blank itself does nothing. It is potential. The pattern you carve into it — and whether you have the vascular prerequisites to sustain that pattern — is what determines the result.",
+
+  "hemomancy.alchemist.item_inquiry.barbed_blade.line1": "The Barbed Blade. A hemomantic weapon — the barbs are living extensions designed to draw blood on contact. Each hit feeds a small return into the wielder's blood reserve. Low return per hit; reliable accumulation over a sustained engagement.",
+  "hemomancy.alchemist.item_inquiry.barbed_blade.line2": "The blade is not optimised for damage. It is optimised for collection. If you need to fight and refuel simultaneously it is the right choice. If you need to end something quickly, choose a different tool.",
+
+  "hemomancy.alchemist.item_inquiry.living_syringe.line1": "The Living Syringe. A precision extraction and injection tool — draws blood from the practitioner or a target and delivers it as a direct bolus injection. Useful for precise control of blood volume in field conditions.",
+  "hemomancy.alchemist.item_inquiry.living_syringe.line2": "In direct application it can disrupt a target's metabolic state. It is not a primary weapon. It is a tool that happens to have secondary applications when other options are unavailable.",
+
+  "hemomancy.alchemist.item_inquiry.bloody_flask.line1": "The Bloody Flask. Larger capacity than the vial — holds a meaningful volume of blood without requiring the full processing chain. Useful for transport between a collection point and the Alembic.",
+  "hemomancy.alchemist.item_inquiry.bloody_flask.line2": "The Flask is not a processing input in itself. Fill it, carry it, decant into the Alembic when you are ready. Do not confuse it with the gourd — the gourd is for active casting reserves; the Flask is for storage and transport.",
+
+  "hemomancy.vicar.item_inquiry.dendritic_distributor.line1": "The Dendritic Distributor. The Covenant's instrument for managing a practitioner's development. The Distributor maps your current vascular state and shows you what you have earned and what remains ahead.",
+  "hemomancy.vicar.item_inquiry.dendritic_distributor.line2": "At each new degree, additional branches of the skill tree become accessible. The Covenant has found that practitioners who take time to consolidate earlier skills perform better in the rites ahead.",
+
+  "hemomancy.vicar.item_inquiry.mnemonic_reliquary.line1": "The Mnemonic Reliquary. You load your active manipulations here. The crystals you have integrated are many — the Reliquary lets you choose which ones to carry at any given moment.",
+  "hemomancy.vicar.item_inquiry.mnemonic_reliquary.line2": "Choose your loadout thoughtfully before you go. The Reliquary does not limit your permanent library — only what you have ready to cast. A practitioner who loads indiscriminately is a practitioner who runs dry at a critical moment.",
+
+  "hemomancy.vicar.item_inquiry.scar_blank.locked": "Blank scar plates are not yet relevant to your practice. The scar work of the Covenant begins at the fourth degree. Focus on what is immediately before you.",
+  "hemomancy.vicar.item_inquiry.scar_blank.line1": "A blank scar plate. These are what the Cerebral Scarring Station works with — a blank canvas that receives a carved pattern. When worn, the scar shapes the body in specific and sometimes permanent ways.",
+  "hemomancy.vicar.item_inquiry.scar_blank.line2": "Scars are not cosmetic. They restructure how blood flows and how the body distributes strain. The Order does not require them, but we observe that practitioners who use scars thoughtfully tend to outlast those who rely only on raw blood volume.",
+
+  "hemomancy.vicar.item_inquiry.scar_binder.line1": "The Scar Binder. Storage case for your carved scar plates. The Binder keeps them organised and accessible — you will accumulate more scars than you can wear at once, and the Binder is where the surplus waits.",
+  "hemomancy.vicar.item_inquiry.scar_binder.line2": "An upgraded Binder holds significantly more. If you are approaching adept-level work the standard Binder will fill quickly. Plan for that before it becomes a constraint on your practice.",
+
+  "hemomancy.vicar.item_inquiry.iron_brazier.line1": "The Iron Brazier. Rite fire — consecrated flame used to anchor Cardinal Rite patterns. Certain rites require a lit Brazier within the pattern boundary, or they will not hold.",
+  "hemomancy.vicar.item_inquiry.iron_brazier.line2": "The Brazier itself is simple ironwork. What makes it functional is its position relative to the pattern and the quality of the flame. A Brazier improperly fuelled will let a rite collapse mid-execution.",
+
+  "hemomancy.vicar.item_inquiry.earthen_vein.line1": "The Earthen Vein. A living conduit — grown rather than crafted in the traditional sense. Place them in sequence and they form a blood-transport network: volume moves through them from source to destination.",
+  "hemomancy.vicar.item_inquiry.earthen_vein.line2": "They are the infrastructure of a developed Harbinger workshop. Not essential in the early degrees, but by the time you are working with the Loom regularly you will want the throughput they provide.",
+
+  "hemomancy.vicar.item_inquiry.scrying_podium.line1": "The Scrying Podium. It reads the practitioner's blood and reveals information about their tendency distribution — what tendencies are dominant, what is latent, how the current sits.",
+  "hemomancy.vicar.item_inquiry.scrying_podium.line2": "Useful early in your practice when you are still determining your path, and useful later when tendency balance matters for specific rites or memory weaving. The Podium does not judge — it only shows.",
+
+  "hemomancy.vicar.item_inquiry.mortal_display.line1": "The Mortal Display. The Covenant uses it to house visceral organ echoes — the preserved resonance of an organ extracted through deep rite work. Each echo holds properties depending on the organ it came from.",
+  "hemomancy.vicar.item_inquiry.mortal_display.line2": "The Display sustains the echo's stability. Without it, echoes degrade. What you do with them depends on where your practice has taken you. Some practitioners treat them as power sources; others as objects of study.",
+
+  "hemomancy.zealot.item_inquiry.lethean_poppy.line1": "The Lethean Poppy. A flower Our Lady has marked as her own — it grows in places where the water has gone still and the blood-taint has begun to recede. You find it where purification has already started working.",
+  "hemomancy.zealot.item_inquiry.lethean_poppy.line2": "Harvest the heads for lethean dew and the distillate. The wreath woven from the whole plant is an offering the Altar recognises. Do not uproot more than you need — the poppy marks a place that is trying to heal.",
+
+  "hemomancy.zealot.item_inquiry.tears_of_silthmere.line1": "Tears of Silthmere. They appear rarely — in places where the grief of the purified has been held long enough that the water remembers it. Each tear is a one-time offering of exceptional potency at the Altar.",
+  "hemomancy.zealot.item_inquiry.tears_of_silthmere.line2": "Do not hold them. Bring them to the Altar when you find them. Our Lady receives them personally. No other offering produces quite the same response.",
+
+  "hemomancy.zealot.item_inquiry.lethean_poppy_wreath.line1": "The Lethean Poppy Wreath. Woven by hand from whole lethean poppies harvested with intention. It is an offering of labour as much as material — the weaving itself is the dedication.",
+  "hemomancy.zealot.item_inquiry.lethean_poppy_wreath.line2": "Bring it to the Altar. It grants five points of purity. Not a large amount, but a clean and honest amount. The Altar responds to what is offered with care.",
+
+  "hemomancy.zealot.item_inquiry.silver_chalice.line1": "The Silver Chalice. A vessel of clarity — not purity, clarity. There is a difference. The chalice holds what the spirit becomes once the corruption has been removed. Offer it at the Altar when your clarity work has stalled.",
+  "hemomancy.zealot.item_inquiry.silver_chalice.line2": "Five points of clarity per offering. Clarity is not the same threshold as purity, and the Altar knows which you are offering toward. Bring the chalice when you are ready to work on what grows in place of what has been removed.",
+
+  "hemomancy.zealot.item_inquiry.pale_silver_ingot.line1": "Pale silver ingot. The metal Our Lady blesses — it does not conduct blood-magic. Equipment made from it resists corruption on contact. The Unstained arm themselves in pale silver for this reason: we do not wish to become what we oppose.",
+  "hemomancy.zealot.item_inquiry.pale_silver_ingot.line2": "The ore runs deep in ground the bloodless earth has not disturbed. Standard smelting. What makes it pale silver is its origin, not any treatment after the fact.",
+
+  "hemomancy.zealot.item_inquiry.pale_distillate.line1": "The Pale Distillate. Concentrated essence rendered from lethean poppies — the compressed form of what the poppy offers. A small amount goes further in certain Altar rites than a full wreath.",
+  "hemomancy.zealot.item_inquiry.pale_distillate.line2": "It takes several poppies to produce a single distillate. Plan your harvest accordingly if you intend to work with the more demanding purity rites.",
+
+  "hemomancy.zealot.item_inquiry.tome_of_the_unstained.line1": "The Tome of the Unstained. Our Lady's teachings, written down. It is not a doctrine — it does not tell you what to believe. It tells you what the path requires: what to bring to the Altar, when to purify, how to recognise the stages.",
+  "hemomancy.zealot.item_inquiry.tome_of_the_unstained.line2": "Read it. Not once — return to it at each stage. What you understand at the beginning is not what you understand halfway through, and the Tome speaks differently once you have lived what it describes.",
+
+  "hemomancy.zealot.item_inquiry.pallid_icon.line1": "The Pallid Icon. A carved image of Our Lady of Still Waters — not a depiction of a face, because she does not show a face. It is a gesture: the posture of still water, the suggestion of something patient beneath the surface.",
+  "hemomancy.zealot.item_inquiry.pallid_icon.line2": "The Icon is carried, worn, or placed. Some practitioners find that the Icon's presence near the Altar improves the Altar's receptivity. Our Lady does not require display. She notices sincerity.",
+
+  "hemomancy.zealot.item_inquiry.consecrated_copper_ingot.line1": "Consecrated copper. Ordinary copper that has been blessed through Unstained rite. The blessing does not change the metal's properties so much as it changes its relationship with blood-magic — consecrated copper resists blood-resonance passively.",
+  "hemomancy.zealot.item_inquiry.consecrated_copper_ingot.line2": "Used in advanced Unstained crafting: structural components in Altar work, in the deeper purification vessels, and in certain ward constructions. The blessing must be renewed if the copper is significantly worked after consecration.",
+
+  "hemomancy.zealot.item_inquiry.hemolytic_solution.line1": "Hemolytic solution. The Church's primary tool for purification and for combat with blood-afflicted creatures. It breaks down blood matrices on contact — in the body, on a surface, or on an afflicted creature.",
+  "hemomancy.zealot.item_inquiry.hemolytic_solution.line2": "For internal purification: bring it to the Altar of Cleansing. For external application: coat your weapons before engaging blood-afflicted targets. One compound, two purposes. Our Lady provided for both.",
+
+  "hemomancy.zealot.item_inquiry.self_reflection_mirror.line1": "The Self-Reflection Mirror. Opens your Unstained progress record — your purity, your clarity, where you stand on the stages of the path. Every practitioner should keep one close.",
+  "hemomancy.zealot.item_inquiry.self_reflection_mirror.line2": "It does not show what you wish you were. It shows what you are. Our Lady does not soften the reading — but she does not abandon those who do not like what they see.",
+
+  "hemomancy.zealot.item_inquiry.cleansed_blood_crystal_shard.line1": "A cleansed blood crystal shard. Purified through Unstained rites — the sanguine resonance has been neutralised, and what remains is structurally inert. Used in certain construction and crafting work that requires a crystal component without blood affinity.",
+  "hemomancy.zealot.item_inquiry.cleansed_blood_crystal_shard.line2": "The cleansing process is not reversible. A cleansed shard cannot be re-infused with sanguine energy. That is the point.",
+
+  "hemomancy.guardian.item_inquiry.pale_silver_ingot.line1": "Pale silver. Every piece of standard Unstained equipment is made from it. Keep ingots in supply — a Guardian without functioning equipment is a liability in the field.",
+  "hemomancy.guardian.item_inquiry.pale_silver_ingot.line2": "Smelt the ore directly. No treatment needed. The resulting ingot is naturally resistant to blood-corruption — that resistance is why we use it and nothing else.",
+
+  "hemomancy.guardian.item_inquiry.hemolytic_solution.line1": "Hemolytic solution. Apply it to your weapons before engaging blood-afflicted targets. Without it you are fighting at reduced effect. One properly coated strike disrupts more than three uncoated.",
+  "hemomancy.guardian.item_inquiry.hemolytic_solution.line2": "Coat warhammer, glaive, dagger, or shield facing before engagement. The coating wears off after several strikes. Carry extra. Running out mid-fight is an avoidable mistake.",
+
+  "hemomancy.guardian.item_inquiry.hemolytic_plating.line1": "Hemolytic plating. Sheet material treated with hemolytic solution and cured into a stable form. Used in armor construction and structural components. It passively disrupts blood-magic on contact — useful lining for gear worn in afflicted areas.",
+  "hemomancy.guardian.item_inquiry.hemolytic_plating.line2": "The plating holds the lytic compound in a stable state indefinitely. Raw solution degrades on fabric or standard metal; the plating form retains the effect. Required material if you are building toward advanced Guardian equipment.",
+
+  "hemomancy.guardian.item_inquiry.lethean_poppy.line1": "The Lethean Poppy. It grows where purification has already taken hold — where the water has gone still and the blood-taint has receded. Finding poppies in the field means you are in a place Our Lady has already touched.",
+  "hemomancy.guardian.item_inquiry.lethean_poppy.line2": "Those areas are typically lower-risk for blood-afflicted encounters. Mark them. The Zealots upstream need to know where the cleansed ground is expanding.",
+
+  "hemomancy.guardian.item_inquiry.lethean_dew.line1": "Lethean dew. Harvested from the lethean poppy at dawn. The Zealots use it in Altar rites. In the field it functions as a supplement — small application disrupts blood-saturation in a wound between engagements.",
+  "hemomancy.guardian.item_inquiry.lethean_dew.line2": "Not a substitute for hemolytic solution in a fight. Useful for treating incidental blood-exposure between engagements. Carry a vial, do not rely on it as your primary tool.",
+
+  "hemomancy.guardian.item_inquiry.lethean_brew.line1": "Lethean brew — the distilled concentrate of lethean dew. Stronger than the raw dew; used in the deeper Altar rites. In the field it is more potent for treating blood-exposure than raw dew.",
+  "hemomancy.guardian.item_inquiry.lethean_brew.line2": "Handle carefully. Lethean brew disrupts blood matrices with more force than the dew alone — in measured quantities it is a treatment. A Guardian carrying lethean brew is prepared for sustained operations.",
+
+  "hemomancy.guardian.item_inquiry.pale_distillate.line1": "Pale distillate. Refined from lethean poppies. The Zealots use it in advanced Altar work. In the field it is the most concentrated lytic material available — used sparingly and only when necessary.",
+  "hemomancy.guardian.item_inquiry.pale_distillate.line2": "You will rarely need this directly in combat. If you are supporting Zealot operations, knowing how it is used upstream is worth understanding. Carry it if requested; otherwise leave it for the ritual work.",
+
+  "hemomancy.guardian.item_inquiry.pallid_icon.line1": "The Pallid Icon. Our Lady's emblem. Every Guardian carries one — not as armament, but as orientation. When a mission becomes unclear, the Icon is a reminder of what you are protecting and why you use the methods you use.",
+  "hemomancy.guardian.item_inquiry.pallid_icon.line2": "We do not carry it for protection from blood-magic. We carry it as a statement of purpose. There is a difference between a Guardian and a soldier of convenience. The Icon makes the distinction visible.",
+
+  "hemomancy.guardian.item_inquiry.tome_of_the_unstained.line1": "The Tome. Our Lady's teachings on the path. Guardians are not expected to walk the purification path themselves, but every Guardian is expected to understand what the Zealots are pursuing and what it demands.",
+  "hemomancy.guardian.item_inquiry.tome_of_the_unstained.line2": "Read it once, at minimum. Understanding the Zealot's purpose helps you protect them effectively. You cannot secure something you do not understand.",
+
+  "hemomancy.alchemist.item_inquiry.glass_bottle.line1": "A glass bottle. Standard alchemical vessel in common use. It holds liquid, it seals adequately, and it will shatter under pressure. We use the vial system for a reason — the precise calibrated volume of a blood vial cannot be replicated with common glassware.",
+  "hemomancy.alchemist.item_inquiry.glass_bottle.line2": "If you need to store something unstabilised that cannot go in a blood vial, the glass bottle is functional. For anything involving blood distillation, processing, or tendency work, use the correct vessel.",
+
+  "hemomancy.alchemist.item_inquiry.brewing_stand.line1": "A brewing stand. The common practitioner's distillation device. Water-and-base model — produces blunt biological responses. It is a reasonable predecessor to what the Alembic does, in the same way that boiling meat over a fire is a predecessor to cooking.",
+  "hemomancy.alchemist.item_inquiry.brewing_stand.line2": "The Alembic produces precise tendency concentrates. The stand produces threshold effects. Both are distillation. The difference is in resolution. Do not mistake familiarity with the stand for understanding of what the Alembic is doing.",
+
+  "hemomancy.alchemist.item_inquiry.blaze_powder.line1": "Blaze powder. Highly volatile combustion compound — concentrated ignition chemistry from the Nether. In the Alembic, it processes as a quality Flammeus tendency input: the volatile compounds strip cleanly into Fervent Enzyme concentrate.",
+  "hemomancy.alchemist.item_inquiry.blaze_powder.line2": "Handle with care during transport. Blaze powder ignites from friction. Keep it dry, away from blood vials, and well away from open flame until you intend to use it.",
+
+  "hemomancy.alchemist.item_inquiry.nether_wart.line1": "Nether Wart. The standard base catalyst in common brewing, but it has uses in the Alembic as well — the organic structure contains binding compounds that help stabilise volatile distillations that would otherwise produce waste compounds.",
+  "hemomancy.alchemist.item_inquiry.nether_wart.line2": "Do not treat it as a base ingredient the way the brewing stand does. In the Alembic it functions as a process stabiliser. Add it to runs where you are seeing erratic or unstable outputs.",
+
+  "hemomancy.alchemist.item_inquiry.slime_ball.line1": "Slime ball. High-viscosity organic adhesive compound. In the Alembic, the chemistry reads as a strong Ductilis tendency input — the pliability and adhesive behaviour is chemically analogous to what makes blood malleable in shaping manipulations.",
+  "hemomancy.alchemist.item_inquiry.slime_ball.line2": "Useful input for Neurotic Enzyme production. The yield is reliable. Slimes are more available than you might expect once you know where to gather them.",
+
+  "hemomancy.alchemist.item_inquiry.redstone.line1": "Redstone. The standard energy conductor of applied mechanics. The mineral chemistry has trace blood-mineral signatures that the Alembic identifies as Ferric tendency input — the conduction properties translate directly.",
+  "hemomancy.alchemist.item_inquiry.redstone.line2": "The Ferric tendency in blood is the conduction tendency: reinforcement, channelling, precision of energy transfer. Redstone occupies an analogous role in mechanical systems. That parallel is not coincidental. The Alembic processes it as such.",
+
+  "hemomancy.alchemist.item_inquiry.iron_ingot.line1": "Iron ingot. Ordinary smelted iron — no blood affinity whatsoever at this stage. Standard iron has no hematic properties. The blood-saturation that produces hematic iron scrap only occurs when the smelting environment itself is blood-charged.",
+  "hemomancy.alchemist.item_inquiry.iron_ingot.line2": "If you need hematic iron, you cannot produce it from standard ingots. Source the scrap from areas of blood saturation, or smelt near concentrated sanguine formation. The blood does the work during smelting; ordinary iron just receives it.",
+
+  "hemomancy.alchemist.item_inquiry.glowstone_dust.line1": "Glowstone dust. Luminescent mineral compound from the Nether. In the Alembic, the light-chemistry processes as a quality Lux tendency input — the radiance compounds strip cleanly into Incandescent Enzyme concentrate.",
+  "hemomancy.alchemist.item_inquiry.glowstone_dust.line2": "Incandescent Enzyme yield from glowstone dust is good — clean extraction, minimal waste compounds. If you are investing in Lux tendency work, glowstone is among the most reliable raw inputs available through conventional means.",
+
+  "hemomancy.vicar.item_inquiry.book.line1": "A book. Written knowledge, preserved for transmission. The Covenant keeps extensive records — the degree rites, the tendency histories, the observations of practitioners across generations. A blank book in attentive hands is the beginning of something worth reading.",
+  "hemomancy.vicar.item_inquiry.book.line2": "The Order's most enduring work was not done by those with the strongest blood. It was done by those who understood what they were doing clearly enough to write it down for the practitioners who came after them.",
+
+  "hemomancy.vicar.item_inquiry.potion.line1": "A common alchemical potion. The old craft — water-and-herb distillation producing blunt metabolic effects. The Covenant does not dismiss it. We recognise that most of the world operates at this level, and it works after a fashion.",
+  "hemomancy.vicar.item_inquiry.potion.line2": "The difference between what the Covenant practices and what you hold there is the difference between a candle and a fire that knows where it is burning. Both produce light. One of them responds to intention.",
+
+  "hemomancy.vicar.item_inquiry.nether_star.line1": "A Nether Star. Immense concentrated energy — the residue of a Wither's collapse. The Covenant has studied these before. The power within is genuine, but it is undirected, unstructured. It does not know what it is for.",
+  "hemomancy.vicar.item_inquiry.nether_star.line2": "That is the limit of raw power without cultivation. The Covenant's work is not the accumulation of force — it is the development of purpose within that force. Bring me something that remembers what it is, and I will tell you it is worth holding.",
+
+  "hemomancy.vicar.item_inquiry.heart_of_the_sea.line1": "Heart of the Sea. There is something in its resonance — the way it holds the memory of deep water — that the Order finds philosophically interesting. Water and blood are closer to each other than common understanding allows.",
+  "hemomancy.vicar.item_inquiry.heart_of_the_sea.line2": "The Unstained would interpret that differently, I imagine. They position water as the counterpoint to blood. The Covenant's reading is more careful: blood and water share a common origin. The Heart is one of the few common artifacts that demonstrates that plainly.",
+
+  "hemomancy.vicar.item_inquiry.enchanted_book.line1": "An enchanted book. Arcane knowledge compressed into inscription — a different method of encoding capability than sanguine memory crystals, but recognisably the same impulse: preserve the knowledge in a form that transfers it to someone else.",
+  "hemomancy.vicar.item_inquiry.enchanted_book.line2": "Arcane inscription and memory weaving are two approaches to the same problem. Some higher-degree practitioners have documented correspondences between enchanting schools and tendency affinities. That research is incomplete, but the direction is not unreasonable.",
+
+  "hemomancy.vicar.item_inquiry.dragon_egg.line1": "The Dragon Egg. The Order has catalogued this. An immense amount of latent vitality compressed into a single crystalline form — a concentration of life-potential that rivals anything the blood produces through natural means.",
+  "hemomancy.vicar.item_inquiry.dragon_egg.line2": "The Covenant has not yet found a formal degree-rite application for it. That may change. At your current stage the rites do not touch what this contains. Hold it carefully. Things with that much compressed potential tend to attract attention they did not seek.",
+
+  "hemomancy.zealot.item_inquiry.water_bucket.line1": "Water. Our Lady's element — not metaphorically, not as a symbol. The still water that covers the deep. The quiet water that carries away what has been shed. The water that remembers everything it has touched. She does not live in fire or storm. She is in the water that does not move unless it chooses to.",
+  "hemomancy.zealot.item_inquiry.water_bucket.line2": "Carry it with intention. Still water brought to the Altar with sincerity is noticed. Not as an ingredient — the water is not consumed. It is a gesture. Our Lady sees gestures.",
+
+  "hemomancy.zealot.item_inquiry.milk_bucket.line1": "Milk. The old folk remedy for poison — the first instinct to cleanse from within. Something about that impulse is right, even if it is not the Altar's method. Our Lady does not mock the reaching toward purity. She extends toward it.",
+  "hemomancy.zealot.item_inquiry.milk_bucket.line2": "The purification path is a deeper form of that same reaching. Milk draws out surface corruption. Hemolytic solution draws out the blood-matrix underneath. The instinct is the same. The depth is what the Altar is for.",
+
+  "hemomancy.zealot.item_inquiry.copper_ingot.line1": "Copper ingot. Raw, unconsecrated — the same metal we use in our deeper purification work, before the blessing has been given. There is nothing of Our Lady in this yet. It is just copper, which is to say it is waiting.",
+  "hemomancy.zealot.item_inquiry.copper_ingot.line2": "The consecration rite is not complicated, but it is not something you can rush through. The copper holds the blessing or it does not, and the difference is almost always in whether the intention behind the consecration was genuine.",
+
+  "hemomancy.zealot.item_inquiry.lily_of_the_valley.line1": "Lily of the Valley. A white-flowered plant that grows in still, shaded places — the kind of places Our Lady favours. The Church does not formally use it in Altar rites. But it grows near places of cleansing as if it knows where to be.",
+  "hemomancy.zealot.item_inquiry.lily_of_the_valley.line2": "Some of the older texts mention it as a sign: where the lily grows, the ground is recovering. We have not formalised that into a rite yet. Perhaps we should.",
+
+  "hemomancy.zealot.item_inquiry.snow_block.line1": "Snow. Cold, still, white. The quietest form of water — water that has chosen to remain where it fell and wait. There is something of Our Lady in deep snow: the cold that does not demand anything of you, that simply is.",
+  "hemomancy.zealot.item_inquiry.snow_block.line2": "The stillness the path leads toward is not emptiness. It is a fullness that does not need to move. The deep snow feels like that. When you reach that place in your practice, you will understand what I mean.",
+
+  "hemomancy.zealot.item_inquiry.bone_meal.line1": "Bone meal. What death becomes when it chooses to nurture rather than simply end — the bones of what lived, returned to the soil that fed it. Our Lady has a patience for this kind of completion: the long arc that brings things back to where they began.",
+  "hemomancy.zealot.item_inquiry.bone_meal.line2": "I think of bone meal sometimes when I consider what the purification is actually doing. The blood-corruption is not destroyed — it is returned. It breaks down. Something grows from what it was. That is not a terrible thing.",
+
+  "hemomancy.zealot.item_inquiry.sugar.line1": "Sugar. What remains after refinement — the sweetness that is left when the raw material has been worked down to its essential character. The path of clarity feels like that sometimes. What you are left with, once the work is done.",
+  "hemomancy.zealot.item_inquiry.sugar.line2": "I do not want to stretch the metaphor too far. It is sugar. But I have noticed that the further along the path you go, the simpler things become — and the simple things become more fully themselves.",
+
+  "hemomancy.guardian.item_inquiry.iron_sword.line1": "Iron sword. We do not use bladed weapons if we can avoid it — the Absolution Dagger is the exception, and it carries its own constraints. A sword draws blood. Drawing blood in a blood-afflicted area adds to what you are trying to contain.",
+  "hemomancy.guardian.item_inquiry.iron_sword.line2": "If you are carrying this, you are operating on general combat logic, not Unstained engagement protocol. Your choice. But if you strike a blood-afflicted creature with an uncoated iron blade in close contact, account for the consequence.",
+
+  "hemomancy.guardian.item_inquiry.shield.line1": "Standard shield. Blocks incoming force. The Unstained shield does the same with pale silver bracing added — that bracing breaks apart blood-cast projectiles on contact. This one does not do that. It stops the physical impact only.",
+  "hemomancy.guardian.item_inquiry.shield.line2": "If you are waiting on Unstained equipment, a standard shield is better than nothing in the interim. Apply hemolytic solution to the facing before an engagement if you have it — the coating partially compensates for the absent pale silver.",
+
+  "hemomancy.guardian.item_inquiry.iron_chestplate.line1": "Iron chest plate. Standard field protection. It works against physical threats; it has no particular advantage or disadvantage in blood-afflicted environments unless an afflicted creature closes to contact range.",
+  "hemomancy.guardian.item_inquiry.iron_chestplate.line2": "Upgrade to pale silver when you have the materials. Iron does not resist blood-corruption transfer on contact. Pale silver disrupts it passively. The difference matters when you are operating at range zero against an actively afflicted target.",
+
+  "hemomancy.guardian.item_inquiry.bow.line1": "Bow. Ranged engagement — the cleanest available option against blood-afflicted targets in open terrain. You do not have to close distance; you do not have to make contact. Distance is your primary advantage in this kind of work.",
+  "hemomancy.guardian.item_inquiry.bow.line2": "Pale silver tipped arrows where you can get them — the silver disrupts blood-corruption on impact at any range. Standard arrows are functional; pale silver arrows are effective. Know the difference before you are in the field.",
+
+  "hemomancy.guardian.item_inquiry.crossbow.line1": "Crossbow. More stopping force per shot than the bow, slower to reload. Against an afflicted target that has closed to medium range and is moving fast, the crossbow's impact force creates distance even when you have lost the initial advantage.",
+  "hemomancy.guardian.item_inquiry.crossbow.line2": "Same logic as the bow on ammunition: pale silver bolts where available. The crossbow's mechanical advantage is in hit force — a pale silver bolt from this at medium range disrupts blood-corruption on contact without requiring you to be near the result.",
+
+  "hemomancy.guardian.item_inquiry.golden_apple.line1": "A golden apple. High-potency restoration compound — concentrated healing effect. The Church does not produce anything equivalent; the method is outside our practice. I will say it is effective, and I have used one in a sustained engagement where standard options were exhausted.",
+  "hemomancy.guardian.item_inquiry.golden_apple.line2": "It is not a replacement for proper Unstained field medicine and it will not address blood-corruption exposure specifically. In a situation where you are taking serious damage and you have nothing else, it buys time. That is a legitimate use."
 }
