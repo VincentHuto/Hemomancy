@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -280,10 +281,18 @@ public class BloodMoonEvents {
 	// ---------------------------------------------------------------------------
 
 	/**
+	 * How much blood is drained from uninitiated players each effect interval
+	 * while the Blood Moon is active. Represents the tide of blood in the air
+	 * pulling at those whose veins are not yet attuned to it.
+	 */
+	private static final double BLOOD_MOON_DRAIN_AMOUNT = 50.0;
+
+	/**
 	 * Applies Blood Moon effects based on whether the player is an initiated
 	 * Harbinger (degree > 0) or not.
 	 * Harbingers: Strength II + Night Vision (the moon favours the blood-bound).
-	 * Non-Harbingers: Weakness I (the blood tide unsettles the uninitiated).
+	 * Non-Harbingers: Weakness I + passive blood drain (the blood tide unsettles
+	 * the uninitiated — their blood answers the moon whether they will it or not).
 	 */
 	private static void applyBloodMoonEffects(ServerPlayer player) {
 		boolean isHarbinger = HemoCapabilityAccess.getPlayerDegreeNumber(player) > 0;
@@ -292,6 +301,13 @@ public class BloodMoonEvents {
 			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false, true));
 		} else {
 			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
+			// Passive blood drain for active (initiated-blood) players caught in the moon
+			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
+				if (vol.isActive()) {
+					vol.drain(BLOOD_MOON_DRAIN_AMOUNT);
+					BloodVolumeEvents.syncVolume(player, vol);
+				}
+			});
 		}
 	}
 

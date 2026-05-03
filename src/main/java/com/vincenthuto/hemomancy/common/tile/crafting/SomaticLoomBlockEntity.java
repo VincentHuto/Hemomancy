@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import java.util.Map;
 import java.util.UUID;
 
@@ -360,6 +361,12 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		if (isCrafting() || curRecipe == null || contents.get(0).isEmpty()) return false;
 
 		double totalBloodCost = curRecipe.getBloodCost();
+
+		// Blood Moon: 25% cost reduction while the blood moon is active
+		if (level != null && BloodMoonEvents.isBloodMoonActive(level)) {
+			totalBloodCost *= 0.75;
+		}
+
 		if (volume.getBloodVolume() < totalBloodCost) {
 			msg(player, "Not enough blood. Need " + (int) totalBloodCost + ".",
 					ChatFormatting.DARK_RED, true);
