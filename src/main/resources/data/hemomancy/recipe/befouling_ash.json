@@ -3,7 +3,9 @@
   "ingredient": {
     "item": "hemomancy:foul_paste"
   },
-  "result": "hemomancy:befouling_ash_trail",
+  "result": {
+    "id": "hemomancy:befouling_ash"
+  },
   "experience": 1.0,
   "cookingtime": 200
 }
