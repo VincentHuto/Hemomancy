@@ -54,6 +54,10 @@ public class UnstainedScoutEntity extends PathfinderMob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // Allow scripted death once dialogue clears invulnerability before calling kill().
+        if (!this.isInvulnerable()) {
+            return super.hurt(source, amount);
+        }
         if (source.getEntity() instanceof Player player && player.isCreative()) {
             return super.hurt(source, amount);
         }
