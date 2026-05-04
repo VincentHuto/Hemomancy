@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 
+import java.util.Locale;
 import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
@@ -99,7 +100,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 			lockedOrgan = organForItem;
 		} else if (lockedOrgan != organForItem) {
 			msg(player, "The brazier is already attuned to the "
-					+ lockedOrgan.getName().toLowerCase() + ". Offer matching reagents.",
+					+ lockedOrgan.getName().toLowerCase(Locale.ROOT) + ". Offer matching reagents.",
 					ChatFormatting.RED);
 			return false;
 		}

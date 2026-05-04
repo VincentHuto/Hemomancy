@@ -94,7 +94,7 @@ public class ScratchEngramHandler {
         // Place the engram block.
         BlockState engramState = BlockInit.engram_block.get().defaultBlockState()
                 .setValue(EngramBlock.CHARACTERINDEX,
-                        (int) Math.floor(Math.random()
+                        (int) Math.floor(level.getRandom().nextFloat()
                                 * EngramBlock.CHARACTERINDEX.getPossibleValues().size()));
         level.setBlockAndUpdate(abovePos, engramState);
 
