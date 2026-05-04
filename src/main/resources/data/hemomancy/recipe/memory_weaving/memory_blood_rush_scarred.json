@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:scar_heart"
+  },
+  "animus": true,
+  "lux": true,
+  "result": "hemomancy:memory_blood_rush",
+  "count": 1
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:vivianite_cluster"
+  },
+  "congeatio": true,
+  "result": "hemomancy:memory_glacial_circulation",
+  "count": 1
+}

@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:scar_phoenix"
+  },
+  "flammeus": true,
+  "animus": true,
+  "result": "hemomancy:memory_sanguine_ignition",
+  "count": 1
+}

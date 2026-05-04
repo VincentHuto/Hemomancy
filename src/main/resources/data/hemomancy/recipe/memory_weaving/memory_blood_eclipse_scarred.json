@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:scar_moon"
+  },
+  "congeatio": true,
+  "tenebris": true,
+  "result": "hemomancy:memory_blood_eclipse",
+  "count": 1
+}

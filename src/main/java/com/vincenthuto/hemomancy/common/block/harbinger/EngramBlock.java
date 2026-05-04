@@ -178,9 +178,10 @@ public class EngramBlock extends WaterloggableBlock {
 	}
 
 	public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
-		// TODO(MnA-compat): when MnA NeoForge 1.21.1 ships, restore ChalkRuneTile comparator
-		// signal (return 15 if the BlockEntity is a non-empty ChalkRuneTile).
-		return 0;
+		// Lit engrams emit full signal; unlit emit nothing.
+		// (MnA-compat note: when MnA NeoForge 1.21.1 ships, also return 15 for a
+		// non-empty ChalkRuneTile regardless of the LIT state.)
+		return blockState.getValue(LIT) ? 15 : 0;
 	}
 
 	public boolean canPlaceLiquid(@javax.annotation.Nullable Player player, BlockGetter worldIn, BlockPos pos,

@@ -395,7 +395,7 @@ public final class MaterialsData {
 				true, UnlockPredicate.minDegree(3)));
 
 		list.add(new MaterialEntry("vivianite_scalpel", "Vivianite Scalpel",
-				"A precision blade of vivianite crystal. Used for visceral extraction.",
+				"A precision blade of vivianite crystal. Required to begin organ extraction at the Visceral Mirror. Also doubles vivianite yield when harvesting Bog Bodies.",
 				"Materials", () -> new ItemStack(ItemInit.vivianite_scalpel.get()),
 				true, UnlockPredicate.minDegree(4)));
 
