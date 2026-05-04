@@ -928,7 +928,6 @@
   "hemomancy.dialogue.event.hermit_archon_wisdom": "The Hermit bows deeply. 'All that I know is already written in your blood, Archon.'",
   "hemomancy.dialogue.event.vicar_gives_scrap": "§7[The Vicar reaches into the folds of their vestments and produces a small, weathered fragment of parchment. They press it into your hands without ceremony.]",
   "hemomancy.dialogue.event.scout_gives_notes": "§7[The Scout presses a small, water-stained journal into your hands. Her grip loosens almost immediately.]",
-  "entity.hemomancy.unstained_scout": "Unstained Scout",
   "hemomancy.scout.root.line1": "§7[An Unstained woman is slumped against the bone-speckled wall of the geode, her robes filthy with stone dust. She raises her eyes to you — glassy, but focused.]",
   "hemomancy.scout.root.line2": "Oh. §o...Someone found me.§r I have not much left. Cold, and hunger — they do what the creatures in here never managed. Please. I have notes — observations — they must not go to waste. Take them before I cannot hand them over.",
   "hemomancy.scout.root.line3": "§oDo not let the work be wasted.§r",

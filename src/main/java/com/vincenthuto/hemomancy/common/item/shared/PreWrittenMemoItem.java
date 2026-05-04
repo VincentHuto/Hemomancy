@@ -105,9 +105,9 @@ public class PreWrittenMemoItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip,
             TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        tooltip.add(Component.translatable("item.hemomancy.scout_field_notes.tooltip")
+        tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip")
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-        tooltip.add(Component.translatable("item.hemomancy.scout_field_notes.tooltip.use")
+        tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip.use")
                 .withStyle(ChatFormatting.DARK_GRAY));
     }
 }

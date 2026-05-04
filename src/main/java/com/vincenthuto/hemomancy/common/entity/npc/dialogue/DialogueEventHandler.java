@@ -76,13 +76,13 @@ public class DialogueEventHandler {
 				Entity entity = player.level().getEntity(event.getEntityId());
 				if (entity instanceof HarbingerHermitEntity hermit) {
 					Vec3 pos = hermit.position();
-					// Drop the rite hint item â€” configured for the Sanguine Initiation rite
+					// Drop the rite hint item — configured for the Sanguine Initiation rite
 					ItemStack riteHint = RiteHintItem.createForRite(
 							ItemInit.rite_hint.get(), ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
 									"cardinal_rite/sanguine_initiation"));
 					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, riteHint);
 					hermit.level().addFreshEntity(drop);
-					// Passing text passage â€” the mortal display was the hermitâ€™s heart
+					// Passing text passage — the mortal display was the hermitâ€™s heart
 					player.displayClientMessage(
 							Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
 									.withStyle(ChatFormatting.DARK_RED),
@@ -156,7 +156,7 @@ public class DialogueEventHandler {
 				handleScoutGiveNotes(player, event.getEntityId());
 			}
 			case "whisper_dismiss" -> {
-				// Player dismissed the whisper â€” no gameplay effect, just acknowledged
+				// Player dismissed the whisper — no gameplay effect, just acknowledged
 			}
 			case "whisper_truth_acknowledged" -> {
 				player.displayClientMessage(
@@ -165,7 +165,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			default -> {
-				// Unknown event â€” log for development
+				// Unknown event — log for development
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
@@ -203,7 +203,7 @@ public class DialogueEventHandler {
 
 	/**
 	 * Recruits a Harbinger NPC into the player's bloodline. The NPC's entity
-	 * UUID is added as a phantom member â€” it counts toward the shared blood
+	 * UUID is added as a phantom member — it counts toward the shared blood
 	 * pool capacity without needing to be an online player. This allows
 	 * single-player users to grow their pool without multiplayer partners.
 	 */
