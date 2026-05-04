@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -114,6 +115,9 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 				worldIn.destroyBlock(pos, false);
 				stack.shrink(1);
 				worldIn.setBlockAndUpdate(pos, BlockInit.scrying_podium.get().defaultBlockState());
+				if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+					MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.scrying_podium.get());
+				}
 			}
 
 			// Unstained path interactions — server-side only

@@ -240,7 +240,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 																sLevel, patternHelper,
 																patW, patH, patD,
 																hitPos, targetPattern.getResult(),
-																animDuration));
+																animDuration, (ServerPlayer) player));
 
 												handled = true;
 											}

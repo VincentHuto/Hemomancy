@@ -50,6 +50,11 @@ public class DialogueScreen extends Screen {
 	private static final int OPTION_SPACING = 16;
 	private static final int OPTION_LEFT_PAD = 14;
 	private static final int TEXT_LEFT_PAD = 10;
+	private static final int VIEWPORT_INSET = 4;
+	private static final int SCROLLBAR_GUTTER = 10;
+	private static final int SCROLLBAR_WIDTH = 4;
+	private static final int SCROLLBAR_MIN_THUMB_HEIGHT = 16;
+	private static final int MOUSE_WHEEL_SCROLL_AMOUNT = 24;
 
 	// ── Portrait texture coordinates ──
 	private static final int TEXTURE_HEAD_U = 8;
@@ -112,6 +117,10 @@ public class DialogueScreen extends Screen {
 	private final List<OptionRect> optionRects = new ArrayList<>();
 	private ResourceLocation resolvedPortraitIcon;
 	private boolean resolvedPortraitIsCompanion;
+	private int scrollOffset;
+	private int maxScroll;
+	private int contentHeight;
+	private boolean draggingScrollbar;
 
 	// Background animation data (allocated per-theme in init())
 	private float[][] bloodVeinParams;
@@ -222,6 +231,10 @@ public class DialogueScreen extends Screen {
 		int panelY = PANEL_MARGIN;
 		int panelH = this.height - PANEL_MARGIN * 2;
 		int panelW = Math.min(PANEL_WIDTH, this.width - PANEL_MARGIN * 2);
+		int viewportTop = panelY + VIEWPORT_INSET;
+		int viewportBottom = panelY + panelH - VIEWPORT_INSET;
+		int contentStartY = panelY + 10;
+		int visibleContentHeight = Math.max(1, viewportBottom - contentStartY);
 
 		// ── Theme background ──
 		renderThemedBackground(gfx, panelX, panelY, panelW, panelH);
@@ -231,10 +244,13 @@ public class DialogueScreen extends Screen {
 
 		Font font = this.font;
 		int contentX = panelX + TEXT_LEFT_PAD;
-		int contentW = panelW - TEXT_LEFT_PAD * 2;
-		int y = panelY + 10;
+		int contentW = resolveContentWidth(font, panelW, visibleContentHeight);
+		this.contentHeight = measureContentHeight(font, contentW);
+		this.maxScroll = Math.max(0, this.contentHeight - visibleContentHeight);
+		this.scrollOffset = Mth.clamp(this.scrollOffset, 0, this.maxScroll);
+		int y = contentStartY - this.scrollOffset;
 
-		gfx.enableScissor(panelX, panelY, panelX + panelW, panelY + panelH);
+		gfx.enableScissor(panelX + VIEWPORT_INSET, viewportTop, panelX + panelW - VIEWPORT_INSET, viewportBottom);
 		try {
 			// ── Speaker portrait ──
 			int portraitX = contentX;
@@ -276,7 +292,8 @@ public class DialogueScreen extends Screen {
 
 					int optTop = y;
 					boolean hovered = mouseX >= optX && mouseX <= optX + optW
-							&& mouseY >= optTop && mouseY < optTop + wrapped.size() * LINE_SPACING;
+							&& mouseY >= optTop && mouseY < optTop + wrapped.size() * LINE_SPACING
+							&& isInsideViewport(mouseX, mouseY, panelX, panelY, panelW, panelH);
 					int col = hovered ? palette.optionHoverColor : palette.optionColor;
 
 					for (var seq : wrapped) {
@@ -291,8 +308,88 @@ public class DialogueScreen extends Screen {
 			gfx.disableScissor();
 		}
 
+		renderScrollbar(gfx, panelX, panelW, contentStartY, viewportBottom);
+
 		resetGuiRenderState();
 		super.render(gfx, mouseX, mouseY, partialTick);
+	}
+
+	private int resolveContentWidth(Font font, int panelW, int visibleContentHeight) {
+		int baseContentW = Math.max(1, panelW - TEXT_LEFT_PAD * 2);
+		if (measureContentHeight(font, baseContentW) <= visibleContentHeight) {
+			return baseContentW;
+		}
+
+		return Math.max(1, baseContentW - SCROLLBAR_GUTTER);
+	}
+
+	private int measureContentHeight(Font font, int contentW) {
+		int y = 0;
+		int sepY = y + PORTRAIT_SIZE + 6;
+		y = sepY + 8;
+
+		if (currentNode != null) {
+			for (String lineKey : currentNode.lines()) {
+				Component line = Component.translatable(lineKey);
+				y += font.split(line, contentW).size() * LINE_SPACING;
+				y += 4;
+			}
+
+			y += 8;
+			int optW = Math.max(1, contentW - OPTION_LEFT_PAD);
+			for (DialogueOption opt : currentNode.options()) {
+				Component optText = Component.literal("> ").append(Component.translatable(opt.text()));
+				y += font.split(optText, optW).size() * LINE_SPACING;
+				y += OPTION_SPACING - LINE_SPACING;
+			}
+		}
+
+		return y + 6;
+	}
+
+	private void renderScrollbar(GuiGraphics gfx, int panelX, int panelW, int viewportTop, int viewportBottom) {
+		if (maxScroll <= 0 || contentHeight <= 0) return;
+
+		int trackX = getScrollbarX(panelX, panelW);
+		int trackHeight = Math.max(1, viewportBottom - viewportTop);
+		int thumbHeight = Mth.clamp((int) ((trackHeight * (float) trackHeight) / contentHeight),
+				SCROLLBAR_MIN_THUMB_HEIGHT, trackHeight);
+		int thumbTravel = Math.max(1, trackHeight - thumbHeight);
+		int thumbY = viewportTop + Math.round(thumbTravel * (scrollOffset / (float) maxScroll));
+
+		int trackShadow = palette.borderOuter & 0xCCFFFFFF;
+		int trackBody = palette.bgColor & 0xAAFFFFFF;
+		int trackHighlight = palette.separatorColor | 0x22000000;
+		int thumbOuter = palette.borderOuter;
+		int thumbBody = palette.optionColor;
+		int thumbHighlight = palette.optionHoverColor;
+		int thumbShadow = palette.borderInner;
+
+		// Recessed track: dark rim, muted body, and a faint theme-coloured inner line.
+		gfx.fill(trackX - 2, viewportTop, trackX + SCROLLBAR_WIDTH + 2, viewportBottom, trackShadow);
+		gfx.fill(trackX - 1, viewportTop + 1, trackX + SCROLLBAR_WIDTH + 1, viewportBottom - 1, trackBody);
+		gfx.fill(trackX, viewportTop + 2, trackX + 1, viewportBottom - 2, trackHighlight);
+
+		// Thumb: outlined capsule-like bar with left highlight and right shadow for depth.
+		int thumbLeft = trackX - 2;
+		int thumbRight = trackX + SCROLLBAR_WIDTH + 2;
+		int thumbBottom = thumbY + thumbHeight;
+		gfx.fill(thumbLeft, thumbY, thumbRight, thumbBottom, thumbOuter);
+		gfx.fill(thumbLeft + 1, thumbY + 1, thumbRight - 1, thumbBottom - 1, thumbBody);
+		gfx.fill(thumbLeft + 2, thumbY + 2, thumbLeft + 3, thumbBottom - 2, thumbHighlight);
+		gfx.fill(thumbRight - 3, thumbY + 2, thumbRight - 2, thumbBottom - 2, thumbShadow);
+
+		// Small caps and grip ticks make the thumb readable even when it is very tall.
+		gfx.fill(thumbLeft + 2, thumbY + 2, thumbRight - 2, thumbY + 3, thumbHighlight);
+		gfx.fill(thumbLeft + 2, thumbBottom - 3, thumbRight - 2, thumbBottom - 2, thumbShadow);
+		if (thumbHeight >= SCROLLBAR_MIN_THUMB_HEIGHT + 8) {
+			int gripTop = thumbY + thumbHeight / 2 - 5;
+			for (int i = 0; i < 3; i++) {
+				int gripY = gripTop + i * 4;
+				gfx.fill(thumbLeft + 2, gripY, thumbRight - 2, gripY + 1, thumbOuter & 0x99FFFFFF);
+				gfx.fill(thumbLeft + 2, gripY + 1, thumbRight - 2, gripY + 2, thumbHighlight & 0xAAFFFFFF);
+			}
+		}
 	}
 
 	private void resetGuiRenderState() {
@@ -317,7 +414,15 @@ public class DialogueScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (button == 0 && currentNode != null) {
+		if (button == 0 && maxScroll > 0 && isOverScrollbar(mouseX, mouseY)) {
+			updateScrollFromScrollbar(mouseY);
+			draggingScrollbar = true;
+			return true;
+		}
+
+		if (button == 0 && currentNode != null
+				&& isInsideViewport(mouseX, mouseY, PANEL_MARGIN, PANEL_MARGIN,
+						Math.min(PANEL_WIDTH, this.width - PANEL_MARGIN * 2), this.height - PANEL_MARGIN * 2)) {
 			for (OptionRect rect : optionRects) {
 				if (mouseX >= rect.x1 && mouseX <= rect.x2
 						&& mouseY >= rect.y1 && mouseY <= rect.y2) {
@@ -327,6 +432,35 @@ public class DialogueScreen extends Screen {
 			}
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (button == 0 && draggingScrollbar) {
+			draggingScrollbar = false;
+			return true;
+		}
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (button == 0 && draggingScrollbar) {
+			updateScrollFromScrollbar(mouseY);
+			return true;
+		}
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		int panelW = Math.min(PANEL_WIDTH, this.width - PANEL_MARGIN * 2);
+		int panelH = this.height - PANEL_MARGIN * 2;
+		if (maxScroll > 0 && isInsidePanel(mouseX, mouseY, PANEL_MARGIN, PANEL_MARGIN, panelW, panelH)) {
+			scrollOffset = Mth.clamp(scrollOffset - (int) (scrollY * MOUSE_WHEEL_SCROLL_AMOUNT), 0, maxScroll);
+			return true;
+		}
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	private void selectOption(int index) {
@@ -348,6 +482,49 @@ public class DialogueScreen extends Screen {
 
 	private void rebuildOptions() {
 		optionRects.clear();
+		scrollOffset = 0;
+		maxScroll = 0;
+		contentHeight = 0;
+		draggingScrollbar = false;
+	}
+
+	private boolean isInsidePanel(double mouseX, double mouseY, int panelX, int panelY, int panelW, int panelH) {
+		return mouseX >= panelX && mouseX <= panelX + panelW
+				&& mouseY >= panelY && mouseY <= panelY + panelH;
+	}
+
+	private boolean isInsideViewport(double mouseX, double mouseY, int panelX, int panelY, int panelW, int panelH) {
+		return mouseX >= panelX + VIEWPORT_INSET && mouseX <= panelX + panelW - VIEWPORT_INSET
+				&& mouseY >= panelY + VIEWPORT_INSET && mouseY <= panelY + panelH - VIEWPORT_INSET;
+	}
+
+	private int getScrollbarX(int panelX, int panelW) {
+		return panelX + panelW - VIEWPORT_INSET - SCROLLBAR_WIDTH - 1;
+	}
+
+	private boolean isOverScrollbar(double mouseX, double mouseY) {
+		int panelX = PANEL_MARGIN;
+		int panelY = PANEL_MARGIN;
+		int panelW = Math.min(PANEL_WIDTH, this.width - PANEL_MARGIN * 2);
+		int panelH = this.height - PANEL_MARGIN * 2;
+		int trackX = getScrollbarX(panelX, panelW);
+		int trackTop = panelY + 10;
+		int trackBottom = panelY + panelH - VIEWPORT_INSET;
+		return mouseX >= trackX - 2 && mouseX <= trackX + SCROLLBAR_WIDTH + 2
+				&& mouseY >= trackTop && mouseY <= trackBottom;
+	}
+
+	private void updateScrollFromScrollbar(double mouseY) {
+		int panelY = PANEL_MARGIN;
+		int panelH = this.height - PANEL_MARGIN * 2;
+		int trackTop = panelY + 10;
+		int trackBottom = panelY + panelH - VIEWPORT_INSET;
+		int trackHeight = Math.max(1, trackBottom - trackTop);
+		int thumbHeight = Mth.clamp((int) ((trackHeight * (float) trackHeight) / contentHeight),
+				SCROLLBAR_MIN_THUMB_HEIGHT, trackHeight);
+		int thumbTravel = Math.max(1, trackHeight - thumbHeight);
+		float ratio = (float) ((mouseY - trackTop - thumbHeight / 2.0) / thumbTravel);
+		scrollOffset = Mth.clamp(Math.round(ratio * maxScroll), 0, maxScroll);
 	}
 
 	// ──────────────────────────────────────────────

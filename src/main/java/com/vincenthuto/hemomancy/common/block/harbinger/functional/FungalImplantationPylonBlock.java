@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
@@ -157,6 +158,9 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 				worldIn.destroyBlock(pos, false);
 				worldIn.addFreshEntity(spawn);
 				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
+				if (player instanceof ServerPlayer serverPlayer) {
+					MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.fungal_podium.get());
+				}
 			}
 		}
 //		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {

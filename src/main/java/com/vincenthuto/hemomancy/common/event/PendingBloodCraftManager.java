@@ -3,9 +3,11 @@ package com.vincenthuto.hemomancy.common.event;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -32,11 +34,12 @@ public class PendingBloodCraftManager {
 		private final int patternDepth;
 		private final BlockPos hitPos;
 		private final ItemStack result;
+		private final UUID crafterId;
 		private int remainingTicks;
 
 		public PendingCraft(ServerLevel level, BlockPattern.BlockPatternMatch patternMatch,
 				int patternWidth, int patternHeight, int patternDepth,
-				BlockPos hitPos, ItemStack result, int delayTicks) {
+				BlockPos hitPos, ItemStack result, int delayTicks, ServerPlayer crafter) {
 			this.level = level;
 			this.patternMatch = patternMatch;
 			this.patternWidth = patternWidth;
@@ -44,6 +47,7 @@ public class PendingBloodCraftManager {
 			this.patternDepth = patternDepth;
 			this.hitPos = hitPos;
 			this.result = result;
+			this.crafterId = crafter.getUUID();
 			this.remainingTicks = delayTicks;
 		}
 
@@ -74,6 +78,10 @@ public class PendingBloodCraftManager {
 			level.playSound(null, hitPos, SoundEvents.ENDERMAN_SCREAM, SoundSource.BLOCKS, 1, 1);
 			level.addFreshEntity(new ItemEntity(level,
 					hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5, result));
+			ServerPlayer crafter = level.getServer().getPlayerList().getPlayer(crafterId);
+			if (crafter != null) {
+				MachineAccessEvents.awardMachineCrafted(crafter, result);
+			}
 		}
 	}
 

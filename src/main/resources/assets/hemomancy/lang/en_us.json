@@ -1887,5 +1887,7 @@
   "hemomancy.guardian.item_inquiry.crossbow.line2": "Same logic as the bow on ammunition: pale silver bolts where available. The crossbow's mechanical advantage is in hit force — a pale silver bolt from this at medium range disrupts blood-corruption on contact without requiring you to be near the result.",
 
   "hemomancy.guardian.item_inquiry.golden_apple.line1": "A golden apple. High-potency restoration compound — concentrated healing effect. The Church does not produce anything equivalent; the method is outside our practice. I will say it is effective, and I have used one in a sustained engagement where standard options were exhausted.",
-  "hemomancy.guardian.item_inquiry.golden_apple.line2": "It is not a replacement for proper Unstained field medicine and it will not address blood-corruption exposure specifically. In a situation where you are taking serious damage and you have nothing else, it buys time. That is a legitimate use."
+  "hemomancy.guardian.item_inquiry.golden_apple.line2": "It is not a replacement for proper Unstained field medicine and it will not address blood-corruption exposure specifically. In a situation where you are taking serious damage and you have nothing else, it buys time. That is a legitimate use.",
+  "hemomancy.machine_access.locked": "You have not yet made a %s by your own hand.",
+  "hemomancy.machine_access.no_loot": "The %s comes apart without yielding its workings."
 }

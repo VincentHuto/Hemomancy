@@ -7,6 +7,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
@@ -236,6 +238,13 @@ public class RiteHintScreen extends Screen {
 
 	// ── Info Panel ──
 
+	private ItemStack materialStackFor(Block block) {
+		if (block == BlockInit.engram_block.get()) {
+			return new ItemStack(ItemInit.engram_stamp.get());
+		}
+		return new ItemStack(block);
+	}
+
 	private void drawInfoPanel(GuiGraphics gfx, int panelX, int panelY, int panelW, int panelH,
 							   int mouseX, int mouseY) {
 		int clipTop = panelY;
@@ -342,7 +351,7 @@ public class RiteHintScreen extends Screen {
 					if (block == null || block == Blocks.AIR) continue;
 					int count = entry.getValue();
 
-					ItemStack blockStack = new ItemStack(block);
+					ItemStack blockStack = materialStackFor(block);
 					if (!blockStack.isEmpty()) {
 						gfx.renderItem(blockStack, panelX + 2, y);
 						String countPrefix = " x" + count + "  ";
@@ -419,7 +428,7 @@ public class RiteHintScreen extends Screen {
 				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
 					Block block = entry.getKey();
 					if (block == null || block == Blocks.AIR) continue;
-					ItemStack blockStack = new ItemStack(block);
+					ItemStack blockStack = materialStackFor(block);
 					if (!blockStack.isEmpty()) {
 						String countPrefix = " x" + entry.getValue() + "  ";
 						List<String> matLines = ScreenDrawUtils.wrapText(font,

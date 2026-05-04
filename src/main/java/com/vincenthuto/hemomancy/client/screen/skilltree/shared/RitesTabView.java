@@ -7,6 +7,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -361,6 +363,13 @@ public final class RitesTabView {
 	//  Info panel
 	// ────────────────────────────────────────────────────────────
 
+	private static ItemStack materialStackFor(Block block) {
+		if (block == BlockInit.engram_block.get()) {
+			return new ItemStack(ItemInit.engram_stamp.get());
+		}
+		return new ItemStack(block);
+	}
+
 	public static void drawInfoPanel(GuiGraphics gfx, ProgressScreenContext ctx,
 									 RitesTabState state, CardinalRiteRecipe rite,
 									 int panelX, int panelY, int panelW,
@@ -473,7 +482,7 @@ public final class RitesTabView {
 				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
 					Block block = entry.getKey();
 					if (block == null || block == Blocks.AIR) continue;
-					ItemStack bs = new ItemStack(block);
+					ItemStack bs = materialStackFor(block);
 					if (!bs.isEmpty()) {
 						gfx.renderItem(bs, panelX + 2, y);
 						String prefix = " x" + entry.getValue() + "  ";
@@ -548,7 +557,7 @@ public final class RitesTabView {
 				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
 					Block block = entry.getKey();
 					if (block == null || block == Blocks.AIR) continue;
-					ItemStack bs = new ItemStack(block);
+					ItemStack bs = materialStackFor(block);
 					if (!bs.isEmpty()) {
 						String prefix = " x" + entry.getValue() + "  ";
 						y += Math.max(18, ScreenDrawUtils.wrapText(font,

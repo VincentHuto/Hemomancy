@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
+import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -10,6 +11,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.ScryingPodiumBlockEntity
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -131,6 +133,9 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 				worldIn.destroyBlock(pos, false);
 				worldIn.addFreshEntity(spawn);
 				worldIn.setBlockAndUpdate(pos, BlockInit.unstained_podium.get().defaultBlockState());
+				if (player instanceof ServerPlayer serverPlayer) {
+					MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.unstained_podium.get());
+				}
 			}
 		}
 //		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {
