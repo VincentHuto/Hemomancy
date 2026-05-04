@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SpecimenJarModel;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenJarBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.SpecimenJarBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +44,11 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		if (model == null) {
 			return;
 		}
+		poseStack.pushPose();
+		Direction facing = jar.getBlockState().getValue(SpecimenJarBlock.FACING);
+		poseStack.translate(0.5D, 0.0D, 0.5D);
+		poseStack.mulPose(Vector3.YP.rotationDegrees(180.0F - facing.toYRot()).toMoj());
+		poseStack.translate(-0.5D, 0.0D, -0.5D);
 		poseStack.translate(0D, -1.5D, 0D);
 		renderJarFrame(model, poseStack, buffer, combinedLight, combinedOverlay);
 		if (jar.hasSpecimen()) {
@@ -53,6 +60,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 
 		}
 		renderJarGlass(model, poseStack, buffer, combinedLight, combinedOverlay);
+		poseStack.popPose();
 	}
 
 	public static void renderJarModel(SpecimenJarModel model, PoseStack poseStack, MultiBufferSource buffer,

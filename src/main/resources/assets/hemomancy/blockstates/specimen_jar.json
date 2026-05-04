@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "hemomancy:block/specimen_jar"
-    }
+    "facing=north": { "model": "hemomancy:block/specimen_jar", "y": 180 },
+    "facing=south": { "model": "hemomancy:block/specimen_jar" },
+    "facing=west": { "model": "hemomancy:block/specimen_jar", "y": 270 },
+    "facing=east": { "model": "hemomancy:block/specimen_jar", "y": 90 }
   }
 }
