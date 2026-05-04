@@ -394,6 +394,9 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> morphling_cradle = MODELEDBLOCKS.register("morphling_cradle",
 			() -> new MorphlingCradleBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> specimen_jar = MODELEDBLOCKS.register("specimen_jar",
+			() -> new SpecimenJarBlock(BlockBehaviour.Properties.of().strength(0.3F, 1.0F)
+					.sound(SoundType.GLASS).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> mycelial_crucible = MODELEDBLOCKS.register("mycelial_crucible",
 			() -> new MycelialCrucibleBlock(
@@ -615,6 +618,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.morphling_cradle.get()) {
 			return Pair.of(block.getSecond(), new MorphlingCradleBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.specimen_jar.get()) {
+			return Pair.of(block.getSecond(), new SpecimenJarBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.altar_of_cleansing.get()) {
 			return Pair.of(block.getSecond(), new AltarOfCleansingBlockItem(b, new Item.Properties()));

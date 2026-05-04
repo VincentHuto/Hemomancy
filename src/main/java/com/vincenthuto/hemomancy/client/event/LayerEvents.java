@@ -111,6 +111,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
 		event.registerLayerDefinition(DictationTableModel.LAYER_LOCATION, DictationTableModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingCradleModel.LAYER_LOCATION, MorphlingCradleModel::createBodyLayer);
+		event.registerLayerDefinition(SpecimenJarModel.LAYER_LOCATION, SpecimenJarModel::createBodyLayer);
 		event.registerLayerDefinition(CleansingAltarModel.LAYER_LOCATION, CleansingAltarModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerSaintSarcophagusModel.LAYER_LOCATION, HarbingerSaintSarcophagusModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineMonolithModel.LAYER_LOCATION, SanguineMonolithModel::createBodyLayer);

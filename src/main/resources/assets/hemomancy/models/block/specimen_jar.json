@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "hemomancy:block/vivianite_glass",
+    "particle": "hemomancy:block/vivianite_glass"
+  }
+}

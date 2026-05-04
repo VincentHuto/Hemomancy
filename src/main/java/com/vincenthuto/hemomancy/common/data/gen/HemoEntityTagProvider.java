@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
@@ -37,6 +36,16 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 		tag(EntityInit.FERVENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 		tag(EntityInit.RUINOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 		tag(EntityInit.VIVACIOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+
+		tag(EntityInit.SPECIMEN_JAR_CAPTURABLE)
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian_queen.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chitinite.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fervent_chitinite.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.hemolymphopoda.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.myelin_borer.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fargone.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.tooth_pecks.getId()));
 
 		// All hemomancy monster entities — used by PurityGainEvents for kill rewards
 		tag(EntityInit.HEMOMANCY_MOB)

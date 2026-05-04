@@ -60,6 +60,7 @@ public class EntityInit {
     public static final TagKey<EntityType<?>> FERVENT_TAG = createTag("fervent");
     public static final TagKey<EntityType<?>> FRIGID_TAG = createTag("frigid");
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
+    public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
 
 
     // Mobs

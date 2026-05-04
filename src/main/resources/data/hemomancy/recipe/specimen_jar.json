@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " H ",
+    "V V",
+    "HVH"
+  ],
+  "key": {
+    "H": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "V": {
+      "item": "hemomancy:vivianite_glass"
+    }
+  },
+  "result": {
+    "id": "hemomancy:specimen_jar",
+    "count": 1
+  }
+}

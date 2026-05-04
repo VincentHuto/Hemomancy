@@ -28,6 +28,9 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MorphlingCradleBlockEntity>> morphling_cradle = TILES
 			.register("morphling_cradle", () -> BlockEntityType.Builder
 					.of(MorphlingCradleBlockEntity::new, BlockInit.morphling_cradle.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpecimenJarBlockEntity>> specimen_jar = TILES
+			.register("specimen_jar", () -> BlockEntityType.Builder
+					.of(SpecimenJarBlockEntity::new, BlockInit.specimen_jar.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UnstainedPodiumBlockEntity>> unstained_podium = TILES
 			.register("unstained_podium", () -> BlockEntityType.Builder
