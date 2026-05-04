@@ -8,8 +8,10 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
+import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
 import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -150,6 +152,9 @@ public class DialogueEventHandler {
 			case "give_blood_structure_hint" -> {
 				handleGiveBloodStructureHint(player, event.getEntityId());
 			}
+			case "scout_give_notes" -> {
+				handleScoutGiveNotes(player, event.getEntityId());
+			}
 			case "whisper_dismiss" -> {
 				// Player dismissed the whisper â€” no gameplay effect, just acknowledged
 			}
@@ -202,6 +207,40 @@ public class DialogueEventHandler {
 	 * pool capacity without needing to be an online player. This allows
 	 * single-player users to grow their pool without multiplayer partners.
 	 */
+
+	/**
+	 * Drops the scout's field notes at the entity's position, then kills the
+	 * scout so the player understands she has truly expired. The notes contain
+	 * memos for both Harbinger and Unstained paths so that any player can
+	 * eventually dictate the correct version into their book.
+	 */
+	private static void handleScoutGiveNotes(ServerPlayer player, int entityId) {
+		ItemStack notes = PreWrittenMemoItem.create(
+				ItemInit.scout_field_notes.get(),
+				ResourceLocation.tryBuild(Hemomancy.MOD_ID, "annetta_insect_observation"),
+				ResourceLocation.tryBuild(Hemomancy.MOD_ID, "annetta_insect_observation_immaculatus"));
+
+		Entity entity = player.level().getEntity(entityId);
+		if (entity != null) {
+			Vec3 pos = entity.position();
+			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, notes);
+			entity.level().addFreshEntity(drop);
+			if (entity instanceof UnstainedScoutEntity scout) {
+				scout.setInvulnerable(false);
+				scout.kill();
+			}
+		} else {
+			if (!player.getInventory().add(notes)) {
+				player.drop(notes, false);
+			}
+		}
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.scout_gives_notes")
+						.withStyle(ChatFormatting.AQUA),
+				false);
+	}
+
 	private static void handleRecruitHarbinger(ServerPlayer player, int entityId) {
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			Bloodline bloodline = volume.getBloodLine();
