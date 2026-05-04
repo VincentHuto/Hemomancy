@@ -17,13 +17,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * JEI recipe category for the Mycelial Crucible — two-phase fungal scar cultivation.
  *
- * <p>Displays the finished scar as input (Phase 1 seed), the immature culture as
+ * <p>Displays the configured seed as input, the immature culture as
  * intermediate, and the final scar as output. A small progress arc and tendency label
  * communicate the alignment requirement.
  */
@@ -35,7 +34,7 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     private static final int BG_W = 170;
     private static final int BG_H = 90;
 
-    // Input slot: the finished scar seed
+    // Input slot: configured seed ingredient
     private static final int SEED_X = 20;
     private static final int SEED_Y = 37;
 
@@ -55,11 +54,9 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     private static final int ARROW_COLOR   = 0xFF44AA33;
     private static final int LABEL_COLOR   = 0xFF66CC44;
 
-    private final IDrawable background;
     private final IDrawable icon;
 
     public MycelialCrucibleRecipeCategory(IGuiHelper helpers) {
-        this.background = helpers.createBlankDrawable(BG_W, BG_H);
         this.icon       = helpers.createDrawableItemStack(new ItemStack(BlockInit.mycelial_crucible.get()));
     }
 
@@ -69,8 +66,11 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     @Override @Nonnull
     public Component getTitle() { return Component.literal("Mycelial Crucible"); }
 
-    @Override @Nonnull
-    public IDrawable getBackground() { return background; }
+    @Override
+    public int getWidth() { return BG_W; }
+
+    @Override
+    public int getHeight() { return BG_H; }
 
     @Override @Nonnull
     public IDrawable getIcon() { return icon; }
@@ -79,9 +79,9 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     public void setRecipe(@Nonnull IRecipeLayoutBuilder builder,
             @Nonnull FungalScarCultivationRecipe recipe,
             @Nonnull IFocusGroup focuses) {
-        // Seed: the finished scar item (player inserts this to seed Phase 1)
+        // Seed: the item consumed to begin Phase 1
         builder.addSlot(RecipeIngredientRole.INPUT, SEED_X + 1, SEED_Y + 1)
-                .addItemStack(recipe.getResultItemStack().copy());
+                .addItemStack(recipe.getSeedItemStack());
 
         // Immature intermediate
         builder.addSlot(RecipeIngredientRole.CATALYST, IMMATURE_X + 1, IMMATURE_Y + 1)
@@ -116,8 +116,6 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
         drawArrow(gfx, IMMATURE_X + 18, IMMATURE_Y + 7, OUTPUT_X - 4, OUTPUT_Y + 7);
 
         // Phase labels
-        long time = System.currentTimeMillis() / 1000L;
-        float anim = (time % 10) / 10f;
 
         gfx.drawString(font, "Phase 1", SEED_X, SEED_Y - 10, LABEL_COLOR, false);
         gfx.drawString(font, "Phase 2", IMMATURE_X, IMMATURE_Y - 10, LABEL_COLOR, false);

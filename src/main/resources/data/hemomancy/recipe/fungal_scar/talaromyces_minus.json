@@ -4,6 +4,9 @@
   "blood_cost_phase1": 1200,
   "phase1_duration": 1200,
   "maturation_threshold": 2000,
+  "seed": {
+    "id": "hemomancy:hematic_iron_powder"
+  },
   "immature_result": {
     "id": "hemomancy:immature_fungal_scar"
   },

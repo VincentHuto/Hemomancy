@@ -45,7 +45,7 @@ import net.minecraft.core.particles.ParticleTypes;
  * Block entity for the Mycelial Crucible.
  *
  * <p><b>Phase 1 — Implantation</b><br>
- * When the center slot holds a valid ingredient (any item required by a matching
+ * When the center slot holds a valid recipe seed required by a matching
  * {@link FungalScarCultivationRecipe}) and the required enzymes are present:
  * <ol>
  *   <li>Flat blood cost is deducted at start.</li>
@@ -79,7 +79,7 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
     private static final float DEFAULT_ENZYME_POWER = 100f;
 
     // ── Slot layout ───────────────────────────────────────────────────────────
-    // 0   = center (ingredient / immature scar)
+    // 0   = center (seed ingredient / immature scar)
     // 1-4 = enzyme feeding slots
     // 5   = output
     // 6   = blood flask / gourd input
@@ -282,10 +282,8 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         for (var holder : level.getRecipeManager()
                 .getAllRecipesFor(com.vincenthuto.hemomancy.common.init.RecipeInit.fungal_scar_cultivation_type.get())) {
             FungalScarCultivationRecipe recipe = holder.value();
-            // The center slot must hold the ItemFungalScar that this recipe produces (finished scar)
-            // — i.e. the player inserts the scar they want to grow and enzymes matching its tendency.
-            // Check: center item is the finished scar described by this recipe, AND aligned enzyme present.
-            if (center.getItem() == recipe.getResultItemStack().getItem()
+            // The center slot must hold this recipe's explicit seed ingredient, not the finished scar.
+            if (center.getItem() == recipe.getSeedItemStack().getItem()
                     && hasAlignedEnzyme(recipe.getTendency())) {
                 return recipe;
             }

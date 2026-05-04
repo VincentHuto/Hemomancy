@@ -28,7 +28,8 @@ import net.minecraft.world.level.Level;
  *   <li>{@code bloodCostPhase1}        — flat blood drained when Phase 1 begins.</li>
  *   <li>{@code phase1Duration}         — crafting ticks for Phase 1 implantation.</li>
  *   <li>{@code maturationThreshold}    — total enzyme-power needed in Phase 2.</li>
- *   <li>{@code immatureResult}         — the {@link ItemImmatureFungalScar} produced at Phase 1 end.</li>
+ *   <li>{@code seed}                   — the center-slot Phase 1 input consumed to start the culture.</li>
+ *   <li>{@code immatureResult}         — the immature fungal scar produced at Phase 1 end.</li>
  *   <li>{@code result}                 — the finished {@link ItemFungalScar}.</li>
  * </ul>
  */
@@ -39,6 +40,7 @@ public class FungalScarCultivationRecipe extends CustomRecipe {
     private final float bloodCostPhase1;
     private final int phase1Duration;
     private final int maturationThreshold;
+    private final ItemStack seed;
     private final ItemStack immatureResult;
     private final ItemStack result;
 
@@ -47,6 +49,7 @@ public class FungalScarCultivationRecipe extends CustomRecipe {
             float bloodCostPhase1,
             int phase1Duration,
             int maturationThreshold,
+            ItemStack seed,
             ItemStack immatureResult,
             ItemStack result) {
         super(CraftingBookCategory.MISC);
@@ -55,6 +58,7 @@ public class FungalScarCultivationRecipe extends CustomRecipe {
         this.bloodCostPhase1 = bloodCostPhase1;
         this.phase1Duration = phase1Duration;
         this.maturationThreshold = maturationThreshold;
+        this.seed = seed;
         this.immatureResult = immatureResult;
         this.result = result;
     }
@@ -66,6 +70,7 @@ public class FungalScarCultivationRecipe extends CustomRecipe {
     public float getBloodCostPhase1()             { return bloodCostPhase1; }
     public int getPhase1Duration()                { return phase1Duration; }
     public int getMaturationThreshold()           { return maturationThreshold; }
+    public ItemStack getSeedItemStack()           { return seed.copy(); }
     public ItemStack getImmatureResult()          { return immatureResult.copy(); }
     public ItemStack getResultItemStack()         { return result; }
 

@@ -92,6 +92,9 @@ public final class MachineAccessEvents {
 	}
 
 	private static boolean isAccessBlocked(Player player, Block block) {
+		if (player.isCreative()) {
+			return false;
+		}
 		return isGatedMachine(block) && !hasCrafted(player, block);
 	}
 

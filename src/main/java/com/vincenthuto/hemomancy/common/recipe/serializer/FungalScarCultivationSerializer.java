@@ -46,10 +46,13 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
         float bloodCostPhase1   = GsonHelper.getAsFloat(json,  "blood_cost_phase1",   600f);
         int   phase1Duration    = GsonHelper.getAsInt(json,    "phase1_duration",      600);
         int   matThreshold      = GsonHelper.getAsInt(json,    "maturation_threshold", 2000);
+        ItemStack seed          = json.has("seed")
+                ? RecipeResultStackParser.parseResultStack(json, "seed")
+                : RecipeResultStackParser.parseResultStack(json, "result");
         ItemStack immature      = RecipeResultStackParser.parseResultStack(json, "immature_result");
         ItemStack result        = RecipeResultStackParser.parseResultStack(json, "result");
         return new FungalScarCultivationRecipe(recipeId, tendency, bloodCostPhase1,
-                phase1Duration, matThreshold, immature, result);
+                phase1Duration, matThreshold, seed, immature, result);
     }
 
     // ── MapCodec ──────────────────────────────────────────────────────────────
@@ -58,7 +61,7 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
         @Override
         public <T> Stream<T> keys(DynamicOps<T> ops) {
             return Stream.of("tendency", "blood_cost_phase1", "phase1_duration",
-                    "maturation_threshold", "immature_result", "result", "id")
+                    "maturation_threshold", "seed", "immature_result", "result", "id")
                     .map(ops::createString);
         }
 
@@ -83,6 +86,8 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
             prefix.add("blood_cost_phase1",    ops.createFloat(recipe.getBloodCostPhase1()));
             prefix.add("phase1_duration",      ops.createInt(recipe.getPhase1Duration()));
             prefix.add("maturation_threshold", ops.createInt(recipe.getMaturationThreshold()));
+            ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getSeedItemStack()).result()
+                    .ifPresent(e -> prefix.add("seed", JsonOps.INSTANCE.convertTo(ops, e)));
             ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getImmatureResult()).result()
                     .ifPresent(e -> prefix.add("immature_result", JsonOps.INSTANCE.convertTo(ops, e)));
             ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItemStack()).result()
@@ -111,10 +116,11 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
         float bloodCostPhase1        = buf.readFloat();
         int   phase1Duration         = buf.readVarInt();
         int   matThreshold           = buf.readVarInt();
+        ItemStack seed               = ItemStack.STREAM_CODEC.decode(buf);
         ItemStack immature           = ItemStack.STREAM_CODEC.decode(buf);
         ItemStack result             = ItemStack.STREAM_CODEC.decode(buf);
         return new FungalScarCultivationRecipe(id, tendency, bloodCostPhase1,
-                phase1Duration, matThreshold, immature, result);
+                phase1Duration, matThreshold, seed, immature, result);
     }
 
     private static void toNetwork(RegistryFriendlyByteBuf buf, FungalScarCultivationRecipe recipe) {
@@ -123,6 +129,7 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
         buf.writeFloat(recipe.getBloodCostPhase1());
         buf.writeVarInt(recipe.getPhase1Duration());
         buf.writeVarInt(recipe.getMaturationThreshold());
+        ItemStack.STREAM_CODEC.encode(buf, recipe.getSeedItemStack());
         ItemStack.STREAM_CODEC.encode(buf, recipe.getImmatureResult());
         ItemStack.STREAM_CODEC.encode(buf, recipe.getResultItemStack());
     }

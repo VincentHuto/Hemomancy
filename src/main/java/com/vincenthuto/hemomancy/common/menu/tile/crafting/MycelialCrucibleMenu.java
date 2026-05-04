@@ -3,10 +3,10 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCatalystSlot;
@@ -63,12 +63,11 @@ public class MycelialCrucibleMenu extends AbstractContainerMenu {
         checkContainerSize(te, SLOT_COUNT);
         checkContainerDataCount(data, DATA_COUNT);
 
-        // Center slot — accepts finished fungal scars (Phase 1 seed) and immature scars (Phase 2 input)
+        // Center slot — accepts recipe seeds (Phase 1) and immature scars (Phase 2 input)
         this.addSlot(new Slot(te, CENTER_SLOT, 80, 40) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.getItem() instanceof ItemFungalScar
-                        || stack.getItem() instanceof ItemImmatureFungalScar;
+                return isCenterInput(stack);
             }
         });
 
@@ -106,6 +105,15 @@ public class MycelialCrucibleMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(playerInv, k, 8 + k * 18, 182));
 
         this.addDataSlots(data);
+    }
+
+    private boolean isCenterInput(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        if (stack.getItem() instanceof ItemImmatureFungalScar) return true;
+        return level.getRecipeManager()
+                .getAllRecipesFor(RecipeInit.fungal_scar_cultivation_type.get())
+                .stream()
+                .anyMatch(holder -> stack.getItem() == holder.value().getSeedItemStack().getItem());
     }
 
     private static MycelialCrucibleBlockEntity getTE(Inventory inv, FriendlyByteBuf buf) {
@@ -160,8 +168,7 @@ public class MycelialCrucibleMenu extends AbstractContainerMenu {
             if (index == OUTPUT_SLOT) slot.onQuickCraft(slotStack, result);
         } else {
             // Player → block slots
-            if (slotStack.getItem() instanceof ItemImmatureFungalScar
-                    || slotStack.getItem() instanceof ItemFungalScar) {
+            if (isCenterInput(slotStack)) {
                 if (!this.moveItemStackTo(slotStack, CENTER_SLOT, CENTER_SLOT + 1, false))
                     return ItemStack.EMPTY;
             } else if (slotStack.getItem() instanceof BloodyFlaskItem
