@@ -163,7 +163,7 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
           Player player, InteractionHand handIn, BlockHitResult result) {
         if (stack.is(ItemInit.vivianite_scalpel.get())) {
           harvestWithScalpel(state, worldIn, pos, player);
-          return ItemInteractionResult.sidedSuccess(true, worldIn.isClientSide);
+          return ItemInteractionResult.sidedSuccess(true);
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
       }

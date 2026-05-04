@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import java.util.Objects;
-
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -12,6 +10,7 @@ import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
+import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -42,6 +41,8 @@ public class JEIPlugin implements IModPlugin {
 			"morphling_incubator", IncubatorRecipe.class);
 	public static final RecipeType<FungalScarCultivationRecipe> mycelial_crucible_recipe_type =
 			MycelialCrucibleRecipeCategory.JEI_TYPE;
+	public static final RecipeType<MorphicNectarRecipe> morphic_nectar_recipe_type =
+			MorphicNectarRecipeCategory.JEI_TYPE;
 
 	@Nonnull
 	@Override
@@ -58,6 +59,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MycelialCrucibleRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new MorphicNectarRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -88,6 +90,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));
 		registry.addRecipes(mycelial_crucible_recipe_type, FungalScarCultivationRecipe.getAllRecipes(world));
+		registry.addRecipes(morphic_nectar_recipe_type, MorphicNectarRecipe.getAllRecipes(world));
 
 	}
 
