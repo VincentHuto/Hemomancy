@@ -1,8 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 500,
   "riteType": "lesser",
-  "requiredDegree": 3,
+  "required_degree": 3,
   "riteName": "Rite of the Pallid Vessel",
   "riteDescription": "The dried gourd is consecrated within a ring of venous stone and ash, its hollow interior awakening to hold the lifeblood of its creator.",
   "pattern": [

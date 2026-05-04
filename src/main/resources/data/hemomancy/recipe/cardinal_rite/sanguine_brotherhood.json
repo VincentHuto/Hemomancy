@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 1000,
   "riteType": "lesser",
+  "required_degree": 3,
   "riteName": "Rite of the Sanguine Brotherhood",
   "riteDescription": "The fourth rite of the Hematic Order, proving mastery of the foundational blood arts.",
   "rankup": true,

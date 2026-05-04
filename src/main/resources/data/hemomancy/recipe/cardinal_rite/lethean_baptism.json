@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "minor",
+  "required_degree": 0,
   "riteName": "Rite of Lethean Baptism",
   "riteDescription": "The first rite of the Unstained path. The supplicant kneels before cleansed stone and lethean flowers, renouncing the blood and beginning the long walk toward purification.",
   "pattern": [

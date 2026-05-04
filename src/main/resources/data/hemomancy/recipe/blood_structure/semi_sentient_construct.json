@@ -1,6 +1,7 @@
-﻿{
+{
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 250,
+  "required_degree": 3,
   "heldItem": "hemomancy:befouling_ash_trail",
   "hitBlock": "hemomancy:conscious_mass",
   "pattern": [

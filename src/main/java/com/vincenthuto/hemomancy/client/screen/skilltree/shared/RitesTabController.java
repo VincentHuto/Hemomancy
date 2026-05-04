@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.IProgressTab;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -68,10 +67,10 @@ public class RitesTabController implements IProgressTab {
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
         if (btn != 0) return false;
-        CardinalRiteType clickedTier = RitesTabView.tierUnder(ctx, state, mx, my);
+        Integer clickedTier = RitesTabView.tierUnder(ctx, state, mx, my);
         if (clickedTier != null) {
             boolean degreeOk = !state.enableDegreeLock
-                    || ctx.playerDegree() >= RitesTabView.minDegree(clickedTier);
+                    || ctx.playerDegree() >= clickedTier;
             if (degreeOk && !state.ritesByTier.getOrDefault(clickedTier, List.of()).isEmpty()) {
                 if (clickedTier == state.selectedRiteTier) {
                     state.selectedRiteTier = null;

@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "grand",
+  "required_degree": 8,
   "riteName": "Rite of Lethean Judgment",
   "riteDescription": "The most powerful rite of the Unstained \u2014 a holy cleansing that projects Lethe's will outward. All blood-active practitioners within range feel their veins seize and their manipulations scatter. A declaration of war against hemomancy itself.",
   "pattern": [

@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 4000,
   "riteType": "greater",
+  "required_degree": 6,
   "riteName": "Rite of the Eternal Covenant",
   "riteDescription": "A transcendent rite that permanently expands the caster's maximum blood volume. This rite may only be performed once â€” the covenant does not grant its boon twice.",
   "pattern": [

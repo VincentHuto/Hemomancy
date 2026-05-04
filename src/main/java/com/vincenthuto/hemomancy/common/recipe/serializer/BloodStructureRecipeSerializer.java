@@ -118,6 +118,13 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		return pattern.toArray(new String[0][]);
 	}
 
+	private static int requiredDegreeFromJson(JsonObject pJson) {
+		if (pJson.has("required_degree")) {
+			return GsonHelper.getAsInt(pJson, "required_degree", 0);
+		}
+		return GsonHelper.getAsInt(pJson, "requiredDegree", 0);
+	}
+
 	// ---- JSON helpers ----
 
 	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
@@ -140,7 +147,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
-		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
+		int requiredDegree = requiredDegreeFromJson(pJson);
 		return new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree);
 	}
 
@@ -149,7 +156,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	private static final MapCodec<BloodStructureRecipe> CODEC = new MapCodec<BloodStructureRecipe>() {
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "requiredDegree")
+			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "required_degree")
 					.map(ops::createString);
 		}
 
@@ -177,7 +184,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
-			prefix.add("requiredDegree", ops.createInt(recipe.getRequiredDegree()));
+			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
 			return prefix;
 		}
 	};

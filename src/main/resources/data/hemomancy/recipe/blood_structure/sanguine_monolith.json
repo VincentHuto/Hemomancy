@@ -1,6 +1,7 @@
-﻿{
+{
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 175,
+  "required_degree": 7,
   "heldItem": "hemomancy:sanguine_formation",
   "hitBlock": "hemomancy:conscious_mass",
   "pattern": [

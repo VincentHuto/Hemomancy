@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 500,
   "riteType": "lesser",
+  "required_degree": 2,
   "riteName": "Rite of Hematic Fortification",
   "riteDescription": "A lesser rite that strengthens the caster's connection to the blood arts.",
   "pattern": [

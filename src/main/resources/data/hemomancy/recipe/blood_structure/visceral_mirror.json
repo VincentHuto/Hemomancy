@@ -1,6 +1,7 @@
-﻿{
+{
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 200,
+  "required_degree": 4,
   "heldItem": "hemomancy:sanguine_formation",
   "hitBlock": "hemomancy:sanguine_glass",
   "pattern": [

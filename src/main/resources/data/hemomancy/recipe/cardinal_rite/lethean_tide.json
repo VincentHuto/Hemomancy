@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "required_degree": 3,
   "riteName": "Rite of the Lethean Tide",
   "riteDescription": "An Unstained greater rite that calls upon the purifying waters of Lethe to wash away the crimson stain of a Blood Moon. The tide cleanses the sky and grants the caster a surge of purity. Requires purity of at least 50.",
   "pattern": [

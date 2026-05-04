@@ -1,6 +1,7 @@
 {
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 100,
+  "required_degree": 1,
   "heldItem": "hemomancy:smouldering_ash_trail",
   "hitBlock": "hemomancy:venous_stone",
   "pattern": [

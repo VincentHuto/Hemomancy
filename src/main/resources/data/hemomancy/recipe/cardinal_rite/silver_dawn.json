@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
@@ -28,6 +28,6 @@
   "result": {
     "id": "hemomancy:consecrated_copper_ingot"
   },
-  "requiredDegree": 6,
+  "required_degree": 6,
   "unstained": true
 }

@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "minor",
+  "required_degree": 1,
   "riteName": "Rite of Still Waters",
   "riteDescription": "A calming rite performed at a junction of cleansed stone and pale silver. The still light of the lanterns suppresses all blood-magic violence in the area â€” magic damage dealt within the zone is reduced by 30% for 5 minutes.",
   "pattern": [

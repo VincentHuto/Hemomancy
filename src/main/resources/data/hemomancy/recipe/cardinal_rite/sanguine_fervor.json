@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 900,
   "riteType": "lesser",
+  "required_degree": 2,
   "riteName": "Rite of Sanguine Fervor",
   "riteDescription": "A hunting rite that saturates the earth with vital blood-heat, drawing creatures from the dark. For a short time, mobs spawn at greatly increased rates within a 3-chunk radius, making the area ideal for farming.",
   "pattern": [

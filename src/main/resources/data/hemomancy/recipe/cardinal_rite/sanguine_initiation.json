@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 100,
   "riteType": "minor",
+  "required_degree": 0,
   "riteName": "Rite of Sanguine Initiation",
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
   "rankup": true,

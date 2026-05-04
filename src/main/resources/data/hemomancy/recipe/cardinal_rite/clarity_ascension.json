@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "required_degree": 5,
   "riteName": "Rite of Clarity Ascension",
   "riteDescription": "The Purified supplicant steps beyond mere cleansing into true sight. Surrounded by silver and crystal, the mind opens to clarity \u2014 the second phase of the Unstained path, where enlightenment begins.",
   "pattern": [

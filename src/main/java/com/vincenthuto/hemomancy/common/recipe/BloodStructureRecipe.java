@@ -81,8 +81,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	/**
 	 * Minimum initiatory degree (Harbinger) or Unstained stage required to perform
-	 * this structure craft. A value of {@code -1} means "derive from blood cost
-	 * tiers" (legacy behaviour, kept for backwards-compatibility).
+	 * this structure craft.
 	 */
 	protected int requiredDegree;
 
@@ -93,7 +92,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result, boolean unstained) {
-		this(pId, bloodCost, pattern, heldItem, hitBlock, result, unstained, -1);
+		this(pId, bloodCost, pattern, heldItem, hitBlock, result, unstained, 0);
 	}
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
@@ -210,8 +209,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	/**
-	 * Returns the per-recipe degree / stage requirement, or {@code -1} if the
-	 * default cost-tier fallback should be used.
+	 * Returns the per-recipe degree / stage requirement.
 	 */
 	public int getRequiredDegree() {
 		return requiredDegree;

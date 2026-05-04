@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 
 /**
  * Holds all mutable state for the Cardinal Rites browser tab.
@@ -19,10 +19,10 @@ public class RitesTabState {
 
 	// ── Loaded recipe data ───────────────────────────────────────
 	public final List<CardinalRiteRecipe> riteRecipes = new ArrayList<>();
-	public final Map<CardinalRiteType, List<CardinalRiteRecipe>> ritesByTier = new LinkedHashMap<>();
+	public final Map<Integer, List<CardinalRiteRecipe>> ritesByTier = new LinkedHashMap<>();
 
 	// ── Selection / navigation ───────────────────────────────────
-	public CardinalRiteType selectedRiteTier = null;
+	public Integer selectedRiteTier = null;
 	public int selectedRiteIndexInTier = 0;
 
 	// ── 3D model rotation ────────────────────────────────────────
@@ -62,11 +62,11 @@ public class RitesTabState {
 	/** Clears and rebuilds {@link #ritesByTier} from {@link #riteRecipes}. */
 	public void rebuildTierMap() {
 		ritesByTier.clear();
-		for (CardinalRiteType type : CardinalRiteType.values()) {
+		for (int type : RecipeDegreeGates.LEVELS) {
 			ritesByTier.put(type, new ArrayList<>());
 		}
 		for (CardinalRiteRecipe r : riteRecipes) {
-			ritesByTier.get(r.getRiteType()).add(r);
+			ritesByTier.get(RecipeDegreeGates.getRequiredDegree(r)).add(r);
 		}
 		for (List<CardinalRiteRecipe> list : ritesByTier.values()) {
 			list.sort(java.util.Comparator.comparingDouble(CardinalRiteRecipe::getBloodCost));
@@ -77,9 +77,9 @@ public class RitesTabState {
 	public void autoSelectFirstTier(int playerDegree) {
 		selectedRiteTier = null;
 		selectedRiteIndexInTier = 0;
-		for (CardinalRiteType type : CardinalRiteType.values()) {
+		for (int type : RecipeDegreeGates.LEVELS) {
 			if (!ritesByTier.getOrDefault(type, List.of()).isEmpty()
-					&& (!enableDegreeLock || playerDegree >= RitesTabView.minDegree(type))) {
+					&& (!enableDegreeLock || playerDegree >= type)) {
 				selectedRiteTier = type;
 				break;
 			}
@@ -92,7 +92,7 @@ public class RitesTabState {
 	public int sidebarContentH() {
 		int rowH = 22;
 		int total = 0;
-		for (CardinalRiteType type : CardinalRiteType.values()) {
+		for (int type : RecipeDegreeGates.LEVELS) {
 			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
 			if (hideEmptyTiers && recipes.isEmpty()) continue;
 			total += rowH + 2;

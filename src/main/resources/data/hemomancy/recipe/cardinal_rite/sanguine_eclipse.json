@@ -1,8 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 750,
   "riteType": "greater",
-  "requiredDegree": 3,
+  "required_degree": 3,
   "riteName": "Rite of the Sanguine Eclipse",
   "riteDescription": "A forbidden rite that tears the veil between night and will. The caster forces a Blood Moon to rise, empowering all Harbingers while weakening the uninitiated.",
   "pattern": [

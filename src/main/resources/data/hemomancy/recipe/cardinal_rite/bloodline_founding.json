@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 500,
   "riteType": "lesser",
+  "required_degree": 5,
   "riteName": "Rite of Bloodline Founding",
   "riteDescription": "A lesser rite that binds the caster's essence into a new bloodline, producing a presigned ancestral ledger that others may use to join.",
   "pattern": [

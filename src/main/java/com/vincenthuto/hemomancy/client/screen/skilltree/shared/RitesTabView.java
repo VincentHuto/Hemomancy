@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 
@@ -46,8 +47,9 @@ public final class RitesTabView {
 	// ────────────────────────────────────────────────────────────
 
 	/**
-	 * Minimum initiatory degree required to browse a given rite tier.
+	 * Minimum initiatory degree required to browse legacy rite-size groups.
 	 */
+	@Deprecated
 	public static int minDegree(CardinalRiteType type) {
 		return switch (type) {
 			case MINOR   -> 0;
@@ -118,7 +120,7 @@ public final class RitesTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), "Select a tier",
+			gfx.drawCenteredString(ctx.font(), "Select a degree",
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -130,7 +132,7 @@ public final class RitesTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), "No rites in this tier",
+			gfx.drawCenteredString(ctx.font(), "No rites at this degree",
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -174,7 +176,7 @@ public final class RitesTabView {
 		int sw  = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		gfx.drawString(ctx.font(), Component.literal("Rite Tiers")
+		gfx.drawString(ctx.font(), Component.literal("Rite Degrees")
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
@@ -187,14 +189,14 @@ public final class RitesTabView {
 
 		sy -= state.riteSidebarScroll;
 
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean selected = (type == state.selectedRiteTier);
+		for (int type : RecipeDegreeGates.LEVELS) {
+			boolean selected = (state.selectedRiteTier != null && type == state.selectedRiteTier);
 			List<CardinalRiteRecipe> recipes =
 					state.ritesByTier.getOrDefault(type, List.of());
 
 			if (state.hideEmptyTiers && recipes.isEmpty()) continue;
 
-			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < minDegree(type);
+			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < type;
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
 					&& mouseY >= sy && mouseY <= sy + rowH
@@ -210,8 +212,7 @@ public final class RitesTabView {
 			gfx.fill(sx, sy,           sx + 1,  sy + rowH,  bc);
 			gfx.fill(sx + sw - 1, sy, sx + sw,  sy + rowH,  bc);
 
-			String sizeLabel = type.getSize() + "x" + type.getSize();
-			String tierLabel = HLTextUtils.toProperCase(type.getSerializedName());
+			String tierLabel = type == 0 ? "No Degree" : "Degree " + type;
 
 			if (locked) {
 				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
@@ -220,7 +221,7 @@ public final class RitesTabView {
 			} else {
 				int textCol = selected ? state.nameColor : 0xFF999999;
 				gfx.drawString(ctx.font(),
-						tierLabel + " " + sizeLabel + " (" + recipes.size() + ")",
+						tierLabel + " (" + recipes.size() + ")",
 						sx + 4, sy + (rowH - 8) / 2, textCol, false);
 			}
 
@@ -411,11 +412,11 @@ public final class RitesTabView {
 			y += 4;
 		}
 
-		// Type
+		// Rite form controls structure size / cast time, not progression access.
 		CardinalRiteType type = rite.getRiteType();
 		String typeStr = HLTextUtils.toProperCase(type.getSerializedName())
 				+ " (" + type.getSize() + "x" + type.getSize() + ")";
-		gfx.drawString(ctx.font(), Component.literal("Type: ")
+		gfx.drawString(ctx.font(), Component.literal("Rite Form: ")
 				.withStyle(s -> s.withColor(0x888888))
 				.append(Component.literal(typeStr).withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF))),
 				panelX, y, 0);
@@ -431,7 +432,7 @@ public final class RitesTabView {
 
 		// Required degree (only shown when degree locking is active)
 		if (state.enableDegreeLock) {
-			int reqDeg = minDegree(type);
+			int reqDeg = RecipeDegreeGates.getRequiredDegree(rite);
 			if (reqDeg > 0) {
 				EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
 				String degName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
@@ -531,12 +532,11 @@ public final class RitesTabView {
 		if (desc != null && !desc.isEmpty())
 			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
 
-		y += lineH; // type
+		y += lineH; // rite form
 		y += lineH; // blood cost
 
 		if (enableDegreeLock) {
-			CardinalRiteType type = rite.getRiteType();
-			int reqDeg = minDegree(type);
+			int reqDeg = RecipeDegreeGates.getRequiredDegree(rite);
 			if (reqDeg > 0) y += lineH;
 		}
 
@@ -581,8 +581,8 @@ public final class RitesTabView {
 	//  Hit testing
 	// ────────────────────────────────────────────────────────────
 
-	/** Returns the {@link CardinalRiteType} clicked in the sidebar, or {@code null}. */
-	public static CardinalRiteType tierUnder(ProgressScreenContext ctx,
+	/** Returns the required degree clicked in the sidebar, or {@code null}. */
+	public static Integer tierUnder(ProgressScreenContext ctx,
 											  RitesTabState state, double mx, double my) {
 		int sx  = ctx.guiLeft() + 4;
 		int sy  = ctx.guiTop()  + 24 + 14 + 4;
@@ -593,8 +593,8 @@ public final class RitesTabView {
 		if (my < clipTop || my > clipBottom) return null;
 		sy -= state.riteSidebarScroll;
 
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean selected = (type == state.selectedRiteTier);
+		for (int type : RecipeDegreeGates.LEVELS) {
+			boolean selected = (state.selectedRiteTier != null && type == state.selectedRiteTier);
 			List<CardinalRiteRecipe> recipes =
 					state.ritesByTier.getOrDefault(type, List.of());
 			if (state.hideEmptyTiers && recipes.isEmpty()) continue;
@@ -623,8 +623,8 @@ public final class RitesTabView {
 		if (my < clipTop || my > clipBottom) return -1;
 		sy -= state.riteSidebarScroll;
 
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean selected = (type == state.selectedRiteTier);
+		for (int type : RecipeDegreeGates.LEVELS) {
+			boolean selected = (state.selectedRiteTier != null && type == state.selectedRiteTier);
 			List<CardinalRiteRecipe> tierRecipes =
 					state.ritesByTier.getOrDefault(type, List.of());
 			if (state.hideEmptyTiers && tierRecipes.isEmpty()) continue;

@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 3500,
   "riteType": "greater",
+  "required_degree": 5,
   "riteName": "Rite of Sanguine Dominion",
   "riteDescription": "An imperial rite that claims the surrounding land as a Blood Domain. Within its bounds, the caster's manipulations cost less blood, enemies suffer a slow bleeding curse, and blood-touched blocks are empowered.",
   "pattern": [

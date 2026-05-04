@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 5000,
   "riteType": "grand",
+  "required_degree": 5,
   "riteName": "Rite of the Pallid Shadow",
   "riteDescription": "A blasphemous rite that corrupts the still waters, stripping the Unstained purification from a nearby player. A direct assault on those who walk the path of Our Lady â€” and an unforgivable act of hematic aggression.",
   "pattern": [

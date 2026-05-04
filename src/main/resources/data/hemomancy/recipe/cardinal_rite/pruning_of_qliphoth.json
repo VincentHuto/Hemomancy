@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 200,
   "riteType": "minor",
+  "required_degree": 0,
   "riteName": "Pruning of the Qliphoth",
   "riteDescription": "A small counter-rite that severs the roots of a nearby Qliphoth bloom, causing the dark tree to wither and vanish. Must be performed within the same chunk as the bloom.",
   "pattern": [

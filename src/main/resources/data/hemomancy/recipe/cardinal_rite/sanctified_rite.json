@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 3000,
   "riteType": "greater",
+  "required_degree": 5,
   "riteName": "Rite of the Bloodline Covenant",
   "riteDescription": "The sixth rite of the Hematic Order, consecrating the practitioner fully to the Bloodline Covenant.",
   "rankup": true,

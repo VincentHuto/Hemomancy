@@ -1,8 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 3500,
   "riteType": "grand",
-  "requiredDegree": 6,
+  "required_degree": 6,
   "riteName": "Rite of the Curved Horn",
   "riteDescription": "The final vessel transcends flesh and gourd alike. Shaped from gilded venous stone and ancient blood, the curved horn is the apex of sanguine containment â€” a relic that drinks the very essence of its bearer.",
   "pattern": [

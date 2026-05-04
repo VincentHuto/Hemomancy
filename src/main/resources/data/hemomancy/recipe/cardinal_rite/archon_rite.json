@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 5000,
   "riteType": "grand",
+  "required_degree": 6,
   "riteName": "Rite of the Hematic Order",
   "riteDescription": "The seventh rite of the Hematic Order, crowning the practitioner as Archon and preparing the way for the hidden Eighth Degree.",
   "rankup": true,

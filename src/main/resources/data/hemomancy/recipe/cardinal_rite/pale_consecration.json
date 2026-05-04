@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "required_degree": 2,
   "riteName": "Rite of Pale Consecration",
   "riteDescription": "The supplicant lays down a grid of cleansed stone, pale silver, and suspended crystals, calling down Lethe's judgment upon the ground itself. For 10 minutes, hostile creatures that enter the consecrated area are seared and slowed â€” a ward against the blood-touched.",
   "pattern": [

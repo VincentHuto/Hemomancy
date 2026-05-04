@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 
 /**
  * Holds all mutable state for the Blood Crafting browser tab.
@@ -16,9 +17,11 @@ import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 public class CraftingTabState {
 
 	// ── Tier configuration (constant, not per-recipe) ────────────
-	public static final String[] TIER_NAMES       = { "Basic", "Advanced", "Expert" };
-	public static final int[]    TIER_THRESHOLDS  = { 100, 200, Integer.MAX_VALUE };
-	public static final int[]    TIER_DEGREE_REQ  = { 0, 2, 4 };
+	public static final String[] TIER_NAMES       = {
+			"No Degree", "Degree 1", "Degree 2", "Degree 3", "Degree 4",
+			"Degree 5", "Degree 6", "Degree 7", "Degree 8"
+	};
+	public static final int[]    TIER_DEGREE_REQ  = RecipeDegreeGates.LEVELS;
 
 	// ── Loaded recipe data ───────────────────────────────────────
 	public final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
@@ -65,12 +68,8 @@ public class CraftingTabState {
 		craftingByTier.clear();
 		for (String name : TIER_NAMES) craftingByTier.put(name, new ArrayList<>());
 		for (BloodStructureRecipe r : craftingRecipes) {
-			for (int i = 0; i < TIER_THRESHOLDS.length; i++) {
-				if (r.getBloodCost() <= TIER_THRESHOLDS[i]) {
-					craftingByTier.get(TIER_NAMES[i]).add(r);
-					break;
-				}
-			}
+			int degree = RecipeDegreeGates.getRequiredDegree(r);
+			craftingByTier.get(TIER_NAMES[degree]).add(r);
 		}
 	}
 

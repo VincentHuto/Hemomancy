@@ -1,6 +1,7 @@
-﻿{
+{
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 200,
+  "required_degree": 5,
   "heldItem": "hemomancy:morphling_polyp",
   "hitBlock": "hemomancy:hematic_iron_block",
   "pattern": [

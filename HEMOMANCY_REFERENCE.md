@@ -17,7 +17,8 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 
 > **Current Gameplay State Snapshot (2026-04-28 audit):**
 > - The Harbinger endgame loop is now explicitly wired through Qliphoth Communion + Apotheos gating, with the full Harbinger advancement chain implemented in data + programmatic grant flow.
-> - Cardinal Rite JSONs now carry a `rankup` boolean. Degree-advancement rites use it for red/gold rank-up highlighting in the Rites tab, and server activation prevents already-higher-rank players from redundantly starting rank-up rites.
+> - Blood Structure and Cardinal Rite JSONs now use explicit `required_degree` progression gates. Harbinger recipes compare against the player's `IInitiatoryDegree`; Unstained recipes compare against the numbered Unstained progression stage from `HemoCapabilityAccess.getPlayerUnstainedLevel`. Blood cost and `CardinalRiteType`/minor-lesser-greater-grand form no longer imply progression access.
+> - Cardinal Rite JSONs also carry a `rankup` boolean. Degree-advancement rites use it for red/gold rank-up highlighting in the Rites tab, and server activation prevents already-higher-rank players from redundantly starting rank-up rites.
 > - Blood Moon gameplay and client rendering are synchronized through `BloodMoonEvents`, `PacketSyncBloodMoon`, and `BloodMoonVeinSkyRenderer`: active nights show the red moon texture plus vein/tendril sky overlay while applying the event's gameplay effects.
 > - Qliphoth Communion is wired end-to-end: monolith shatter has black shards plus a black orb blast, Bloom of the Qliphoth drops all nine named pomes with owner whispers, creative-spawned pomes still use the current husk order, and `/hemo qliphoth pome reset` reseals the Communion gate.
 > - Qliphoth Bloom blocks and their filler shell cannot be broken by normal player mining; removal is intentionally routed through the Rite of Cult Pruning.
@@ -141,7 +142,8 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 
 Cardinal Rites have:
 - A blood cost
-- A rite type (`CardinalRiteType`)
+- A rite form (`CardinalRiteType`), which controls structure size, cast duration, and boundary behavior
+- An explicit `required_degree` JSON field, interpreted as Initiatory Degree for Harbinger rites or Unstained stage for Unstained rites
 - A multiblock pattern
 - A `rankup` boolean on Harbinger degree-advancement rites, used by the Rites tab to highlight degree rites with a slow red/gold name glow
 - An item result
@@ -157,7 +159,7 @@ Managed by `CardinalRiteEvents`:
 3. Each tick: particles spawn, boundary checked, sacrifices processed
 4. On completion: degree awarded, Unstained progress reset (if any), chat message sent
 
-`BloodCraftingKeyPressPacket` validates rank-up rites before activation. If a rite's `rankup` flag is true and the caster is already at or above the rank it grants, the server refuses to start the rite so players do not spend materials or time on redundant degree-up rituals. The same packet also accepts structure-spawner-placed rite structures by scanning the matched multiblock pattern rather than assuming the clicked block is the rite origin.
+`BloodCraftingKeyPressPacket` validates the explicit `required_degree` before activation through `RecipeDegreeGates`, then performs the rank-up redundancy check. If a rite's `rankup` flag is true and the caster is already at or above the rank it grants, the server refuses to start the rite so players do not spend materials or time on redundant degree-up rituals. `CardinalRiteEvents` re-checks the same gate before completion so saved/active rites cannot finish after a player loses access. The same packet also accepts structure-spawner-placed rite structures by scanning the matched multiblock pattern rather than assuming the clicked block is the rite origin.
 
 ### 3.4 Harbinger NPC Dialogue System
 
@@ -184,10 +186,10 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 |---|---|
 | Uninitiated | Politely refuses: machines require initiation |
 | Neophyte | Introduces the Ghastly Alembic; overview of the Outpost machine chain |
-| Votary | Explains the Vial Centrifuge and blood tendency separation; **introduces Blood Structure crafting** (basic-tier patterns now available) |
+| Votary | Explains the Vial Centrifuge and blood tendency separation; **introduces Blood Structure crafting** (recipes unlock by explicit degree/stage gates) |
 | Initiate | Reveals the Somatic Loom and explains memory weaving |
 | Adept | Introduces the Cerebral Scarring Station (surgical instrument) and Chisel Station (rune encoding) |
-| Illuminatus | Reveals Blood Structure **Grand tier** — Blood Conduit pipeline becomes mandatory for complex patterns; and Morphling Incubator lore |
+| Illuminatus | Reveals higher-degree Blood Structure patterns, including conduit-scale machinery and Morphling Incubator lore |
 | Sanctified | Describes the "final synthesis" — all machines as one unified process |
 | Archon | Defers to the player's mastery; "I have nothing left to teach" |
 | Apotheos | Awe and vertigo: "I built machines to process blood. The machines were always pointing at something. I understand now." Reflects that the player was the product the machines were building toward |
@@ -525,7 +527,7 @@ To gate Unstained cardinal rites the same way Harbinger degree gates Harbinger r
 | 7 | Vigilant | clarity ≥ 50 |
 | 8 | Enlightened | `isEnlightened()` (clarity ≥ 100) |
 
-These levels are compared against the same `getRequiredDegreeForRite()` thresholds used by Harbinger rites (MINOR=0, LESSER=1, GREATER=3, GRAND=5), so a GREATER Unstained rite blocks at level 3 (Cleansing) and a GRAND rite blocks at level 5 (Purified) unless the recipe overrides `requiredDegree`.
+These levels are compared against each recipe's explicit `required_degree` value through `RecipeDegreeGates`, using the same field name as Harbinger Cardinal Rites and Blood Structure recipes. `CardinalRiteType` still controls ritual form and cast behavior, but it does not imply progression access for Unstained rites.
 
 ### 4.7 Unstained Cardinal Rites
 
@@ -533,22 +535,22 @@ All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather
 
 **Purity-Phase Rites (levels 0–5):**
 
-| Rite | File | Tier | Min Level | Effect |
-|------|------|------|-----------|--------|
+| Rite | File | Rite Form | Required Stage | Effect |
+|------|------|-----------|----------------|--------|
 | Rite of Lethean Baptism | `lethean_baptism` | Minor | 0 | Begins the Unstained path; sets `begunPurification = true`, grants starting purity |
-| Rite of Still Waters | `still_waters` | Minor | 0 | Creates a 5-min zone (16 block radius) reducing magic damage by 30% |
-| Rite of Pale Consecration | `pale_consecration` | Lesser | 1 | 10-min zone that sears and slows hostile mobs entering the consecrated ground |
-| Rite of the Silver Veil | `silver_veil` | Lesser | 1 | Grants Silver Ward effect (30 min, amplifier 1) to the caster |
-| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 3 (Cleansing) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
+| Rite of Still Waters | `still_waters` | Minor | 1 (Begun) | Creates a 5-min zone (16 block radius) reducing magic damage by 30% |
+| Rite of Pale Consecration | `pale_consecration` | Lesser | 2 (Tainted) | 10-min zone that sears and slows hostile mobs entering the consecrated ground |
+| Rite of the Silver Veil | `silver_veil` | Lesser | 2 (Tainted) | Grants Silver Ward effect (30 min, amplifier 1) to the caster |
+| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 5 (Purified) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
 | Rite of the Lethean Tide | `lethean_tide` | Greater | 3 (Cleansing) | Forcibly ends an active Blood Moon; grants the caster +10 purity |
 | Rite of Clarity Ascension | `clarity_ascension` | Greater | 5 (Purified) | Unlocks the clarity phase (`clarityUnlocked = true`); requires full purity enforced in handler |
-| Rite of the Lethe Covenant | `lethe_covenant` | Grand | 5 (Purified) | Establishes a Lethe Covenant domain: 5 chunks, 30 min. Halves spawns, shields Silver Ward from bleed, passively grows purity for Unstained inside |
-| Rite of Lethean Judgment | `lethean_judgment` | Grand | 5 (Purified) | Offensive — applies Hemolysis (amp 2, 30 s) and disrupts vascular system of all blood-active players within 16 blocks |
+| Rite of the Lethe Covenant | `lethe_covenant` | Grand | 8 (Enlightened) | Establishes a Lethe Covenant domain: 5 chunks, 30 min. Halves spawns, shields Silver Ward from bleed, passively grows purity for Unstained inside |
+| Rite of Lethean Judgment | `lethean_judgment` | Grand | 8 (Enlightened) | Offensive: applies Hemolysis (amp 2, 30 s) and disrupts vascular system of all blood-active players within 16 blocks |
 
 **Clarity-Phase Rites (levels 6–8):**
 
-| Rite | File | Tier | Min Level | Effect |
-|------|------|------|-----------|--------|
+| Rite | File | Rite Form | Required Stage | Effect |
+|------|------|-----------|----------------|--------|
 | Rite of the Silver Dawn | `silver_dawn` | Greater | 6 (Discerning) | Converts blood-faction blocks to cleansed equivalents in 8-block radius; grants Verdigris Aura (amp 2, 10 min) and +5 clarity |
 | Rite of the Pale Vigil | `pale_vigil` | Greater | 7 (Vigilant) | Bursts +10 clarity, Silver Ward (amp 2, 30 min), and Verdigris Aura (amp 2, 30 min) to all clarity-bearing Unstained within 40 blocks. Grants `ADV_VIGILANT`. |
 | Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`. |
@@ -1371,64 +1373,65 @@ All applicable flowers have **potted** variants.
 
 An in-world system: build a specific block structure, then hit a particular block with a catalyst item while spending blood. The structure transforms into the desired output.
 
-Blood structure crafting is introduced at **Degree 2 (Votary)** — the Alchemist explains the system at this degree. Recipes are graduated across tiers:
-- **Basic tier** (degree gate 0): simple flat-layout patterns, low blood cost — available from the start
-- **Advanced tier** (degree gate 2): introduces the Blood Key mechanic fully; 3D patterns begin
-- **Expert tier** (degree gate 4): complex multiblock patterns requiring Sanguine Formation catalyst
-- **Grand tier** (degree gate 5–6, drafted): structures that require the Sanguine Conduit as catalyst or hit-block, reflecting the Founding Sanctum's claim over the land. Three draft recipes exist: **Consecrated Bloodwell** (`consecrated_bloodwell.json`, cost 5000, uses sanguine_conduit as heldItem — 3-layer cubic arrangement of pillars, polished venous stone, conscious mass, and sanguine glass), **Vascular Effigy** (`vascular_effigy.json`, cost 6500, 4-layer humanoid profile of hematic iron, summoning a Semi-Sentient Construct), and **Covenant Throne** (`covenant_throne.json`, cost 8000, requires a Sanguine Monolith at center — upgrades the monolith within a ring of chiseled iron and conscious mass into a sanctified seat).
+Blood structure crafting is introduced through the Alchemist dialogue around Votary, but individual recipes are no longer inferred from blood-cost tiers. Each JSON carries `required_degree`; Harbinger recipes compare that value against the player's Initiatory Degree, while Unstained recipes compare it against the numbered Unstained progression stage. Blood cost is only the resource cost.
 
-The Liber Sanguinum sidebar groups recipes as Basic/Advanced/Expert with the 0/2/4 degree gating displayed. Grand-tier gating is a planned addition.
+The Liber Sanguinum/Immaculatus crafting sidebar and the debug Structure Spawner now group recipes directly by required degree/stage (`No Degree`, `Degree 1`, ..., `Degree 8`) through `RecipeDegreeGates`.
 
-| Recipe | Blood Cost | Held Item | Hit Block | Result |
-|--------|-----------|-----------|-----------|--------|
-| Liber Sanguinum | 100 | Sanguine Formation | Bookshelf | Liber Sanguinum |
-| Hematic Iron Block | *(see JSON)* | *(see JSON)* | Iron Block | Hematic Iron Block |
-| Living Staff | 150 | Sanguine Formation | Iron Bars | Living Staff |
-| Morphling Incubator | 200 | Morphling Polyp | Hematic Iron Block | Morphling Incubator |
-| Semi-Sentient Construct | 250 | Befouling Ash | Conscious Mass | Semi-Sentient Construct |
-| Unstained Podium | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
-| *(Grand)* Consecrated Bloodwell | 5000 | Sanguine Conduit | Conscious Mass | Dendritic Distributor *(placeholder result — own block TBD)* |
-| *(Grand)* Vascular Effigy | 6500 | Sanguine Formation | Hematic Iron Block | Semi-Sentient Construct *(placeholder — dedicated construct upgrade TBD)* |
-| *(Grand)* Covenant Throne | 8000 | Sanguine Formation | Sanguine Monolith | Sanguine Monolith *(placeholder — dedicated throne block TBD)* |
+| Recipe | Required Degree/Stage | Blood Cost | Held Item | Hit Block | Result |
+|--------|-----------------------|-----------|-----------|-----------|--------|
+| Liber Sanguinum | 0 | 100 | Sanguine Formation | Bookshelf | Liber Sanguinum |
+| Hematic Iron Block | 0 | *(see JSON)* | *(see JSON)* | Iron Block | Hematic Iron Block |
+| Ghastly Alembic / Iron Brazier / Living Staff | 1 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Early Harbinger machinery/tools |
+| Vial Centrifuge / Mnemonic Reliquary | 2 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Votary machinery |
+| Somatic Loom / Mind Spike / Semi-Sentient Construct | 3 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Initiate machinery |
+| Runic Chisel Station / Visceral Mirror | 4 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Adept machinery |
+| Dendritic Distributor / Consecrated Bloodwell / Morphling Incubator | 5 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Crimson Lodge machinery |
+| Covenant Throne / Vascular Effigy | 6 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Bloodline Covenant machinery |
+| Sanguine Monolith | 7 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Archon machinery |
+| Unstained Podium | Unstained stage 1 | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
 
-> Recipes are in `data/hemomancy/recipes/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, and `result`.
+> Recipes are in `data/hemomancy/recipe/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, `required_degree`, optional `unstained`, and `result`.
 
 ### 18.2 Cardinal Rite Recipes
 
-Specific cardinal rite recipes include degree advancement rites (section 3.2) plus utility rites. Rites come in four tiers based on complexity and cost:
+Specific cardinal rite recipes include degree advancement rites (section 3.2) plus utility rites. Progression access now comes from each recipe JSON's explicit `required_degree`; the `minor`/`lesser`/`greater`/`grand` `CardinalRiteType` remains as a ritual form that controls size, cast time, and boundary behavior.
 
-**Degree Advancement Rites:** These recipe JSONs set `"rankup": true`, which lets client UI and tooling distinguish degree rites from utility rites.
+`RecipeDegreeGates` is the shared helper for Blood Structures and Cardinal Rites. Harbinger rites compare `required_degree` against `IInitiatoryDegree`. Unstained rites compare the same field against `getPlayerUnstainedLevel`. The Rites tab groups recipes by this required degree/stage rather than by rite form.
 
-| Rite | Blood Cost | Tier | Degree → | Description |
-|------|-----------|------|----------|-------------|
-| Sanguine Initiation | 100 | Minor | 0 → 1 | Basic initiation awakening hematic potential |
-| Rite of the Votary | 250 | Minor | 1 → 2 | Binds the practitioner deeper into the Covenant |
-| Rite of the Scarlet Sanctum | 500 | Lesser | 2 → 3 | Grants formal entry into the Scarlet Sanctum |
-| Adept Rite | *(see JSON)* | Lesser | 3 → 4 | Fourth rite of the Hematic Order |
-| Rite of the Crimson Lodge | 2000 | Greater | 4 → 5 | Illuminates the inner secrets of the Crimson Lodge |
-| Rite of the Bloodline Covenant | 3000 | Greater | 5 → 6 | Consecrates the practitioner to the Bloodline Covenant |
-| Rite of the Hematic Order | 5000 | Grand | 6 → 7 | Crowns the practitioner as Archon |
-| Rite of Apotheos | 7000 | Grand | 7 → 8 | Final ascension beyond Archon; requires completed Qliphoth Communion |
+**Degree Advancement Rites:** These recipe JSONs set `"rankup": true`, which lets client UI and tooling distinguish degree rites from utility rites. The rank-up target is inferred from the rite ID so a player who already has that degree or higher cannot start a redundant rank-up rite.
+
+| Rite | Blood Cost | Rite Form | Required Degree | Degree -> | Description |
+|------|-----------|-----------|-----------------|----------|-------------|
+| Sanguine Initiation | 100 | Minor | 0 | 0 -> 1 | Basic initiation awakening hematic potential |
+| Rite of the Votary | 250 | Minor | 1 | 1 -> 2 | Binds the practitioner deeper into the Covenant |
+| Rite of the Scarlet Sanctum | 500 | Lesser | 2 | 2 -> 3 | Grants formal entry into the Scarlet Sanctum |
+| Adept Rite | *(see JSON)* | Lesser | 3 | 3 -> 4 | Fourth rite of the Hematic Order |
+| Rite of the Crimson Lodge | 2000 | Greater | 4 | 4 -> 5 | Illuminates the inner secrets of the Crimson Lodge |
+| Rite of the Bloodline Covenant | 3000 | Greater | 5 | 5 -> 6 | Consecrates the practitioner to the Bloodline Covenant |
+| Rite of the Hematic Order | 5000 | Grand | 6 | 6 -> 7 | Crowns the practitioner as Archon |
+| Rite of Apotheos | 7000 | Grand | 7 | 7 -> 8 | Final ascension beyond Archon; requires completed Qliphoth Communion |
 
 **Utility Rites:**
 
-| Rite | Blood Cost | Tier | Description |
-|------|-----------|------|-------------|
+Utility rite `required_degree` values are authored per recipe rather than inferred from their form. For example, Vascular Mending is Degree 1, the Bloodline/Beacon/Hungering Earth cluster is Degree 2, Scarlet Summons and Sanguine Eclipse are Degree 3, Crimson Vessel is Degree 4, Founding Sanctum/Pallid Shadow/Sanguine Dominion are Degree 5, Eternal Covenant is Degree 6, and Ancestral Communion/Bloom of the Qliphoth are Degree 7. Unstained utility rites use the same field for Unstained stages 0-8.
+
+| Rite | Blood Cost | Rite Form | Description |
+|------|-----------|-----------|-------------|
 | **Bloodline Founding** | 500 | Lesser | Binds the caster's essence into a new bloodline, producing a presigned ancestral ledger |
 | **Bloodline Recall** | 750 | Lesser | Reconjures a lost ancestral ledger from the caster's blood memory |
 | **Vascular Mending** | 800 | Lesser | Floods the caster's vascular system with purified blood, fully healing all 7 vein sections |
 | **Hematic Fortification** | 500 | Lesser | Strengthens the caster's connection to the blood arts |
 | **Hematic Unbinding** | 1000 | Lesser | Dissolves the caster's bloodline, freeing all members and returning shared blood |
-| **Crimson Beacon** | 600 | Lesser | Anchors the caster's dying essence to this location — respawn point on fatal blow |
+| **Crimson Beacon** | 600 | Lesser | Anchors the caster's dying essence to this location: respawn point on fatal blow |
 | **Hungering Earth** | 750 | Lesser | Feeds blood into the earth, converting terrain into blood-touched stone and ash |
 | **Exsanguination** | 500 | Lesser | Drains the lifeblood of a creature within the ritual circle, crystallizing their essence into Sanguine Quintessence |
 | **Sanguine Attunement** | 300 | Minor | Purges and resets the caster's blood tendency alignments to a blank slate |
 | **Scarlet Summons** | 2000 | Greater | Teleports all online bloodline members to the rite location (cost scales with members) |
-| **Sanguine Dominion** | 3500 | Greater | Claims the surrounding land as a Blood Domain — reduced manip cost, bleeding curse on enemies, empowered blood blocks |
+| **Sanguine Dominion** | 3500 | Greater | Claims the surrounding land as a Blood Domain: reduced manip cost, bleeding curse on enemies, empowered blood blocks |
 | **Eternal Covenant** | 4000 | Greater | Permanently expands the caster's maximum blood volume (one-time only) |
-| **Pallid Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player — a blasphemous assault on Our Lady's path |
-| **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees` — 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
-| **Bloom of the Qliphoth** | 1200 | Grand | Degree 7. Plants a Qliphoth Seed (placed as catalyst within the rite pattern) → summons a `QliphothBloomBlock` (1×1×8 tree, 3-chunk radius). In-range players gain Regeneration I and +5 blood/tick. Tree produces exactly 9 Qliphoth Pomes over its lifecycle. First step toward Qliphoth Communion. One bloom allowed per 3-chunk radius. Fires `FungalWhisperDialogueTrees.postBloom()`. See §3.9. |
+| **Pallid Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player: a blasphemous assault on Our Lady's path |
+| **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees`: 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
+| **Bloom of the Qliphoth** | 1200 | Grand | Degree 7. Plants a Qliphoth Seed (placed as catalyst within the rite pattern), summons a `QliphothBloomBlock` (1x1x8 tree, 3-chunk radius), and starts the Qliphoth Communion chain. See section 3.9. |
 
 ### 18.3 Plant & Fungi Recipes
 

@@ -100,6 +100,13 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		return pattern.toArray(new String[0][]);
 	}
 
+	private static int requiredDegreeFromJson(JsonObject pJson) {
+		if (pJson.has("required_degree")) {
+			return GsonHelper.getAsInt(pJson, "required_degree", 0);
+		}
+		return GsonHelper.getAsInt(pJson, "requiredDegree", 0);
+	}
+
 	// ---- JSON helpers ----
 
 	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
@@ -126,7 +133,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
-		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
+		int requiredDegree = requiredDegreeFromJson(pJson);
 		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
 		boolean rankup = GsonHelper.getAsBoolean(pJson, "rankup", false);
@@ -140,7 +147,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
 			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
-					"result", "requiredDegree", "breakBlocksOnCreation", "unstained", "rankup").map(ops::createString);
+					"result", "required_degree", "breakBlocksOnCreation", "unstained", "rankup").map(ops::createString);
 		}
 
 		@Override
@@ -166,7 +173,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			// pattern / key are complex — handled via stream codec
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResult()).result()
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
-			prefix.add("requiredDegree", ops.createInt(recipe.getRequiredDegree()));
+			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
 			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("rankup", ops.createBoolean(recipe.isRankup()));

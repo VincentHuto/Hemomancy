@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "required_degree": 2,
   "riteName": "Rite of the Silver Veil",
   "riteDescription": "A consecration rite that draws silver light from the cleansed blocks, weaving a protective veil around the supplicant. The Silver Ward shields the faithful from the touch of blood magic.",
   "pattern": [

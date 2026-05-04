@@ -18,7 +18,7 @@ import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 
@@ -52,77 +52,10 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
-	private static final java.util.Map<String, Integer> RANKUP_RITE_TARGET_DEGREES = java.util.Map.of(
-			"cardinal_rite/sanguine_initiation", 1,
-			"cardinal_rite/votary_rite", 2,
-			"cardinal_rite/initiate_rite", 3,
-			"cardinal_rite/sanguine_brotherhood", 4,
-			"cardinal_rite/illuminatus_rite", 5,
-			"cardinal_rite/sanctified_rite", 6,
-			"cardinal_rite/archon_rite", 7,
-			"cardinal_rite/apotheos_rite", 8);
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
 	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_Y = 1.0;
-
-	// ── Tier degree requirements (must match HarbingerProgressScreen constants) ──
-	private static final String[] CRAFTING_TIER_NAMES = { "Basic", "Advanced", "Expert" };
-	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
-	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
-
-	/** Returns the minimum initiatory degree required for a blood structure recipe.
-	 *  Uses the per-recipe {@code requiredDegree} when set (>= 0); otherwise falls
-	 *  back to the cost-tier table. */
-	private static int getRequiredDegreeForRecipe(BloodStructureRecipe recipe) {
-		if (recipe.getRequiredDegree() >= 0) {
-			return recipe.getRequiredDegree();
-		}
-		double cost = recipe.getBloodCost();
-		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
-			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
-				return CRAFTING_TIER_DEGREE_REQ[i];
-			}
-		}
-		return CRAFTING_TIER_DEGREE_REQ[CRAFTING_TIER_DEGREE_REQ.length - 1];
-	}
-
-	/** Returns the tier name for a blood structure recipe based on its blood cost. */
-	private static String getTierNameForRecipe(BloodStructureRecipe recipe) {
-		double cost = recipe.getBloodCost();
-		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
-			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
-				return CRAFTING_TIER_NAMES[i];
-			}
-		}
-		return CRAFTING_TIER_NAMES[CRAFTING_TIER_NAMES.length - 1];
-	}
-
-	/** Returns the minimum initiatory degree required for a cardinal rite type. */
-	private static int getRequiredDegreeForRite(CardinalRiteType type) {
-		return switch (type) {
-			case MINOR   -> 0;
-			case LESSER  -> 1;
-			case GREATER -> 3;
-			case GRAND   -> 5;
-		};
-	}
-
-	/** Maps an Unstained progression level (1–8) to its stage name for error messages. */
-	private static String getUnstainedLevelName(int level) {
-		return switch (level) {
-			case 1  -> "Begun";
-			case 2  -> "Tainted";
-			case 3  -> "Cleansing";
-			case 4  -> "Absolved";
-			case 5  -> "Purified";
-			case 6  -> "Discerning";
-			case 7  -> "Vigilant";
-			case 8  -> "Enlightened";
-			default -> "Unknown";
-		};
-	}
-
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodCraftingKeyPressPacket(ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
@@ -162,23 +95,25 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							for (BloodStructureRecipe targetPattern : matchedPatterns) {
 								ServerLevel sLevel = (ServerLevel) ctx.player().level();
 								if (player.getMainHandItem().getItem() == targetPattern.getHeldItem().getItem()) {
-									// ── Tier degree check ──
-									int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-									int requiredDegree = getRequiredDegreeForRecipe(targetPattern);
-									if (playerDegree < requiredDegree) {
-										String tierName = getTierNameForRecipe(targetPattern);
+									// Explicit recipe degree / stage check.
+									int playerLevel = RecipeDegreeGates.getPlayerLevel(player, targetPattern.isUnstained());
+									int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
+									if (playerLevel < requiredDegree) {
+										String requiredName = targetPattern.isUnstained()
+												? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
+												: RecipeDegreeGates.degreeLabel(requiredDegree);
 										player.displayClientMessage(
-												Component.literal("This recipe requires the ")
+												Component.literal("This formation requires ")
 														.withStyle(ChatFormatting.RED)
-														.append(Component.literal(tierName)
+														.append(Component.literal(requiredName)
 																.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-														.append(Component.literal(" tier (Degree " + requiredDegree + ")")
+														.append(Component.literal(targetPattern.isUnstained() ? " purity stage." : ".")
 																.withStyle(ChatFormatting.RED)),
 												false);
 										handled = true;
 										break;
 									}
-									// ── Path alignment gate ──
+									// â”€â”€ Path alignment gate â”€â”€
 									net.minecraft.network.chat.Component alignError = checkPathAlignment(player, targetPattern);
 									if (alignError != null) {
 										player.displayClientMessage(alignError, false);
@@ -195,7 +130,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 											BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
 											BlockPattern.BlockPatternMatch patternHelper = blockPat.find(sLevel, searchStart);
 											if (patternHelper != null) {
-												// ── Compute structure bounding box ──
+												// â”€â”€ Compute structure bounding box â”€â”€
 												int patW = blockPat.getWidth();
 												int patH = blockPat.getHeight();
 												int patD = blockPat.getDepth();
@@ -216,7 +151,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 													}
 												}
 
-												// ── Send blood craft ring animation immediately ──
+												// â”€â”€ Send blood craft ring animation immediately â”€â”€
 												BlockPos ringCenter = new BlockPos(
 														(minX + maxX) / 2, minY, (minZ + maxZ) / 2);
 												float centerY = (minY + maxY) / 2.0f + 0.5f;
@@ -227,14 +162,14 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 												PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
 																centerY, animDuration));
 
-												// ── Drain blood and consume held item now ──
+												// â”€â”€ Drain blood and consume held item now â”€â”€
 												ItemStack oldStack = player.getMainHandItem().copy();
 												player.setItemInHand(InteractionHand.MAIN_HAND,
 														new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
 												bloodVolume.drain(targetPattern.getBloodCost());
 												PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
 
-												// ── Schedule block breaking + result drop after ring collapses ──
+												// â”€â”€ Schedule block breaking + result drop after ring collapses â”€â”€
 												PendingBloodCraftManager.schedule(
 														new PendingBloodCraftManager.PendingCraft(
 																sLevel, patternHelper,
@@ -272,17 +207,19 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					for (BloodStructureRecipe recipe : BloodStructureRecipe.getAllRecipes(player.level())) {
 						BlockPattern.BlockPatternMatch match = recipe.getPattern().getBlockPattern().find(sLevel, hitPos);
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
-							// Check degree first — if locked by tier, show tier message instead
-							int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-							int requiredDegree = getRequiredDegreeForRecipe(recipe);
-							if (playerDegree < requiredDegree) {
-								String tierName = getTierNameForRecipe(recipe);
+							// Check progression first, so locked recipes explain the missing degree/stage.
+							int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
+							int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
+							if (playerLevel < requiredDegree) {
+								String requiredName = recipe.isUnstained()
+										? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
+										: RecipeDegreeGates.degreeLabel(requiredDegree);
 								player.displayClientMessage(
-										Component.literal("This recipe requires the ")
+										Component.literal("This formation requires ")
 												.withStyle(ChatFormatting.RED)
-												.append(Component.literal(tierName)
+												.append(Component.literal(requiredName)
 														.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-												.append(Component.literal(" tier (Degree " + requiredDegree + ")")
+												.append(Component.literal(recipe.isUnstained() ? " purity stage." : ".")
 														.withStyle(ChatFormatting.RED)),
 										false);
 							} else {
@@ -341,28 +278,22 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			BlockPattern bp = recipe.getPattern().getBlockPattern();
 			BlockPattern.BlockPatternMatch match = findPatternNearBlock(bp, sLevel, hitPos);
 			if (match != null) {
-				// ── Tier progression check ──
+				// Explicit recipe degree / stage progression check.
 				if (!recipe.isUnstained()) {
 					// Harbinger: check Hematic Order degree
 					int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-					int requiredDegree = recipe.getRequiredDegree() >= 0
-							? recipe.getRequiredDegree()
-							: getRequiredDegreeForRite(recipe.getRiteType());
+					int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
 					if (playerDegree < requiredDegree) {
-						String riteTypeName = recipe.getRiteType().getSerializedName().substring(0, 1).toUpperCase()
-								+ recipe.getRiteType().getSerializedName().substring(1);
 						player.displayClientMessage(
-								Component.literal("This rite requires the ")
+								Component.literal("This rite requires ")
 										.withStyle(ChatFormatting.RED)
-										.append(Component.literal(riteTypeName)
-												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
-										.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
-												.withStyle(ChatFormatting.RED)),
+										.append(Component.literal(RecipeDegreeGates.degreeLabel(requiredDegree))
+												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD)),
 								false);
 						return;
 					}
 					if (recipe.isRankup()) {
-						Integer targetDegree = RANKUP_RITE_TARGET_DEGREES.get(recipe.getId().getPath());
+						Integer targetDegree = RecipeDegreeGates.getRankupTargetDegree(recipe.getId());
 						if (targetDegree != null && playerDegree >= targetDegree) {
 							EnumInitiatoryDegree current = EnumInitiatoryDegree.byNumber(playerDegree);
 							String currentName = current != null ? current.getTitle() : "Degree " + playerDegree;
@@ -378,13 +309,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						}
 					}
 				} else {
-					// Unstained: check purity/clarity progression level (0–8)
+					// Unstained: check purity/clarity progression level (0â€“8)
 					int playerLevel = HemoCapabilityAccess.getPlayerUnstainedLevel(player);
-					int requiredLevel = recipe.getRequiredDegree() >= 0
-							? recipe.getRequiredDegree()
-							: getRequiredDegreeForRite(recipe.getRiteType());
+					int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
 					if (playerLevel < requiredLevel) {
-						String stageName = getUnstainedLevelName(requiredLevel);
+						String stageName = RecipeDegreeGates.unstainedStageLabel(requiredLevel);
 						player.displayClientMessage(
 								Component.literal("This rite demands ")
 										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
@@ -397,7 +326,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 				}
 
-				// ── Path alignment gate ──
+				// â”€â”€ Path alignment gate â”€â”€
 				boolean playerIsInitiated = HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1;
 				boolean playerIsUnstained = HemoCapabilityAccess.getUnstainedProgress(player)
 						.map(u -> u.hasBegunPurification()).orElse(false);
@@ -416,7 +345,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return;
 				}
 
-				// ── Apotheos gate: requires completed Qliphoth Communion ──
+				// â”€â”€ Apotheos gate: requires completed Qliphoth Communion â”€â”€
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
 						&& !HemoCapabilityAccess.getInitiatoryDegree(player)
 								.map(d -> d.isQliphothCommunionDone()).orElse(false)) {
@@ -427,7 +356,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return;
 				}
 
-				// ── Blood cost check ──
+				// â”€â”€ Blood cost check â”€â”€
 				if (bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
 					player.displayClientMessage(
 							Component.literal("Not enough blood to begin the " + recipe.getRiteName())

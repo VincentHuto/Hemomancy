@@ -43,6 +43,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -514,6 +515,21 @@ public class CardinalRiteEvents {
 	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return;
+
+		int playerLevel = RecipeDegreeGates.getPlayerLevel(caster, recipe.isUnstained());
+		int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
+		if (playerLevel < requiredLevel) {
+			String requirement = recipe.isUnstained()
+					? RecipeDegreeGates.unstainedStageLabel(requiredLevel)
+					: RecipeDegreeGates.degreeLabel(requiredLevel);
+			caster.displayClientMessage(
+					Component.literal("The rite falls silent. It requires ")
+							.withStyle(recipe.isUnstained() ? ChatFormatting.GRAY : ChatFormatting.DARK_RED)
+							.append(Component.literal(requirement)
+									.withStyle(recipe.isUnstained() ? ChatFormatting.AQUA : ChatFormatting.GOLD, ChatFormatting.BOLD)),
+					false);
+			return;
+		}
 
 		if (isApotheosRite(recipe.getId()) && !hasQliphothCommunion(caster)) {
 			caster.displayClientMessage(

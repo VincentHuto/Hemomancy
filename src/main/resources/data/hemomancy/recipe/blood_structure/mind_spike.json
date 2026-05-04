@@ -1,6 +1,7 @@
-﻿{
+{
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 500,
+  "required_degree": 3,
   "heldItem": "hemomancy:sanguine_formation",
   "hitBlock": "hemomancy:polished_venous_stone",
   "pattern": [

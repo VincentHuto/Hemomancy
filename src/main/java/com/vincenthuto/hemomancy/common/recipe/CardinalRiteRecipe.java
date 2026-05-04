@@ -214,8 +214,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	}
 
 	/**
-	 * Returns the per-recipe degree requirement, or -1 if the default
-	 * rite-type degree should be used.
+	 * Returns the per-recipe degree / stage requirement.
 	 */
 	public int getRequiredDegree() {
 		return requiredDegree;

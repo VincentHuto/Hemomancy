@@ -1,7 +1,8 @@
-﻿{
+{
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 2000,
   "riteType": "greater",
+  "required_degree": 4,
   "riteName": "Rite of the Crimson Lodge",
   "riteDescription": "The fifth rite of the Hematic Order, illuminating the inner secrets of the Crimson Lodge.",
   "breakBlocksOnCreation": false,
