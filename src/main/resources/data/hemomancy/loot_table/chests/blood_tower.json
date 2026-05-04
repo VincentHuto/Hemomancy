@@ -198,7 +198,7 @@
         {
           "type": "minecraft:item",
           "weight": 20,
-          "name": "hemomancy:smouldering_ash",
+          "name": "hemomancy:smouldering_ash_trail",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -214,7 +214,7 @@
         {
           "type": "minecraft:item",
           "weight": 20,
-          "name": "hemomancy:befouling_ash",
+          "name": "hemomancy:befouling_ash_trail",
           "functions": [
             {
               "function": "minecraft:set_count",

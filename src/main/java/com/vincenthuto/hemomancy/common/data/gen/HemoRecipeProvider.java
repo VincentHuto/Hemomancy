@@ -32,7 +32,7 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.unlockedBy("has_swollen_leech", has(ItemInit.swollen_leech.get())).save(consumer);
 
 		SimpleCookingRecipeBuilder
-				.smelting(Ingredient.of(ItemInit.foul_paste.get()), RecipeCategory.MISC, ItemInit.befouling_ash.get(), 1f, 200)
+				.smelting(Ingredient.of(ItemInit.foul_paste.get()), RecipeCategory.MISC, BlockInit.befouling_ash_trail.get(), 1f, 200)
 				.unlockedBy("has_foul_paste", has(ItemInit.foul_paste.get())).save(consumer);
 
 		SimpleCookingRecipeBuilder
@@ -60,7 +60,7 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.requires(Items.BONE_MEAL).requires(Items.RED_MUSHROOM)
 				.unlockedBy("has_nether_wart", has(Items.NETHER_WART)).save(consumer);
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.smouldering_ash.get(), 3).requires(ItemInit.hematic_iron_powder.get())
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, BlockInit.smouldering_ash_trail.get(), 3).requires(ItemInit.hematic_iron_powder.get())
 				.requires(Items.BLAZE_POWDER).requires(Items.GUNPOWDER)
 				.unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER)).save(consumer);
 
@@ -138,7 +138,7 @@ public class HemoRecipeProvider extends RecipeProvider {
 		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockInit.sanguine_glass.get(), 4)
 				.define('B', ItemInit.blood_crystal_shard.get())
 				.define('G', Items.GLASS)
-				.define('A', ItemInit.befouling_ash.get())
+				.define('A', BlockInit.befouling_ash_trail.get())
 				.pattern(" B ")
 				.pattern("AGA")
 				.pattern(" B ")

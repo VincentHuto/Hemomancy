@@ -2,7 +2,7 @@
   "display": {
     "icon": {
       "count": 1,
-      "id": "hemomancy:befouling_ash"
+      "id": "hemomancy:befouling_ash_trail"
     },
     "title": {
       "translate": "advancements.hemomancy.ashen_beginnings.title"
@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": "hemomancy:befouling_ash"
+            "items": "hemomancy:befouling_ash_trail"
           }
         ]
       }

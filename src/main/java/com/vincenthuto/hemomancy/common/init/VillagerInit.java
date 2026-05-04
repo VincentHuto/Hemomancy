@@ -6,7 +6,6 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.village.HemopothecaryProcessor;
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
@@ -44,7 +43,7 @@ public class VillagerInit {
 	public static final DeferredHolder<VillagerProfession, VillagerProfession> HEMOPOTHECARY = PROFESSIONS.register("hemopothecary", () -> {
 		var key = Objects.requireNonNull(TABLE_POI.getKey());
 		return new VillagerProfession("hemopothecary", holder -> holder.is(key), holder -> holder.is(key),
-				Arrays.stream(new Item[] { ItemInit.befouling_ash.get() }).collect(ImmutableSet.toImmutableSet()),
+				Arrays.stream(new Item[] { BlockInit.befouling_ash_trail.get().asItem() }).collect(ImmutableSet.toImmutableSet()),
 				ImmutableSet.of(), SoundEvents.VILLAGER_WORK_LEATHERWORKER);
 	});
 

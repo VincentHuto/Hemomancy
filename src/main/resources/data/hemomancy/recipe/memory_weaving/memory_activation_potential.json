@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:memory_weaving",
   "ingredient": {
-    "item": "hemomancy:smouldering_ash"
+    "item": "hemomancy:smouldering_ash_trail"
   },
   "flammeus": true,
   "result": "hemomancy:memory_activation_potential",
