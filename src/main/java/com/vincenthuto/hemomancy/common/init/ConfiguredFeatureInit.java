@@ -78,6 +78,8 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TERMITE_MOUND = createKey("termite_mound");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TOOTH_GEODE = createKey("tooth_geode");
+
 	// Spore Nexus Tower - massive rare fungal spire for the fungal dimension
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SPORE_NEXUS_TOWER = createKey("spore_nexus_tower");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SILVER_BELLS_TOWER = createKey("silver_bells_tower");
@@ -238,6 +240,8 @@ public class ConfiguredFeatureInit {
 		register(context, EARTHEN_VEIN, BaseFeatureInit.EARTHEN_VEIN, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, TERMITE_MOUND, BaseFeatureInit.TERMITE_MOUND, NoneFeatureConfiguration.INSTANCE);
+
+		register(context, TOOTH_GEODE, BaseFeatureInit.TOOTH_GEODE, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, SPORE_NEXUS_TOWER, BaseFeatureInit.SPORE_NEXUS_TOWER, NoneFeatureConfiguration.INSTANCE);
 		register(context, SILVER_BELLS_TOWER, BaseFeatureInit.SILVER_BELLS_TOWER, NoneFeatureConfiguration.INSTANCE);
