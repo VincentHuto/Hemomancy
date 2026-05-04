@@ -28,6 +28,7 @@ public final class MemoHelper {
 	public static final int MAX_FIELD_NOTES_MEMOS = 15;
 	public static final int DICTATION_BASE_BLOOD_COST = 100;
 	public static final int DICTATION_BLOOD_COST_PER_MEMO = 75;
+	public static final int DICTATION_UNSTAINED_XP_LEVEL_COST = 1;
 
 	private static final String TAG_REMAINING = "RemainingMemos";
 	private static final String TAG_MEMOS = "Memos";
@@ -152,6 +153,23 @@ public final class MemoHelper {
 			return DictationResult.NO_NEW_MEMOS;
 		}
 
+		if (liber.is(ItemInit.liber_immaculatus.get())) {
+			int cost = getUnstainedDictationXpLevelCost();
+			if (player.experienceLevel < cost) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.memo.not_enough_xp", cost)
+						.withStyle(ChatFormatting.AQUA), true);
+				return DictationResult.NOT_ENOUGH_EXPERIENCE;
+			}
+
+			player.giveExperienceLevels(-cost);
+			unlockDictatedMemos(knowledge, memos);
+			LiberKnowledgeEvents.sync(player);
+
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.dictated_unstained", newMemoCount, cost)
+					.withStyle(ChatFormatting.AQUA), true);
+			return DictationResult.DICTATED;
+		}
+
 		int cost = getDictationBloodCost(knowledge.getKnownMemos().size(), newMemoCount);
 		IBloodVolume volume = player.getData(HemoAttachmentTypes.BLOOD_VOLUME);
 		if (!volume.isActive() || volume.getBloodVolume() < cost) {
@@ -161,6 +179,15 @@ public final class MemoHelper {
 		}
 
 		volume.drain(cost);
+		unlockDictatedMemos(knowledge, memos);
+		LiberKnowledgeEvents.sync(player);
+
+		player.displayClientMessage(Component.translatable("message.hemomancy.memo.dictated", newMemoCount, cost)
+				.withStyle(ChatFormatting.DARK_RED), true);
+		return DictationResult.DICTATED;
+	}
+
+	private static void unlockDictatedMemos(IBookKnowledge knowledge, ListTag memos) {
 		for (int i = 0; i < memos.size(); i++) {
 			String memoId = memos.getString(i);
 			ResourceLocation memoLocation = ResourceLocation.tryParse(memoId);
@@ -169,11 +196,6 @@ public final class MemoHelper {
 				knowledge.unlockMemo(memoLocation, liberEntry);
 			}
 		}
-		LiberKnowledgeEvents.sync(player);
-
-		player.displayClientMessage(Component.translatable("message.hemomancy.memo.dictated", newMemoCount, cost)
-				.withStyle(ChatFormatting.DARK_RED), true);
-		return DictationResult.DICTATED;
 	}
 
 	/**
@@ -185,6 +207,10 @@ public final class MemoHelper {
 	 */
 	public static int getDictationBloodCost(int knownMemoCount, int newMemoCount) {
 		return DICTATION_BASE_BLOOD_COST + (knownMemoCount + newMemoCount) * DICTATION_BLOOD_COST_PER_MEMO;
+	}
+
+	public static int getUnstainedDictationXpLevelCost() {
+		return DICTATION_UNSTAINED_XP_LEVEL_COST;
 	}
 
 	public static void migrateLegacyLiberStack(ServerPlayer player, ItemStack liber) {
@@ -406,6 +432,7 @@ public final class MemoHelper {
 		NO_MEMOS,
 		NO_NEW_MEMOS,
 		NOT_ENOUGH_BLOOD,
+		NOT_ENOUGH_EXPERIENCE,
 		NO_INK_PATH,
 		WRONG_LIBER,
 		MIXED_NOTES

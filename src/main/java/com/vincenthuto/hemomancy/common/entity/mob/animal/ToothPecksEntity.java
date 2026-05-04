@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -15,6 +14,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -88,12 +88,32 @@ public class ToothPecksEntity extends PathfinderMob {
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+                ToothPecksEntity::isValidBloodTarget));
+    }
+
+    private static boolean isValidBloodTarget(LivingEntity entity) {
+        if (entity instanceof Player player) {
+            return canDrawBloodFrom(player);
+        }
+        return false;
+    }
+
+    private static boolean canDrawBloodFrom(Player player) {
+        return HemoCapabilityAccess.getUnstainedProgress(player)
+                .map(progress -> !progress.hasClarityUnlocked())
+                .orElse(true);
     }
 
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide && getTarget() instanceof Player player && !canDrawBloodFrom(player)) {
+            setLatched(false);
+            detachHits = 0;
+            setTarget(null);
+            return;
+        }
         if (!level().isClientSide && isLatched()) {
             if (getTarget() instanceof Player player && player.isAlive()) {
                 Vec3 pp = player.position();
@@ -184,21 +204,31 @@ public class ToothPecksEntity extends PathfinderMob {
 
         @Override
         public boolean canUse() {
-            if (mob.isLatched()) return true;
-            Player nearest = mob.level().getNearestPlayer(mob, 6.0);
-            if (nearest == null || !nearest.isAlive()) return false;
-            target = nearest;
-            return mob.distanceToSqr(nearest) < 2.25;
+            if (mob.isLatched()) {
+                return mob.getTarget() instanceof Player p && p.isAlive() && ToothPecksEntity.canDrawBloodFrom(p);
+            }
+            target = null;
+            double nearestDistance = 2.25D;
+            for (Player player : mob.level().players()) {
+                if (!player.isAlive() || !ToothPecksEntity.canDrawBloodFrom(player)) continue;
+                double distance = mob.distanceToSqr(player);
+                if (distance < nearestDistance) {
+                    target = player;
+                    nearestDistance = distance;
+                }
+            }
+            return target != null;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return mob.isLatched() && mob.getTarget() instanceof Player p && p.isAlive();
+            return mob.isLatched() && mob.getTarget() instanceof Player p
+                    && p.isAlive() && ToothPecksEntity.canDrawBloodFrom(p);
         }
 
         @Override
         public void start() {
-            if (target != null && !mob.isLatched()) {
+            if (target != null && ToothPecksEntity.canDrawBloodFrom(target) && !mob.isLatched()) {
                 mob.setLatched(true);
                 mob.setTarget(target);
                 mob.getNavigation().stop();

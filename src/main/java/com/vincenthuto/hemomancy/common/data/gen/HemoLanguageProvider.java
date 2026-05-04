@@ -63,6 +63,8 @@ public class HemoLanguageProvider extends LanguageProvider {
 		add("message.hemomancy.memo.no_new_memos", "The Liber already knows these memos.");
 		add("message.hemomancy.memo.not_enough_blood", "Dictation requires %s blood.");
 		add("message.hemomancy.memo.dictated", "%s memos become written in blood. Cost: %s blood.");
+		add("message.hemomancy.memo.not_enough_xp", "Dictation requires %s XP level.");
+		add("message.hemomancy.memo.dictated_unstained", "%s pale memos settle into the Liber. Cost: %s XP level.");
 		add("message.hemomancy.memo.field_notes_refilled", "The Field Notes drink the ink.");
 		add("message.hemomancy.memo.field_notes_refilled_unstained", "The Field Notes take the pale ink.");
 		add("message.hemomancy.memo.liber_placed", "You place the Liber on the Dictation Table.");

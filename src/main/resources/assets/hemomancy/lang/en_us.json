@@ -1566,6 +1566,8 @@
   "message.hemomancy.memo.no_new_memos": "The Liber already knows these memos.",
   "message.hemomancy.memo.not_enough_blood": "Dictation requires %s blood.",
   "message.hemomancy.memo.dictated": "%s memos become written in blood. Cost: %s blood.",
+  "message.hemomancy.memo.not_enough_xp": "Dictation requires %s XP level.",
+  "message.hemomancy.memo.dictated_unstained": "%s pale memos settle into the Liber. Cost: %s XP level.",
   "message.hemomancy.memo.field_notes_refilled": "The Field Notes drink the ink.",
   "message.hemomancy.memo.field_notes_refilled_unstained": "The Field Notes take the pale ink.",
   "message.hemomancy.memo.liber_placed": "You place the Liber on the Dictation Table.",
