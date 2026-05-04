@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 
@@ -49,7 +50,7 @@ public class VillageEvents {
 
 		Int2ObjectMap<List<VillagerTrades.ItemListing>> trademap = event.getTrades();
 
-		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.befouling_ash.get(), 1, 1, 10, 4)));
+		trademap.get(1).addAll(Arrays.asList(sellItem(BlockInit.befouling_ash_trail.get(), 1, 1, 10, 4)));
 		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.morphling_fungal.get(), 1, 1, 10, 4)));
 		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.recycled_enzyme.get(), 1, 1, 10, 4)));
 		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.bloody_flask.get(), 1, 1, 10, 4)));

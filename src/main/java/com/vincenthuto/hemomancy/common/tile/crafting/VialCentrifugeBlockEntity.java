@@ -181,9 +181,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 					// Auxillary output chance 
 					if (level.random.nextInt(1, 5) %2 == 0) {
 						if (inventory.get(18).isEmpty()) {
-							inventory.set(18, new ItemStack(ItemInit.befouling_ash.get()));
+							inventory.set(18, new ItemStack(BlockInit.befouling_ash_trail.get()));
 						} else if (inventory.get(18).getCount() < 64
-								&& inventory.get(18).getItem() == ItemInit.befouling_ash.get()) {
+								&& inventory.get(18).getItem() == BlockInit.befouling_ash_trail.get().asItem()) {
 							inventory.get(18).grow(1);
 						}
 					}

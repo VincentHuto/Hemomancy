@@ -1,7 +1,7 @@
 ﻿{
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 250,
-  "heldItem": "hemomancy:befouling_ash",
+  "heldItem": "hemomancy:befouling_ash_trail",
   "hitBlock": "hemomancy:conscious_mass",
   "pattern": [
   	 ["      ","SSSSSS"],

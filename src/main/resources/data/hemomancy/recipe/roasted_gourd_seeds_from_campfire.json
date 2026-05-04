@@ -3,7 +3,9 @@
   "ingredient": {
     "item": "hemomancy:gourd_seeds"
   },
-  "result": "hemomancy:roasted_gourd_seeds",
+  "result": {
+    "id": "hemomancy:roasted_gourd_seeds"
+  },
   "experience": 0.1,
   "cookingtime": 600
 }

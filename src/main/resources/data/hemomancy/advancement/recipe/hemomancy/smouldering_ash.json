@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "hemomancy:smouldering_ash_trail"
+      "hemomancy:smouldering_ash"
     ]
   },
   "criteria": {
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "hemomancy:smouldering_ash_trail"
+        "recipe": "hemomancy:smouldering_ash"
       }
     }
   },

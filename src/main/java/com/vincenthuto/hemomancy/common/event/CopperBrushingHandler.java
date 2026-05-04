@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -87,7 +87,7 @@ public class CopperBrushingHandler {
         level.setBlock(pos, newState, Block.UPDATE_ALL);
 
         // Drop one Virid Salis at the block centre
-        Block.popResource(level, pos, new ItemStack(ItemInit.virid_salis.get()));
+        Block.popResource(level, pos, new ItemStack(BlockInit.virid_salis_trail.get()));
 
         // Spend one durability for survival players
         if (!serverPlayer.isCreative()) {
