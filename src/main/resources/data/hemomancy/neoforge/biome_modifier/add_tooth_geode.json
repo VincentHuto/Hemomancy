@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:tooth_geode_spawnlist",
+  "features": "hemomancy:tooth_geode",
+  "step": "underground_structures"
+}

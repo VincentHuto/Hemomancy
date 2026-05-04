@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.worldgen.feature.SmallInfectedMushroomFe
 import com.vincenthuto.hemomancy.common.worldgen.feature.SporeNexusTowerFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.TermiteMoundFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.MorphicPoolFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.ToothGeodeFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.VenousRidgeFeature;
 
 import net.minecraft.core.registries.Registries;
@@ -73,6 +74,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> MORPHIC_POOL = register("morphic_pool",
 			new MorphicPoolFeature(NoneFeatureConfiguration.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> TOOTH_GEODE = register("tooth_geode",
+			new ToothGeodeFeature(NoneFeatureConfiguration.CODEC));
 
 	private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
 		FEATURE_REGISTER.register(key, () -> value);
