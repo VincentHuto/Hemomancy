@@ -5,7 +5,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -38,7 +37,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -66,16 +64,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, message.heldStack);
 	}
 
-	public static List<BloodStructureRecipe> getMatchingRecipes(ItemStack stack, Level level) {
-		List<BloodStructureRecipe> matchedRecipes = new ArrayList<>();
-		for (BloodStructureRecipe recipe : BloodStructureRecipe.getAllRecipes(level)) {
-			if (recipe.getHeldItem().getItem() == stack.getItem()) {
-				matchedRecipes.add(recipe);
-			}
-		}
-		return matchedRecipes;
-	}
-
 	public static void handle(final BloodCraftingKeyPressPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
@@ -85,127 +73,117 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			boolean handled = false;
 
 			// === Blood Structure Recipes (instant crafting) ===
-			for (BloodStructureRecipe pattern : BloodStructureRecipe.getAllRecipes(player.level())) {
-				if (player.getMainHandItem().getItem() == pattern.getHeldItem().getItem()) {
+			HitResult rayTrace = player.pick(3, 102, false);
+			if (rayTrace.getType() == HitResult.Type.BLOCK) {
+				BlockHitResult blockResult = (BlockHitResult) rayTrace;
+				BlockPos hitPos = blockResult.getBlockPos();
+				ServerLevel sLevel = (ServerLevel) player.level();
+
+				for (BloodStructureRecipe targetPattern : BloodStructureRecipe.getAllRecipes(player.level())) {
+					if (player.getMainHandItem().getItem() != targetPattern.getHeldItem().getItem()) continue;
+
+					BlockPattern blockPat = targetPattern.getPattern().getBlockPattern();
+					BlockPattern.BlockPatternMatch patternHelper = findStructurePatternAtHit(targetPattern, sLevel, hitPos);
+					if (patternHelper == null) continue;
+
 					IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 							.orElseThrow(NullPointerException::new);
-					List<BloodStructureRecipe> matchedPatterns = getMatchingRecipes(message.heldStack, player.level());
-					if (matchedPatterns != null) {
-						if (!matchedPatterns.isEmpty()) {
-							for (BloodStructureRecipe targetPattern : matchedPatterns) {
-								ServerLevel sLevel = (ServerLevel) ctx.player().level();
-								if (player.getMainHandItem().getItem() == targetPattern.getHeldItem().getItem()) {
-									// Explicit recipe degree / stage check.
-									int playerLevel = RecipeDegreeGates.getPlayerLevel(player, targetPattern.isUnstained());
-									int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
-									if (playerLevel < requiredDegree) {
-										String requiredName = targetPattern.isUnstained()
-												? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
-												: RecipeDegreeGates.degreeLabel(requiredDegree);
-										player.displayClientMessage(
-												Component.literal("This formation requires ")
-														.withStyle(ChatFormatting.RED)
-														.append(Component.literal(requiredName)
-																.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-														.append(Component.literal(targetPattern.isUnstained() ? " purity stage." : ".")
-																.withStyle(ChatFormatting.RED)),
-												false);
-										handled = true;
-										break;
-									}
-									// â”€â”€ Path alignment gate â”€â”€
-									net.minecraft.network.chat.Component alignError = checkPathAlignment(player, targetPattern);
-									if (alignError != null) {
-										player.displayClientMessage(alignError, false);
-										handled = true;
-										break;
-									}
-									if (bloodVolume.getBloodVolume() > targetPattern.getBloodCost()) {
-										HitResult rayTrace = player.pick(3, 102, false);
-										if (rayTrace.getType() == HitResult.Type.BLOCK) {
-											BlockHitResult blockResult = (BlockHitResult) rayTrace;
-											BlockPos hitPos = blockResult.getBlockPos();
-											BlockPattern blockPat = targetPattern.getPattern().getBlockPattern();
-											int maxDim = Math.max(Math.max(blockPat.getWidth(), blockPat.getHeight()), blockPat.getDepth());
-											BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
-											BlockPattern.BlockPatternMatch patternHelper = blockPat.find(sLevel, searchStart);
-											if (patternHelper != null) {
-												// â”€â”€ Compute structure bounding box â”€â”€
-												int patW = blockPat.getWidth();
-												int patH = blockPat.getHeight();
-												int patD = blockPat.getDepth();
-												int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-												int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-												int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-												for (int i = 0; i < patW; ++i) {
-													for (int j = 0; j < patH; ++j) {
-														for (int k = 0; k < patD; ++k) {
-															BlockPos matchPos = patternHelper.getBlock(i, j, k).getPos();
-															if (matchPos.getX() < minX) minX = matchPos.getX();
-															if (matchPos.getX() > maxX) maxX = matchPos.getX();
-															if (matchPos.getY() < minY) minY = matchPos.getY();
-															if (matchPos.getY() > maxY) maxY = matchPos.getY();
-															if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
-															if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
-														}
-													}
-												}
 
-												// â”€â”€ Send blood craft ring animation immediately â”€â”€
-												BlockPos ringCenter = new BlockPos(
-														(minX + maxX) / 2, minY, (minZ + maxZ) / 2);
-												float centerY = (minY + maxY) / 2.0f + 0.5f;
-												float halfW = (maxX - minX) / 2.0f + 0.5f;
-												float halfD = (maxZ - minZ) / 2.0f + 0.5f;
-												float startRadius = Math.max(halfW, halfD) + 2.0f;
-												int animDuration = 30; // ticks (~1.5 seconds)
-												PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
-																centerY, animDuration));
-
-												// â”€â”€ Drain blood and consume held item now â”€â”€
-												ItemStack oldStack = player.getMainHandItem().copy();
-												player.setItemInHand(InteractionHand.MAIN_HAND,
-														new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
-												bloodVolume.drain(targetPattern.getBloodCost());
-												PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
-
-												// â”€â”€ Schedule block breaking + result drop after ring collapses â”€â”€
-												PendingBloodCraftManager.schedule(
-														new PendingBloodCraftManager.PendingCraft(
-																sLevel, patternHelper,
-																patW, patH, patD,
-																hitPos, targetPattern.getResult(),
-																animDuration, (ServerPlayer) player));
-
-												handled = true;
-											}
-										}
-									} else {
-										player.displayClientMessage(
-												Component.literal("Not enough blood can be drawn for formation"), true);
-										sLevel.playLocalSound(player.blockPosition().getX(),
-												player.blockPosition().getY(), player.blockPosition().getZ(),
-												SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
-										handled = true;
-									}
+					// Explicit recipe degree / stage check.
+					int playerLevel = RecipeDegreeGates.getPlayerLevel(player, targetPattern.isUnstained());
+					int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
+					if (playerLevel < requiredDegree) {
+						String requiredName = targetPattern.isUnstained()
+								? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
+								: RecipeDegreeGates.degreeLabel(requiredDegree);
+						player.displayClientMessage(
+								Component.literal("This formation requires " + targetPattern.getId().getPath() + " to be held, and demands ")
+										.withStyle(ChatFormatting.RED)
+										.append(Component.literal(requiredName)
+												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+										.append(Component.literal(targetPattern.isUnstained() ? " purity stage." : ".")
+												.withStyle(ChatFormatting.RED)),
+								false);
+						handled = true;
+						break;
+					}
+					// ── Path alignment gate ──
+					net.minecraft.network.chat.Component alignError = checkPathAlignment(player, targetPattern);
+					if (alignError != null) {
+						player.displayClientMessage(alignError, false);
+						handled = true;
+						break;
+					}
+					if (bloodVolume.getBloodVolume() > targetPattern.getBloodCost()) {
+						// ── Compute structure bounding box ──
+						int patW = blockPat.getWidth();
+						int patH = blockPat.getHeight();
+						int patD = blockPat.getDepth();
+						int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+						int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+						int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+						for (int i = 0; i < patW; ++i) {
+							for (int j = 0; j < patH; ++j) {
+								for (int k = 0; k < patD; ++k) {
+									BlockPos matchPos = patternHelper.getBlock(i, j, k).getPos();
+									if (matchPos.getX() < minX) minX = matchPos.getX();
+									if (matchPos.getX() > maxX) maxX = matchPos.getX();
+									if (matchPos.getY() < minY) minY = matchPos.getY();
+									if (matchPos.getY() > maxY) maxY = matchPos.getY();
+									if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
+									if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
 								}
-
 							}
 						}
+
+						// ── Send blood craft ring animation immediately ──
+						BlockPos ringCenter = new BlockPos(
+								(minX + maxX) / 2, minY, (minZ + maxZ) / 2);
+						float centerY = (minY + maxY) / 2.0f + 0.5f;
+						float halfW = (maxX - minX) / 2.0f + 0.5f;
+						float halfD = (maxZ - minZ) / 2.0f + 0.5f;
+						float startRadius = Math.max(halfW, halfD) + 2.0f;
+						int animDuration = 30; // ticks (~1.5 seconds)
+						PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
+										centerY, animDuration));
+
+						// ── Drain blood and consume held item now ──
+						ItemStack oldStack = player.getMainHandItem().copy();
+						player.setItemInHand(InteractionHand.MAIN_HAND,
+								new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
+						bloodVolume.drain(targetPattern.getBloodCost());
+						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
+
+						// ── Schedule block breaking + result drop after ring collapses ──
+						PendingBloodCraftManager.schedule(
+								new PendingBloodCraftManager.PendingCraft(
+										sLevel, patternHelper,
+										patW, patH, patD,
+										hitPos, targetPattern.getResult(),
+										animDuration, (ServerPlayer) player));
+
+						handled = true;
+					} else {
+						player.displayClientMessage(
+								Component.literal("Not enough blood can be drawn for formation"), true);
+						sLevel.playLocalSound(player.blockPosition().getX(),
+								player.blockPosition().getY(), player.blockPosition().getZ(),
+								SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
+						handled = true;
 					}
+					break;
 				}
 			}
 
 			// === Missing held item warning ===
 			if (!handled) {
-				HitResult rayTrace = player.pick(3, 102, false);
 				if (rayTrace.getType() == HitResult.Type.BLOCK) {
 					BlockHitResult blockResult = (BlockHitResult) rayTrace;
 					BlockPos hitPos = blockResult.getBlockPos();
 					ServerLevel sLevel = (ServerLevel) player.level();
 
 					for (BloodStructureRecipe recipe : BloodStructureRecipe.getAllRecipes(player.level())) {
-						BlockPattern.BlockPatternMatch match = recipe.getPattern().getBlockPattern().find(sLevel, hitPos);
+						BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 							// Check progression first, so locked recipes explain the missing degree/stage.
 							int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
@@ -215,7 +193,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 										? RecipeDegreeGates.unstainedStageLabel(requiredDegree)
 										: RecipeDegreeGates.degreeLabel(requiredDegree);
 								player.displayClientMessage(
-										Component.literal("This formation requires ")
+										Component.literal("This formation requires " + recipe.getId().getPath() + " to be held, and demands ")
 												.withStyle(ChatFormatting.RED)
 												.append(Component.literal(requiredName)
 														.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
@@ -229,7 +207,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 									player.displayClientMessage(alignError, false);
 								} else {
 									player.displayClientMessage(
-											Component.literal("This formation requires you to hold: ")
+											Component.literal("This formation requires you to hold: "+ recipe.getId().getPath() + " to be held, and demands ")
 													.withStyle(ChatFormatting.RED)
 													.append(recipe.getHeldItem().getHoverName().copy()
 															.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)),
@@ -416,6 +394,40 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				return;
 			}
 		}
+	}
+
+	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(
+			BloodStructureRecipe recipe, ServerLevel level, BlockPos hitPos) {
+		if (!level.getBlockState(hitPos).is(recipe.getHitBlock())) return null;
+
+		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
+		int maxDim = Math.max(Math.max(
+				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
+		int radius = maxDim - 1;
+		for (BlockPos candidate : BlockPos.betweenClosed(
+				hitPos.offset(-radius, -radius, -radius),
+				hitPos.offset(radius, radius, radius))) {
+			for (Direction finger : Direction.values()) {
+				for (Direction thumb : Direction.values()) {
+					if (thumb == finger || thumb == finger.getOpposite()) continue;
+					BlockPattern.BlockPatternMatch match = blockPattern.matches(level, candidate, finger, thumb);
+					if (match != null && matchContainsPos(match, blockPattern, hitPos)) return match;
+				}
+			}
+		}
+		return null;
+	}
+
+	private static boolean matchContainsPos(
+			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BlockPos pos) {
+		for (int i = 0; i < blockPattern.getWidth(); ++i) {
+			for (int j = 0; j < blockPattern.getHeight(); ++j) {
+				for (int k = 0; k < blockPattern.getDepth(); ++k) {
+					if (match.getBlock(i, j, k).getPos().equals(pos)) return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static BlockPattern.BlockPatternMatch findPatternNearBlock(
