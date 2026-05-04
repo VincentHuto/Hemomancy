@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
 import com.vincenthuto.hemomancy.common.item.shared.FieldNotesBookItem;
+import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
 import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.StructureScannerItem;
 import com.vincenthuto.hemomancy.common.item.shared.StructureSpawnerItem;
@@ -131,6 +132,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
             () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/field_notes.png")));
+
+    public static final DeferredHolder<Item, Item> scout_field_notes = SPECIALITEMS.register("scout_field_notes",
+            () -> new PreWrittenMemoItem(new Item.Properties()));
     // Base Items
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
             () -> new Item(new Item.Properties()));

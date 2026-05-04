@@ -35,6 +35,7 @@ import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerHermitModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerVicarModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedAcolyteModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedGuardianModel;
+import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedScoutModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedZealotModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.HollowVesselModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.ContainmentAnchorModel;
@@ -171,6 +172,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedGuardianModel.LAYER_LOCATION, UnstainedGuardianModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedAcolyteModel.LAYER_LOCATION, UnstainedAcolyteModel::createBodyLayer);
+		event.registerLayerDefinition(UnstainedScoutModel.LAYER_LOCATION, UnstainedScoutModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerHermitModel.LAYER_LOCATION, HarbingerHermitModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerAlchemistModel.LAYER_LOCATION, HarbingerAlchemistModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerVicarModel.LAYER_LOCATION, HarbingerVicarModel::createBodyLayer);

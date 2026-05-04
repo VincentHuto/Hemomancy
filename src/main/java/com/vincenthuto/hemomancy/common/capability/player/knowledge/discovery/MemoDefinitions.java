@@ -92,6 +92,16 @@ public final class MemoDefinitions {
 			LiberEntryDefinitions.QLIPHOTH,
 			MemoDefinition.MemoPath.HARBINGER));
 
+	public static final MemoDefinition ANNETTA_INSECT_OBSERVATION = register(new MemoDefinition(
+			Hemomancy.rloc("annetta_insect_observation"),
+			LiberEntryDefinitions.ANNETTA_KNOWLES_GEODE,
+			MemoDefinition.MemoPath.HARBINGER));
+
+	public static final MemoDefinition ANNETTA_INSECT_OBSERVATION_IMMACULATUS = register(new MemoDefinition(
+			Hemomancy.rloc("annetta_insect_observation_immaculatus"),
+			LiberEntryDefinitions.IMMACULATUS_ANNETTA_GEODE,
+			MemoDefinition.MemoPath.UNSTAINED));
+
 	private MemoDefinitions() {
 	}
 

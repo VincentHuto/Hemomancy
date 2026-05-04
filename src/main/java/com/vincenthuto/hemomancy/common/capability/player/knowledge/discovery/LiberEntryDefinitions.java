@@ -45,6 +45,8 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation IMMACULATUS_COPPER_AND_SILVER = immaculatusEntry("sacred_tools/pages/copper_and_silver");
 	public static final ResourceLocation IMMACULATUS_SHE_WHO_LISTENS = immaculatusEntry("our_lady/pages/she_who_listens");
 	public static final ResourceLocation IMMACULATUS_CLARITY_PRICE = immaculatusEntry("our_lady/pages/clarity_and_its_price");
+	public static final ResourceLocation ANNETTA_KNOWLES_GEODE = entry("cosmic_forces/pages/annetta_geode_memo");
+	public static final ResourceLocation IMMACULATUS_ANNETTA_GEODE = immaculatusEntry("the_path/pages/annetta_geode_memo");
 
 	static {
 		register(FIRST_RITE_NOTES, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE);
@@ -73,6 +75,8 @@ public final class LiberEntryDefinitions {
 		register(IMMACULATUS_COPPER_AND_SILVER, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
 		register(IMMACULATUS_SHE_WHO_LISTENS, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DIALOGUE);
 		register(IMMACULATUS_CLARITY_PRICE, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE);
+		register(ANNETTA_KNOWLES_GEODE, HemomancyDiscoverySource.MEMO);
+		register(IMMACULATUS_ANNETTA_GEODE, HemomancyDiscoverySource.MEMO);
 
 		registerRite("cardinal_rite/sanguine_initiation", HEMOMANCY);
 		registerRite("cardinal_rite/sanguine_initiation", THE_HARBINGERS);

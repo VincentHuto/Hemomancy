@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEnti
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedGuardianEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
@@ -81,6 +82,12 @@ public class EntityInit {
             () -> EntityType.Builder.of(UnstainedAcolyteEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("unstained_acolyte").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<UnstainedScoutEntity>> unstained_scout = ENTITY_TYPES.register(
+            "unstained_scout",
+            () -> EntityType.Builder.of(UnstainedScoutEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("unstained_scout").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpectralCompanionEntity>> spectral_companion = ENTITY_TYPES.register(
             "spectral_companion",
@@ -528,6 +535,7 @@ public class EntityInit {
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.unstained_guardian.get(), UnstainedGuardianEntity.setAttributes().build());
         event.put(EntityInit.unstained_acolyte.get(), UnstainedAcolyteEntity.setAttributes().build());
+        event.put(EntityInit.unstained_scout.get(), UnstainedScoutEntity.setAttributes().build());
         event.put(EntityInit.spectral_companion.get(), SpectralCompanionEntity.setAttributes().build());
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());

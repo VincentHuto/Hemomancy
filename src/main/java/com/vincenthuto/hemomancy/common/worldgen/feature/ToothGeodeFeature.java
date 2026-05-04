@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.core.BlockPos;
@@ -126,15 +127,35 @@ public class ToothGeodeFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	/**
-	 * Spawns 2-5 ToothPeck mobs inside the hollow interior of the geode.
-	 * Uses the same persistence pattern as {@link TermiteMoundFeature} so they
-	 * do not despawn after the chunk has loaded.
+	 * Spawns 2-5 ToothPeck mobs inside the hollow interior of the geode, plus a
+	 * 1-in-10 chance of also spawning a dying {@link UnstainedScoutEntity} at
+	 * the very centre. She carries field notes with observations about Annetta
+	 * Knowles that the player can receive via her brief dialogue tree.
+	 *
+	 * <p>Uses the same persistence pattern as {@link TermiteMoundFeature} so
+	 * inhabitants do not despawn after the chunk has loaded.</p>
 	 */
 	private void spawnInhabitants(WorldGenLevel level, BlockPos center, int hollowRadius,
 			RandomSource random, BlockPos.MutableBlockPos mutable) {
 		int count = 2 + random.nextInt(4);
 		int cx = center.getX(), cy = center.getY(), cz = center.getZ();
 		int r = Math.max(hollowRadius - 1, 1);
+
+		// 10% chance to also place a dying Unstained Scout at the geode centre
+		if (random.nextInt(10) == 0) {
+			// Try the exact centre first, then spiral outward
+			boolean placed = false;
+			for (int attempt = 0; attempt < 16 && !placed; attempt++) {
+				int dx = attempt == 0 ? 0 : random.nextInt(r * 2 + 1) - r;
+				int dy = attempt == 0 ? 0 : random.nextInt(r * 2 + 1) - r;
+				int dz = attempt == 0 ? 0 : random.nextInt(r * 2 + 1) - r;
+				mutable.set(cx + dx, cy + dy, cz + dz);
+				if (level.getBlockState(mutable).isAir()) {
+					spawnScout(level, mutable.immutable());
+					placed = true;
+				}
+			}
+		}
 
 		for (int i = 0; i < count; i++) {
 			for (int attempt = 0; attempt < 12; attempt++) {
@@ -148,6 +169,15 @@ public class ToothGeodeFeature extends Feature<NoneFeatureConfiguration> {
 				}
 			}
 		}
+	}
+
+	private void spawnScout(WorldGenLevel level, BlockPos pos) {
+		UnstainedScoutEntity scout = EntityInit.unstained_scout.get().create(level.getLevel());
+		if (scout == null) return;
+		scout.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f);
+		scout.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
+		scout.setPersistenceRequired();
+		level.addFreshEntityWithPassengers(scout);
 	}
 
 	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos,
