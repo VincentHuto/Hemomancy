@@ -23,7 +23,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.monster.Erythromycelium
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.FargoneModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.FerventChitiniteModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.FunglingModel;
-import com.vincenthuto.hemomancy.client.model.entity.mob.animal.ToothPecksModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.ToothPecksModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.HemolymphopodaModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.LeechModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.LumpOfThoughtModel;

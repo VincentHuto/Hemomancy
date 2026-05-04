@@ -1,7 +1,7 @@
-package com.vincenthuto.hemomancy.client.render.entity.mob.animal;
+package com.vincenthuto.hemomancy.client.render.entity.mob.arthropod;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.mob.animal.ToothPecksModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.ToothPecksModel;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.ToothPecksEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
