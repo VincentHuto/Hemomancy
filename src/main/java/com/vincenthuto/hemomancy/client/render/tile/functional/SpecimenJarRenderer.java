@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SpecimenJarModel;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SpecimenJarBlock;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneEntity;
 import com.vincenthuto.hemomancy.common.tile.functional.SpecimenJarBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -28,6 +30,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 
 	private final SpecimenJarModel model;
 	private Entity cachedEntity;
+	private long cachedAnimationTick = Long.MIN_VALUE;
 	private String cachedKey = "";
 
 	public SpecimenJarRenderer(BlockEntityRendererProvider.Context context) {
@@ -95,6 +98,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		if (entity == null) {
 			return;
 		}
+		updateRenderAnimation(entity, level);
 
 		float maxDim = Math.max(entity.getBbWidth(), entity.getBbHeight());
 		float scale = maxDim <= 0 ? 0.45F : Math.min(0.55F / maxDim, 0.75F);
@@ -115,6 +119,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		if (cachedEntity != null && key.equals(cachedKey)) {
 			return cachedEntity;
 		}
+		cachedAnimationTick = Long.MIN_VALUE;
 		CompoundTag renderTag = specimen.copy();
 		ListTag pos = new ListTag();
 		pos.add(net.minecraft.nbt.DoubleTag.valueOf(0.0D));
@@ -130,5 +135,29 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 			cachedEntity.setXRot(0.0F);
 		}
 		return cachedEntity;
+	}
+
+	private void updateRenderAnimation(Entity entity, Level level) {
+		long gameTime = level.getGameTime();
+		if (cachedAnimationTick == gameTime) {
+			return;
+		}
+		cachedAnimationTick = gameTime;
+		int visualTick = (int) (gameTime % Integer.MAX_VALUE);
+		entity.tickCount = visualTick;
+		entity.setPos(0.0D, 0.0D, 0.0D);
+		entity.setYRot(0.0F);
+		entity.setXRot(0.0F);
+
+		if (entity instanceof LivingEntity living) {
+			living.yBodyRot = 0.0F;
+			living.yBodyRotO = 0.0F;
+			living.yHeadRot = 0.0F;
+			living.yHeadRotO = 0.0F;
+			living.walkAnimation.update(0.25F, 1.0F);
+		}
+		if (entity instanceof FargoneEntity fargone) {
+			fargone.idleAnimationState.startIfStopped(visualTick);
+		}
 	}
 }
