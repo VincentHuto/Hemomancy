@@ -1,0 +1,27 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 100,
+  "heldItem": "hemomancy:smouldering_ash_trail",
+  "hitBlock": "hemomancy:venous_stone",
+  "pattern": [
+    [
+      "C",
+      "B",
+      "A"
+    ]
+  ],
+  "key": {
+    "A": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "C": {
+      "block": "hemomancy:venous_stone"
+    }
+  },
+  "result": {
+    "item": "hemomancy:iron_brazier"
+  }
+}
