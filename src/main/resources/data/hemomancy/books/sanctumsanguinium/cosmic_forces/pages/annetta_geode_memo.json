@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Field Scout's Notes",
+  "subtitle": "The bugs were always a problem",
+  "text": "Recovered from the remains of an Unstained field scout found dead inside a tooth geode. The handwriting deteriorates toward the end.\n\n\"The bugs were always such a problem in the church, or at least Annetta always said they were. But now, as I lay starving down here, they seem to completely ignore me. I have watched a ToothPeck investigate every inch of this chamber. It pressed its face to the stone a hand-span from mine and never flinched. I smell no different than I did when I entered. I am Unstained — perhaps that is reason enough. Or perhaps Annetta was never clean to begin with.\"",
+  "icon": "hemomancy:scout_field_notes"
+}
