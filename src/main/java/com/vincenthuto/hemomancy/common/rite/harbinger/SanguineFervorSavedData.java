@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,33 +15,31 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 /**
- * World-level persistence for active Lethe Covenant domains established by
- * the Rite of the Lethe Covenant.  Each entry tracks the caster, domain
- * center, dimension, chunk radius, and expiry tick.
+ * World-level persistence for active Sanguine Fervor zones established by the
+ * Rite of Sanguine Fervor. Each entry tracks who cast the rite, where it is
+ * centred, the chunk radius of effect, the dimension, and the game-tick at
+ * which the boost expires.
  * <p>
- * While a domain is active:
- * <ul>
- *   <li>Natural mob spawns within it have a 50% chance of being denied.</li>
- *   <li>Players with Silver Ward active take zero magic (bleed) damage.</li>
- *   <li>Unstained players in the domain gain +0.2 purity per minute.</li>
- * </ul>
+ * While a fervor zone is active, natural mob spawns within its radius are
+ * force-allowed even when the global mob cap has been reached, effectively
+ * increasing local spawn density.
  */
-public class LetheCovenantSavedData extends SavedData {
+public class SanguineFervorSavedData extends SavedData {
 
-	private static final String DATA_NAME = "hemomancy_lethe_covenant";
-	private static final SavedData.Factory<LetheCovenantSavedData> FACTORY =
-			new SavedData.Factory<>(LetheCovenantSavedData::new, LetheCovenantSavedData::load, null);
+	private static final String DATA_NAME = "hemomancy_sanguine_fervor";
+	private static final SavedData.Factory<SanguineFervorSavedData> FACTORY =
+			new SavedData.Factory<>(SanguineFervorSavedData::new, SanguineFervorSavedData::load, null);
 
-	private final List<CovenantEntry> entries = new ArrayList<>();
+	private final List<FervorEntry> entries = new ArrayList<>();
 
-	public LetheCovenantSavedData() {}
+	public SanguineFervorSavedData() {}
 
-	public static LetheCovenantSavedData get(ServerLevel overworld) {
+	public static SanguineFervorSavedData get(ServerLevel overworld) {
 		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static LetheCovenantSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
-		LetheCovenantSavedData data = new LetheCovenantSavedData();
+	public static SanguineFervorSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
+		SanguineFervorSavedData data = new SanguineFervorSavedData();
 		if (tag.contains("entries", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("entries", Tag.TAG_COMPOUND);
 			for (int i = 0; i < list.size(); i++) {
@@ -51,7 +49,7 @@ public class LetheCovenantSavedData extends SavedData {
 				String dimension = entry.getString("Dimension");
 				int chunkRadius = entry.getInt("ChunkRadius");
 				long expiryTick = entry.getLong("ExpiryTick");
-				data.entries.add(new CovenantEntry(ownerUUID, center, dimension, chunkRadius, expiryTick));
+				data.entries.add(new FervorEntry(ownerUUID, center, dimension, chunkRadius, expiryTick));
 			}
 		}
 		return data;
@@ -61,7 +59,7 @@ public class LetheCovenantSavedData extends SavedData {
 	@Nonnull
 	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
-		for (CovenantEntry entry : entries) {
+		for (FervorEntry entry : entries) {
 			CompoundTag entryTag = new CompoundTag();
 			entryTag.putUUID("Owner", entry.ownerUUID());
 			entryTag.putLong("Center", entry.center().asLong());
@@ -74,25 +72,31 @@ public class LetheCovenantSavedData extends SavedData {
 		return tag;
 	}
 
-	public void addEntry(CovenantEntry entry) {
+	public void addEntry(FervorEntry entry) {
 		entries.add(entry);
 		setDirty();
 	}
 
-	public List<CovenantEntry> getEntries() {
+	public List<FervorEntry> getEntries() {
 		return entries;
 	}
 
-	/** Removes all expired entries. Returns true if anything was removed. */
+	/**
+	 * Removes all entries whose expiry tick has passed. Returns {@code true} if
+	 * any entries were removed (so the caller knows to persist the change).
+	 */
 	public boolean removeExpired(long currentTick) {
 		boolean changed = entries.removeIf(e -> currentTick >= e.expiryTick());
 		if (changed) setDirty();
 		return changed;
 	}
 
-	/** Returns true if the given block position in the given dimension is inside any active domain. */
-	public boolean isInDomain(BlockPos pos, String dimension, long currentTick) {
-		for (CovenantEntry entry : entries) {
+	/**
+	 * Returns {@code true} if the given block position in the given dimension is
+	 * inside at least one active (not yet expired) fervor zone.
+	 */
+	public boolean isInFervorRange(BlockPos pos, String dimension, long currentTick) {
+		for (FervorEntry entry : entries) {
 			if (currentTick >= entry.expiryTick()) continue;
 			if (!entry.dimension().equals(dimension)) continue;
 			int blockRadius = entry.chunkRadius() * 16;
@@ -106,14 +110,14 @@ public class LetheCovenantSavedData extends SavedData {
 	}
 
 	/**
-	 * A single Lethe Covenant domain entry.
+	 * A single Sanguine Fervor zone entry.
 	 *
 	 * @param ownerUUID   UUID of the player who cast the rite
-	 * @param center      center block position
-	 * @param dimension   dimension registry-key string
-	 * @param chunkRadius radius in chunks
+	 * @param center      centre block position of the rite
+	 * @param dimension   registry-key string of the dimension (e.g. {@code "minecraft:overworld"})
+	 * @param chunkRadius radius in chunks for the effect
 	 * @param expiryTick  world game-tick at which this entry expires
 	 */
-	public record CovenantEntry(UUID ownerUUID, BlockPos center, String dimension,
+	public record FervorEntry(UUID ownerUUID, BlockPos center, String dimension,
 			int chunkRadius, long expiryTick) {}
 }

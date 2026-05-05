@@ -184,7 +184,7 @@ public class SkillPointGainEvents {
     }
 
     /**
-     * Called from {@code CardinalRiteEvents.completeRite} when a cardinal rite
+     * Called from {@code HarbingerCardinalRiteEvents.completeRite} when a cardinal rite
      * finishes successfully. Awards the first-rite milestone and checks tiered
      * rite-completion milestones.
      */
@@ -207,7 +207,7 @@ public class SkillPointGainEvents {
     }
 
     /**
-     * Called from {@code CardinalRiteEvents.completeRite} when a degree rite
+     * Called from {@code HarbingerCardinalRiteEvents.completeRite} when a degree rite
      * grants a new initiatory degree. Awards the corresponding degree milestone.
      * Also converts any excess skill_manip_slots levels into skill points
      * when the hard cap of 9 slots is reached.

@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -341,7 +342,7 @@ public class BloodManipulation  {
 
 				// Qliphoth Bloom: 25% cost reduction when within a bloom's radius
 				if (player instanceof ServerPlayer serverPlayer
-						&& com.vincenthuto.hemomancy.common.rite.QliphothBloomEvents.isInQliphothBloom(serverPlayer)) {
+						&& QliphothBloomEvents.isInQliphothBloom(serverPlayer)) {
 					effectiveCost *= 0.75;
 				}
 

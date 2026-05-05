@@ -1,5 +1,6 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -159,7 +160,7 @@ public class QliphothBloomEvents {
 		// Register the drop in SavedData before spawning (so we don't double-count)
 		data.incrementPomesDropped(center);
 		// Sync the updated pomes-dropped count to all clients so the tree advances its growth stage
-		CardinalRiteEvents.syncQliphothBlooms(level.getServer());
+		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
 
 		// Spawn at the tree center with a small random horizontal offset,
 		// a few blocks up (as if falling from the canopy), with slight outward velocity

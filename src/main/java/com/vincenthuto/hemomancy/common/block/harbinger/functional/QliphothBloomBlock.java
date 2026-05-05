@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -104,7 +104,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 				// Remove filler blocks
 				removeFillers(level, pos);
 				// Remove the bloom from SavedData so effects and client sync update
-				CardinalRiteEvents.removeBloomAt(level, pos);
+				HarbingerCardinalRiteEvents.removeBloomAt(level, pos);
 			}
 		}
 		super.onRemove(state, level, pos, newState, isMoving);

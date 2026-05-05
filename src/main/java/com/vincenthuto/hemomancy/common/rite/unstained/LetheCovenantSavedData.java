@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.unstained;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,30 +15,33 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 /**
- * World-level persistence for active Pale Consecration zones established by
- * the Rite of Pale Consecration. Each entry tracks the caster, zone center,
- * dimension, radius, and expiry tick.
+ * World-level persistence for active Lethe Covenant domains established by
+ * the Rite of the Lethe Covenant.  Each entry tracks the caster, domain
+ * center, dimension, chunk radius, and expiry tick.
  * <p>
- * While active, hostile mobs inside the zone periodically take 1 damage and
- * receive Slowness I, simulating the consecrated ground's rejection of
- * blood-touched creatures.
+ * While a domain is active:
+ * <ul>
+ *   <li>Natural mob spawns within it have a 50% chance of being denied.</li>
+ *   <li>Players with Silver Ward active take zero magic (bleed) damage.</li>
+ *   <li>Unstained players in the domain gain +0.2 purity per minute.</li>
+ * </ul>
  */
-public class PaleConsecrationSavedData extends SavedData {
+public class LetheCovenantSavedData extends SavedData {
 
-	private static final String DATA_NAME = "hemomancy_pale_consecration";
-	private static final SavedData.Factory<PaleConsecrationSavedData> FACTORY =
-			new SavedData.Factory<>(PaleConsecrationSavedData::new, PaleConsecrationSavedData::load, null);
+	private static final String DATA_NAME = "hemomancy_lethe_covenant";
+	private static final SavedData.Factory<LetheCovenantSavedData> FACTORY =
+			new SavedData.Factory<>(LetheCovenantSavedData::new, LetheCovenantSavedData::load, null);
 
-	private final List<ConsecrationEntry> entries = new ArrayList<>();
+	private final List<CovenantEntry> entries = new ArrayList<>();
 
-	public PaleConsecrationSavedData() {}
+	public LetheCovenantSavedData() {}
 
-	public static PaleConsecrationSavedData get(ServerLevel overworld) {
+	public static LetheCovenantSavedData get(ServerLevel overworld) {
 		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
-	public static PaleConsecrationSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
-		PaleConsecrationSavedData data = new PaleConsecrationSavedData();
+	public static LetheCovenantSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
+		LetheCovenantSavedData data = new LetheCovenantSavedData();
 		if (tag.contains("entries", Tag.TAG_LIST)) {
 			ListTag list = tag.getList("entries", Tag.TAG_COMPOUND);
 			for (int i = 0; i < list.size(); i++) {
@@ -46,9 +49,9 @@ public class PaleConsecrationSavedData extends SavedData {
 				UUID ownerUUID = entry.getUUID("Owner");
 				BlockPos center = BlockPos.of(entry.getLong("Center"));
 				String dimension = entry.getString("Dimension");
-				int blockRadius = entry.getInt("BlockRadius");
+				int chunkRadius = entry.getInt("ChunkRadius");
 				long expiryTick = entry.getLong("ExpiryTick");
-				data.entries.add(new ConsecrationEntry(ownerUUID, center, dimension, blockRadius, expiryTick));
+				data.entries.add(new CovenantEntry(ownerUUID, center, dimension, chunkRadius, expiryTick));
 			}
 		}
 		return data;
@@ -58,12 +61,12 @@ public class PaleConsecrationSavedData extends SavedData {
 	@Nonnull
 	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
-		for (ConsecrationEntry entry : entries) {
+		for (CovenantEntry entry : entries) {
 			CompoundTag entryTag = new CompoundTag();
 			entryTag.putUUID("Owner", entry.ownerUUID());
 			entryTag.putLong("Center", entry.center().asLong());
 			entryTag.putString("Dimension", entry.dimension());
-			entryTag.putInt("BlockRadius", entry.blockRadius());
+			entryTag.putInt("ChunkRadius", entry.chunkRadius());
 			entryTag.putLong("ExpiryTick", entry.expiryTick());
 			list.add(entryTag);
 		}
@@ -71,12 +74,12 @@ public class PaleConsecrationSavedData extends SavedData {
 		return tag;
 	}
 
-	public void addEntry(ConsecrationEntry entry) {
+	public void addEntry(CovenantEntry entry) {
 		entries.add(entry);
 		setDirty();
 	}
 
-	public List<ConsecrationEntry> getEntries() {
+	public List<CovenantEntry> getEntries() {
 		return entries;
 	}
 
@@ -87,28 +90,30 @@ public class PaleConsecrationSavedData extends SavedData {
 		return changed;
 	}
 
-	/** Returns true if the given position is inside at least one active zone. */
-	public boolean isInZone(BlockPos pos, String dimension, long currentTick) {
-		for (ConsecrationEntry entry : entries) {
+	/** Returns true if the given block position in the given dimension is inside any active domain. */
+	public boolean isInDomain(BlockPos pos, String dimension, long currentTick) {
+		for (CovenantEntry entry : entries) {
 			if (currentTick >= entry.expiryTick()) continue;
 			if (!entry.dimension().equals(dimension)) continue;
+			int blockRadius = entry.chunkRadius() * 16;
 			BlockPos center = entry.center();
-			double dx = Math.abs(pos.getX() - center.getX());
-			double dz = Math.abs(pos.getZ() - center.getZ());
-			if (dx <= entry.blockRadius() && dz <= entry.blockRadius()) return true;
+			if (Math.abs(pos.getX() - center.getX()) <= blockRadius
+					&& Math.abs(pos.getZ() - center.getZ()) <= blockRadius) {
+				return true;
+			}
 		}
 		return false;
 	}
 
 	/**
-	 * A single Pale Consecration zone entry.
+	 * A single Lethe Covenant domain entry.
 	 *
 	 * @param ownerUUID   UUID of the player who cast the rite
 	 * @param center      center block position
 	 * @param dimension   dimension registry-key string
-	 * @param blockRadius zone radius in blocks
+	 * @param chunkRadius radius in chunks
 	 * @param expiryTick  world game-tick at which this entry expires
 	 */
-	public record ConsecrationEntry(UUID ownerUUID, BlockPos center, String dimension,
-			int blockRadius, long expiryTick) {}
+	public record CovenantEntry(UUID ownerUUID, BlockPos center, String dimension,
+			int chunkRadius, long expiryTick) {}
 }

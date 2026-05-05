@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.unstained;
 
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;

@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.rite.CrimsonBeaconSavedData.BeaconEntry;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CrimsonBeaconSavedData.BeaconEntry;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

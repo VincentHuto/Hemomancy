@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.rite;
+package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import java.util.HashMap;
 import java.util.Map;
