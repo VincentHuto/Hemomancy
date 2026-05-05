@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
@@ -118,6 +119,22 @@ public static IKnownManipulations requireKnownManipulations(Player player) {
 
 public static IKnownManipulations requireKnownManipulations(Entity entity) {
     return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<IKnownStillArts> getKnownStillArts(Player player) {
+    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.KNOWN_STILL_ARTS));
+}
+
+public static Optional<IKnownStillArts> getKnownStillArts(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.KNOWN_STILL_ARTS));
+}
+
+public static IKnownStillArts requireKnownStillArts(Player player) {
+    return getKnownStillArts(player).orElseThrow(IllegalStateException::new);
+}
+
+public static IKnownStillArts requireKnownStillArts(Entity entity) {
+    return getKnownStillArts(entity).orElseThrow(IllegalStateException::new);
 }
 
 public static Optional<IBookKnowledge> getLiberKnowledge(Player player) {

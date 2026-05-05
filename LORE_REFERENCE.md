@@ -331,6 +331,10 @@ And critically: **biological immortality**. A fully purified Unstained does not 
 
 The Unstained Church does not need many members. High-quality, immortal practitioners who arrive at purity and stay are sufficient. The church grows slowly, surely, and endures.
 
+Once Clarity opens, the purified no longer force power into being the way Harbingers do through Hematic Memories. Instead, they learn **Still Arts**: quiet, defensive acts that settle into the silvery vital humor as gifts from Our Lady or as the fruit of non-breaking rites. These arts are progressive rather than manufactured. A newly clarified Unstained might learn Silver Rebuke, while later clarity allows Lethean Mute, Still Pulse, Pale Diagnosis, Memory Shear, Absolving Step, Quietus Bell, and finally Autoimmune Edge.
+
+The last of these is intentionally troubling. Autoimmune Edge is not evil, but it shows the risk in Our Lady's nature: an immune response can protect the world, and it can also begin to attack anything that resembles infection too eagerly.
+
 ### 7.6 The Zealots, Acolytes, and Guardians
 
 - **Zealots** are the recruiters and frontline representatives, the NPCs who approach Harbingers with the offer of purification.

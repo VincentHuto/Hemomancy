@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
@@ -39,6 +40,9 @@ public final class HemoCapabilityKeys {
 
     public static final EntityCapability<IKnownManipulations, Void> KNOWN_MANIPULATIONS =
             EntityCapability.createVoid(Hemomancy.rloc("known_manipulations"), IKnownManipulations.class);
+
+    public static final EntityCapability<IKnownStillArts, Void> KNOWN_STILL_ARTS =
+            EntityCapability.createVoid(Hemomancy.rloc("known_still_arts"), IKnownStillArts.class);
 
     public static final EntityCapability<IBookKnowledge, Void> LIBER_KNOWLEDGE =
             EntityCapability.createVoid(Hemomancy.rloc("liber_knowledge"), IBookKnowledge.class);

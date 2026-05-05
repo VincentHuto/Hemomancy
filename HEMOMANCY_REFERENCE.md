@@ -517,6 +517,32 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 
 - **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
 - Reaching 100 clarity = **Enlightenment**, the final state
+
+#### Still Arts
+
+Still Arts are the Clarity-phase counterpart to Blood Manipulations, but they are not crafted Hematic Memories. They are granted by Our Lady of Still Waters and by Unstained rites as the player's silvery vital humor becomes stable enough to carry them.
+
+Implementation spine:
+- Registry: `StillArtInit.STILL_ARTS` (`hemomancy:still_arts`)
+- Art definition: `common/unstained/stillarts/StillArt`
+- Player state: `IKnownStillArts` / `KnownStillArts`, exposed through `HemoCapabilityAccess.getKnownStillArts(player)`
+- Sync and use packets: `KnownStillArtsServerPacket`, `UpdateSelectedStillArtPacket`, `UseStillArtKeyPacket`
+- Client selection: `RadialChooseStillArtScreen`, opened from the existing charm/radial key after Clarity is unlocked
+
+Current basic Still Arts:
+
+| Art | Required Clarity Stage | Role |
+|-----|------------------------|------|
+| Silver Rebuke | Awakened | Short-range pale knockback and slowing rebuke |
+| Lethean Mute | Awakened | Silences hostile bodies through weakness and confusion |
+| Still Pulse | Discerning | Brief defensive stillness and area slowing |
+| Pale Diagnosis | Discerning | Reveals nearby suspicious or afflicted bodies |
+| Memory Shear | Vigilant | Cuts a monster's immediate hostile fixation and disorients it |
+| Absolving Step | Vigilant | Purging step that clears fire, poison, and wither while lunging forward |
+| Quietus Bell | Resolute | Protective bell pulse that weakens surrounding hostiles |
+| Autoimmune Edge | Enlightened | Dangerous pale backlash against nearby living bodies |
+
+The Rite of Clarity currently grants **Silver Rebuke** as the first Still Art. Later Unstained rites and Pale Lady gifts should unlock the remaining arts progressively by clarity stage. The existing use-manipulation key casts the selected Still Art after Clarity, while pre-Clarity players keep the normal manipulation behavior.
 ### 4.6 Unstained Progression Level (`getPlayerUnstainedLevel`)
 
 To gate Unstained cardinal rites the same way Harbinger degree gates Harbinger rites, the full purity → clarity path is divided into **8 numbered levels** by `HemoCapabilityAccess.getPlayerUnstainedLevel(Player)`:

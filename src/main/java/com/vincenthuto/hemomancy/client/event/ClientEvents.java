@@ -47,6 +47,7 @@ import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScr
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
+import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.GhastlyAlembicScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.MorphlingIncubatorScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.MycelialCrucibleScreen;
@@ -69,6 +70,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbo
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseManipKeyPacket;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
@@ -205,6 +207,12 @@ public class ClientEvents {
         if (useManip.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null) {
+                if (HemoCapabilityAccess.getUnstainedProgress(mc.player)
+                        .map(progress -> progress.hasClarityUnlocked())
+                        .orElse(false)) {
+                    PacketHandler.sendToServer(new UseStillArtKeyPacket());
+                    return;
+                }
                 HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(manip -> {
                     if (manip.getSelectedManip() != null
                             && manip.getSelectedManip().getName().equals("venous_travel")) {
@@ -225,7 +233,13 @@ public class ClientEvents {
             if (vascCharmKeyIsDown && !menuKey) {
 
                 while (openVascCharmMenu.consumeClick()) {
-                    if (mc.screen == null) {
+                    if (mc.screen == null && mc.player != null) {
+                        if (HemoCapabilityAccess.getUnstainedProgress(mc.player)
+                                .map(progress -> progress.hasClarityUnlocked())
+                                .orElse(false)) {
+                            mc.setScreen(new RadialChooseStillArtScreen());
+                            continue;
+                        }
                         HemoCapabilityAccess.getScars(mc.player).ifPresent(inv -> {
                             if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
                                 mc.setScreen(new RadialChooseManipScreen(inv));

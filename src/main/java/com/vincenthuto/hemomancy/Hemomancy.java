@@ -63,6 +63,7 @@ public class Hemomancy {
         VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
         VillagerInit.PROFESSIONS.register(modEventBus);
         ManipulationInit.MANIPS.register(modEventBus);
+        StillArtInit.STILL_ARTS.register(modEventBus);
         DataComponentInit.COMPONENTS.register(modEventBus);
         ParticleInit.PARTICLE_TYPES.register(modEventBus);
         EffectInit.EFFECTS.register(modEventBus);

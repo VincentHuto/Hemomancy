@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyE
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -36,6 +37,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedDat
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -1874,6 +1876,12 @@ public class CardinalRiteEvents {
 
 			unstained.setClarityUnlocked(true);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
+			if (KnownStillArtEvents.grantArt(caster, StillArtInit.silver_rebuke.get())) {
+				caster.displayClientMessage(
+						Component.literal("A first Still Art settles into you: Silver Rebuke.")
+								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+						false);
+			}
 
 			HemoCapabilityAccess.getScars(caster).ifPresent(scars -> {
 				ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
