@@ -23,6 +23,7 @@ public class HemoServerConfig {
 	public static ModConfigSpec.BooleanValue TENDENCY_SHIFT_ON_KILL_ENABLED;
 	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_AMOUNT;
 	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_ON_MANIP_USE;
+	public static ModConfigSpec.DoubleValue TENDENCY_BOSS_MULTIPLIER;
 
 	// ===== Vascular System =====
 	public static ModConfigSpec.BooleanValue VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED;
@@ -118,6 +119,10 @@ public class HemoServerConfig {
 		TENDENCY_SHIFT_ON_MANIP_USE = builder
 				.comment("How much tendency alignment is gained when using a manipulation of that tendency.")
 				.defineInRange("tendencyShiftOnManipUse", 0.5, 0.0, 50.0);
+
+		TENDENCY_BOSS_MULTIPLIER = builder
+				.comment("Multiplier applied to tendency shift when killing a boss entity (Ender Dragon, Wither, Elder Guardian, Warden). Default 10x the base shift amount.")
+				.defineInRange("tendencyBossMultiplier", 10.0, 1.0, 100.0);
 
 		builder.pop();
 

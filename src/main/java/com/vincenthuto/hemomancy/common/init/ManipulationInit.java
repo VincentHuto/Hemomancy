@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.animus.BloodAneurysmManip;
 import com.vincenthuto.hemomancy.common.manipulation.animus.BloodCloudManip;
+import com.vincenthuto.hemomancy.common.manipulation.animus.VitalEffusionManip;
 import com.vincenthuto.hemomancy.common.manipulation.animus.BloodNeedleManip;
 import com.vincenthuto.hemomancy.common.manipulation.animus.BloodRushManip;
 import com.vincenthuto.hemomancy.common.manipulation.animus.BloodShotManip;
@@ -28,11 +29,14 @@ import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialGraspManip
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.OsseousBloomManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.ActivationPotentialManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.CrimsonHarvestManip;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.HemolymphalPulseManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.SanguineWardManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.FerricResonanceManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.FerricTransmutationManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineExcavationManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineMendingManip;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.VascularDowsingManip;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.PyreticForgeManip;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.SanguineIgnitionManip;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.VitricCombustionManip;
@@ -183,6 +187,25 @@ public class ManipulationInit {
 						return true;
 					}, "Area nausea pulse on hostiles"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> vital_effusion = MANIPS.register("vital_effusion",
+			() -> new VitalEffusionManip("vital_effusion", 350, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
+					.setCooldownTicks(60)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						BlockPos p = centre;
+						if (!(world instanceof net.minecraft.server.level.ServerLevel sLevel)) return false;
+						boolean grew = false;
+						for (BlockPos nearby : BlockPos.betweenClosed(p.offset(-2, -1, -2), p.offset(2, 1, 2))) {
+							net.minecraft.world.level.block.state.BlockState state = world.getBlockState(nearby);
+							if (state.getBlock() instanceof net.minecraft.world.level.block.BonemealableBlock bb
+									&& bb.isValidBonemealTarget(sLevel, nearby, state)) {
+								bb.performBonemeal(sLevel, world.random, nearby.immutable(), world.getBlockState(nearby.immutable()));
+								grew = true;
+							}
+						}
+						return grew;
+					}, "Accelerates crop growth near the Drudge's position"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_transmutation = MANIPS.register("ferric_transmutation",
 			() -> new FerricTransmutationManip("ferric_transmutation", 1000, 50, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
@@ -220,6 +243,20 @@ public class ManipulationInit {
 								new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 200, 0, false, true)));
 						return true;
 					}, "Grants Resistance to nearby allies"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> hemolymphal_pulse = MANIPS.register("hemolymphal_pulse",
+			() -> new HemolymphalPulseManip("hemolymphal_pulse", 400, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
+					.setCooldownTicks(300)
+					.setDrudgeAction((drudge, world, centre, radius) -> {
+						AABB area = new AABB(centre).inflate(radius);
+						List<net.minecraft.world.entity.LivingEntity> nearby =
+								world.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, area);
+						if (nearby.isEmpty()) return false;
+						nearby.forEach(e -> e.addEffect(
+								new MobEffectInstance(MobEffects.GLOWING, 300, 0, false, false)));
+						return true;
+					}, "Applies Glowing to all nearby entities"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
 			() -> new ConjurationManip("conjure_blade", ItemInit.living_blade, 1000, 0, 0,
@@ -373,6 +410,18 @@ public class ManipulationInit {
 						world.destroyBlock(target, true);
 						return true;
 					}, "Mines the block the Drudge faces"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> vascular_dowsing = MANIPS.register("vascular_dowsing",
+			() -> new VascularDowsingManip("vascular_dowsing", 500, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
+					.setCooldownTicks(400)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_resonance = MANIPS.register("ferric_resonance",
+			() -> new FerricResonanceManip("ferric_resonance", 600, 20, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
+					.setCooldownTicks(200)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> pyretic_forge = MANIPS.register("pyretic_forge",
 			() -> new PyreticForgeManip("pyretic_forge", 350, 10, 0, EnumManipulationType.QUICK,
