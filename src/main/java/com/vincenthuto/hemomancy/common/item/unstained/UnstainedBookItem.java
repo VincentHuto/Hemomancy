@@ -23,6 +23,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class UnstainedBookItem extends ItemGuideBook {
     public UnstainedBookItem(Properties prop, ResourceLocation loc) {
@@ -52,12 +53,12 @@ public class UnstainedBookItem extends ItemGuideBook {
         if (lvl.isClientSide && book != null) {
               final BookCodeModel rawBook = book;
               final BookTheme theme = new BookTheme(
-                  Hemomancy.rloc("textures/gui/guide/book.png"),
+                  Hemomancy.rloc("textures/gui/guide/unstained_overlay.png"),
                   0x88AACC,
-                  Hemomancy.rloc("textures/gui/guide/hemo_overlay.png"));
+                  Hemomancy.rloc("textures/gui/guide/unstained_overlay.png"));
               BookCodeModel filtered = applyVisibilityFilters(rawBook, p_41433_);
               filtered.setTheme(theme);
-              java.util.function.Supplier<BookCodeModel> refresher = () -> {
+             Supplier<BookCodeModel> refresher = () -> {
                 BookCodeModel refreshed = applyVisibilityFilters(rawBook, p_41433_);
                 refreshed.setTheme(theme);
                 return refreshed;
