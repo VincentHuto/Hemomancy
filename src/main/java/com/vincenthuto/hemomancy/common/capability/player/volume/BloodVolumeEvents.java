@@ -304,24 +304,6 @@ public class BloodVolumeEvents {
 		// Sync skill tree to client
 		com.vincenthuto.hemomancy.common.network.PacketHandler.sendToPlayer(player, new com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills(
 						com.vincenthuto.hemomancy.common.init.SkillPointInit.serializeAll()));
-
-		player.displayClientMessage(
-				Component.literal("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
-		player.displayClientMessage(
-				Component.literal(
-						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
-				false);
-		Bloodline currentLine = volume.getBloodLine();
-		player.displayClientMessage(
-				Component.literal("Welcome! Current Bloodline: " + ChatFormatting.GOLD + currentLine.getName()),
-				false);
-		if (currentLine.isValid()) {
-			player.displayClientMessage(
-					Component.literal("Bloodline Pool: " + ChatFormatting.DARK_RED
-							+ String.format("%.1f", currentLine.getBloodVolume()) + "/"
-							+ String.format("%.0f", currentLine.getMaxBloodVolume()) + "ml"),
-					false);
-		}
 	}
 
 	@SubscribeEvent

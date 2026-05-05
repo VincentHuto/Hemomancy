@@ -3,18 +3,17 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
-import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -105,14 +104,11 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 		if (!volume.isActive()) {
 			volume.setActive(true);
 			player.displayClientMessage(
-					Component.literal("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
-			// Grant the advancement programmatically
+					Component.translatable("hemomancy.mortal_display.activated")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
-				AdvancementHolder adv = serverPlayer.server.getAdvancements()
-						.get(Hemomancy.rloc("hemomancy/the_first_awakening"));
-				if (adv != null) {
-					serverPlayer.getAdvancements().award(adv, "activate_temple");
-				}
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer, Hemomancy.rloc("hemomancy/the_first_awakening"));
 			}
 			for (int i = 0; i < 10; i++) {
 				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);

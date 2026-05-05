@@ -25,6 +25,15 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_ON_MANIP_USE;
 	public static ModConfigSpec.DoubleValue TENDENCY_BOSS_MULTIPLIER;
 
+	// ===== Hematic Salvage =====
+	public static ModConfigSpec.BooleanValue HEMATIC_SALVAGE_ENABLED;
+	public static ModConfigSpec.DoubleValue HEMATIC_SALVAGE_MIN_DAMAGE;
+	public static ModConfigSpec.IntValue HEMATIC_SALVAGE_COOLDOWN_TICKS;
+	public static ModConfigSpec.DoubleValue HEMATIC_SALVAGE_BASE_CHANCE;
+	public static ModConfigSpec.DoubleValue HEMATIC_SALVAGE_CHANCE_PER_PIECE;
+	public static ModConfigSpec.DoubleValue HEMATIC_SALVAGE_MAX_CHANCE;
+	public static ModConfigSpec.IntValue HEMATIC_SALVAGE_MAX_DEGREE;
+
 	// ===== Vascular System =====
 	public static ModConfigSpec.BooleanValue VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED;
 	public static ModConfigSpec.DoubleValue VASCULAR_DAMAGE_PER_HIT;
@@ -123,6 +132,39 @@ public class HemoServerConfig {
 		TENDENCY_BOSS_MULTIPLIER = builder
 				.comment("Multiplier applied to tendency shift when killing a boss entity (Ender Dragon, Wither, Elder Guardian, Warden). Default 10x the base shift amount.")
 				.defineInRange("tendencyBossMultiplier", 10.0, 1.0, 100.0);
+
+		builder.pop();
+
+		// ───── Hematic Salvage ─────
+		builder.comment("First-hour Hematic Salvage Settings").push("hematic_salvage");
+
+		HEMATIC_SALVAGE_ENABLED = builder
+				.comment("Whether serious wounds can shake Hematic Iron Scrap loose from damaged vanilla iron armor.")
+				.define("enabled", true);
+
+		HEMATIC_SALVAGE_MIN_DAMAGE = builder
+				.comment("Minimum post-mitigation damage required to roll for Hematic Iron Scrap. 2 damage = 1 heart.")
+				.defineInRange("minimumDamage", 4.0, 0.0, 100.0);
+
+		HEMATIC_SALVAGE_COOLDOWN_TICKS = builder
+				.comment("Ticks between successful Hematic Iron Scrap drops per player.")
+				.defineInRange("cooldownTicks", 1200, 0, 72000);
+
+		HEMATIC_SALVAGE_BASE_CHANCE = builder
+				.comment("Base chance for Hematic Iron Scrap when the player has at least one damaged vanilla iron armor piece.")
+				.defineInRange("baseChance", 0.12, 0.0, 1.0);
+
+		HEMATIC_SALVAGE_CHANCE_PER_PIECE = builder
+				.comment("Additional chance per damaged vanilla iron armor piece.")
+				.defineInRange("chancePerDamagedPiece", 0.04, 0.0, 1.0);
+
+		HEMATIC_SALVAGE_MAX_CHANCE = builder
+				.comment("Maximum Hematic Iron Scrap drop chance after damaged armor bonuses.")
+				.defineInRange("maxChance", 0.25, 0.0, 1.0);
+
+		HEMATIC_SALVAGE_MAX_DEGREE = builder
+				.comment("Highest Harbinger degree that can receive first-hour Hematic Iron Scrap from wounded iron.")
+				.defineInRange("maximumDegree", 2, 0, 8);
 
 		builder.pop();
 

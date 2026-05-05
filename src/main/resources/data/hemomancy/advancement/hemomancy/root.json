@@ -25,11 +25,22 @@
           }
         ]
       }
+    },
+    "has_hematic_iron_scrap": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "hemomancy:hematic_iron_scrap"
+          }
+        ]
+      }
     }
   },
   "requirements": [
     [
-      "has_gourd_seeds"
+      "has_gourd_seeds",
+      "has_hematic_iron_scrap"
     ]
   ]
 }

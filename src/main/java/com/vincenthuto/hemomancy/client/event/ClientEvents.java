@@ -128,6 +128,9 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.lwjgl.glfw.GLFW;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+
 @EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ClientEvents {
 
@@ -281,6 +284,27 @@ public class ClientEvents {
 
         if (event.getItemStack().getItem() instanceof StructureScannerItem scanner) {
             scanner.addScannerStateTooltip(event.getItemStack(), event.getToolTip());
+        }
+
+        appendFirstHourTooltip(event);
+    }
+
+    private static void appendFirstHourTooltip(ItemTooltipEvent event) {
+        Item item = event.getItemStack().getItem();
+        if (item == ItemInit.gourd_seeds.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.gourd_seeds.tooltip")
+                    .withStyle(ChatFormatting.GRAY));
+        } else if (item == ItemInit.hematic_iron_scrap.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.hematic_iron_scrap.tooltip")
+                    .withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.translatable("item.hemomancy.hematic_iron_scrap.tooltip.nugget")
+                    .withStyle(ChatFormatting.DARK_GRAY));
+        } else if (item == ItemInit.charm_of_vascularium.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.charm_of_vascularium.tooltip.first_hour")
+                    .withStyle(ChatFormatting.DARK_RED));
+        } else if (item == ItemInit.liber_sanguinum.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.liber_sanguinum.tooltip.first_hour")
+                    .withStyle(ChatFormatting.GRAY));
         }
     }
 
