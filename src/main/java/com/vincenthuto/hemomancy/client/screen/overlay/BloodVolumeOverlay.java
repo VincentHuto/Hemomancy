@@ -53,7 +53,7 @@ public class BloodVolumeOverlay {
         if (player == null) return;
 
         HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
-            if (cap.hasClarityUnlocked()) return;
+                if (cap.hasBegunPurification()) return;
 
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(bloodCap -> {
                 if (bloodCap == null || !bloodCap.isActive()) return;

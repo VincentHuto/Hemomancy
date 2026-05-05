@@ -288,9 +288,12 @@ The Unstained do not necessarily believe blood magic is evil in an absolute mora
 - **Something that can be shed** — through painful, deliberate effort
 
 They are devout, but not fanatical in the way of those who seek to convert or conquer. They welcome those who come to them and leave alone those who do not. A Harbinger wandering into an Unstained Church will receive a measured response:
-- Below Degree 3: a cautious welcome and an offer to help, with an invitation to leave if they wish
-- Degree 3+: given one or two chances to leave or declare intent; Guardians will escort them out by force if necessary (using blunt weapons, not blades — they do not spill blood)
-- Genuinely seeking purification: received with open arms regardless of degree
+- Degree 0: concerned sadness; the Church sees a newly blood-touched person as infected and frightened rather than culpable
+- Degree 1-2: careful welcome; help is offered plainly, though the Unstained warn that every rite makes the blood harder to shed
+- Degree 3-4: wary help; Zealots and Acolytes still offer cure, but ask whether the player seeks healing or merely another power
+- Degree 5: hesitant disdain; aid is still possible, but the Church assumes the player has loved the crimson road long enough to make repentance suspect
+- Degree 6+: ordinary Church members refuse the normal cure path, treating the infection as too deeply rooted for safe hemolytic rites
+- Guardians use blunt force to escort hostile or deceptive visitors out when necessary; they do not spill blood near the church
 
 ### 7.3 Appearance and Equipment
 

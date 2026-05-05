@@ -100,12 +100,10 @@ public class UnstainedZealotEntity extends PathfinderMob {
                 tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), purity, clarityUnlocked, enlightened);
             } else if (volume == null || !volume.isActive()) {
                 tree = ZealotDialogueTrees.noBlood(this.getId());
-            } else if (degree >= EnumInitiatoryDegree.VOTARY.getNumber()) {
-                tree = ZealotDialogueTrees.pleaDialogue(this.getId());
-            } else if (degree >= 1) {
-                tree = ZealotDialogueTrees.tooEarly(this.getId());
+            } else if (degree <= EnumInitiatoryDegree.ILLUMINATUS.getNumber()) {
+                tree = ZealotDialogueTrees.pleaDialogue(this.getId(), degree);
             } else {
-                tree = ZealotDialogueTrees.uninitiated(this.getId());
+                tree = ZealotDialogueTrees.tooDeep(this.getId());
             }
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

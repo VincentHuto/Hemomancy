@@ -145,14 +145,14 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 
 	private void handleUnstainedInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
 		int degreeNumber = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		if (degreeNumber < EnumInitiatoryDegree.VOTARY.getNumber()) {
-			// Player hasn't reached the required degree yet
-			player.displayClientMessage(
-					Component.translatable("hemomancy.unstained.not_ready"), false);
-			return;
-		}
-
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
+			if (!unstained.hasBegunPurification()
+					&& degreeNumber > EnumInitiatoryDegree.ILLUMINATUS.getNumber()) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.unstained.too_deep"), false);
+				return;
+			}
+
 			if (stack.getItem() == ItemInit.hemolytic_solution.get()) {
 				handleHemolyticSolution(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) {

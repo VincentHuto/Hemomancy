@@ -23,12 +23,12 @@ public final class ZealotDialogueTrees {
     /**
      * Player has active blood at VOTARY+ degree — the full plea with choices.
      */
-    public static DialogueTree pleaDialogue(int entityId) {
+    public static DialogueTree pleaDialogue(int entityId, int degree) {
         return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
                 .theme(DialogueTheme.UNSTAINED)
                 .addNode(new DialogueNode("greeting", List.of(
                         "hemomancy.zealot.plea.line1",
-                        "hemomancy.zealot.plea.line2"
+                        pleaDegreeLine(degree)
                 ), List.of(
                         new DialogueOption("hemomancy.dialogue.zealot.option.tell_me_more", "explain", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.not_interested", "reject", "zealot_reject_help")
@@ -210,6 +210,17 @@ public final class ZealotDialogueTrees {
                 .build();
     }
 
+    private static String pleaDegreeLine(int degree) {
+        return switch (degree) {
+            case 0 -> "hemomancy.zealot.plea.degree0.line2";
+            case 1 -> "hemomancy.zealot.plea.degree1.line2";
+            case 2 -> "hemomancy.zealot.plea.degree2.line2";
+            case 3 -> "hemomancy.zealot.plea.degree3.line2";
+            case 4 -> "hemomancy.zealot.plea.degree4.line2";
+            default -> "hemomancy.zealot.plea.degree5.line2";
+        };
+    }
+
     /**
      * Player has no blood magic active.
      */
@@ -238,6 +249,26 @@ public final class ZealotDialogueTrees {
                 .theme(DialogueTheme.UNSTAINED)
                 .addNode(new DialogueNode("root", List.of(
                         "hemomancy.zealot.too_early"
+                ), List.of(
+                        new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+                )))
+                .addNode(new DialogueNode("item_hint", List.of(
+                        "hemomancy.zealot.item_hint"
+                ), List.of(
+                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+                )))
+                .build();
+    }
+
+    /**
+     * Player is beyond the normal cure window.
+     */
+    public static DialogueTree tooDeep(int entityId) {
+        return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+                .theme(DialogueTheme.UNSTAINED)
+                .addNode(new DialogueNode("root", List.of(
+                        "hemomancy.zealot.too_deep"
                 ), List.of(
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)

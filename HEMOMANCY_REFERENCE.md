@@ -410,9 +410,11 @@ Two Unstained NPC types guide the player through the purification journey. All d
 | Player State | Dialogue Branch |
 |---|---|
 | No blood at all | Dismisses gently: "You bear no mark of the crimson arts." |
-| Degree < 2 (too early) | "Return when the Covenant has shown you its true face." |
-| Degree 0 with blood (uninitiated) | "The silver bells toll only for those who have tasted the crimson." |
-| Active blood, Votary+ (plea) | Full plea: explains the hemolytic rites, offers craft-hemolytic info branch, `zealot_accept_purification` / `zealot_accept_church` / `zealot_reject_help` outcomes |
+| Active blood, Degree 0-1 | Full plea with concerned sadness: the Church treats early infection as something that can still be healed |
+| Active blood, Degree 2-4 | Full plea with increasing caution: the Zealot still offers help, but questions the player's motives and attachment to the Covenant |
+| Active blood, Degree 5 (Illuminatus) | Full plea with hesitant disdain: aid is still offered, but the Church assumes the request may be manipulation or regret arriving late |
+| Active blood, Degree 6+ | Refuses recruitment; the Church believes the stain has rooted too deeply for ordinary hemolytic cure |
+| Active blood, Degree 0-5 (plea) | Explains the hemolytic rites, offers craft-hemolytic info branch, `zealot_accept_purification` / `zealot_accept_church` / `zealot_reject_help` outcomes |
 | Already on purification path — Corrupted | "Continue your work at the podium, and the stain shall lift." |
 | Purity 25–49 (Tainted) | Silver Ward info branch |
 | Purity 50–74 (Cleansing) | Altar of Cleansing info branch |
@@ -435,7 +437,9 @@ Two Unstained NPC types guide the player through the purification journey. All d
 
 ### 4.3 Entry Requirements
 
-- Player must have reached at least **Degree 2 (Votary)** before an Unstained Zealot will offer the choice
+- Standard path: the player finds a Blood Temple, activates blood control, then later finds an Unstained Church seeking cure or healing
+- Unstained Zealots offer purification to blood-active players from **Degree 0 through Degree 5 (Illuminatus)**, with tone shifting from concerned sadness to wary disdain as degree rises
+- **Degree 6+** Harbingers are not accepted by the normal Church route; the Church treats them as too deeply rooted in the blood-memory infection for ordinary cure
 - The Zealot directs the player to bring **Hemolytic Solution** ![Hemolytic Solution](src/main/resources/assets/hemomancy/textures/item/hemolytic_solution.png) to an **Unstained Podium** block
 
 ### 4.4 Phase 1: Purity (0–100)
@@ -559,10 +563,12 @@ All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather
 
 ### 4.8 HUD
 
-Unstained players see a dedicated gauge overlay (top-right corner) with:
-- Silver **Purity** bar
-- Teal **Clarity** bar (only after clarity unlocked)
-- Stage labels for each
+Unstained players see a dedicated top-right reliquary orb overlay:
+- During the purity phase, a round blood-filled orb uses the same organic blood language as the Blood Volume HUD, then washes from red toward silver-white as purity rises
+- At full purity, the orb locks into a white/silver state with a glowing halo and solid faceted diamond border, signaling the transformation has become concrete
+- During clarity, the orb remains white while clarity progress is represented by halo intensity, size, and pulse strength rather than a second bar
+- Five angular stage pips follow the lower V edge of the diamond frame; the active clarity pip highlights in verdigris
+- Stage name and exact percent remain visible during normal play
 
 ---
 

@@ -37,6 +37,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
@@ -1873,6 +1874,17 @@ public class CardinalRiteEvents {
 
 			unstained.setClarityUnlocked(true);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			HemoCapabilityAccess.getScars(caster).ifPresent(scars -> {
+				ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+				if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
+					scars.setStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, ItemStack.EMPTY);
+					caster.displayClientMessage(
+							Component.literal("You feel the parasitic necklace burn away, starved of nutrients from your now silvery vital humor.")
+									.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+							false);
+				}
+			});
 
 			caster.displayClientMessage(
 					Component.literal("The veil parts. True sight is yours â€” clarity has been unlocked.")

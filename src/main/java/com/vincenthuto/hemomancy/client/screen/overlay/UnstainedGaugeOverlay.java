@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import java.util.Random;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -9,44 +11,34 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 /**
- * HUD overlay that displays the Unstained purity and clarity gauges.
- * Uses a sharp angular / beveled aesthetic, positioned in the top-right corner.
- * Fully programmatic — no texture files required.
- * The gauge has two vertical bars: purity (silver) and clarity (teal),
- * with angular frames, chevron stage indicators, and geometric accents.
+ * HUD overlay for the Unstained path.
+ *
+ * <p>The gauge is a single reliquary orb: purity washes the blood-red orb toward
+ * white, then clarity brightens the halo around the sealed diamond frame.</p>
  */
 public class UnstainedGaugeOverlay {
 
 	public static UnstainedGaugeOverlay instance;
 
-	// ── Angular bar dimensions ──
-	private static final int BAR_WIDTH = 6;
-	private static final int BAR_HEIGHT = 80;
-	private static final int FRAME_THICKNESS = 2;
+	private static final int ORB_RADIUS = 18;
+	private static final int DIAMOND_RADIUS = 27;
+	private static final int PIP_COUNT = 5;
 
-	/** Spacing between the two bars */
-	private static final int BAR_SPACING = 22;
-
-	// ── Angular color palette ──
-	private static final int PURITY_COLOR = 0xBEC8D7;
-	private static final int PURITY_DIM = 0x404850;
-	private static final int PURITY_FRAME = 0xFF505868;
-	private static final int PURITY_FRAME_INNER = 0xFF303840;
-
-	private static final int CLARITY_COLOR = 0xA0D2C8;
-	private static final int CLARITY_DIM = 0x304840;
-	private static final int CLARITY_FRAME = 0xFF508878;
-	private static final int CLARITY_FRAME_INNER = 0xFF284838;
-
-	private static final int FRAME_BG = 0xFF0A0C10;
+	private static final int BLOOD_TOP = 0xFF9A1016;
+	private static final int BLOOD_BOTTOM = 0xFF220305;
+	private static final int PALE_TOP = 0xFFF1F6FF;
+	private static final int PALE_BOTTOM = 0xFF7A8795;
+	private static final int VERDIGRIS = 0xFF8BD6C6;
+	private static final int VERDIGRIS_DIM = 0xFF315F56;
+	private static final int TEXT_DIM = 0xFF9AA6B4;
 
 	private final Minecraft mc = Minecraft.getInstance();
+	private float animTime = 0f;
 
 	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {
 		LocalPlayer player = mc.player;
@@ -54,219 +46,280 @@ public class UnstainedGaugeOverlay {
 
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
 			if (!cap.hasBegunPurification()) return;
-			renderGauge(gfx, screenWidth, screenHeight, cap, partialTicks);
+			renderGauge(gfx, screenWidth, cap);
 		});
 	}
-		private float animTime = 0f;
 
-	private void renderGauge(GuiGraphics gfx, int screenWidth, int screenHeight,
-			IUnstainedProgress cap, float partialTicks) {
-		Font fr = mc.font;
-		ClientLevel world = mc.level;
-		animTime += 0.016f; // ~60 FPS approximation
-
+	private void renderGauge(GuiGraphics gfx, int screenWidth, IUnstainedProgress cap) {
+		Font font = mc.font;
+		animTime += 0.016f;
 		float time = animTime;
-		// Position: top-right area
-		int baseX = screenWidth - 46;
-		int baseY = 6;
 
-		float purity = cap.getPurity();
-		float clarity = cap.getClarity();
+		float purity = Mth.clamp(cap.getPurity(), 0f, 100f);
+		float clarity = Mth.clamp(cap.getClarity(), 0f, 100f);
 		boolean clarityUnlocked = cap.hasClarityUnlocked();
 
 		EnumPurityStage purityStage = EnumPurityStage.byPurity(purity);
 		EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
 
+		String title = clarityUnlocked ? clarityStage.getTitle() : purityStage.getTitle();
+		String percent = clarityUnlocked ? String.format("Clarity %.0f%%", clarity) : String.format("Purity %.0f%%", purity);
+		int titleColor = clarityUnlocked ? VERDIGRIS : lerpColor(0xFFCC4A4A, 0xFFE6EEF8, purity / 100f);
+		int percentColor = clarityUnlocked ? 0xFF9EDACC : TEXT_DIM;
+
+		int right = screenWidth - 8;
+		int titleY = 6;
+		int percentY = titleY + 11;
+		int centerX = screenWidth - 34;
+		int centerY = 54;
+
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		// ── Render Purity Bar ──
-		renderAngularBar(gfx, baseX, baseY, purity, 100f, PURITY_COLOR,
-				PURITY_FRAME, PURITY_FRAME_INNER, time, false);
+		gfx.drawString(font, Component.literal(title), right - font.width(title), titleY, titleColor, true);
+		gfx.drawString(font, Component.literal(percent), right - font.width(percent), percentY, percentColor, true);
 
-		// Purity stage label — sharp left-aligned
-		String pTitle = purityStage.getTitle();
-		gfx.drawString(fr, Component.literal(pTitle),
-				baseX - fr.width(pTitle) - 6, baseY + 2, PURITY_COLOR, true);
-
-		// Purity percentage
-		String purityPct = String.format("%.0f%%", purity);
-		gfx.drawString(fr, Component.literal(purityPct),
-				baseX - fr.width(purityPct) - 6, baseY + 14, 0x8890A0, true);
-
-		// ── Render Clarity Bar (if unlocked) ──
-		if (clarityUnlocked) {
-			int clarityX = baseX + BAR_SPACING;
-			renderAngularBar(gfx, clarityX, baseY, clarity, 100f, CLARITY_COLOR,
-					CLARITY_FRAME, CLARITY_FRAME_INNER, time, true);
-
-			// Clarity stage label — sharp right-aligned
-			gfx.drawString(fr, Component.literal(clarityStage.getTitle()),
-					clarityX + BAR_WIDTH + FRAME_THICKNESS * 2 + 6, baseY + 2, CLARITY_COLOR, true);
-
-			String clarityPct = String.format("%.0f%%", clarity);
-			gfx.drawString(fr, Component.literal(clarityPct),
-					clarityX + BAR_WIDTH + FRAME_THICKNESS * 2 + 6, baseY + 14, 0x70A098, true);
+		if (clarityUnlocked || purity >= 100f) {
+			renderHalo(gfx, centerX, centerY, clarityUnlocked ? clarity / 100f : 0f, time);
+			renderDiamondFrame(gfx, centerX, centerY, clarityUnlocked, clarity / 100f, time);
 		}
 
-		// ── Angular chevron stage indicators below bars ──
-		int indicatorY = baseY + BAR_HEIGHT + FRAME_THICKNESS * 2 + 8;
-		renderChevronIndicators(gfx, baseX, indicatorY, purityStage.getLevel(), 5,
-				PURITY_COLOR, PURITY_DIM, time);
+		renderOrb(gfx, centerX, centerY, purity, clarityUnlocked, time);
 
-		if (clarityUnlocked) {
-			renderChevronIndicators(gfx, baseX + BAR_SPACING, indicatorY, clarityStage.getLevel(), 5,
-					CLARITY_COLOR, CLARITY_DIM, time);
-		}
-
-		// ── Angular arrow accent at top ──
-		renderAngularArrowAccent(gfx, baseX, baseY - 6, purity >= 100f ? 0xFFE8F0FF : 0xA0BEC8D7);
-		if (clarityUnlocked) {
-			renderAngularArrowAccent(gfx, baseX + BAR_SPACING, baseY - 6,
-					clarity >= 100f ? 0xFFD0F0E8 : 0xA0A0D2C8);
-		}
+		int currentStage = clarityUnlocked ? clarityStage.getLevel() : purityStage.getLevel();
+		renderLowerFacetPips(gfx, centerX, centerY, currentStage, clarityUnlocked, time);
 
 		RenderSystem.disableBlend();
 	}
 
-	// ───── Angular bar with beveled frame ─────
+	private void renderOrb(GuiGraphics gfx, int centerX, int centerY, float purity, boolean sealed, float time) {
+		float purification = sealed ? 1f : purity / 100f;
+		int topColor = lerpColor(BLOOD_TOP, PALE_TOP, purification);
+		int bottomColor = lerpColor(BLOOD_BOTTOM, PALE_BOTTOM, purification);
+		int borderColor = lerpColor(0xFF330808, 0xFFDCE6F2, purification);
+		int innerBorderColor = lerpColor(0xFF170304, 0xFF27313C, purification);
 
-	private void renderAngularBar(GuiGraphics gfx, int x, int y, float value, float maxValue,
-			int fillColor, int frameColor, int frameInnerColor, float time, boolean mirrorBevel) {
+		renderFilledCircle(gfx, centerX, centerY, ORB_RADIUS + 2, borderColor);
+		renderFilledCircle(gfx, centerX, centerY, ORB_RADIUS, innerBorderColor);
 
-		float fillRatio = Math.min(value / maxValue, 1.0f);
-		int fillHeight = (int) (BAR_HEIGHT * fillRatio);
-		int emptyHeight = BAR_HEIGHT - fillHeight;
+		for (int y = -ORB_RADIUS + 1; y <= ORB_RADIUS - 1; y++) {
+			for (int x = -ORB_RADIUS + 1; x <= ORB_RADIUS - 1; x++) {
+				float distSq = x * x + y * y;
+				if (distSq > (ORB_RADIUS - 1) * (ORB_RADIUS - 1)) continue;
 
-		int fx = x;
-		int fy = y;
-		int fw = BAR_WIDTH + FRAME_THICKNESS * 2;
-		int fh = BAR_HEIGHT + FRAME_THICKNESS * 2;
+				float vertical = (y + ORB_RADIUS) / (ORB_RADIUS * 2f);
+				float pulse = 0.88f + 0.12f * Mth.sin(time * 1.7f + y * 0.18f);
+				int color = multiplyColor(lerpColor(topColor, bottomColor, vertical), pulse);
 
-		// ── Outer frame — angular beveled look ──
-		// Top edge (bright bevel)
-		gfx.fill(fx, fy, fx + fw, fy + 1, frameColor);
-		// Bottom edge (dark bevel)
-		gfx.fill(fx, fy + fh - 1, fx + fw, fy + fh, frameInnerColor);
-		// Left edge
-		gfx.fill(fx, fy, fx + 1, fy + fh, mirrorBevel ? frameInnerColor : frameColor);
-		// Right edge
-		gfx.fill(fx + fw - 1, fy, fx + fw, fy + fh, mirrorBevel ? frameColor : frameInnerColor);
+				float highlight = 1f - ellipseDistance(x, y, -7f, -8f, 5.5f, 8f);
+				if (highlight > 0f) {
+					int alpha = (int) (Mth.clamp(highlight, 0f, 1f) * (sealed ? 70 : 55));
+					color = alphaBlend(color, (alpha << 24) | 0x00FFFFFF);
+				}
 
-		// Inner border
-		gfx.fill(fx + 1, fy + 1, fx + fw - 1, fy + 2, frameInnerColor);
-		gfx.fill(fx + 1, fy + fh - 2, fx + fw - 1, fy + fh - 1, frameColor);
-		gfx.fill(fx + 1, fy + 1, fx + 2, fy + fh - 1, mirrorBevel ? frameColor : frameInnerColor);
-		gfx.fill(fx + fw - 2, fy + 1, fx + fw - 1, fy + fh - 1, mirrorBevel ? frameInnerColor : frameColor);
+				float lowerGleam = 1f - ellipseDistance(x, y, 8f, 8f, 3.5f, 2.5f);
+				if (lowerGleam > 0f) {
+					int alpha = (int) (Mth.clamp(lowerGleam, 0f, 1f) * 42);
+					color = alphaBlend(color, (alpha << 24) | 0x00FFFFFF);
+				}
 
-		// Background fill
-		int innerX = fx + FRAME_THICKNESS;
-		int innerY = fy + FRAME_THICKNESS;
-		gfx.fill(innerX, innerY, innerX + BAR_WIDTH, innerY + BAR_HEIGHT, FRAME_BG);
-
-		// ── Angular notch separators at each 25% ──
-		for (int notch = 1; notch <= 3; notch++) {
-			int ny = innerY + BAR_HEIGHT - (BAR_HEIGHT * notch / 4);
-			// Left notch
-			gfx.fill(fx, ny, innerX + 1, ny + 1, frameColor);
-			// Right notch
-			gfx.fill(innerX + BAR_WIDTH - 1, ny, fx + fw, ny + 1, frameColor);
+				gfx.fill(centerX + x, centerY + y, centerX + x + 1, centerY + y + 1, color);
+			}
 		}
 
-		// ── Fill from bottom up ──
-		if (fillHeight > 0) {
-			int fillTop = innerY + emptyHeight;
-			float r = ((fillColor >> 16) & 0xFF) / 255f;
-			float g = ((fillColor >> 8) & 0xFF) / 255f;
-			float b = (fillColor & 0xFF) / 255f;
-
-			for (int row = 0; row < fillHeight; row++) {
-				float rowT = (float) row / fillHeight;
-				// Subtle brightness gradient: brighter at bottom, dimmer at top
-				float brightness = 0.5f + 0.5f * rowT;
-				float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + row * 0.06f);
-				float finalBright = brightness * pulse;
-
-				int cr = (int) (Mth.clamp(r * finalBright * 255, 0, 255));
-				int cg = (int) (Mth.clamp(g * finalBright * 255, 0, 255));
-				int cb = (int) (Mth.clamp(b * finalBright * 255, 0, 255));
-				int alpha = (int) (200 + 55 * rowT);
-				int color = (alpha << 24) | (cr << 16) | (cg << 8) | cb;
-				gfx.fill(innerX, fillTop + row, innerX + BAR_WIDTH, fillTop + row + 1, color);
-			}
-
-			// Sharp top-edge highlight on the fill (angular meniscus)
-			float edgePulse = 0.6f + 0.4f * Mth.sin(time * 3.5f);
-			int eAlpha = (int) (220 * edgePulse);
-			int eR = (int) (Mth.clamp(r * 255 * 1.3f, 0, 255));
-			int eG = (int) (Mth.clamp(g * 255 * 1.3f, 0, 255));
-			int eB = (int) (Mth.clamp(b * 255 * 1.3f, 0, 255));
-			gfx.fill(innerX, fillTop, innerX + BAR_WIDTH, fillTop + 1,
-					(eAlpha << 24) | (eR << 16) | (eG << 8) | eB);
-
-			// Angular specular line on left edge of fill
-			for (int row = 0; row < fillHeight; row++) {
-				float specFade = 0.2f + 0.1f * Mth.sin(time * 1.5f + row * 0.12f);
-				int sAlpha = (int) (60 * specFade);
-				gfx.fill(innerX, fillTop + row, innerX + 1, fillTop + row + 1,
-						(sAlpha << 24) | 0xFFFFFF);
-			}
+		renderMeniscus(gfx, centerX, centerY, purification, time);
+		if (!sealed) {
+			renderBloodParticles(gfx, centerX, centerY, purification, time);
 		}
 	}
 
-	// ───── Angular chevron (▶ or ◀) stage indicators ─────
+	private void renderMeniscus(GuiGraphics gfx, int centerX, int centerY, float purification, float time) {
+		int lineY = centerY - 3 + Math.round(Mth.sin(time * 1.8f) * 1.2f);
+		int color = lerpColor(0xCCDD2A22, 0xBFFFFFFF, purification);
+		for (int x = -11; x <= 11; x++) {
+			float curve = 1f - Math.abs(x) / 12f;
+			if (curve <= 0f) continue;
+			int alpha = (int) (alpha(color) * curve);
+			gfx.fill(centerX + x, lineY, centerX + x + 1, lineY + 1, (alpha << 24) | (color & 0x00FFFFFF));
+		}
+	}
 
-	private void renderChevronIndicators(GuiGraphics gfx, int x, int y,
-			int currentStage, int totalStages, int filledColor, int emptyColor, float time) {
+	private void renderBloodParticles(GuiGraphics gfx, int centerX, int centerY, float purification, float time) {
+		Random random = new Random(9127L);
+		float bloodVisibility = 1f - purification;
+		for (int i = 0; i < 6; i++) {
+			float phase = random.nextFloat();
+			float speed = 0.22f + random.nextFloat() * 0.32f;
+			float progress = (time * speed + phase) % 1f;
+			int x = centerX - 9 + random.nextInt(19) + Math.round(Mth.sin(time * 0.8f + i) * 2f);
+			int y = centerY + 10 - Math.round(progress * 21f);
+			int dx = x - centerX;
+			int dy = y - centerY;
+			if (dx * dx + dy * dy > (ORB_RADIUS - 4) * (ORB_RADIUS - 4)) continue;
 
-		int chevronW = 8;
-		int chevronH = 5;
-		int spacing = 2;
+			int alpha = (int) (Mth.clamp(bloodVisibility, 0f, 1f) * 70f * (1f - Math.abs(progress - 0.5f)));
+			if (alpha <= 4) continue;
+			gfx.fill(x, y, x + 1, y + 1, (alpha << 24) | 0x00FF6A58);
+		}
+	}
 
-		for (int i = 0; i < totalStages; i++) {
-			int cy = y + i * (chevronH + spacing);
+	private void renderHalo(GuiGraphics gfx, int centerX, int centerY, float clarityRatio, float time) {
+		float pulse = 0.75f + 0.25f * Mth.sin(time * (1.6f + clarityRatio * 1.5f));
+		int radius = 24 + Math.round(clarityRatio * 7f + pulse * 2f);
+
+		for (int ring = 0; ring < 8; ring++) {
+			int r = radius - ring;
+			if (r <= ORB_RADIUS + 1) continue;
+			float fade = 1f - ring / 8f;
+			int alpha = (int) ((34 + clarityRatio * 78f) * fade * pulse);
+			int color = (alpha << 24) | 0x00E7EFFA;
+			renderCircleOutline(gfx, centerX, centerY, r, color);
+		}
+
+		if (clarityRatio > 0f) {
+			int verdigrisAlpha = (int) (80f * clarityRatio * pulse);
+			renderCircleOutline(gfx, centerX, centerY, radius - 5, (verdigrisAlpha << 24) | (VERDIGRIS & 0x00FFFFFF));
+		}
+	}
+
+	private void renderDiamondFrame(GuiGraphics gfx, int centerX, int centerY, boolean clarityUnlocked,
+			float clarityRatio, float time) {
+		int bright = clarityUnlocked ? lerpColor(0xFFDCE6F2, 0xFFFFFFFF, clarityRatio) : 0xFFDCE6F2;
+		int shadow = clarityUnlocked ? lerpColor(0xFF73808E, VERDIGRIS_DIM, clarityRatio) : 0xFF73808E;
+		int teal = withAlpha(VERDIGRIS, (int) ((80 + clarityRatio * 120) * (0.8f + 0.2f * Mth.sin(time * 2.3f))));
+
+		drawDiamondOutline(gfx, centerX, centerY, DIAMOND_RADIUS, shadow);
+		drawDiamondOutline(gfx, centerX, centerY, DIAMOND_RADIUS - 1, bright);
+		gfx.fill(centerX, centerY - DIAMOND_RADIUS - 2, centerX + 1, centerY - DIAMOND_RADIUS + 2, bright);
+		gfx.fill(centerX + DIAMOND_RADIUS - 2, centerY, centerX + DIAMOND_RADIUS + 2, centerY + 1, shadow);
+		gfx.fill(centerX - 1, centerY + DIAMOND_RADIUS - 2, centerX + 1, centerY + DIAMOND_RADIUS + 2, bright);
+		gfx.fill(centerX - DIAMOND_RADIUS - 2, centerY, centerX - DIAMOND_RADIUS + 2, centerY + 1, shadow);
+
+		if (clarityUnlocked) {
+			drawDiamondOutline(gfx, centerX, centerY, DIAMOND_RADIUS - 5, teal);
+		}
+	}
+
+	private void renderLowerFacetPips(GuiGraphics gfx, int centerX, int centerY, int currentStage, boolean clarityUnlocked,
+			float time) {
+		int[][] offsets = {
+				{ -14, DIAMOND_RADIUS - 10 },
+				{ -7, DIAMOND_RADIUS - 6 },
+				{ 0, DIAMOND_RADIUS - 2 },
+				{ 7, DIAMOND_RADIUS - 6 },
+				{ 14, DIAMOND_RADIUS - 10 }
+		};
+
+		for (int i = 0; i < PIP_COUNT; i++) {
 			boolean filled = i <= currentStage;
-			int baseColor = filled ? filledColor : emptyColor;
-
-			// Pulse effect for current stage
-			if (filled && i == currentStage) {
-				float pulse = 0.7f + 0.3f * Mth.sin(time * 4f + i);
-				int r = (int) (((baseColor >> 16) & 0xFF) * pulse);
-				int g = (int) (((baseColor >> 8) & 0xFF) * pulse);
-				int b = (int) ((baseColor & 0xFF) * pulse);
-				baseColor = (r << 16) | (g << 8) | b;
+			boolean active = i == currentStage;
+			int color;
+			if (!filled) {
+				color = 0xFF3B4652;
+			} else if (clarityUnlocked && active) {
+				float pulse = 0.74f + 0.26f * Mth.sin(time * 4.2f);
+				color = multiplyColor(VERDIGRIS, pulse);
+			} else if (clarityUnlocked) {
+				color = 0xFFDCE6F2;
+			} else if (active) {
+				color = multiplyColor(lerpColor(0xFFB42024, 0xFFE6EEF8, currentStage / 4f),
+						0.78f + 0.22f * Mth.sin(time * 3.4f));
+			} else {
+				color = lerpColor(0xFFB42024, 0xFFDCE6F2, i / 4f);
 			}
 
-			int argb = 0xFF000000 | baseColor;
-
-			// Angular chevron pointing right: ▷
-			// Row 0:     ##
-			// Row 1:   ####
-			// Row 2: ######
-			// Row 3:   ####
-			// Row 4:     ##
-			int cx = x + FRAME_THICKNESS;
-			gfx.fill(cx + 4, cy, cx + chevronW, cy + 1, argb);           // top point
-			gfx.fill(cx + 2, cy + 1, cx + chevronW, cy + 2, argb);      // upper
-			gfx.fill(cx, cy + 2, cx + chevronW, cy + 3, argb);          // widest
-			gfx.fill(cx + 2, cy + 3, cx + chevronW, cy + 4, argb);      // lower
-			gfx.fill(cx + 4, cy + 4, cx + chevronW, cy + 5, argb);      // bottom point
+			renderDiamondPip(gfx, centerX + offsets[i][0], centerY + offsets[i][1], color);
 		}
 	}
 
-	// ───── Angular arrow accent at top of bar ─────
+	private void renderDiamondPip(GuiGraphics gfx, int centerX, int centerY, int color) {
+		gfx.fill(centerX, centerY - 2, centerX + 1, centerY + 3, color);
+		gfx.fill(centerX - 1, centerY - 1, centerX + 2, centerY + 2, color);
+		gfx.fill(centerX - 2, centerY, centerX + 3, centerY + 1, color);
+	}
 
-	private void renderAngularArrowAccent(GuiGraphics gfx, int x, int y, int color) {
-		int alpha = (color >> 24) & 0xFF;
-		if (alpha == 0) alpha = 0xFF;
-		int argb = (alpha << 24) | (color & 0x00FFFFFF);
+	private void renderFilledCircle(GuiGraphics gfx, int centerX, int centerY, int radius, int color) {
+		int radiusSq = radius * radius;
+		for (int y = -radius; y <= radius; y++) {
+			for (int x = -radius; x <= radius; x++) {
+				if (x * x + y * y <= radiusSq) {
+					gfx.fill(centerX + x, centerY + y, centerX + x + 1, centerY + y + 1, color);
+				}
+			}
+		}
+	}
 
-		// Downward-pointing angular arrow: ▽
-		int cx = x + FRAME_THICKNESS + BAR_WIDTH / 2;
-		gfx.fill(cx - 4, y, cx + 4, y + 1, argb);       // top wide
-		gfx.fill(cx - 3, y + 1, cx + 3, y + 2, argb);   // taper
-		gfx.fill(cx - 2, y + 2, cx + 2, y + 3, argb);   // taper
-		gfx.fill(cx - 1, y + 3, cx + 1, y + 4, argb);   // near point
-		gfx.fill(cx, y + 4, cx + 1, y + 5, argb);       // point
+	private void renderCircleOutline(GuiGraphics gfx, int centerX, int centerY, int radius, int color) {
+		int radiusSq = radius * radius;
+		int innerSq = (radius - 1) * (radius - 1);
+		for (int y = -radius; y <= radius; y++) {
+			for (int x = -radius; x <= radius; x++) {
+				int distSq = x * x + y * y;
+				if (distSq <= radiusSq && distSq >= innerSq) {
+					gfx.fill(centerX + x, centerY + y, centerX + x + 1, centerY + y + 1, color);
+				}
+			}
+		}
+	}
+
+	private void drawDiamondOutline(GuiGraphics gfx, int centerX, int centerY, int radius, int color) {
+		for (int d = 0; d <= radius; d++) {
+			gfx.fill(centerX + d, centerY - radius + d, centerX + d + 1, centerY - radius + d + 1, color);
+			gfx.fill(centerX + radius - d, centerY + d, centerX + radius - d + 1, centerY + d + 1, color);
+			gfx.fill(centerX - d, centerY - radius + d, centerX - d + 1, centerY - radius + d + 1, color);
+			gfx.fill(centerX - radius + d, centerY + d, centerX - radius + d + 1, centerY + d + 1, color);
+		}
+	}
+
+	private float ellipseDistance(float px, float py, float cx, float cy, float rx, float ry) {
+		float dx = (px - cx) / rx;
+		float dy = (py - cy) / ry;
+		return dx * dx + dy * dy;
+	}
+
+	private int lerpColor(int from, int to, float t) {
+		t = Mth.clamp(t, 0f, 1f);
+		int a = (int) (alpha(from) + (alpha(to) - alpha(from)) * t);
+		int r = (int) (red(from) + (red(to) - red(from)) * t);
+		int g = (int) (green(from) + (green(to) - green(from)) * t);
+		int b = (int) (blue(from) + (blue(to) - blue(from)) * t);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	private int alphaBlend(int base, int overlay) {
+		float overlayA = alpha(overlay) / 255f;
+		int a = Math.max(alpha(base), alpha(overlay));
+		int r = (int) (red(base) * (1f - overlayA) + red(overlay) * overlayA);
+		int g = (int) (green(base) * (1f - overlayA) + green(overlay) * overlayA);
+		int b = (int) (blue(base) * (1f - overlayA) + blue(overlay) * overlayA);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	private int multiplyColor(int color, float factor) {
+		int a = alpha(color);
+		int r = (int) Mth.clamp(red(color) * factor, 0, 255);
+		int g = (int) Mth.clamp(green(color) * factor, 0, 255);
+		int b = (int) Mth.clamp(blue(color) * factor, 0, 255);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	private int withAlpha(int color, int alpha) {
+		return (Mth.clamp(alpha, 0, 255) << 24) | (color & 0x00FFFFFF);
+	}
+
+	private int alpha(int color) {
+		return color >>> 24 & 0xFF;
+	}
+
+	private int red(int color) {
+		return color >>> 16 & 0xFF;
+	}
+
+	private int green(int color) {
+		return color >>> 8 & 0xFF;
+	}
+
+	private int blue(int color) {
+		return color & 0xFF;
 	}
 }
