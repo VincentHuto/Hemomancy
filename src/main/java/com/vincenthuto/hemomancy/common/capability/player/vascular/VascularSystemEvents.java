@@ -20,7 +20,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class VascularSystemEvents {	/**
@@ -68,7 +67,7 @@ public class VascularSystemEvents {	/**
 
 		// Fall damage hits the legs
 		if (source.is(DamageTypes.FALL)) {
-			return player.level().random.nextBoolean() ? EnumVeinSections.LEFTLEG : EnumVeinSections.RIGHTLEG;
+			return EnumVeinSections.LEGS;
 		}
 
 		// Projectiles hit the body
@@ -94,7 +93,7 @@ public class VascularSystemEvents {	/**
 		// Melee/generic â€” weighted random favoring body and arms
 		EnumVeinSections[] meleePool = {
 				EnumVeinSections.BODY, EnumVeinSections.BODY,
-				EnumVeinSections.LEFTARM, EnumVeinSections.RIGHTARM,
+				EnumVeinSections.ARMS, EnumVeinSections.ARMS,
 				EnumVeinSections.HEAD
 		};
 		return meleePool[player.level().random.nextInt(meleePool.length)];
@@ -134,8 +133,8 @@ public class VascularSystemEvents {	/**
 	 *   <li>  HEAD (DEAD) â†’ Blindness, (CLOTTED) â†’ Nausea</li>
 	 *   <li>  HEART (DEAD) â†’ Wither, (CLOTTED) â†’ Weakness</li>
 	 *   <li>  BODY (DEAD) â†’ Hunger, (CLOTTED) â†’ Mining Fatigue</li>
-	 *   <li>  LEG sections (DEAD) â†’ Slowness II, (CLOTTED) â†’ Slowness I</li>
-	 *   <li>  ARM sections (DEAD) â†’ Mining Fatigue II, (CLOTTED) â†’ Weakness</li>
+	 *   <li>  LEGS (DEAD) â†’ Slowness II, (CLOTTED) â†’ Slowness I</li>
+	 *   <li>  ARMS (DEAD) â†’ Mining Fatigue II, (CLOTTED) â†’ Weakness</li>
 	 * </ul>
 	 */
 	@SubscribeEvent
@@ -195,16 +194,16 @@ public class VascularSystemEvents {	/**
 					case HEAD -> player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0, false, false, true));
 					case HEART -> player.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0, false, false, true));
 					case BODY -> player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 1, false, false, true));
-					case LEFTLEG, RIGHTLEG -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1, false, false, true));
-					case LEFTARM, RIGHTARM -> player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 1, false, false, true));
+					case LEGS -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1, false, false, true));
+					case ARMS -> player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 1, false, false, true));
 				}
 			} else if (flow == EnumBloodFlow.ClOTTED) {
 				switch (section) {
 					case HEAD -> player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60, 0, false, false, true));
 					case HEART -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, false, false, true));
 					case BODY -> player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 0, false, false, true));
-					case LEFTLEG, RIGHTLEG -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, false, true));
-					case LEFTARM, RIGHTARM -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, false, false, true));
+					case LEGS -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, false, true));
+					case ARMS -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, false, false, true));
 				}
 			}
 		}

@@ -13,29 +13,28 @@ public class VascularSystem implements IVascularSystem, INBTSerializable<Compoun
 			put(EnumVeinSections.HEAD, 100f);
 			put(EnumVeinSections.HEART, 100f);
 			put(EnumVeinSections.BODY, 100f);
-			put(EnumVeinSections.LEFTARM, 100f);
-			put(EnumVeinSections.RIGHTARM, 100f);
-			put(EnumVeinSections.LEFTLEG, 100f);
-			put(EnumVeinSections.RIGHTLEG, 100f);
+			put(EnumVeinSections.ARMS, 100f);
+			put(EnumVeinSections.LEGS, 100f);
 		}
 	};
 
 	@Override
 	public EnumBloodFlow getBloodFlowBySection(EnumVeinSections sectionIn) {
-		if (vascularSystem.get(sectionIn) >= 90) {
+		float health = getHealthBySection(sectionIn);
+		if (health >= 90) {
 			return EnumBloodFlow.RAGING;
-		} else if (vascularSystem.get(sectionIn) < 90 && vascularSystem.get(sectionIn) >= 75) {
+		} else if (health < 90 && health >= 75) {
 			return EnumBloodFlow.FLOWING;
 
-		} else if (vascularSystem.get(sectionIn) < 75 && vascularSystem.get(sectionIn) >= 50) {
+		} else if (health < 75 && health >= 50) {
 			return EnumBloodFlow.STABLE;
 
-		} else if (vascularSystem.get(sectionIn) < 50 && vascularSystem.get(sectionIn) >= 15) {
+		} else if (health < 50 && health >= 15) {
 			return EnumBloodFlow.VARICOSE;
 
-		} else if (vascularSystem.get(sectionIn) < 15 && vascularSystem.get(sectionIn) > 0) {
+		} else if (health < 15 && health > 0) {
 			return EnumBloodFlow.ClOTTED;
-		} else if (vascularSystem.get(sectionIn) < 0) {
+		} else if (health <= 0) {
 			return EnumBloodFlow.DEAD;
 		}
 		return EnumBloodFlow.STABLE;
@@ -82,7 +81,25 @@ public class VascularSystem implements IVascularSystem, INBTSerializable<Compoun
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 		for (EnumVeinSections key : EnumVeinSections.values()) {
-			vascularSystem.put(key, nbt.getFloat(key.toString()));
+			if (nbt.contains(key.toString())) {
+				vascularSystem.put(key, nbt.getFloat(key.toString()));
+			}
+		}
+
+		boolean hasLeftArm = nbt.contains("LEFTARM");
+		boolean hasRightArm = nbt.contains("RIGHTARM");
+		if (hasLeftArm || hasRightArm) {
+			float leftArm = hasLeftArm ? nbt.getFloat("LEFTARM") : 100f;
+			float rightArm = hasRightArm ? nbt.getFloat("RIGHTARM") : 100f;
+			vascularSystem.put(EnumVeinSections.ARMS, Math.min(leftArm, rightArm));
+		}
+
+		boolean hasLeftLeg = nbt.contains("LEFTLEG");
+		boolean hasRightLeg = nbt.contains("RIGHTLEG");
+		if (hasLeftLeg || hasRightLeg) {
+			float leftLeg = hasLeftLeg ? nbt.getFloat("LEFTLEG") : 100f;
+			float rightLeg = hasRightLeg ? nbt.getFloat("RIGHTLEG") : 100f;
+			vascularSystem.put(EnumVeinSections.LEGS, Math.min(leftLeg, rightLeg));
 		}
 	}
 

@@ -265,10 +265,10 @@ public class VascularStatusScreen extends Screen {
 		// The torso model part covers both HEART and BODY sections — use their average health
 		renderTintedPartBlended(poseStack, bufferSource, model.body, vascular,
 				EnumVeinSections.HEART, EnumVeinSections.BODY);
-		renderTintedPart(poseStack, bufferSource, model.rightArm, vascular, EnumVeinSections.RIGHTARM);
-		renderTintedPart(poseStack, bufferSource, model.leftArm, vascular, EnumVeinSections.LEFTARM);
-		renderTintedPart(poseStack, bufferSource, model.rightLeg, vascular, EnumVeinSections.RIGHTLEG);
-		renderTintedPart(poseStack, bufferSource, model.leftLeg, vascular, EnumVeinSections.LEFTLEG);
+		renderTintedPart(poseStack, bufferSource, model.rightArm, vascular, EnumVeinSections.ARMS);
+		renderTintedPart(poseStack, bufferSource, model.leftArm, vascular, EnumVeinSections.ARMS);
+		renderTintedPart(poseStack, bufferSource, model.rightLeg, vascular, EnumVeinSections.LEGS);
+		renderTintedPart(poseStack, bufferSource, model.leftLeg, vascular, EnumVeinSections.LEGS);
 
 		bufferSource.endBatch();
 		RenderSystem.disableBlend();
@@ -373,10 +373,10 @@ public class VascularStatusScreen extends Screen {
 			new BodySectionDef(EnumVeinSections.HEAD,     0.0f, -0.55f, 0.0f, 22, 22),
 			new BodySectionDef(EnumVeinSections.HEART,    0.0f, -0.15f, 0.0f, 24, 16),
 			new BodySectionDef(EnumVeinSections.BODY,     0.0f,  0.15f, 0.0f, 24, 20),
-			new BodySectionDef(EnumVeinSections.RIGHTARM, -0.40f, 0.0f, 0.0f, 14, 38),
-			new BodySectionDef(EnumVeinSections.LEFTARM,   0.40f, 0.0f, 0.0f, 14, 38),
-			new BodySectionDef(EnumVeinSections.RIGHTLEG, -0.12f, 0.65f, 0.0f, 14, 36),
-			new BodySectionDef(EnumVeinSections.LEFTLEG,   0.12f, 0.65f, 0.0f, 14, 36),
+			new BodySectionDef(EnumVeinSections.ARMS,     -0.40f, 0.0f, 0.0f, 14, 38),
+			new BodySectionDef(EnumVeinSections.ARMS,      0.40f, 0.0f, 0.0f, 14, 38),
+			new BodySectionDef(EnumVeinSections.LEGS,     -0.12f, 0.65f, 0.0f, 14, 36),
+			new BodySectionDef(EnumVeinSections.LEGS,      0.12f, 0.65f, 0.0f, 14, 36),
 		};
 
 		EnumVeinSections hoveredSection = null;

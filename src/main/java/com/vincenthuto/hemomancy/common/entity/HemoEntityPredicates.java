@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.GlowSquid;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.SnowGolem;

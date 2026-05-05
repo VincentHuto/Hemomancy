@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
+import net.minecraft.world.entity.monster.ElderGuardian;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
@@ -15,7 +16,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.animal.allay.Allay;
-import net.minecraft.world.entity.boss.elderguardian.ElderGuardian;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.warden.Warden;

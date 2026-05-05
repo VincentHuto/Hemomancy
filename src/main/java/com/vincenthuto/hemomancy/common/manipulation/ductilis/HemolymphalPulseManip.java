@@ -62,7 +62,7 @@ public class HemolymphalPulseManip extends BloodManipulation {
 		}
 
 		if (tagged > 0) {
-			world.playSound(null, player.blockPosition(), SoundEvents.HEART_HIT,
+			world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT,
 					SoundSource.PLAYERS, 0.8f, 0.6f);
 		}
 	}
