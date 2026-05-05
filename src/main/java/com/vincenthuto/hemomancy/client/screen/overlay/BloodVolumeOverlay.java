@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -17,6 +18,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,9 +27,9 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.Random;
 
 /**
- * Programmatic blood volume HUD overlay.
- * Renders an evolving Harbinger vessel whose frame changes with initiatory
- * degree and whose Archon crown contains the nine Qliphoth pome sockets.
+ * Blood volume HUD overlay.
+ * The main Harbinger vessel is assembled from static texture layers so the HUD
+ * does not rebuild the crown, frame, and Apotheos helix pixel-by-pixel each frame.
  */
 public class BloodVolumeOverlay {
 
@@ -38,9 +40,20 @@ public class BloodVolumeOverlay {
     private static final int VESSEL_H = 92;
     private static final int VESSEL_TOP = 26;
     private static final int VESSEL_BOTTOM = VESSEL_TOP + VESSEL_H;
+    private static final int APOTHEOS_FILL_FRAMES = 16;
+    private static final int[][] POME_POINTS = {
+            {0, -13}, {-15, -7}, {15, -7}, {-27, 5}, {27, 5},
+            {-31, 23}, {31, 23}, {-20, 40}, {20, 40}
+    };
     private static final int GOURD_W = 18;
     private static final int GOURD_H = 26;
     private static final int HORN_W = 24;
+
+    private static final ResourceLocation VESSEL_BACK_TEXTURE = texture("vessel_back");
+    private static final ResourceLocation APOTHEOS_HALO_TEXTURE = texture("halo_apotheos");
+    private static final ResourceLocation[] DEGREE_BASE_TEXTURES = textureRange("base_degree_", 9);
+    private static final ResourceLocation[] POME_TEXTURES = textureRange("pomes_", 10);
+    private static final ResourceLocation[] APOTHEOS_FILL_TEXTURES = textureRange("fill_apotheos_", APOTHEOS_FILL_FRAMES);
     private static final int HORN_H = 18;
 
     private static final int BORDER_OUTER = 0xFF330808;
@@ -140,22 +153,20 @@ public class BloodVolumeOverlay {
             pomeProgress = 9;
         }
         boolean isApotheos = degreeNumber >= 8;
-        float bloodCorruption = degreeNumber >= 7 ? Mth.clamp(pomeProgress / 9f, 0f, 1f) : 0f;
 
         int centerX = posX + OVERLAY_W / 2;
-        int vesselX = centerX - VESSEL_W / 2;
-        int vesselY = posY + VESSEL_TOP;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
         if (isApotheos) {
-            renderApotheosHalo(gfx, centerX, vesselY + 48, time);
+            blitOverlay(gfx, APOTHEOS_HALO_TEXTURE, posX, posY);
         }
-        renderDegreeOrnament(gfx, centerX, vesselY, degreeNumber, time);
-        renderCrownVessel(gfx, vesselX, vesselY, ratio, bloodCorruption, degreeNumber, time);
+        blitOverlay(gfx, VESSEL_BACK_TEXTURE, posX, posY);
+        renderLayeredBloodFill(gfx, posX, posY, ratio, degreeNumber, pomeProgress, time);
+        blitOverlay(gfx, DEGREE_BASE_TEXTURES[degreeNumber], posX, posY);
         if (degreeNumber >= 7) {
-            renderPomeCrown(gfx, centerX, vesselY, pomeProgress, isApotheos, time);
+            renderPomeSockets(gfx, posX, posY, pomeProgress);
         }
         renderEquippedGourd(gfx, player, posX, posY, screenWidth, screenHeight, time);
 
@@ -166,6 +177,147 @@ public class BloodVolumeOverlay {
         String volText = String.format("%.0f", vol);
         int textX = centerX - (fr.width(volText) / 2);
         gfx.drawString(fr, Component.literal(volText), textX, posY + 10, 0xFFE05A5A, true);
+    }
+
+    private static ResourceLocation texture(String name) {
+        return Hemomancy.rloc("textures/gui/blood_overlay/" + name + ".png");
+    }
+
+    private static ResourceLocation[] textureRange(String prefix, int count) {
+        ResourceLocation[] textures = new ResourceLocation[count];
+        for (int i = 0; i < count; i++) {
+            textures[i] = texture(prefix + i);
+        }
+        return textures;
+    }
+
+    private void blitOverlay(GuiGraphics gfx, ResourceLocation texture, int x, int y) {
+        gfx.blit(texture, x, y, 0, 0, OVERLAY_W, OVERLAY_H, OVERLAY_W, OVERLAY_H);
+    }
+
+    private void renderPomeSockets(GuiGraphics gfx, int x, int y, int pomeProgress) {
+        if (!HemoClientConfig.RENDER_CROWN_POMES_AS_ITEMS.get()) {
+            blitOverlay(gfx, POME_TEXTURES[pomeProgress], x, y);
+            return;
+        }
+
+        blitOverlay(gfx, POME_TEXTURES[0], x, y);
+        ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
+        int centerX = x + OVERLAY_W / 2;
+        int vesselY = y + VESSEL_TOP;
+        for (int i = 0; i < pomeProgress && i < POME_POINTS.length; i++) {
+            int itemX = centerX + POME_POINTS[i][0] - 8;
+            int itemY = vesselY + POME_POINTS[i][1] - 8;
+            gfx.renderItem(pomeStack, itemX, itemY);
+        }
+    }
+
+    private void renderLayeredBloodFill(GuiGraphics gfx, int x, int y, double ratio, int degree, int pomeProgress, float time) {
+        if (ratio <= 0.0D) {
+            return;
+        }
+
+        int fillOffset = VESSEL_TOP + VESSEL_H - (int) Math.round(VESSEL_H * ratio);
+        int fillHeight = VESSEL_BOTTOM - fillOffset;
+        if (fillHeight <= 0) {
+            return;
+        }
+
+        if (degree >= 8) {
+            int frame = Math.floorMod((int) (time * 8.0f), APOTHEOS_FILL_FRAMES);
+            ResourceLocation fillTexture = APOTHEOS_FILL_TEXTURES[frame];
+            gfx.blit(fillTexture, x, y + fillOffset, 0, fillOffset, OVERLAY_W, fillHeight, OVERLAY_W, OVERLAY_H);
+            renderApotheosBloodActivity(gfx, x, y, fillOffset, fillHeight, time);
+        } else {
+            renderProceduralBloodFill(gfx, x, y, fillOffset, fillHeight, degree, pomeProgress, time);
+        }
+
+        renderFillMeniscus(gfx, x, y, fillOffset, degree, pomeProgress, time);
+    }
+
+    private void renderProceduralBloodFill(GuiGraphics gfx, int x, int y, int fillOffset, int fillHeight,
+                                           int degree, int pomeProgress, float time) {
+        int centerX = x + OVERLAY_W / 2;
+        int fillBottom = fillOffset + fillHeight;
+        float corruption = degree >= 7 ? Mth.clamp(pomeProgress / 9.0f, 0.0f, 1.0f) : 0.0f;
+
+        for (int local = fillOffset; local < fillBottom; local++) {
+            int vesselLocalY = Mth.clamp(local - VESSEL_TOP, 0, VESSEL_H - 1);
+            int halfInner = Math.max(1, vesselHalfWidth(vesselLocalY, false));
+            float depth = Mth.clamp((local - fillOffset) / (float) Math.max(fillHeight, 1), 0.0f, 1.0f);
+            float pulse = 0.82f + 0.18f * Mth.sin(time * 1.5f + vesselLocalY * 0.11f);
+            float fade = 1.0f - corruption * 0.70f;
+            int color = multiplyColor(blendColor(0xEED32327, 0xEE520507, depth), pulse * fade);
+            if (corruption > 0.0f) {
+                color = alphaBlend(color, ((int) (118 * corruption) << 24) | 0x00030106);
+            }
+
+            gfx.fill(centerX - halfInner, y + local, centerX + halfInner + 1, y + local + 1, color);
+
+            if (degree >= 6 && (vesselLocalY + (int) (time * 9.0f)) % 19 < 2) {
+                int veinX = centerX + Math.round(Mth.sin(time * 0.9f + vesselLocalY * 0.18f) * (halfInner - 3));
+                gfx.fill(veinX, y + local, veinX + 2, y + local + 1,
+                        alphaBlend(0x6635080A, ((int) (90 * corruption) << 24) | 0x00010002));
+            }
+        }
+
+        renderBloodBubbles(gfx, x, y, fillOffset, fillHeight, time, corruption);
+    }
+
+    private void renderApotheosBloodActivity(GuiGraphics gfx, int x, int y, int fillOffset, int fillHeight, float time) {
+        int centerX = x + OVERLAY_W / 2;
+        int fillBottom = fillOffset + fillHeight;
+        for (int i = 0; i < 3; i++) {
+            float phase = time * (0.55f + i * 0.13f) + i * 0.31f;
+            int local = fillOffset + Math.floorMod((int) (phase * VESSEL_H), Math.max(fillHeight, 1));
+            if (local < fillOffset || local >= fillBottom) {
+                continue;
+            }
+            int vesselLocalY = Mth.clamp(local - VESSEL_TOP, 0, VESSEL_H - 1);
+            int halfInner = Math.max(3, vesselHalfWidth(vesselLocalY, false) - 2);
+            int drift = Math.round(Mth.sin(time * 1.1f + i * 2.4f) * (halfInner - 2));
+            gfx.fill(centerX + drift - 1, y + local, centerX + drift + 2, y + local + 2, 0x70420612);
+        }
+        renderBloodBubbles(gfx, x, y, fillOffset, fillHeight, time, 1.0f);
+    }
+
+    private void renderBloodBubbles(GuiGraphics gfx, int x, int y, int fillOffset, int fillHeight, float time, float corruption) {
+        if (fillHeight <= 5) {
+            return;
+        }
+
+        int centerX = x + OVERLAY_W / 2;
+        Random bubbleRand = new Random(7777L);
+        for (int i = 0; i < 7; i++) {
+            float speed = 0.18f + bubbleRand.nextFloat() * 0.38f;
+            float phase = bubbleRand.nextFloat();
+            float progress = (time * speed + phase) % 1.0f;
+            int localY = fillOffset + fillHeight - 3 - Math.round(progress * Math.max(fillHeight - 5, 1));
+            if (localY < fillOffset + 2 || localY >= fillOffset + fillHeight - 1) {
+                continue;
+            }
+
+            int vesselLocalY = Mth.clamp(localY - VESSEL_TOP, 0, VESSEL_H - 1);
+            int halfInner = Math.max(2, vesselHalfWidth(vesselLocalY, false) - 3);
+            int bubbleX = centerX - halfInner + bubbleRand.nextInt(Math.max(halfInner * 2, 1));
+            int alpha = (int) (Mth.clamp((1.0f - Math.abs(progress - 0.5f) * 1.7f), 0.0f, 1.0f) * 72);
+            int color = alphaBlend((alpha << 24) | 0x00FF4A40, ((int) (120 * corruption) << 24) | 0x00100616);
+            gfx.fill(bubbleX, y + localY, bubbleX + 1, y + localY + 1, color);
+            if (i % 3 == 0) {
+                gfx.fill(bubbleX + 1, y + localY + 1, bubbleX + 2, y + localY + 2, color & 0x88FFFFFF);
+            }
+        }
+    }
+
+    private void renderFillMeniscus(GuiGraphics gfx, int x, int y, int fillOffset, int degree, int pomeProgress, float time) {
+        int localY = Mth.clamp(fillOffset - VESSEL_TOP, 0, VESSEL_H - 1);
+        int halfInner = Math.max(1, vesselHalfWidth(localY, false));
+        int centerX = x + OVERLAY_W / 2;
+        int rowY = y + fillOffset;
+        int corruptionAlpha = degree >= 7 ? (int) (120 * (pomeProgress / 9.0f)) : 0;
+        int meniscus = degree >= 8 ? 0xAA560710 : alphaBlend(0xBBDD2F2F, (corruptionAlpha << 24) | 0x00030106);
+        int wave = Math.round(Mth.sin(time * 2.2f + localY * 0.3f) * 1.25f);
+        gfx.fill(centerX - halfInner, rowY + wave, centerX + halfInner + 1, rowY + wave + 1, meniscus);
     }
 
     private void renderDegreeOrnament(GuiGraphics gfx, int centerX, int vesselY, int degree, float time) {

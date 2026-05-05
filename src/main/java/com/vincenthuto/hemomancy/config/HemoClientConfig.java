@@ -6,6 +6,7 @@ public class HemoClientConfig {
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
 	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
+	public static ModConfigSpec.BooleanValue RENDER_CROWN_POMES_AS_ITEMS;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_GOURD_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_VASCULARIUM_CHARM_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_JAR_LAYER;
@@ -23,6 +24,10 @@ public class HemoClientConfig {
 	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER
 		.comment("Render cooldowns as full-screen vignette overlays. If false, cooldowns render as compact numerical timers beside the relevant HUD gauge.")
 		.define("useCooldownVignette", true);
+
+	RENDER_CROWN_POMES_AS_ITEMS = CLIENT_BUILDER
+		.comment("Render Qliphoth Communion crown sockets using the real Qliphoth Pome item icon instead of filled HUD pips.")
+		.define("renderCrownPomesAsItems", false);
 
         CLIENT_BUILDER.pop();
 
