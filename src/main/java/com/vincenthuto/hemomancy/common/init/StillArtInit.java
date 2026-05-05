@@ -41,7 +41,7 @@ public class StillArtInit {
 					.defaultKey(Hemomancy.rloc("silver_rebuke")));
 
 	public static final DeferredHolder<StillArt, StillArt> silver_rebuke = STILL_ARTS.register("silver_rebuke",
-			() -> new StillArt("silver_rebuke", EnumClarityStage.AWAKENED, 60, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("silver_rebuke", EnumClarityStage.AWAKENED, 200, (player, level, heldItem, pos, art) -> {
 				AABB area = player.getBoundingBox().inflate(5.0);
 				Vec3 look = player.getLookAngle().normalize();
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
@@ -58,7 +58,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> lethean_mute = STILL_ARTS.register("lethean_mute",
-			() -> new StillArt("lethean_mute", EnumClarityStage.AWAKENED, 160, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("lethean_mute", EnumClarityStage.AWAKENED, 320, (player, level, heldItem, pos, art) -> {
 				AABB area = player.getBoundingBox().inflate(6.0);
 				List<Monster> targets = level.getEntitiesOfClass(Monster.class, area, Monster::isAlive);
 				targets.forEach(target -> {
@@ -72,7 +72,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> still_pulse = STILL_ARTS.register("still_pulse",
-			() -> new StillArt("still_pulse", EnumClarityStage.DISCERNING, 120, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("still_pulse", EnumClarityStage.DISCERNING, 260, (player, level, heldItem, pos, art) -> {
 				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(7.0), Monster::isAlive)
 						.forEach(target -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true)));
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true));
@@ -82,7 +82,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> pale_diagnosis = STILL_ARTS.register("pale_diagnosis",
-			() -> new StillArt("pale_diagnosis", EnumClarityStage.DISCERNING, 100, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("pale_diagnosis", EnumClarityStage.DISCERNING, 240, (player, level, heldItem, pos, art) -> {
 				List<LivingEntity> targets = level.getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT,
 						player, player.getBoundingBox().inflate(18.0));
 				int marked = 0;
@@ -103,7 +103,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> memory_shear = STILL_ARTS.register("memory_shear",
-			() -> new StillArt("memory_shear", EnumClarityStage.VIGILANT, 140, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("memory_shear", EnumClarityStage.VIGILANT, 300, (player, level, heldItem, pos, art) -> {
 				Monster target = level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(10.0), Monster::isAlive)
 						.stream().min(Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
 				if (target == null) {
@@ -120,7 +120,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> absolving_step = STILL_ARTS.register("absolving_step",
-			() -> new StillArt("absolving_step", EnumClarityStage.VIGILANT, 80, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("absolving_step", EnumClarityStage.VIGILANT, 220, (player, level, heldItem, pos, art) -> {
 				Vec3 look = player.getLookAngle().normalize();
 				player.setDeltaMovement(look.x * 1.6, Math.max(0.15, player.getDeltaMovement().y), look.z * 1.6);
 				player.move(MoverType.SELF, player.getDeltaMovement());
@@ -133,7 +133,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> quietus_bell = STILL_ARTS.register("quietus_bell",
-			() -> new StillArt("quietus_bell", EnumClarityStage.RESOLUTE, 220, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("quietus_bell", EnumClarityStage.RESOLUTE, 420, (player, level, heldItem, pos, art) -> {
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 1, false, true));
 				player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, false, true));
 				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(8.0), Monster::isAlive)
@@ -143,7 +143,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> autoimmune_edge = STILL_ARTS.register("autoimmune_edge",
-			() -> new StillArt("autoimmune_edge", EnumClarityStage.ENLIGHTENED, 300, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("autoimmune_edge", EnumClarityStage.ENLIGHTENED, 600, (player, level, heldItem, pos, art) -> {
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5.0),
 						target -> target != player && target.isAlive());
 				targets.forEach(target -> {

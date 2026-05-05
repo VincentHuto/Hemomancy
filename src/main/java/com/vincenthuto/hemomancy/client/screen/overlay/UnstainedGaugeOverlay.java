@@ -40,6 +40,22 @@ public class UnstainedGaugeOverlay {
 	private final Minecraft mc = Minecraft.getInstance();
 	private float animTime = 0f;
 
+	public static boolean isConfiguredOnLeftSide() {
+		return false;
+	}
+
+	public static int getGaugeCenterX(int screenWidth) {
+		return screenWidth - 34;
+	}
+
+	public static int getGaugeCenterY() {
+		return 54;
+	}
+
+	public static int getGaugeRadius() {
+		return DIAMOND_RADIUS;
+	}
+
 	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {
 		LocalPlayer player = mc.player;
 		if (player == null) return;
@@ -70,8 +86,8 @@ public class UnstainedGaugeOverlay {
 		int right = screenWidth - 8;
 		int titleY = 6;
 		int percentY = titleY + 11;
-		int centerX = screenWidth - 34;
-		int centerY = 54;
+		int centerX = getGaugeCenterX(screenWidth);
+		int centerY = getGaugeCenterY();
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();

@@ -304,6 +304,8 @@ The Unstained aesthetic is **white, silver, and oxidized copper**. Their Guardia
 
 Their weapons are exclusively **blunt instruments**: maces, war hammers, staves. They explicitly refuse to carry bladed weapons. The philosophy is simple: they do not want blood spilled anywhere near them.
 
+Their field equipment is practical before it is mystical. A **Pale Silver Bell** makes blood-magic hesitate and gives frightened practitioners a moment to breathe. A **Lethean Chalice** carries still water for rinsing poison, fever, and old influence from the body. A **Verdigris Censer** burns oxidized copper salts into a diagnostic smoke that marks blood-active bodies without needing to open them.
+
 ### 7.4 The Significance of Copper and Silver
 
 **Copper** is historically antiseptic — it does not harbor disease, and the Unstained have known this for generations (even if they did not understand the chemistry). Copper door handles, copper tools, copper armor — surrounding oneself with copper was believed to stave off illness.

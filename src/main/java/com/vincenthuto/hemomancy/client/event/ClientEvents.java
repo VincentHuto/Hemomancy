@@ -167,6 +167,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientTickPost(ClientTickEvent.Post event) {
         ManipCooldownOverlay.tick();
+        StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
         BloodBallClientData.tick();
         SanguineMonolithShatterRenderer.tick();
@@ -476,6 +477,7 @@ public class ClientEvents {
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();
             EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
             ManipCooldownOverlay.instance = new ManipCooldownOverlay();
+            StillArtCooldownOverlay.instance = new StillArtCooldownOverlay();
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
             // Tiles
@@ -762,6 +764,12 @@ public class ClientEvents {
                 if (ManipCooldownOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     ManipCooldownOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
+            event.registerAboveAll(Hemomancy.rloc("still_art_cooldown"), (graphics, deltaTracker) -> {
+                if (StillArtCooldownOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    StillArtCooldownOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
             event.registerAboveAll(Hemomancy.rloc("unstained_gauge"), (graphics, deltaTracker) -> {

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " D ",
+    "CSC",
+    " P "
+  ],
+  "key": {
+    "C": {
+      "item": "hemomancy:consecrated_copper_ingot"
+    },
+    "D": {
+      "item": "hemomancy:lethean_dew"
+    },
+    "P": {
+      "item": "hemomancy:pale_distillate"
+    },
+    "S": {
+      "item": "hemomancy:silver_chalice"
+    }
+  },
+  "result": {
+    "id": "hemomancy:lethean_chalice"
+  }
+}

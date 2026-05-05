@@ -1,0 +1,39 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 7,
+  "breakBlocksOnCreation": false,
+  "riteName": "Rite of Moon-Washed Copper",
+  "riteDescription": "Oxidized copper is washed in moon-cold clarity. Verdigris becomes halo, halo becomes diagnosis, and the highest Still Arts begin to answer.",
+  "pattern": [
+    ["CPVPVPC", "P     P", "V     V", "P  C  P", "V     V", "P     P", "CPVPVPC"],
+    ["       ", " CCCCC ", " C   C ", " C V C ", " C   C ", " CCCCC ", "       "],
+    ["       ", " C   C ", "  PVP  ", "  V V  ", "  PVP  ", " C   C ", "       "],
+    ["       ", " C V C ", "  V V  ", "  SLS  ", " SVLVS ", "  SLS  ", " C V C "],
+    ["       ", " C   C ", "  PVP  ", "  V V  ", "  PVP  ", " C   C ", "       "],
+    ["       ", " CCCCC ", " C   C ", " C V C ", " C   C ", " CCCCC ", "       "],
+    ["CPVPVPC", "P     P", "V     V", "P  C  P", "V     V", "P     P", "CPVPVPC"]
+  ],
+  "key": {
+    "C": {
+      "block": "minecraft:oxidized_copper"
+    },
+    "L": {
+      "block": "hemomancy:pallid_lantern"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    },
+    "S": {
+      "block": "hemomancy:suspended_cleansed_blood_crystal"
+    },
+    "V": {
+      "block": "hemomancy:virid_salis_trail"
+    }
+  },
+  "result": {
+    "id": "hemomancy:verdigris_censer"
+  },
+  "unstained": true
+}

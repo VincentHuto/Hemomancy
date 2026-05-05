@@ -542,7 +542,7 @@ Current basic Still Arts:
 | Quietus Bell | Resolute | Protective bell pulse that weakens surrounding hostiles |
 | Autoimmune Edge | Enlightened | Dangerous pale backlash against nearby living bodies |
 
-The Rite of Clarity currently grants **Silver Rebuke** as the first Still Art. Later Unstained rites and Pale Lady gifts should unlock the remaining arts progressively by clarity stage. The existing use-manipulation key casts the selected Still Art after Clarity, while pre-Clarity players keep the normal manipulation behavior.
+The Rite of Clarity currently grants **Silver Rebuke** as the first Still Art. The reusable non-breaking Unstained rites unlock the remaining arts progressively: Closed Vein grants Lethean Mute; Antiseptic Ground grants Still Pulse and Pale Diagnosis; Glass Lungs grants Memory Shear and Absolving Step once the caster is Vigilant; Moon-Washed Copper grants Quietus Bell, and Autoimmune Edge only answers after Enlightenment. The existing use-manipulation key casts the selected Still Art after Clarity, while pre-Clarity players keep the normal manipulation behavior.
 ### 4.6 Unstained Progression Level (`getPlayerUnstainedLevel`)
 
 To gate Unstained cardinal rites the same way Harbinger degree gates Harbinger rites, the full purity → clarity path is divided into **8 numbered levels** by `HemoCapabilityAccess.getPlayerUnstainedLevel(Player)`:
@@ -576,6 +576,7 @@ All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather
 | Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 5 (Purified) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
 | Rite of the Lethean Tide | `lethean_tide` | Greater | 3 (Cleansing) | Forcibly ends an active Blood Moon; grants the caster +10 purity |
 | Rite of Clarity Ascension | `clarity_ascension` | Greater | 5 (Purified) | Unlocks the clarity phase (`clarityUnlocked = true`); requires full purity enforced in handler |
+| Rite of the Closed Vein | `closed_vein` | Minor | 5 (Purified) | Reusable, non-breaking rite; clears Blood Loss, grants Silver Ward, slows nearby hostiles, and grants Lethean Mute after Clarity |
 | Rite of the Lethe Covenant | `lethe_covenant` | Grand | 8 (Enlightened) | Establishes a Lethe Covenant domain: 5 chunks, 30 min. Halves spawns, shields Silver Ward from bleed, passively grows purity for Unstained inside |
 | Rite of Lethean Judgment | `lethean_judgment` | Grand | 8 (Enlightened) | Offensive: applies Hemolysis (amp 2, 30 s) and disrupts vascular system of all blood-active players within 16 blocks |
 
@@ -584,7 +585,10 @@ All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather
 | Rite | File | Rite Form | Required Stage | Effect |
 |------|------|-----------|----------------|--------|
 | Rite of the Silver Dawn | `silver_dawn` | Greater | 6 (Discerning) | Converts blood-faction blocks to cleansed equivalents in 8-block radius; grants Verdigris Aura (amp 2, 10 min) and +5 clarity |
+| Rite of Antiseptic Ground | `antiseptic_ground` | Lesser | 6 (Discerning) | Reusable, non-breaking rite; creates a 15-min antiseptic ground zone and grants Still Pulse + Pale Diagnosis |
+| Rite of Glass Lungs | `glass_lungs` | Lesser | 7 (Vigilant) | Reusable, non-breaking rite; clears poison/wither/fire, grants clean breath and slow falling, and grants Memory Shear + Absolving Step |
 | Rite of the Pale Vigil | `pale_vigil` | Greater | 7 (Vigilant) | Bursts +10 clarity, Silver Ward (amp 2, 30 min), and Verdigris Aura (amp 2, 30 min) to all clarity-bearing Unstained within 40 blocks. Grants `ADV_VIGILANT`. |
+| Rite of Moon-Washed Copper | `moon_washed_copper` | Greater | 7 (Vigilant) | Reusable, non-breaking rite; grants Verdigris Aura/Silver Ward, +5 clarity (+10 at night), Quietus Bell, and Autoimmune Edge if Enlightened |
 | Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`. |
 
 ### 4.8 HUD
@@ -1091,6 +1095,9 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 | Tears of Silthmere | Distilled from Lethean Dew — used at the Altar of Cleansing for a one-time purity boost (+25) |
 | ![](src/main/resources/assets/hemomancy/textures/item/lethean_poppy_wreath.png) Lethean Poppy Wreath | Woven from Lethean Poppies — repeatable altar offering (+5 purity) |
 | ![](src/main/resources/assets/hemomancy/textures/item/silver_chalice.png) Silver Chalice | A ritual vessel of the Unstained — offered at the Altar of Cleansing for clarity (+5) |
+| Pale Silver Bell | Handheld Unstained support equipment. Use grants short Silver Ward and weakens/slows nearby hostiles. |
+| Lethean Chalice | Reusable still-water vessel. Use clears one harmful effect, extinguishes fire, grants brief regeneration, and adds Verdigris Aura after Clarity. |
+| Verdigris Censer | Reusable oxidized-copper support tool. Use grants Verdigris Aura and marks nearby monsters or blood-active bodies with Glowing + Weakness. |
 | Tome of the Unstained | A book of Unstained scripture describing Our Lady of Still Waters and the path of purification |
 | Icon of Our Lady | A rare relic depicting Our Lady of Still Waters — carved from pale silver, grants her protection |
 | ![](src/main/resources/assets/hemomancy/textures/item/pale_silver_ingot.png) Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |

@@ -1,0 +1,34 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "required_degree": 6,
+  "breakBlocksOnCreation": false,
+  "riteName": "Rite of Antiseptic Ground",
+  "riteDescription": "Virid salis and cleansed stone are laid as a warded floor. The ground refuses blood gathering, searing hostile bodies that cross it.",
+  "pattern": [
+    ["VCSCV", "C   C", "S P S", "C   C", "VCSCV"],
+    ["     ", " VVV ", " VCV ", " VVV ", "     "],
+    ["  C  ", " CVC ", "CVPVC", " CVC ", "  C  "],
+    ["     ", " VVV ", " VCV ", " VVV ", "     "],
+    ["VCSCV", "C   C", "S P S", "C   C", "VCSCV"]
+  ],
+  "key": {
+    "C": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "P": {
+      "block": "minecraft:smooth_quartz"
+    },
+    "S": {
+      "block": "hemomancy:suspended_cleansed_blood_crystal"
+    },
+    "V": {
+      "block": "hemomancy:virid_salis_trail"
+    }
+  },
+  "result": {
+    "id": "hemomancy:virid_salis_trail"
+  },
+  "unstained": true
+}

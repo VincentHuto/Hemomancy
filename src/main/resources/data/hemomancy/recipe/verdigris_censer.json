@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "VSV",
+    " P "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "P": {
+      "item": "hemomancy:pale_silver_ingot"
+    },
+    "S": {
+      "item": "hemomancy:consecrated_copper_ingot"
+    },
+    "V": {
+      "item": "hemomancy:virid_salis_trail"
+    }
+  },
+  "result": {
+    "id": "hemomancy:verdigris_censer"
+  }
+}

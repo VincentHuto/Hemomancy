@@ -1,0 +1,29 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "minor",
+  "required_degree": 5,
+  "breakBlocksOnCreation": false,
+  "riteName": "Rite of the Closed Vein",
+  "riteDescription": "The purified vessel is taught to close around old wounds. Blood loss is denied, hostile bodies are slowed, and the first mute arts of stillness settle more deeply.",
+  "pattern": [
+    ["PCP", "V V", "PCP"],
+    [" C ", "VPV", " C "],
+    ["PCP", "V V", "PCP"]
+  ],
+  "key": {
+    "C": {
+      "block": "minecraft:calcite"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    },
+    "V": {
+      "block": "hemomancy:virid_salis_trail"
+    }
+  },
+  "result": {
+    "id": "hemomancy:hemolytic_vial"
+  },
+  "unstained": true
+}

@@ -5,6 +5,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class HemoClientConfig {
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
+	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_GOURD_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_VASCULARIUM_CHARM_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_JAR_LAYER;
@@ -18,6 +19,10 @@ public class HemoClientConfig {
         HUD_LOCATION = CLIENT_BUILDER
                 .comment("Location of Blood Volume Hud(Top Left =0,Top Right =1,Bottom Left =2,Bottom Right =3")
                 .defineInRange("location", 0, 0, 3);
+
+	USE_COOLDOWN_VIGNETTE = CLIENT_BUILDER
+		.comment("Render cooldowns as full-screen vignette overlays. If false, cooldowns render as compact numerical timers beside the relevant HUD gauge.")
+		.define("useCooldownVignette", true);
 
         CLIENT_BUILDER.pop();
 

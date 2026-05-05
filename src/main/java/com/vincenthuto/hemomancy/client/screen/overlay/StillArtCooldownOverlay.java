@@ -3,17 +3,17 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 /**
- * HUD overlay that renders a reddish vignette around the screen edges
- * while any blood manipulation cooldown is active. The vignette fades
- * out as the cooldown expires.
+ * HUD overlay that renders a pale, low-intensity vignette while Still Arts are
+ * settling. Unlike manipulation cooldowns, this represents recovering focus
+ * rather than bloodshot strain.
  */
-public class ManipCooldownOverlay {
+public class StillArtCooldownOverlay {
 
-	public static ManipCooldownOverlay instance;
+	public static StillArtCooldownOverlay instance;
 
 	private static volatile int cooldownDuration = 0;
 	private static volatile int cooldownRemaining = 0;
@@ -42,30 +42,26 @@ public class ManipCooldownOverlay {
 			return;
 		}
 		if (!useCooldownVignette()) {
-			renderNumericCooldown(gfx, screenWidth, screenHeight);
+			renderNumericCooldown(gfx, screenWidth);
 			return;
 		}
 
 		float progress = (cooldownRemaining - partialTicks) / (float) cooldownDuration;
 		progress = Math.max(0.0f, Math.min(1.0f, progress));
 
-		float alpha = progress * 0.6f;
-		int edgeSize = (int) (Math.min(screenWidth, screenHeight) * 0.35f);
+		float alpha = progress * 0.28f;
+		int edgeSize = (int) (Math.min(screenWidth, screenHeight) * 0.30f);
 
-		int ri = 153; // 0.6 * 255
-		int gi = 0;
-		int bi = 0;
+		int ri = 245;
+		int gi = 250;
+		int bi = 255;
 		int a = (int) (alpha * 255);
 		int opaqueColor = (a << 24) | (ri << 16) | (gi << 8) | bi;
-		int transparentColor = (0 << 24) | (ri << 16) | (gi << 8) | bi;
+		int transparentColor = (ri << 16) | (gi << 8) | bi;
 
-		// Top edge — opaque at top, fading to transparent
 		gfx.fillGradient(0, 0, screenWidth, edgeSize, opaqueColor, transparentColor);
-
-		// Bottom edge — transparent at top, fading to opaque
 		gfx.fillGradient(0, screenHeight - edgeSize, screenWidth, screenHeight, transparentColor, opaqueColor);
 
-		// Left edge — per-column fill, opaque at left fading right
 		for (int col = 0; col < edgeSize; col++) {
 			float t = 1.0f - (float) col / edgeSize;
 			int ca = (int) (a * t);
@@ -73,7 +69,6 @@ public class ManipCooldownOverlay {
 			gfx.fill(col, 0, col + 1, screenHeight, color);
 		}
 
-		// Right edge — per-column fill, opaque at right fading left
 		for (int col = 0; col < edgeSize; col++) {
 			float t = (float) col / edgeSize;
 			int ca = (int) (a * t);
@@ -86,20 +81,21 @@ public class ManipCooldownOverlay {
 		return HemoClientConfig.USE_COOLDOWN_VIGNETTE == null || HemoClientConfig.USE_COOLDOWN_VIGNETTE.get();
 	}
 
-	private void renderNumericCooldown(GuiGraphics gfx, int screenWidth, int screenHeight) {
+	private void renderNumericCooldown(GuiGraphics gfx, int screenWidth) {
 		Minecraft mc = Minecraft.getInstance();
 		int seconds = Math.max(1, (int) Math.ceil(cooldownRemaining / 20.0));
 		Component text = Component.literal(seconds + "s");
 		int textWidth = mc.font.width(text);
 
-		boolean gaugeOnLeft = BloodVolumeOverlay.isConfiguredOnLeftSide();
-		int barX = BloodVolumeOverlay.getConfiguredBarX(screenWidth);
-		int barY = BloodVolumeOverlay.getConfiguredBarY(mc.player, screenHeight);
+		boolean gaugeOnLeft = UnstainedGaugeOverlay.isConfiguredOnLeftSide();
+		int centerX = UnstainedGaugeOverlay.getGaugeCenterX(screenWidth);
+		int centerY = UnstainedGaugeOverlay.getGaugeCenterY();
+		int radius = UnstainedGaugeOverlay.getGaugeRadius();
 		int x = gaugeOnLeft
-				? barX + BloodVolumeOverlay.getBarWidth() + 8
-				: barX - textWidth - 8;
-		int y = barY + BloodVolumeOverlay.getBarHeight() / 2 - 4;
+				? centerX + radius + 8
+				: centerX - radius - textWidth - 8;
+		int y = centerY - 4;
 
-		gfx.drawString(mc.font, text, x, y, 0xFFE05A5A, true);
+		gfx.drawString(mc.font, text, x, y, 0xFFEAF6FF, true);
 	}
 }

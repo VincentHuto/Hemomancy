@@ -19,8 +19,12 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -41,6 +45,10 @@ public class UnstainedCardinalRiteEvents {
 	private static final String LETHEAN_TIDE_RITE = "cardinal_rite/lethean_tide";
 	private static final String PALE_VIGIL_RITE = "cardinal_rite/pale_vigil";
 	private static final String LETHEAN_FONT_RITE = "cardinal_rite/lethean_font";
+	private static final String CLOSED_VEIN_RITE = "cardinal_rite/closed_vein";
+	private static final String ANTISEPTIC_GROUND_RITE = "cardinal_rite/antiseptic_ground";
+	private static final String GLASS_LUNGS_RITE = "cardinal_rite/glass_lungs";
+	private static final String MOON_WASHED_COPPER_RITE = "cardinal_rite/moon_washed_copper";
 	/** Radius (in blocks) for Lethean Judgment anti-blood disruption. */
 	private static final int LETHEAN_JUDGMENT_RADIUS = 16;
 	/** Duration in ticks for Silver Veil effect (30 minutes = 36000 ticks). */
@@ -61,6 +69,14 @@ public class UnstainedCardinalRiteEvents {
 	private static final float LETHEAN_FONT_CLARITY = 20.0f;
 	/** Duration of effects granted by the Lethean Font burst (1 hour). */
 	private static final int LETHEAN_FONT_EFFECT_TICKS = 72000;
+	private static final int CLOSED_VEIN_RADIUS = 24;
+	private static final int CLOSED_VEIN_EFFECT_TICKS = 12000;
+	private static final int ANTISEPTIC_GROUND_RADIUS = 12;
+	private static final long ANTISEPTIC_GROUND_DURATION_TICKS = 18000L;
+	private static final int GLASS_LUNGS_RADIUS = 24;
+	private static final int GLASS_LUNGS_EFFECT_TICKS = 18000;
+	private static final int MOON_WASHED_COPPER_RADIUS = 40;
+	private static final int MOON_WASHED_COPPER_EFFECT_TICKS = 24000;
 
 	/**
 	 * Dispatches completion effects for Unstained cardinal rites.
@@ -114,6 +130,22 @@ public class UnstainedCardinalRiteEvents {
 		}
 		if (LETHEAN_FONT_RITE.equals(ritePath)) {
 			completeLetheanFont(sLevel, caster, center);
+			return true;
+		}
+		if (CLOSED_VEIN_RITE.equals(ritePath)) {
+			completeClosedVein(sLevel, caster, center);
+			return true;
+		}
+		if (ANTISEPTIC_GROUND_RITE.equals(ritePath)) {
+			completeAntisepticGround(sLevel, caster, center);
+			return true;
+		}
+		if (GLASS_LUNGS_RITE.equals(ritePath)) {
+			completeGlassLungs(sLevel, caster, center);
+			return true;
+		}
+		if (MOON_WASHED_COPPER_RITE.equals(ritePath)) {
+			completeMoonWashedCopper(sLevel, caster, center);
 			return true;
 		}
 		return false;
@@ -232,6 +264,153 @@ public class UnstainedCardinalRiteEvents {
 			com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
 					caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_CLARITY_AWAKENED);
 		});
+	}
+
+	private static void completeClosedVein(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		AABB area = new AABB(center).inflate(CLOSED_VEIN_RADIUS);
+		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
+		int[] blessed = { 0 };
+
+		for (ServerPlayer target : nearbyPlayers) {
+			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
+				if (!progress.hasBegunPurification()) return;
+				target.removeEffect(EffectInit.blood_loss);
+				target.addEffect(new MobEffectInstance(EffectInit.silver_ward, CLOSED_VEIN_EFFECT_TICKS, 1, false, true, true));
+				if (progress.hasClarityUnlocked()) {
+					progress.addClarity(2.0f);
+					UnstainedProgressEvents.syncProgress(target, progress);
+				}
+				target.displayClientMessage(Component.literal("The vein closes. The old leak is denied.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
+				blessed[0]++;
+			});
+		}
+
+		for (Monster monster : sLevel.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+			monster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 180, 1, false, true, true));
+			monster.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 180, 0, false, true, true));
+		}
+
+		if (HemoCapabilityAccess.getUnstainedProgress(caster)
+				.map(progress -> progress.hasClarityUnlocked())
+				.orElse(false)
+				&& KnownStillArtEvents.grantArt(caster, StillArtInit.lethean_mute.get())) {
+			caster.displayClientMessage(Component.literal("A Still Art settles into the closed vessel: Lethean Mute.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		}
+
+		caster.displayClientMessage(Component.literal("The Rite of the Closed Vein blesses " + blessed[0] + " Unstained soul(s).")
+				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
+		sLevel.playSound(null, center, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.2f, 0.8f);
+		sLevel.sendParticles(ParticleTypes.END_ROD, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				120, CLOSED_VEIN_RADIUS * 0.25, 2.0, CLOSED_VEIN_RADIUS * 0.25, 0.015);
+	}
+
+	private static void completeAntisepticGround(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		PaleConsecrationSavedData data = PaleConsecrationSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		long expiryTick = sLevel.getGameTime() + ANTISEPTIC_GROUND_DURATION_TICKS;
+
+		PaleConsecrationSavedData.ConsecrationEntry entry = new PaleConsecrationSavedData.ConsecrationEntry(
+				caster.getUUID(), center, dimension, ANTISEPTIC_GROUND_RADIUS, expiryTick);
+		data.addEntry(entry);
+
+		if (KnownStillArtEvents.grantArt(caster, StillArtInit.still_pulse.get())) {
+			caster.displayClientMessage(Component.literal("A Still Art beats once, then quiets: Still Pulse.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		}
+		if (KnownStillArtEvents.grantArt(caster, StillArtInit.pale_diagnosis.get())) {
+			caster.displayClientMessage(Component.literal("A diagnostic stillness opens behind your eyes: Pale Diagnosis.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		}
+
+		caster.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 12000, 1, false, true, true));
+		caster.displayClientMessage(Component.literal("Antiseptic ground takes hold for 15 minutes.")
+				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		sLevel.playSound(null, center, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1.0f, 1.4f);
+		sLevel.sendParticles(ParticleTypes.SCRAPE, center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
+				120, ANTISEPTIC_GROUND_RADIUS * 0.35, 0.5, ANTISEPTIC_GROUND_RADIUS * 0.35, 0.01);
+	}
+
+	private static void completeGlassLungs(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		AABB area = new AABB(center).inflate(GLASS_LUNGS_RADIUS);
+		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
+		int[] blessed = { 0 };
+
+		for (ServerPlayer target : nearbyPlayers) {
+			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
+				if (!progress.hasBegunPurification()) return;
+				target.removeEffect(MobEffects.POISON);
+				target.removeEffect(MobEffects.WITHER);
+				target.clearFire();
+				target.setAirSupply(target.getMaxAirSupply());
+				target.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, GLASS_LUNGS_EFFECT_TICKS, 0, false, true, true));
+				target.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 2400, 0, false, true, true));
+				if (progress.hasClarityUnlocked()) {
+					progress.addClarity(3.0f);
+					UnstainedProgressEvents.syncProgress(target, progress);
+				}
+				blessed[0]++;
+			});
+		}
+
+		if (HemoCapabilityAccess.getUnstainedProgress(caster)
+				.map(progress -> progress.getClarity() >= 50.0f)
+				.orElse(false)) {
+			if (KnownStillArtEvents.grantArt(caster, StillArtInit.memory_shear.get())) {
+				caster.displayClientMessage(Component.literal("A Still Art thins the breath of hostile memory: Memory Shear.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+			}
+			if (KnownStillArtEvents.grantArt(caster, StillArtInit.absolving_step.get())) {
+				caster.displayClientMessage(Component.literal("A Still Art learns the shape of escape: Absolving Step.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+			}
+		}
+
+		caster.displayClientMessage(Component.literal("Glass lungs open in " + blessed[0] + " Unstained body(s).")
+				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
+		sLevel.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 1.0f, 1.2f);
+		sLevel.sendParticles(ParticleTypes.SNOWFLAKE, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				140, GLASS_LUNGS_RADIUS * 0.25, 2.5, GLASS_LUNGS_RADIUS * 0.25, 0.015);
+	}
+
+	private static void completeMoonWashedCopper(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		boolean isNight = sLevel.getDayTime() % 24000L >= 13000L && sLevel.getDayTime() % 24000L <= 23000L;
+		float clarityGain = isNight ? 10.0f : 5.0f;
+		AABB area = new AABB(center).inflate(MOON_WASHED_COPPER_RADIUS);
+		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
+		int[] blessed = { 0 };
+
+		for (ServerPlayer target : nearbyPlayers) {
+			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
+				if (!progress.hasClarityUnlocked()) return;
+				progress.addClarity(clarityGain);
+				UnstainedProgressEvents.syncProgress(target, progress);
+				target.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, MOON_WASHED_COPPER_EFFECT_TICKS, 2, false, true, true));
+				target.addEffect(new MobEffectInstance(EffectInit.silver_ward, MOON_WASHED_COPPER_EFFECT_TICKS, 1, false, true, true));
+				blessed[0]++;
+			});
+		}
+
+		if (KnownStillArtEvents.grantArt(caster, StillArtInit.quietus_bell.get())) {
+			caster.displayClientMessage(Component.literal("A Still Art rings in moon-washed copper: Quietus Bell.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		}
+		if (HemoCapabilityAccess.getUnstainedProgress(caster)
+				.map(progress -> progress.isEnlightened())
+				.orElse(false)
+				&& KnownStillArtEvents.grantArt(caster, StillArtInit.autoimmune_edge.get())) {
+			caster.displayClientMessage(Component.literal("The immune edge answers. Handle it carefully.")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		}
+
+		String moonText = isNight ? "under the moon" : "without moonlight";
+		caster.displayClientMessage(Component.literal("Moon-washed copper blesses " + blessed[0] + " clarity-bearer(s) " + moonText + ".")
+				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		sLevel.playSound(null, center, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.4f, isNight ? 1.7f : 1.25f);
+		sLevel.sendParticles(ParticleTypes.WAX_OFF, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				200, MOON_WASHED_COPPER_RADIUS * 0.22, 3.5, MOON_WASHED_COPPER_RADIUS * 0.22, 0.018);
 	}
 
 	/**

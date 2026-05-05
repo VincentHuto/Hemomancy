@@ -1,0 +1,34 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "required_degree": 7,
+  "breakBlocksOnCreation": false,
+  "riteName": "Rite of Glass Lungs",
+  "riteDescription": "White glass, pale water, and copper still the breath. Poison and wither are rinsed from the chest, leaving the supplicant able to breathe where corruption would choke them.",
+  "pattern": [
+    ["GPCPG", "P   P", "C L C", "P   P", "GPCPG"],
+    ["     ", " GGG ", " GCG ", " GGG ", "     "],
+    ["  P  ", " PGP ", "PGLGP", " PGP ", "  P  "],
+    ["     ", " GGG ", " GCG ", " GGG ", "     "],
+    ["GPCPG", "P   P", "C L C", "P   P", "GPCPG"]
+  ],
+  "key": {
+    "C": {
+      "block": "minecraft:oxidized_copper"
+    },
+    "G": {
+      "block": "minecraft:white_stained_glass"
+    },
+    "L": {
+      "block": "hemomancy:lethean_poppy"
+    },
+    "P": {
+      "block": "minecraft:calcite"
+    }
+  },
+  "result": {
+    "id": "hemomancy:lethean_chalice"
+  },
+  "unstained": true
+}

@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.StillArtCooldownPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
@@ -126,7 +126,7 @@ public class StillArt {
 
 		if (action.cast(serverPlayer, serverLevel, heldItem, position, this)) {
 			startCooldown(serverPlayer);
-			PacketHandler.sendToPlayer(serverPlayer, new ManipCooldownPacket(cooldownTicks));
+			PacketHandler.sendToPlayer(serverPlayer, new StillArtCooldownPacket(cooldownTicks));
 		}
 	}
 }
