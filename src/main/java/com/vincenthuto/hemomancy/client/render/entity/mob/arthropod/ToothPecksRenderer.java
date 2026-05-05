@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.ToothPecksMod
 import com.vincenthuto.hemomancy.common.entity.mob.animal.ToothPecksEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,11 @@ public class ToothPecksRenderer extends MobRenderer<ToothPecksEntity, ToothPecks
     }
 
     @Override
+    public void render(ToothPecksEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+    }
+
+    @Override
     public ResourceLocation getTextureLocation(ToothPecksEntity entity) {
         return TEXTURE;
     }
@@ -26,7 +32,8 @@ public class ToothPecksRenderer extends MobRenderer<ToothPecksEntity, ToothPecks
     // Scale up as the creature engorges — fully fed is 70% larger than a fresh one
     @Override
     protected void scale(ToothPecksEntity entity, PoseStack poseStack, float partialTick) {
-        float s = 1.0F + entity.getFeedCount() * 0.14F;
+        float s = 1.0F + entity.getFeedCount() * 0.05F;
+        poseStack.translate(0, 0.2, 0);
         poseStack.scale(s, s, s);
     }
 }

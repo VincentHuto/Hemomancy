@@ -36,6 +36,10 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
     private final ModelPart lump3;
     private final ModelPart lump4;
     private final ModelPart lump5;
+    private final ModelPart tooth;
+    private final ModelPart roots;
+    private final ModelPart root1;
+    private final ModelPart root2;
     private final ModelPart llegs;
     private final ModelPart lLegSeg1;
     private final ModelPart lLegSeg2;
@@ -55,9 +59,7 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
     private final ModelPart rLegSeg7;
     private final ModelPart rLegSeg8;
     private final ModelPart head;
-    private final ModelPart fangs;
-    private final ModelPart rFang;
-    private final ModelPart lFang;
+
 
     public ToothPecksModel(ModelPart root) {
         super(RenderType::entityTranslucent);
@@ -69,6 +71,10 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
         this.lump3 = this.lumps.getChild("lump3");
         this.lump4 = this.lumps.getChild("lump4");
         this.lump5 = this.lumps.getChild("lump5");
+        this.tooth = this.body.getChild("tooth");
+        this.roots = this.tooth.getChild("roots");
+        this.root1 = this.roots.getChild("root1");
+        this.root2 = this.roots.getChild("root2");
         this.llegs = this.body.getChild("llegs");
         this.lLegSeg1 = this.llegs.getChild("lLegSeg1");
         this.lLegSeg2 = this.lLegSeg1.getChild("lLegSeg2");
@@ -88,9 +94,6 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
         this.rLegSeg7 = this.rllegs.getChild("rLegSeg7");
         this.rLegSeg8 = this.rLegSeg7.getChild("rLegSeg8");
         this.head = this.body.getChild("head");
-        this.fangs = this.head.getChild("fangs");
-        this.rFang = this.fangs.getChild("rFang");
-        this.lFang = this.fangs.getChild("lFang");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -99,22 +102,32 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
 
         PartDefinition whole = partdefinition.addOrReplaceChild("whole", CubeListBuilder.create(), PartPose.offset(0.0F, 22.7F, -0.9F));
 
-        PartDefinition body = whole.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -1.7F, -3.1F, 6.0F, 2.0F, 9.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 12).addBox(-2.0F, -2.7F, -2.35F, 4.0F, 2.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition body = whole.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition lumps = body.addOrReplaceChild("lumps", CubeListBuilder.create(), PartPose.offset(0.0F, 1.3F, 0.9F));
+        PartDefinition lumps = body.addOrReplaceChild("lumps", CubeListBuilder.create(), PartPose.offset(0.0F, 0.3F, 0.9F));
 
-        PartDefinition lump1 = lumps.addOrReplaceChild("lump1", CubeListBuilder.create().texOffs(0, 37).addBox(0.75F, -3.0F, -3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.75F, 0.0F));
+        PartDefinition lump1 = lumps.addOrReplaceChild("lump1", CubeListBuilder.create().texOffs(0, 37).addBox(0.75F, -2.0F, -3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.75F, 0.0F));
 
-        PartDefinition lump2 = lumps.addOrReplaceChild("lump2", CubeListBuilder.create().texOffs(21, 30).addBox(0.75F, -3.0F, -3.0F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-3.0F, -1.75F, 0.5F));
+        PartDefinition lump2 = lumps.addOrReplaceChild("lump2", CubeListBuilder.create().texOffs(21, 30).addBox(0.75F, -2.0F, -4.0F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-3.0F, -1.75F, 0.5F));
 
-        PartDefinition lump3 = lumps.addOrReplaceChild("lump3", CubeListBuilder.create().texOffs(25, 17).addBox(0.75F, -4.0F, -3.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, 3.0F));
+        PartDefinition lump3 = lumps.addOrReplaceChild("lump3", CubeListBuilder.create().texOffs(25, 17).addBox(1.75F, -2.0F, -2.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, 3.0F));
 
-        PartDefinition lump4 = lumps.addOrReplaceChild("lump4", CubeListBuilder.create().texOffs(21, 23).addBox(-0.25F, -4.0F, -4.0F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.25F, -1.5F, 4.5F));
+        PartDefinition lump4 = lumps.addOrReplaceChild("lump4", CubeListBuilder.create().texOffs(21, 23).addBox(-1.25F, -2.0F, -4.0F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.25F, -1.5F, 4.5F));
 
-        PartDefinition lump5 = lumps.addOrReplaceChild("lump5", CubeListBuilder.create().texOffs(0, 23).addBox(-1.25F, -5.0F, -4.0F, 5.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.25F, -1.25F, 8.25F));
+        PartDefinition lump5 = lumps.addOrReplaceChild("lump5", CubeListBuilder.create().texOffs(0, 23).addBox(-1.25F, -5.0F, -9.0F, 5.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.25F, -1.25F, 8.25F));
 
-        PartDefinition llegs = body.addOrReplaceChild("llegs", CubeListBuilder.create(), PartPose.offset(2.5F, -0.2F, 1.4F));
+        PartDefinition tooth = body.addOrReplaceChild("tooth", CubeListBuilder.create().texOffs(42, 4).addBox(-2.6667F, -2.4167F, -2.9167F, 5.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(3, 3).addBox(-3.1667F, -2.9167F, 0.0833F, 6.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.1667F, -0.7833F, -0.1833F));
+
+        PartDefinition roots = tooth.addOrReplaceChild("roots", CubeListBuilder.create(), PartPose.offset(0.3333F, 1.8333F, -1.6667F));
+
+        PartDefinition root1 = roots.addOrReplaceChild("root1", CubeListBuilder.create().texOffs(14, 4).addBox(-0.5F, -0.5F, -4.0F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(14, 4).addBox(-0.5F, -1.0F, -2.0F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.65F, -2.75F, -1.0F));
+
+        PartDefinition root2 = roots.addOrReplaceChild("root2", CubeListBuilder.create().texOffs(14, 4).addBox(-0.5F, -0.5F, -4.0F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(14, 4).addBox(-0.5F, -1.0F, -2.0F, 1.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(1.75F, -2.75F, -1.0F));
+
+        PartDefinition llegs = body.addOrReplaceChild("llegs", CubeListBuilder.create(), PartPose.offset(1.5F, 0.05F, 1.4F));
 
         PartDefinition lLegSeg1 = llegs.addOrReplaceChild("lLegSeg1", CubeListBuilder.create().texOffs(34, 15).addBox(-0.4763F, -0.2836F, -0.5F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, -3.0F, 0.0F, 0.0F, 0.2182F));
 
@@ -132,7 +145,7 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
 
         PartDefinition lLegSeg8 = lLegSeg7.addOrReplaceChild("lLegSeg8", CubeListBuilder.create().texOffs(31, 6).addBox(0.0F, -0.5F, -0.5F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.5237F, 0.2164F, 0.0F, 0.0F, 0.0F, 0.1745F));
 
-        PartDefinition rllegs = body.addOrReplaceChild("rllegs", CubeListBuilder.create(), PartPose.offset(-2.5F, -0.2F, 1.4F));
+        PartDefinition rllegs = body.addOrReplaceChild("rllegs", CubeListBuilder.create(), PartPose.offset(-1.5F, -0.2F, 1.4F));
 
         PartDefinition rLegSeg1 = rllegs.addOrReplaceChild("rLegSeg1", CubeListBuilder.create().texOffs(34, 24).addBox(-1.5237F, -0.2836F, -0.5F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 1.5F, 0.0F, 0.0F, -0.2182F));
 
@@ -150,13 +163,7 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
 
         PartDefinition rLegSeg8 = rLegSeg7.addOrReplaceChild("rLegSeg8", CubeListBuilder.create().texOffs(7, 34).addBox(-2.0F, -0.5F, -0.5F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5237F, 0.2164F, 0.0F, 0.0F, 0.0F, -0.1745F));
 
-        PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(25, 12).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.2F, -3.1F));
-
-        PartDefinition fangs = head.addOrReplaceChild("fangs", CubeListBuilder.create(), PartPose.offset(0.0F, 0.5F, -1.0F));
-
-        PartDefinition rFang = fangs.addOrReplaceChild("rFang", CubeListBuilder.create().texOffs(14, 34).addBox(-0.5F, 0.0F, -2.0F, 1.0F, 0.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.0F, 0.0F, 0.0F));
-
-        PartDefinition lFang = fangs.addOrReplaceChild("lFang", CubeListBuilder.create().texOffs(34, 12).addBox(-0.5F, 0.0F, -2.0F, 1.0F, 0.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(1.0F, 0.0F, 0.0F));
+        PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(26, 13).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.45F, -2.35F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
@@ -180,9 +187,9 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
         head.xRot = headPitch * Mth.DEG_TO_RAD;
 
         float fangChew = Mth.sin(ageInTicks * 0.3F) * 0.15F;
-        fangs.xRot = Mth.sin(ageInTicks * 0.45F) * 0.05F;
-        lFang.yRot = fangChew;
-        rFang.yRot = -fangChew;
+        roots.xRot = Mth.sin(ageInTicks * 0.45F) * 0.05F;
+        root2.yRot = fangChew;
+        root1.yRot = -fangChew;
 
         // Chthonian-inspired spider gait: diagonal leg pairs alternate, with
         // smaller secondary movement on the outer segments so the legs bend.

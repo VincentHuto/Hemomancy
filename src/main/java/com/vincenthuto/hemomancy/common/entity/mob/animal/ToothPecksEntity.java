@@ -21,6 +21,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -77,19 +78,54 @@ public class ToothPecksEntity extends PathfinderMob {
     }
 
     private void setFeedCount(int count) {
-        this.entityData.set(FEED_COUNT, Math.min(count, MAX_FEED_COUNT));
+        this.entityData.set(FEED_COUNT, Math.max(0, Math.min(count, MAX_FEED_COUNT)));
+    }
+
+    public boolean isFullyFed() {
+        return getFeedCount() >= MAX_FEED_COUNT;
+    }
+
+    private void detachAndClearTarget() {
+        boolean wasLatchedOrTargeting = isLatched() || getTarget() != null;
+        setLatched(false);
+        detachHits = 0;
+        setTarget(null);
+        if (wasLatchedOrTargeting) {
+            getNavigation().stop();
+        }
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new LatchAndFeedGoal(this));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<Player>(this, Player.class, 8.0F, 1.1D, 1.4D) {
+            @Override
+            public boolean canUse() {
+                return ToothPecksEntity.this.isFullyFed() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return ToothPecksEntity.this.isFullyFed() && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(2, new LatchAndFeedGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
-                ToothPecksEntity::isValidBloodTarget));
+                ToothPecksEntity::isValidBloodTarget) {
+            @Override
+            public boolean canUse() {
+                return !ToothPecksEntity.this.isFullyFed() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !ToothPecksEntity.this.isFullyFed() && super.canContinueToUse();
+            }
+        });
     }
 
     private static boolean isValidBloodTarget(LivingEntity entity) {
@@ -107,11 +143,21 @@ public class ToothPecksEntity extends PathfinderMob {
 
     @Override
     public void tick() {
+        if (!level().isClientSide && isFullyFed() && (isLatched() || getTarget() != null)) {
+            detachAndClearTarget();
+        }
+
         super.tick();
+
+        if (!level().isClientSide && isFullyFed()) {
+            if (isLatched() || getTarget() != null) {
+                detachAndClearTarget();
+            }
+            return;
+        }
+
         if (!level().isClientSide && getTarget() instanceof Player player && !canDrawBloodFrom(player)) {
-            setLatched(false);
-            detachHits = 0;
-            setTarget(null);
+            detachAndClearTarget();
             return;
         }
         if (!level().isClientSide && isLatched()) {
@@ -127,10 +173,12 @@ public class ToothPecksEntity extends PathfinderMob {
                     playSound(SoundInit.ENTITY_TOOTH_PECKS_AMBIENT.get(), 0.4F, 1.0F + random.nextFloat() * 0.2F);
                     // Grow redder and larger with each feed
                     setFeedCount(getFeedCount() + 1);
+                    if (isFullyFed()) {
+                        detachAndClearTarget();
+                    }
                 }
             } else {
-                setLatched(false);
-                detachHits = 0;
+                detachAndClearTarget();
             }
         }
     }
@@ -168,6 +216,9 @@ public class ToothPecksEntity extends PathfinderMob {
         setLatched(tag.getBoolean("Latched"));
         detachHits = tag.getInt("DetachHits");
         setFeedCount(tag.getInt("FeedCount"));
+        if (isFullyFed()) {
+            detachAndClearTarget();
+        }
     }
 
     @Override
@@ -204,6 +255,9 @@ public class ToothPecksEntity extends PathfinderMob {
 
         @Override
         public boolean canUse() {
+            if (mob.isFullyFed()) {
+                return false;
+            }
             if (mob.isLatched()) {
                 return mob.getTarget() instanceof Player p && p.isAlive() && ToothPecksEntity.canDrawBloodFrom(p);
             }
@@ -222,13 +276,13 @@ public class ToothPecksEntity extends PathfinderMob {
 
         @Override
         public boolean canContinueToUse() {
-            return mob.isLatched() && mob.getTarget() instanceof Player p
+            return !mob.isFullyFed() && mob.isLatched() && mob.getTarget() instanceof Player p
                     && p.isAlive() && ToothPecksEntity.canDrawBloodFrom(p);
         }
 
         @Override
         public void start() {
-            if (target != null && ToothPecksEntity.canDrawBloodFrom(target) && !mob.isLatched()) {
+            if (!mob.isFullyFed() && target != null && ToothPecksEntity.canDrawBloodFrom(target) && !mob.isLatched()) {
                 mob.setLatched(true);
                 mob.setTarget(target);
                 mob.getNavigation().stop();
