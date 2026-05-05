@@ -1,0 +1,69 @@
+package com.vincenthuto.hemomancy.common.manipulation.ductilis;
+
+import java.util.List;
+
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+/**
+ * Hemolymphal Pulse — a DUCTILIS HUMILIS quick manipulation that sends a blood-sense
+ * pulse revealing all nearby living entities through walls for 15 seconds.
+ *
+ * Ductilis-tended blood moves like nerve signal. Everything alive has a pulse. Find it.
+ */
+public class HemolymphalPulseManip extends BloodManipulation {
+
+	private static final double RADIUS = 24.0;
+	private static final int GLOW_DURATION = 300; // 15 seconds
+
+	public HemolymphalPulseManip(String name, double cost, double alignLevel, double xpCost,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumVeinSections section) {
+		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+	}
+
+	@Override
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+		List<LivingEntity> nearby = world.getEntitiesOfClass(
+				LivingEntity.class, player.getBoundingBox().inflate(RADIUS));
+
+		int tagged = 0;
+		for (LivingEntity entity : nearby) {
+			if (entity == player) continue;
+			entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_DURATION, 0, false, false));
+			tagged++;
+		}
+
+		// Expanding ring of crimson spore particles to visualise the pulse
+		int steps = 32;
+		for (int i = 0; i < steps; i++) {
+			double angle = i * (Math.PI * 2.0 / steps);
+			for (double r : new double[]{4.0, 10.0, 18.0}) {
+				world.addParticle(ParticleTypes.CRIMSON_SPORE,
+						player.getX() + Math.cos(angle) * r,
+						player.getY() + 1.0,
+						player.getZ() + Math.sin(angle) * r,
+						0, 0.15, 0);
+			}
+		}
+
+		if (tagged > 0) {
+			world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT,
+					SoundSource.PLAYERS, 0.8f, 0.6f);
+		}
+	}
+}

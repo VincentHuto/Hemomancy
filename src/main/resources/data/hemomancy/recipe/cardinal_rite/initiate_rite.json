@@ -9,7 +9,7 @@
   "pattern": [
     ["E C E", " V V ", "  P  ", " V V ", "E C E"],
     ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["  G  ", " GCG ", "GCGCG", " GCG ", "  G  "],
+    ["  G  ", " GNG ", "GCGCG", " GNG ", "  G  "],
     ["     ", " E E ", " EBE ", " E E ", "     "],
     ["E C E", " V V ", "  P  ", " V V ", "E C E"]
   ],
@@ -31,6 +31,9 @@
     },
     "B": {
       "block": "minecraft:chiseled_stone_bricks"
+    },
+    "N": {
+      "block": "hemomancy:crucible_of_nether_ichor"
     }
   },
   "result": {

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -12,21 +13,28 @@ import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Drowned;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.monster.Phantom;
+import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.Stray;
 import net.minecraft.world.entity.monster.Strider;
+import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
@@ -68,7 +76,29 @@ public class HemoEntityPredicates {
 	public static Predicate<Entity> COLDBLOODED = new Predicate<>() {
 		@Override
 		public boolean test(Entity e) {
-			if (e instanceof Raider || e instanceof Zombie || e instanceof WaterAnimal || e instanceof SnowGolem) {
+			if (e instanceof Drowned || e instanceof Stray || e instanceof WaterAnimal || e instanceof SnowGolem) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+
+	public static Predicate<Entity> LUMINOUS = new Predicate<>() {
+		@Override
+		public boolean test(Entity e) {
+			if (e instanceof Guardian || e instanceof GlowSquid || e instanceof Witch || e instanceof Allay) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+
+	public static Predicate<Entity> IRONCLAD = new Predicate<>() {
+		@Override
+		public boolean test(Entity e) {
+			if (e instanceof IronGolem || e instanceof Vindicator || e instanceof Pillager) {
 				return true;
 			} else {
 				return false;
@@ -145,6 +175,8 @@ public class HemoEntityPredicates {
 		PREDICATES.add(UNDEAD);
 		PREDICATES.add(INFERNALBLOOD);
 		PREDICATES.add(PLANTBLOOD);
+		PREDICATES.add(LUMINOUS);
+		PREDICATES.add(IRONCLAD);
 		BLOODTYPES.add(COLDBLOODED);
 		BLOODTYPES.add(ENDERBLOOD);
 		BLOODTYPES.add(WARMBLOODED);
@@ -152,6 +184,8 @@ public class HemoEntityPredicates {
 		BLOODTYPES.add(UNDEAD);
 		BLOODTYPES.add(INFERNALBLOOD);
 		BLOODTYPES.add(PLANTBLOOD);
+		BLOODTYPES.add(LUMINOUS);
+		BLOODTYPES.add(IRONCLAD);
 	}
 
 }

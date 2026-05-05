@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "PVP",
+    " E "
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:eye_of_ender"
+    },
+    "P": {
+      "item": "minecraft:ender_pearl"
+    },
+    "V": {
+      "item": "hemomancy:bloody_vial"
+    }
+  },
+  "result": {
+    "id": "hemomancy:voidtouched_vessel",
+    "count": 1
+  }
+}

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SanguineBlobItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.BloodHonedScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemMindSpike;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
@@ -334,6 +335,10 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.activation_potential));
     public static final DeferredHolder<Item, Item> memory_sanguine_ward = BASEITEMS.register("memory_sanguine_ward",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ward));
+    public static final DeferredHolder<Item, Item> memory_hemolymphal_pulse = BASEITEMS.register("memory_hemolymphal_pulse",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemolymphal_pulse));
+    public static final DeferredHolder<Item, Item> memory_vital_effusion = BASEITEMS.register("memory_vital_effusion",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
     public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_blade));
     public static final DeferredHolder<Item, Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
@@ -380,6 +385,10 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> memory_sanguine_excavation = BASEITEMS.register(
             "memory_sanguine_excavation",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_excavation));
+    public static final DeferredHolder<Item, Item> memory_vascular_dowsing = BASEITEMS.register("memory_vascular_dowsing",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vascular_dowsing));
+    public static final DeferredHolder<Item, Item> memory_ferric_resonance = BASEITEMS.register("memory_ferric_resonance",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_resonance));
     public static final DeferredHolder<Item, Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
     public static final DeferredHolder<Item, Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",
@@ -876,6 +885,10 @@ public class ItemInit {
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Item, Item> scar_pattern_crucible = BASEITEMS.register("scar_pattern_crucible",
             () -> new ItemScarPattern(new Item.Properties(), scar_crucible, "scar_crucible"));
+    public static final DeferredHolder<Item, Item> scar_blood_honed = BASEITEMS.register("scar_blood_honed",
+            () -> new BloodHonedScar(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> scar_pattern_blood_honed = BASEITEMS.register("scar_pattern_blood_honed",
+            () -> new ItemScarPattern(new Item.Properties(), scar_blood_honed, "scar_blood_honed"));
     public static final DeferredHolder<Item, Item> scar_shade = BASEITEMS.register("scar_shade",
             () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1, 1)
                     .withModifier(Attributes.MOVEMENT_SPEED, "scar_shade_ms", 0.05,

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
+import net.minecraft.world.entity.monster.ElderGuardian;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
@@ -13,6 +14,11 @@ import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -22,20 +28,15 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class BloodTendencyEvents {	/**
-	 * Killing entities shifts the player's blood tendency based on what they killed.
-	 * <ul>
-	 *   <li>Warm-blooded (animals, villagers) â†’ ANIMUS (life/vitality)</li>
-	 *   <li>Cold-blooded (drowned, water mobs, snow golem) â†’ CONGEATIO (cold/ice)</li>
-	 *   <li>Undead (zombies, skeletons, wither) â†’ MORTEM (death)</li>
-	 *   <li>Fire entities (blaze, magma cube, strider) â†’ FLAMMEUS (fire)</li>
-	 *   <li>Ender entities (enderman, shulker, endermite) â†’ TENEBRIS (darkness)</li>
-	 *   <li>Arthropods/vermin (spiders, silverfish) â†’ DUCTILIS (flexible/nervous)</li>
-	 *   <li>Iron entities (iron golem) â†’ FERRIC (iron)</li>
-	 *   <li>Glowing/phantom/light entities â†’ LUX (light)</li>
-	 * </ul>
-	 * Only applies when the blood system is active.
-	 */
+public class BloodTendencyEvents {
+
+	private record TendencyShift(EnumBloodTendency primary, float amount,
+			EnumBloodTendency secondary, float secondaryAmount) {
+		TendencyShift(EnumBloodTendency tendency, float amount) {
+			this(tendency, amount, null, 0f);
+		}
+	}
+
 	@SubscribeEvent
 	public static void onEntityKilled(LivingDeathEvent event) {
 		DamageSource source = event.getSource();
@@ -43,65 +44,70 @@ public class BloodTendencyEvents {	/**
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.TENDENCY_SHIFT_ON_KILL_ENABLED.get()) return;
 
-		// Only shift tendency when the blood system is active
 		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) return;
 
 		LivingEntity victim = event.getEntity();
-		float amount = HemoServerConfig.TENDENCY_SHIFT_AMOUNT.get().floatValue();
+		float base = HemoServerConfig.TENDENCY_SHIFT_AMOUNT.get().floatValue();
+		float bossMult = (float) HemoServerConfig.TENDENCY_BOSS_MULTIPLIER.get().doubleValue();
 
-		EnumBloodTendency tendency = determineTendencyFromKill(victim);
-		if (tendency == null) return;
+		TendencyShift shift = determineTendencyFromKill(victim, base, bossMult);
+		if (shift == null) return;
 
 		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
-			cap.addTendencyAlignment(tendency, amount);
+			cap.addTendencyAlignment(shift.primary(), shift.amount());
+			if (shift.secondary() != null) {
+				cap.addTendencyAlignment(shift.secondary(), shift.secondaryAmount());
+			}
 			syncTendency((ServerPlayer) player, cap);
 		});
 	}
 
 	/**
-	 * Determines which blood tendency a killed entity corresponds to.
-	 * Returns null if the entity doesn't map to any tendency.
+	 * Maps a killed entity to a TendencyShift (tendency + amount). Returns null for
+	 * entities that yield no tendency shift (e.g. Snow Golems).
+	 *
+	 * Check order: specific bosses → general predicates. This ensures INFERNALBLOOD
+	 * and ENDERBLOOD are tested before NOBLOOD, so Blazes and Endermen correctly
+	 * give FLAMMEUS/TENEBRIS rather than returning null.
 	 */
-	private static EnumBloodTendency determineTendencyFromKill(LivingEntity entity) {
-		// Bloodless entities don't shift tendency at all
-		if (HemoEntityPredicates.NOBLOOD.test(entity)) {
-			return null;
-		}
+	private static TendencyShift determineTendencyFromKill(LivingEntity entity, float base, float bossMult) {
+		// ── Specific bosses (surge amounts, most specific first) ──────────────────
+		if (entity instanceof EnderDragon)   return new TendencyShift(EnumBloodTendency.TENEBRIS, base * bossMult);
+		// Wither is both death and fire — split the shift evenly
+		if (entity instanceof WitherBoss)    return new TendencyShift(EnumBloodTendency.MORTEM, base * bossMult * 0.5f,
+				EnumBloodTendency.FLAMMEUS, base * bossMult * 0.5f);
+		if (entity instanceof ElderGuardian) return new TendencyShift(EnumBloodTendency.CONGEATIO, base * bossMult);
+		if (entity instanceof Warden)        return new TendencyShift(EnumBloodTendency.MORTEM, base * bossMult);
 
-		// Infernal / fire-aligned â†’ FLAMMEUS
-		if (HemoEntityPredicates.INFERNALBLOOD.test(entity)) {
-			return EnumBloodTendency.FLAMMEUS;
-		}
+		// ── Specific single mobs (override before general Animal catch) ──────────
+		if (entity instanceof Allay)         return new TendencyShift(EnumBloodTendency.ANIMUS, base * 3f);
+		if (entity instanceof Bee)           return new TendencyShift(EnumBloodTendency.DUCTILIS, base);
 
-		// Ender / dark-aligned â†’ TENEBRIS
-		if (HemoEntityPredicates.ENDERBLOOD.test(entity)) {
-			return EnumBloodTendency.TENEBRIS;
-		}
+		// ── General predicates (specific before NOBLOOD to fix predicate conflict) ─
+		// Fire-aligned (Blaze, Ghast, Hoglin, etc.) — checked before NOBLOOD which also listed Blaze
+		if (HemoEntityPredicates.INFERNALBLOOD.test(entity)) return new TendencyShift(EnumBloodTendency.FLAMMEUS, base * 2f);
+		// Ender-aligned (EnderMan, Shulker, Phantom, etc.) — checked before NOBLOOD which also listed EnderMan/Shulker
+		if (HemoEntityPredicates.ENDERBLOOD.test(entity))    return new TendencyShift(EnumBloodTendency.TENEBRIS, base * 3f);
+		// Cold / aquatic (Drowned, Stray, WaterAnimal)
+		if (HemoEntityPredicates.COLDBLOODED.test(entity))   return new TendencyShift(EnumBloodTendency.CONGEATIO, base * 2f);
+		// Light-aligned (Guardian, GlowSquid, Witch, Allay)
+		if (HemoEntityPredicates.LUMINOUS.test(entity))      return new TendencyShift(EnumBloodTendency.LUX, base);
+		// Iron/militant constructs (IronGolem, Vindicator, Pillager)
+		if (HemoEntityPredicates.IRONCLAD.test(entity))      return new TendencyShift(EnumBloodTendency.FERRIC, base * 2f);
+		// All undead (catches Skeleton, WitherSkeleton, Zombie, Spider, Silverfish via isInvertedHealAndHarm or UNDEAD)
+		if (entity.isInvertedHealAndHarm() || HemoEntityPredicates.UNDEAD.test(entity))
+			return new TendencyShift(EnumBloodTendency.MORTEM, base);
+		// Warm-blooded animals and villagers
+		if (HemoEntityPredicates.WARMBLOODED.test(entity))   return new TendencyShift(EnumBloodTendency.ANIMUS, base);
+		// Slimes/plant-like mobs
+		if (HemoEntityPredicates.PLANTBLOOD.test(entity))    return new TendencyShift(EnumBloodTendency.DUCTILIS, base);
+		// Explicitly bloodless (SnowGolem, etc.) — after all specific checks
+		if (HemoEntityPredicates.NOBLOOD.test(entity))       return null;
 
-		// Cold-blooded â†’ CONGEATIO
-		if (HemoEntityPredicates.COLDBLOODED.test(entity)) {
-			return EnumBloodTendency.CONGEATIO;
-		}
-
-		// Plant-like / slime entities â†’ DUCTILIS (flexible, nervous)
-		if (HemoEntityPredicates.PLANTBLOOD.test(entity)) {
-			return EnumBloodTendency.DUCTILIS;
-		}
-
-		// Undead â†’ MORTEM
-		if (entity.isInvertedHealAndHarm() || HemoEntityPredicates.UNDEAD.test(entity)) {
-			return EnumBloodTendency.MORTEM;
-		}
-
-		// Warm-blooded (animals, villagers, players) â†’ ANIMUS
-		if (HemoEntityPredicates.WARMBLOODED.test(entity)) {
-			return EnumBloodTendency.ANIMUS;
-		}
-
-		// Default fallback for anything with blood that doesn't match above
-		return EnumBloodTendency.ANIMUS;
+		// Fallback for anything else with blood
+		return new TendencyShift(EnumBloodTendency.ANIMUS, base);
 	}
 
 	/**

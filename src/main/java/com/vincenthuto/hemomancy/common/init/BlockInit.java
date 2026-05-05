@@ -543,6 +543,19 @@ public class BlockInit {
 			() -> new BloodTrialAltarBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
 
+	// ── Vanilla-gate rite components ──
+	public static final DeferredHolder<Block, Block> crucible_of_nether_ichor = SPECIALBLOCKS.register(
+			"crucible_of_nether_ichor",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 6.0F).sound(SoundType.STONE)
+					.mapColor(MapColor.NETHER)));
+
+	public static final DeferredHolder<Block, Block> voidtouched_vessel = SPECIALBLOCKS.register(
+			"voidtouched_vessel",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 6.0F).sound(SoundType.STONE)
+					.mapColor(MapColor.COLOR_PURPLE)));
+
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
 		BASEBLOCKS.getEntries().stream().map(e -> e.get()).forEach(b -> blocks.add(b));
