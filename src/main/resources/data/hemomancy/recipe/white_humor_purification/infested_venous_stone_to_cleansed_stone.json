@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:white_humor_purification",
+  "input": {
+    "item": "hemomancy:infested_venous_stone"
+  },
+  "result": {
+    "id": "hemomancy:cleansed_stone",
+    "count": 1
+  },
+  "transform_time": 260
+}

@@ -897,7 +897,7 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.hemolytic_vial.get())));
 
         list.add(new MaterialEntry("pale_humor_flask", "Pale Humor Flask",
-                "A flask of purified pale humor. Restores purity in small measure.",
+                "A flask of purified pale humor. Restores purity in small measure, or pours into a pool for item purification.",
                 "Materials", () -> new ItemStack(ItemInit.pale_humor_flask.get()),
                 true, UnlockPredicate.minPurity(15f)));
 
@@ -945,11 +945,6 @@ public final class MaterialsData {
                 "Potent brew of lethean essence. Powerful memory erasure.",
                 "Anti-Blood", () -> new ItemStack(ItemInit.lethean_brew.get()),
                 true, UnlockPredicate.minPurity(50f)));
-
-        list.add(new MaterialEntry("consecrated_syringe", "Consecrated Syringe",
-                "A syringe blessed through Unstained rites. Used for hemolytic procedures.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.consecrated_syringe.get()),
-                true, UnlockPredicate.minPurity(25f)));
 
         // ── Equipment ──
         list.add(new MaterialEntry("unstained_helm", "Unstained Armor",

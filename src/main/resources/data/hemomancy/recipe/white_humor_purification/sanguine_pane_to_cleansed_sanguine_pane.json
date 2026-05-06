@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:white_humor_purification",
+  "input": {
+    "item": "hemomancy:sanguine_pane"
+  },
+  "result": {
+    "id": "hemomancy:cleansed_sanguine_pane",
+    "count": 1
+  },
+  "transform_time": 240
+}

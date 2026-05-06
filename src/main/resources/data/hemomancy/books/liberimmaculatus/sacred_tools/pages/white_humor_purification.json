@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "White Humor Pools",
+  "subtitle": "Still water made bodily",
+  "text": "White humor may be poured from a pale flask into a shallow pool. Items left within it are not crafted so much as diagnosed: blood-taint loosens, then returns to the still water. Each source block can accept about thirty-two such purifications before it is spent. Larger offerings are divided by what the nearest source can still bear. The work is slow unless clean witnesses stand nearby. Lethean poppies close after taking on filth. White candles darken. Unwaxed copper tarnishes as it accepts what the item sheds.",
+  "icon": "hemomancy:pale_humor_flask"
+}

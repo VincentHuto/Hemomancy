@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.compat.jei;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -36,6 +37,8 @@ public class JEIPlugin implements IModPlugin {
 			MycelialCrucibleRecipeCategory.JEI_TYPE;
 	public static final RecipeType<MorphicNectarRecipe> morphic_nectar_recipe_type =
 			MorphicNectarRecipeCategory.JEI_TYPE;
+	public static final RecipeType<WhiteHumorPurificationRecipe> white_humor_purification_recipe_type =
+			WhiteHumorPurificationRecipeCategory.JEI_TYPE;
 
 	@Nonnull
 	@Override
@@ -53,6 +56,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MycelialCrucibleRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MorphicNectarRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new WhiteHumorPurificationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -65,6 +69,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.morphling_incubator.get()), incubator_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.mycelial_crucible.get()), mycelial_crucible_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.pale_humor_flask.get()), white_humor_purification_recipe_type);
 	}
 
 	@Override
@@ -84,6 +89,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));
 		registry.addRecipes(mycelial_crucible_recipe_type, FungalScarCultivationRecipe.getAllRecipes(world));
 		registry.addRecipes(morphic_nectar_recipe_type, MorphicNectarRecipe.getAllRecipes(world));
+		registry.addRecipes(white_humor_purification_recipe_type, WhiteHumorPurificationRecipe.getAllRecipes(world));
 
 	}
 

@@ -35,7 +35,7 @@ public class BloodVolumeOverlay {
 
     private static final int OVERLAY_W = 76;
     private static final int OVERLAY_H = 126;
-    private static final float OVERLAY_SCALE = 0.5f;
+    private static final float OVERLAY_SCALE = 0.6f;
     private static final int VESSEL_W = 32;
     private static final int VESSEL_H = 92;
     private static final int VESSEL_TOP = 26;
@@ -87,7 +87,7 @@ public class BloodVolumeOverlay {
     public static int getConfiguredBarY(Player player, int screenHeight) {
         int positionLoc = HemoClientConfig.HUD_LOCATION.get();
         return switch (positionLoc) {
-            case 1 -> player != null && player.getActiveEffects().isEmpty() ? 4 : 56;
+            case 1 -> player != null && player.getActiveEffects().isEmpty() ? 4 : 30;
             case 2, 3 -> screenHeight - getBarHeight() - 30;
             default -> 4;
         };

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/water",
+  "render_type" : "translucent",
+  "textures": {
+    "particle": "hemomancy:block/white_humor_still"
+  }
+}

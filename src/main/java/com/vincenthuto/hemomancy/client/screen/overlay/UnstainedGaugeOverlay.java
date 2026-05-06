@@ -36,6 +36,8 @@ public class UnstainedGaugeOverlay {
 	private static final int TEXTURE_HALF = TEXTURE_SIZE / 2;
 	private static final int PURITY_TEXTURE_STEPS = 20;
 	private static final int CLARITY_TEXTURE_STEPS = 10;
+	private static final int BASE_CENTER_Y = 54;
+	private static final int EFFECT_ICON_OFFSET_Y = 26;
 	private static final int FLUID_TOP_OFFSET = -11;
 	private static final int FLUID_BOTTOM_OFFSET = 10;
 	private static final float MENISCUS_WAVE_AMPLITUDE = 1.2f;
@@ -61,8 +63,20 @@ public class UnstainedGaugeOverlay {
 		return screenWidth - 34;
 	}
 
+	public static int getGaugeCenterY(LocalPlayer player, int screenHeight) {
+		int centerY = BASE_CENTER_Y;
+		if (player != null && !player.getActiveEffects().isEmpty()) {
+			centerY += EFFECT_ICON_OFFSET_Y;
+		}
+		return Math.min(centerY, screenHeight - DIAMOND_RADIUS - 6);
+	}
+
+	private static int getLabelTopY(LocalPlayer player) {
+		return player != null && !player.getActiveEffects().isEmpty() ? 6 + EFFECT_ICON_OFFSET_Y : 6;
+	}
+
 	public static int getGaugeCenterY() {
-		return 54;
+		return BASE_CENTER_Y;
 	}
 
 	public static int getGaugeRadius() {
@@ -75,11 +89,11 @@ public class UnstainedGaugeOverlay {
 
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
 			if (!cap.hasBegunPurification()) return;
-			renderGauge(gfx, screenWidth, player, cap);
+			renderGauge(gfx, screenWidth, screenHeight, player, cap);
 		});
 	}
 
-	private void renderGauge(GuiGraphics gfx, int screenWidth, LocalPlayer player, IUnstainedProgress cap) {
+	private void renderGauge(GuiGraphics gfx, int screenWidth, int screenHeight, LocalPlayer player, IUnstainedProgress cap) {
 		Font font = mc.font;
 		animTime += 0.016f;
 		float time = animTime;
@@ -97,10 +111,10 @@ public class UnstainedGaugeOverlay {
 		int percentColor = clarityUnlocked ? 0xFF9EDACC : TEXT_DIM;
 
 		int right = screenWidth - 8;
-		int titleY = 6;
+		int titleY = getLabelTopY(player);
 		int percentY = titleY + 11;
 		int centerX = getGaugeCenterX(screenWidth);
-		int centerY = getGaugeCenterY();
+		int centerY = getGaugeCenterY(player, screenHeight);
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();

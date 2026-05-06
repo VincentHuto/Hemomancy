@@ -1,15 +1,20 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.event.WhiteHumorPoolSavedData;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
+import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -18,7 +23,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
@@ -108,6 +116,37 @@ public class PaleHumorFlaskItem extends Item {
         }
 
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Level level = context.getLevel();
+        Player player = context.getPlayer();
+        ItemStack stack = context.getItemInHand();
+        BlockPlaceContext placeContext = new BlockPlaceContext(context);
+        BlockPos placePos = placeContext.getClickedPos();
+        BlockState targetState = level.getBlockState(placePos);
+
+        if (!targetState.canBeReplaced(placeContext)) {
+            return InteractionResult.PASS;
+        }
+
+        if (!level.isClientSide) {
+            level.setBlock(placePos, BlockInit.WHITE_HUMOR_BLOCK.get().defaultBlockState(), 3);
+            if (level instanceof ServerLevel serverLevel) {
+                WhiteHumorPoolSavedData.get(serverLevel).resetSource(placePos);
+            }
+            level.playSound(null, placePos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.8f, 1.1f);
+            if (player == null || !player.isCreative()) {
+                stack.shrink(1);
+                ItemStack emptyFlask = new ItemStack(HLItemInit.cured_clay_flask.get());
+                if (player != null && !player.getInventory().add(emptyFlask)) {
+                    player.drop(emptyFlask, false);
+                }
+            }
+        }
+
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     public static boolean isUnstainedWeapon(ItemStack stack) {

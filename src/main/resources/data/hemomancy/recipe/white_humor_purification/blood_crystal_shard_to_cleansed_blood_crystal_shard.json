@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:white_humor_purification",
+  "input": {
+    "item": "hemomancy:blood_crystal_shard"
+  },
+  "result": {
+    "id": "hemomancy:cleansed_blood_crystal_shard",
+    "count": 1
+  },
+  "transform_time": 300
+}

@@ -106,6 +106,20 @@ public class BlockInit {
 							.liquid()
 							.sound(SoundType.EMPTY)));
 
+	public static final DeferredHolder<Block, LiquidBlock> WHITE_HUMOR_BLOCK = LIQUIDBLOCKS.register(
+			"white_humor_block",
+			() -> new LiquidBlock(
+					FluidInit.WHITE_HUMOR.get(),
+					BlockBehaviour.Properties.of()
+							.mapColor(MapColor.SNOW)
+							.replaceable()
+							.noCollission()
+							.strength(100f)
+							.pushReaction(PushReaction.DESTROY)
+							.noLootTable()
+							.liquid()
+							.sound(SoundType.EMPTY)));
+
 	private static final ResourceKey<Block> GOURD_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("gourd"));
 	private static final ResourceKey<Block> GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("gourd_stem"));
 	private static final ResourceKey<Block> ATTACHED_GOURD_STEM_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Hemomancy.rloc("attached_gourd_stem"));

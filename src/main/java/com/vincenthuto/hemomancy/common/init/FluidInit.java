@@ -78,4 +78,59 @@ public class FluidInit {
 			.slopeFindDistance(3)
 			.levelDecreasePerBlock(1)
 			.block(BlockInit.MORPHIC_NECTAR_BLOCK);
+
+	// ---- White Humor ----
+
+	public static final DeferredHolder<FluidType, FluidType> WHITE_HUMOR_TYPE = FLUID_TYPES.register(
+			"white_humor",
+			() -> new FluidType(FluidType.Properties.create()
+					.density(1100)
+					.viscosity(3500)
+					.lightLevel(1)) {
+				@Override
+				public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+					consumer.accept(new IClientFluidTypeExtensions() {
+						private static final ResourceLocation STILL =
+								Hemomancy.rloc("block/white_humor_still");
+						private static final ResourceLocation FLOW =
+								Hemomancy.rloc("block/white_humor_flow");
+						private static final ResourceLocation OVERLAY =
+								Hemomancy.rloc("block/white_humor_overlay");
+						private static final ResourceLocation CAMERA_OVERLAY =
+								Hemomancy.rloc("textures/block/white_humor_overlay.png");
+
+						@Override
+						public ResourceLocation getStillTexture() { return STILL; }
+
+						@Override
+						public ResourceLocation getFlowingTexture() { return FLOW; }
+
+						@Override
+						public ResourceLocation getOverlayTexture() { return OVERLAY; }
+
+						@Override
+						public ResourceLocation getRenderOverlayTexture(Minecraft mc) { return CAMERA_OVERLAY; }
+
+						@Override
+						public int getTintColor() { return 0xDDEAF7FF; }
+					});
+				}
+			});
+
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> WHITE_HUMOR =
+			FLUIDS.register("white_humor",
+					() -> new BaseFlowingFluid.Source(FluidInit.WHITE_HUMOR_PROPS));
+
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> WHITE_HUMOR_FLOWING =
+			FLUIDS.register("white_humor_flowing",
+					() -> new BaseFlowingFluid.Flowing(FluidInit.WHITE_HUMOR_PROPS));
+
+	public static final BaseFlowingFluid.Properties WHITE_HUMOR_PROPS =
+			new BaseFlowingFluid.Properties(
+					WHITE_HUMOR_TYPE,
+					WHITE_HUMOR,
+					WHITE_HUMOR_FLOWING)
+			.slopeFindDistance(2)
+			.levelDecreasePerBlock(1)
+			.block(BlockInit.WHITE_HUMOR_BLOCK);
 }

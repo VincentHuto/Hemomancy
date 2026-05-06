@@ -89,7 +89,7 @@ public class StillArtCooldownOverlay {
 
 		boolean gaugeOnLeft = UnstainedGaugeOverlay.isConfiguredOnLeftSide();
 		int centerX = UnstainedGaugeOverlay.getGaugeCenterX(screenWidth);
-		int centerY = UnstainedGaugeOverlay.getGaugeCenterY();
+		int centerY = UnstainedGaugeOverlay.getGaugeCenterY(mc.player, mc.getWindow().getGuiScaledHeight());
 		int radius = UnstainedGaugeOverlay.getGaugeRadius();
 		int x = gaugeOnLeft
 				? centerX + radius + 8

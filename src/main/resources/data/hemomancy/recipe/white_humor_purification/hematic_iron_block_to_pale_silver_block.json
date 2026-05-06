@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:white_humor_purification",
+  "input": {
+    "item": "hemomancy:hematic_iron_block"
+  },
+  "result": {
+    "id": "hemomancy:pale_silver_block",
+    "count": 1
+  },
+  "transform_time": 600
+}

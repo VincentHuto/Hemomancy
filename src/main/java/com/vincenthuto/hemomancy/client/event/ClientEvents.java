@@ -92,7 +92,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -319,6 +321,11 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void renderWhiteHumorScreenOverlay(RenderGuiEvent.Pre event) {
+        WhiteHumorScreenOverlay.render(event.getGuiGraphics());
+    }
+
+    @SubscribeEvent
     public static void renderLevelLastEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             renderBloodMoonSky(event);
@@ -499,6 +506,10 @@ public class ClientEvents {
 
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
+            });
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();
             EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
