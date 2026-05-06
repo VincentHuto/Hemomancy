@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BloodTempleStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.BrokenChurchStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.MausoleumStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.UnstainedChurchStructure;
@@ -31,6 +32,9 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<UnstainedChurchStructure>> unstained_church = STRUCTURES
 			.register("unstained_church", () -> explicitStructureTypeTyping(UnstainedChurchStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<BrokenChurchStructure>> broken_church = STRUCTURES
+			.register("broken_church", () -> explicitStructureTypeTyping(BrokenChurchStructure.CODEC));
 
 	public static final DeferredHolder<StructureType<?>, StructureType<HarbingerOutpostStructure>> harbinger_outpost = STRUCTURES
 			.register("harbinger_outpost", () -> explicitStructureTypeTyping(HarbingerOutpostStructure.CODEC));

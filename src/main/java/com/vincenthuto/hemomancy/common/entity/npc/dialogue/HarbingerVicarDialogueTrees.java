@@ -354,6 +354,7 @@ public final class HarbingerVicarDialogueTrees {
 	public static DialogueTree archon(int entityId, boolean hasBloodline) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_the_final_truth", "final_truth", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
 		if (hasBloodline) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
@@ -368,6 +369,13 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.archon.final_truth"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("annetta_map", List.of(
+						"hemomancy.vicar.annetta_map.line1",
+						"hemomancy.vicar.annetta_map.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.take_stained_map", null, "give_stained_church_map"),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(
@@ -465,6 +473,7 @@ public final class HarbingerVicarDialogueTrees {
 	public static DialogueTree apotheos(int entityId, boolean hasBloodline) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_do_you_make_of_this", "reflection", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
 		if (hasBloodline) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
@@ -479,6 +488,13 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.apotheos.reflection"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("annetta_map", List.of(
+						"hemomancy.vicar.annetta_map.line1",
+						"hemomancy.vicar.annetta_map.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.take_stained_map", null, "give_stained_church_map"),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(

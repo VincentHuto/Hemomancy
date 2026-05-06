@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
@@ -156,6 +158,20 @@ public class EntityInit {
                     .sized(0.6F, 1.8F)
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("annetta_knowles").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<StainedPriestessEntity>> stained_priestess = ENTITY_TYPES.register(
+            "stained_priestess",
+            () -> EntityType.Builder.of(StainedPriestessEntity::new, MobCategory.MONSTER)
+                    .sized(0.9F, 2.6F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("stained_priestess").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LatentAnnettaInfectionEntity>> latent_annetta_infection = ENTITY_TYPES.register(
+            "latent_annetta_infection",
+            () -> EntityType.Builder.of(LatentAnnettaInfectionEntity::new, MobCategory.MONSTER)
+                    .sized(1.0F, 2.2F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("latent_annetta_infection").toString()));
 
     // Boss: Putriciel (The Rotting Saint)
     public static final DeferredHolder<EntityType<?>, EntityType<PutricielEntity>> putriciel = ENTITY_TYPES.register(
@@ -539,6 +555,8 @@ public class EntityInit {
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
         event.put(EntityInit.annetta_knowles.get(), AnnettaKnowlesEntity.setAttributes().build());
+        event.put(EntityInit.stained_priestess.get(), StainedPriestessEntity.setAttributes().build());
+        event.put(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionEntity.setAttributes().build());
         event.put(EntityInit.putriciel.get(), PutricielEntity.setAttributes().build());
         event.put(EntityInit.velorum.get(), VelorumEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());

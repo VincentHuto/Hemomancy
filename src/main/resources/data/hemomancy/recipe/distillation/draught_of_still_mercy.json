@@ -1,0 +1,15 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:lethean_brew"
+  },
+  "catalyst": {
+    "item": "hemomancy:tears_of_silthmere"
+  },
+  "result": "hemomancy:draught_of_still_mercy",
+  "count": 1,
+  "experience": 1.5,
+  "cookingtime": 260,
+  "pallid": true,
+  "id": "hemomancy:distillation/draught_of_still_mercy"
+}

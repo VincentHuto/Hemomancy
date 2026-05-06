@@ -13,6 +13,8 @@ import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRender
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.HollowVesselRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaKnowlesRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.LatentAnnettaInfectionRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.StainedPriestessRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.putriciel.PutricielRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.ContainmentAnchorRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeFragmentRenderer;
@@ -472,6 +474,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.drudge.get(), com.vincenthuto.hemomancy.client.render.entity.npc.DrudgeRenderer::new);
             event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
             event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
+            event.registerEntityRenderer(EntityInit.stained_priestess.get(), StainedPriestessRenderer::new);
+            event.registerEntityRenderer(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionRenderer::new);
             event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
             event.registerEntityRenderer(EntityInit.velorum.get(), VelorumRenderer::new);
             event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);

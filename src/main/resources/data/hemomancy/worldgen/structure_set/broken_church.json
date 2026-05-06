@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:broken_church",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1210792437,
+    "spacing": 48,
+    "separation": 12,
+    "type": "minecraft:random_spread"
+  }
+}

@@ -82,7 +82,15 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.enlightened.line1",
                             "hemomancy.zealot.enlightened.line2"
                     ), List.of(
+                            new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
+                            new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+                    )))
+                    .addNode(new DialogueNode("annetta_map", List.of(
+                            "hemomancy.zealot.annetta_map.line1",
+                            "hemomancy.zealot.annetta_map.line2"
+                    ), List.of(
+                            new DialogueOption("hemomancy.dialogue.zealot.option.take_stained_map", null, "give_stained_church_map"),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
                     .addNode(new DialogueNode("item_hint", List.of(
@@ -101,6 +109,7 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.clarity_phase.line2"
                     ), List.of(
                             new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null),
+                            new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -108,6 +117,13 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.verdigris_info.line1",
                             "hemomancy.zealot.verdigris_info.line2"
                     ), List.of(
+                            new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+                    )))
+                    .addNode(new DialogueNode("annetta_map", List.of(
+                            "hemomancy.zealot.annetta_map.line1",
+                            "hemomancy.zealot.annetta_map.line2"
+                    ), List.of(
+                            new DialogueOption("hemomancy.dialogue.zealot.option.take_stained_map", null, "give_stained_church_map"),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
                     .addNode(new DialogueNode("item_hint", List.of(

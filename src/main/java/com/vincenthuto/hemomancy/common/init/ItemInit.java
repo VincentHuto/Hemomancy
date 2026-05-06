@@ -128,6 +128,8 @@ public class ItemInit {
             () -> new RiteHintItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> blood_structure_hint = BASEITEMS.register("blood_structure_hint",
             () -> new BloodStructureHintItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> stained_church_map = BASEITEMS.register("stained_church_map",
+            () -> new StainedChurchMapItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",
@@ -264,6 +266,8 @@ public class ItemInit {
     // Unstained â€" Our Lady of Still Waters materials
     public static final DeferredHolder<Item, Item> draught_of_still_waters = BASEITEMS.register("draught_of_still_waters",
             () -> new DraughtOfStillWatersItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> draught_of_still_mercy = BASEITEMS.register("draught_of_still_mercy",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> pallid_infusion = BASEITEMS.register("pallid_infusion",
             () -> new PallidInfusionItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> lethean_dew = BASEITEMS.register("lethean_dew",
@@ -415,6 +419,8 @@ public class ItemInit {
             () -> new BloodProjectionItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguis_lancea = SPECIALITEMS.register("sanguis_lancea",
             () -> new SanguisLanceaItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> annettas_sanguis_lancea = SPECIALITEMS.register("annettas_sanguis_lancea",
+            () -> new SanguisLanceaItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final DeferredHolder<Item, Item> living_syringe = SPECIALITEMS.register("living_syringe",
             () -> new LivingSyringeItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_staff = SPECIALITEMS.register("living_staff",
@@ -581,6 +587,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> absolution_dagger = HANDHELDITEMS.register("absolution_dagger",
             () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
                     new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> annettas_absolution_dagger = HANDHELDITEMS.register("annettas_absolution_dagger",
+            () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final DeferredHolder<Item, Item> silthmere_glaive = HANDHELDITEMS.register("silthmere_glaive",
             () -> new SilthmereGlaiveItem(4, -2.8f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));

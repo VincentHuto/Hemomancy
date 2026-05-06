@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.Util;
@@ -153,8 +154,8 @@ public class CrimsonFlameBlock extends BaseFireBlock {
 				worldIn.removeBlock(pos, false);
 			}
 
-			BlockState blockstate = worldIn.getBlockState(pos.below());
-			boolean flag = blockstate.isFireSource(worldIn, pos, Direction.UP);
+		BlockState blockstate = worldIn.getBlockState(pos.below());
+		boolean flag = blockstate.isFireSource(worldIn, pos, Direction.UP) || this.isVenousStone(blockstate);
 			int i = state.getValue(AGE);
 			if (!flag && worldIn.isRaining() && this.canDie(worldIn, pos) && rand.nextFloat() < 0.2F + i * 0.03F) {
 				worldIn.removeBlock(pos, false);
@@ -223,6 +224,10 @@ public class CrimsonFlameBlock extends BaseFireBlock {
 
 	protected boolean canDie(Level worldIn, BlockPos pos) {
 		return false;
+	}
+
+	private boolean isVenousStone(BlockState state) {
+		return state.is(BlockInit.venous_stone.get());
 	}
 
 	@Deprecated

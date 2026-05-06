@@ -151,6 +151,9 @@ public class DialogueEventHandler {
 			case "give_blood_structure_hint" -> {
 				handleGiveBloodStructureHint(player, event.getEntityId());
 			}
+			case "give_stained_church_map" -> {
+				handleGiveStainedChurchMap(player, event.getEntityId());
+			}
 			case "scout_give_notes" -> {
 				handleScoutGiveNotes(player, event.getEntityId());
 			}
@@ -196,6 +199,23 @@ public class DialogueEventHandler {
 
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_gives_scrap")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleGiveStainedChurchMap(ServerPlayer player, int entityId) {
+		ItemStack map = new ItemStack(ItemInit.stained_church_map.get());
+		Entity entity = player.level().getEntity(entityId);
+		if (entity != null) {
+			Vec3 pos = entity.position();
+			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, map);
+			entity.level().addFreshEntity(drop);
+		} else if (!player.getInventory().add(map)) {
+			player.drop(map, false);
+		}
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.gives_stained_church_map")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 	}
