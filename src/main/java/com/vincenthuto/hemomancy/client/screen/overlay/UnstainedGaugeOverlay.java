@@ -36,6 +36,9 @@ public class UnstainedGaugeOverlay {
 	private static final int TEXTURE_HALF = TEXTURE_SIZE / 2;
 	private static final int PURITY_TEXTURE_STEPS = 20;
 	private static final int CLARITY_TEXTURE_STEPS = 10;
+	private static final int FLUID_TOP_OFFSET = -11;
+	private static final int FLUID_BOTTOM_OFFSET = 10;
+	private static final float MENISCUS_WAVE_AMPLITUDE = 1.2f;
 
 	private static final int VERDIGRIS = 0xFF8BD6C6;
 	private static final int TEXT_DIM = 0xFF9AA6B4;
@@ -72,11 +75,11 @@ public class UnstainedGaugeOverlay {
 
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
 			if (!cap.hasBegunPurification()) return;
-			renderGauge(gfx, screenWidth, cap);
+			renderGauge(gfx, screenWidth, player, cap);
 		});
 	}
 
-	private void renderGauge(GuiGraphics gfx, int screenWidth, IUnstainedProgress cap) {
+	private void renderGauge(GuiGraphics gfx, int screenWidth, LocalPlayer player, IUnstainedProgress cap) {
 		Font font = mc.font;
 		animTime += 0.016f;
 		float time = animTime;
@@ -112,7 +115,10 @@ public class UnstainedGaugeOverlay {
 
 		renderLayer(gfx, ORB_TEXTURES[clarityUnlocked ? PURITY_TEXTURE_STEPS : stepIndex(purity, PURITY_TEXTURE_STEPS)],
 				centerX, centerY);
-		renderOrbActivity(gfx, centerX, centerY, purity, clarityUnlocked, time);
+
+		float purification = clarityUnlocked ? 1f : purity / 100f;
+		float fluidLevel = clarityUnlocked ? 1f : getBloodFillRatio(player, purification);
+		renderOrbActivity(gfx, centerX, centerY, purification, fluidLevel, clarityUnlocked, time);
 
 		if (clarityUnlocked || purity >= 100f) {
 			renderLayer(gfx, clarityUnlocked ? CLARITY_DIAMOND_TEXTURES[stepIndex(clarity, CLARITY_TEXTURE_STEPS)]
@@ -124,6 +130,13 @@ public class UnstainedGaugeOverlay {
 				centerX, centerY);
 
 		RenderSystem.disableBlend();
+	}
+
+	private float getBloodFillRatio(LocalPlayer player, float fallbackRatio) {
+		return HemoCapabilityAccess.getBloodVolume(player)
+				.filter(blood -> blood.isActive() && blood.getMaxBloodVolume() > 0)
+				.map(blood -> (float) Mth.clamp(blood.getBloodVolume() / blood.getMaxBloodVolume(), 0.0, 1.0))
+				.orElse(Mth.clamp(fallbackRatio, 0f, 1f));
 	}
 
 	private static ResourceLocation texture(String name) {
@@ -162,16 +175,63 @@ public class UnstainedGaugeOverlay {
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
-	private void renderOrbActivity(GuiGraphics gfx, int centerX, int centerY, float purity, boolean sealed, float time) {
-		float purification = sealed ? 1f : purity / 100f;
-		renderMeniscus(gfx, centerX, centerY, purification, time);
+	private void renderOrbActivity(GuiGraphics gfx, int centerX, int centerY, float purification, float fluidLevel, boolean sealed, float time) {
+		if (fluidLevel <= 0.001f) {
+			return;
+		}
+
+		renderMeniscus(gfx, centerX, centerY, purification, fluidLevel, time);
 		if (!sealed) {
-			renderBloodParticles(gfx, centerX, centerY, purification, time);
+			renderBloodParticles(gfx, centerX, centerY, purification, fluidLevel, time);
 		}
 	}
 
-	private void renderMeniscus(GuiGraphics gfx, int centerX, int centerY, float purification, float time) {
-		int lineY = centerY - 3 + Math.round(Mth.sin(time * 1.8f) * 1.2f);
+	private int getFluidTopY(int centerY, float fluidLevel) {
+		float level = Mth.clamp(fluidLevel, 0f, 1f);
+		if (level <= 0f) {
+			return centerY + FLUID_BOTTOM_OFFSET;
+		}
+		if (level >= 1f) {
+			return centerY + FLUID_TOP_OFFSET;
+		}
+
+		double top = FLUID_TOP_OFFSET;
+		double bottom = FLUID_BOTTOM_OFFSET;
+		double radius = (bottom - top) / 2.0;
+		double mid = (top + bottom) / 2.0;
+
+		double low = -radius;
+		double high = radius;
+		for (int i = 0; i < 16; i++) {
+			double y = (low + high) * 0.5;
+			double fraction = circleAreaFractionBelow(y, radius);
+			if (fraction < level) {
+				low = y;
+			} else {
+				high = y;
+			}
+		}
+
+		double ySolved = (low + high) * 0.5;
+		return centerY + (int) Math.round(mid - ySolved);
+	}
+
+	private double circleAreaFractionBelow(double y, double radius) {
+		double clampedY = Mth.clamp(y, -radius, radius);
+		double root = Math.sqrt(Math.max(0.0, radius * radius - clampedY * clampedY));
+		double area = clampedY * root + radius * radius * (Math.asin(clampedY / radius) + Math.PI / 2.0);
+		return Mth.clamp(area / (Math.PI * radius * radius), 0.0, 1.0);
+	}
+
+	private void renderMeniscus(GuiGraphics gfx, int centerX, int centerY, float purification, float fluidLevel, float time) {
+		if (fluidLevel >= 0.995f) {
+			return;
+		}
+
+		int baseY = getFluidTopY(centerY, fluidLevel);
+		float waveScale = Mth.clamp((1f - fluidLevel) / 0.15f, 0f, 1f);
+		float wave = Mth.sin(time * 1.8f) * MENISCUS_WAVE_AMPLITUDE * waveScale;
+		int lineY = Mth.clamp(baseY + Math.round(wave), centerY + FLUID_TOP_OFFSET, centerY + FLUID_BOTTOM_OFFSET);
 		int color = lerpColor(0xCCDD2A22, 0xBFFFFFFF, purification);
 		for (int x = -11; x <= 11; x++) {
 			float curve = 1f - Math.abs(x) / 12f;
@@ -181,15 +241,22 @@ public class UnstainedGaugeOverlay {
 		}
 	}
 
-	private void renderBloodParticles(GuiGraphics gfx, int centerX, int centerY, float purification, float time) {
+	private void renderBloodParticles(GuiGraphics gfx, int centerX, int centerY, float purification, float fluidLevel, float time) {
+		if (fluidLevel <= 0f) {
+			return;
+		}
+
 		Random random = new Random(9127L);
 		float bloodVisibility = 1f - purification;
+		int fillBottomY = centerY + FLUID_BOTTOM_OFFSET;
+		int fillTopY = getFluidTopY(centerY, fluidLevel);
+		int fillHeight = Math.max(1, fillBottomY - fillTopY + 1);
 		for (int i = 0; i < 6; i++) {
 			float phase = random.nextFloat();
 			float speed = 0.22f + random.nextFloat() * 0.32f;
 			float progress = (time * speed + phase) % 1f;
 			int x = centerX - 9 + random.nextInt(19) + Math.round(Mth.sin(time * 0.8f + i) * 2f);
-			int y = centerY + 10 - Math.round(progress * 21f);
+			int y = fillBottomY - Math.round(progress * (fillHeight - 1));
 			int dx = x - centerX;
 			int dy = y - centerY;
 			if (dx * dx + dy * dy > (ORB_RADIUS - 4) * (ORB_RADIUS - 4)) continue;

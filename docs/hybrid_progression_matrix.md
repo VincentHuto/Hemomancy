@@ -34,3 +34,15 @@ This matrix aligns Hemomancy's internal paths with familiar Minecraft milestones
 - Unstained escalate from cleansing to sanctuary to immune-system certainty.
 - Tags are compatibility surfaces, not identity replacements; Hemomancy-specific blocks and reagents should remain central.
 - Early and midgame gates should allow equivalent modded materials. Late transformations should require clear milestone trophies or Hemomancy endgame components.
+
+## Unstained Multiblock Queue
+
+The Pallid Retort should be the first serious Unstained workshop machine, formed through blood-structure crafting after early purification with pale stone, clarity glass, copper, cleansed stone, and Lethean reagent symbolism. Future Unstained multiblock crafts should continue this language: quiet apparatus, chapel hardware, and purification instruments rather than Harbinger organs or fungal infrastructure.
+
+| Candidate | Stage | Role | Crafting identity |
+| --- | --- | --- | --- |
+| Stillwater Condenser | Stage 2-3 | Turns Lethean Poppies, cold water, snow, or ice-side inputs into Lethean Dew or pale distillate | Pallid Retort, clarity glass, copper, pale ritual stone |
+| Verdigris Lattice | Stage 4-5 | Sanctuary block that strengthens Silver Ward or reduces bleeding and blood-magic effects nearby | Consecrated copper, pale silver, pallid lanterns, cleansed stone |
+| Absolution Reliquary | Stage 5-6 | Memory-release or scar-shedding station that trades blood identity for purity or clarity progress | Lethean Chalice, pale silver block, clarity crystals, judgment relic tags |
+| Discerning Lens | Stage 3-5 | Reveals blood residue, hidden rite hints, or Harbinger contamination traces | Clarity glass, pale distillate, copper, cleansed crystal shards |
+| Chapel Anchor | Stage 7-8 | Marks a late-game sanctuary center and stabilizes major Unstained rites | Pallid Icon, pale ritual stone, pale silver, saint relic tags |

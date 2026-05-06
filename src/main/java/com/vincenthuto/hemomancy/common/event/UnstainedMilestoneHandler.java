@@ -89,7 +89,7 @@ public class UnstainedMilestoneHandler {
 				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura);
 				if (existing == null || existing.getAmplifier() < auraAmplifier || existing.getDuration() < 40) {
 					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.verdigris_aura, AUTO_EFFECT_DURATION, auraAmplifier, false, false, true));
+							EffectInit.verdigris_aura, AUTO_EFFECT_DURATION, auraAmplifier, false, false, false));
 				}
 			}
 
@@ -100,7 +100,7 @@ public class UnstainedMilestoneHandler {
 				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward);
 				if (existing == null || existing.getAmplifier() < wardAmplifier || existing.getDuration() < 40) {
 					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.silver_ward, AUTO_EFFECT_DURATION, wardAmplifier, false, false, true));
+							EffectInit.silver_ward, AUTO_EFFECT_DURATION, wardAmplifier, false, false, false));
 				}
 			}
 

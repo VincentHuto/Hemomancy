@@ -1,0 +1,38 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 0,
+  "required_degree": 2,
+  "heldItem": "hemomancy:pale_distillate",
+  "hitBlock": "minecraft:cauldron",
+  "pattern": [
+    [" Q ", "G G", " Q "],
+    ["CDC", " A ", "CDC"],
+    [" Q ", "SSS", " Q "]
+  ],
+  "key": {
+    "Q": {
+      "tag": "hemomancy:progression/pale_ritual_stone",
+      "fallback": "minecraft:quartz_bricks"
+    },
+    "G": {
+      "tag": "hemomancy:progression/clarity_glass",
+      "fallback": "minecraft:white_stained_glass"
+    },
+    "C": {
+      "block": "minecraft:copper_block"
+    },
+    "D": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "A": {
+      "block": "minecraft:cauldron"
+    },
+    "S": {
+      "block": "minecraft:smooth_quartz"
+    }
+  },
+  "result": {
+    "id": "hemomancy:pallid_retort"
+  },
+  "unstained": true
+}
