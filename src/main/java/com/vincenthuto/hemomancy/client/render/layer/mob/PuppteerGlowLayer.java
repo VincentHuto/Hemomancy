@@ -3,12 +3,10 @@ package com.vincenthuto.hemomancy.client.render.layer.mob;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.BloodDrunkPuppeteerModel;
-
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 public class PuppteerGlowLayer<T extends LivingEntity> extends EyesLayer<T, BloodDrunkPuppeteerModel<T>> {

@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
+
+import java.util.Random;
 
 public final class UnstainedBackgroundRenderer {
     private static final int RHOMBUS_COUNT = 10;

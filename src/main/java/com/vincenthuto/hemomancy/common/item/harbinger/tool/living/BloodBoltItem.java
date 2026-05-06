@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
 
 public class BloodBoltItem extends ArrowItem {
 

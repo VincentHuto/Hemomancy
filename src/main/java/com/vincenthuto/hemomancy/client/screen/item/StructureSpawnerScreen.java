@@ -1,16 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import java.util.List;
-
-import java.util.ArrayList;
-import java.util.Comparator;
 import com.vincenthuto.hemomancy.common.menu.StructureSpawnerMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,6 +14,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpawnerMenu> {
 

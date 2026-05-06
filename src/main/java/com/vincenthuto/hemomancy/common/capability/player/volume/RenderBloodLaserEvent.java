@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.volume;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+
+import java.util.List;
 
 public class RenderBloodLaserEvent {
 	@SubscribeEvent

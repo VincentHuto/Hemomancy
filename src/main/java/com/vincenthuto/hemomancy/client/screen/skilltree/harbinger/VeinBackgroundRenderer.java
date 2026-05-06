@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import java.util.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
+
+import java.util.Random;
 
 public final class VeinBackgroundRenderer {
     private static final int VEIN_COUNT = 28;

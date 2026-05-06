@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -19,6 +16,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.Random;
 
 public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 	private final net.minecraft.client.renderer.entity.ItemRenderer itemRenderer;

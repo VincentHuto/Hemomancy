@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.compat.mna.spell;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.Arrays;
-import java.util.List;
-
 import com.mna.api.affinity.Affinity;
 import com.mna.api.capabilities.IPlayerMagic;
 import com.mna.api.particles.MAParticleType;
@@ -19,8 +15,8 @@ import com.mna.api.spells.targeting.SpellContext;
 import com.mna.api.spells.targeting.SpellSource;
 import com.mna.api.spells.targeting.SpellTarget;
 import com.mna.capabilities.playerdata.magic.PlayerMagicProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -29,6 +25,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A spell component that converts the caster's MnA mana into Hemomancy blood

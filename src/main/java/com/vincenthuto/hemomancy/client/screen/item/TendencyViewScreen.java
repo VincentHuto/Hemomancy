@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenu;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -16,19 +16,15 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
 
-import java.awt.Point;
-import java.util.Collection;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyViewMenu> {

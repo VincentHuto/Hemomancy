@@ -1,17 +1,15 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.AttributeInit.TriState;
-
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public final class CPacketFlight implements CustomPacketPayload {
 

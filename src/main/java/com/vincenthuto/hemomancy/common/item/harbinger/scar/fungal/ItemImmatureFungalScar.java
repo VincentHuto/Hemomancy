@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+
+import java.util.List;
 
 /**
  * A single item representing any immature fungal scar culture partway through

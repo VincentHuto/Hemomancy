@@ -1,17 +1,12 @@
 package com.vincenthuto.hemomancy.compat.mna.item;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import com.mna.api.items.ITieredItem;
-import com.mna.api.tools.RLoc;
 import com.mna.capabilities.playerdata.magic.PlayerMagicProvider;
 import com.mna.items.armor.DyeableMageArmor;
 import com.mna.items.armor.IBrokenArmorReplaceable;
 import com.mna.items.armor.ISetItem;
 import com.mna.items.base.IManaRepairable;
 import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,13 +14,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.DyeableArmorItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class DyeableLivingThreadArmor extends DyeableArmorItem
 		implements ISetItem, ITieredItem<DyeableMageArmor>, IBrokenArmorReplaceable<DyeableMageArmor>, IManaRepairable {

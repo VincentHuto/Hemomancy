@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import java.util.function.Consumer;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
@@ -13,6 +10,8 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+import java.util.function.Consumer;
 
 public class FluidInit {
 

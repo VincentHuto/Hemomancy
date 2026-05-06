@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
-import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
  * Server-side event handler for active Still Waters zones established by the

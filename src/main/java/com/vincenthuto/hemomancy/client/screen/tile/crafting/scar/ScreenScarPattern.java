@@ -1,15 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting.scar;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
-//GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hutoslib.client.screen.HLButtonTextured;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,6 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
+
+import java.util.List;
+
+//GlStateManager;
 
 public class ScreenScarPattern extends Screen {
 	final ResourceLocation texture = Hemomancy.rloc("textures/gui/scar_pattern.png");

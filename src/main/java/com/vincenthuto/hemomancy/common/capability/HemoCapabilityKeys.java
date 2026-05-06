@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;

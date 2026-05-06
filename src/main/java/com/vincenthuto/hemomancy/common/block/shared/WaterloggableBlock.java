@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.block.shared;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -20,6 +18,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+
+import javax.annotation.Nullable;
 
 public abstract class WaterloggableBlock extends Block implements SimpleWaterloggedBlock {
 	public WaterloggableBlock(BlockBehaviour.Properties properties, boolean startWaterlogged) {

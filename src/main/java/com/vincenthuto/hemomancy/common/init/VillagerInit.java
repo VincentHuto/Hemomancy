@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableSet;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.village.HemopothecaryProcessor;
@@ -14,8 +11,11 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class VillagerInit {
 

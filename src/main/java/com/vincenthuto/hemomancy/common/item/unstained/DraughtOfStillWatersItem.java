@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +14,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * Distilled in the Pallid Retort from white humor and Lethean Dew.

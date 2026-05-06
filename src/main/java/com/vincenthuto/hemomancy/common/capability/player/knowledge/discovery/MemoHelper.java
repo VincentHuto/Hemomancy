@@ -1,16 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
-
+import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +18,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public final class MemoHelper {
 	public static final String EVENT_PREFIX = "memo_capture:";

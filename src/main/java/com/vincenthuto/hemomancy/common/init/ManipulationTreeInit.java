@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.ManipulationTreeEntry;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.ManipulationTreeEntry;
 
 /**
  * Defines the spatial layout and parent-child relationships of the

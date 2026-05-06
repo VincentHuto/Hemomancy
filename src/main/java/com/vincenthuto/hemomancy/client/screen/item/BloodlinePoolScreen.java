@@ -1,16 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
-import com.vincenthuto.hemomancy.common.network.capa.PacketKickBloodlinePlayer;
-import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
-import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
-import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
-
+import com.vincenthuto.hemomancy.common.network.capa.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

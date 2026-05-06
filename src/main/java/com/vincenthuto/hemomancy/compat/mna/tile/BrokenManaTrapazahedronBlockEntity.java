@@ -5,14 +5,11 @@ import com.mna.api.items.ChargeableItem;
 import com.mna.api.particles.ParticleInit;
 import com.mna.blocks.runeforging.PedestalBlock;
 import com.mna.blocks.tileentities.PedestalTile;
-import com.mna.blocks.tileentities.init.TileEntityInit;
 import com.mna.effects.EffectInit;
 import com.mna.entities.EntityInit;
 import com.mna.entities.constructs.animated.Construct;
 import com.mna.entities.sorcery.targeting.SpellSigil;
 import com.mna.network.ServerMessageDispatcher;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -26,10 +23,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BrokenManaTrapazahedronBlockEntity extends BlockEntity implements GeoBlockEntity {
     private ArrayList<Long> knownPedestalLocations;

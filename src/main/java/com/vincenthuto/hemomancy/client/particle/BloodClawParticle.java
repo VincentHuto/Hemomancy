@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.client.particle;
 
-import java.util.Random;
-
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
-
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
+
+import java.util.Random;
 
 public class BloodClawParticle extends TextureSheetParticle {
 	public float colorR = 0;

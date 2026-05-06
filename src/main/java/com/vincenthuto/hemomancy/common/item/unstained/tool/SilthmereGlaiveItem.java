@@ -1,11 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +14,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Silthmere Glaive — a reach weapon for the Unstained path.

@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import java.util.List;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -10,6 +8,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
 
 /**
  * A beneficial effect that emanates a hemorrhagic aura, periodically

@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-
-import com.vincenthuto.hemomancy.Hemomancy;
 
 /**
  * Caches pixel data for each engram texture (a-z, indices 0-25). For each

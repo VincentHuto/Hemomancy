@@ -1,20 +1,19 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
-import java.util.List;
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.StartCentrifugeButtonPacket;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Vial Centrifuge screen — fully programmatic, no texture files.

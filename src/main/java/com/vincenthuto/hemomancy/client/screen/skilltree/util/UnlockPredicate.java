@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
-import java.util.function.Predicate;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Predicate;
 
 /**
  * Client-side predicate that controls whether a recipe, node, or entry is

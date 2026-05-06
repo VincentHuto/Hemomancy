@@ -1,19 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.FoundRecipe;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.RecipeKind;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-
+import com.vincenthuto.hemomancy.common.recipe.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,6 +16,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Renders a compact recipe preview inside the material info panels.

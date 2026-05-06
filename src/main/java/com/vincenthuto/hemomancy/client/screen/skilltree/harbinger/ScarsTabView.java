@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.List;
 
 /**
  * Static rendering and hit-testing helpers for the <em>Cerebral Scarring</em>

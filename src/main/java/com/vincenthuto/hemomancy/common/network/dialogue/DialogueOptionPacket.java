@@ -3,16 +3,14 @@ package com.vincenthuto.hemomancy.common.network.dialogue;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
-
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Client → Server packet sent when a player selects a dialogue option that

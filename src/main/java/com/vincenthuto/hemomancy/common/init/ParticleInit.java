@@ -1,34 +1,18 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import net.neoforged.fml.common.EventBusSubscriber;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.data.AbsorbedBloodCellData;
-import com.vincenthuto.hemomancy.client.particle.data.BloodAvatarHitParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.client.particle.data.BloodClawData;
-import com.vincenthuto.hemomancy.client.particle.data.HitColorParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodAvatarHitParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodClawParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.type.AbsorbedBloodCellParticleType;
-import com.vincenthuto.hemomancy.client.particle.type.BloodAvatarHitParticleType;
-import com.vincenthuto.hemomancy.client.particle.type.BloodCellParticleType;
-import com.vincenthuto.hemomancy.client.particle.type.BloodClawParticleType;
-import com.vincenthuto.hemomancy.client.particle.type.HitGlowParticleType;
-import com.vincenthuto.hemomancy.client.particle.type.SerpentParticleType;
-
+import com.vincenthuto.hemomancy.client.particle.data.*;
+import com.vincenthuto.hemomancy.client.particle.factory.*;
+import com.vincenthuto.hemomancy.client.particle.type.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ParticleInit {

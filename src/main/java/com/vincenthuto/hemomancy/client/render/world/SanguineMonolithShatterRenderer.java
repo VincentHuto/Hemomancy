@@ -1,19 +1,17 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class SanguineMonolithShatterRenderer {
 

@@ -1,19 +1,18 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Leeches morphling that passively replenishes blood volume by applying the

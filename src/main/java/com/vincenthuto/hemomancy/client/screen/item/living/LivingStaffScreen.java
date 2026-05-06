@@ -1,18 +1,16 @@
 package com.vincenthuto.hemomancy.client.screen.item.living;
 
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.joml.Vector3f;
 
 public class LivingStaffScreen extends AbstractContainerScreen<LivingStaffMenu> {
 	private ResourceLocation GUI;

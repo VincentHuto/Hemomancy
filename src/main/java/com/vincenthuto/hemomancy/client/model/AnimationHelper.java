@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.client.model;
 
-import java.util.List;
-import java.util.Map;
-
-import org.joml.Vector3f;
-
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
+import org.joml.Vector3f;
+
+import java.util.List;
+import java.util.Map;
 
 public final class AnimationHelper {
 	private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();

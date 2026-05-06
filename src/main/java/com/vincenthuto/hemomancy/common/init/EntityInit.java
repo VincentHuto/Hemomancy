@@ -1,23 +1,22 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.mob.animal.CrimsonDoeEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.animal.LeechEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.animal.ToothPecksEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.animal.VenousStriderEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEntity;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeFragmentEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
+import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
+import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
+import com.vincenthuto.hemomancy.common.entity.item.EntityQliphothSeedItem;
+import com.vincenthuto.hemomancy.common.entity.mob.animal.*;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.HematicConstructEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
@@ -25,26 +24,22 @@ import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEnt
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedGuardianEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-import com.vincenthuto.hemomancy.common.entity.summon.*;
-import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
-import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
-import com.vincenthuto.hemomancy.common.entity.item.EntityQliphothSeedItem;
 import com.vincenthuto.hemomancy.common.entity.projectile.*;
+import com.vincenthuto.hemomancy.common.entity.summon.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class EntityInit {

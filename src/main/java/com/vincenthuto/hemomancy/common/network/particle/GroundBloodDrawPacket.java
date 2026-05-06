@@ -1,26 +1,19 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.Arrays;
-
-import org.joml.Vector3d;
-
 import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.BitLocation;
-
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -28,6 +21,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.joml.Vector3d;
+
+import java.util.Arrays;
 
 public class GroundBloodDrawPacket implements CustomPacketPayload {
 

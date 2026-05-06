@@ -1,12 +1,6 @@
 
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -20,7 +14,6 @@ import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
@@ -43,6 +36,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 

@@ -1,15 +1,13 @@
 package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Server → Client packet that tells the client to open the Visceral Mirror

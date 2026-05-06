@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained.stillart;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KnownStillArts implements IKnownStillArts, INBTSerializable<CompoundTag> {
 	private List<String> knownArtNames = new ArrayList<>();

@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
-
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public final class LiberEntryDefinitions {
 	public static final String DIALOGUE_EVENT_PREFIX = "liber_unlock:";

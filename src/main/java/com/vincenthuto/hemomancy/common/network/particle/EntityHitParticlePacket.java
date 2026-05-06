@@ -1,16 +1,14 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
 import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class EntityHitParticlePacket implements CustomPacketPayload {
 

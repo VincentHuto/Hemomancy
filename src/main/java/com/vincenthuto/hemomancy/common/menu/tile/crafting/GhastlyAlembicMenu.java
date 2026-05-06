@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
-import java.util.Objects;
-
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
@@ -9,20 +7,16 @@ import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.FurnaceResultSlot;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+
+import java.util.Objects;
 
 /**
  * Ghastly Alembic menu — 3 container slots + player inventory.

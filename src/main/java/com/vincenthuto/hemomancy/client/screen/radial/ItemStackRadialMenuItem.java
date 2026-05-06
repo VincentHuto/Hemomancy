@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 

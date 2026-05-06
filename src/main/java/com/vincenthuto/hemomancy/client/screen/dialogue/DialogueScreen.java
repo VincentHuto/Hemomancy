@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
@@ -11,7 +7,6 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTheme;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,6 +18,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Custom non-traditional dialogue screen. Renders on the left side of the

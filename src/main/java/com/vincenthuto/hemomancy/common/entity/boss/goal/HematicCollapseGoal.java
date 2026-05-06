@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.EnumSet;
-
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -14,6 +11,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.EnumSet;
 
 /**
  * Hematic Collapse — the Hollow Vessel's signature reckoning. After a visible

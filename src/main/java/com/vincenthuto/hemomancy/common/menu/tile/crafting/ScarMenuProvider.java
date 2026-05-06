@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import javax.annotation.Nullable;
 
 public class ScarMenuProvider implements MenuProvider {
 

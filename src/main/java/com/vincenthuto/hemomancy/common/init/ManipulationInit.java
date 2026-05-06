@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
@@ -12,31 +8,13 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.DrudgeAction;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.animus.BloodAneurysmManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.BloodCloudManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.VitalEffusionManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.BloodNeedleManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.BloodRushManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.BloodShotManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.CrimsonFlameConjurationManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.DeadlyGazeManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
-import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
-import com.vincenthuto.hemomancy.common.manipulation.congeatio.CryogenicPulseManip;
-import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialBastionManip;
-import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialCirculationManip;
-import com.vincenthuto.hemomancy.common.manipulation.congeatio.GlacialGraspManip;
-import com.vincenthuto.hemomancy.common.manipulation.congeatio.OsseousBloomManip;
+import com.vincenthuto.hemomancy.common.manipulation.animus.*;
+import com.vincenthuto.hemomancy.common.manipulation.congeatio.*;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.ActivationPotentialManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.CrimsonHarvestManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.HemolymphalPulseManip;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.SanguineWardManip;
-import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
-import com.vincenthuto.hemomancy.common.manipulation.ferric.FerricResonanceManip;
-import com.vincenthuto.hemomancy.common.manipulation.ferric.FerricTransmutationManip;
-import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineExcavationManip;
-import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineMendingManip;
-import com.vincenthuto.hemomancy.common.manipulation.ferric.VascularDowsingManip;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.*;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.PyreticForgeManip;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.SanguineIgnitionManip;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.VitricCombustionManip;
@@ -46,14 +24,13 @@ import com.vincenthuto.hemomancy.common.manipulation.lux.HemosynthesisManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.ExsanguinateManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.HemorrhageManip;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.VitalReservoirManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BloodEclipseManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.UmbralStepManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.VoidShroudManip;
-import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
-import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip;
-import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotManip;
-import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -74,7 +51,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryBuilder;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class ManipulationInit {
 

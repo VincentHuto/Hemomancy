@@ -1,15 +1,13 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client packet: synchronises the full skill tree state

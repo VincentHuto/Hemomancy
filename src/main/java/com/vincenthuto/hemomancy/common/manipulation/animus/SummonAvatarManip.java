@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
@@ -12,13 +9,15 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SummonAvatarManip extends BloodManipulation {
 

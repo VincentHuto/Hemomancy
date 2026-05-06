@@ -1,12 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
-import net.neoforged.fml.common.EventBusSubscriber;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.client.event.ClientEvents;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,11 +9,15 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.items.IItemHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialMenuScreen extends Screen {

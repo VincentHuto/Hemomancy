@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -21,10 +19,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.core.NonNullList;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+
+import java.util.List;
 
 public class VialRackItem extends Item {
 	public static final String TAG_VIALS = "Vials";

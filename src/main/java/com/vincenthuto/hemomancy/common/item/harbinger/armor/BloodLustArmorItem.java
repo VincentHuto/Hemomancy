@@ -1,12 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.Holder;
@@ -16,13 +12,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+
+import java.util.List;
 
 public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 

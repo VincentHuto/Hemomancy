@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.client.morphling;
 
-import java.util.function.Supplier;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,7 +12,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import com.vincenthuto.hemomancy.Hemomancy;
+
+import java.util.function.Supplier;
 
 /**
  * Defines a 3D model attachment rendered on the player while a morphling is

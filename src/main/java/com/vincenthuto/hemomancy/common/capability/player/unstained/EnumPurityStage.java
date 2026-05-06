@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public enum EnumPurityStage {
     CORRUPTED(0, "Corrupted", 0f, 0f, null),

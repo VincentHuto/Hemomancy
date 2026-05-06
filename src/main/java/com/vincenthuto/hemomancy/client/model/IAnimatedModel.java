@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.client.model;
-import java.util.Optional;
 
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.level.Level;
+
+import java.util.Optional;
 
 public interface IAnimatedModel<T>
 {

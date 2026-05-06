@@ -1,15 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
-import java.util.List;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
+
+import java.util.List;
 
 public class HematicIronArmorItem extends ArmorItem {
 

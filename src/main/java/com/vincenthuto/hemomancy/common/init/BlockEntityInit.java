@@ -2,14 +2,15 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.tile.*;
-
 import com.vincenthuto.hemomancy.common.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.tile.functional.*;
-import com.vincenthuto.hemomancy.common.tile.puzzle.*;
+import com.vincenthuto.hemomancy.common.tile.puzzle.BloodBasinBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.puzzle.BloodPylonBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.puzzle.BloodTrialAltarBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BlockEntityInit {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister

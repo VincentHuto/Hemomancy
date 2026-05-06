@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
-import java.util.List;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
+
+import java.util.List;
 
 /**
  * Pale Silver Pickaxe — an Unstained utility tool.

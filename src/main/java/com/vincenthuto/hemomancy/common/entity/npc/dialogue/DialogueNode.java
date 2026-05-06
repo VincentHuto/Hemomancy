@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import net.minecraft.network.FriendlyByteBuf;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * A single step in a dialogue tree. Contains the speaker's lines and

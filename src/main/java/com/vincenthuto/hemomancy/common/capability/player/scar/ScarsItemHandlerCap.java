@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
-import java.util.concurrent.Callable;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-
-import net.minecraft.world.item.ItemStack;
+import java.util.concurrent.Callable;
 
 public class ScarsItemHandlerCap {
 

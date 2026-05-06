@@ -1,23 +1,20 @@
 package com.vincenthuto.hemomancy.client.morphling;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingAttachmentExampleModel;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment.AttachmentPoint;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.util.Lazy;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Client-side registry mapping each morphling item to its visual mutation.

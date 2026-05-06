@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import java.util.Map;
 
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundTag> {
 	@SuppressWarnings("serial")

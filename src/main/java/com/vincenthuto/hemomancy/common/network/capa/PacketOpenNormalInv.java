@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketOpenNormalInv implements CustomPacketPayload {
 	public static final Type<PacketOpenNormalInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_normal_inv"));

@@ -1,63 +1,52 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
-import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
-import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
-import net.neoforged.fml.common.EventBusSubscriber;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
-import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
+import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
-import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.StillArtInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
-import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
-import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
-import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -66,7 +55,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -78,10 +66,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Server-side event handler for managing active cardinal rite casting.
@@ -786,19 +780,13 @@ public class HarbingerCardinalRiteEvents {
 					LiberKnowledgeHelper.unlockForDegree(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
-					HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-						if (unstained.hasBegunPurification()) {
-							unstained.setBegunPurification(false);
-							unstained.setPurity(0);
-							unstained.setClarityUnlocked(false);
-							unstained.setClarity(0);
-							UnstainedProgressEvents.syncProgress(caster, unstained);
-							caster.displayClientMessage(
-									Component.literal("Your purification has been undone by the blood rite.")
-											.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-									false);
-						}
-					});
+					boolean unstainedWasReset = PathMutualExclusionHelper.resetUnstainedProgress(caster);
+					if (unstainedWasReset) {
+						caster.displayClientMessage(
+								Component.literal("Your purification has been undone by the blood rite.")
+										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+								false);
+					}
 
 					EnumInitiatoryDegree newDegree = degree.getDegree();
 					if (newDegree != null) {
@@ -1292,16 +1280,7 @@ public class HarbingerCardinalRiteEvents {
 
 		final Player victim = target;
 		HemoCapabilityAccess.getUnstainedProgress(victim).ifPresent(unstained -> {
-			boolean hadProgress = unstained.hasBegunPurification() || unstained.getPurity() > 0;
-
-			unstained.setBegunPurification(false);
-			unstained.setPurity(0);
-			unstained.setClarityUnlocked(false);
-			unstained.setClarity(0);
-
-			if (victim instanceof ServerPlayer serverVictim) {
-				UnstainedProgressEvents.syncProgress(serverVictim, unstained);
-			}
+			boolean hadProgress = PathMutualExclusionHelper.resetUnstainedProgress((ServerPlayer) victim, unstained);
 
 			if (hadProgress) {
 				if (victim instanceof ServerPlayer sp) {

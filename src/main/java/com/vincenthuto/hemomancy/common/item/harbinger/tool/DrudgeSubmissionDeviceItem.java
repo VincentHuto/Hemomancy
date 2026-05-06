@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SemiSentientConstructBlock;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -16,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
 
 /**
  * The Drudge Submission Device.

@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketOpenTendencyView implements CustomPacketPayload {
 	public static final Type<PacketOpenTendencyView> TYPE = new Type<>(Hemomancy.rloc("packet_open_tendency_view"));

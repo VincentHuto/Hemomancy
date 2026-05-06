@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A complete dialogue tree that can be sent to the client.

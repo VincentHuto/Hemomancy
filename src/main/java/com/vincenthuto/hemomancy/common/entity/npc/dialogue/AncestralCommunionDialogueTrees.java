@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.List;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the

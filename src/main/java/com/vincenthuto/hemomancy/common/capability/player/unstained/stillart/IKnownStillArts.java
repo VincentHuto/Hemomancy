@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained.stillart;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
+
+import java.util.List;
 
 public interface IKnownStillArts {
 	List<String> getKnownArtNames();

@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -13,6 +10,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
 
 /**
  * A beneficial effect that causes nearby animals to enter love mode (breeding)

@@ -2,10 +2,9 @@ package com.vincenthuto.hemomancy.common.capability.player.unstained.stillart;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.KnownStillArtsServerPacket;
-
+import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

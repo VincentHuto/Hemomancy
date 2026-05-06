@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.menu;
 
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,6 +9,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
 
 public class VascularViewMenu extends AbstractContainerMenu {
 

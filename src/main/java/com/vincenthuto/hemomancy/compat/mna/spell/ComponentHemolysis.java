@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.compat.mna.spell;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.mna.api.affinity.Affinity;
 import com.mna.api.particles.MAParticleType;
 import com.mna.api.particles.ParticleInit;
@@ -12,7 +9,6 @@ import com.mna.api.spells.attributes.AttributeValuePair;
 import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.spells.components.PotionEffectComponent;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -20,6 +16,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A harmful spell component that applies the Hemolysis effect (blood

@@ -1,13 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.render.item.MarrowCrownItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -16,13 +12,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+
+import java.util.List;
 
 public class MarrowCrownArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 

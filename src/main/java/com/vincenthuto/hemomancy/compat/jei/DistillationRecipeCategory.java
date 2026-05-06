@@ -1,16 +1,11 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import java.util.Arrays;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -30,6 +25,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 /**
  * JEI recipe category for the Ghastly Alembic — fully programmatic rendering.

@@ -1,15 +1,12 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
-import java.util.Objects;
-
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.menu.slot.ScarStationSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarPatternSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarStationSlot;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +15,8 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+
+import java.util.Objects;
 
 public class ScarStationMenu extends AbstractContainerMenu {
 	private final ScarStationBlockEntity te;

@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.client.particle;
 
-import java.util.Random;
-
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
-
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class HitGlowParticle extends TextureSheetParticle {

@@ -1,17 +1,15 @@
 package com.vincenthuto.hemomancy.compat.mna.spell;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mna.api.affinity.Affinity;
 import com.mna.api.capabilities.IPlayerProgression;
 import com.mna.api.events.CalculatingManaCostEvent;
 import com.mna.api.events.SpellCastEvent;
 import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
-import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
-
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

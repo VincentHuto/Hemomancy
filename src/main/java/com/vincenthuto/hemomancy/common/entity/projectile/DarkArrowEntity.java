@@ -1,17 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import net.minecraft.network.syncher.SynchedEntityData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import javax.annotation.Nonnull;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,6 +17,8 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
+
+import javax.annotation.Nonnull;
 
 public class DarkArrowEntity extends AbstractArrow {
 

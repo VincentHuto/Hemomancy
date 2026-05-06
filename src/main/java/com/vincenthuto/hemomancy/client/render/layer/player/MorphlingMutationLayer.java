@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingVisualMutation;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
-
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;

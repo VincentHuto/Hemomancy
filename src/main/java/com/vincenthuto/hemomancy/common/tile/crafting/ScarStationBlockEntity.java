@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
@@ -11,7 +7,6 @@ import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -34,6 +29,10 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ScarStationBlockEntity extends BaseContainerBlockEntity implements MenuProvider, IMultiBlockEntity {
 	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);

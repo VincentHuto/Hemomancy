@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.client.render.tile.functional;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -10,7 +8,6 @@ import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThron
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -20,6 +17,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.joml.Matrix4f;
 
 /**
  * Renders the Covenant Throne as four solid black cubes assembled into a

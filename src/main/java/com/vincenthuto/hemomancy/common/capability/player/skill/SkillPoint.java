@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.skill;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class SkillPoint {
 	int id, maxLevels;

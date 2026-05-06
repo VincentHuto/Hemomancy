@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +18,9 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A pre-written field-note item found in the world (e.g. dropped by a dying

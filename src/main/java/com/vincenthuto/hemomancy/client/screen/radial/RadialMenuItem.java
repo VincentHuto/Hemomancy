@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.network.chat.MutableComponent;
+
+import javax.annotation.Nullable;
 
 public abstract class RadialMenuItem
 {

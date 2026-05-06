@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * Client-side cache for active cardinal rite boundaries.

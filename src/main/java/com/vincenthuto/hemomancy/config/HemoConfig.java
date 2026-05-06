@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class HemoConfig {
 

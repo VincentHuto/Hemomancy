@@ -1,15 +1,13 @@
 package com.vincenthuto.hemomancy.common.data.gen;
 
-import java.util.concurrent.CompletableFuture;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class HemoBlockTagProvider extends BlockTagsProvider {
 

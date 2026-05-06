@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import com.mojang.serialization.Codec;
-
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -13,6 +9,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public record StructureScannerTooltipComponent(List<Component> lines) implements TooltipProvider {
 

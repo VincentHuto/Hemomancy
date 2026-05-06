@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.client.render.item.hematic;
 
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -16,7 +12,6 @@ import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -43,6 +38,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
+
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 

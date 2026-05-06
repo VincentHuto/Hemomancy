@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.vascular;
 
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VascularSystem implements IVascularSystem, INBTSerializable<CompoundTag> {
 	@SuppressWarnings("serial")

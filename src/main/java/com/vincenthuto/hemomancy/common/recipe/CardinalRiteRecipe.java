@@ -1,23 +1,16 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CardinalRiteRecipe extends CustomRecipe {
 

@@ -1,18 +1,17 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.summon.WretchedWillModel;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityWretchedWill;
-
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class WretchedWillRenderer extends MobRenderer<EntityWretchedWill, WretchedWillModel<EntityWretchedWill>> {

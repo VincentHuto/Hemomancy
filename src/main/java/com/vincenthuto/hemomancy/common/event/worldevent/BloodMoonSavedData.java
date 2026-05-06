@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+
+import javax.annotation.Nonnull;
 
 /**
  * Persists blood moon state across server restarts.

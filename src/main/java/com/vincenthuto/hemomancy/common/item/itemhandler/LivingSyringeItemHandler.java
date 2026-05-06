@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.itemhandler;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
@@ -13,6 +11,8 @@ import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+
+import javax.annotation.Nonnull;
 
 public class LivingSyringeItemHandler extends ItemStackHandler {
 	private ItemStack itemStack;

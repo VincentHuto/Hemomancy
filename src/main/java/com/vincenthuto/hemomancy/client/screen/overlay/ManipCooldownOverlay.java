@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 /**
  * HUD overlay that renders a reddish vignette around the screen edges

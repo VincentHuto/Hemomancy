@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.compat.mna.item;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-
-
 import com.mna.items.renderers.books.SpellBookRenderer;
 import com.mna.items.sorcery.Grimoire;
 import com.vincenthuto.hemomancy.Hemomancy;
-
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.resources.ResourceLocation;

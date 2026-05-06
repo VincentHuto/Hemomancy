@@ -1,15 +1,8 @@
 package com.vincenthuto.hemomancy.client.event;
 
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.init.BiomeInit;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -19,6 +12,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class FungalRealmsRenderInfo extends DimensionSpecialEffects {
 

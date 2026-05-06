@@ -1,31 +1,13 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.recipe.CopyBloodGourdRecipe;
-import com.vincenthuto.hemomancy.common.recipe.CopyMorphlingJarRecipe;
-import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
-import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
-import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.DistillationRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.MorphicNectarRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
-import com.vincenthuto.hemomancy.common.recipe.serializer.FungalScarCultivationSerializer;
-
+import com.vincenthuto.hemomancy.common.recipe.*;
+import com.vincenthuto.hemomancy.common.recipe.serializer.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.registries.Registries;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class RecipeInit {
 	public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister

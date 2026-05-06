@@ -1,17 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
@@ -19,11 +15,14 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;
-
+import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+
+import java.util.Map;
+import java.util.Optional;
 
 public final class HemoCapabilityAccess {
 

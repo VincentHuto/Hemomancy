@@ -1,76 +1,37 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyClientPacket;
-import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeClientPacket;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
-import com.vincenthuto.hemomancy.common.network.capa.PacketGourdScarSync;
-import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
-import com.vincenthuto.hemomancy.common.network.capa.PacketLedgerAction;
-import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
-import com.vincenthuto.hemomancy.common.network.capa.PacketKickBloodlinePlayer;
-import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
-import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
-import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
-import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
-import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
-import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
-import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
-import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
-import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.*;
 import com.vincenthuto.hemomancy.common.network.capa.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.scars.*;
-import com.vincenthuto.hemomancy.common.network.capa.unstained.*;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.KnownStillArtsServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.StillArtCooldownPacket;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.UpdateSelectedStillArtPacket;
+import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
-import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
-import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
-import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
-import com.vincenthuto.hemomancy.common.network.morphling.ChangeMorphKeyPacket;
-import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
-import com.vincenthuto.hemomancy.common.network.morphling.OpenLivingStaffPacket;
-import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
-import com.vincenthuto.hemomancy.common.network.morphling.PacketUpdateLivingStaffMorph;
-import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
-import com.vincenthuto.hemomancy.common.network.morphling.ToggleMorphlingJarMessagePacket;
-import com.vincenthuto.hemomancy.common.network.particle.AirBloodDrawPacket;
-import com.vincenthuto.hemomancy.common.network.particle.EntityHitParticlePacket;
-import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
-import com.vincenthuto.hemomancy.common.network.particle.SpawnAvatarParticlesPacket;
-import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticlesPacket;
-import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
-import com.vincenthuto.hemomancy.common.network.particle.SpawnMonolithShatterBurstPacket;
-import com.vincenthuto.hemomancy.common.network.particle.SpawnPomePulsePacket;
-import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
-import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
-import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket;
-import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
+import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
+import com.vincenthuto.hemomancy.common.network.morphling.*;
+import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+
 // ── NeoForge 1.21 networking API ─────────────────────────────────────────────
 // SimpleChannel / NetworkRegistry / PacketDistributor (old pattern) are REMOVED.
 // Registration now happens via RegisterPayloadHandlersEvent on the mod bus.
 // Sending now uses static PacketDistributor methods.
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 public class PacketHandler {
 

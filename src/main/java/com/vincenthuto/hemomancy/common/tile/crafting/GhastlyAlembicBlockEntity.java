@@ -1,12 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
+import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBudBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -18,14 +14,9 @@ import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
-
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -54,6 +45,9 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Ghastly Alembic Block Entity — a blood distillery powered by fire below.

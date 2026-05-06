@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +9,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+
+import java.util.List;
 
 /**
  * Consecrated Syringe — produced by offering a filled Blood Vial to a Saint Sarcophagus.

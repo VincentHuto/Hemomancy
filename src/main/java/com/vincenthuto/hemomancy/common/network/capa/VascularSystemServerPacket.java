@@ -1,19 +1,17 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VascularSystemServerPacket implements CustomPacketPayload {
 

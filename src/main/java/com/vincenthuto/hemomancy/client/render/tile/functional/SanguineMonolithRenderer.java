@@ -1,17 +1,14 @@
 package com.vincenthuto.hemomancy.client.render.tile.functional;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -23,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import org.joml.Matrix4f;
 
 /**
  * Renders the Sanguine Monolith as a black slab (1 wide × 2 tall × 0.5 deep)

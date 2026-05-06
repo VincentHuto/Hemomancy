@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.client.screen.item.BloodStructureHintScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -19,6 +15,9 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * A fragment of ancient Harbinger parchment containing the instructions for

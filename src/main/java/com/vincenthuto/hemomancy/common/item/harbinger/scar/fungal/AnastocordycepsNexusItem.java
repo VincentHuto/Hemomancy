@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+
+import java.util.List;
 
 public class AnastocordycepsNexusItem extends ItemFungalScar {
 

@@ -1,13 +1,10 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery;
 
-import java.util.Set;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter;
 import com.vincenthuto.hutoslib.common.book.knowledge.BookEntryRegistry;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
-
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +13,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+
+import java.util.Set;
 
 /**
  * Thin bridging handlers that read from HutosLib's {@link BookEntryRegistry}

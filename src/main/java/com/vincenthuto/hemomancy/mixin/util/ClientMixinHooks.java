@@ -3,12 +3,9 @@ package com.vincenthuto.hemomancy.mixin.util;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.AttributeInit.TriState;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.NeoForge;
 
 public class ClientMixinHooks {
 	public static boolean checkFlight() {

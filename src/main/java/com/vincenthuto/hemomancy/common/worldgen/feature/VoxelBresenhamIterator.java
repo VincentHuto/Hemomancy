@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
-import java.util.Iterator;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+
+import java.util.Iterator;
 
 /** Short-able voxel line placement that lazily creates BlockPos */
 public final class VoxelBresenhamIterator implements Iterator<BlockPos>, Iterable<BlockPos> {

@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -13,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * A hand-held item that opens the Bloodline Pool management screen.

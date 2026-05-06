@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import java.util.function.Supplier;
-
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
-import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+
+import java.util.function.Supplier;
 
 public enum EnumModToolTiers implements Tier {
 

@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
-
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Server → Client packet that carries a complete {@link DialogueTree} and

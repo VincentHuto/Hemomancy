@@ -2,9 +2,7 @@ package com.vincenthuto.hemomancy.compat.mna;
 
 import com.google.common.base.Supplier;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
-
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.LazyLoadedValue;

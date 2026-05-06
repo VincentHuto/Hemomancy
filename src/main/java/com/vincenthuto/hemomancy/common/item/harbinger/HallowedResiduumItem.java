@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumDoctrineTag;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+
+import java.util.List;
 
 /**
  * Hallowed Residuum — a hybridized saint-enzyme extracted from a Preserved Corpus.

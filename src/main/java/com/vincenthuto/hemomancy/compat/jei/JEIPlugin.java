@@ -1,17 +1,8 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import javax.annotation.Nonnull;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
-import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
-
+import com.vincenthuto.hemomancy.common.recipe.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
@@ -22,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {

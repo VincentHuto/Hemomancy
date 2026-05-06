@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
-import java.util.Map;
-
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+
+import java.util.Map;
 
 public interface IBloodTendency {
 

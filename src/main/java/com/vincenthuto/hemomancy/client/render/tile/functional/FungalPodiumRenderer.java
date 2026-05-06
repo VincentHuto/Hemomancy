@@ -1,16 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.tile.functional;
 
-import com.vincenthuto.hemomancy.client.render.tile.RadiantPortalRendertype;
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.tile.RadiantPortalRendertype;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalPodiumBlockEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -22,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import org.joml.Matrix4f;
+
 public class FungalPodiumRenderer implements BlockEntityRenderer<FungalPodiumBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 

@@ -1,10 +1,5 @@
 package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
-import java.util.Map;
-import java.util.Random;
-
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -16,7 +11,6 @@ import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSer
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -30,6 +24,10 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import org.joml.Matrix4f;
+
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Renders the Somatic Loom's visual effects: fractal tendency star, enzyme

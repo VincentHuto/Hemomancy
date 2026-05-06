@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.client.particle.util;
 
-import java.util.Random;
-import java.util.function.Predicate;
-
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-
 import net.minecraft.world.entity.Entity;
+
+import java.util.Random;
+import java.util.function.Predicate;
 
 public class EntityParticleUtils {
 	public static ParticleColor genRandomColor() {

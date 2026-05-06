@@ -3,9 +3,8 @@ package com.vincenthuto.hemomancy.client.render.layer.mob;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.model.entity.npc.DrudgeModel;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;

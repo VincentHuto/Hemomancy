@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.visceral;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class VisceralOrgans implements IVisceralOrgans, INBTSerializable<CompoundTag> {
 

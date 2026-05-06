@@ -1,23 +1,17 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
-
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Recipe type for the {@code MycelialCrucible}.

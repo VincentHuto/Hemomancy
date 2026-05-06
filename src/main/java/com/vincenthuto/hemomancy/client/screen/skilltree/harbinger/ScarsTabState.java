@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 
 /**
  * Holds all mutable state for the Cerebral Scarring browser tab.

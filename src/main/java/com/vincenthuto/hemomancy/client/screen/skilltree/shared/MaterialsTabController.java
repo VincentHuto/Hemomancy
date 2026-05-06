@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class MaterialsTabController implements IProgressTab {
     private final PanZoomState panZoom = new PanZoomState();

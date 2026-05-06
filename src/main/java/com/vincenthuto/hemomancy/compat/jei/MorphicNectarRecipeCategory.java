@@ -1,11 +1,8 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import javax.annotation.Nonnull;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
-
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -21,6 +18,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 /**
  * JEI recipe category for Morphic Nectar item transformations.

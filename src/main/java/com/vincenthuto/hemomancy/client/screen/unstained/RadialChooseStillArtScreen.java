@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.unstained;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.client.event.ClientEvents;
 import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
@@ -12,7 +10,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UpdateSelectedStillArtPacket;
 import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +17,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 public class RadialChooseStillArtScreen extends Screen {
 	private final Minecraft mc;

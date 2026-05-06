@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AnastocordycepsNexusItem;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Manages the Latching Vein (Anastocordyceps nexus) tether mechanic.

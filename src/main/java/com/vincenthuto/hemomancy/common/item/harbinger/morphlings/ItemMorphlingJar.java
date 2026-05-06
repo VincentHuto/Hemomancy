@@ -1,16 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
-
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -28,7 +24,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.minecraft.server.level.ServerPlayer;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemMorphlingJar extends Item implements IScar {
 

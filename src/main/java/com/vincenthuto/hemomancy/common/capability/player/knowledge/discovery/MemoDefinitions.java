@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import com.vincenthuto.hemomancy.Hemomancy;
-
-import net.minecraft.resources.ResourceLocation;
 
 public final class MemoDefinitions {
 	private static final Map<ResourceLocation, MemoDefinition> DEFINITIONS = new LinkedHashMap<>();

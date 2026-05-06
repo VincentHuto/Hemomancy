@@ -1,18 +1,13 @@
 package com.vincenthuto.hemomancy.common.recipe.serializer;
 
-import java.util.HashMap;
-import java.util.stream.Stream;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.*;
-import com.mojang.serialization.JsonOps;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +16,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+
+import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	public static HashMap<ResourceLocation, ScarRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ScarRecipe>();

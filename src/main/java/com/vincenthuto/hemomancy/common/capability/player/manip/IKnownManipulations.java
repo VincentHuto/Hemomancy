@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
-
 import net.minecraft.core.BlockPos;
+
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public interface IKnownManipulations {
 

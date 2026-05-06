@@ -1,11 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.carver;
 
-import java.util.function.Function;
-
-import org.apache.commons.lang3.mutable.MutableBoolean;
-
 import com.mojang.serialization.Codec;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -16,10 +11,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.CarvingMask;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Aquifer;
+import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.CaveWorldCarver;
-import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
+import java.util.function.Function;
 
 public class FungalCaveWorldCarver extends CaveWorldCarver {
 	private static final int SEA_PROTECTION_Y = 38;

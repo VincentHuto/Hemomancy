@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.UnlockPredicate;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberEntryDefinitions;
-
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Maps Cardinal Rite recipe {@link ResourceLocation}s to their

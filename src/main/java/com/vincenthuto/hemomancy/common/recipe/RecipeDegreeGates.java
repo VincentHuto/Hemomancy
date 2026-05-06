@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Map;
 
 /**
  * Shared degree/stage gates for recipe-driven Hemomancy progression.

@@ -1,68 +1,56 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
-
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.*;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.*;
+import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockHumaneIdol;
+import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.*;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodBasinBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodPylonBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodTrialAltarBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.block.shared.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
-import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockHumaneIdol;
-import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.functional.AltarOfCleansingBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.functional.PaleSilverBellsBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.GhostPipeBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.LetheanPoppyBlock;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.*;
 import com.vincenthuto.hemomancy.common.item.shared.tile.DictationTableBlockItem;
-
 import com.vincenthuto.hemomancy.common.item.unstained.tile.AltarOfCleansingBlockItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tile.PallidRetortBlockItem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.AttachedStemBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FlowerPotBlock;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.StemBlock;
-import net.minecraft.world.level.block.TransparentBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class BlockInit {

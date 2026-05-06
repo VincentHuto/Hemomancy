@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.rite;
 
-import java.util.UUID;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.UUID;
 
 /**
  * Represents a cardinal rite that is currently being cast.

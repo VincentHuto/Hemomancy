@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * Bottled white humor drained from the Pallid Retort.

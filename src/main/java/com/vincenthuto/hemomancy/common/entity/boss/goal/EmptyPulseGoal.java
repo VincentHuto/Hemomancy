@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
-import java.util.EnumSet;
-
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +10,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.EnumSet;
 
 /**
  * Empty Pulse — the Hollow Vessel releases a concussive wave that knocks back

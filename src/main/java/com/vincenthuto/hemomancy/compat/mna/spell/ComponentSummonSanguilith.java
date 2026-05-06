@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.compat.mna.spell;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.mna.api.affinity.Affinity;
 import com.mna.api.faction.IFaction;
 import com.mna.api.particles.MAParticleType;
@@ -22,7 +19,6 @@ import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
 import com.vincenthuto.hemomancy.compat.mna.entity.SanguilithEntity;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
-
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -34,6 +30,9 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A spell component that summons a Sanguilith entity at the target location.

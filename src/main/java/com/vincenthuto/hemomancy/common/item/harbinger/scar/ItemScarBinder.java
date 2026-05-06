@@ -1,12 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScreenScarBinderViewer;
 import com.vincenthuto.hemomancy.common.menu.ScarBinderInventoryMenu;
-
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -24,6 +19,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemScarBinder extends Item {
 

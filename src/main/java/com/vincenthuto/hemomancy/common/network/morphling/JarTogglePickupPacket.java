@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import net.minecraft.network.FriendlyByteBuf;
 
 /** Legacy packet – auto-pickup feature has been removed. Kept for wire compatibility. */
 public class JarTogglePickupPacket implements CustomPacketPayload {

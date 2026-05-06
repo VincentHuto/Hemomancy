@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting.scar;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,7 +14,6 @@ import com.vincenthuto.hemomancy.common.network.capa.scars.PacketUpdateScarPatte
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -32,6 +27,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> {
 	/** Texture still used for scar grid button sprites. */

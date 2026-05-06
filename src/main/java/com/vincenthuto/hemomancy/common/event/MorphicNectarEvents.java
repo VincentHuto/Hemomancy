@@ -1,11 +1,8 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +16,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+
+import java.util.List;
 
 /**
  * Handles morphic nectar item transformation. When an ItemEntity is submerged

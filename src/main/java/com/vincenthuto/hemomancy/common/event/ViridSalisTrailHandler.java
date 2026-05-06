@@ -4,15 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.LeechEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.VenousStriderEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.AbyssalSiphonEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.CruorFiendEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.FrozenClotEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.HematicConstructEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.ThirsterEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.summon.IBloodConstruct;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
-import java.util.function.BiPredicate;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
+
+import java.util.function.BiPredicate;
 
 public interface SimpleBlockPredicate extends BiPredicate<WorldGenLevel, BlockPos>
 {

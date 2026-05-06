@@ -1,17 +1,11 @@
 package com.vincenthuto.hemomancy.compat.mna.entity;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import com.mna.api.affinity.Affinity;
 import com.mna.api.particles.MAParticleType;
 import com.mna.api.particles.ParticleInit;
 import com.mna.api.sound.SFX.Spell.Impact.Single;
 import com.mna.tools.SummonUtils;
 import com.mna.tools.math.MathUtils;
-
 import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleType;
@@ -32,6 +26,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public class SanguilithEntity extends Monster implements OwnableEntity {
 	public float deathTicks = 1;

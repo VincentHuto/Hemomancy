@@ -1,19 +1,15 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.*;
 
 /**
  * Shared renderer for the "Materials &amp; Processes" tab that appears in both

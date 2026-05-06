@@ -1,11 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
-import java.util.List;
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket.DrudgeEntry;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,6 +10,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Client-side GUI for the Semi-Sentient Construct.

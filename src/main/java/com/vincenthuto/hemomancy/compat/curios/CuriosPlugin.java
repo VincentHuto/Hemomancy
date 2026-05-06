@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.compat.curios;
 
-import net.minecraft.world.item.Item;
 import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;

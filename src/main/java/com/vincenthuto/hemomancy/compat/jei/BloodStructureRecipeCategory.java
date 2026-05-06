@@ -1,14 +1,5 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
-
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -19,7 +10,6 @@ import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern.MaterialCount;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import com.vincenthuto.hutoslib.math.Quaternion;
-
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -43,6 +33,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
+
+import javax.annotation.Nonnull;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JEI recipe category for Blood Structure crafting — fully programmatic rendering.

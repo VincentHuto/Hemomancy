@@ -1,19 +1,11 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
-
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -31,6 +23,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.joml.Matrix4f;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * JEI recipe category for the Somatic Loom.

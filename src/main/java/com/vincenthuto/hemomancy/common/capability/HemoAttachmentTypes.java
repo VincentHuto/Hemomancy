@@ -2,13 +2,13 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsContainer;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolume;

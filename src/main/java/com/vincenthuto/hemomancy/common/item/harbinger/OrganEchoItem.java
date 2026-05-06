@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * An "Echo of" organ item produced by the Visceral Mirror ritual.

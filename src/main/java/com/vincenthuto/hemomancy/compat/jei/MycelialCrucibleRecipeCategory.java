@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import javax.annotation.Nonnull;
-
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -18,6 +15,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 /**
  * JEI recipe category for the Mycelial Crucible — two-phase fungal scar cultivation.

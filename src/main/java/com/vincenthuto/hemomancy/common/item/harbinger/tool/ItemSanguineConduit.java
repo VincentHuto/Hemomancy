@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -19,6 +16,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+
+import java.util.List;
 
 public class ItemSanguineConduit extends BlockItem {
 

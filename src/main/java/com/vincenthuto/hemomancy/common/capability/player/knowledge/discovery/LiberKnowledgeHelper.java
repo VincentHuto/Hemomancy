@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public final class LiberKnowledgeHelper {
 	private LiberKnowledgeHelper() {

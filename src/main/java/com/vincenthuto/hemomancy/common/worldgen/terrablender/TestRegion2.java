@@ -1,19 +1,15 @@
 package com.vincenthuto.hemomancy.common.worldgen.terrablender;
 
-import java.util.function.Consumer;
-
 import com.mojang.datafixers.util.Pair;
-import com.vincenthuto.hemomancy.common.init.BiomeInit;
-import com.vincenthuto.hemomancy.common.init.TerraBiomeInit;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
 import terrablender.api.Region;
 import terrablender.api.RegionType;
+
+import java.util.function.Consumer;
 
 public class TestRegion2 extends Region
 {

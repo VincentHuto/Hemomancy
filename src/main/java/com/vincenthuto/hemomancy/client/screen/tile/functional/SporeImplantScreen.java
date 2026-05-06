@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
-
+import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -15,6 +12,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu> {

@@ -1,17 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import org.joml.Vector3f;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -44,6 +36,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Set;
 
 public class ActiveBefoulingAshTrailBlock extends Block {
 	public static final EnumProperty<RedstoneSide> NORTH = BlockStateProperties.NORTH_REDSTONE;

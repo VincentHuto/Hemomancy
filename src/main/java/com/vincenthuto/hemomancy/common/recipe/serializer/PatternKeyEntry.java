@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.recipe.serializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
+import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +12,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 
 final class PatternKeyEntry {
 	private final String symbol;

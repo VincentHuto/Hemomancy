@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.common.menu.StructureSpawnerMenu;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -15,6 +12,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
 
 public class StructureSpawnerItem extends Item {
 

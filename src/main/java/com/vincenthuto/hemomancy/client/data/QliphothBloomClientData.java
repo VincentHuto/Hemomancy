@@ -1,12 +1,8 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import net.minecraft.core.BlockPos;
+
+import java.util.*;
 
 /**
  * Client-side cache for persistent Qliphoth Bloom locations.

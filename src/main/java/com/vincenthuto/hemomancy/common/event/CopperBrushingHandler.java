@@ -1,11 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +21,9 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Copper Brushing mechanic: right-clicking an unwaxed oxidized copper block

@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.common.capability.player.knowledge;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
-
 import com.vincenthuto.hutoslib.common.book.knowledge.BookKnowledge;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
-
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Hemomancy's book-knowledge implementation. Extends {@link BookKnowledge} for

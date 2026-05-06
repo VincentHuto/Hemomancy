@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.client;
 
-import java.util.Collection;
-import java.util.UUID;
-
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
-
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.Collection;
+import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public final class ClientLiberScreenHooks {

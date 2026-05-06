@@ -1,12 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.*;
 
 /**
  * Runtime store for all item-inquiry mappings loaded by {@link ItemInquiryLoader}.

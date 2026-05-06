@@ -1,30 +1,28 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import javax.annotation.Nonnull;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Unstained Progress screen — displays the player's purification and clarity

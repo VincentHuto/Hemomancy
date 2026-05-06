@@ -1,18 +1,17 @@
 package com.vincenthuto.hemomancy.common.network.capa.unstained;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KnownStillArtsServerPacket implements CustomPacketPayload {
 	public static final Type<KnownStillArtsServerPacket> TYPE = new Type<>(Hemomancy.rloc("known_still_arts_server_packet"));

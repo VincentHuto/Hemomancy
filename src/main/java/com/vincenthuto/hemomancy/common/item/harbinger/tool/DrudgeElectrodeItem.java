@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +17,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
+import java.util.UUID;
 
 public class DrudgeElectrodeItem extends Item {
 

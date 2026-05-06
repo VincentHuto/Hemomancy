@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
-import java.util.stream.Stream;
-
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -23,6 +20,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
+
+import java.util.stream.Stream;
 
 public class PuffballFungusBlock extends FlowerBlock {
 

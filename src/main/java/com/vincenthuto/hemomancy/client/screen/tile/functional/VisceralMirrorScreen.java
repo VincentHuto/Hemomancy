@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -9,7 +7,6 @@ import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCanc
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtractPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,6 +15,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.Random;
 
 /**
  * GUI screen for the Visceral Mirror — a blood-themed organ extraction

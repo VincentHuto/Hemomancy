@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import com.vincenthuto.hemomancy.Hemomancy;
 
 /**
  * Utility class for programmatically granting Hemomancy Unstained-path

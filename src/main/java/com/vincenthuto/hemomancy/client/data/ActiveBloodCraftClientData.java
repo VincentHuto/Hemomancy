@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import net.minecraft.core.BlockPos;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import net.minecraft.core.BlockPos;
 
 /**
  * Client-side cache for active blood craft ring animations.

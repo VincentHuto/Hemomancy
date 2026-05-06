@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.capability.player.degree;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nullable;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<CompoundTag> {
 

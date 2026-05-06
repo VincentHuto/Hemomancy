@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.tile;
 
-import org.joml.Matrix3f;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
-
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
 
 /**
  * A mutable, three dimensional vector with single floating point precision.

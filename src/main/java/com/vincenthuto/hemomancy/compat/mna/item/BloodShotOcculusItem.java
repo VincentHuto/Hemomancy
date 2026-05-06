@@ -3,11 +3,7 @@ package com.vincenthuto.hemomancy.compat.mna.item;
 import com.mna.api.capabilities.IPlayerMagic;
 import com.mna.capabilities.playerdata.magic.PlayerMagicProvider;
 import com.mna.gui.containers.providers.NamedOcculus;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -16,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 

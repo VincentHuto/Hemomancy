@@ -1,19 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinition;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.*;
 
 /**
  * Static factory producing {@link DialogueTree} instances for Our Lady of Still

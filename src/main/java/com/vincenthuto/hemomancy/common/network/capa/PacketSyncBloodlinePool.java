@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
-
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Server → Client: Syncs the current state of the shared bloodline pool

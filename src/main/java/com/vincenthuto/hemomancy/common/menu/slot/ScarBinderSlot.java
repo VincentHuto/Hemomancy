@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import javax.annotation.Nonnull;
-
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
-
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class ScarBinderSlot extends SlotItemHandler {
 	public ScarBinderSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {

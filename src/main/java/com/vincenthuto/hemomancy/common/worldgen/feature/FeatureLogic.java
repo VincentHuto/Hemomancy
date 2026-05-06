@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
-import java.util.function.Predicate;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -9,6 +7,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.function.Predicate;
 
 public final class FeatureLogic {
     public static final Predicate<BlockState> IS_REPLACEABLE_AIR = state -> state.canBeReplaced() || state.isAir();

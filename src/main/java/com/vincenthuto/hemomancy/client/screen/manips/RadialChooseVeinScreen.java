@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
-import net.neoforged.fml.common.EventBusSubscriber;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.event.ClientEvents;
@@ -17,7 +14,6 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.TeleportToVeinPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,9 +23,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.bus.api.SubscribeEvent;
+
+import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseVeinScreen extends Screen {

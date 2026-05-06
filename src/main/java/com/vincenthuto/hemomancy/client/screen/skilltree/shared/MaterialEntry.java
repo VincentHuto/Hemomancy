@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import java.util.function.Supplier;
-
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.UnlockPredicate;
-
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Supplier;
 
 /**
  * Represents a single material or process entry displayed as a node in the

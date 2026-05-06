@@ -1,18 +1,17 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
-import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Static rendering helpers shared between {@link HarbingerProgressScreen}
