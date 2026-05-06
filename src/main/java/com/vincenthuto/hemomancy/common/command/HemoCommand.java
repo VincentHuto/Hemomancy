@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.command;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -338,12 +339,16 @@ public class HemoCommand {
 				.orElseThrow(IllegalStateException::new);
 		degree.setDegreeNumber(degreeNum);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
+		boolean resetUnstained = degreeNum > 0 && PathMutualExclusionHelper.resetUnstainedProgress(player);
 		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(degreeNum);
 		String title = (enumDeg != null) ? enumDeg.getTitle() : "Uninitiated";
 		source.sendSuccess(() -> Component.literal("Set ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" degree to "))
-				.append(Component.literal(degreeNum + " — " + title).withStyle(ChatFormatting.LIGHT_PURPLE)),
+				.append(Component.literal(degreeNum + " — " + title).withStyle(ChatFormatting.LIGHT_PURPLE))
+				.append(resetUnstained
+						? Component.literal("; unstained progress reset.").withStyle(ChatFormatting.GRAY)
+						: Component.empty()),
 				true);
 		return 1;
 	}
@@ -487,12 +492,16 @@ public class HemoCommand {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarityUnlocked(!cap.hasClarityUnlocked());
+		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		source.sendSuccess(() -> Component.literal("Set ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" clarityUnlocked: "))
 				.append(Component.literal(String.valueOf(cap.hasClarityUnlocked()))
-						.withStyle(cap.hasClarityUnlocked() ? ChatFormatting.GREEN : ChatFormatting.RED)),
+						.withStyle(cap.hasClarityUnlocked() ? ChatFormatting.GREEN : ChatFormatting.RED))
+				.append(resetHarbinger
+						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
+						: Component.empty()),
 				true);
 		return 1;
 	}
@@ -514,13 +523,17 @@ public class HemoCommand {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarity(value);
+		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
 		source.sendSuccess(() -> Component.literal("Set ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" clarity to "))
 				.append(Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA))
-				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY)),
+				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY))
+				.append(resetHarbinger
+						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
+						: Component.empty()),
 				true);
 		return 1;
 	}
@@ -547,10 +560,14 @@ public class HemoCommand {
 		cap.setPurity(100);
 		cap.setClarityUnlocked(true);
 		cap.setClarity(100);
+		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		source.sendSuccess(() -> Component.literal("Maxed ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" unstained progress (Purified + Enlightened)").withStyle(ChatFormatting.GREEN)),
+				.append(Component.literal(" unstained progress (Purified + Enlightened)").withStyle(ChatFormatting.GREEN))
+				.append(resetHarbinger
+						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
+						: Component.empty()),
 				true);
 		return 1;
 	}

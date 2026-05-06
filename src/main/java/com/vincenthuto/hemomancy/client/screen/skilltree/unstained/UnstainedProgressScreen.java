@@ -108,7 +108,7 @@ public class UnstainedProgressScreen extends Screen {
 	private static final int SIDEBAR_TAB_H = 50;  // collapsed tab height
 	private static final int SIDEBAR_SHADOW = 0xAA000000;
 	private static final float SIDEBAR_Z = 700.0F;
-	private boolean sidebarVisible = true;
+	private boolean sidebarVisible = false;
 
 	// ── Bonus toggle panel (right side) ──
 	private static final int BONUS_BTN_SIZE = 24;
@@ -244,7 +244,10 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	private ProgressScreenContext makeContext() {
-		return new ProgressScreenContext(font, guiLeft, guiTop, guiWidth, guiHeight, 0);
+		int unstainedLevel = minecraft != null && minecraft.player != null
+				? HemoCapabilityAccess.getPlayerUnstainedLevel(minecraft.player)
+				: 0;
+		return new ProgressScreenContext(font, guiLeft, guiTop, guiWidth, guiHeight, unstainedLevel);
 	}
 
 	// ────────────────────────────────────────────────────────────

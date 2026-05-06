@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -384,6 +385,10 @@ public final class RitesTabView {
 		return currentStack.getHoverName().getString();
 	}
 
+	private static List<FormattedCharSequence> wrappedLines(net.minecraft.client.gui.Font font, String text, int width) {
+		return font.split(Component.literal(text), Math.max(1, width));
+	}
+
 	public static void drawInfoPanel(GuiGraphics gfx, ProgressScreenContext ctx,
 									 RitesTabState state, CardinalRiteRecipe rite,
 									 int panelX, int panelY, int panelW,
@@ -493,6 +498,8 @@ public final class RitesTabView {
 				gfx.drawString(ctx.font(), Component.literal("Materials:")
 						.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 				y += lineH;
+				int materialTextX = panelX + 20;
+				int materialWrapW = panelW - 24;
 				long cycleIndex = materialCycleIndex();
 				for (MultiblockPattern.MaterialCount material : materials) {
 					MultiblockPatternKey key = material.key();
@@ -502,12 +509,11 @@ public final class RitesTabView {
 					if (!bs.isEmpty()) {
 						gfx.renderItem(bs, panelX + 2, y);
 						String prefix = " x" + material.count() + "  ";
-						List<String> matLines = ScreenDrawUtils.wrapText(ctx.font(),
-								prefix + materialLabelFor(key, bs), panelW - 20);
+						List<FormattedCharSequence> matLines = wrappedLines(ctx.font(),
+								prefix + materialLabelFor(key, bs), materialWrapW);
 						for (int li = 0; li < matLines.size(); li++) {
-							gfx.drawString(ctx.font(), Component.literal(matLines.get(li))
-									.withStyle(s -> s.withColor(0xAAAAAA)),
-									panelX + 20, y + 4 + li * lineH, 0);
+							gfx.drawString(ctx.font(), matLines.get(li),
+									materialTextX, y + 4 + li * lineH, 0xAAAAAA);
 						}
 						y += Math.max(18, matLines.size() * lineH + 4);
 					}
@@ -569,6 +575,7 @@ public final class RitesTabView {
 			List<MultiblockPattern.MaterialCount> materials = rite.getPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
 				y += lineH;
+				int materialWrapW = panelW - 24;
 				long cycleIndex = materialCycleIndex();
 				for (MultiblockPattern.MaterialCount material : materials) {
 					MultiblockPatternKey key = material.key();
@@ -577,8 +584,8 @@ public final class RitesTabView {
 					ItemStack bs = materialStackFor(block);
 					if (!bs.isEmpty()) {
 						String prefix = " x" + material.count() + "  ";
-						y += Math.max(18, ScreenDrawUtils.wrapText(font,
-								prefix + materialLabelFor(key, bs), panelW - 20).size() * lineH + 4);
+						y += Math.max(18, wrappedLines(font,
+								prefix + materialLabelFor(key, bs), materialWrapW).size() * lineH + 4);
 					}
 				}
 			}

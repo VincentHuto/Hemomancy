@@ -96,9 +96,12 @@ public class RitesTabState {
 			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
 			if (hideEmptyTiers && recipes.isEmpty()) continue;
 			total += rowH + 2;
-			if (type == selectedRiteTier) {
-				total += rowH + 2 + recipes.size() * 18;
+			if (this.selectedRiteTier != null) {
+				if (type == selectedRiteTier) {
+					total += rowH + 2 + recipes.size() * 18;
+				}
 			}
+
 		}
 		return total;
 	}

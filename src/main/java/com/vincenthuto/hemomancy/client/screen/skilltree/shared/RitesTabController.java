@@ -21,7 +21,7 @@ public class RitesTabController implements IProgressTab {
      * Creates a rites-tab controller with a path-specific theme.
      *
      * @param unstained {@code true} for the Unstained path (teal/blue palette,
-     *                  no degree lock, hidden empty tiers);
+     *                  level lock active, hidden empty tiers);
      *                  {@code false} for the Harbinger path (purple palette,
      *                  degree lock active, all tiers shown).
      */
@@ -34,7 +34,7 @@ public class RitesTabController implements IProgressTab {
             state.rowBgSelected    = 0xDD101828;
             state.rowBgHovered     = 0xBB0C1420;
             state.rowBgNormal      = 0x990A0E18;
-            state.enableDegreeLock = false;
+            state.enableDegreeLock = true;
             state.hideEmptyTiers   = true;
         }
     }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
@@ -231,6 +232,12 @@ public class UnstainedCardinalRiteEvents {
 
 			unstained.setClarityUnlocked(true);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
+			if (PathMutualExclusionHelper.enforceHarbingerResetOnClarity(caster, unstained)) {
+				caster.displayClientMessage(
+						Component.literal("The Hematic Order falls silent within you. Your former rank is washed away.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+			}
 			if (KnownStillArtEvents.grantArt(caster, StillArtInit.silver_rebuke.get())) {
 				caster.displayClientMessage(
 						Component.literal("A first Still Art settles into you: Silver Rebuke.")

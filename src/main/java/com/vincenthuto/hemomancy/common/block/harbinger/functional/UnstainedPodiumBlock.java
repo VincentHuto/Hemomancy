@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -228,6 +229,13 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		// Perform the Rite of Clarity
 		stack.shrink(1);
 		unstained.setClarityUnlocked(true);
+		if (player instanceof ServerPlayer serverPlayer
+				&& PathMutualExclusionHelper.enforceHarbingerResetOnClarity(serverPlayer, unstained)) {
+			player.displayClientMessage(
+					Component.literal("The Hematic Order falls silent within you. Your former rank is washed away.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+		}
 		// Disable blood magic permanently
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			volume.setActive(false);

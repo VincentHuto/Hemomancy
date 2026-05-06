@@ -19,7 +19,7 @@ public class CraftingTabController implements IProgressTab {
      * Creates a crafting-tab controller with a path-specific theme.
      *
      * @param unstained {@code true} for the Unstained path (teal/blue palette,
-     *                  no degree lock);
+     *                  level lock active);
      *                  {@code false} for the Harbinger path (red palette,
      *                  degree lock active).
      */
@@ -32,7 +32,7 @@ public class CraftingTabController implements IProgressTab {
             state.rowBgSelected    = 0xDD101828;
             state.rowBgHovered     = 0xBB0C1420;
             state.rowBgNormal      = 0x990A0E18;
-            state.enableDegreeLock = false;
+            state.enableDegreeLock = true;
         }
     }
 
