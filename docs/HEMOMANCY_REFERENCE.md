@@ -26,6 +26,8 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - Qliphoth Bloom blocks and their filler shell cannot be broken by normal player mining; removal is intentionally routed through the Rite of Cult Pruning.
 > - World-found Harbinger/Unstained machines are individually gated by player crafting history through `MachineAccessEvents`: right-click use is blocked until that exact machine's block item has been crafted. Breaking a locked machine removes it without loot, so structures cannot become unbreakable barriers or free progression skips. Blood Structure crafting awards the vanilla `ITEM_CRAFTED` stat on completion so custom multiblock crafts participate in the same gate.
 > - Morphling support gameplay expanded with the new **Morphling Cradle** block entity (owner-bound hosted morphling, aura support, blood upkeep/leech behavior, and floor/wall/ceiling placement support).
+> - Primal morphlings are implemented as a nectar-only capstone above Apex, gated by Apotheos degree 8 and paired with Morphic Strain, nectar mutation tooltips, and animated inventory tendril overlays.
+> - White Humor Purification is implemented as an Unstained physical-pool recipe system: Pale Humor Flasks place finite 32-charge White Humor sources, submerged items transform by recipe, and nearby clean witnesses accelerate the process while absorbing taint.
 > - Blood extraction flow was modernized: **Living Syringe** now uses loadable **Vial Rack** storage (8-vial rack state), and the **Vial Centrifuge** can bulk-load sampled vials directly from racks.
 > - Bloodline administration now includes leader-side member expulsion in `BloodlinePoolScreen` + `PacketKickBloodlinePlayer`.
 > - Fungal scar cultivation is implemented through the **Mycelial Crucible**: Phase 1 produces one consolidated `immature_fungal_scar` item with target scar metadata, and Phase 2 matures it with aligned enzymes into one of 9 finished fungal scars.
@@ -108,6 +110,7 @@ All player-attached NeoForge capabilities / attachments, registered in `Capabili
 | Scar Item Handler | `IScarsItemHandler` | Inventory for scar binder contents |
 | Initiatory Degree | `IInitiatoryDegree` | Harbinger rank (0–8) |
 | Unstained Progress | `IUnstainedProgress` | Purification path state (purity, clarity, flags) |
+| White Humor Volume | `IWhiteHumorVolume` | Unstained/pallid reservoir for purified lymph. Used by Pale Humor Flasks and Pallid Retort white humor storage. |
 | Earthen Vein Location | `IEarthenVeinLoc` | Block capability for earthen vein blocks |
 | Visceral Organs | `IVisceralOrgans` | Tracks extracted/modified organs (Spleen, Liver, Lungs, Kidneys, Heart) for the Visceral Mirror ritual system |
 
@@ -855,7 +858,9 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 
 ### 11.3 Maturity System
 
-Each morphling has a **maturity level** (1–4) that determines its power and which reactive abilities it has:
+**Current implementation note:** Morphling maturity is now a five-stage system: `Unfed -> Fledgling -> Developing -> Mature -> Apex -> Primal` in code-facing terminology, with player-facing Primal treated as maturity level `5`. Incubator feeding and enzyme power still mature a morphling only up to **Apex**. **Primal** is a nectar-only capstone state and is backed by the stack marker `Primalized`, so it cannot be reached by simply adding more enzyme power.
+
+Each morphling has a **maturity level** (1–5) that determines its power and which reactive abilities it has:
 
 | Maturity | Name | Description |
 |----------|------|-------------|
@@ -863,8 +868,38 @@ Each morphling has a **maturity level** (1–4) that determines its power and wh
 | 2 | Developing | First reactive ability unlocked (typically a triggered defensive response) |
 | 3 | Mature | Second reactive ability unlocked (more powerful utility/combat mechanic) |
 | 4 | Apex | Third reactive ability unlocked (powerful signature ability with longer cooldown) |
+| 5 | Primal | Nectar-transformed Apex form. Unlocks a late-game active or loop-defining capstone power. |
 
 Each morphling type has a **preferred tendency** and **secondary tendency** — feeding the corresponding enzymes during incubation accelerates maturity. The passive effect's amplifier scales with maturity level.
+
+### 11.3.1 Primal Morphlings
+
+Primal morphlings are the true fourth player-facing capstone above Apex. To primalize a morphling, throw an **Apex** morphling item into a pool of **Morphic Nectar** while a nearby/throwing `ServerPlayer` has completed **Apotheos** (`IInitiatoryDegree >= 8`). The special Primal transform path runs before normal Morphic Nectar recipes. It refuses non-Apex morphlings, already-Primal morphlings, and players below Apotheos degree 8.
+
+The transform preserves the item stack's morphling identity, existing custom data, feedings/enzyme power, cooldowns, and nectar mutation marker. Primal powers intentionally fill late-game gameplay roles rather than acting as simple numeric upgrades. Existing Apex powers still count Primal morphlings as Apex-or-better for compatibility.
+
+Successful Primal powers apply **Morphic Strain** as the main fungal drawback alongside blood cost and cooldown. Morphic Strain is lighter than Hematic Strain: it modestly reduces max health and movement speed, uses fungal visual feedback, and is capped before it becomes a hard lockout.
+
+| Morphling | Primal Role | Primal Power |
+|---|---|---|
+| Fungal | Corpse ecology / fungal resource engine | **Primal Mycorrhiza** seeds temporary communion patches from elite kills, healing allies, weakening hostiles, and rarely converting remains into fungal scar or morphic crafting resources. Cradle mode emits a sanctuary pulse. |
+| Leeches | Blood economy overdrive | **Hemophage Covenant** links nearby bloodline allies; linked damage returns capped healing/blood to the owner or bloodline pool. |
+| Chitinite | Boss tank / counterburst bank | **Primal Carapace** enters a shell stance that stores incoming damage briefly, then releases ferric shards in a ring or cone. Cradle mode fortifies ritual areas. |
+| Serpent | Priority-target assassination | **Sovereign Venom** marks one target; repeated hits escalate poison into paralysis and then hemotoxic rupture. Strong against elites/bosses, poor for trash clearing. |
+| Pests | Swarm commander / area denial | **Vermin Crown** builds a swarm counter from kills, then releases stored swarms as autonomous hunters. Cradle mode patrols and harasses hostiles. |
+| Spider | Terrain control / vertical lair | **Web of Red Thread** tethers to blocks, pulls or roots entities, and can lace temporary climbable web-lines for allies. |
+| Bat | Recon / night raid planning | **Echothesis** sends an active pulse that reveals living blood signatures through terrain, pings important block entities, and grants a short darkness combat window. |
+| Moth | Rare reset / luminous rescue | **Chrysalis of Last Light** is an active or lethal-trigger cocoon that cleanses debuffs, prevents death, and disorients nearby hostiles. It has a very long cooldown and heavy blood/strain cost. |
+| Tick | Attrition epidemic | **Hemorrhagic Season** infects wounded hostiles with a spreading bleed/wither marker; infected deaths refresh and spread the outbreak. |
+| Urchin | Ritual anchor / bastion | **Reefheart Bastion** roots the player, grants resistance and knockback immunity, and reflects damage in pulses. Cradle mode becomes a defensive ward. |
+| Centipede | Danger traversal / de-aggro | **Hundredfold Molt** sheds a decoy husk, grants brief invulnerability/invisibility/speed, and clears poison, wither, and slowness. |
+| Mole | Excavation / domain utility | **Deep Tremor Sense** maps nearby ores, entities, and caves; charged use releases a tunneling shockwave. In the Fungal Gardens, it can reveal morphic pools or buried fungal features. |
+
+### 11.3.2 Morphic Nectar Mutation Display
+
+Any item transformed through Morphic Nectar receives the `MorphicNectarMutated` stack marker via `MorphicNectarMutationRules.markMutated`. Mutated items gain a tooltip line (`Morphic Nectar-mutated`) and a client-side inventory decorator. Generic nectar-mutated items use a dark organic green frame. Primal morphlings use a stronger red/green/yellow animated tendril overlay rendered procedurally over the item slot.
+
+The Primal decorator is intentionally not a static frame: it uses a small set of animated, high-resolution procedural tendrils drawn with the GUI render type so the item reads as actively writhing while staying legible at inventory scale. The current tuning uses 5 tendrils, 42 curve samples, 3 layered passes, a 1.25 px body width, and trimmed endpoints to avoid a filled-in slot mask.
 
 ### 11.4 Morphling Cradle (new support block)
 
@@ -875,6 +910,7 @@ The **Morphling Cradle** (`MorphlingCradleBlockEntity`) is an owner-bound suppor
 - Applies hosted morphling support effects to the owner and valid bloodline members in range
 - Uses staged upkeep/action blood costs, with fallback draw from owner bloodline pool when enabled
 - Can leech nearby valid hostile targets into a cradle blood buffer and redistribute that blood to nearby cradles / owner blood volume
+- Recognizes Primal maturity (`level 5`) but only cradle-suitable morphlings gain special Primal area behavior: Fungal, Leeches, Chitinite, Pests, and Urchin.
 
 ---
 
@@ -1129,6 +1165,7 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 | Pale Silver Bell | Handheld Unstained support equipment. Use grants short Silver Ward and weakens/slows nearby hostiles. |
 | Lethean Chalice | Reusable still-water vessel. Use clears one harmful effect, extinguishes fire, grants brief regeneration, and adds Verdigris Aura after Clarity. |
 | Verdigris Censer | Reusable oxidized-copper support tool. Use grants Verdigris Aura and marks nearby monsters or blood-active bodies with Glowing + Weakness. |
+| Pale Humor Flask | Bottled White Humor from the Pallid Retort. Drink to replenish an active Unstained white humor reservoir, use with an Unstained weapon in the off hand to coat it with hemolytic charge, or pour into the world to create a finite White Humor source pool for purification recipes. |
 | Tome of the Unstained | A book of Unstained scripture describing Our Lady of Still Waters and the path of purification |
 | Icon of Our Lady | A rare relic depicting Our Lady of Still Waters — carved from pale silver, grants her protection |
 | ![](../src/main/resources/assets/hemomancy/textures/item/pale_silver_ingot.png) Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
@@ -1435,6 +1472,7 @@ All applicable flowers have **potted** variants.
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (13 morphling recipes). JEI-integrated via `IncubatorRecipeCategory`. Fungal scar crafting has moved out to the Mycelial Crucible. |
 | `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 9 finished `ItemFungalScar` variants. |
+| `white_humor_purification` | `WhiteHumorPurificationRecipeSerializer` | Physical White Humor pool | Dropped item purification in placed White Humor source pools. JEI-integrated via `WhiteHumorPurificationRecipeCategory` with Pale Humor Flask as catalyst. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
 | `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
@@ -1611,6 +1649,27 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | `PUTRICIEL` | Hallowed Residuum of Putriciel |
 | `VELORUM` | Hallowed Residuum of Velorum |
 
+### 18.8 White Humor Purification
+
+White Humor Purification is an Unstained in-world recipe system handled by `WhiteHumorPurificationRecipe`, `WhiteHumorPurificationEvents`, and persisted pool charge data in `WhiteHumorPoolSavedData`.
+
+The player creates a pool by using a **Pale Humor Flask** on a replaceable block. This places a `white_humor` source block, returns an empty cured clay flask when not in creative mode, and resets that source to **32 purification charges**. Dropped item entities sitting in White Humor check for `hemomancy:white_humor_purification` recipes. Matching stacks keep extended lifetime while submerged, accumulate purification progress, then transform once their recipe's `transform_time` is reached and a charged source block is found within a 2-block search radius.
+
+Each transformed item consumes one source charge. Large stacks are split by the nearest source's remaining charges: the transformed result entity is spawned, the original stack shrinks by the transformed count, and the source is removed when its charges are spent. If no charged source is available, progress holds at completion until one is available.
+
+Clean Unstained witness blocks within 4 blocks accelerate the process. Bloomed Lethean Poppies count as 2 progress bonus; white/light gray/gray candles and unwaxed copper/cut copper/stairs/slabs count as 1. Every 80 item ticks, one participating witness may absorb the shed taint: Lethean Poppies become dormant, candles darken toward black, and copper advances one oxidation step.
+
+| Input | Output | Transform Time |
+|---|---|---|
+| Blood Crystal Shard | Cleansed Blood Crystal Shard | 300 ticks |
+| Hematic Iron Block | Pale Silver Block | 600 ticks |
+| Venous Stone | Cleansed Stone | 240 ticks |
+| Infested Venous Stone | Cleansed Stone | 260 ticks |
+| Sanguine Glass | Cleansed Sanguine Glass | 240 ticks |
+| Sanguine Pane | Cleansed Sanguine Pane | 240 ticks |
+
+The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/sacred_tools/pages/white_humor_purification.json`. JEI displays the recipe category as **White Humor Purification** and notes that each source purifies 32 items.
+
 ---
 
 ## 19. Mob Entities
@@ -1775,6 +1834,7 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 | **Burrower's Instinct** | Beneficial | — | Mole morphling effect — mining speed + underground regen/night vision |
 | **Arcane Resonance** | Beneficial | 0x8800AA | MnA combo marker — next blood manipulation costs less blood (granted by blood-affinity MnA spells) |
 | **Sanguine Clarity** | Beneficial | 0xAA0022 | MnA combo marker — next MnA spell costs less mana (granted by using blood manipulations) |
+| **Morphic Strain** | Harmful | Fungal green | Primal morphling drawback. Modest max-health and movement-speed reduction after successful Primal powers. |
 
 ---
 
@@ -1984,7 +2044,7 @@ HutosLib is still the required shared runtime library (`com.vincenthuto.hutoslib
 |---------|----------|-------|
 | `BloodVolumeOverlay` | Left side | Current/max blood volume bar plus a small two-lobed equipped blood gourd indicator that reads only the Charm/Gourd slot and tints white/red/black by gourd variant ![](../src/main/resources/assets/hemomancy/textures/gui/blood_bar.png) |
 | `UnstainedGaugeOverlay` | Top-right | Purity + Clarity bars ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_gauge.png) |
-| `EquippedMorphlingOverlay` | — | Currently equipped morphling icon |
+| `EquippedMorphlingOverlay` | Next to `BloodVolumeOverlay` | Currently equipped morphling icon only. It appears on the right side of a left-anchored blood bar, or on the left side of a right-anchored blood bar, vertically centered with the bar. No text/backplate. |
 | `ManipCooldownOverlay` | — | Active manipulation cooldown timer |
 
 > **Gauge fills:** ![](../src/main/resources/assets/hemomancy/textures/gui/blood_fill_tiled.png) Blood fill &nbsp; ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_fill_tiled.png) Purity fill &nbsp; ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_clarity_fill_tiled.png) Clarity fill
