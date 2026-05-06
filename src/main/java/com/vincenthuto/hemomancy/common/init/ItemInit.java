@@ -658,28 +658,12 @@ public class ItemInit {
 
     // Spores
 //	public static final DeferredHolder<Item, Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
-//
 //	public static final DeferredHolder<Item, Item> fervent_spores = BASEITEMS.register("fervent_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
-//
-//	public static final DeferredHolder<Item, Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
-//
 //	public static final DeferredHolder<Item, Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
-//
 //	public static final DeferredHolder<Item, Item> umbral_spores = BASEITEMS.register("umbral_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
-//
 //	public static final DeferredHolder<Item, Item> frigid_spores = BASEITEMS.register("frigid_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
-//
 //	public static final DeferredHolder<Item, Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
-//
 //	public static final DeferredHolder<Item, Item> ferric_spores = BASEITEMS.register("ferric_spores",
-//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
 
     // ── Regular Scars (8 tendencies × 3 tiers = 24 scars) ──
     // Each scar has focused upsides and real downsides; magnitude escalates with tier.
