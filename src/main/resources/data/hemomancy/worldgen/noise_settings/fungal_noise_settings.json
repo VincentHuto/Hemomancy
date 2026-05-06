@@ -8,7 +8,7 @@
     "Name": "hemomancy:venous_stone"
   },
   "default_fluid": {
-    "Name": "hemomancy:morphic_nectar_block",
+    "Name": "minecraft:water",
     "Properties": {
       "level": "0"
     }

@@ -17,11 +17,10 @@ public class MorphicNectarItemDecorator implements IItemDecorator {
 
 		boolean primal = MorphlingItem.isPrimal(stack);
 		long phase = Util.getMillis() / (primal ? MorphicNectarMutationRules.primalTendrilFrameMillis() : 180L);
-		renderOrganicFrame(graphics, xOffset, yOffset, primal, phase);
 		if (primal) {
-			for (int tendril = 0; tendril < MorphicNectarMutationRules.primalTendrilCount(); tendril++) {
-				renderCrawlingTendril(graphics, xOffset, yOffset, (int) phase + tendril * 32);
-			}
+			MorphicNectarTendrilRenderer.renderPrimalOverlay(graphics, xOffset, yOffset, phase);
+		} else {
+			renderOrganicFrame(graphics, xOffset, yOffset, false, phase);
 		}
 		return true;
 	}
@@ -40,36 +39,5 @@ public class MorphicNectarItemDecorator implements IItemDecorator {
 			graphics.fill(x + 15 - offset, y + 14, x + 16 - offset, y + 16,
 					MorphicNectarMutationRules.tendrilColor((int) phase + i + 1));
 		}
-	}
-
-	private static void renderCrawlingTendril(GuiGraphics graphics, int x, int y, int phase) {
-		for (int segment = 0; segment < MorphicNectarMutationRules.primalTendrilSegments(); segment++) {
-			int pathIndex = Math.floorMod(phase - segment, 64);
-			int color = segment == 0
-					? MorphicNectarMutationRules.tendrilColor(2)
-					: segment % 4 == 0
-							? MorphicNectarMutationRules.tendrilColor(1)
-							: MorphicNectarMutationRules.tendrilColor(0);
-			renderPerimeterPixel(graphics, x, y, pathIndex, color);
-		}
-	}
-
-	private static void renderPerimeterPixel(GuiGraphics graphics, int x, int y, int pathIndex, int color) {
-		int px;
-		int py;
-		if (pathIndex < 16) {
-			px = x + pathIndex;
-			py = y - 1;
-		} else if (pathIndex < 32) {
-			px = x + 16;
-			py = y + pathIndex - 16;
-		} else if (pathIndex < 48) {
-			px = x + 47 - pathIndex;
-			py = y + 16;
-		} else {
-			px = x - 1;
-			py = y + 63 - pathIndex;
-		}
-		graphics.fill(px, py, px + 1, py + 1, color);
 	}
 }

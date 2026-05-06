@@ -73,7 +73,9 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
                 return;
 
             int maturity = MorphlingItem.getMaturityLevel(morphlingStack);
-            float maturityScale = MATURITY_ALPHA_SCALE[maturity];
+            // Primal maturity can be level 5 while the visual scale table is 0..4.
+            int maturityIndex = Mth.clamp(maturity, 0, MATURITY_ALPHA_SCALE.length - 1);
+            float maturityScale = MATURITY_ALPHA_SCALE[maturityIndex];
 
             // Sine-wave pulse — amplitude is ±30 % of the alpha
             float pulse = 1.0f;

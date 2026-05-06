@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
@@ -8,6 +9,7 @@ import com.vincenthuto.hemomancy.common.menu.slot.MorphlingJarSlot;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -127,6 +129,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 				&& !(getSlot(slot).getItem().getItem() instanceof ItemMorphlingJar)) {
 			getSlot(slot).container.setChanged();
 		}
+		clearEquippedMorphlingIfNoLongerInJar(player);
 		if (handler != null)
 			handler.save();
 	}
@@ -158,6 +161,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 				slot.set(ItemStack.EMPTY);
 			else
 				slot.setChanged();
+			clearEquippedMorphlingIfNoLongerInJar(playerIn);
 			if (handler != null)
 				handler.save();
 		}
@@ -197,6 +201,26 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 
 	// ─── Helpers ─────────────────────────────────────────────────────────────────
 
+	private void clearEquippedMorphlingIfNoLongerInJar(Player player) {
+		if (handler == null || player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer))
+			return;
+
+		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
+			ItemStack equipped = cap.getEquippedMorphling();
+			if (equipped.isEmpty())
+				return;
+
+			for (int i = 0; i < slotcount; i++) {
+				if (ItemStack.isSameItemSameComponents(equipped, handler.getStackInSlot(i))) {
+					return;
+				}
+			}
+
+			cap.clearMorphling();
+			EquippedMorphlingEvents.syncToClient(serverPlayer);
+		});
+	}
+
 	private ItemStack findMorphlingJar(Player playerEntity) {
 		// 1. Main hand
 		if (playerEntity.getMainHandItem().getItem() instanceof ItemMorphlingJar) {
@@ -232,3 +256,4 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 		return ItemStack.EMPTY;
 	}
 }
+

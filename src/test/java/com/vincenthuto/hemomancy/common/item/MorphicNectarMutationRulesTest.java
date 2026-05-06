@@ -21,12 +21,36 @@ public final class MorphicNectarMutationRulesTest {
 				MorphicNectarMutationRules.tendrilColor(1));
 		assertEquals("bile tendril color", 0xFFE0B536,
 				MorphicNectarMutationRules.tendrilColor(2));
-		assertEquals("primal tendril count stays readable", 2,
+		assertEquals("primal tendril count gives a layered organic silhouette", 5,
 				MorphicNectarMutationRules.primalTendrilCount());
-		assertEquals("primal tendril animation is slower and less frantic", 140,
+		assertEquals("primal tendril animation moves like the pylon and centrifuge screens", 55,
 				MorphicNectarMutationRules.primalTendrilFrameMillis());
-		assertEquals("primal tendrils are long enough to read as connected", 11,
+		assertEquals("primal tendrils use enough samples for curved bodies", 18,
 				MorphicNectarMutationRules.primalTendrilSegments());
+		assertEquals("texture-backed primal overlay has a longer animation cycle", 16,
+				MorphicNectarMutationRules.primalOverlayFrameCount());
+		assertEquals("texture-backed primal overlay uses high source resolution", 64,
+				MorphicNectarMutationRules.primalOverlayFrameSize());
+		assertEquals("texture-backed primal overlay has independent tendril sprites", 4,
+				MorphicNectarMutationRules.primalOverlaySpriteCount());
+		assertEquals("procedural primal tendrils use high-resolution curve samples", 42,
+				MorphicNectarMutationRules.primalProceduralCurveSamples());
+		assertEquals("procedural primal tendrils use layered glow, body, and highlight passes", 3,
+				MorphicNectarMutationRules.primalProceduralLayerCount());
+		assertEquals("procedural primal overlay does not paint a full-slot core mask", 0,
+				MorphicNectarMutationRules.primalProceduralCoreFillAlpha());
+		assertEquals("procedural primal overlay renders on the active gui plane", 0,
+				MorphicNectarMutationRules.primalProceduralOverlayZ());
+		assertTrue("procedural primal overlay uses the managed gui buffer",
+				MorphicNectarMutationRules.primalProceduralUsesManagedGuiBuffer());
+		assertTrue("procedural primal overlay uses the vanilla gui render type",
+				MorphicNectarMutationRules.primalProceduralUsesVanillaGuiRenderType());
+		assertTrue("procedural primal overlay uses vanilla gui quad winding",
+				MorphicNectarMutationRules.primalProceduralUsesVanillaGuiQuadWinding());
+		assertEquals("procedural primal body tendrils stay thin at inventory scale", 125,
+				MorphicNectarMutationRules.primalProceduralBodyWidthCentipixels());
+		assertEquals("procedural primal tendrils trim unstable root and tip samples", 8,
+				MorphicNectarMutationRules.primalProceduralEndpointTrimPercent());
 	}
 
 	private static void assertEquals(String label, int expected, int actual) {

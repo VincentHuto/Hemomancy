@@ -173,10 +173,10 @@ public class BloodVolumeOverlay {
         RenderSystem.disableBlend();
 
         drawScaledCenteredString(gfx, fr, Component.translatable("hemomancy.degree." + degreeNumber),
-                centerX, posY + 1, 0xFFD9A29A, 0.55f);
+                centerX, posY  +125, 0xFFD9A29A, 0.55f);
         String volText = String.format("%.0f", vol);
         int textX = centerX - (fr.width(volText) / 2);
-        gfx.drawString(fr, Component.literal(volText), textX, posY + 10, 0xFFE05A5A, true);
+        gfx.drawString(fr, Component.literal(volText).append("ml"), textX, posY + 130, 0xFFE05A5A, true);
     }
 
     private static ResourceLocation texture(String name) {
