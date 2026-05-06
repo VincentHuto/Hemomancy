@@ -7,10 +7,10 @@
   ],
   "key": {
     "A": {
-      "item": "minecraft:amethyst_shard"
+      "tag": "hemomancy:progression/clarity_crystals"
     },
     "P": {
-      "item": "hemomancy:pale_silver_ingot"
+      "tag": "hemomancy:progression/pale_metals"
     },
     "S": {
       "item": "minecraft:string"

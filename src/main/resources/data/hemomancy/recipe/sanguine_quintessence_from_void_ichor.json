@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
@@ -9,6 +9,9 @@
     },
     {
       "item": "hemomancy:foul_paste"
+    },
+    {
+      "tag": "hemomancy:progression/dragon_proofs"
     }
   ],
   "result": {

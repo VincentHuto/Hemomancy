@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:nether_star",
+    "minecraft:totem_of_undying",
+    "minecraft:wither_skeleton_skull"
+  ]
+}

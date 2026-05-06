@@ -1,11 +1,11 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "hemomancy:runic_motif_paper"
     },
     {
-      "item": "minecraft:nether_star"
+      "tag": "hemomancy:progression/saint_relics"
     }
   ],
   "result": {

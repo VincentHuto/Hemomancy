@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
 import java.util.List;
-import java.util.Map;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,6 +9,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintIt
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
+import com.vincenthuto.hutoslib.math.MultiblockPattern;
+import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,6 +51,7 @@ public class BloodStructureHintScreen extends Screen {
 	private static final int GUI_WIDTH = 340;
 	private static final int GUI_HEIGHT = 220;
 	private static final int LAYER_BTN_SIZE = 16;
+	private static final long MATERIAL_CYCLE_MILLIS = 2000L;
 
 	private final ResourceLocation structureId;
 	private BloodStructureRecipe structure;
@@ -155,7 +157,7 @@ public class BloodStructureHintScreen extends Screen {
 	private void drawStructureModel(GuiGraphics gfx, int areaX, int areaY, int areaW, int areaH, float partial) {
 		if (structure.getPattern() == null) return;
 
-		List<BlockPosBlockPair> blockPairs = structure.getPattern().getBlockPosBlockList();
+		List<BlockPosBlockPair> blockPairs = structure.getPattern().getDisplayBlockPosBlockList(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
@@ -225,6 +227,17 @@ public class BloodStructureHintScreen extends Screen {
 	}
 
 	// ── Info Panel ──
+
+	private long materialCycleIndex() {
+		return System.currentTimeMillis() / MATERIAL_CYCLE_MILLIS;
+	}
+
+	private String materialLabelFor(MultiblockPatternKey key, ItemStack currentStack) {
+		if (key.isTag()) {
+			return key.displayLabel() + " (" + currentStack.getHoverName().getString() + ")";
+		}
+		return currentStack.getHoverName().getString();
+	}
 
 	private void drawInfoPanel(GuiGraphics gfx, int panelX, int panelY, int panelW, int panelH,
 							   int mouseX, int mouseY) {
@@ -331,22 +344,24 @@ public class BloodStructureHintScreen extends Screen {
 
 		// ── Materials list ──
 		if (structure.getPattern() != null) {
-			Map<Block, Integer> blockCounts = structure.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
+			List<MultiblockPattern.MaterialCount> materials = structure.getPattern().getMaterialCounts(false);
+			if (!materials.isEmpty()) {
 				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)),
 						panelX, y, 0);
 				y += lineH;
 
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
+				long cycleIndex = materialCycleIndex();
+				for (MultiblockPattern.MaterialCount material : materials) {
+					MultiblockPatternKey key = material.key();
+					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
-					int count = entry.getValue();
+					int count = material.count();
 					ItemStack blockStack = new ItemStack(block);
 					if (!blockStack.isEmpty()) {
 						gfx.renderItem(blockStack, panelX + 2, y);
 						String countPrefix = " x" + count + "  ";
 						List<String> matLines = ScreenDrawUtils.wrapText(font,
-								countPrefix + blockStack.getHoverName().getString(), panelW - 20);
+								countPrefix + materialLabelFor(key, blockStack), panelW - 20);
 						for (int li = 0; li < matLines.size(); li++) {
 							gfx.drawString(font, Component.literal(matLines.get(li))
 									.withStyle(s -> s.withColor(VALUE_COLOR)), panelX + 20, y + 4 + li * lineH, 0);
@@ -415,17 +430,19 @@ public class BloodStructureHintScreen extends Screen {
 
 		// Materials
 		if (structure.getPattern() != null) {
-			Map<Block, Integer> blockCounts = structure.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
+			List<MultiblockPattern.MaterialCount> materials = structure.getPattern().getMaterialCounts(false);
+			if (!materials.isEmpty()) {
 				y += lineH;
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
+				long cycleIndex = materialCycleIndex();
+				for (MultiblockPattern.MaterialCount material : materials) {
+					MultiblockPatternKey key = material.key();
+					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
 					ItemStack blockStack = new ItemStack(block);
 					if (!blockStack.isEmpty()) {
-						String countPrefix = " x" + entry.getValue() + "  ";
+						String countPrefix = " x" + material.count() + "  ";
 						List<String> matLines = ScreenDrawUtils.wrapText(font,
-								countPrefix + blockStack.getHoverName().getString(), panelW - 20);
+								countPrefix + materialLabelFor(key, blockStack), panelW - 20);
 						y += Math.max(18, matLines.size() * lineH + 4);
 					}
 				}

@@ -18,7 +18,8 @@
       "block": "hemomancy:engram_block"
     },
     "V": {
-      "block": "hemomancy:venous_stone"
+      "tag": "hemomancy:progression/ritual_stone",
+      "fallback": "hemomancy:venous_stone"
     },
     "C": {
       "block": "minecraft:dark_oak_planks"

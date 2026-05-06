@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:polished_basalt",
+    "minecraft:nether_bricks",
+    "minecraft:soul_sand",
+    "minecraft:soul_soil",
+    "minecraft:crimson_nylium"
+  ]
+}

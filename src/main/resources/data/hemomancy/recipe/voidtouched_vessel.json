@@ -7,7 +7,7 @@
   ],
   "key": {
     "E": {
-      "item": "minecraft:eye_of_ender"
+      "tag": "hemomancy:progression/void_vessels"
     },
     "P": {
       "item": "minecraft:ender_pearl"

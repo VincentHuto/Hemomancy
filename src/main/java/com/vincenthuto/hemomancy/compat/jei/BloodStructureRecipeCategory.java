@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
 import java.nio.FloatBuffer;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -15,6 +16,8 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
+import com.vincenthuto.hutoslib.math.MultiblockPattern.MaterialCount;
+import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import com.vincenthuto.hutoslib.math.Quaternion;
 
 import mezz.jei.api.constants.VanillaTypes;
@@ -145,17 +148,15 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 
 		// Pattern block slot frames
 		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
-			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
 			int slotCount = 0;
-			for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-				Block block = entry.getKey();
-				if (block != null && block != Blocks.AIR && slotCount < MAX_PATTERN_SLOTS) {
-					ItemStack blockStack = new ItemStack(block.asItem());
-					if (!blockStack.isEmpty()) {
-						drawSlotFrame(gfx, INPUT_SLOT_X - 1,
-								PATTERN_SLOT_START_Y + (slotCount * PATTERN_SLOT_SPACING) - 1);
-						slotCount++;
-					}
+			for (MaterialCount material : recipe.getPattern().getMaterialCounts(false)) {
+				if (slotCount >= MAX_PATTERN_SLOTS) {
+					break;
+				}
+				if (!itemStacksFor(material.key(), material.count()).isEmpty()) {
+					drawSlotFrame(gfx, INPUT_SLOT_X - 1,
+							PATTERN_SLOT_START_Y + (slotCount * PATTERN_SLOT_SPACING) - 1);
+					slotCount++;
 				}
 			}
 		}
@@ -189,18 +190,17 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 
 		// Pattern block inputs (deduplicated with counts)
 		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
-			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
 			int slotIndex = 0;
-			for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-				Block block = entry.getKey();
-				if (block != null && block != Blocks.AIR && slotIndex < MAX_PATTERN_SLOTS) {
-					ItemStack blockStack = new ItemStack(block.asItem(), entry.getValue());
-					if (!blockStack.isEmpty()) {
-						int slotY = PATTERN_SLOT_START_Y + (slotIndex * PATTERN_SLOT_SPACING);
-						builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, slotY)
-								.addIngredient(VanillaTypes.ITEM_STACK, blockStack);
-						slotIndex++;
-					}
+			for (MaterialCount material : recipe.getPattern().getMaterialCounts(false)) {
+				if (slotIndex >= MAX_PATTERN_SLOTS) {
+					break;
+				}
+				List<ItemStack> stacks = itemStacksFor(material.key(), material.count());
+				if (!stacks.isEmpty()) {
+					int slotY = PATTERN_SLOT_START_Y + (slotIndex * PATTERN_SLOT_SPACING);
+					builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, slotY)
+							.addIngredients(VanillaTypes.ITEM_STACK, stacks);
+					slotIndex++;
 				}
 			}
 		}
@@ -276,7 +276,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		int patD = recipe.getPattern().getBlockPattern().getDepth();
 		double explodeSpacing = 1.5;
 
-		for (BlockPosBlockPair pair : recipe.getPattern().getBlockPosBlockList()) {
+		for (BlockPosBlockPair pair : recipe.getPattern().getDisplayBlockPosBlockList(materialCycleIndex())) {
 			if (pair.getPos().getY() >= patH) continue;
 			if (pair.getBlock() == null || pair.getBlock() == Blocks.AIR) continue;
 
@@ -297,6 +297,28 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	// ═══════════════════════════════════════════════════════════════
 	//  Drawing helpers
 	// ═══════════════════════════════════════════════════════════════
+
+	private long materialCycleIndex() {
+		Minecraft minecraft = Minecraft.getInstance();
+		if (minecraft.level != null) {
+			return minecraft.level.getGameTime() / 40L;
+		}
+		return System.currentTimeMillis() / 2000L;
+	}
+
+	private List<ItemStack> itemStacksFor(MultiblockPatternKey key, int count) {
+		List<ItemStack> stacks = new ArrayList<>();
+		for (Block block : key.displayBlocks()) {
+			if (block == null || block == Blocks.AIR) {
+				continue;
+			}
+			ItemStack stack = new ItemStack(block.asItem(), count);
+			if (!stack.isEmpty()) {
+				stacks.add(stack);
+			}
+		}
+		return stacks;
+	}
 
 	/** Draws a subtle pulsing red glow in the background. */
 	private void drawSubtleGlow(GuiGraphics gfx, int cx, int cy, float time) {

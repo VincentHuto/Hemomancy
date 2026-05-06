@@ -11,7 +11,8 @@
   ],
   "key": {
     "S": {
-      "block": "minecraft:quartz_bricks"
+      "tag": "hemomancy:progression/pale_ritual_stone",
+      "fallback": "minecraft:quartz_bricks"
     },
     "L": {
       "block": "minecraft:sea_lantern"
@@ -20,7 +21,8 @@
       "block": "hemomancy:suspended_cleansed_blood_crystal"
     },
     "Q": {
-      "block": "minecraft:smooth_quartz"
+      "tag": "hemomancy:progression/end_city_ritual_blocks",
+      "fallback": "minecraft:purpur_block"
     }
   },
   "result": {

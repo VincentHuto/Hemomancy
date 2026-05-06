@@ -6,7 +6,7 @@
 		"item": "hemomancy:scar_blank"
 	},
 	"ingredient2": {
-		"item": "minecraft:echo_shard"
+		"tag": "hemomancy:progression/resonant_crystals"
 	},
 	"pattern": [
 		[

@@ -22,10 +22,12 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "minecraft:crying_obsidian"
+      "tag": "hemomancy:progression/end_city_ritual_blocks",
+      "fallback": "minecraft:purpur_block"
     },
     "C": {
-      "block": "minecraft:end_stone_bricks"
+      "tag": "hemomancy:progression/end_ritual_stone",
+      "fallback": "minecraft:end_stone_bricks"
     },
     "E": {
       "block": "hemomancy:engram_block"

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:white_stained_glass",
+    "minecraft:blue_stained_glass",
+    "minecraft:tinted_glass",
+    "hemomancy:vivianite_glass"
+  ]
+}

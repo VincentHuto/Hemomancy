@@ -72,16 +72,19 @@
   ],
   "key": {
     "S": {
-      "block": "minecraft:calcite"
+      "tag": "hemomancy:progression/pale_ritual_stone",
+      "fallback": "minecraft:calcite"
     },
     "L": {
-      "block": "minecraft:white_stained_glass"
+      "tag": "hemomancy:progression/clarity_glass",
+      "fallback": "minecraft:white_stained_glass"
     },
     "C": {
       "block": "hemomancy:suspended_cleansed_blood_crystal"
     },
     "P": {
-      "block": "minecraft:smooth_quartz"
+      "tag": "hemomancy:progression/end_ritual_stone",
+      "fallback": "minecraft:end_stone_bricks"
     }
   },
   "result": {

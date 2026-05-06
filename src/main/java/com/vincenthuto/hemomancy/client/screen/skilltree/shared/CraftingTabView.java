@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import java.util.List;
-import java.util.Map;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,6 +9,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
+import com.vincenthuto.hutoslib.math.MultiblockPattern;
+import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -34,6 +35,18 @@ public final class CraftingTabView {
 	private CraftingTabView() {}
 
 	private static final int LAYER_BTN_SIZE = 16;
+	private static final long MATERIAL_CYCLE_MILLIS = 2000L;
+
+	private static long materialCycleIndex() {
+		return System.currentTimeMillis() / MATERIAL_CYCLE_MILLIS;
+	}
+
+	private static String materialLabelFor(MultiblockPatternKey key, ItemStack currentStack) {
+		if (key.isTag()) {
+			return key.displayLabel() + " (" + currentStack.getHoverName().getString() + ")";
+		}
+		return currentStack.getHoverName().getString();
+	}
 
 	// ────────────────────────────────────────────────────────────
 	//  Top-level draw call
@@ -205,7 +218,7 @@ public final class CraftingTabView {
 								 int areaX, int areaY, int areaW, int areaH,
 								 BloodStructureRecipe recipe) {
 		if (recipe.getPattern() == null) return;
-		List<BlockPosBlockPair> blockPairs = recipe.getPattern().getBlockPosBlockList();
+		List<BlockPosBlockPair> blockPairs = recipe.getPattern().getDisplayBlockPosBlockList(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
@@ -379,20 +392,22 @@ public final class CraftingTabView {
 
 		// Block materials list
 		if (recipe.getPattern() != null) {
-			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
+			List<MultiblockPattern.MaterialCount> materials = recipe.getPattern().getMaterialCounts(false);
+			if (!materials.isEmpty()) {
 				gfx.drawString(ctx.font(), Component.literal("Materials:")
 						.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 				y += lineH;
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
+				long cycleIndex = materialCycleIndex();
+				for (MultiblockPattern.MaterialCount material : materials) {
+					MultiblockPatternKey key = material.key();
+					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
 					ItemStack bs = new ItemStack(block);
 					if (!bs.isEmpty()) {
 						gfx.renderItem(bs, panelX + 2, y);
-						String prefix = " x" + entry.getValue() + "  ";
+						String prefix = " x" + material.count() + "  ";
 						List<String> matLines = ScreenDrawUtils.wrapText(ctx.font(),
-								prefix + bs.getHoverName().getString(), panelW - 20);
+								prefix + materialLabelFor(key, bs), panelW - 20);
 						for (int li = 0; li < matLines.size(); li++) {
 							gfx.drawString(ctx.font(), Component.literal(matLines.get(li))
 									.withStyle(s -> s.withColor(0xAAAAAA)),
@@ -455,17 +470,19 @@ public final class CraftingTabView {
 		y += 6;
 
 		if (recipe.getPattern() != null) {
-			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
+			List<MultiblockPattern.MaterialCount> materials = recipe.getPattern().getMaterialCounts(false);
+			if (!materials.isEmpty()) {
 				y += lineH;
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
+				long cycleIndex = materialCycleIndex();
+				for (MultiblockPattern.MaterialCount material : materials) {
+					MultiblockPatternKey key = material.key();
+					Block block = key.displayBlock(cycleIndex);
 					if (block == null || block == Blocks.AIR) continue;
 					ItemStack bs = new ItemStack(block);
 					if (!bs.isEmpty()) {
-						String prefix = " x" + entry.getValue() + "  ";
+						String prefix = " x" + material.count() + "  ";
 						y += Math.max(18, ScreenDrawUtils.wrapText(font,
-								prefix + bs.getHoverName().getString(), panelW - 20).size() * lineH + 4);
+								prefix + materialLabelFor(key, bs), panelW - 20).size() * lineH + 4);
 					}
 				}
 			}

@@ -1,11 +1,11 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "hemomancy:runic_motif_paper"
     },
     {
-      "item": "minecraft:echo_shard"
+      "tag": "hemomancy:progression/resonant_crystals"
     }
   ],
   "result": {

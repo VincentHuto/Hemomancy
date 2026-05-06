@@ -1,11 +1,11 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "hemomancy:runic_motif_paper"
     },
     {
-      "item": "minecraft:netherite_scrap"
+      "tag": "hemomancy:progression/ancient_alloys"
     }
   ],
   "result": {

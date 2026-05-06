@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:hematic_iron_block",
+    "hemomancy:chiseled_hematic_iron_block",
+    "hemomancy:conscious_mass",
+    "hemomancy:sanguine_monolith"
+  ]
+}

@@ -19,7 +19,8 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "P": {
-      "block": "minecraft:polished_basalt"
+      "tag": "hemomancy:progression/ritual_stone",
+      "fallback": "minecraft:polished_basalt"
     }
   },
   "result": {

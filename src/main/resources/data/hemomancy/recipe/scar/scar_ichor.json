@@ -6,7 +6,7 @@
 		"item": "hemomancy:scar_blank"
 	},
 	"ingredient2": {
-		"item": "minecraft:totem_of_undying"
+		"tag": "hemomancy:progression/saint_relics"
 	},
 	"pattern": [
 		[

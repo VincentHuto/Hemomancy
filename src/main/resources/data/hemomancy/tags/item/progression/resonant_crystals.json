@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:amethyst_shard",
+    "minecraft:echo_shard",
+    "hemomancy:cleansed_blood_crystal_shard"
+  ]
+}

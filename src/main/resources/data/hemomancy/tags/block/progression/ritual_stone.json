@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:stone_bricks",
+    "minecraft:chiseled_stone_bricks",
+    "minecraft:polished_basalt",
+    "minecraft:deepslate_bricks",
+    "hemomancy:venous_stone",
+    "hemomancy:polished_venous_stone"
+  ]
+}

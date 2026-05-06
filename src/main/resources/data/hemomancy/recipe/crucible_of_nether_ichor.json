@@ -5,7 +5,7 @@
       "item": "hemomancy:bloody_vial"
     },
     {
-      "item": "minecraft:ghast_tear"
+      "tag": "hemomancy:progression/nether_ichor_reagents"
     },
     {
       "item": "minecraft:blaze_powder"

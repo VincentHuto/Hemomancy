@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 500,
-  "required_degree": 3,
+  "required_degree": 4,
   "heldItem": "hemomancy:sanguine_formation",
   "hitBlock": "hemomancy:polished_venous_stone",
   "pattern": [
@@ -14,7 +14,8 @@
       "block": "hemomancy:hematic_iron_block"
     },
     "S": {
-      "block": "minecraft:polished_basalt"
+      "tag": "hemomancy:progression/nether_ritual_stone",
+      "fallback": "minecraft:polished_basalt"
     },
     "P": {
       "block": "minecraft:iron_bars"

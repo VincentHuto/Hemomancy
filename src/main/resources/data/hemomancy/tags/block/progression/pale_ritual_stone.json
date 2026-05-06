@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:calcite",
+    "minecraft:smooth_quartz",
+    "minecraft:quartz_bricks",
+    "hemomancy:cleansed_stone"
+  ]
+}

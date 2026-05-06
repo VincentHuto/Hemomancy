@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:hematic_iron_scrap",
+    "hemomancy:gourd_seeds",
+    "minecraft:ink_sac",
+    "minecraft:iron_nugget"
+  ]
+}

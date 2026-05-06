@@ -6,7 +6,7 @@
 		"item": "hemomancy:scar_blank"
 	},
 	"ingredient2": {
-		"item": "minecraft:netherite_scrap"
+		"tag": "hemomancy:progression/ancient_alloys"
 	},
 	"pattern": [
 		[

@@ -41,10 +41,12 @@
       "block": "hemomancy:blood_wood_log"
     },
     "B": {
-      "block": "minecraft:nether_wart_block"
+      "tag": "hemomancy:progression/qliphoth_soil",
+      "fallback": "minecraft:nether_wart_block"
     },
     "C": {
-      "block": "hemomancy:polished_venous_stone"
+      "tag": "hemomancy:progression/end_city_ritual_blocks",
+      "fallback": "minecraft:purpur_block"
     },
     "D": {
       "block": "hemomancy:chiseled_polished_venous_stone"
@@ -53,7 +55,8 @@
       "block": "hemomancy:engram_block"
     },
     "F": {
-      "block": "minecraft:soul_soil"
+      "tag": "hemomancy:progression/qliphoth_soil",
+      "fallback": "minecraft:soul_soil"
     }
   },
   "result": {

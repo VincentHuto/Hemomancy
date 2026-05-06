@@ -24,11 +24,16 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
+import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -53,6 +58,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		return BlockInWorld.hasState(state -> state.getBlock() == target);
 	}
 
+	private static Predicate<BlockInWorld> keyEntryPredFromHash(Map<String, PatternKeyEntry> symbolList, String string) {
+		PatternKeyEntry entry = symbolList.get(string);
+		return entry::matches;
+	}
+
 	private static BlockPattern generateBlockPatternFromArray(Map<String, Block> symbolList, String[][] schematic) {
 		BlockPatternBuilder builder = BlockPatternBuilder.start();
 		for (String[] element : schematic) {
@@ -62,6 +72,22 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				for (String element2 : distinct) {
 					if (" ".equals(element2)) continue;
 					builder.where(element2.toCharArray()[0], blockPredFromHash(symbolList, element2));
+				}
+			}
+		}
+		return builder.build();
+	}
+
+	private static BlockPattern generateBlockPatternFromKeyEntries(Map<String, PatternKeyEntry> symbolList,
+			String[][] schematic) {
+		BlockPatternBuilder builder = BlockPatternBuilder.start();
+		for (String[] element : schematic) {
+			builder.aisle(element);
+			for (String element3 : element) {
+				List<String> distinct = getDistinctChars(element3);
+				for (String element2 : distinct) {
+					if (" ".equals(element2)) continue;
+					builder.where(element2.toCharArray()[0], keyEntryPredFromHash(symbolList, element2));
 				}
 			}
 		}
@@ -78,16 +104,22 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		return distinct;
 	}
 
-	private static Map<String, Block> keyFromJson(JsonObject pKeyEntry) {
-		Map<String, Block> map = Maps.newHashMap();
+	private static Map<String, PatternKeyEntry> keyEntriesFromJson(JsonObject pKeyEntry) {
+		Map<String, PatternKeyEntry> map = Maps.newHashMap();
 		for (Entry<String, JsonElement> entry : pKeyEntry.entrySet()) {
 			if (entry.getKey().length() != 1)
 				throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey() + "' must be 1 character.");
 			if (" ".equals(entry.getKey()))
 				throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
-			map.put(entry.getKey(), blockFromJson(entry.getValue().getAsJsonObject()));
+			map.put(entry.getKey(), PatternKeyEntry.fromJson(entry.getKey(), entry.getValue().getAsJsonObject()));
 		}
-		map.put(" ", Blocks.AIR);
+		return map;
+	}
+
+	private static Map<String, MultiblockPatternKey> displayKeyMapFromKeyEntries(Map<String, PatternKeyEntry> keyEntries) {
+		Map<String, MultiblockPatternKey> map = Maps.newHashMap();
+		keyEntries.forEach((key, entry) -> map.put(key, entry.toMultiblockPatternKey()));
+		map.put(" ", MultiblockPatternKey.block(" ", Blocks.AIR));
 		return map;
 	}
 
@@ -126,13 +158,13 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		String riteName = GsonHelper.getAsString(pJson, "riteName", "");
 		String riteDescription = GsonHelper.getAsString(pJson, "riteDescription", "");
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
-		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
+		Map<String, PatternKeyEntry> keyEntries = keyEntriesFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		ItemStack result = ItemStack.EMPTY;
 		if (pJson.has("result")) {
 			result = RecipeResultStackParser.parseResultStack(pJson, "result");
 		}
-		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
-		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
+		BlockPattern bp = generateBlockPatternFromKeyEntries(keyEntries, pattern);
+		MultiblockPattern mbPattern = new MultiblockPattern(bp, displayKeyMapFromKeyEntries(keyEntries), pattern, true);
 		int requiredDegree = requiredDegreeFromJson(pJson);
 		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
@@ -207,14 +239,23 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		}
 		String[][] pattern = patternList.toArray(new String[0][]);
 		Map<String, Block> map = Maps.newHashMap();
+		Map<String, MultiblockPatternKey> displayKeys = Maps.newHashMap();
 		int symbolListLength = pBuffer.readInt();
 		for (int i = 0; i < symbolListLength; i++) {
 			String key = pBuffer.readUtf();
-			Block block = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
-			map.put(key, block);
+			boolean tagged = pBuffer.readBoolean();
+			Block fallback = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
+			ResourceLocation tagId = tagged ? pBuffer.readResourceLocation() : null;
+			List<Block> displayBlocks = readDisplayBlocks(pBuffer);
+			map.put(key, fallback);
+			if (tagged) {
+				displayKeys.put(key, MultiblockPatternKey.tag(key, tagId, fallback, displayBlocks));
+			} else {
+				displayKeys.put(key, MultiblockPatternKey.block(key, fallback));
+			}
 		}
 		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
-		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
+		MultiblockPattern mbPattern = new MultiblockPattern(bp, displayKeys, pattern, true);
 		boolean hasResult = pBuffer.readBoolean();
 		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		int requiredDegree = pBuffer.readInt();
@@ -236,10 +277,15 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			pBuffer.writeInt(row.length);
 			for (String cell : row) pBuffer.writeUtf(cell);
 		}
-		pBuffer.writeInt(pRecipe.getPattern().getSymbolList().size());
-		pRecipe.getPattern().getSymbolList().forEach((k, v) -> {
+		pBuffer.writeInt(pRecipe.getPattern().getKeyList().size());
+		pRecipe.getPattern().getKeyList().forEach((k, v) -> {
 			pBuffer.writeUtf(k);
-			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v));
+			pBuffer.writeBoolean(v.isTag());
+			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(v.fallbackBlock()));
+			if (v.isTag()) {
+				pBuffer.writeResourceLocation(v.tagId());
+			}
+			writeDisplayBlocks(pBuffer, displayBlocksForNetwork(pBuffer, v));
 		});
 		ItemStack result = pRecipe.getResult();
 		boolean hasResult = result != null && !result.isEmpty();
@@ -251,5 +297,45 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 		pBuffer.writeBoolean(pRecipe.isUnstained());
 		pBuffer.writeBoolean(pRecipe.isRankup());
+	}
+
+	private static List<Block> readDisplayBlocks(RegistryFriendlyByteBuf pBuffer) {
+		int displayBlockCount = pBuffer.readInt();
+		List<Block> displayBlocks = new ArrayList<>();
+		for (int i = 0; i < displayBlockCount; i++) {
+			Block block = BuiltInRegistries.BLOCK.get(pBuffer.readResourceLocation());
+			if (block != Blocks.AIR) {
+				displayBlocks.add(block);
+			}
+		}
+		return displayBlocks;
+	}
+
+	private static void writeDisplayBlocks(RegistryFriendlyByteBuf pBuffer, List<Block> displayBlocks) {
+		pBuffer.writeInt(displayBlocks.size());
+		for (Block block : displayBlocks) {
+			pBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(block));
+		}
+	}
+
+	private static List<Block> displayBlocksForNetwork(RegistryFriendlyByteBuf pBuffer, MultiblockPatternKey key) {
+		if (!key.isTag()) {
+			return key.displayBlocks();
+		}
+		Registry<Block> blockRegistry = pBuffer.registryAccess().registryOrThrow(Registries.BLOCK);
+		TagKey<Block> tag = TagKey.create(Registries.BLOCK, key.tagId());
+		return blockRegistry.getTag(tag)
+				.map(named -> {
+					List<Block> blocks = new ArrayList<>();
+					for (Holder<Block> holder : named) {
+						Block block = holder.value();
+						if (block != Blocks.AIR) {
+							blocks.add(block);
+						}
+					}
+					return blocks;
+				})
+				.filter(blocks -> !blocks.isEmpty())
+				.orElseGet(key::displayBlocks);
 	}
 }

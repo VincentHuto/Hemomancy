@@ -22,10 +22,12 @@
       "block": "hemomancy:hematic_iron_pillar"
     },
     "G": {
-      "block": "minecraft:polished_basalt"
+      "tag": "hemomancy:progression/nether_ritual_stone",
+      "fallback": "minecraft:polished_basalt"
     },
     "C": {
-      "block": "minecraft:deepslate_bricks"
+      "tag": "hemomancy:progression/deep_ritual_stone",
+      "fallback": "minecraft:deepslate_bricks"
     }
   },
   "result": {

@@ -1,11 +1,11 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "hemomancy:runic_motif_paper"
     },
     {
-      "item": "minecraft:totem_of_undying"
+      "tag": "hemomancy:progression/saint_relics"
     }
   ],
   "result": {

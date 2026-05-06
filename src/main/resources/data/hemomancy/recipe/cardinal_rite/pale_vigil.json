@@ -11,7 +11,8 @@
   ],
   "key": {
     "S": {
-      "block": "hemomancy:cleansed_stone"
+      "tag": "hemomancy:progression/pale_ritual_stone",
+      "fallback": "hemomancy:cleansed_stone"
     },
     "L": {
       "block": "minecraft:sea_lantern"
