@@ -200,6 +200,9 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> hematic_strain = EFFECTS.register("hematic_strain",
             () -> new HematicStrainEffect(MobEffectCategory.HARMFUL, 0x660000));
 
+    public static final DeferredHolder<MobEffect, MobEffect> morphic_strain = EFFECTS.register("morphic_strain",
+            () -> new MorphicStrainEffect(MobEffectCategory.HARMFUL, 0x5A2A65));
+
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
     }

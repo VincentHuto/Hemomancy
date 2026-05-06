@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -51,6 +53,11 @@ public class MothMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.DUCTILIS;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		triggerPrimalChrysalis(playerIn, itemStack);
 	}
 
 	@Override
@@ -106,6 +113,12 @@ public class MothMorphlingItem extends MorphlingItem {
 			}
 		}
 
+		if (MorphlingItem.isPrimal(stack) && player.getHealth() - amount <= 0) {
+			if (triggerPrimalChrysalis(player, stack)) {
+				return;
+			}
+		}
+
 		// Apex (4): Cocoon Rebirth — prevent lethal damage by consuming blood
 		if (maturity >= 4 && player.getHealth() - amount <= 0) {
 			long lastCocoon = getLastAbilityTick(stack, "CocoonRebirth");
@@ -126,12 +139,33 @@ public class MothMorphlingItem extends MorphlingItem {
 		}
 	}
 
+	private boolean triggerPrimalChrysalis(Player player, ItemStack stack) {
+		if (!MorphlingItem.tryBeginPrimalAbility(player, stack, "ChrysalisOfLastLight",
+				750.0, 12000, 700, 1)) return false;
+		player.removeAllEffects();
+		player.setHealth(Math.max(player.getHealth(), 12.0f));
+		player.invulnerableTime = 80;
+		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
+				160, 1, true, true, true));
+		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,
+				240, 2, true, true, true));
+		AABB area = player.getBoundingBox().inflate(8.0);
+		for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+			mob.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
+					160, 0, true, true, true));
+			mob.addEffect(new MobEffectInstance(MobEffects.CONFUSION,
+					160, 0, true, true, true));
+		}
+		return true;
+	}
+
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Dustwing Trail (Blind hostiles while sprinting)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Phototaxis Pulse (Flash blinds attacker on hit)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Cocoon Rebirth (Prevent death using blood)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Chrysalis of Last Light (Primal rescue cocoon cleanses and prevents death)", 5, currentMaturity));
 		return list;
 	}
 

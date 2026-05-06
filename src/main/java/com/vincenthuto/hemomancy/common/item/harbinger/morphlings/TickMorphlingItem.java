@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -48,6 +50,20 @@ public class TickMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.TENEBRIS;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HemorrhagicSeason",
+				420.0, 700, 260, 0)) return;
+		AABB area = playerIn.getBoundingBox().inflate(12.0);
+		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area,
+				mob -> mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
+			mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
+					180, 1, true, true, true));
+			mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+					180, 0, true, true, true));
+		}
 	}
 
 	@Override
@@ -93,6 +109,18 @@ public class TickMorphlingItem extends MorphlingItem {
 			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
 					armorDuration, armorAmplifier, true, true, true));
 		}
+
+		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide
+				&& victim.hasEffect(MobEffects.WITHER)) {
+			AABB area = victim.getBoundingBox().inflate(8.0);
+			for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area,
+					mob -> mob != victim && mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
+				mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
+						140, 1, true, true, true));
+				mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+						100, 0, true, true, true));
+			}
+		}
 	}
 
 	@Override
@@ -125,6 +153,7 @@ public class TickMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Engorge (Resistance on kill from feeding)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Blood Fever (Speed near wounded hostiles)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Pandemic Burst (AoE Wither + Weakness on heavy hit)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Hemorrhagic Season (Staff active spreads outbreak through wounded mobs)", 5, currentMaturity));
 		return list;
 	}
 

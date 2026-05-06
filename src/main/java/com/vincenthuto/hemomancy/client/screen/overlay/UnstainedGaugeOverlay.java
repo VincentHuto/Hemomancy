@@ -14,6 +14,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
@@ -53,7 +54,6 @@ public class UnstainedGaugeOverlay {
 	private static final ResourceLocation[] CLARITY_PIP_TEXTURES = textureRange("pips_clarity_", PIP_COUNT);
 
 	private final Minecraft mc = Minecraft.getInstance();
-	private float animTime = 0f;
 
 	public static boolean isConfiguredOnLeftSide() {
 		return false;
@@ -86,17 +86,17 @@ public class UnstainedGaugeOverlay {
 	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {
 		LocalPlayer player = mc.player;
 		if (player == null) return;
+		float animationTime = getAnimationTime(partialTicks);
 
 		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
 			if (!cap.hasBegunPurification()) return;
-			renderGauge(gfx, screenWidth, screenHeight, player, cap);
+			renderGauge(gfx, screenWidth, screenHeight, player, cap, animationTime);
 		});
 	}
 
-	private void renderGauge(GuiGraphics gfx, int screenWidth, int screenHeight, LocalPlayer player, IUnstainedProgress cap) {
+	private void renderGauge(GuiGraphics gfx, int screenWidth, int screenHeight, LocalPlayer player, IUnstainedProgress cap,
+			float time) {
 		Font font = mc.font;
-		animTime += 0.016f;
-		float time = animTime;
 
 		float purity = Mth.clamp(cap.getPurity(), 0f, 100f);
 		float clarity = Mth.clamp(cap.getClarity(), 0f, 100f);
@@ -144,6 +144,13 @@ public class UnstainedGaugeOverlay {
 				centerX, centerY);
 
 		RenderSystem.disableBlend();
+	}
+
+	private float getAnimationTime(float partialTicks) {
+		if (mc.level != null) {
+			return (mc.level.getGameTime() + partialTicks) * 0.05f;
+		}
+		return Util.getMillis() * 0.001f;
 	}
 
 	private float getBloodFillRatio(LocalPlayer player, float fallbackRatio) {

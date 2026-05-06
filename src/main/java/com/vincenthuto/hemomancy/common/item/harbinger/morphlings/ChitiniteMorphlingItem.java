@@ -2,12 +2,18 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -36,6 +42,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 	private static final int IRONHIDE_COOLDOWN = 60;
 	/** Interval in ticks between Ablative Plating grants (8 seconds). */
 	private static final int ABLATIVE_PLATING_INTERVAL = 160;
+	private static final int PRIMAL_CARAPACE_DURATION = 120;
 
 	public ChitiniteMorphlingItem(Properties prop) {
 		super(prop);
@@ -49,6 +56,19 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.CONGEATIO;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "PrimalCarapace",
+				500.0, 900, 260, 0)) return;
+		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putLong("PrimalCarapaceUntil", worldIn.getGameTime() + PRIMAL_CARAPACE_DURATION);
+		tag.putFloat("PrimalCarapaceStored", 0.0f);
+		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+				PRIMAL_CARAPACE_DURATION, 2, true, true, true));
+		playerIn.setAbsorptionAmount(Math.min(playerIn.getAbsorptionAmount() + 8.0f, 16.0f));
 	}
 
 	@Override
@@ -74,6 +94,30 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 					player.setAbsorptionAmount(
 							Math.min(player.getAbsorptionAmount() + absorptionAmount, 8.0f));
 				}
+			}
+		}
+
+		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide) {
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			float stored = tag.getFloat("PrimalCarapaceStored");
+			long until = tag.getLong("PrimalCarapaceUntil");
+			if (stored > 0 && until > 0 && player.level().getGameTime() > until) {
+				double radius = 5.5;
+				AABB area = player.getBoundingBox().inflate(radius);
+				float burstDamage = Math.min(18.0f, 4.0f + stored * 0.65f);
+				for (net.minecraft.world.entity.monster.Monster mob :
+						player.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, area)) {
+					mob.hurt(player.damageSources().thorns(player), burstDamage);
+					double dx = mob.getX() - player.getX();
+					double dz = mob.getZ() - player.getZ();
+					double dist = Math.sqrt(dx * dx + dz * dz);
+					if (dist > 0) {
+						mob.push(dx / dist * 0.9, 0.35, dz / dist * 0.9);
+					}
+				}
+				tag.remove("PrimalCarapaceUntil");
+				tag.remove("PrimalCarapaceStored");
+				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 			}
 		}
 	}
@@ -121,6 +165,14 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
+
+		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide) {
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			if (tag.getLong("PrimalCarapaceUntil") > player.level().getGameTime()) {
+				tag.putFloat("PrimalCarapaceStored", tag.getFloat("PrimalCarapaceStored") + amount);
+				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+			}
+		}
 	}
 
 	@Override
@@ -129,6 +181,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Carapace Thorns (Reflect melee damage)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Ablative Plating (Regenerating Absorption shield)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Ironhide (Invulnerability + thorn burst on heavy hit)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Primal Carapace (Staff active banks damage into ferric shard burst)", 5, currentMaturity));
 		return list;
 	}
 

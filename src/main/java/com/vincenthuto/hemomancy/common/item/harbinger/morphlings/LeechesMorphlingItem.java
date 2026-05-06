@@ -4,12 +4,18 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +43,7 @@ public class LeechesMorphlingItem extends MorphlingItem {
 	private static final int TRANSFUSION_COOLDOWN = 200;
 	/** Cooldown in ticks between Exsanguinate triggers (10 seconds). */
 	private static final int EXSANGUINATE_COOLDOWN = 200;
+	private static final int HEMOPHAGE_COVENANT_DURATION = 400;
 
 	public LeechesMorphlingItem(Properties prop) {
 		super(prop);
@@ -50,6 +57,17 @@ public class LeechesMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.CONGEATIO;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HemophageCovenant",
+				450.0, 1200, 300, 0)) return;
+		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putLong("HemophageCovenantUntil", worldIn.getGameTime() + HEMOPHAGE_COVENANT_DURATION);
+		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		playerIn.displayClientMessage(Component.literal("Hemophage Covenant opens.")
+				.withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
 	}
 
 	@Override
@@ -126,6 +144,26 @@ public class LeechesMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
+
+		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide) {
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			if (tag.getLong("HemophageCovenantUntil") > player.level().getGameTime()) {
+				float sharedHealing = Math.min(2.5f, amount * 0.18f);
+				AABB area = player.getBoundingBox().inflate(12.0);
+				for (Player ally : player.level().getEntitiesOfClass(Player.class, area, Player::isAlive)) {
+					if (ally.getHealth() < ally.getMaxHealth()) {
+						ally.heal(sharedHealing);
+					}
+				}
+				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+					if (!volume.isActive()) return;
+					volume.fill(Math.min(35.0, amount * 8.0));
+					if (player instanceof ServerPlayer serverPlayer) {
+						BloodVolumeEvents.syncVolume(serverPlayer, volume);
+					}
+				});
+			}
+		}
 	}
 
 	@Override
@@ -134,6 +172,7 @@ public class LeechesMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Life Steal (Heal from melee damage)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Blood Transfusion (Emergency heal using blood)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Sanguine Frenzy (Missing HP damage + execute low targets)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Hemophage Covenant (Staff active shares damage into blood and healing)", 5, currentMaturity));
 		return list;
 	}
 

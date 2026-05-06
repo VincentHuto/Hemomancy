@@ -42,10 +42,12 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private enum MaturityStage {
 		POLYP,
 		JUVENILE,
-		MATURE;
+		MATURE,
+		PRIMAL;
 
 		static MaturityStage fromStack(ItemStack stack) {
 			int level = MorphlingItem.getMaturityLevel(stack);
+			if (level >= 5) return PRIMAL;
 			if (level >= 4) return MATURE;
 			if (level >= 2) return JUVENILE;
 			return POLYP;
@@ -58,17 +60,17 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 
 	private static final double INTERNAL_BUFFER_MAX = 800.0;
 
-	private static final double[] UPKEEP_COST = new double[] { 0.35, 0.7, 1.1 };
-	private static final double[] ACTION_COST = new double[] { 35.0, 60.0, 95.0 };
-	private static final int[] ACTION_INTERVAL = new int[] { 30, 24, 18 };
+	private static final double[] UPKEEP_COST = new double[] { 0.35, 0.7, 1.1, 1.8 };
+	private static final double[] ACTION_COST = new double[] { 35.0, 60.0, 95.0, 150.0 };
+	private static final int[] ACTION_INTERVAL = new int[] { 30, 24, 18, 14 };
 
-	private static final double[] SUPPORT_AURA_RANGE = new double[] { 8.0, 11.0, 15.0 };
+	private static final double[] SUPPORT_AURA_RANGE = new double[] { 8.0, 11.0, 15.0, 20.0 };
 
-	private static final int[] STAGE_AURA_INTERVAL = new int[] { 12, 8, 6 };
-	private static final double[] STAGE_AURA_RANGE = new double[] { 4.0, 7.0, 10.0 };
-	private static final float[] STAGE_DRAIN_PER_HIT = new float[] { 1.5f, 3.0f, 5.0f };
-	private static final double[] STAGE_BUFFER_MAX = new double[] { 200.0, 600.0, 1200.0 };
-	private static final double[] STAGE_DISTRIBUTION_RANGE = new double[] { 6.0, 10.0, 28.0 };
+	private static final int[] STAGE_AURA_INTERVAL = new int[] { 12, 8, 6, 4 };
+	private static final double[] STAGE_AURA_RANGE = new double[] { 4.0, 7.0, 10.0, 14.0 };
+	private static final float[] STAGE_DRAIN_PER_HIT = new float[] { 1.5f, 3.0f, 5.0f, 7.0f };
+	private static final double[] STAGE_BUFFER_MAX = new double[] { 200.0, 600.0, 1200.0, 2000.0 };
+	private static final double[] STAGE_DISTRIBUTION_RANGE = new double[] { 6.0, 10.0, 28.0, 40.0 };
 
 	private ItemStack morphlingItem = ItemStack.EMPTY;
 	private UUID ownerUUID = null;

@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -10,6 +13,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -35,6 +40,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 	private static final int SWARM_RETALIATION_COOLDOWN = 20;
 	/** Cooldown in ticks between Plague Burst triggers (30 seconds). */
 	private static final int PLAGUE_BURST_COOLDOWN = 600;
+	private static final int MAX_PRIMAL_SWARM = 8;
 
 	public PestsMorphlingItem(Properties prop) {
 		super(prop);
@@ -48,6 +54,31 @@ public class PestsMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.TENEBRIS;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		int stored = tag.getInt("VerminCrownSwarm");
+		if (stored <= 0) {
+			playerIn.displayClientMessage(Component.literal("The Vermin Crown is quiet."), true);
+			return;
+		}
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "VerminCrown",
+				300.0, 500, 180, 0)) return;
+		AABB area = playerIn.getBoundingBox().inflate(18.0);
+		List<Monster> hostiles = worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive);
+		int releases = Math.min(stored, MAX_PRIMAL_SWARM);
+		for (int i = 0; i < releases; i++) {
+			var pest = new com.vincenthuto.hemomancy.common.entity.projectile.TrackingPestsEntity(
+					playerIn, false);
+			if (!hostiles.isEmpty()) {
+				pest.setTarget(hostiles.get(i % hostiles.size()));
+			}
+			worldIn.addFreshEntity(pest);
+		}
+		tag.putInt("VerminCrownSwarm", Math.max(0, stored - releases));
+		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
 	@Override
@@ -127,6 +158,13 @@ public class PestsMorphlingItem extends MorphlingItem {
 				}
 			}
 		}
+
+		if (MorphlingItem.isPrimal(stack) && !player.level().isClientSide) {
+			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+			tag.putInt("VerminCrownSwarm", Math.min(MAX_PRIMAL_SWARM,
+					tag.getInt("VerminCrownSwarm") + (victim.getMaxHealth() >= 20.0f ? 2 : 1)));
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		}
 	}
 
 	@Override
@@ -135,6 +173,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Swarm Retaliation (Pests hunt your attacker)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Infest (Kills spawn pests targeting nearby foes)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Plague Burst (AoE Wither at low health)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Vermin Crown (Kills store swarms; staff releases hunters)", 5, currentMaturity));
 		return list;
 	}
 

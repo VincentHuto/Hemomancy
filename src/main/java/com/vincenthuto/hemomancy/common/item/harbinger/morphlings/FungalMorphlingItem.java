@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -41,6 +42,7 @@ public class FungalMorphlingItem extends MorphlingItem {
 
 	/** Cooldown in ticks between Sporulation triggers (3 seconds). */
 	private static final int SPORULATION_COOLDOWN = 60;
+	private static final int PRIMAL_MYCORRHIZA_COOLDOWN = 600;
 
 	public FungalMorphlingItem(Properties prop) {
 		super(prop);
@@ -143,6 +145,35 @@ public class FungalMorphlingItem extends MorphlingItem {
 				serverLevel.addFreshEntity(itemEntity);
 			}
 		}
+
+		if (MorphlingItem.isPrimal(stack) && player.level() instanceof ServerLevel serverLevel
+				&& victim.getMaxHealth() >= 20.0f) {
+			long now = serverLevel.getGameTime();
+			long lastMycorrhiza = getLastAbilityTick(stack, "PrimalMycorrhiza");
+			if (now - lastMycorrhiza >= PRIMAL_MYCORRHIZA_COOLDOWN) {
+				setLastAbilityTick(stack, "PrimalMycorrhiza", now);
+				MorphlingItem.applyMorphicStrain(player, 220, 0);
+
+				double radius = 7.0;
+				AABB area = victim.getBoundingBox().inflate(radius);
+				for (Player ally : serverLevel.getEntitiesOfClass(Player.class, area, Player::isAlive)) {
+					ally.heal(3.0f);
+					ally.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending,
+							160, 1, true, true, true));
+				}
+				for (Monster mob : serverLevel.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+					mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+							180, 0, true, true, true));
+					mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+							180, 1, true, true, true));
+				}
+				if (serverLevel.random.nextFloat() < 0.12f) {
+					serverLevel.addFreshEntity(new ItemEntity(serverLevel,
+							victim.getX(), victim.getY(), victim.getZ(),
+							new ItemStack(ItemInit.immature_fungal_scar.get())));
+				}
+			}
+		}
 	}
 
 	@Override
@@ -151,6 +182,7 @@ public class FungalMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Sporulation (AoE toxic spores when hit)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Mycorrhizal Network (Heal nearby allies)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Cordyceps Burst (Kills explode, poison foes + bonus loot)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Primal Mycorrhiza (Elite kills seed a healing fungal patch)", 5, currentMaturity));
 		return list;
 	}
 

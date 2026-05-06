@@ -3,12 +3,16 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,29 @@ public class BatMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.DUCTILIS;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "Echothesis",
+				260.0, 500, 160, 0)) return;
+		AABB area = playerIn.getBoundingBox().inflate(36.0);
+		for (LivingEntity entity : worldIn.getEntitiesOfClass(LivingEntity.class, area,
+				entity -> entity != playerIn && entity.isAlive())) {
+			entity.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+					220, 0, true, false, true));
+		}
+		int lightLevel = worldIn.getMaxLocalRawBrightness(playerIn.blockPosition());
+		if (lightLevel < 5) {
+			playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
+					180, 1, true, false, true));
+			playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
+					180, 1, true, false, true));
+			for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+				mob.addEffect(new MobEffectInstance(MobEffects.DARKNESS,
+						100, 0, true, true, true));
+			}
+		}
 	}
 
 	@Override
@@ -123,6 +150,7 @@ public class BatMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Sonar Shriek (Darkness & Slow attacker on hit)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Membrane Glide (Slow falling & reduced fall damage)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Nightwing Frenzy (Strength in darkness)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Echothesis (Staff active reveals blood signatures and empowers night raids)", 5, currentMaturity));
 		return list;
 	}
 

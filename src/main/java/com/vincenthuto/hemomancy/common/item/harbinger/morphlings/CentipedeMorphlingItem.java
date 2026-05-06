@@ -2,13 +2,17 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,27 @@ public class CentipedeMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.FERRIC;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "HundredfoldMolt",
+				300.0, 700, 180, 0)) return;
+		playerIn.removeEffect(MobEffects.POISON);
+		playerIn.removeEffect(MobEffects.WITHER);
+		playerIn.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+		playerIn.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
+				120, 0, true, false, true));
+		playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
+				140, 3, true, true, true));
+		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+				60, 4, true, false, true));
+		playerIn.invulnerableTime = Math.max(playerIn.invulnerableTime, 40);
+		if (worldIn instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.POOF,
+					playerIn.getX(), playerIn.getY() + 0.4, playerIn.getZ(),
+					30, 0.45, 0.35, 0.45, 0.05);
+		}
 	}
 
 	@Override
@@ -107,6 +132,7 @@ public class CentipedeMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Burrowing Strike (Weaken targets on hit)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Segmented Defense (Regen from heavy hits)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Myriapod Swarm (Invisibility escape at low HP)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Hundredfold Molt (Staff active sheds danger and vanishes)", 5, currentMaturity));
 		return list;
 	}
 

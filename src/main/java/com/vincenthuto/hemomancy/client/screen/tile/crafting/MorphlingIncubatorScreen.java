@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEnt
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -82,9 +83,10 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		int gy = this.topPos;
 		int gw = this.imageWidth;
 		int gh = this.imageHeight;
+		float animationTime = getAnimationTime(partialTicks);
 
 		// ───── Venous background for upper crafting area ─────
-		renderVeinBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
+		renderVeinBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, animationTime);
 		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ───── Red gradient panel behind inventory section ─────
@@ -104,10 +106,17 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		}
 
 		// ───── Progress ring ─────
-		renderProgressRing(gfx, gx, gy);
+		renderProgressRing(gfx, gx, gy, animationTime);
 
 		// ───── Blood volume bar (inline) ─────
-		renderBloodBar(gfx, gx, gy);
+		renderBloodBar(gfx, gx, gy, animationTime);
+	}
+
+	private float getAnimationTime(float partialTicks) {
+		if (this.minecraft != null && this.minecraft.level != null) {
+			return (this.minecraft.level.getGameTime() + partialTicks) * 0.05f;
+		}
+		return Util.getMillis() * 0.001f;
 	}
 
 	@Override
@@ -176,9 +185,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 	}
 
 	// ───── Progress ring (around center slot) ─────
-	private float animTime = 0f;
-
-	private void renderProgressRing(GuiGraphics gfx, int gx, int gy) {
+	private void renderProgressRing(GuiGraphics gfx, int gx, int gy, float time) {
 		// Ring centered on the center slot (80+8, 40+8 = slot center)
 		int cx = gx + 88;
 		int cy = gy + 48;
@@ -192,9 +199,6 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		}
 		int filledSegments = (int) (segments * progress);
 
-		animTime += 0.016f; // ~60 FPS approximation
-
-			float time = animTime;
 		for (int i = 0; i < segments; i++) {
 			double angle1 = -Math.PI / 2 + (2 * Math.PI / segments) * i;
 			double angle2 = -Math.PI / 2 + (2 * Math.PI / segments) * (i + 1);
@@ -238,7 +242,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 
 	// ───── Blood volume bar ─────
 
-	private void renderBloodBar(GuiGraphics gfx, int gx, int gy) {
+	private void renderBloodBar(GuiGraphics gfx, int gx, int gy, float time) {
 		// Vertical vial bar directly above the blood slot (blood slot is at 8, 74)
 		int barW = 8;
 		int barH = 52;
@@ -254,9 +258,6 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		double vol = te.getBloodVolume();
 		double maxVol = te.getMaxBloodVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
-
-		animTime += 0.016f; // ~60 FPS approximation
-		float time = animTime;
 
 		// Outer frame — double border
 		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
@@ -332,7 +333,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 
 	// ───── Procedural Animated Vein Background ─────
 
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
+	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh, float time) {
 		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -353,8 +354,6 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		}
 
 		// Layer 3: animated vein tendrils
-		animTime += 0.016f; // ~60 FPS approximation
-		float time = animTime;
 		if (veinParams != null) {
 			for (int i = 0; i < VEIN_COUNT; i++) {
 				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);

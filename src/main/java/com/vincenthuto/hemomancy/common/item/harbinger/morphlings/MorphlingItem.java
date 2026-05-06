@@ -1,34 +1,45 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
+import java.util.Comparator;
 
 public class MorphlingItem extends Item implements IMorphling {
 
 	public int bloodCost;
+	public static final String PRIMALIZED_KEY = "Primalized";
+	public static final String PRIMAL_ABILITY_PREFIX = "Primal:";
 
 	// Maturity thresholds based on effective EnzymePower
-	public static final float[] MATURITY_THRESHOLDS = { 0f, 10f, 30f, 60f, 100f };
-	public static final String[] MATURITY_NAMES = { "Unfed", "Fledgling", "Developing", "Mature", "Apex" };
+	public static final float[] MATURITY_THRESHOLDS = { 0f, 10f, 30f, 60f, 100f, 100f };
+	public static final String[] MATURITY_NAMES = { "Unfed", "Fledgling", "Developing", "Mature", "Apex", "Primal" };
 	public static final ChatFormatting[] MATURITY_COLORS = {
 			ChatFormatting.GRAY, ChatFormatting.GREEN, ChatFormatting.DARK_GREEN,
-			ChatFormatting.GOLD, ChatFormatting.LIGHT_PURPLE
+			ChatFormatting.GOLD, ChatFormatting.LIGHT_PURPLE, ChatFormatting.DARK_PURPLE
 	};
 
 	public MorphlingItem(Properties prop) {
@@ -64,11 +75,27 @@ public class MorphlingItem extends Item implements IMorphling {
 	 */
 	public static int getMaturityLevel(ItemStack stack) {
 		if (!stack.has(DataComponents.CUSTOM_DATA)) return 0;
-		float power = stack.get(DataComponents.CUSTOM_DATA).copyTag().getFloat("EnzymePower");
-		for (int i = MATURITY_THRESHOLDS.length - 1; i > 0; i--) {
+		CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+		float power = tag.getFloat("EnzymePower");
+		if (PrimalMorphlingRules.isPrimalMaturity(power, tag.getBoolean(PRIMALIZED_KEY))) {
+			return PrimalMorphlingRules.PRIMAL_LEVEL;
+		}
+		for (int i = PrimalMorphlingRules.APEX_LEVEL; i > 0; i--) {
 			if (power >= MATURITY_THRESHOLDS[i]) return i;
 		}
 		return 0;
+	}
+
+	public static boolean isPrimal(ItemStack stack) {
+		return getMaturityLevel(stack) >= PrimalMorphlingRules.PRIMAL_LEVEL;
+	}
+
+	public static void setPrimalized(ItemStack stack) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putBoolean(PRIMALIZED_KEY, true);
+		float power = Math.max(tag.getFloat("EnzymePower"), MATURITY_THRESHOLDS[PrimalMorphlingRules.APEX_LEVEL]);
+		tag.putFloat("EnzymePower", power);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
 	/**
@@ -121,10 +148,13 @@ public class MorphlingItem extends Item implements IMorphling {
 						.withStyle(ChatFormatting.GOLD));
 
 				// Show progress to next level
-				if (maturity < MATURITY_THRESHOLDS.length - 1) {
+				if (maturity < PrimalMorphlingRules.APEX_LEVEL) {
 					float nextThreshold = MATURITY_THRESHOLDS[maturity + 1];
 					tooltip.add(Component.literal("Next level at: " + String.format("%.0f", nextThreshold) + " power")
 							.withStyle(ChatFormatting.DARK_GRAY));
+				} else if (maturity == PrimalMorphlingRules.APEX_LEVEL) {
+					tooltip.add(Component.literal("Primalization: Morphic Nectar after Apotheos")
+							.withStyle(ChatFormatting.DARK_PURPLE));
 				}
 
 				// Show maturity bonuses
@@ -158,6 +188,51 @@ public class MorphlingItem extends Item implements IMorphling {
 			return Component.literal(prefix + description)
 					.withStyle(ChatFormatting.DARK_GRAY);
 		}
+	}
+
+	public static boolean tryBeginPrimalAbility(Player player, ItemStack stack, String abilityKey,
+			double bloodCost, int cooldownTicks, int strainTicks, int strainAmplifier) {
+		if (!isPrimal(stack) || player.level().isClientSide) return false;
+		long now = player.level().getGameTime();
+		long lastUse = getLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey);
+		if (now - lastUse < cooldownTicks) {
+			player.displayClientMessage(Component.literal("The primal morphling is still recoiling.")
+					.withStyle(ChatFormatting.DARK_PURPLE), true);
+			return false;
+		}
+		var volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive() || volume.getBloodVolume() < bloodCost) {
+			player.displayClientMessage(Component.literal("The primal morphling hungers for more blood.")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return false;
+		}
+		if (!volume.drain(bloodCost)) return false;
+		if (player instanceof ServerPlayer serverPlayer) {
+			BloodVolumeEvents.syncVolume(serverPlayer, volume);
+		}
+		applyMorphicStrain(player, strainTicks, strainAmplifier);
+		setLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey, now);
+		return true;
+	}
+
+	public static void applyMorphicStrain(Player player, int durationTicks, int amplifier) {
+		if (durationTicks <= 0) return;
+		int cappedAmplifier = Math.max(0, Math.min(amplifier, 2));
+		player.addEffect(new MobEffectInstance(EffectInit.morphic_strain,
+				durationTicks, cappedAmplifier, true, true, true));
+	}
+
+	public static LivingEntity findLookTarget(Player player, double range) {
+		Vec3 look = player.getLookAngle().normalize();
+		Vec3 eye = player.getEyePosition();
+		AABB area = player.getBoundingBox().inflate(range);
+		return player.level().getEntitiesOfClass(LivingEntity.class, area,
+						target -> target != player && target.isAlive()
+								&& target.distanceToSqr(player) <= range * range
+								&& target.getBoundingBox().getCenter().subtract(eye).normalize().dot(look) > 0.85D)
+				.stream()
+				.min(Comparator.comparingDouble(target -> target.distanceToSqr(player)))
+				.orElse(null);
 	}
 
 	/**

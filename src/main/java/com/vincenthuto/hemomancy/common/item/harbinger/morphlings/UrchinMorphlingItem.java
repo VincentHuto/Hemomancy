@@ -3,12 +3,15 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -47,6 +50,28 @@ public class UrchinMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.CONGEATIO;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "ReefheartBastion",
+				480.0, 900, 260, 0)) return;
+		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+				220, 2, true, true, true));
+		playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+				220, 4, true, true, true));
+		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
+				220, 0, true, true, true));
+		AABB area = playerIn.getBoundingBox().inflate(7.0);
+		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+			mob.hurt(playerIn.damageSources().thorns(playerIn), 6.0f);
+			double dx = mob.getX() - playerIn.getX();
+			double dz = mob.getZ() - playerIn.getZ();
+			double dist = Math.sqrt(dx * dx + dz * dz);
+			if (dist > 0) {
+				mob.push(dx / dist * 1.2, 0.3, dz / dist * 1.2);
+			}
+		}
 	}
 
 	@Override
@@ -124,6 +149,7 @@ public class UrchinMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Spine Lash (Thorns + Slow attackers)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Tidal Anchor (Push away hostile mobs)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Calcareous Shell (Resistance after heavy hit)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Reefheart Bastion (Staff active roots into a reflecting ritual anchor)", 5, currentMaturity));
 		return list;
 	}
 

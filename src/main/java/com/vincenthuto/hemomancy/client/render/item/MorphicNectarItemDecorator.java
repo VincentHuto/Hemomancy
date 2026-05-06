@@ -1,0 +1,75 @@
+package com.vincenthuto.hemomancy.client.render.item;
+
+import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import net.minecraft.Util;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.IItemDecorator;
+
+public class MorphicNectarItemDecorator implements IItemDecorator {
+	@Override
+	public boolean render(GuiGraphics graphics, Font font, ItemStack stack, int xOffset, int yOffset) {
+		if (!MorphicNectarMutationRules.shouldShowMutation(stack)) {
+			return false;
+		}
+
+		boolean primal = MorphlingItem.isPrimal(stack);
+		long phase = Util.getMillis() / (primal ? MorphicNectarMutationRules.primalTendrilFrameMillis() : 180L);
+		renderOrganicFrame(graphics, xOffset, yOffset, primal, phase);
+		if (primal) {
+			for (int tendril = 0; tendril < MorphicNectarMutationRules.primalTendrilCount(); tendril++) {
+				renderCrawlingTendril(graphics, xOffset, yOffset, (int) phase + tendril * 32);
+			}
+		}
+		return true;
+	}
+
+	private static void renderOrganicFrame(GuiGraphics graphics, int x, int y, boolean primal, long phase) {
+		int base = MorphicNectarMutationRules.borderColor(primal);
+		int flicker = MorphicNectarMutationRules.tendrilColor((int) phase);
+		graphics.fill(x, y, x + 16, y + 1, base);
+		graphics.fill(x, y + 15, x + 16, y + 16, base);
+		graphics.fill(x, y, x + 1, y + 16, base);
+		graphics.fill(x + 15, y, x + 16, y + 16, base);
+
+		for (int i = 0; i < (primal ? 3 : 2); i++) {
+			int offset = Math.floorMod((int) phase / 2 + i * 6, 14) + 1;
+			graphics.fill(x + offset, y, x + offset + 1, y + 2, flicker);
+			graphics.fill(x + 15 - offset, y + 14, x + 16 - offset, y + 16,
+					MorphicNectarMutationRules.tendrilColor((int) phase + i + 1));
+		}
+	}
+
+	private static void renderCrawlingTendril(GuiGraphics graphics, int x, int y, int phase) {
+		for (int segment = 0; segment < MorphicNectarMutationRules.primalTendrilSegments(); segment++) {
+			int pathIndex = Math.floorMod(phase - segment, 64);
+			int color = segment == 0
+					? MorphicNectarMutationRules.tendrilColor(2)
+					: segment % 4 == 0
+							? MorphicNectarMutationRules.tendrilColor(1)
+							: MorphicNectarMutationRules.tendrilColor(0);
+			renderPerimeterPixel(graphics, x, y, pathIndex, color);
+		}
+	}
+
+	private static void renderPerimeterPixel(GuiGraphics graphics, int x, int y, int pathIndex, int color) {
+		int px;
+		int py;
+		if (pathIndex < 16) {
+			px = x + pathIndex;
+			py = y - 1;
+		} else if (pathIndex < 32) {
+			px = x + 16;
+			py = y + pathIndex - 16;
+		} else if (pathIndex < 48) {
+			px = x + 47 - pathIndex;
+			py = y + 16;
+		} else {
+			px = x - 1;
+			py = y + 63 - pathIndex;
+		}
+		graphics.fill(px, py, px + 1, py + 1, color);
+	}
+}

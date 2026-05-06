@@ -1,14 +1,20 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -50,6 +56,39 @@ public class MoleMorphlingItem extends MorphlingItem {
 	@Override
 	public EnumBloodTendency getSecondaryTendency() {
 		return EnumBloodTendency.MORTEM;
+	}
+
+	@Override
+	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
+		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "DeepTremorSense",
+				320.0, 600, 180, 0)) return;
+		playerIn.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,
+				300, 2, true, true, true));
+		playerIn.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,
+				320, 0, true, false, true));
+		AABB area = playerIn.getBoundingBox().inflate(30.0);
+		for (LivingEntity entity : worldIn.getEntitiesOfClass(LivingEntity.class, area,
+				entity -> entity != playerIn && entity.isAlive())) {
+			entity.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+					180, 0, true, false, true));
+		}
+		for (net.minecraft.world.entity.monster.Monster mob :
+				worldIn.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class,
+						playerIn.getBoundingBox().inflate(8.0), net.minecraft.world.entity.monster.Monster::isAlive)) {
+			mob.hurt(playerIn.damageSources().magic(), 7.0f);
+			mob.push(0, 0.75, 0);
+		}
+		if (worldIn instanceof ServerLevel serverLevel) {
+			BlockPos origin = playerIn.blockPosition();
+			for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-12, -8, -12), origin.offset(12, 8, 12))) {
+				if (serverLevel.getFluidState(pos).is(FluidInit.MORPHIC_NECTAR.get())
+						|| serverLevel.getFluidState(pos).is(FluidInit.MORPHIC_NECTAR_FLOWING.get())) {
+					serverLevel.sendParticles(ParticleTypes.WITCH,
+							pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+							4, 0.2, 0.2, 0.2, 0.01);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -136,6 +175,7 @@ public class MoleMorphlingItem extends MorphlingItem {
 		list.add(MorphlingItem.maturityBonusLine("Burrow Sense (Reveal entities underground)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Earthen Bulwark (Resistance when hit underground)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Seismic Slam (Shockwave attack underground)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Deep Tremor Sense (Staff active maps life, nectar, and tunneling threats)", 5, currentMaturity));
 		return list;
 	}
 

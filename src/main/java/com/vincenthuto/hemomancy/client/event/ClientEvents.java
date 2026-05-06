@@ -31,6 +31,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
+import com.vincenthuto.hemomancy.client.render.item.MorphicNectarItemDecorator;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
@@ -62,7 +63,9 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
@@ -288,7 +291,20 @@ public class ClientEvents {
             scanner.addScannerStateTooltip(event.getItemStack(), event.getToolTip());
         }
 
+        appendMorphicNectarMutationTooltip(event);
         appendFirstHourTooltip(event);
+    }
+
+    private static void appendMorphicNectarMutationTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (!MorphicNectarMutationRules.shouldShowMutation(stack)) {
+            return;
+        }
+        boolean primal = MorphlingItem.isPrimal(stack);
+        event.getToolTip().add(Component.translatable(primal
+                        ? "tooltip.hemomancy.morphic_nectar_mutated.primal"
+                        : "tooltip.hemomancy.morphic_nectar_mutated")
+                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
     }
 
     private static void appendFirstHourTooltip(ItemTooltipEvent event) {
@@ -750,6 +766,14 @@ public class ClientEvents {
             ItemInit.BASEITEMS.getEntries().stream()
                     .filter(entry -> entry.get() instanceof ItemScarPattern)
                     .forEach(entry -> event.register(scarPatternColor, entry.get()));
+        }
+
+        @SubscribeEvent
+        public static void registerItemDecorations(RegisterItemDecorationsEvent event) {
+            MorphicNectarItemDecorator decorator = new MorphicNectarItemDecorator();
+            for (Item item : BuiltInRegistries.ITEM) {
+                event.register(item, decorator);
+            }
         }
 
 
