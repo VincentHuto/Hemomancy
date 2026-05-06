@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -38,9 +39,24 @@ public class UpdateSelectedStillArtPacket implements CustomPacketPayload {
 			}
 			HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> {
 				StillArt art = StillArt.byName(msg.artName);
+				if (art == StillArt.BLANK) {
+					player.displayClientMessage(Component.translatable("hemomancy.still_art.select.invalid")
+							.withStyle(ChatFormatting.GRAY), true);
+					return;
+				}
+				if (!known.isKnown(art)) {
+					player.displayClientMessage(Component.translatable("hemomancy.still_art.select.unknown")
+							.withStyle(ChatFormatting.GRAY), true);
+					return;
+				}
+				if (!art.isUnlockedFor(player)) {
+					player.displayClientMessage(Component.translatable("hemomancy.still_art.select.locked")
+							.withStyle(ChatFormatting.GRAY), true);
+					return;
+				}
 				known.setSelectedArt(art);
 				KnownStillArtEvents.sync(player, known);
-				player.displayClientMessage(Component.literal("Still Art selected: " + art.getProperName()), true);
+				player.displayClientMessage(Component.translatable("hemomancy.still_art.select.success", art.getProperName()), true);
 			});
 		});
 	}

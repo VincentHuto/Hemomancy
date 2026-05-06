@@ -522,6 +522,10 @@ public class HemoCommand {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarity(value);
+		boolean unlockedBySet = value > 0.0f && !cap.hasClarityUnlocked();
+		if (unlockedBySet) {
+			cap.setClarityUnlocked(true);
+		}
 		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
@@ -530,6 +534,9 @@ public class HemoCommand {
 				.append(Component.literal(" clarity to "))
 				.append(Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA))
 				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY))
+				.append(unlockedBySet
+						? Component.literal("; clarity unlocked.").withStyle(ChatFormatting.GRAY)
+						: Component.empty())
 				.append(resetHarbinger
 						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
 						: Component.empty()),

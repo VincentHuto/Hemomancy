@@ -4,10 +4,13 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegr
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
 
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.List;
 
 /**
  * Shared mutual-exclusion helpers for the Harbinger and Unstained paths.
@@ -45,10 +48,14 @@ public final class PathMutualExclusionHelper {
 	}
 
 	public static boolean resetUnstainedProgress(ServerPlayer player, IUnstainedProgress progress) {
+		boolean hadKnownStillArts = HemoCapabilityAccess.getKnownStillArts(player)
+				.map(known -> !known.getKnownArtNames().isEmpty())
+				.orElse(false);
 		boolean hadProgress = progress.hasBegunPurification()
 				|| progress.getPurity() > 0.0f
 				|| progress.hasClarityUnlocked()
-				|| progress.getClarity() > 0.0f;
+				|| progress.getClarity() > 0.0f
+				|| hadKnownStillArts;
 		if (!hadProgress) {
 			return false;
 		}
@@ -57,6 +64,10 @@ public final class PathMutualExclusionHelper {
 		progress.setClarityUnlocked(false);
 		progress.setClarity(0.0f);
 		UnstainedProgressEvents.syncProgress(player, progress);
+		HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> {
+			known.setKnownArtNames(List.of());
+			KnownStillArtEvents.sync(player, known);
+		});
 		return true;
 	}
 

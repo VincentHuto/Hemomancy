@@ -8,9 +8,11 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.UnstainedPodiumBlockEntity;
@@ -223,12 +225,19 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		// Perform the Rite of Clarity
 		stack.shrink(1);
 		unstained.setClarityUnlocked(true);
-		if (player instanceof ServerPlayer serverPlayer
-				&& PathMutualExclusionHelper.enforceHarbingerResetOnClarity(serverPlayer, unstained)) {
-			player.displayClientMessage(
-					Component.literal("The Hematic Order falls silent within you. Your former rank is washed away.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-					false);
+		if (player instanceof ServerPlayer serverPlayer) {
+			if (PathMutualExclusionHelper.enforceHarbingerResetOnClarity(serverPlayer, unstained)) {
+				player.displayClientMessage(
+						Component.literal("The Hematic Order falls silent within you. Your former rank is washed away.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+			}
+			if (KnownStillArtEvents.grantArt(serverPlayer, StillArtInit.silver_rebuke.get())) {
+				player.displayClientMessage(
+						Component.literal("A first Still Art settles into you: Silver Rebuke.")
+								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+						false);
+			}
 		}
 		// Disable blood magic permanently
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {

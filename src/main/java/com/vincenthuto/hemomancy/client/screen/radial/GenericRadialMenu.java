@@ -205,13 +205,13 @@ public class GenericRadialMenu {
 			}
 
 			if (currentCentralText != null) {
-				for(int i = 0; i < currentCentralText.getSiblings().size(); i++) {
-					String text = currentCentralText.getSiblings().get(i).getString();
+				List<String> lines = RadialTextLines.split(currentCentralText.getString());
+				float blockTop = (owner.height - font.lineHeight * lines.size()) / 2.0f;
+				for (int i = 0; i < lines.size(); i++) {
+					String text = lines.get(i);
 					float textX = (owner.width - font.width(text)) / 2.0f;
-					float textY = (owner.height - font.lineHeight) / 2.0f;
-					graphics.drawString(font, text, textX, textY+(font.lineHeight* i), 0xFFFFFFFF, true);
+					graphics.drawString(font, text, textX, blockTop + font.lineHeight * i, 0xFFFFFFFF, true);
 				}
-				
 			}
 
 			poseStack.pushPose();

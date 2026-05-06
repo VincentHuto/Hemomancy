@@ -50,6 +50,8 @@ public class RadialChooseStillArtScreen extends Screen {
 				close();
 			}
 		};
+		this.menu.backgroundColor = 0x4FDEEAF2;
+		this.menu.backgroundColorHover = 0x7FFFFFFF;
 	}
 
 	@Override
@@ -70,11 +72,15 @@ public class RadialChooseStillArtScreen extends Screen {
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
+		if (!canUseStillArts()) {
+			Minecraft.getInstance().setScreen(null);
+			return;
+		}
 		if (needsRecheckArts) {
 			rebuildMenuItems();
 		}
 		if (cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			menu.setCentralText(Component.literal("No Gifted Still Arts"));
+			menu.setCentralText(Component.translatable("hemomancy.still_art.radial.empty"));
 		}
 		menu.draw(graphics, partialTicks, mouseX, mouseY);
 	}
@@ -87,13 +93,21 @@ public class RadialChooseStillArtScreen extends Screen {
 		}
 
 		HemoCapabilityAccess.getKnownStillArts(mc.player).ifPresent(known -> {
+			StillArt selected = known.getSelectedArt();
+			String selectedName = selected.getName();
+			if (selected != StillArt.BLANK && selected.isUnlockedFor(mc.player)) {
+				menu.setCentralText(Component.translatable("hemomancy.still_art.radial.selected",
+						selected.getProperName()));
+			} else {
+				menu.setCentralText(Component.translatable("hemomancy.still_art.radial.prompt"));
+			}
 			for (StillArt art : known.getKnownArts()) {
 				if (!art.isUnlockedFor(mc.player)) {
 					continue;
 				}
 				TextRadialMenuItem item = new TextRadialMenuItem(menu,
 						Component.literal(shortLabel(art)),
-						0xFFBFEFFF) {
+						art.getName().equals(selectedName) ? 0xFFFFFFFF : 0xFFBFEFFF) {
 					@Override
 					public boolean onClick() {
 						PacketHandler.sendToServer(new UpdateSelectedStillArtPacket(art.getName()));
@@ -103,6 +117,10 @@ public class RadialChooseStillArtScreen extends Screen {
 				};
 				MutableComponent central = Component.literal(art.getProperName());
 				central.append(Component.literal("\n" + art.getRequiredStage().getTitle()));
+				if (art.getName().equals(selectedName)) {
+					central.append(Component.literal("\n"))
+							.append(Component.translatable("hemomancy.still_art.radial.current"));
+				}
 				item.setCentralText(central);
 				item.setVisible(true);
 				cachedMenuItems.add(item);
@@ -127,9 +145,19 @@ public class RadialChooseStillArtScreen extends Screen {
 		return label.toString();
 	}
 
+	private boolean canUseStillArts() {
+		return mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player)
+				.map(progress -> progress.hasClarityUnlocked())
+				.orElse(false);
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
+		if (!canUseStillArts()) {
+			Minecraft.getInstance().setScreen(null);
+			return;
+		}
 		menu.tick();
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);

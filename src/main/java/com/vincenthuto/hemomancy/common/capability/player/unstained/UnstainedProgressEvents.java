@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
@@ -36,6 +37,7 @@ public class UnstainedProgressEvents {
     }
 
     public static void syncProgress(ServerPlayer player, IUnstainedProgress progress) {
+        KnownStillArtEvents.grantEligibleArts(player, progress);
         PacketHandler.sendToPlayer(player, new PacketSyncUnstainedProgress(progress));
     }
 
