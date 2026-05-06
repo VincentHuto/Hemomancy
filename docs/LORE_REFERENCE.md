@@ -2,13 +2,14 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-04-29 (Degree theme design added — §6.4a; lore for all 8 degrees with theme/gameplay breakdown; Blood Structure introduced at Votary not Illuminatus; §6.5a Sanguine Monolith identity; Archon Fungal Scars planned note)
+> **Last Updated:** 2026-05-06 (Annetta Knowles implementation status updated — full two-route encounter wired. §11 reflects current code state. Previous 2026-04-29: Degree theme design added — §6.4a; lore for all 8 degrees with theme/gameplay breakdown; Blood Structure introduced at Votary not Illuminatus; §6.5a Sanguine Monolith identity; Archon Fungal Scars planned note)
 
-> **Current Lore-State Snapshot (2026-04-28 audit):**
+> **Current Lore-State Snapshot (2026-05-06 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
-> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain WIP in gameplay implementation: full Fungal Dimension progression, Saints encounters/chambers, and the Stained Priestess storyline boss arc.
+> - **Annetta Knowles encounter is now fully wired.** The Broken Church structure spawns her cowering. Both her routes are implemented: the Harbinger route triggers a two-phase boss fight culminating in the Stained Priestess; the Unstained route cures her and externalizes the latent infection as a separate challenge. Dedicated model/texture/animations remain WIP.
+> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain WIP in gameplay implementation: full Fungal Dimension progression, Saints encounters/chambers, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
@@ -461,9 +462,18 @@ Her sanity broke under the weight of this question. And in that fracture, the la
 
 **Her thematic domain:** Teeth, nails, hair — the biological materials that are *not* blood-connected (calcium, keratin) but are undeniably biological. These fall into neither the Harbinger (blood, iron, bone) nor the fully Unstained (copper, silver) domain. They are hers.
 
+**Draught of Still Mercy** — a specialized Unstained-crafted tincture that can suppress the latent infection in a host who has not yet fully converted. If brought to Annetta by an Unstained practitioner with sufficient Clarity, she will drink it, allowing the infection to be externalized and fought separately rather than burning through her. This is not a cure in the traditional sense — it is a violent purging — but it leaves the host alive and, eventually, at peace.
+
 > *She is not the Pale Lady.* Our Lady of Still Waters is a force of nature, non-physical and non-corporeal. Annetta is a person — a broken person with enormous and terrible power.
 
-**Implementation status:** Annetta is a separate Unstained boss arc, not a Saint. Her entity AI is implemented around a silver-aura first phase and a blood-spear second phase, but her encounter trigger, model, texture, GeckoLib animations, and the fuller teeth/nails/hair combat identity still need dedicated work.
+**Implementation status:** Annetta's encounter is **fully wired**. She spawns in COWERING state inside a `BrokenChurchStructure` with contextual scene dressing (a ToothPecks Specimen Jar placed beside her, Devil's Tooth decorations). Two routes are implemented:
+
+- **Harbinger route**: Approach holding a ToothPecks Specimen Jar. The jar shatters, the termite bites her, and the boss fight begins (silver aura, hemolytic vials, hair-and-nails slash). If the fight proceeds to near-death she mutates into the Stained Priestess — a more powerful blood-spear phase. The Harbinger route drops `Annetta's Sanguis Lancea`.
+- **Unstained route**: Approach holding a Draught of Still Mercy (requires Clarity unlocked). She drinks it, transitions to a cured ally state, and the **Latent Infection** — the suppressed blood magic given physical form — tears itself free as a separate boss. Cured Annetta fights alongside the player until the infection is destroyed. The Unstained route drops `Annetta's Absolution Dagger` and Pale Silver Ingots.
+
+After either route concludes she either lies broken (Harbinger) or stands resolved and at peace (Unstained).
+
+**Still WIP:** Dedicated entity model, texture, and GeckoLib animations; the fuller teeth/nails/hair biological domain for Phase 1; SanguisLancea projectile rendering.
 
 ---
 
