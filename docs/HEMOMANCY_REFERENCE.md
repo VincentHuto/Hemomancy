@@ -5,7 +5,8 @@
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
 > **2026-05-04 Machine Access Update:** `MachineAccessEvents` blocks right-click access to selected Harbinger/Unstained machines until that specific block item has been crafted by the player. Locked machines can still be broken, but drop no loot.
 > **2026-05-07 Mycelial Lantern Update:** Adds the Degree 5 Mycelial Lantern enzyme-fruiting machine, all eight aligned spore culture items, the `enzyme_fruiting` recipe type and JSON data, reusable blood-reservoir transfer helpers, reusable blood/white-humor GUI bar widgets, Pallid Retort white humor widget extraction, and Mycelial Lantern entity-model rendering with Blockbench source.
-> **Last Updated:** 2026-05-07 documentation cleanup pass. Current code audit refreshed capabilities/attachments, NeoForge payload networking, active vs dormant config status, sound counts, and WIP status labels. Current code remains authoritative when older notes disagree.
+> **2026-05-07 Early Memory and Mnemonist Update:** Adds shared manipulation rank gates, crude-memory starter learning with auto-equip, Degree 1 default utility manipulations, curated starter crude memories, and the Harbinger Mnemonist outpost guide/reward NPC.
+> **Last Updated:** 2026-05-07 documentation cleanup + early memory/Mnemonist pass. Current code audit refreshed capabilities/attachments, NeoForge payload networking, active vs dormant config status, sound counts, and WIP status labels. Current code remains authoritative when older notes disagree.
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -36,6 +37,8 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - All eight aligned spore cultures are registered as items (`vivacious`, `fervent`, `neurotic`, `incandescent`, `ruinous`, `frigid`, `ferric`, `umbral`) and are crafted shapelessly from matching enzyme + Spore Sac + Hyphal Substrate.
 > - Blood-reservoir machines now share the `IBloodReservoirContainer` / `BloodContainerTransfer` helper path for filled blood containers, empty flask output, and Blood Gourd transfer math. Screen-side reservoir bars now use reusable `BloodVolumeBarWidget` and `WhiteHumorBarWidget` helpers where applicable.
 > - NPC item inquiries moved out to datapack JSON under `data/hemomancy/dialogue_inquiry/<npc>/<item_namespace>/<item>.json`, loaded by `ItemInquiryLoader` with optional degree/purity conditions.
+> - Early blood manipulation learning now has a crude-memory lane: crude memory shards teach and auto-equip weak starter manipulations without requiring the Mnemonic Reliquary, while full Blood Memory items and Somatic Loom recipes remain the refined midgame path.
+> - Harbinger Outposts now include a **Harbinger Mnemonist**, a non-hostile memory mentor who explains crude memories, active manipulation slots, the Mnemonic Reliquary, and the Somatic Loom, and gives eligible Degree 1+ Harbingers one starter crude memory choice.
 > - Client progression UIs were modularized (`HarbingerProgressScreen` + shared tab controllers used by both Harbinger and Unstained screens), and manipulation star overlays now include numeric tendency values.
 
 ---
@@ -174,7 +177,7 @@ Managed by `CardinalRiteEvents`:
 
 ### 3.4 Harbinger NPC Dialogue System
 
-Three Harbinger NPC types provide lore and gameplay hints through the `DialogueTree` framework. All dialogue trees are fully implemented and degree-gated.
+Four Harbinger NPC types provide lore and gameplay hints through the `DialogueTree` framework. All dialogue trees are fully implemented and degree-gated.
 
 **Harbinger Hermit** (`HarbingerHermitDialogueTrees`) — one-of-a-kind NPC found at the starting Blood Temple. Acts as the player's first guide.
 
@@ -222,7 +225,20 @@ Three Harbinger NPC types provide lore and gameplay hints through the `DialogueT
 | Apotheos | Speechless reverence; the Covenant was "always meant to be outlived — it is a ladder; what you have become is what was always at the top of it" |
 | Purifying | Stern warning; grieves the loss of blood power; urges return before path completes |
 
-**Item inquiry dialogue:** Detailed "ask about held item" responses are now data-driven through `ItemInquiryLoader`. Files live under `data/hemomancy/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json`; supported NPC IDs currently include `alchemist`, `vicar`, `zealot`, and `guardian`. Entries may be simple line lists or ordered conditional branches using `min_degree`, `max_degree`, `min_purity`, and `max_purity`. Current authored count: 51 inquiry entries. The dialogue UI also uses dedicated 48x48 portrait textures for Harbinger and Unstained NPCs (`*_portrait.png`) instead of deriving portraits from the full entity texture.
+**Harbinger Mnemonist** (`HarbingerMnemonistDialogueTrees`) - found at Harbinger Outposts. Patient, quietly unsettling mentor for blood-memory practice; focuses on crude memories, active manipulation slots, the Mnemonic Reliquary, and Somatic Loom memory weaving.
+
+| Degree / State | Content |
+|---|---|
+| Degree 0 / uninitiated | Explains blood-memory as inheritance, but refuses practical manipulation teaching before Sanguine Initiation |
+| Degree 1 Neophyte | Explains crude memories, auto-equipped starter practices, and active manipulation slots; offers a one-time starter crude memory choice if eligible |
+| Degree 2 Votary | Introduces the Mnemonic Reliquary as deliberate loadout management |
+| Degree 3+ Initiate and above | Explains the Somatic Loom as a move from scraped echoes to deliberate weaving, and clarifies rank-gated full memories |
+| Degree 5+ Illuminatus and above | Includes normal Harbinger recruit/expel options when the player has a valid bloodline |
+| Purifying / Clarity | Will answer questions, but does not offer the starter crude-memory reward |
+
+The one-time Mnemonist starter reward is tracked in persistent player data as `hemomancy.mnemonist_starter_memory_claimed`. Eligible Degree 1+ Harbingers choose exactly one item from `crude_memory_blood_shot`, `crude_memory_blood_rush`, or `crude_memory_deadly_gaze`. The reward is an item, not direct learning; using the crude memory shard performs the actual teach/auto-equip flow. If the player already knows the chosen manipulation or the grant fails, the claimed flag is not set. Dialogue event IDs are `mnemonist_grant_crude_blood_shot`, `mnemonist_grant_crude_blood_rush`, and `mnemonist_grant_crude_deadly_gaze`.
+
+**Item inquiry dialogue:** Detailed "ask about held item" responses are now data-driven through `ItemInquiryLoader`. Files live under `data/hemomancy/dialogue_inquiry/<npc_id>/<item_namespace>/<item_path>.json`; supported NPC IDs currently include `alchemist`, `vicar`, `mnemonist`, `zealot`, and `guardian`. Entries may be simple line lists or ordered conditional branches using `min_degree`, `max_degree`, `min_purity`, and `max_purity`. Current authored count: 137 inquiry entries, including Mnemonist entries for all crude memories, key full memories, the Mnemonic Reliquary, and the Somatic Loom. The dialogue UI also uses dedicated 48x48 portrait textures for Harbinger and Unstained NPCs (`*_portrait.png`) instead of deriving portraits from the full entity texture.
 
 ### 3.5 Fungal Whisper Events
 
@@ -650,7 +666,7 @@ The two paths are **mutually exclusive**. Resets are handled by `PathMutualExclu
 
 ## 6. Blood Manipulations
 
-Blood manipulations are abilities fueled by blood. Lore-wise, they are dormant memories everyone has access to — unlocked via **Hematic Memory** items.
+Blood manipulations are abilities fueled by blood. Lore-wise, they are dormant memories everyone has access to. They can now be learned through two paths: crude memory shards for early, weak starter echoes, and full **Blood Memory** items for the refined midgame-and-later memory-weaving path.
 
 ### 6.1 Manipulation Properties
 
@@ -665,6 +681,16 @@ Each manipulation has:
 - **Vein Section** — which vein section takes strain when cast
 - **Cooldown** — tick-based cooldown between uses
 - **ManipLevel** — manipulations level up with use
+
+Shared degree gates for manipulation ranks are centralized in `ManipulationRankGates` and used by full Blood Memory items, crude memory shards, and the manipulation progress UI:
+
+| Rank | Required Initiatory Degree |
+|------|----------------------------|
+| `HUMILIS` | 0 |
+| `MEDIOCRITAS` | 1 |
+| `SUMMA` | 3 |
+| `MAGISTER` | 5 |
+| `PERFECTUS` | 6 |
 
 ### 6.2 Registered Manipulations
 
@@ -711,7 +737,39 @@ Each manipulation has:
 | `bloom_of_rot` | 500 | Quick | Summa | Mortem | Body | 80t | **Canon Memory (Putriciel)** — 8-block AoE: applies Wither II (10s) + Poison I (10s) + Slowness III (10s) to all entities; caster also receives Poison I (5s). |
 | `endless_hour` | 600 | Quick | Summa | Congeatio | Body | 200t | **Canon Memory (Velorum)** — absorbs all incoming damage for 10s (Absorption V + Resistance IV), then repays the full accumulated damage when the effect expires. |
 
-### 6.3 Manipulation Tree
+### 6.3 Memory Learning and Early Starter Flow
+
+Full Blood Memory items (`BloodMemoryItem`) teach a manipulation only when the player meets that manipulation rank's shared degree gate. They remain the deliberate, refined path for advanced `HUMILIS`, remaining `MEDIOCRITAS`, `SUMMA`, saint canon memories, scar-catalyst alternatives, and later ranks.
+
+Crude memory shards (`CrudeMemoryShardItem`) are the early "scraped echo" path. They do not require the Mnemonic Reliquary: using one teaches the manipulation, auto-equips it into the first empty equipped-manipulation slot, and syncs `KnownManipulationServerPacket`. If all active slots are full, the crude memory still teaches the manipulation but never replaces the player's existing loadout.
+
+Sanguine Initiation now grants the two core utility manipulations at Degree 1 and auto-equips them if slots are open:
+
+| Manipulation | Role |
+|--------------|------|
+| `blood_absorption` | Utility tool conjuration for early blood collection |
+| `blood_projection` | Utility launcher/projection practice |
+
+Existing Degree 1+ Harbinger saves are backfilled on login if they lack either utility manipulation.
+
+Current crude memory shard items:
+
+| Item | Manipulation | Lane |
+|------|--------------|------|
+| `crude_memory_blood_shot` | `blood_shot` | Starter Animus |
+| `crude_memory_blood_rush` | `blood_rush` | Starter Animus |
+| `crude_memory_deadly_gaze` | `deadly_gaze` | Starter Animus |
+| `crude_memory_crimson_harvest` | `crimson_harvest` | Ductilis starter |
+| `crude_memory_sanguine_mending` | `sanguine_mending` | Ferric starter |
+| `crude_memory_blood_lamp` | `blood_lamp` | Lux starter |
+| `crude_memory_hemorrhage` | `hemorrhage` | Mortem starter |
+| `crude_memory_glacial_grasp` | `glacial_grasp` | Congeatio starter |
+| `crude_memory_sanguine_ignition` | `sanguine_ignition` | Flammeus starter |
+| `crude_memory_void_shroud` | `void_shroud` | Tenebris starter |
+
+Harbinger outpost loot now favors these crude starter memories in early danger/exploration rewards instead of over-granting full memory items. The Mnemonic Reliquary remains the Degree 2 deliberate loadout-management tool, and the Somatic Loom remains the Degree 3 refined memory-weaving station.
+
+### 6.4 Manipulation Tree
 
 Manipulations are organized in a visual **Manipulation Tree** (displayed on the Skill Tree screen alongside the skill tree). Entries are defined in `ManipulationTreeInit` with parent-child relationships. Each node shows whether the player has learned it.
 
@@ -1102,6 +1160,7 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 | ![](../src/main/resources/assets/hemomancy/textures/item/fervent_husk.png) Fervent Husk | Memory processing ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_stained_stone.png) Blood Stained Stone | Memory-related item |
 | Blood Memory (per manipulation) | One for each registered manipulation — using it teaches the player |
+| Crude Memory Shards | Early starter memories that teach and auto-equip weak manipulations without needing the Mnemonic Reliquary; current set covers `blood_shot`, `blood_rush`, `deadly_gaze`, `crimson_harvest`, `sanguine_mending`, `blood_lamp`, `hemorrhage`, `glacial_grasp`, `sanguine_ignition`, and `void_shroud` |
 | **Canon Memory: Crimson Tithe** | Saint manipulation memory (Hemorath) — obtained via Somatic Loom with Hallowed Residuum of Hemorath |
 | **Canon Memory: Unclosing Eye** | Saint manipulation memory (Seraphae) — obtained via Somatic Loom with Hallowed Residuum of Seraphae |
 | **Canon Memory: Bloom of Rot** | Saint manipulation memory (Putriciel) — obtained via Somatic Loom with Hallowed Residuum of Putriciel |
@@ -1741,6 +1800,7 @@ The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/
 | **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0–7 dialogue (`HarbingerHermitDialogueTrees`). Drops Rite Hint item on farewell. Invulnerable until player chooses "Farewell" option. |
 | **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
 | **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
+| **Harbinger Mnemonist** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_mnemonist/harbinger_mnemonist.png) | Creature | NPC blood-memory mentor found at Harbinger Outposts; full degree-gated dialogue (`HarbingerMnemonistDialogueTrees`). Teaches crude memories, active manipulation slots, the Mnemonic Reliquary, and Somatic Loom progression. Gives eligible Degree 1+ Harbingers one starter crude memory item; purifying/Clarity players may inquire but cannot claim. |
 | **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see §23), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Her renderer still uses `textures/entity/blank.png` — dedicated model/texture/GeckoLib animations are WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters, Annetta is bitten, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: ① Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) ② Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) ③ Hair-and-Nails Slash at ≤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 — see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4 (if Phase 2 not triggered).<br><br>**Unstained route** (interact while holding a Draught of Still Mercy and `clarityUnlocked == true`): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Unstained-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot ×3. |
 | **Stained Priestess (`StainedPriestessEntity`)** | | Boss | Phase 2 of the Harbinger-route Annetta encounter. Stats: 420 HP, 12 ATK, 0.32 SPD, 0.9 KB resist, 10 armor. Boss bar: WHITE, NOTCHED_10. Phase abilities: ① Blood Lances (every 70t, fires `SanguisLanceaEntity` projectile in look direction + 2 angled variants) ② Lunge attack (every 100t, moves rapidly toward target and strikes) ③ Blood Pressure Bloom (every 85t, 7-block AoE, 6 magic damage + Slowness to all nearby). Melee hits drain 300 blood from blood-active players (`BLOOD_DRAIN = 300`). Drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4. |
 | **Latent Annetta Infection (`LatentAnnettaInfectionEntity`)** | | Boss | Final challenge of the Unstained-route Annetta encounter: the latent infection given physical form. Stats: 360 HP, 10 ATK, 0.27 SPD, 0.85 KB resist, 8 armor. Boss bar: WHITE, NOTCHED_10. Abilities: ① Infection Bloom (every 70t, MYCELIUM particle burst, Sculk Shrieker sound, 6-block AoE, 5 magic damage + Confusion + Slowness) ② Pressure Spike (every 110t, SOUL_FIRE_FLAME particles, 9-block AoE, 4 indirect magic damage + Weakness). Melee hits apply Poison I. On death: if a linked `AnnettaKnowlesEntity` is in CURED_SUPPORT within 32 blocks, calls `markResolvedAfterCure()`. Drops: `annettas_absolution_dagger` + pale_silver_ingot ×3. |
@@ -1923,6 +1983,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 |-----------|------|-------|
 | **Broken Church** | `BrokenChurchStructure` | Jigsaw-based overworld structure (registered in `StructureInit`). Spawns Annetta Knowles in COWERING state at `afterPlace()` by scanning the bounding box floor for a valid air-over-solid position. The corner scene includes: a **ToothPecks Specimen Jar** placed 1 block east of Annetta (facing her); three **Devil's Tooth** blocks nearby; and a scatter of random Hemolytic Plating or Bone Blocks within a 7×7 area as environmental debris. |
 | **Blood Temple** | `BloodTempleStructure` | Contains the Mortal Display; gateway to hemomancy |
+| **Harbinger Outpost** | `HarbingerOutpostStructure` | Harbinger exploration structure. Its `afterPlace()` hook spawns outpost NPCs: Vicar/Alchemist guidance and one **Harbinger Mnemonist** in the unused opposite corner from one Alchemist, giving the structure an early manipulation teacher without requiring NBT edits. Chest loot now favors crude memory starter rewards over overly generous early full-memory rewards. |
 | **Unstained Church** | `UnstainedChurchStructure` | Contains the Unstained Podium; gateway to the Unstained path |
 | **Qliphoth Sanctum** | NBT structure | Dark sanctum used for the Qliphoth-related endgame content; contains Engram Block |
 | **Qliphoth Bloom** | NBT structure | Qliphoth Bloom block structure placement |
@@ -2251,7 +2312,7 @@ This section now separates current status from older audit history. "Implemented
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 18 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, Mycelial Lantern enzyme fruiting |
+| Implemented | Entity loot JSONs, all 18 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta dedicated art/rendering and final combat polish, JEI display wiring for Mycelial Lantern |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Placeable blood fluid, forced manipulation rank-up rituals, deep-sea iron snail, Ghost Pipe Unstained material role, Cleansed Stone and Pallid Lantern recipes |
@@ -2282,10 +2343,10 @@ This section now separates current status from older audit history. "Implemented
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
 - **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
 - **New Monster Mobs** — **Implemented, with art polish remaining:** All 10 monster/creature additions (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer, Crimson Doe, Hemojelly, Venous Strider) have AI goals, spawn placements, biome modifier JSONs, and loot table JSONs implemented. GeckoLib animation state machines are stubs awaiting final model work.
-- **New NPC Entities Dialogue** — **Implemented, with entity polish remaining:** Full dialogue trees are now implemented for all 5 main NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, and **Harbinger Vicar**. AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
+- **New NPC Entities Dialogue** — **Implemented, with entity polish remaining:** Full dialogue trees are now implemented for all 6 main NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, **Harbinger Vicar**, and **Harbinger Mnemonist**. AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
 - **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index, offerMemo)` (per-husk drop announcement; always delivered to the online bloom owner, with memo capture only when still relevant), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
-- **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
+- **Harbinger Outpost NPCs** — Harbinger Alchemist, Vicar, and Mnemonist are implemented with degree-gated dialogue trees. The Alchemist covers machine lore, the Vicar covers faction history/doctrine, and the Mnemonist covers crude memories, active manipulation slots, Mnemonic Reliquary loadout management, Somatic Loom memory weaving, and the one-time Degree 1+ starter crude-memory choice. Entities are registered with textures, lang keys, client render hooks, dialogue handlers, and outpost `afterPlace()` spawning.
 - **Scar Tier System** — All three standard tiers are registered through `ItemInit` with active gameplay effects. Current active set is Mind Spike + 24 standard scars (8 tendencies × 3 tiers) + 9 fungal scars. Resource cleanup still needed: `scar_ichor` recipe/lang/model data exists but the item is not registered in `ItemInit`.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System** — **Partial:** Four canon Saints exist: Hemorath, Seraphae the Chain Saint, Putriciel, and Velorum. The shared sarcophagus spine and boss dispatch are implemented, and Hemorath's trial is the first complete trial flow. Bespoke Trial Chamber rooms/world placement for Seraphae, Putriciel, and Velorum remain WIP. Boss models/textures/GeckoLib animations are stub/placeholder. See §3.8.
@@ -2469,7 +2530,7 @@ Notable packets:
 - `PacketSyncDegree` / `PacketSyncUnstainedProgress` — Path progression sync
 - `SyncTrackingAvatarPacket` — Blood Avatar visual state sync to all nearby players
 - `TeleportToVeinPacket` — Venous Travel teleportation
-- `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)
+- `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Mnemonist, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)
 - `PlaceStructurePacket` — Debug structure spawner
 
 ---
