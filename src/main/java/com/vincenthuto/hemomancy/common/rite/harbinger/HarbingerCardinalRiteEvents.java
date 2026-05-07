@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyE
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
@@ -778,6 +779,7 @@ public class HarbingerCardinalRiteEvents {
 					// Grant Harbinger degree advancement(s) for the new rank
 					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
 					LiberKnowledgeHelper.unlockForDegree(caster, targetDegree);
+					KnownManipulationGrantHelper.grantDegreeOneUtilities(caster);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					boolean unstainedWasReset = PathMutualExclusionHelper.resetUnstainedProgress(caster);

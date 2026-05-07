@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
@@ -76,8 +77,14 @@ public class BloodMemoryItem extends Item {
 			if (!worldIn.isClientSide) {
 				if (volume.isActive()) {
 					if (!playerIn.isShiftKeyDown()) {
-						if (!known.doesListContainName(knownList, getManip())) {
-							knownList.put(getManip(), ManipLevel.BLANK);
+						BloodManipulation manipulation = getManip();
+						int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(playerIn);
+						if (!ManipulationRankGates.playerMeetsRank(playerDegree, manipulation.getRank())) {
+							playerIn.displayClientMessage(Component.literal("This memory requires Degree "
+											+ ManipulationRankGates.minDegreeForRank(manipulation.getRank()) + ".")
+									.withStyle(ChatFormatting.DARK_RED), true);
+						} else if (!known.doesListContainName(knownList, manipulation)) {
+							knownList.put(manipulation, ManipLevel.BLANK);
 							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(known));
 							stack.shrink(1);
 						} else {

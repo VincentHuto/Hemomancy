@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
@@ -176,20 +177,14 @@ public class ManipulationsTabController implements IProgressTab {
         }
     }
 
-    private static int manipMinDegree(EnumManipulationRank rank) {
-        if (rank == null) return 0;
-        if (rank == EnumManipulationRank.HUMILIS) return 0;
-        if (rank == EnumManipulationRank.MEDIOCRITAS) return 1;
-        if (rank == EnumManipulationRank.SUMMA) return 3;
-        if (rank == EnumManipulationRank.MAGISTER) return 5;
-        if (rank == EnumManipulationRank.PERFECTUS) return 6;
-        return 0;
-    }
+	private static int manipMinDegree(EnumManipulationRank rank) {
+		return ManipulationRankGates.minDegreeForRank(rank);
+	}
 
-    private boolean isManipRankLocked(BloodManipulation manip) {
-        if (manip == null) return false;
-        return playerDegree < manipMinDegree(manip.getRank());
-    }
+	private boolean isManipRankLocked(BloodManipulation manip) {
+		if (manip == null) return false;
+		return !ManipulationRankGates.playerMeetsRank(playerDegree, manip.getRank());
+	}
 
     private int sx(ProgressScreenContext ctx, int cx) { return panZoom.sx(ctx.guiLeft(), cx); }
     private int sy(ProgressScreenContext ctx, int cy) { return panZoom.sy(ctx.guiTop(), cy); }

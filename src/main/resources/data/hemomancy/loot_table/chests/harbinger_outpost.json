@@ -180,27 +180,57 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 6,
-          "name": "hemomancy:memory_blood_shot"
+          "weight": 5,
+          "name": "hemomancy:crude_memory_blood_shot"
         },
         {
           "type": "minecraft:item",
-          "weight": 6,
-          "name": "hemomancy:memory_blood_rush"
+          "weight": 5,
+          "name": "hemomancy:crude_memory_blood_rush"
         },
         {
           "type": "minecraft:item",
-          "weight": 4,
-          "name": "hemomancy:memory_sanguine_ward"
+          "weight": 3,
+          "name": "hemomancy:crude_memory_deadly_gaze"
         },
         {
           "type": "minecraft:item",
-          "weight": 4,
-          "name": "hemomancy:memory_blood_lamp"
+          "weight": 3,
+          "name": "hemomancy:crude_memory_crimson_harvest"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_sanguine_mending"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_blood_lamp"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_hemorrhage"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_glacial_grasp"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_sanguine_ignition"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_void_shroud"
         },
         {
           "type": "minecraft:empty",
-          "weight": 24
+          "weight": 36
         }
       ]
     }

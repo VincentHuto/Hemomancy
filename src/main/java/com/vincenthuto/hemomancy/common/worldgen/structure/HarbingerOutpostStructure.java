@@ -37,6 +37,7 @@ public class HarbingerOutpostStructure extends Structure {
 	private static final int INITIAL_CENTERED_ATTEMPTS = 4;
 	private static final int VICAR_SPAWN_SPREAD = 3;
 	private static final int ALCHEMIST_SPAWN_SPREAD = 2;
+	private static final int MNEMONIST_SPAWN_SPREAD = 2;
 
 	public static final MapCodec<HarbingerOutpostStructure> CODEC = RecordCodecBuilder
 			.<HarbingerOutpostStructure>mapCodec(instance -> instance.group(HarbingerOutpostStructure.settingsCodec(instance),
@@ -123,6 +124,8 @@ public class HarbingerOutpostStructure extends Structure {
 				centerX - halfWidth, centerZ - halfDepth, floorY, maxY, ALCHEMIST_SPAWN_SPREAD);
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
 				centerX + halfWidth, centerZ + halfDepth, floorY, maxY, ALCHEMIST_SPAWN_SPREAD);
+		spawnOnFloor(level, random, EntityInit.harbinger_mnemonist.get(),
+				centerX - halfWidth, centerZ + halfDepth, floorY, maxY, MNEMONIST_SPAWN_SPREAD);
 	}
 
 	private <T extends Entity> void spawnOnFloor(WorldGenLevel level, RandomSource random,

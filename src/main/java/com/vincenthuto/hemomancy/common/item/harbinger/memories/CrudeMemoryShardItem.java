@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
-import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
 
@@ -21,7 +22,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -29,8 +29,9 @@ import java.util.List;
  * chamber wall.  Right-clicking teaches the encoded manipulation directly,
  * costing {@link #BLOOD_COST} mL of blood.
  * <p>
- * Only works while blood is active and only for HUMILIS-rank manipulations.
- * This is the pre-Somatic-Loom path to learning one's first manipulation.
+ * Only works while blood is active and the player has reached the manipulation's
+ * rank gate. This is the pre-Somatic-Loom path to learning one's first
+ * manipulation.
  */
 public class CrudeMemoryShardItem extends Item {
 
@@ -81,9 +82,18 @@ public class CrudeMemoryShardItem extends Item {
 		}
 
 		BloodManipulation manipulation = getManip();
-		if (manipulation == null || manipulation.getRank() != EnumManipulationRank.HUMILIS) {
+		if (manipulation == null) {
 			player.displayClientMessage(
 					Component.literal("This memory is too complex to absorb raw.")
+							.withStyle(ChatFormatting.DARK_RED),
+					true);
+			return InteractionResultHolder.fail(stack);
+		}
+		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		if (!ManipulationRankGates.playerMeetsRank(playerDegree, manipulation.getRank())) {
+			player.displayClientMessage(
+					Component.literal("This memory requires Degree "
+									+ ManipulationRankGates.minDegreeForRank(manipulation.getRank()) + ".")
 							.withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
@@ -93,8 +103,7 @@ public class CrudeMemoryShardItem extends Item {
 				.orElse(null);
 		if (known == null) return InteractionResultHolder.fail(stack);
 
-		LinkedHashMap<BloodManipulation, ManipLevel> knownList = known.getKnownManips();
-		if (known.doesListContainName(knownList, manipulation)) {
+		if (known.doesListContainName(known.getKnownManips(), manipulation)) {
 			player.displayClientMessage(
 					Component.literal("You already carry this memory.")
 							.withStyle(ChatFormatting.DARK_RED),
@@ -110,11 +119,11 @@ public class CrudeMemoryShardItem extends Item {
 			return InteractionResultHolder.fail(stack);
 		}
 
-		// Teach the manipulation
 		volume.drain(BLOOD_COST);
 		PacketHandler.sendToPlayer((ServerPlayer) player,
 				new com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket(volume));
-		knownList.put(manipulation, ManipLevel.BLANK);
+		KnownManipulationGrantHelper.learnAndEquipIfPossible(known, manipulation,
+				ManipSlotHelper.getMaxSlots(player));
 		PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 		stack.shrink(1);
 

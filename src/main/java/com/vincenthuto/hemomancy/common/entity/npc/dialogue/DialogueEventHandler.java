@@ -39,6 +39,11 @@ public class DialogueEventHandler {
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
 		ServerPlayer player = event.getPlayer();
+		var mnemonistChoice = MnemonistStarterMemoryChoice.fromEventId(event.getEventId());
+		if (mnemonistChoice.isPresent()) {
+			handleMnemonistStarterMemory(player, event.getEntityId(), mnemonistChoice.get());
+			return;
+		}
 		switch (event.getEventId()) {
 			case "zealot_accept_church" -> {
 				player.displayClientMessage(
@@ -170,6 +175,69 @@ public class DialogueEventHandler {
 				// Unknown event — log for development
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
+		}
+	}
+
+	private static void handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> progress.hasBegunPurification())
+				.orElse(false);
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> progress.hasClarityUnlocked())
+				.orElse(false);
+		boolean claimed = player.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+
+		if (!MnemonistStarterMemoryChoice.canClaim(degree, purifying, clarity, claimed)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.mnemonist_starter_unavailable")
+							.withStyle(ChatFormatting.DARK_RED),
+					false);
+			return;
+		}
+		if (knowsStarterManipulation(player, choice.manipulationName())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.mnemonist_starter_already_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		ItemStack stack = starterStack(choice);
+		if (stack.isEmpty()) {
+			return;
+		}
+		giveOrDropAtEntity(player, entityId, stack);
+		player.getPersistentData().putBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY, true);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.mnemonist_starter_granted")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static boolean knowsStarterManipulation(ServerPlayer player, String manipulationName) {
+		return HemoCapabilityAccess.getKnownManipulations(player)
+				.map(known -> known.getKnownManips().keySet().stream()
+						.anyMatch(manip -> manip != null && manipulationName.equals(manip.getName())))
+				.orElse(false);
+	}
+
+	private static ItemStack starterStack(MnemonistStarterMemoryChoice choice) {
+		return switch (choice) {
+			case BLOOD_SHOT -> new ItemStack(ItemInit.crude_memory_blood_shot.get());
+			case BLOOD_RUSH -> new ItemStack(ItemInit.crude_memory_blood_rush.get());
+			case DEADLY_GAZE -> new ItemStack(ItemInit.crude_memory_deadly_gaze.get());
+		};
+	}
+
+	private static void giveOrDropAtEntity(ServerPlayer player, int entityId, ItemStack stack) {
+		Entity entity = player.level().getEntity(entityId);
+		if (entity != null) {
+			Vec3 pos = entity.position();
+			ItemEntity drop = new ItemEntity(entity.level(), pos.x, pos.y + 0.5, pos.z, stack);
+			entity.level().addFreshEntity(drop);
+		} else if (!player.getInventory().add(stack)) {
+			player.drop(stack, false);
 		}
 	}
 

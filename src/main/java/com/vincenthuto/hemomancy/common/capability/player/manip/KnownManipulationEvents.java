@@ -109,6 +109,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
+		KnownManipulationGrantHelper.grantDegreeOneUtilities(player);
 		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 
 	}

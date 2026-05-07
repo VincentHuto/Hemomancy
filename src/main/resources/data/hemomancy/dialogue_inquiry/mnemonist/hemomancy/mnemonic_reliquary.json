@@ -1,0 +1,6 @@
+{
+  "conditions": [
+    { "min_degree": 2, "lines": ["hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line1", "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line2"] },
+    { "lines": ["hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.locked"] }
+  ]
+}

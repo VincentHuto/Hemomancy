@@ -132,6 +132,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(UnstainedScoutModel.LAYER_LOCATION, UnstainedScoutModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerHermitModel.LAYER_LOCATION, HarbingerHermitModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerAlchemistModel.LAYER_LOCATION, HarbingerAlchemistModel::createBodyLayer);
+		event.registerLayerDefinition(HarbingerMnemonistModel.LAYER_LOCATION, HarbingerMnemonistModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerVicarModel.LAYER_LOCATION, HarbingerVicarModel::createBodyLayer);
 		event.registerLayerDefinition(HollowVesselModel.LAYER_LOCATION, HollowVesselModel::createBodyLayer);
 		event.registerLayerDefinition(SeraphaeModel.LAYER_LOCATION, SeraphaeModel::createBodyLayer);

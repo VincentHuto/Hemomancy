@@ -346,6 +346,27 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> crude_memory_deadly_gaze = BASEITEMS.register(
             "crude_memory_deadly_gaze",
             () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.deadly_gaze));
+    public static final DeferredHolder<Item, Item> crude_memory_crimson_harvest = BASEITEMS.register(
+            "crude_memory_crimson_harvest",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.crimson_harvest));
+    public static final DeferredHolder<Item, Item> crude_memory_sanguine_mending = BASEITEMS.register(
+            "crude_memory_sanguine_mending",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.sanguine_mending));
+    public static final DeferredHolder<Item, Item> crude_memory_blood_lamp = BASEITEMS.register(
+            "crude_memory_blood_lamp",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.blood_lamp));
+    public static final DeferredHolder<Item, Item> crude_memory_hemorrhage = BASEITEMS.register(
+            "crude_memory_hemorrhage",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.hemorrhage));
+    public static final DeferredHolder<Item, Item> crude_memory_glacial_grasp = BASEITEMS.register(
+            "crude_memory_glacial_grasp",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.glacial_grasp));
+    public static final DeferredHolder<Item, Item> crude_memory_sanguine_ignition = BASEITEMS.register(
+            "crude_memory_sanguine_ignition",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.sanguine_ignition));
+    public static final DeferredHolder<Item, Item> crude_memory_void_shroud = BASEITEMS.register(
+            "crude_memory_void_shroud",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.void_shroud));
     // Organ Echoes (Visceral Mirror system)
     public static final DeferredHolder<Item, Item> echo_of_spleen = SPECIALITEMS.register("echo_of_spleen",
             () -> new OrganEchoItem(new Item.Properties(), EnumOrgan.SPLEEN));
