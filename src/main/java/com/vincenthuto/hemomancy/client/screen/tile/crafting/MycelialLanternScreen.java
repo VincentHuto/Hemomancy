@@ -134,7 +134,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     private void renderProgress(GuiGraphics gfx, int gx, int gy) {
         int progress = menu.getScaledCraftProgress();
         int trackX = gx + 101;
-        int trackY = gy + 50;
+        int trackY = gy + 54;
         int trackW = 27;
         int trackH = 7;
 
@@ -158,7 +158,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
 
     private void renderCultureGlow(GuiGraphics gfx, int gx, int gy) {
         int cx = gx + 88;
-        int cy = gy + 28;
+        int cy = gy + 52;
         float pulse = 0.45f + 0.55f * Mth.sin(animTime * 2.2f);
         for (int ring = 16; ring >= 9; ring--) {
             float t = (ring - 9) / 7f;
@@ -174,7 +174,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     private void renderBloodBar(GuiGraphics gfx, int gx, int gy) {
         int barW = 8;
         int barH = 54;
-        int barX = gx + 13;
+        int barX = gx + 12;
         int barY = gy + 26;
 
         bloodBarX1 = barX - 2;

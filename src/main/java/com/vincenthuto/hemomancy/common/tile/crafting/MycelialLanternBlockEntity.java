@@ -167,10 +167,10 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
         if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
             double amount = flask.getAmount();
             double available = vol.getMaxBloodVolume() - vol.getBloodVolume();
-            if (available <= 0) return false;
+            if (available < amount) return false;
             ItemStack outputStack = inventory.get(SLOT_EMPTY_CONTAINER);
             if (canAcceptEmptyFlask(outputStack)) {
-                vol.addBloodVolume(Math.min(amount, available));
+                vol.addBloodVolume(amount);
                 bloodStack.shrink(1);
                 addEmptyFlask();
                 return true;

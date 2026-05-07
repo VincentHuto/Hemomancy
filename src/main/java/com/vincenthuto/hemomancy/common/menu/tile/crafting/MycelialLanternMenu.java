@@ -45,14 +45,14 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
         checkContainerSize(te, SLOT_COUNT);
         checkContainerDataCount(data, DATA_COUNT);
 
-        this.addSlot(new Slot(te, CULTURE_SLOT, 80, 20) {
+        this.addSlot(new Slot(te, CULTURE_SLOT, 80, 44) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return isCulture(stack);
             }
         });
 
-        this.addSlot(new Slot(te, BLOOD_SLOT, 26, 72) {
+        this.addSlot(new Slot(te, BLOOD_SLOT, 8, 84) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return isBloodContainer(stack);
@@ -61,7 +61,7 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
 
         this.addSlot(new FurnaceResultSlot(playerInv.player, te, OUTPUT_SLOT, 134, 48));
 
-        this.addSlot(new Slot(te, EMPTY_CONTAINER_SLOT, 44, 72) {
+        this.addSlot(new Slot(te, EMPTY_CONTAINER_SLOT, 30, 84) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
