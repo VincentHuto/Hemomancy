@@ -1,8 +1,10 @@
 # Hemomancy × Mana and Artifice — Compatibility Brainstorm
 
-> **Date:** 2026-04-08 (Revised — 8 features now implemented)
-> **Status:** Brainstorming / Feature Planning — Partially Implemented
+> **Date:** 2026-05-07 documentation cleanup pass
+> **Status:** Brainstorming / Feature Planning — **Dormant runtime integration on the NeoForge 1.21.1 branch**
 > **Goal:** Make playing with both Hemomancy and Mana and Artifice (MnA) together more fun, synergistic, and rewarding.
+
+> **Current branch note:** The MnA design/source is preserved as a port target, but it is **not compiled or registered** in the current NeoForge 1.21.1 branch. `build.gradle` excludes `src/main/java/com/vincenthuto/hemomancy/compat/mna/**`, the MnA dependency is commented out, and the `Hemomancy.java` registration block is commented behind TODOs until a compatible MnA build exists. Status labels below distinguish **dormant source present** from active runtime features.
 
 ### Design Principle: "Why Does This Need MnA?"
 
@@ -12,7 +14,7 @@ Every feature in this document must pass a simple test: **Does this feature only
 
 ## Current Integration Summary
 
-Before brainstorming new features, here is what already exists:
+Before brainstorming new features, here is what exists in preserved compat source/design. These entries are not active runtime features until the source exclusion and dependency blocker are removed.
 
 | Category | What Exists |
 |----------|-------------|
@@ -23,7 +25,7 @@ Before brainstorming new features, here is what already exists:
 | **Items** | Befouled Vinteum Dust, Foul Vinteum Ingot, Mana Infused Memory Blank, Living Infused Thread, Mote of Blood, Blood Shot Occulus, Living Thread Armor (4 pieces) |
 | **Armor** | Living Thread set (Hood, Robes, Leggings, Boots) — dyeable, mana-repairable, 3pc set bonus: +500 max mana, +50% mana regen |
 | **Crafting** | Runic Anvil: Living Infused Thread + Mage Armor → Living Thread armor pieces |
-| **Block/Tile** | Broken Mana Trapezohedron — provides mana regen aura, recharges constructs, charges pedestal items, charges sigils |
+| **Block/BlockEntity** | Broken Mana Trapezohedron — provides mana regen aura, recharges constructs, charges pedestal items, charges sigils |
 | **Entity** | Sanguilith — blood-themed summoned monster, uses MnA summon/target utilities |
 | **Guidebook** | 12+ MnA guidebook entries covering all cross-mod content (updated with new components) |
 | **VFX** | Animated bloody border overlay on Hemomancy spell icons (HemoSpellIconCompositor) |
@@ -32,7 +34,7 @@ Before brainstorming new features, here is what already exists:
 | **Effects (Combo)** | Arcane Resonance (marker buff, reduces blood cost), Sanguine Clarity (marker buff, reduces mana cost) |
 | **Config** | `HemoMnAConfig` — Full server config for all cross-mod mechanics: conversion ratios, Blood Tithe settings, Living Thread armor values, Trapezohedron radius, combo durations/reductions, Sanguilith scaling |
 | **Spell Textures** | blood_loss.png, blood_rush.png, hemolysis.png, summon_sanguilith.png (all in `textures/mna/`) |
-| **MnA Recipes** | Component recipe JSONs for Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith (in `data/hemomancy/recipes/components/`) |
+| **MnA Recipes** | Component recipe JSONs for Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith (current 1.21-style path: `data/hemomancy/recipe/components/`) |
 
 ---
 
@@ -63,36 +65,36 @@ Use this section as a recipe/ritual block-palette guardrail so new content is no
 
 These are MnA spell system components that players slot into MnA's spell crafting UI. They inherently require MnA because they extend `SpellEffect` / `PotionEffectComponent` and are only meaningful within MnA's composable spell system (shapes + components + modifiers). The value is being able to **compose** these with other MnA shapes and modifiers — something that blood manipulations alone can't do.
 
-#### 1a. `ComponentBloodToMana` — "Sanguine Offering" ✅ IMPLEMENTED
-- **Status:** Implemented in `compat/mna/spell/ComponentBloodToMana.java`. Extends `SpellEffect` with MAGNITUDE attribute (50–500). Conversion ratio configurable via `HemoMnAConfig.BLOOD_TO_MANA_RATIO`.
+#### 1a. `ComponentBloodToMana` — "Sanguine Offering" — dormant source present
+- **Status:** Implemented in preserved compat source at `compat/mna/spell/ComponentBloodToMana.java`, but dormant at runtime on the current NeoForge 1.21.1 branch. Extends `SpellEffect` with MAGNITUDE attribute (50–500). Conversion ratio configurable via `HemoMnAConfig.BLOOD_TO_MANA_RATIO`.
 - **Concept:** The inverse of `ComponentManaToBlood`. Drains the target's (or caster's) Hemomancy blood volume and converts it into mana for the caster.
 - **MnA Justification:** Exists as a spell component, so it can be composed with any MnA shape (projectile, touch, self, AoE zone) and modified by MnA modifiers (amplify, extend, etc.). The existing manipulation `SanguineTransfusionManip` is self-only and fixed-cost. As a spell component, this becomes far more flexible — e.g., pair it with a beam shape to drain enemy blood into your mana at range, or combine it with an AoE zone shape to create a mana-leeching field.
 - **Attributes:** Magnitude (how much blood to drain, 50–500), Affinity: Blood
 - **Tag:** FRIENDLY (self-cast) or HARMFUL (target drain — drains target blood, converts to caster mana)
 
-#### 1b. `ComponentBloodLoss` — "Hemorrhage" ✅ IMPLEMENTED
-- **Status:** Implemented in `compat/mna/spell/ComponentBloodLoss.java`. Extends `PotionEffectComponent`, icon at `textures/mna/blood_loss.png`, recipe JSON at `data/hemomancy/recipes/components/blood_loss.json`.
+#### 1b. `ComponentBloodLoss` — "Hemorrhage" — dormant source present
+- **Status:** Implemented in preserved compat source at `compat/mna/spell/ComponentBloodLoss.java`, but dormant at runtime. Extends `PotionEffectComponent`, icon at `textures/mna/blood_loss.png`, recipe JSON at `data/hemomancy/recipe/components/blood_loss.json`.
 - **Concept:** Applies the existing Blood Loss effect (movement speed debuff) via the MnA spell system.
 - **MnA Justification:** Blood Loss exists as a potion/effect in base Hemomancy, but applying it via spells lets players combine it with MnA shapes and modifiers that don't exist in Hemomancy — e.g., attach it to a Rune shape to create a persistent trap that slows enemies, or use a Chain modifier to spread it to multiple targets, or combine it with projectile shape for ranged application. These delivery mechanisms are MnA-exclusive.
 - **Attributes:** Duration (60–300 ticks), Magnitude (1–3), Affinity: Blood
 - **Tag:** HARMFUL
 
-#### 1c. `ComponentBloodRush` — "Crimson Surge" ✅ IMPLEMENTED
-- **Status:** Implemented in `compat/mna/spell/ComponentBloodRush.java`. Extends `PotionEffectComponent`, icon at `textures/mna/blood_rush.png`, recipe JSON at `data/hemomancy/recipes/components/blood_rush.json`.
+#### 1c. `ComponentBloodRush` — "Crimson Surge" — dormant source present
+- **Status:** Implemented in preserved compat source at `compat/mna/spell/ComponentBloodRush.java`, but dormant at runtime. Extends `PotionEffectComponent`, icon at `textures/mna/blood_rush.png`, recipe JSON at `data/hemomancy/recipe/components/blood_rush.json`.
 - **Concept:** Applies the Blood Rush effect (+move speed, +attack speed) via spells.
 - **MnA Justification:** Same reasoning as 1b — composability with MnA shapes. Cast on allies at range with projectile shape, create a sigil/rune that buffs anyone who steps on it, or combine with zone shape to create a "blood rally point" area buff. None of these delivery options exist in base Hemomancy.
 - **Attributes:** Duration (100–600 ticks), Magnitude (1–3), Affinity: Blood
 - **Tag:** FRIENDLY
 
-#### 1d. `ComponentHemolysis` — "Blood Destruction" ✅ IMPLEMENTED
-- **Status:** Implemented in `compat/mna/spell/ComponentHemolysis.java`. Extends `PotionEffectComponent`, icon at `textures/mna/hemolysis.png`, recipe JSON at `data/hemomancy/recipes/components/hemolysis.json`.
+#### 1d. `ComponentHemolysis` — "Blood Destruction" — dormant source present
+- **Status:** Implemented in preserved compat source at `compat/mna/spell/ComponentHemolysis.java`, but dormant at runtime. Extends `PotionEffectComponent`, icon at `textures/mna/hemolysis.png`, recipe JSON at `data/hemomancy/recipe/components/hemolysis.json`.
 - **Concept:** Applies Hemolysis effect via spells.
 - **MnA Justification:** Same composability argument. Additionally, when combined with MnA's spell modifier system, the DoT behavior can be tuned (extended, amplified) in ways that Hemomancy's potion system doesn't support. Pair with AoE/zone shapes for area denial.
 - **Attributes:** Duration (40–200 ticks), Magnitude (1–4), Affinity: Blood
 - **Tag:** HARMFUL
 
-#### 1e. `ComponentSummonSanguilith` — "Conjure Sanguilith" ✅ IMPLEMENTED
-- **Status:** Implemented in `compat/mna/spell/ComponentSummonSanguilith.java`. Extends `SpellEffect`, icon at `textures/mna/summon_sanguilith.png`, recipe JSON at `data/hemomancy/recipes/components/summon_sanguilith.json`. Requires Harbinger faction. Health scaling configurable via `HemoMnAConfig.SANGUILITH_HEALTH_PER_MAGNITUDE`.
+#### 1e. `ComponentSummonSanguilith` — "Conjure Sanguilith" — dormant source present
+- **Status:** Implemented in preserved compat source at `compat/mna/spell/ComponentSummonSanguilith.java`, but dormant at runtime. Extends `SpellEffect`, icon at `textures/mna/summon_sanguilith.png`, recipe JSON at `data/hemomancy/recipe/components/summon_sanguilith.json`. Requires Harbinger faction. Health scaling configurable via `HemoMnAConfig.SANGUILITH_HEALTH_PER_MAGNITUDE`.
 - **Concept:** Summons a Sanguilith entity at the target location via spell casting.
 - **MnA Justification:** The Sanguilith already exists as an MnA-dependent entity (uses `SummonUtils`, MnA particles, MnA sounds). But currently there's no way to summon it via a spell — you'd need to trigger it through code. Making it a proper spell component means it integrates into MnA's summon ecosystem alongside Animated Constructs and other faction summons. Players can customize it with MnA modifiers (longer duration, more damage, etc.).
 - **Attributes:** Duration (200–600 ticks for summon lifetime), Magnitude (damage scaling), Affinity: Blood
@@ -202,7 +204,7 @@ These mechanics specifically bridge MnA and Hemomancy's separate systems in ways
   - High Blood affinity (MnA) + High FERRIC tendency (Hemomancy) → blood-affinity spells deal bonus damage to armored targets
   - Having any tendency above 5 → +5% reduced mana cost for Blood affinity spells per tendency above 5
 - **MnA Justification:** Reads MnA's affinity system (`IPlayerMagic`) and Hemomancy's tendency system (`IBloodKinship`) simultaneously. The bonuses modify MnA spell behavior based on Hemomancy progression. Neither system alone has enough information to produce these effects.
-- **Implementation:** Forge tick event that checks both capabilities, applies attribute modifiers.
+- **Implementation:** NeoForge tick subscription that checks both capabilities and applies attribute modifiers.
 
 #### 6b. Tendency ↔ Affinity Mapping for Spell Power
 - **Concept:** Map Hemomancy's 8 blood tendencies to MnA's affinities so that investing in Hemomancy tendencies boosts corresponding MnA spell power:
@@ -217,20 +219,20 @@ These mechanics specifically bridge MnA and Hemomancy's separate systems in ways
 - **MnA Justification:** This modifies MnA's spell damage/effect calculations based on Hemomancy's tendency values. It hooks into MnA's spell resolution to apply bonuses. The mapping is meaningless without MnA's affinity system as the target.
 - **Effect:** Each tendency point above 3 gives +2% power to spells of the corresponding MnA affinity.
 
-#### 6c. Blood Tithe — Spell Modifier ✅ IMPLEMENTED (as event handler)
-- **Status:** Implemented in `compat/mna/spell/BloodTitheHandler.java` as a Forge event handler (hooks into `CalculatingManaCostEvent` and `SpellCastEvent`) rather than as a `SpellModifier`. This was chosen because it's simpler and automatically applies to all Harbinger faction members casting blood-affinity spells without requiring players to manually slot a modifier. Configurable via `HemoMnAConfig` (enable/disable, mana reduction %, blood-per-mana ratio).
+#### 6c. Blood Tithe — Spell Modifier — dormant source present (as event handler)
+- **Status:** Implemented in preserved compat source at `compat/mna/spell/BloodTitheHandler.java` as a NeoForge event subscriber (hooks into `CalculatingManaCostEvent` and `SpellCastEvent`) rather than as a `SpellModifier`, but dormant at runtime. This was chosen because it automatically applies to all Harbinger faction members casting blood-affinity spells without requiring players to manually slot a modifier. Configurable via `HemoMnAConfig` (enable/disable, mana reduction %, blood-per-mana ratio).
 - **Concept:** A new MnA spell modifier (slotted into spells via the spell crafting UI) that replaces a percentage of the spell's mana cost with blood cost.
 - **MnA Justification:** This is a `SpellModifier` that lives inside MnA's spell crafting system. Players add it to spells in the crafting UI like any other modifier. It hooks into MnA's spell cost calculation to divert part of the cost to Hemomancy's blood pool. This is a spell modifier — an MnA-exclusive concept.
 - **Mechanics:** Tier 1: 25% of mana cost paid in blood instead. Tier 2: 50%. Tier 3: 75%. Blood-to-mana ratio: 5 blood per 1 mana replaced. Requires Harbinger faction.
 
-#### 6d. Spell → Manipulation Combos ✅ IMPLEMENTED
-- **Status:** Implemented across `BloodTitheHandler.onSpellCast()` (grants Arcane Resonance after blood-affinity spell cast) and `ManipComboHelper.onManipulationUsed()` (grants Sanguine Clarity after manipulation use, consumes Arcane Resonance). Two new marker effects added: `ArcaneResonanceEffect` and `SanguineClarityEffect`. Durations and reduction percentages configurable via `HemoMnAConfig`. Integration in `BloodManipulation.performAction()` checks for Arcane Resonance to reduce blood cost.
+#### 6d. Spell → Manipulation Combos — dormant source present
+- **Status:** Implemented in preserved compat source across `BloodTitheHandler.onSpellCast()` (grants Arcane Resonance after blood-affinity spell cast) and `ManipComboHelper.onManipulationUsed()` (grants Sanguine Clarity after manipulation use, consumes Arcane Resonance), but dormant at runtime. Two marker effects exist for the integration target: `ArcaneResonanceEffect` and `SanguineClarityEffect`. Durations and reduction percentages are configurable via `HemoMnAConfig`. Integration in `BloodManipulation.performAction()` checks for Arcane Resonance to reduce blood cost when compat is active.
 - **Concept:** Casting certain MnA spells with Blood affinity components triggers a brief "Arcane Resonance" buff that reduces the blood cost and cooldown of the next Hemomancy manipulation used within 5 seconds. Conversely, using certain high-rank Hemomancy manipulations grants a brief "Sanguine Clarity" buff that reduces the mana cost of the next MnA spell.
 - **MnA Justification:** This combo system reads MnA's spell cast events and Hemomancy's manipulation use events. It creates a gameplay loop that alternates between both mod systems — cast MnA spell → use Hemomancy manipulation at reduced cost → cast MnA spell at reduced cost → repeat. The combo mechanic bridges both systems' event buses.
 
 ### 7. New Blocks & Structures (MnA Infrastructure)
 
-These blocks extend MnA's block/tile entity systems or create structures using MnA's multiblock framework.
+These blocks extend MnA's block/block-entity systems or create structures using MnA's multiblock framework.
 
 #### 7a. Blood-Corrupted Mana Pedestal
 - **Concept:** A Hemomancy variant of MnA's pedestal (`PedestalBlock` / `PedestalTile`) that can hold MnA items and slowly corrupts them with blood, converting MnA materials into cross-mod variants.
@@ -281,8 +283,8 @@ These blocks extend MnA's block/tile entity systems or create structures using M
   - Runeforging recipes for blood construct capabilities
 - **MnA Justification:** These are MnA crafting systems. JEI categories help players discover cross-mod recipes that use MnA infrastructure.
 
-#### 9e. Config Options ✅ IMPLEMENTED
-- **Status:** Implemented in `config/HemoMnAConfig.java`. Registered as a Forge server config when MnA is present. Covers: blood↔mana conversion ratios, Blood Tithe settings, Living Thread armor set bonus values, Trapezohedron effect radius, Spell↔Manipulation combo settings (enable/disable, durations, reduction percentages), and Sanguilith summon tuning.
+#### 9e. Config Options — dormant source present
+- **Status:** Implemented in `config/HemoMnAConfig.java`, but not currently registered because MnA compat is dormant. Intended registration is a NeoForge server config when MnA is present. Covers: blood↔mana conversion ratios, Blood Tithe settings, Living Thread armor set bonus values, Trapezohedron effect radius, Spell↔Manipulation combo settings (enable/disable, durations, reduction percentages), and Sanguilith summon tuning.
 - **Concept:** Add server config options for all cross-mod mechanics:
   - Blood ↔ Mana conversion ratios (spell & manipulation)
   - Living Thread armor set bonus values
@@ -337,17 +339,17 @@ Based on implementation difficulty and gameplay impact, here's a suggested prior
 
 ### High Priority (Quick wins, high impact)
 1. **9a. Harbinger Mana HUD Fix** — Bug fix, small code change
-2. ~~**1b–1d. New PotionEffectComponents** (Blood Loss, Blood Rush, Hemolysis)~~ ✅ Done
+2. **1b–1d. New PotionEffectComponents** (Blood Loss, Blood Rush, Hemolysis) — source present, dormant at runtime
 3. **9b. Occulus Task Integration** — Small code change in HarbingersFaction
-4. ~~**9e. Config Options**~~ ✅ Done — `HemoMnAConfig.java`
+4. **9e. Config Options** — source present in `HemoMnAConfig.java`, dormant at runtime
 5. **9c. Cross-Mod Advancements** — JSON-only, no code needed
 
 ### Medium Priority (Moderate effort, great synergy)
-6. ~~**1a. ComponentBloodToMana**~~ ✅ Done
-7. ~~**1e. ComponentSummonSanguilith**~~ ✅ Done
-8. ~~**6c. Blood Tithe Modifier**~~ ✅ Done — implemented as event handler in `BloodTitheHandler`
+6. **1a. ComponentBloodToMana** — source present, dormant at runtime
+7. **1e. ComponentSummonSanguilith** — source present, dormant at runtime
+8. **6c. Blood Tithe Modifier** — source present as event handler in `BloodTitheHandler`, dormant at runtime
 9. **5d. Harbinger Manaweaving Recipes** — JSON recipe definitions using MnA infrastructure
-10. ~~**6d. Spell → Manipulation Combos**~~ ✅ Done — `ManipComboHelper` + `BloodTitheHandler`
+10. **6d. Spell → Manipulation Combos** — source present in `ManipComboHelper` + `BloodTitheHandler`, dormant at runtime
 11. **9d. JEI Integration** — Follows existing JEI pattern
 
 ### Lower Priority (Ambitious, high effort)
@@ -370,16 +372,16 @@ Based on implementation difficulty and gameplay impact, here's a suggested prior
 - **PotionEffect spell components** follow `ComponentBloodLoss.java` / `ComponentBloodRush.java` / `ComponentHemolysis.java` — extend `PotionEffectComponent`, pass effect supplier + attribute pairs (DURATION, MAGNITUDE), override `SoundEffect()`, `getAffinity()` (return `Affinity.BLOOD`), `SpawnParticles()`, `getRequiredXPForRote()`, `getComponentTags()`. Very minimal code per component.
 - **Custom logic spell components** follow `ComponentBloodToMana.java` — extend `SpellEffect` directly, override `applyEffect()` with full custom logic. Use `MAGNITUDE` attribute for scaling.
 - **Summon spell components** follow `ComponentSummonSanguilith.java` — extend `SpellEffect`, use `SummonUtils` for entity spawning, gate behind faction check via `HarbingerEventHandler.isPlayerHarbinger()`.
-- **Cross-system event handlers** follow `BloodTitheHandler.java` — use `@SubscribeEvent` on Forge event bus, hook into MnA events like `CalculatingManaCostEvent` and `SpellCastEvent`. Register on the Forge bus when MnA is loaded.
+- **Cross-system event handlers** follow `BloodTitheHandler.java` — use NeoForge event subscriptions, hook into MnA events like `CalculatingManaCostEvent` and `SpellCastEvent`, and register on the NeoForge event bus when MnA compat is active.
 - **Manipulation-side combo integration** follows `ManipComboHelper.java` — called from `BloodManipulation.performAction()` when MnA is loaded. Keep in `compat/mna/spell/` package to avoid class-loading issues.
-- **Cross-mod config** follows `HemoMnAConfig.java` — separate `ForgeConfigSpec` registered only when MnA is present.
+- **Cross-mod config** follows `HemoMnAConfig.java` — separate NeoForge `ModConfigSpec` registered only when MnA compat is active.
 - **New spell shapes** extend MnA's `SpellShape` API — study MnA's existing shapes for patterns.
 - **New spell modifiers** extend MnA's modifier system — study existing modifiers for the pattern.
 - **New items** go in `MnAPluginItemInit.java` using the `MNAITEMS` DeferredRegister.
-- **Registration** happens in `Hemomancy.java` constructor (already has conditional MnA loading).
+- **Registration** should happen in the `Hemomancy.java` constructor by re-enabling the existing conditional MnA block after a compatible MnA dependency is available and the `compat/mna/**` source exclusion is removed.
 - **Spell registration** via `MnAPluginSpellInit.registerSpellBits()`.
 - **Ritual registration** via `MnAPluginRitualInit.registerRitualEffects()`.
-- **Component recipe JSONs** go in `data/hemomancy/recipes/components/` — one JSON per component.
+- **Component recipe JSONs** go in `data/hemomancy/recipe/components/` — one JSON per component.
 - **Construct capabilities** register through MnA's `ConstructCapability` system.
 - **Runeforging recipes** use MnA's runeforging recipe format.
 - **Manaweaving recipes** use MnA's manaweaving recipe format.

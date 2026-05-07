@@ -2,14 +2,14 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-05-06 (Annetta Knowles implementation status updated — full two-route encounter wired. §11 reflects current code state. Previous 2026-04-29: Degree theme design added — §6.4a; lore for all 8 degrees with theme/gameplay breakdown; Blood Structure introduced at Votary not Illuminatus; §6.5a Sanguine Monolith identity; Archon Fungal Scars planned note)
+> **Last Updated:** 2026-05-07 documentation cleanup pass. Implementation-status notes now use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
 > **Current Lore-State Snapshot (2026-05-06 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
-> - **Annetta Knowles encounter is now fully wired.** The Broken Church structure spawns her cowering. Both her routes are implemented: the Harbinger route triggers a two-phase boss fight culminating in the Stained Priestess; the Unstained route cures her and externalizes the latent infection as a separate challenge. Dedicated model/texture/animations remain WIP.
-> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain WIP in gameplay implementation: full Fungal Dimension progression, Saints encounters/chambers, and fuller boss artwork.
+> - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, while dedicated model/texture/animations, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP.
+> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
@@ -239,7 +239,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ARCHON 7 — *of the Hematic Order*
 **Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
 
-**Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice. **Fungal Scars** also become available at this degree — harvested from the Fungal Gardens dimension rather than crafted at the Cerebral Scarring Station; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. One Fungal Scar may be equipped at a time (requires the Upgraded Scar Binder). A second, deeper fungal scar is locked behind completion of Qliphoth Communion (Apotheos-tier content). *(Planned — not yet implemented.)*
+**Gameplay:** **Qliphoth Communion** — the 5-stage endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; prune the bloom via the Cult Pruning rite. The most elaborate multi-step sequence in the mod. Completing Communion unlocks the Apotheos rite choice. **Fungal Scars** are implemented as a fourth scar family through Mycelial Crucible cultivation rather than the older Fungal Gardens harvesting plan; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. Deeper Apotheos-tier fungal scar concepts remain planned design space.
 
 #### APOTHEOS 8 — *of the Hematic Order*
 **Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. The Fungal Spine tears free from the player's back. Their consciousness is cast into the Fungal Dimension — not physically, but as astral projection into the Entity's local surface. There is no body here. Everything here is hostile, even to an Apotheos. On returning, the player faces the choice: carry the truth in silence, or continue deeper into hive-mind dissolution (expansion content).
@@ -432,6 +432,8 @@ Players are directed to seek the Saints around **Degree 3–4**, when they are s
 
 **Triggering a boss fight deliberately**: Smearing **Foul Paste** on a sarcophagus will anger the saint and force a fight even if the player had already extracted a sample peacefully.
 
+**Implementation status:** Partial. The shared sarcophagus spine, peaceful aligned extraction, unaligned awakening, Foul Paste forced awakening, saint-specific boss dispatch, syringe tagging, and direct residuum rewards are implemented for all four Saints. Hemorath's trial flow is the first complete chamber. Seraphae, Putriciel, and Velorum have registered boss AI, but bespoke chambers, world placement, final balance, and dedicated art/animation remain WIP.
+
 ### 10.1 Hemorath — The First Saint
 
 **Narrative:** One of the original great Archons of the Hematic Order. Hemorath represents the iron, unchanging, Ferric-tended aspect of blood magic — the belief that the blood can be made permanent, solid, inevitable.
@@ -466,14 +468,14 @@ Her sanity broke under the weight of this question. And in that fracture, the la
 
 > *She is not the Pale Lady.* Our Lady of Still Waters is a force of nature, non-physical and non-corporeal. Annetta is a person — a broken person with enormous and terrible power.
 
-**Implementation status:** Annetta's encounter is **fully wired**. She spawns in COWERING state inside a `BrokenChurchStructure` with contextual scene dressing (a ToothPecks Specimen Jar placed beside her, Devil's Tooth decorations). Two routes are implemented:
+**Implementation status:** Partial. Annetta's encounter is wired and playable. She spawns in COWERING state inside a `BrokenChurchStructure` with contextual scene dressing (a ToothPecks Specimen Jar placed beside her, Devil's Tooth decorations). Two routes are implemented:
 
 - **Harbinger route**: Approach holding a ToothPecks Specimen Jar. The jar shatters, the termite bites her, and the boss fight begins (silver aura, hemolytic vials, hair-and-nails slash). If the fight proceeds to near-death she mutates into the Stained Priestess — a more powerful blood-spear phase. The Harbinger route drops `Annetta's Sanguis Lancea`.
 - **Unstained route**: Approach holding a Draught of Still Mercy (requires Clarity unlocked). She drinks it, transitions to a cured ally state, and the **Latent Infection** — the suppressed blood magic given physical form — tears itself free as a separate boss. Cured Annetta fights alongside the player until the infection is destroyed. The Unstained route drops `Annetta's Absolution Dagger` and Pale Silver Ingots.
 
 After either route concludes she either lies broken (Harbinger) or stands resolved and at peace (Unstained).
 
-**Still WIP:** Dedicated entity model, texture, and GeckoLib animations; the fuller teeth/nails/hair biological domain for Phase 1; SanguisLancea projectile rendering.
+**Remaining WIP:** Dedicated entity model, texture, and GeckoLib animations; the fuller teeth/nails/hair biological domain for Phase 1; Sanguis Lancea projectile rendering.
 
 ---
 
