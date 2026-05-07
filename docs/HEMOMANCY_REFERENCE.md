@@ -4,7 +4,8 @@
 
 > **Minecraft Version:** 1.21.1 (NeoForge 21.1.x, Java 21)
 > **2026-05-04 Machine Access Update:** `MachineAccessEvents` blocks right-click access to selected Harbinger/Unstained machines until that specific block item has been crafted by the player. Locked machines can still be broken, but drop no loot.
-> **Last Updated:** 2026-05-06 (audit: Annetta Knowles full two-route encounter wired — BrokenChurchStructure spawning, COWERING→PhaseOne/CuredSupport→StainedPriestess/LatentAnnettaInfection boss fights, route-gated drops. Unstained Podium full interaction mechanics. PathMutualExclusionHelper utility (resets KnownStillArts on path switch). Still Arts advancement-based grant system corrected (StillArtRewardTable). UnstainedGaugeOverlay layered texture system documented. IBloodVolume blood debt API. §23 BrokenChurchStructure. §30 WIP updated. Previous 2026-05-04 audit: Specimen Jar, MachineAccessEvents, item-inquiry dialogue JSON loader, NPC portrait textures, Virid Salis, Saint AI refactor, Mycelial Crucible, scar tier table, entity loot path.) **+** Copper Brushing. **+** Engram comparator, Iron Brazier organ reagents, Blood Moon mechanics. **+** Scratch-Engraving mechanic. See §13.7 tools table.
+> **2026-05-07 Mycelial Lantern Update:** Adds the Degree 5 Mycelial Lantern enzyme-fruiting machine, all eight aligned spore culture items, the `enzyme_fruiting` recipe type and JSON data, reusable blood-reservoir transfer helpers, reusable blood/white-humor GUI bar widgets, Pallid Retort white humor widget extraction, and Mycelial Lantern entity-model rendering with Blockbench source.
+> **Last Updated:** 2026-05-07 (audit: Mycelial Lantern enzyme-fruiting machine, all eight aligned spore culture items, `enzyme_fruiting` recipe type/data, shared blood-reservoir transfer helpers, reusable blood/white-humor GUI bar widgets, Pallid Retort white humor widget extraction, Mycelial Lantern entity-model renderer and Blockbench source. Drudge per-manipulation memory behavior table. Previous audit: Annetta Knowles full two-route encounter wired — BrokenChurchStructure spawning, COWERING→PhaseOne/CuredSupport→StainedPriestess/LatentAnnettaInfection boss fights, route-gated drops. Unstained Podium full interaction mechanics. PathMutualExclusionHelper utility (resets KnownStillArts on path switch). Still Arts advancement-based grant system corrected (StillArtRewardTable). UnstainedGaugeOverlay layered texture system documented. IBloodVolume blood debt API. §23 BrokenChurchStructure. §30 WIP updated. Previous 2026-05-04 audit: Specimen Jar, MachineAccessEvents, item-inquiry dialogue JSON loader, NPC portrait textures, Virid Salis, Saint AI refactor, Mycelial Crucible, scar tier table, entity loot path.) **+** Copper Brushing. **+** Engram comparator, Iron Brazier organ reagents, Blood Moon mechanics. **+** Scratch-Engraving mechanic. See §13.7 tools table.
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -31,6 +32,9 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - Blood extraction flow was modernized: **Living Syringe** now uses loadable **Vial Rack** storage (8-vial rack state), and the **Vial Centrifuge** can bulk-load sampled vials directly from racks.
 > - Bloodline administration now includes leader-side member expulsion in `BloodlinePoolScreen` + `PacketKickBloodlinePlayer`.
 > - Fungal scar cultivation is implemented through the **Mycelial Crucible**: Phase 1 produces one consolidated `immature_fungal_scar` item with target scar metadata, and Phase 2 matures it with aligned enzymes into one of 9 finished fungal scars.
+> - Late-game passive enzyme production is implemented through the **Mycelial Lantern**: a Degree 5 Blood Structure machine that holds one reusable aligned spore culture, consumes stored blood over time, and slowly fruits the matching enzyme without consuming the culture.
+> - All eight aligned spore cultures are registered as items (`vivacious`, `fervent`, `neurotic`, `incandescent`, `ruinous`, `frigid`, `ferric`, `umbral`) and are crafted shapelessly from matching enzyme + Spore Sac + Hyphal Substrate.
+> - Blood-reservoir machines now share the `IBloodReservoirContainer` / `BloodContainerTransfer` helper path for filled blood containers, empty flask output, and Blood Gourd transfer math. Screen-side reservoir bars now use reusable `BloodVolumeBarWidget` and `WhiteHumorBarWidget` helpers where applicable.
 > - NPC item inquiries moved out to datapack JSON under `data/hemomancy/dialogue_inquiry/<npc>/<item_namespace>/<item>.json`, loaded by `ItemInquiryLoader` with optional degree/purity conditions.
 > - Client progression UIs were modularized (`HarbingerProgressScreen` + shared tab controllers used by both Harbinger and Unstained screens), and manipulation star overlays now include numeric tendency values.
 
@@ -1002,17 +1006,21 @@ The new advanced set is also registered and has live event handlers for the non-
 }
 ```
 
-### 12.3 Spores (Passive scar items)
+### 12.3 Spore Cultures (Enzyme Fruiting)
 
-One for each tendency:
+Aligned spores are now functional reusable culture items for the **Mycelial Lantern** enzyme-fruiting loop. Each is registered as an uncommon item that stacks to 16 and is crafted shapelessly from the matching enzyme + `spore_sac` + `hyphal_substrate`. The culture remains in the Lantern while blood is converted into the matching enzyme output.
+
+One culture exists for each enzyme/tendency vocabulary pair:
 ![](../src/main/resources/assets/hemomancy/textures/item/vivacious_spores.png) Vivacious,
-![](../src/main/resources/assets/hemomancy/textures/item/ferric_spores.png) Ferric,
 ![](../src/main/resources/assets/hemomancy/textures/item/fervent_spores.png) Fervent,
-![](../src/main/resources/assets/hemomancy/textures/item/incandescent_spores.png) Incandescent,
 ![](../src/main/resources/assets/hemomancy/textures/item/neurotic_spores.png) Neurotic,
+![](../src/main/resources/assets/hemomancy/textures/item/incandescent_spores.png) Incandescent,
 ![](../src/main/resources/assets/hemomancy/textures/item/ruinous_spores.png) Ruinous,
-![](../src/main/resources/assets/hemomancy/textures/item/umbral_spores.png) Umbral,
-![](../src/main/resources/assets/hemomancy/textures/item/frigid_spores.png) Frigid.
+![](../src/main/resources/assets/hemomancy/textures/item/frigid_spores.png) Frigid,
+![](../src/main/resources/assets/hemomancy/textures/item/ferric_spores.png) Ferric,
+![](../src/main/resources/assets/hemomancy/textures/item/umbral_spores.png) Umbral.
+
+The JSON recipes live at `data/hemomancy/recipe/<spore_id>.json`, e.g. `vivacious_spores.json` combines `vivacious_enzyme`, `spore_sac`, and `hyphal_substrate` into `vivacious_spores`.
 
 ### 12.4 Mycelial Crucible & Immature Fungal Scar Cultures
 
@@ -1069,8 +1077,8 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 
 | Item | Capacity |
 |------|----------|
-| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_flask.png) Bloody Flask | 250 |
-| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_jug.png) Bloody Jug | 2,500 |
+| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_flask.png) Bloody Flask | 2,500 |
+| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_jug.png) Bloody Jug | 5,000 |
 | ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Stabilized Sanguine Formation | 5,000 |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_white.png) Blood Gourd White | Simple tier |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_red.png) Blood Gourd Red | Crimson tier |
@@ -1332,6 +1340,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Cerebral Scarring Station**        | `ScarStationBlockEntity`                   | Crafts scars from patterns and blanks                    ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/scar_station.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/morphling_incubator.png) 
 | **Mycelial Crucible**                | `MycelialCrucibleBlockEntity`              | Cultivates fungal scars through `FungalScarCultivationRecipe`. Has 8 slots: center scar/immature culture, 4 aligned enzyme slots, output, blood flask/gourd input, and empty flask output. Phase 1 drains the recipe's flat blood cost plus 1.5/tick to produce the consolidated `immature_fungal_scar`; Phase 2 feeds aligned enzymes into the culture's custom-data progress until it matures into its stored target scar. See §12.4. |
+| **Mycelial Lantern**                 | `MycelialLanternBlockEntity`               | Degree 5 passive enzyme-fruiting machine. A 1x2x1 multiblock (main block below, `filler_block` above) crafted via Blood Structure recipe. Slots: reusable spore culture (0), blood input for Bloody Flasks/Blood Gourds (1), enzyme output (2), empty flask output (3). Uses a 4,000 blood internal reservoir; each default recipe takes 2,400 ticks at 0.25 blood/tick (600 total) for 1 matching enzyme. Progress pauses without reset when blood or output space is unavailable. Automation: top inserts culture, sides insert blood containers, bottom extracts enzyme/empty containers; culture is not auto-extracted. Rendered by `MycelialLanternRenderer` / `MycelialLanternModel`, with translucent glass rendered after the displayed culture/output item and Blockbench source at `assets/hemomancy/models/block/bbmodel/mycelial_lantern.bbmodel`. |
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Specimen Jar**                     | `SpecimenJarBlockEntity`                   | Vivianite glass and Hematic Iron containment jar for Hemomancy arthropod specimens. Empty jars place normally and face the placer. Right-clicking a capturable Hemomancy arthropod with an empty jar stores that exact entity's NBT in the jar item and removes the live mob. Filled jars place with the specimen displayed inside by `SpecimenJarRenderer` / `SpecimenJarItemRenderer`, rotated with the jar's horizontal facing and animated via the renderer's client-only entity copy. Shift-right-clicking a placed jar picks it back up without releasing the specimen; breaking a filled jar releases the stored entity and drops an empty jar. Capturable scope is data-driven by `data/hemomancy/tags/entity_types/specimen_jar_capturable.json` and currently includes Chthonian, Chthonian Queen, Chitinite, Fervent Chitinite, Hemolymphopoda, Myelin Borer, Fargone, and Tooth Pecks. |
 | **Fungal Podium**                    | `FungalPodiumBlockEntity`                  | Portal to the Fungal Gardens dimension. Degree 2+ (Votary) required; costs 500 blood. Stores overworld return coordinates in player persistent data. Degree-7 Archons on first exit attempt see the `coreWitnessDialogue()` choice fork instead of teleporting home; subsequent uses proceed directly. See §3.6, §3.9.                                                                                                                                                                                                                                                                                                                                               |
@@ -1472,6 +1481,7 @@ All applicable flowers have **potted** variants.
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (13 morphling recipes). JEI-integrated via `IncubatorRecipeCategory`. Fungal scar crafting has moved out to the Mycelial Crucible. |
 | `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 9 finished `ItemFungalScar` variants. |
+| `enzyme_fruiting` | `EnzymeFruitingRecipeSerializer` | Mycelial Lantern | Reusable aligned spore culture + blood -> matching enzyme. Defaults: 2,400 ticks, 0.25 blood/tick, 600 total blood, output count 1; JSON-tunable per recipe. |
 | `white_humor_purification` | `WhiteHumorPurificationRecipeSerializer` | Physical White Humor pool | Dropped item purification in placed White Humor source pools. JEI-integrated via `WhiteHumorPurificationRecipeCategory` with Pale Humor Flask as catalyst. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
 | `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
@@ -1496,12 +1506,13 @@ The Liber Sanguinum/Immaculatus crafting sidebar and the debug Structure Spawner
 | Vial Centrifuge / Mnemonic Reliquary | 2 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Votary machinery |
 | Somatic Loom / Mind Spike / Semi-Sentient Construct | 3 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Initiate machinery |
 | Runic Chisel Station / Visceral Mirror | 4 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Adept machinery |
-| Dendritic Distributor / Consecrated Bloodwell / Morphling Incubator | 5 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Crimson Lodge machinery |
+| Dendritic Distributor / Consecrated Bloodwell / Morphling Incubator / Mycelial Lantern | 5 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Crimson Lodge machinery, including passive enzyme fruiting |
 | Covenant Throne / Vascular Effigy | 6 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Bloodline Covenant machinery |
 | Sanguine Monolith | 7 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Archon machinery |
 | Unstained Podium | Unstained stage 1 | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
 
 > Recipes are in `data/hemomancy/recipe/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, `required_degree`, optional `unstained`, and `result`.
+> **Mycelial Lantern blood structure:** `blood_structure/mycelial_lantern.json` is Degree 5, costs 2,500 blood, uses `spore_sac` on a `hematic_iron_block`, and builds from Sanguine Glass, brown mushroom blocks, Hematic Iron, Polished Venous Stone, and Copper Block.
 
 ### 18.2 Cardinal Rite Recipes
 
@@ -1544,7 +1555,15 @@ Utility rite `required_degree` values are authored per recipe rather than inferr
 | **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees`: 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
 | **Bloom of the Qliphoth** | 1200 | Grand | Degree 7. Plants a Qliphoth Seed (placed as catalyst within the rite pattern), summons a `QliphothBloomBlock` (1x1x8 tree, 3-chunk radius), and starts the Qliphoth Communion chain. See section 3.9. |
 
-### 18.3 Plant & Fungi Recipes
+### 18.3 Enzyme Fruiting Recipes
+
+`data/hemomancy/recipe/enzyme_fruiting/*.json` defines Mycelial Lantern fruiting recipes. Each recipe names a reusable `culture` ingredient, an output `result`, a `duration`, and `blood_per_tick`.
+
+Default tuning for the eight enzyme recipes is 2,400 ticks, 0.25 blood/tick, 600 total blood, and 1 matching enzyme output. The spore culture item is not consumed; the machine only consumes blood and time. Progress is preserved while paused for insufficient blood or blocked output.
+
+Implemented outputs: `vivacious_enzyme`, `fervent_enzyme`, `neurotic_enzyme`, `incandescent_enzyme`, `ruinous_enzyme`, `frigid_enzyme`, `ferric_enzyme`, and `umbral_enzyme`.
+
+### 18.4 Plant & Fungi Recipes
 
 Plants and fungi found in hemomancy biomes serve as ingredients across multiple crafting systems:
 
@@ -1585,7 +1604,7 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | Rafflesia | Potion of Hemolysis |
 | Sarcodes | Potion of Blood Rush |
 
-### 18.4 Food Recipes
+### 18.5 Food Recipes
 
 | Recipe | Type | Notes |
 |--------|------|-------|
@@ -1595,7 +1614,7 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | Roasted Gourd Seeds | Smoking | Gourd seeds in smoker |
 | Roasted Gourd Seeds | Campfire Cooking | Gourd seeds on campfire |
 
-### 18.5 Faction-Associated Block Palettes (Planning Guardrail)
+### 18.6 Faction-Associated Block Palettes (Planning Guardrail)
 
 When drafting new ritual patterns and recipe structures, use faction palettes to avoid repeatedly reusing the same Hemomancy-only block combinations.
 
@@ -2029,6 +2048,10 @@ JEI is currently supplied by a local `libs/jei-1.21.1-neoforge-19.27.0.340.jar` 
 - Visceral Recaller recipes
 - Blood Structure Crafting recipes
 - Morphling Incubator recipes (`IncubatorRecipeCategory`)
+- Mycelial Crucible recipes (`MycelialCrucibleRecipeCategory`)
+- Morphic Nectar recipes (`MorphicNectarRecipeCategory`)
+- White Humor Purification recipes (`WhiteHumorPurificationRecipeCategory`)
+- Enzyme Fruiting recipes have `EnzymeFruitingRecipeCategory` authored, but `JEIPlugin` does not currently register the type/category/catalyst/recipes yet.
 
 ### 25.4 HutosLib
 
@@ -2049,6 +2072,12 @@ HutosLib is still the required shared runtime library (`com.vincenthuto.hutoslib
 
 > **Gauge fills:** ![](../src/main/resources/assets/hemomancy/textures/gui/blood_fill_tiled.png) Blood fill &nbsp; ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_fill_tiled.png) Purity fill &nbsp; ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_clarity_fill_tiled.png) Clarity fill
 
+
+### 26.1a Reusable Screen Widgets
+
+- `BloodVolumeBarWidget`: reusable vertical blood reservoir bar with frame, animated red fill, meniscus, highlights, bubbles, tick marks, `Bounds`, and tooltip rendering. Used by internal blood reservoir screens including Ghastly Alembic, Vial Centrifuge, Morphling Incubator, Mycelial Crucible, and Mycelial Lantern.
+- `WhiteHumorBarWidget`: dedicated Unstained counterpart with pale silver-blue fill and tooltip rendering. Extracted from `PallidRetortScreen` so future White Humor machines can reuse the same visual language without forcing a generic fluid widget yet.
+
 ### 26.2 Screens
 
 **Key GUI Textures:**
@@ -2068,8 +2097,10 @@ HutosLib is still the required shared runtime library (`com.vincenthuto.hutoslib
 | `VascularStatusScreen` | — | Detailed vascular status |
 | `BloodlinePoolScreen` | Bloodline Pool Monitor | View/manage bloodline shared pool |
 | `GhastlyAlembicScreen` | ghastly_alembic block | ghastly_alembic crafting GUI |
+| `PallidRetortScreen` | Pallid Retort | Unstained distillation GUI with crystalline background and reusable `WhiteHumorBarWidget` for the internal White Humor reservoir. |
 | `VialCentrifugeScreen` | Vial Centrifuge | Centrifuge crafting GUI (reworked with new 3D stand model) |
 | `MorphlingIncubatorScreen` | Morphling Incubator | Incubation crafting GUI |
+| `MycelialLanternScreen` | Mycelial Lantern | Fungal/amber enzyme-fruiting GUI. Uses `BloodVolumeBarWidget`, centered reusable culture slot, blood input/empty flask slots under the bar, progress lane to enzyme output, and hover tooltip for the internal blood reservoir. |
 | `UnstainedProgressScreen` | Self Reflection Mirror | Unstained progress + shared Rites/Crafting/Materials tab controller stack |
 | `MnemonicReliquaryScreen` | Mnemonic Reliquary block | Reliquary viewing GUI — opens animated lid on interaction |
 | `SporeImplantScreen` | Fungal Implantation Pylon | Spore implantation GUI |
@@ -2232,6 +2263,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 - **Memory Overlay Textures** — All manipulations now have unique overlay textures (`textures/item/memories/memory_*_overlay.png`) for the layered memory item model system. The `HemoItemModelProvider` generates 2-layer models (base `memory_blank` + per-manipulation overlay) for all `BloodMemoryItem` instances.
 - **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipe/incubator/`.
 - **~~Fungal Scar Cultivation~~** — **IMPLEMENTED:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
+- **Mycelial Lantern / Enzyme Fruiting** - **IMPLEMENTED:** `MycelialLanternBlockEntity`, `EnzymeFruitingRecipe`, `EnzymeFruitingRecipeSerializer`, eight spore culture items, eight enzyme-fruiting JSON recipes, Blood Structure recipe, menu/screen, block entity renderer, item renderer, and Blockbench source are present. **Remaining polish:** `EnzymeFruitingRecipeCategory` exists but `JEIPlugin` is not yet registering it, so JEI display/catalyst wiring still needs a pass.
 - **Mnemonic Reliquary** — New functional block with animated lid (open/close), custom 3D block entity renderer (`MnemonicReliquaryRenderer`), item renderer (`MnemonicReliquaryItemRenderer`), block model (`MnemonicReliquaryModel`), menu (`MnemonicReliquaryMenu`), and screen (`MnemonicReliquaryScreen`). Tracks open count and syncs lid angle via block events.
 - **Suspended Cleansed Blood Crystal** — Purified variant of the Suspended Blood Crystal with custom block, block entity (random time offset for desynchronized animations), block item with custom renderer, 3D model, and blockstate.
 - **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
@@ -2480,7 +2512,7 @@ Registered in `ParticleInit`:
 
 ## 35. Drudge System
 
-*Last Updated: 2026-04-29*
+*Last Updated: 2026-05-07*
 
 The Drudge is a persistent, player-owned semi-organic construct that holds a single **Blood Memory** (`BloodManipulation`) and executes it autonomously within a leash radius anchored to a **Semi-Sentient Construct (SSC)** block. Unlike the Blood Thrall (a transient courier), the Drudge is a long-term servant that "learns a job" and keeps doing it.
 
@@ -2515,17 +2547,56 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | 4 | `WaterAvoidingRandomStrollGoal` | Not rogue, within leash range |
 | 5 | `RandomLookAroundGoal` | Always |
 
-### Tendency-Based Execute Behavior
+### Drudge Memory Behavior
 
-The `DrudgeExecuteMemoryGoal` uses the memory's `EnumBloodTendency` to pick a target and apply a simplified effect (no `Player` reference required):
+`DrudgeExecuteMemoryGoal` dispatches the installed manipulation's registered `DrudgeAction` from `ManipulationInit`. Actions use the Drudge's current block position as the work origin and `drudgeWorkRadius` as the search radius. Blood charge and cooldown are only consumed when the action returns `true`; unsupported or unregistered actions do not fire.
 
-| Tendency | Behavior |
-|----------|----------|
-| MORTEM, FLAMMEUS, CONGEATIO | Attacks nearest hostile mob within work radius (Melee damage × 2) |
-| DUCTILIS, ANIMUS | Heals nearest damaged player (4 HP), or self if below 60% HP |
-| LUX | Places a torch at the darkest air block within work radius |
-| FERRIC | Applies Haste I (20 s) to all players in work radius |
-| TENEBRIS | Applies Invisibility (30 s) to self |
+| Manipulation | Drudge behavior |
+|--------------|-----------------|
+| `venous_travel` | Unsupported; cannot be used by Drudges |
+| `blood_shot` | Ranged strike against the nearest hostile |
+| `deadly_gaze` | Launches and heavily strikes the nearest hostile |
+| `summon_avatar` | Unsupported; cannot be used by Drudges |
+| `blood_needle` | Fires a five-hit needle volley at the nearest hostile |
+| `blood_cloud` | Applies Wither to nearby hostiles |
+| `blood_rush` | Grants Speed II to the Drudge and nearby player allies for 10 seconds |
+| `blood_aneurysm` | Damages nearby hostiles and applies Nausea |
+| `vital_effusion` | Bonemeal-accelerates nearby growable blocks around the Drudge |
+| `ferric_transmutation` | Spawns one iron ingot at the Drudge's position |
+| `activation_potential` | Grants Regeneration II to nearby player allies for 5 seconds |
+| `sanguine_ward` | Grants Resistance I to nearby player allies for 10 seconds |
+| `hemolymphal_pulse` | Applies Glowing to all nearby living entities |
+| `conjure_blade` | Unsupported; cannot be used by Drudges |
+| `blood_absorption` | Unsupported; cannot be used by Drudges |
+| `blood_projection` | Unsupported; cannot be used by Drudges |
+| `summon_thrall` | Unsupported; cannot be used by Drudges |
+| `crimson_flame_conjuration` | Ignites the nearest hostile for 6 seconds |
+| `sanguine_mending` | Repairs up to 100 durability on the most-damaged armor piece of the nearest player ally |
+| `hemosynthesis` | Heals the most-wounded nearby player ally for 4 HP |
+| `blood_lamp` | Places a torch at a nearby dark, supported air block |
+| `crimson_harvest` | Bonemeal-accelerates nearby growable blocks in the work radius |
+| `glacial_grasp` | Freezes, heavily slows, and damages the nearest hostile |
+| `sanguine_excavation` | Mines the block the Drudge is facing, dropping normal block drops |
+| `vascular_dowsing` | Unsupported; cannot be used by Drudges |
+| `ferric_resonance` | Unsupported; cannot be used by Drudges |
+| `pyretic_forge` | Ignites and damages all hostiles in the work radius |
+| `umbral_step` | Teleports the Drudge to a random dark valid spot within the work radius |
+| `crimson_sight` | Applies Glowing to nearby hostiles |
+| `vital_reservoir` | Damages the nearest hostile for 2 magic damage and refills 200 Drudge blood charge, unless near full |
+| `cryogenic_pulse` | Slows all hostiles in the work radius |
+| `glacial_circulation` | No registered Drudge action; currently does not fire |
+| `glacial_bastion` | Raises a ring of packed ice around the Drudge |
+| `osseous_bloom` | No registered Drudge action; currently does not fire |
+| `sanguine_ignition` | Ignites and damages the nearest hostile |
+| `vitric_combustion` | Ignites and heavily fire-damages all hostiles in the work radius |
+| `void_shroud` | Cloaks the Drudge with Invisibility for 30 seconds |
+| `blood_eclipse` | Blinds and magic-damages all hostiles in the work radius |
+| `hemorrhage` | Applies Wither to the nearest hostile |
+| `exsanguinate` | Deals 20% max-health magic damage to the nearest hostile and heals the Drudge for half that amount |
+| `crimson_tithe` | Unsupported; cannot be used by Drudges |
+| `unclosing_eye` | Applies long-duration Glowing to all nearby living entities |
+| `bloom_of_rot` | Applies Wither II and Poison I to all hostiles in the work radius |
+| `endless_hour` | Grants the Drudge Absorption III and Resistance III for 20 seconds |
 
 ### Rogue State
 
