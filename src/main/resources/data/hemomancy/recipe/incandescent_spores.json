@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:incandescent_enzyme" },
+    { "item": "hemomancy:spore_sac" },
+    { "item": "hemomancy:hyphal_substrate" }
+  ],
+  "result": {
+    "id": "hemomancy:incandescent_spores"
+  }
+}

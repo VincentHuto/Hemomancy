@@ -63,4 +63,7 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<MycelialCrucibleMenu>> mycelial_crucible = CONTAINERS
 			.register("mycelial_crucible", () -> IMenuTypeExtension.create(MycelialCrucibleMenu::new));
 
+	public static final DeferredHolder<MenuType<?>, MenuType<MycelialLanternMenu>> mycelial_lantern = CONTAINERS
+			.register("mycelial_lantern", () -> IMenuTypeExtension.create(MycelialLanternMenu::new));
+
 }

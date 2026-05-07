@@ -123,5 +123,8 @@ public final class HemoCapabilityRegistrar {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 BlockEntityInit.pallid_retort.get(),
                 (be, facing) -> facing == null ? null : new SidedInvWrapper(be, facing));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+                BlockEntityInit.mycelial_lantern.get(),
+                (be, facing) -> facing == null ? null : new SidedInvWrapper(be, facing));
     }
 }

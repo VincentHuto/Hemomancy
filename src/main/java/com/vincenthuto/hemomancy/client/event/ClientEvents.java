@@ -539,6 +539,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.pallid_retort.get(), PallidRetortRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mycelial_crucible.get(), MycelialCrucibleRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.mycelial_lantern.get(), MycelialLanternRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_cradle.get(), MorphlingCradleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.specimen_jar.get(), SpecimenJarRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
@@ -705,6 +706,7 @@ public class ClientEvents {
             event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
             event.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
             event.register(ContainerInit.mycelial_crucible.get(), MycelialCrucibleScreen::new);
+            event.register(ContainerInit.mycelial_lantern.get(), MycelialLanternScreen::new);
             event.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
             event.register(ContainerInit.mnemonic_reliquary.get(), MnemonicReliquaryScreen::new);
         }

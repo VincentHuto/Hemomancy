@@ -45,6 +45,9 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeType<?>, RecipeType<FungalScarCultivationRecipe>> fungal_scar_cultivation_type = RECIPE_TYPES
 			.register("fungal_scar_cultivation", () -> RecipeType.simple(Hemomancy.rloc("fungal_scar_cultivation")));
 
+	public static final DeferredHolder<RecipeType<?>, RecipeType<EnzymeFruitingRecipe>> enzyme_fruiting_type = RECIPE_TYPES
+			.register("enzyme_fruiting", () -> RecipeType.simple(Hemomancy.rloc("enzyme_fruiting")));
+
 	// Serialize
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
 			DistillationRecipeSerializer::new);
@@ -81,5 +84,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> fungal_scar_cultivation_serializer = SERIALIZERS
 			.register("fungal_scar_cultivation", FungalScarCultivationSerializer::new);
+
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> enzyme_fruiting_serializer = SERIALIZERS
+			.register("enzyme_fruiting", EnzymeFruitingRecipeSerializer::new);
 
 }

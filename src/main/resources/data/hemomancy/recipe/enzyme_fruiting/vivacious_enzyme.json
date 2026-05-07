@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:enzyme_fruiting",
+  "id": "hemomancy:enzyme_fruiting/vivacious_enzyme",
+  "culture": { "item": "hemomancy:vivacious_spores" },
+  "result": { "id": "hemomancy:vivacious_enzyme", "count": 1 },
+  "duration": 2400,
+  "blood_per_tick": 0.25
+}

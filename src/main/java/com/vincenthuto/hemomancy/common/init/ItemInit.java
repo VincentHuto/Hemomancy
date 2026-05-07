@@ -665,6 +665,23 @@ public class ItemInit {
 //	public static final DeferredHolder<Item, Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
 //	public static final DeferredHolder<Item, Item> ferric_spores = BASEITEMS.register("ferric_spores",
 
+    public static final DeferredHolder<Item, Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> fervent_spores = BASEITEMS.register("fervent_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> frigid_spores = BASEITEMS.register("frigid_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> ferric_spores = BASEITEMS.register("ferric_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+    public static final DeferredHolder<Item, Item> umbral_spores = BASEITEMS.register("umbral_spores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
+
     // ── Regular Scars (8 tendencies × 3 tiers = 24 scars) ──
     // Each scar has focused upsides and real downsides; magnitude escalates with tier.
 

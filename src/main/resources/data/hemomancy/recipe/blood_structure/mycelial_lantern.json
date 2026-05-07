@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 2500,
+  "required_degree": 5,
+  "heldItem": "hemomancy:spore_sac",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+    [" G ", "SBS", " G "],
+    [" H ", "HCH", " H "]
+  ],
+  "key": {
+    "G": { "block": "hemomancy:sanguine_glass" },
+    "S": { "block": "minecraft:brown_mushroom_block" },
+    "B": { "block": "hemomancy:hematic_iron_block" },
+    "H": { "block": "hemomancy:polished_venous_stone" },
+    "C": { "block": "minecraft:copper_block" }
+  },
+  "result": {
+    "id": "hemomancy:mycelial_lantern"
+  }
+}

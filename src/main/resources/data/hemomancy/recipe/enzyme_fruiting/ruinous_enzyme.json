@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:enzyme_fruiting",
+  "id": "hemomancy:enzyme_fruiting/ruinous_enzyme",
+  "culture": { "item": "hemomancy:ruinous_spores" },
+  "result": { "id": "hemomancy:ruinous_enzyme", "count": 1 },
+  "duration": 2400,
+  "blood_per_tick": 0.25
+}

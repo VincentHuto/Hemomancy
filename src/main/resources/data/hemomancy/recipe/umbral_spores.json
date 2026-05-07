@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:umbral_enzyme" },
+    { "item": "hemomancy:spore_sac" },
+    { "item": "hemomancy:hyphal_substrate" }
+  ],
+  "result": {
+    "id": "hemomancy:umbral_spores"
+  }
+}

@@ -2089,5 +2089,13 @@
   "hemomancy.still_art.memory_shear": "Memory Shear",
   "hemomancy.still_art.absolving_step": "Absolving Step",
   "hemomancy.still_art.quietus_bell": "Quietus Bell",
-  "hemomancy.still_art.autoimmune_edge": "Autoimmune Edge"
+  "hemomancy.still_art.autoimmune_edge": "Autoimmune Edge",
+  "block.hemomancy.mycelial_lantern": "Mycelial Lantern",
+  "container.hemomancy.mycelial_lantern": "Mycelial Lantern",
+  "item.hemomancy.neurotic_spores": "Neurotic Spores",
+  "item.hemomancy.incandescent_spores": "Incandescent Spores",
+  "item.hemomancy.ruinous_spores": "Ruinous Spores",
+  "item.hemomancy.frigid_spores": "Frigid Spores",
+  "item.hemomancy.ferric_spores": "Ferric Spores",
+  "item.hemomancy.umbral_spores": "Umbral Spores"
 }
