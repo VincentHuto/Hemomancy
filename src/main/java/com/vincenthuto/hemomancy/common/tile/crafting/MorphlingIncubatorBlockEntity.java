@@ -6,17 +6,14 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -45,7 +42,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodTile {
+public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	private static final int CRAFT_TIME = 200;
@@ -169,44 +166,22 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	// ---- Blood slot processing ----
 
 	private void processBloodSlot() {
-		ItemStack bloodStack = inventory.get(SLOT_BLOOD);
-		if (bloodStack.isEmpty()) return;
+		if (processBloodContainerInputSlot()) sendUpdates();
+	}
 
-		IBloodVolume vol = resolveVolume();
-		if (vol == null || vol.isFull()) return;
+	@Override
+	public int getBloodContainerInputSlot() {
+		return SLOT_BLOOD;
+	}
 
-		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
-			double amount = flask.getAmount();
-			double available = vol.getMaxBloodVolume() - vol.getBloodVolume();
-			if (available > 0) {
-				// Check if we can output the empty flask
-				ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);
-				if (outputStack.isEmpty()
-						|| (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
-								&& outputStack.getCount() < outputStack.getMaxStackSize())) {
-					vol.addBloodVolume(Math.min(amount, available));
-					bloodStack.shrink(1);
-					// Output empty flask
-					if (outputStack.isEmpty()) {
-						inventory.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
-					} else {
-						outputStack.grow(1);
-					}
-					sendUpdates();
-				}
-			}
-		} else if (bloodStack.getItem() instanceof BloodGourdItem) {
-			IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(bloodStack).orElse(null);
-			if (gourdVolume != null && gourdVolume.getBloodVolume() > 0) {
-				double transfer = Math.min(gourdVolume.getBloodVolume(), vol.getMaxBloodVolume() - vol.getBloodVolume());
-				transfer = Math.min(transfer, 10); // Transfer rate limit
-				if (transfer > 0) {
-					gourdVolume.subtractBloodVolume(transfer);
-					vol.addBloodVolume(transfer);
-					sendUpdates();
-				}
-			}
-		}
+	@Override
+	public int getEmptyBloodContainerOutputSlot() {
+		return SLOT_FLASK_OUTPUT;
+	}
+
+	@Override
+	public boolean acceptsBloodGourdInput() {
+		return true;
 	}
 
 	// ---- Polyp crafting ----

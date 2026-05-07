@@ -20,54 +20,71 @@ public class MycelialLanternModel extends Model {
             Hemomancy.rloc("mycelial_lantern_model"), "main");
 
     private final ModelPart root;
+    private final ModelPart base;
+    private final ModelPart glassChamber;
+    private final ModelPart cap;
+    private final ModelPart supports;
+    private final ModelPart lanternCore;
 
     public MycelialLanternModel(ModelPart root) {
         super(RenderType::entityTranslucent);
         this.root = root.getChild("mycelial_lantern");
+        this.base = this.root.getChild("base");
+        this.glassChamber = this.root.getChild("glass_chamber");
+        this.cap = this.root.getChild("cap");
+        this.supports = this.root.getChild("supports");
+        this.lanternCore = this.root.getChild("lantern_core");
     }
 
     @SuppressWarnings("unused")
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition parts = mesh.getRoot();
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition lantern = parts.addOrReplaceChild("mycelial_lantern", CubeListBuilder.create(),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition mycelial_lantern = partdefinition.addOrReplaceChild("mycelial_lantern", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-        lantern.addOrReplaceChild("base", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-7.0F, -3.0F, -7.0F, 14.0F, 3.0F, 14.0F, new CubeDeformation(0.0F))
+        PartDefinition base = mycelial_lantern.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, -3.0F, -7.0F, 14.0F, 3.0F, 14.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 17).addBox(-5.0F, -6.0F, -5.0F, 10.0F, 3.0F, 10.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 30).addBox(-3.0F, -8.0F, -3.0F, 6.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)),
-                PartPose.ZERO);
+                .texOffs(0, 30).addBox(-3.0F, -8.0F, -3.0F, 6.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        lantern.addOrReplaceChild("glass_chamber", CubeListBuilder.create()
-                .texOffs(40, 0).addBox(-5.0F, -22.0F, -5.0F, 10.0F, 14.0F, 10.0F, new CubeDeformation(0.0F)),
-                PartPose.ZERO);
+        PartDefinition glass_chamber = mycelial_lantern.addOrReplaceChild("glass_chamber", CubeListBuilder.create().texOffs(54, 46).addBox(-5.0F, -22.0F, -5.0F, 10.0F, 14.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        lantern.addOrReplaceChild("cap", CubeListBuilder.create()
-                .texOffs(0, 39).addBox(-6.0F, -25.0F, -6.0F, 12.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+        PartDefinition cap = mycelial_lantern.addOrReplaceChild("cap", CubeListBuilder.create().texOffs(0, 39).addBox(-6.0F, -25.0F, -6.0F, 12.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
                 .texOffs(48, 30).addBox(-3.0F, -29.0F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 55).addBox(-2.0F, -33.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)),
-                PartPose.ZERO);
+                .texOffs(0, 55).addBox(-2.0F, -33.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        lantern.addOrReplaceChild("supports", CubeListBuilder.create()
-                .texOffs(80, 0).addBox(-6.0F, -23.0F, -6.0F, 2.0F, 17.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(88, 0).addBox(4.0F, -23.0F, -6.0F, 2.0F, 17.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(96, 0).addBox(-6.0F, -23.0F, 4.0F, 2.0F, 17.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(104, 0).addBox(4.0F, -23.0F, 4.0F, 2.0F, 17.0F, 2.0F, new CubeDeformation(0.0F)),
-                PartPose.ZERO);
+        PartDefinition supports = mycelial_lantern.addOrReplaceChild("supports", CubeListBuilder.create().texOffs(80, 0).addBox(4.0F, -22.0F, -6.0F, 2.0F, 16.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(88, 0).addBox(-6.0F, -22.0F, -6.0F, 2.0F, 16.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(96, 0).addBox(4.0F, -22.0F, 4.0F, 2.0F, 16.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(104, 0).addBox(-6.0F, -22.0F, 4.0F, 2.0F, 16.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        lantern.addOrReplaceChild("lantern_core", CubeListBuilder.create()
-                .texOffs(72, 30).addBox(-3.0F, -16.0F, -3.0F, 6.0F, 6.0F, 6.0F, new CubeDeformation(0.0F))
-                .texOffs(96, 30).addBox(-2.0F, -18.0F, -2.0F, 4.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
-                PartPose.ZERO);
+        PartDefinition lantern_core = mycelial_lantern.addOrReplaceChild("lantern_core", CubeListBuilder.create().texOffs(72, 30).addBox(-3.0F, -16.0F, -3.0F, 6.0F, 6.0F, 6.0F, new CubeDeformation(0.0F))
+                .texOffs(96, 30).addBox(-2.0F, -18.0F, -2.0F, 4.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        return LayerDefinition.create(mesh, 128, 128);
+        return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
             int packedColor) {
         root.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+    }
+
+    public void renderOpaqueParts(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+            int packedColor) {
+        renderFrameParts(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        lanternCore.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+    }
+
+    public void renderFrameParts(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+            int packedColor) {
+        base.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        cap.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        supports.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+    }
+
+    public void renderGlass(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+            int packedColor) {
+        glassChamber.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

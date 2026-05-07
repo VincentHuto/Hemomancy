@@ -4,13 +4,11 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialLanternMenu;
 import com.vincenthuto.hemomancy.common.recipe.EnzymeFruitingRecipe;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
-import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -36,10 +34,11 @@ import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 
-public class MycelialLanternBlockEntity extends BaseContainerBlockEntity implements IBloodTile, IMultiBlockEntity, WorldlyContainer {
+public class MycelialLanternBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer, IMultiBlockEntity, WorldlyContainer {
 
     public static final String TAG_BLOOD_LEVEL = "bloodLevel";
     private static final float MAX_BLOOD = 4_000F;
+    private static final AABB RENDER_BOUNDS = new AABB(-0.5D, -0.25D, -0.5D, 1.5D, 2.75D, 1.5D);
 
     public static final int SLOT_CULTURE = MycelialLanternAutomationRules.SLOT_CULTURE;
     public static final int SLOT_BLOOD = MycelialLanternAutomationRules.SLOT_BLOOD;
@@ -158,51 +157,7 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
     }
 
     private boolean processBloodSlot() {
-        ItemStack bloodStack = inventory.get(SLOT_BLOOD);
-        if (bloodStack.isEmpty()) return false;
-
-        IBloodVolume vol = resolveVolume();
-        if (vol == null || vol.isFull()) return false;
-
-        if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
-            double amount = flask.getAmount();
-            double available = vol.getMaxBloodVolume() - vol.getBloodVolume();
-            if (available < amount) return false;
-            ItemStack outputStack = inventory.get(SLOT_EMPTY_CONTAINER);
-            if (canAcceptEmptyFlask(outputStack)) {
-                vol.addBloodVolume(amount);
-                bloodStack.shrink(1);
-                addEmptyFlask();
-                return true;
-            }
-        } else if (bloodStack.getItem() instanceof BloodGourdItem) {
-            IBloodVolume gourdVol = HemoCapabilityAccess.getBloodVolume(bloodStack).orElse(null);
-            if (gourdVol != null && gourdVol.getBloodVolume() > 0) {
-                double transfer = Math.min(gourdVol.getBloodVolume(), vol.getMaxBloodVolume() - vol.getBloodVolume());
-                transfer = Math.min(transfer, 10);
-                if (transfer > 0) {
-                    gourdVol.subtractBloodVolume(transfer);
-                    vol.addBloodVolume(transfer);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean canAcceptEmptyFlask(ItemStack stack) {
-        return stack.isEmpty()
-                || (stack.getItem() == HLItemInit.cured_clay_flask.get()
-                && stack.getCount() < stack.getMaxStackSize());
-    }
-
-    private void addEmptyFlask() {
-        ItemStack outputStack = inventory.get(SLOT_EMPTY_CONTAINER);
-        if (outputStack.isEmpty()) {
-            inventory.set(SLOT_EMPTY_CONTAINER, new ItemStack(HLItemInit.cured_clay_flask.get()));
-        } else {
-            outputStack.grow(1);
-        }
+        return processBloodContainerInputSlot();
     }
 
     public ItemStack getCultureStack() {
@@ -234,6 +189,21 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
     @Nullable
     public IBloodVolume getBloodCapability() {
         return resolveVolume();
+    }
+
+    @Override
+    public int getBloodContainerInputSlot() {
+        return SLOT_BLOOD;
+    }
+
+    @Override
+    public int getEmptyBloodContainerOutputSlot() {
+        return SLOT_EMPTY_CONTAINER;
+    }
+
+    @Override
+    public boolean acceptsBloodGourdInput() {
+        return true;
     }
 
     @Override
@@ -283,7 +253,7 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
             case SLOT_CULTURE -> !findMatchingRecipe(stack).isEmpty();
-            case SLOT_BLOOD -> stack.getItem() instanceof BloodyFlaskItem || stack.getItem() instanceof BloodGourdItem;
+            case SLOT_BLOOD -> BloodContainerTransfer.isFilledBloodContainer(stack) || BloodContainerTransfer.isBloodGourd(stack);
             default -> false;
         };
     }
@@ -350,10 +320,6 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
         if (side == Direction.UP) return MycelialLanternAutomationRules.Side.TOP;
         if (side == Direction.DOWN) return MycelialLanternAutomationRules.Side.BOTTOM;
         return MycelialLanternAutomationRules.Side.SIDE;
-    }
-
-    public AABB getRenderBoundingBox() {
-        return IMultiBlockEntity.computeMultiBlockAABB(this);
     }
 
     @Override

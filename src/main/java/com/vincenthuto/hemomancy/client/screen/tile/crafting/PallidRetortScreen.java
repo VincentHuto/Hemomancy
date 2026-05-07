@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.widget.WhiteHumorBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.PallidRetortMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,7 +11,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -33,8 +33,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	final PallidRetortBlockEntity te;
 	private float[][] rhombusParams;
 
-	// White Humor bar screen-space bounds for hover detection
-	private int whiteHumorBarX1, whiteHumorBarY1, whiteHumorBarX2, whiteHumorBarY2;
+	private WhiteHumorBarWidget.Bounds whiteHumorBarBounds = WhiteHumorBarWidget.Bounds.EMPTY;
 
 	public PallidRetortScreen(PallidRetortMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
@@ -72,14 +71,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY);
 
-		// White Humor bar hover tooltip
-		if (mouseX >= whiteHumorBarX1 && mouseX < whiteHumorBarX2 && mouseY >= whiteHumorBarY1 && mouseY < whiteHumorBarY2) {
-			double vol = te.getWhiteHumorVolume();
-			double maxVol = te.getMaxWhiteHumorVolume();
-			graphics.renderTooltip(font, List.of(
-					Component.literal(String.format("\u00A77White Humor: \u00A7f%.0f \u00A77/ \u00A7f%.0f", vol, maxVol))
-			), java.util.Optional.empty(), mouseX, mouseY);
-		}
+		WhiteHumorBarWidget.renderTooltip(graphics, font, whiteHumorBarBounds,
+				te.getWhiteHumorVolume(), te.getMaxWhiteHumorVolume(), mouseX, mouseY);
 	}
 
 	@Override
@@ -297,74 +290,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int barX = gx + 158;
 		int barY = gy + 16;
 
-		// Store bounds for hover tooltip
-		whiteHumorBarX1 = barX - 2;
-		whiteHumorBarY1 = barY - 2;
-		whiteHumorBarX2 = barX + barW + 2;
-		whiteHumorBarY2 = barY + barH + 2;
-
-		double vol = te.getWhiteHumorVolume();
-		double maxVol = te.getMaxWhiteHumorVolume();
-		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
-
-
-		float time = animTime;
-		// Outer frame — double border
-		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
-		gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_INNER);
-
-		// Inner dark background
-		gfx.fill(barX, barY, barX + barW, barY + barH, 0xFF060102);
-
-		// Fill from bottom up with a vertical gradient
-		int fillH = (int) (barH * ratio);
-		if (fillH > 0) {
-			int fillTop = barY + barH - fillH;
-			for (int row = 0; row < fillH; row++) {
-				float rowT = (float) row / fillH; // 0 at top of fill, 1 at bottom
-				float pulse = 0.75f + 0.25f * Mth.sin(time * 2.5f + row * 0.08f);
-				// Gradient: pale silver-blue
-				int r = (int) (Mth.clamp((140 + 55 * rowT) * pulse, 0, 255));
-				int g = (int) (Mth.clamp((165 + 55 * rowT) * pulse, 0, 255));
-				int b = (int) (Mth.clamp((190 + 45 * rowT) * pulse, 0, 255));
-				int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-				gfx.fill(barX, fillTop + row, barX + barW, fillTop + row + 1, color);
-			}
-
-			// Meniscus highlight — bright line at the top of the fill
-			float meniscusPulse = 0.6f + 0.4f * Mth.sin(time * 3f);
-			int mAlpha = (int) (200 * meniscusPulse);
-			int meniscusColor = (mAlpha << 24) | (0xEE << 16) | (0xF8 << 8) | 0xFF;
-			gfx.fill(barX, fillTop, barX + barW, fillTop + 1, meniscusColor);
-
-			// Specular highlight — thin bright strip on the left side
-			for (int row = 0; row < fillH; row++) {
-				float fade = 0.3f + 0.15f * Mth.sin(time * 1.5f + row * 0.15f);
-				int hAlpha = (int) (80 * fade);
-				gfx.fill(barX + 1, fillTop + row, barX + 2, fillTop + row + 1,
-						(hAlpha << 24) | (0xFF << 16) | (0xFF << 8) | 0xFF);
-			}
-
-			// Animated bubbles rising through the white humor
-			Random bubbleRand = new Random(7777L);
-			for (int bi = 0; bi < 4; bi++) {
-				float bSpeed = 0.4f + bubbleRand.nextFloat() * 0.6f;
-				float bPhase = bubbleRand.nextFloat() * 100f;
-				int bx = barX + 2 + bubbleRand.nextInt(Math.max(barW - 4, 1));
-				float bProgress = ((time * bSpeed + bPhase) % 1.0f);
-				int by = fillTop + fillH - (int) (bProgress * fillH);
-				if (by >= fillTop && by < fillTop + fillH - 1) {
-					int bAlpha = (int) (60 * (1f - Math.abs(bProgress - 0.5f) * 2f));
-					gfx.fill(bx, by, bx + 1, by + 1, (bAlpha << 24) | (0xF2 << 16) | (0xFB << 8) | 0xFF);
-				}
-			}
-		}
-
-		// Tick marks on the right side of the bar
-		for (int tick = 1; tick <= 3; tick++) {
-			int tickY = barY + barH - (barH * tick / 4);
-			gfx.fill(barX + barW, tickY, barX + barW + 1, tickY + 1, 0x60FFFFFF);
-		}
+		whiteHumorBarBounds = WhiteHumorBarWidget.render(gfx, barX, barY, barW, barH,
+				te.getWhiteHumorVolume(), te.getMaxWhiteHumorVolume(), animTime, BORDER_OUTER, BORDER_INNER);
 	}
 
 	// ───── Programmatic border ─────

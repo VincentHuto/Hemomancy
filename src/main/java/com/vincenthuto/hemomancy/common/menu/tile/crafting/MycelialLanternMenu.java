@@ -23,6 +23,8 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
     public static final int EMPTY_CONTAINER_SLOT = MycelialLanternBlockEntity.SLOT_EMPTY_CONTAINER;
     public static final int SLOT_COUNT = MycelialLanternBlockEntity.INVENTORY_SIZE;
     public static final int DATA_COUNT = 4;
+    public static final int CULTURE_SLOT_X = 80;
+    public static final int CULTURE_SLOT_Y = 48;
 
     private final MycelialLanternBlockEntity te;
     private final ContainerData dataAccess;
@@ -45,7 +47,7 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
         checkContainerSize(te, SLOT_COUNT);
         checkContainerDataCount(data, DATA_COUNT);
 
-        this.addSlot(new Slot(te, CULTURE_SLOT, 80, 44) {
+        this.addSlot(new Slot(te, CULTURE_SLOT, CULTURE_SLOT_X, CULTURE_SLOT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return isCulture(stack);

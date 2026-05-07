@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
+import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -143,7 +144,12 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		// --- Blood flask: fill the blood reservoir ---
 		if (stack.getItem() instanceof BloodyFlaskItem flask) {
 			if (volume.isFull()) return false;
-			volume.addBloodVolume(flask.getAmount());
+			double amount = flask.getAmount();
+			if (!BloodContainerTransfer.canAcceptFilledContainer(
+					volume.getBloodVolume(), volume.getMaxBloodVolume(), amount)) {
+				return false;
+			}
+			volume.addBloodVolume(amount);
 			consumeItem(player, stack, hand);
 			markDirtyAndSync();
 			return true;
@@ -153,8 +159,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		if (stack.getItem() instanceof BloodGourdItem) {
 			IBloodVolume gourdVol = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
 			if (gourdVol == null || gourdVol.getBloodVolume() <= 0 || volume.isFull()) return false;
-			double transfer = Math.min(gourdVol.getBloodVolume(),
-					volume.getMaxBloodVolume() - volume.getBloodVolume());
+			double transfer = BloodContainerTransfer.calculateGourdTransfer(
+					gourdVol.getBloodVolume(), volume.getBloodVolume(), volume.getMaxBloodVolume(), Double.MAX_VALUE);
 			if (transfer <= 0) return false;
 			gourdVol.subtractBloodVolume(transfer);
 			volume.addBloodVolume(transfer);

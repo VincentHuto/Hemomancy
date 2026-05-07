@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialLanternMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -32,10 +33,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     private int[][] speckleParams;
     private float animTime = 0f;
 
-    private int bloodBarX1;
-    private int bloodBarY1;
-    private int bloodBarX2;
-    private int bloodBarY2;
+    private BloodVolumeBarWidget.Bounds bloodBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
     public MycelialLanternScreen(MycelialLanternMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -88,13 +86,8 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         this.renderBackground(gfx, mouseX, mouseY, partialTick);
         super.render(gfx, mouseX, mouseY, partialTick);
         this.renderTooltip(gfx, mouseX, mouseY);
-        if (mouseX >= bloodBarX1 && mouseX < bloodBarX2 && mouseY >= bloodBarY1 && mouseY < bloodBarY2) {
-            double vol = menu.getBloodVolume();
-            double maxVol = menu.getMaxBloodVolume();
-            gfx.renderTooltip(font, List.of(
-                    Component.literal(String.format("\u00A74Blood: \u00A7c%.0f \u00A74/ \u00A7c%.0f", vol, maxVol))
-            ), java.util.Optional.empty(), mouseX, mouseY);
-        }
+        BloodVolumeBarWidget.renderTooltip(gfx, font, bloodBarBounds,
+                menu.getBloodVolume(), menu.getMaxBloodVolume(), mouseX, mouseY);
     }
 
     @Override
@@ -157,8 +150,8 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     }
 
     private void renderCultureGlow(GuiGraphics gfx, int gx, int gy) {
-        int cx = gx + 88;
-        int cy = gy + 52;
+        int cx = gx + MycelialLanternMenu.CULTURE_SLOT_X + 8;
+        int cy = gy + MycelialLanternMenu.CULTURE_SLOT_Y + 8;
         float pulse = 0.45f + 0.55f * Mth.sin(animTime * 2.2f);
         for (int ring = 16; ring >= 9; ring--) {
             float t = (ring - 9) / 7f;
@@ -176,63 +169,8 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         int barH = 54;
         int barX = gx + 12;
         int barY = gy + 26;
-
-        bloodBarX1 = barX - 2;
-        bloodBarY1 = barY - 2;
-        bloodBarX2 = barX + barW + 2;
-        bloodBarY2 = barY + barH + 2;
-
-        double maxVol = menu.getMaxBloodVolume();
-        double ratio = maxVol > 0 ? Mth.clamp(menu.getBloodVolume() / maxVol, 0, 1) : 0;
-
-        gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_RED);
-        gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, 0xFF220606);
-        gfx.fill(barX, barY, barX + barW, barY + barH, 0xFF060102);
-
-        int fillH = (int) (barH * ratio);
-        if (fillH > 0) {
-            int fillTop = barY + barH - fillH;
-            for (int row = 0; row < fillH; row++) {
-                float rowT = (float) row / Math.max(fillH, 1);
-                float pulse = 0.75f + 0.25f * Mth.sin(animTime * 2.5f + row * 0.08f);
-                int r = (int) Mth.clamp((100 + 80 * rowT) * pulse, 0, 255);
-                int g = (int) Mth.clamp((5 + 15 * rowT) * pulse, 0, 255);
-                int b = (int) Mth.clamp((8 + 10 * rowT) * pulse, 0, 255);
-                gfx.fill(barX, fillTop + row, barX + barW, fillTop + row + 1,
-                        (0xEE << 24) | (r << 16) | (g << 8) | b);
-            }
-
-            float meniscusPulse = 0.6f + 0.4f * Mth.sin(animTime * 3f);
-            int mAlpha = (int) (200 * meniscusPulse);
-            gfx.fill(barX, fillTop, barX + barW, fillTop + 1,
-                    (mAlpha << 24) | (0xCC << 16) | (0x20 << 8) | 0x18);
-
-            for (int row = 0; row < fillH; row++) {
-                float fade = 0.3f + 0.15f * Mth.sin(animTime * 1.5f + row * 0.15f);
-                int hAlpha = (int) (80 * fade);
-                gfx.fill(barX + 1, fillTop + row, barX + 2, fillTop + row + 1,
-                        (hAlpha << 24) | (0xFF << 16) | (0x60 << 8) | 0x50);
-            }
-
-            Random bubbleRand = new Random(7777L);
-            for (int bi = 0; bi < 3; bi++) {
-                float speed = 0.4f + bubbleRand.nextFloat() * 0.6f;
-                float phase = bubbleRand.nextFloat() * 100f;
-                int bx = barX + 2 + bubbleRand.nextInt(Math.max(barW - 4, 1));
-                float bubbleProgress = (animTime * speed + phase) % 1.0f;
-                int by = fillTop + fillH - (int) (bubbleProgress * fillH);
-                if (by >= fillTop && by < fillTop + fillH - 1) {
-                    int alpha = (int) (60 * (1f - Math.abs(bubbleProgress - 0.5f) * 2f));
-                    gfx.fill(bx, by, bx + 1, by + 1,
-                            (alpha << 24) | (0xFF << 16) | (0x40 << 8) | 0x30);
-                }
-            }
-        }
-
-        for (int tick = 1; tick <= 3; tick++) {
-            int tickY = barY + barH - (barH * tick / 4);
-            gfx.fill(barX + barW, tickY, barX + barW + 1, tickY + 1, 0x60FFFFFF);
-        }
+        bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
+                menu.getBloodVolume(), menu.getMaxBloodVolume(), animTime, BORDER_RED, 0xFF220606);
     }
 
     private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, int slotIndex) {

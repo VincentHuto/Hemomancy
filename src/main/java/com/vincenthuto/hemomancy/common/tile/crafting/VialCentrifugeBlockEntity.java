@@ -8,12 +8,10 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
-import com.vincenthuto.hutoslib.common.registry.HLItemInit;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -39,7 +37,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
-		implements StackedContentsCompatible, IBloodTile {
+		implements StackedContentsCompatible, IBloodReservoirContainer {
 
 	public static final int SLOT_INPUT = 0;
 	public static final int SLOT_BLOOD = 1;
@@ -248,33 +246,17 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	// ---- Blood slot processing ----
 
 	private void processBloodSlot() {
-		ItemStack bloodStack = inventory.get(SLOT_BLOOD);
-		if (bloodStack.isEmpty()) return;
+		if (processBloodContainerInputSlot()) sendUpdates();
+	}
 
-		IBloodVolume vol = resolveVolume();
-		if (vol == null || vol.isFull()) return;
+	@Override
+	public int getBloodContainerInputSlot() {
+		return SLOT_BLOOD;
+	}
 
-		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
-			double amount = flask.getAmount();
-			if (vol.getBloodVolume() + amount <= vol.getMaxBloodVolume()) {
-				// Check if we can output the empty flask
-				ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);
-				if (outputStack.isEmpty()
-						|| (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
-								&& outputStack.getCount() < outputStack.getMaxStackSize())) {
-					// Consume the bloody flask
-					bloodStack.shrink(1);
-					vol.addBloodVolume(amount);
-					// Output empty flask
-					if (outputStack.isEmpty()) {
-						inventory.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
-					} else {
-						outputStack.grow(1);
-					}
-					sendUpdates();
-				}
-			}
-		}
+	@Override
+	public int getEmptyBloodContainerOutputSlot() {
+		return SLOT_FLASK_OUTPUT;
 	}
 
 	public boolean isCentrifugeEmpty() {
@@ -438,10 +420,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
+	@Nullable
 	public IBloodVolume getBloodCapability() {
-		IBloodVolume vol = resolveVolume();
-		if (vol == null) throw new IllegalStateException("Blood capability not available yet");
-		return vol;
+		return resolveVolume();
 	}
 
 	public double getBloodVolume() {

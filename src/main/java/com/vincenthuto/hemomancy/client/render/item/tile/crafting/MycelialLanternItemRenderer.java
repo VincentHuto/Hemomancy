@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.MycelialLanternModel;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.MycelialLanternRenderer;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class MycelialLanternItemRenderer extends BlockEntityWithoutLevelRenderer {
 
+    private static final int GLASS_TINT = 0x66FFFFFF;
     private MycelialLanternModel model;
 
     public MycelialLanternItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
@@ -44,7 +46,7 @@ public class MycelialLanternItemRenderer extends BlockEntityWithoutLevelRenderer
             Lighting.setupForEntityInInventory();
             poseStack.mulPose(new Quaternion(Vector3.YP, 90, true).toMoj());
             poseStack.mulPose(new Quaternion(Vector3.ZP, 30, true).toMoj());
-            poseStack.translate(-0.5, -0.2, 0);
+            poseStack.translate(-0.5, -0.5, 0);
         }
 
         poseStack.pushPose();
@@ -59,14 +61,17 @@ public class MycelialLanternItemRenderer extends BlockEntityWithoutLevelRenderer
             poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
             poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
         } else {
-            poseStack.translate(0.5, 0.7, 0.5);
+            poseStack.translate(0.5, 0.4, 0.5);
             poseStack.scale(0.25f, 0.25f, 0.25f);
             poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
             poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
         }
 
-        VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucentCull(MycelialLanternRenderer.TEXTURE));
-        model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
+        VertexConsumer opaqueConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(MycelialLanternRenderer.TEXTURE));
+        model.renderOpaqueParts(poseStack, opaqueConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
+
+        VertexConsumer glassConsumer = buffer.getBuffer(RenderTypeInit.MYCELIAL_LANTERN_GLASS);
+        model.renderGlass(poseStack, glassConsumer, combinedLight, OverlayTexture.NO_OVERLAY, GLASS_TINT);
         poseStack.popPose();
 
         if (isGui) {

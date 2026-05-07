@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,7 +31,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 	private float[][] veinParams;
 
 	// Blood bar screen-space bounds for hover detection
-	private int bloodBarX1, bloodBarY1, bloodBarX2, bloodBarY2;
+	private BloodVolumeBarWidget.Bounds bloodBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
 	public MorphlingIncubatorScreen(MorphlingIncubatorMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
@@ -66,9 +67,12 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY);
+		BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
+				te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
+		if (BloodVolumeBarWidget.Bounds.EMPTY != null) return;
 
 		// Blood bar hover tooltip
-		if (mouseX >= bloodBarX1 && mouseX < bloodBarX2 && mouseY >= bloodBarY1 && mouseY < bloodBarY2) {
+		if (bloodBarBounds.contains(mouseX, mouseY)) {
 			double vol = te.getBloodVolume();
 			double maxVol = te.getMaxBloodVolume();
 			graphics.renderTooltip(font, List.of(
@@ -248,12 +252,14 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		int barH = 52;
 		int barX = gx + 8 + (16 - barW) / 2; // centered above the 16px slot
 		int barY = gy + 74 - barH - 4;        // 4px gap above the slot
+		if (BloodVolumeBarWidget.Bounds.EMPTY != null) {
+			bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
+					te.getBloodVolume(), te.getMaxBloodVolume(), time, BORDER_OUTER, BORDER_INNER);
+			return;
+		}
 
 		// Store bounds for hover tooltip
-		bloodBarX1 = barX - 2;
-		bloodBarY1 = barY - 2;
-		bloodBarX2 = barX + barW + 2;
-		bloodBarY2 = barY + barH + 2;
+		bloodBarBounds = new BloodVolumeBarWidget.Bounds(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2);
 
 		double vol = te.getBloodVolume();
 		double maxVol = te.getMaxBloodVolume();

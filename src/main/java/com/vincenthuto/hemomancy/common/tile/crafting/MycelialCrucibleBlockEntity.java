@@ -4,16 +4,13 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -66,7 +63,7 @@ import javax.annotation.Nullable;
  *
  * <p>Blood runs dry → cultivation pauses; progress is not lost.
  */
-public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implements IBloodTile {
+public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer {
 
     // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -227,43 +224,22 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
     // ── Blood slot processing ─────────────────────────────────────────────────
 
     private void processBloodSlot() {
-        ItemStack bloodStack = inventory.get(SLOT_BLOOD);
-        if (bloodStack.isEmpty()) return;
+        if (processBloodContainerInputSlot()) sendUpdates();
+    }
 
-        IBloodVolume vol = resolveVolume();
-        if (vol == null || vol.isFull()) return;
+    @Override
+    public int getBloodContainerInputSlot() {
+        return SLOT_BLOOD;
+    }
 
-        if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
-            double amount    = flask.getAmount();
-            double available = vol.getMaxBloodVolume() - vol.getBloodVolume();
-            if (available > 0) {
-                ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);
-                if (outputStack.isEmpty()
-                        || (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
-                                && outputStack.getCount() < outputStack.getMaxStackSize())) {
-                    vol.addBloodVolume(Math.min(amount, available));
-                    bloodStack.shrink(1);
-                    if (outputStack.isEmpty()) {
-                        inventory.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
-                    } else {
-                        outputStack.grow(1);
-                    }
-                    sendUpdates();
-                }
-            }
-        } else if (bloodStack.getItem() instanceof BloodGourdItem) {
-            IBloodVolume gourdVol = HemoCapabilityAccess.getBloodVolume(bloodStack).orElse(null);
-            if (gourdVol != null && gourdVol.getBloodVolume() > 0) {
-                double transfer = Math.min(gourdVol.getBloodVolume(),
-                        vol.getMaxBloodVolume() - vol.getBloodVolume());
-                transfer = Math.min(transfer, 10);
-                if (transfer > 0) {
-                    gourdVol.subtractBloodVolume(transfer);
-                    vol.addBloodVolume(transfer);
-                    sendUpdates();
-                }
-            }
-        }
+    @Override
+    public int getEmptyBloodContainerOutputSlot() {
+        return SLOT_FLASK_OUTPUT;
+    }
+
+    @Override
+    public boolean acceptsBloodGourdInput() {
+        return true;
     }
 
     // ── Phase 1 ───────────────────────────────────────────────────────────────

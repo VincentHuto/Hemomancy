@@ -15,6 +15,7 @@ public class RenderTypeInit extends RenderType {
 	private final static ResourceLocation vine = Hemomancy.rloc("textures/misc/vine.png");
 	private final static ResourceLocation laserBeam2 = Hemomancy.rloc("textures/misc/laser2.png");
 	private final static ResourceLocation laserBeamGlow = Hemomancy.rloc("textures/misc/laser_glow.png");
+	private final static ResourceLocation mycelialLantern = Hemomancy.rloc("textures/entity/model_mycelial_lantern.png");
 
 	static RenderType.CompositeState lightningState = RenderType.CompositeState.builder()
 			.setShaderState(POSITION_COLOR_SHADER).setTransparencyState(LIGHTNING_TRANSPARENCY)
@@ -149,6 +150,19 @@ public class RenderTypeInit extends RenderType {
 					.setWriteMaskState(COLOR_DEPTH_WRITE)
 					.setCullState(NO_CULL)
 					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
+	public static final RenderType MYCELIAL_LANTERN_GLASS = create("MycelialLanternGlass",
+			DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setTextureState(new TextureStateShard(mycelialLantern, false, false))
+					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setCullState(CULL)
+					.setLightmapState(LIGHTMAP)
+					.setOverlayState(OVERLAY)
+					.setWriteMaskState(COLOR_WRITE)
 					.createCompositeState(false));
 
 	public static final RenderType ENTITY_BEAM_RENDER_TYPE = create("beam",

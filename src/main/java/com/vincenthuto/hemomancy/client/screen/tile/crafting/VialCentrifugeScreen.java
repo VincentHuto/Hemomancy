@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.StartCentrifugeButtonPacket;
@@ -40,7 +41,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	private float[][] veinParams;
 
 	// Blood bar screen-space bounds for hover detection
-	private int bloodBarX1, bloodBarY1, bloodBarX2, bloodBarY2;
+	private BloodVolumeBarWidget.Bounds bloodBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
 	// Start button bounds (center of the ring)
 	private int btnX1, btnY1, btnX2, btnY2;
@@ -87,14 +88,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY);
 
-		// Blood bar hover tooltip
-		if (mouseX >= bloodBarX1 && mouseX < bloodBarX2 && mouseY >= bloodBarY1 && mouseY < bloodBarY2) {
-			double vol = te.getBloodVolume();
-			double maxVol = te.getMaxBloodVolume();
-			graphics.renderTooltip(font, List.of(
-					Component.literal(String.format("\u00A74Blood: \u00A7c%.0f \u00A74/ \u00A7c%.0f", vol, maxVol))
-			), java.util.Optional.empty(), mouseX, mouseY);
-		}
+		BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
+				te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
 
 		// Start button hover tooltip
 		if (!this.menu.isSpinning() && mouseX >= btnX1 && mouseX < btnX2 && mouseY >= btnY1 && mouseY < btnY2) {
@@ -325,73 +320,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		int barH = 52;
 		int barX = gx + 8 + (16 - barW) / 2;
 		int barY = gy + 90 - barH - 4;
-
-		// Store bounds for hover tooltip
-		bloodBarX1 = barX - 2;
-		bloodBarY1 = barY - 2;
-		bloodBarX2 = barX + barW + 2;
-		bloodBarY2 = barY + barH + 2;
-
-		double vol = te.getBloodVolume();
-		double maxVol = te.getMaxBloodVolume();
-		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
-
-		float time = animTime;
-		// Outer frame — double border
-		gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
-		gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_INNER);
-
-		// Inner dark background
-		gfx.fill(barX, barY, barX + barW, barY + barH, 0xFF060102);
-
-		// Fill from bottom up with vertical gradient
-		int fillH = (int) (barH * ratio);
-		if (fillH > 0) {
-			int fillTop = barY + barH - fillH;
-			for (int row = 0; row < fillH; row++) {
-				float rowT = (float) row / fillH;
-				float pulse = 0.75f + 0.25f * Mth.sin(time * 2.5f + row * 0.08f);
-				int r = (int) (Mth.clamp((100 + 80 * rowT) * pulse, 0, 255));
-				int g = (int) (Mth.clamp((5 + 15 * rowT) * pulse, 0, 255));
-				int b = (int) (Mth.clamp((8 + 10 * rowT) * pulse, 0, 255));
-				int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-				gfx.fill(barX, fillTop + row, barX + barW, fillTop + row + 1, color);
-			}
-
-			// Meniscus highlight
-			float meniscusPulse = 0.6f + 0.4f * Mth.sin(time * 3f);
-			int mAlpha = (int) (200 * meniscusPulse);
-			int meniscusColor = (mAlpha << 24) | (0xCC << 16) | (0x20 << 8) | 0x18;
-			gfx.fill(barX, fillTop, barX + barW, fillTop + 1, meniscusColor);
-
-			// Specular highlight — thin bright strip on the left
-			for (int row = 0; row < fillH; row++) {
-				float fade = 0.3f + 0.15f * Mth.sin(time * 1.5f + row * 0.15f);
-				int hAlpha = (int) (80 * fade);
-				gfx.fill(barX + 1, fillTop + row, barX + 2, fillTop + row + 1,
-						(hAlpha << 24) | (0xFF << 16) | (0x60 << 8) | 0x50);
-			}
-
-			// Animated bubbles rising through the blood
-			Random bubbleRand = new Random(7777L);
-			for (int bi = 0; bi < 3; bi++) {
-				float bSpeed = 0.4f + bubbleRand.nextFloat() * 0.6f;
-				float bPhase = bubbleRand.nextFloat() * 100f;
-				int bx = barX + 2 + bubbleRand.nextInt(Math.max(barW - 4, 1));
-				float bProgress = ((time * bSpeed + bPhase) % 1.0f);
-				int by = fillTop + fillH - (int) (bProgress * fillH);
-				if (by >= fillTop && by < fillTop + fillH - 1) {
-					int bAlpha = (int) (60 * (1f - Math.abs(bProgress - 0.5f) * 2f));
-					gfx.fill(bx, by, bx + 1, by + 1, (bAlpha << 24) | (0xFF << 16) | (0x40 << 8) | 0x30);
-				}
-			}
-		}
-
-		// Tick marks on the right side of the bar
-		for (int tick = 1; tick <= 3; tick++) {
-			int tickY = barY + barH - (barH * tick / 4);
-			gfx.fill(barX + barW, tickY, barX + barW + 1, tickY + 1, 0x60FFFFFF);
-		}
+		bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
+				te.getBloodVolume(), te.getMaxBloodVolume(), animTime, BORDER_OUTER, BORDER_INNER);
 	}
 
 	// ───── Programmatic border ─────
