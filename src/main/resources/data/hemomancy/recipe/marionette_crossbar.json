@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SIS",
+    " T ",
+    " T "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "T": {
+      "item": "hemomancy:puppeteering_thread"
+    }
+  },
+  "result": {
+    "id": "hemomancy:marionette_crossbar"
+  }
+}

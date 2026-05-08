@@ -22,6 +22,7 @@ public class HarbingerProgressScreen extends Screen {
         MANIPULATIONS("Manipulations", 0xFFCC8833),
         CRAFTING("Crafting", 0xFFAA2222),
         SCARS("Scars", 0xFF44AACC),
+        SUMMONS("Summons", 0xFFBB3355),
         RITES("Rites", 0xFF8844CC),
         MATERIALS("Materials", 0xFFCC6644);
 
@@ -45,6 +46,7 @@ public class HarbingerProgressScreen extends Screen {
     private final RitesTabController rites     = new RitesTabController();
     private final CraftingTabController crafting  = new CraftingTabController();
     private final ScarsTabController          scars     = new ScarsTabController();
+    private final SummonsTabController summons = new SummonsTabController();
     private final MaterialsTabController materials = new MaterialsTabController();
 
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
@@ -71,6 +73,7 @@ public class HarbingerProgressScreen extends Screen {
             case RITES         -> rites;
             case CRAFTING      -> crafting;
             case SCARS         -> scars;
+            case SUMMONS       -> summons;
             case MATERIALS     -> materials;
         };
     }
@@ -96,7 +99,7 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private IProgressTab[] allTabs() {
-        return new IProgressTab[]{skills, manips, rites, crafting, scars, materials};
+        return new IProgressTab[]{skills, manips, rites, crafting, scars, summons, materials};
     }
 
     private PanZoomState viewForTab(Tab tab) {

@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -14,7 +17,6 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -27,8 +29,11 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	private boolean spawnedDolls = false;
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+		return Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 18.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.28D)
+				.add(Attributes.ATTACK_DAMAGE, 2.0D)
+				.add(Attributes.ARMOR, 2.0D);
 	}
 
 	public BloodDrunkPuppeteerEntity(EntityType<? extends BloodDrunkPuppeteerEntity> type, Level worldIn) {
@@ -104,15 +109,16 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 		spawnedDolls = tag.getBoolean("SpawnedDolls");
 	}
 
-	public List<EnthralledDollEntity> getPuppeteer() {
-		List<EnthralledDollEntity> owners = level().getNearbyEntities(EnthralledDollEntity.class,
-				TargetingConditions.DEFAULT, this, getBoundingBox().inflate(12.0D, 6.0D, 12.0D));
-		List<EnthralledDollEntity> dolls = owners.stream()
-				.filter(o -> o.getPuppeteer().getUUID().equals(this.getUUID())).toList();
-		if (!dolls.isEmpty()) {
-			return dolls;
-		}
-		return null;
+	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
+			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
+		return pLevel.getDifficulty() != Difficulty.PEACEFUL
+				&& checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+	}
+
+	public List<EnthralledDollEntity> getPuppets() {
+		return level().getEntitiesOfClass(EnthralledDollEntity.class,
+				getBoundingBox().inflate(BloodDrunkPuppeteerTuning.DOLL_OWNER_SEARCH_RANGE),
+				doll -> this.getUUID().equals(doll.getOwnerUUID()));
 	}
 
 	@Override
@@ -120,23 +126,19 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 		super.tick();
 		if (!level().isClientSide && !spawnedDolls) {
 			spawnedDolls = true;
-			EnthralledDollEntity[] needles = new EnthralledDollEntity[4];
-			for (int i = 0; i < needles.length; i++) {
-				needles[i] = new EnthralledDollEntity(level(), this);
-				needles[i].setPos(position().add(1, 1, 1));
-				needles[i].setOwnerUUID(this.getUUID());
-				level().addFreshEntity(needles[i]);
-			}
+			summonInitialDolls();
 		}
+	}
 
-//		if (level().dayTime() % 10 == 0) {
-//			EnthralledDollEntity[] needles = new EnthralledDollEntity[1];
-//			for (int i = 0; i < needles.length; i++) {
-//				needles[i] = new EnthralledDollEntity(level(), this);
-//				needles[i].setPos(position());
-//				needles[i].setOwnerUUID(this.getUUID());
-//				level().addFreshEntity(needles[i]);
-//			}
-//		}
+	private void summonInitialDolls() {
+		for (int i = 0; i < BloodDrunkPuppeteerTuning.DOLL_COUNT; i++) {
+			EnthralledDollEntity doll = new EnthralledDollEntity(level(), this);
+			double[] offset = BloodDrunkPuppeteerTuning.dollSpawnOffset(i);
+			doll.setPos(getX() + offset[0], getY() + offset[1], getZ() + offset[2]);
+			doll.setOwnerUUID(this.getUUID());
+			doll.setSummonedByPuppeteer(true);
+			doll.setTarget(getTarget());
+			level().addFreshEntity(doll);
+		}
 	}
 }

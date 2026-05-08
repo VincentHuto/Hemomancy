@@ -24,7 +24,8 @@ public class SkillPointInit {
 			skill_feeding_frenzy, skill_hemostasis, skill_sanguine_surge, skill_crimson_mastery,
 			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach,
 			skill_manip_slots,
-			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery;
+			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery,
+			skill_puppet_skein, skill_living_sinew, skill_far_tether;
 
 	// ── Milestone tracking ──
 	/** Set of milestones that have already been completed and rewarded. */
@@ -116,6 +117,19 @@ public class SkillPointInit {
 				new SkillPoint(17, "skill_scar_mastery", 600, 3, EnumSkillStates.LOCKED, skill_scar_resonance)
 						.setSkillPointCost(4).setRequiredDegree(5)
 						.setIconItem(() -> new ItemStack(ItemInit.scar_transcendence.get())));
+
+		skill_puppet_skein = registerSkill(BASE,
+				new SkillPoint(18, "skill_puppet_skein", 350, 3, EnumSkillStates.LOCKED, skill_manip_slots)
+						.setSkillPointCost(2).setRequiredDegree(2)
+						.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+		skill_living_sinew = registerSkill(BASE,
+				new SkillPoint(19, "skill_living_sinew", 450, 3, EnumSkillStates.LOCKED, skill_puppet_skein)
+						.setSkillPointCost(3).setRequiredDegree(3)
+						.setIconItem(() -> new ItemStack(ItemInit.sanguine_quintessence.get())));
+		skill_far_tether = registerSkill(BASE,
+				new SkillPoint(20, "skill_far_tether", 400, 3, EnumSkillStates.LOCKED, skill_puppet_skein)
+						.setSkillPointCost(3).setRequiredDegree(3)
+						.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
 
 		registerSkillBranch(BASE);
 	}

@@ -39,6 +39,7 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - NPC item inquiries moved out to datapack JSON under `data/hemomancy/dialogue_inquiry/<npc>/<item_namespace>/<item>.json`, loaded by `ItemInquiryLoader` with optional degree/purity conditions.
 > - Early blood manipulation learning now has a crude-memory lane: crude memory shards teach and auto-equip weak starter manipulations without requiring the Mnemonic Reliquary, while full Blood Memory items and Somatic Loom recipes remain the refined midgame path.
 > - Harbinger Outposts now include a **Harbinger Mnemonist**, a non-hostile memory mentor who explains crude memories, active manipulation slots, the Mnemonic Reliquary, and the Somatic Loom, and gives eligible Degree 1+ Harbingers one starter crude memory choice.
+> - Puppeteer summons are implemented as a separate Harbinger utility path: `Marionette Crossbar` uses `puppeteering_thread` charge, `Puppeteer's Spindle` binds/refills/unlocks summons, `sanguine_quintessence` permanently unlocks summon shapes, active summons render red owner threads, and the Harbinger progress screen has a Summons tab with degree gates, stats, and safe client-side previews.
 > - Client progression UIs were modularized (`HarbingerProgressScreen` + shared tab controllers used by both Harbinger and Unstained screens), and manipulation star overlays now include numeric tendency values.
 
 ---
@@ -109,6 +110,7 @@ All player-attached NeoForge attachments and exposed capabilities are registered
 |---|---|---|
 | Blood Volume | `IBloodVolume` | Current/max blood, active state, bloodline link, trickle/auto-draw settings, blood debt tracking (Hemorath encounter) |
 | Known Still Arts | `IKnownStillArts` | Set of Still Arts granted by Our Lady / Unstained rites; selected art; synced via `KnownStillArtsServerPacket` |
+| Known Summons | `IKnownSummons` | Permanently unlocked puppeteer summon shapes; synced via `KnownSummonsServerPacket` and refreshed on progress-screen open |
 | Blood Tendency | `IBloodTendency` | 8-axis alignment scores (kinship with blood tendencies) |
 | Vascular System | `IVascularSystem` | Health state of 7 vein sections |
 | Known Manipulations | `IKnownManipulations` | Unlocked blood manipulations, selected manip, vein locations |
@@ -333,6 +335,28 @@ There are **four Saints** in total; which one a player encounters first is parti
 | **Velorum** | Martyrdom resistance — gains brief Resistance I on every hit, creating attack-rhythm windows. Frost nova roots players. Veil of darkness blinds (Nausea for blood-active players). Silence drain strips blood from nearby Harbingers at low HP (≤25%). | `VelorumEntity`: `DATA_MARTYRDOM` synched flag; `fireFrostNova()`, `fireVeilOfDarkness()`, `fireSilenceDrain()` per-tick methods; martyrdom Resistance in `hurt()`, with the synced martyrdom visual/state cleared after the resistance window expires. | CONGEATIO + TENEBRIS (martyrdom, silence, frozen dark) |
 
 > **Status: Partial.** The shared sarcophagus encounter spine is implemented for all four saints: peaceful aligned extraction, unaligned rejection/awakening, Foul Paste forced awakening, saint-specific boss dispatch, Consecrated Syringe tagging, and direct boss residuum rewards. Hemorath's basin/altar/gate trial remains the first complete trial flow. Seraphae, Putriciel, and Velorum have boss AI implemented and registered, but bespoke Trial Chamber rooms, world placement tuning, models/textures/GeckoLib animations, and final balance are still WIP.
+
+### 3.8.1 Puppeteer Summons (Degree 2+)
+
+The puppeteer summon system is a Harbinger-side control-tool path rather than another blood manipulation category.
+
+- **Control tool:** `marionette_crossbar` / **Marionette Crossbar**. It stores a stable crossbar UUID, selected summon name, and up to 256 thread charge. Use calls or recalls the selected summon; sneak-use cycles known summons.
+- **Station:** `puppeteers_spindle` / **Puppeteer's Spindle**. Using a crossbar on it binds the first known summon shape if none is selected. Using `puppeteering_thread` refills the first held/carried crossbar by 16 charge. Using `sanguine_quintessence` unlocks the next eligible summon type for the player permanently.
+- **Catalyst economy:** `sanguine_quintessence` is consumed only for the first permanent unlock of a summon shape. Future crossbar binding does not consume another quintessence.
+- **Thread economy and tether:** Summoning spends the definition's `threadSummonCost`; active summons drain `threadUpkeepPerMinute` from their owning crossbar every minute. Each bound summon renders a red thread back to its owner. If the matching crossbar is not equipped in either hand, the summon and thread flicker/fade for 100 ticks (5 seconds); re-equipping the crossbar stabilizes the summon, while failing to do so unravels it. If upkeep cannot be paid, the crossbar's active summons still unravel immediately.
+- **Anti-stockpile rule:** active summon cap is calculated from the player's `skill_puppet_skein` level and checks active bound summons by owner, not by crossbar. Carrying extra crossbars cannot exceed the learned cap.
+- **Skills:** `skill_puppet_skein` increases active summon cap, `skill_living_sinew` increases summon health/damage, and `skill_far_tether` increases command range.
+- **Harbinger UI:** `HarbingerProgressScreen` includes a `SUMMONS` tab. It groups summons by degree, shows locked requirements, displays known/eligible status, reports base and skill-modified stats, and creates a client-only preview entity for the selected summon. Preview render failures fall back to an icon/text placeholder rather than crashing the screen.
+
+Current summon definitions:
+
+| Summon | Degree | Role | Base HP | Base Damage | Thread Call | Upkeep |
+|---|---:|---|---:|---:|---:|---:|
+| `veinwing_vulture` | 2 | Fast flying striker | 14 | 4 | 28 | 18/min |
+| `marrow_spitter` | 3 | Ranged support | 22 | 5 | 38 | 12/min |
+| `gorebound_hulk` | 4 | Slow heavy bruiser | 55 | 9 | 56 | 8/min |
+
+Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
 
 ---
 
@@ -1800,6 +1824,8 @@ The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
 | **Blood Thrall** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_thrall/blood_thrall.png) | Creature | Small (0.6×0.7), summoned blood transport creature |
+| **Blood Drunk Puppeteer** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png) | Monster | Rare blood-themed hostile in dark/spooky and fungal biomes; summons four bonded Enthralled Dolls, drops Puppeteering Thread, and is a bloody-jug drop candidate |
+| **Enthralled Doll** | | Monster | Puppeteer-bound support minion. Summoned dolls follow/assist their puppeteer and vanish without loot if the owner is gone |
 | **Unstained Zealot** | ![](../src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
 | **Unstained Guardian** | | Creature | NPC that guards Unstained sacred sites |
 | **Unstained Acolyte** | | Creature | NPC acolyte of the Unstained faction |
@@ -1846,7 +1872,7 @@ Notable implemented drop families:
 | Chitinite / Fervent Chitinite / Chthonian / Chthonian Queen | Chitinous Husk, with Chthonian Queen also rolling Ferric Enzyme |
 | Leech / Blood aquatic or arthropod mobs | Blood/hemolymph materials such as Swollen Leech or Cleansing Hemolymph |
 | Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob |
-| Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread / Bleeding Bulb |
+| Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread from the puppeteer; puppeteer-summoned dolls are support minions and do not create extra loot |
 | Saint and boss entities | Direct/special boss rewards are handled in entity code or matching loot JSON depending on encounter |
 
 Do not re-enable `HemoEntityLootProvider` unless the current JSON values are first ported back into the provider.
@@ -2327,7 +2353,7 @@ This section now separates current status from older audit history. "Implemented
 - **Progression Codex / Liber Sanguinum / Liber Immaculatus** — `HemoProgressionScreen.setupEntries()` is still commented out (Java renderer WIP). However, the HutosLib JSON book framework is wired: the `sanctumsanguinium` book folder now has normal lore/mechanics chapters, and the `liberimmaculatus` book folder has 4 chapters (intro, sacred_tools, our_lady, the_path) with 12 pages covering the full Unstained path. The Field Notes / memo slice is implemented: `memo_capture:<id>` dialogue events write memo IDs into Field Notes, and the Dictation Table dictates those IDs into the player's `LiberKnowledge` attachment rather than into the Liber item stack. Field Notes are now ink-bound: Hematic Field Ink captures Harbinger memos for Liber Sanguinum, while Pale Field Ink captures Unstained memos for Liber Immaculatus. `LiberKnowledge` stores `KnownMemos`, `UnlockedLiberEntries`, and per-entry discovery sources, syncs to clients with `PacketSyncLiberKnowledge`, and can be granted through `LiberKnowledgeHelper` by memos, advancements, rites, item pickups, degree changes, dialogue, or other future triggers. `LiberEntryDefinitions` is the central code-side page map: it lists visible book entries and maps initial rites, Harbinger degree advancements, Unstained milestones, selected item pickups, and `liber_unlock:<entry_id>` dialogue events to normal book page IDs. The Liber items now behave like personal viewers/keys: borrowed books show the reader's own unlocked pages, not the owner's. Legacy stack data is migrated into the player attachment when an old Liber is used or placed for dictation. `MemoBookFilter` treats `LiberEntryDefinitions` as the source of visible pages for both Liber books; pages not mapped by a definition remain hidden, and chapters with zero unlocked pages are omitted. Current memos include `first_rite_notes`, `pale_lady_notes`, and Harbinger fungal whisper memos (`fungal_whisper_adept`, `fungal_whisper_illuminatus`, `fungal_whisper_sanctified`, `fungal_whisper_archon`, `fungal_whisper_truth`, `qliphoth_communion`) that unlock the Hyphae, Entity, Truth, and Qliphoth Liber Sanguinum pages through Hematic Field Ink. Remaining WIP: re-enable `setupEntries()` if that older renderer is revived, move entry definitions to data-driven JSON if desired, and author more entry definitions across existing chapters.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
-- **Skill Effect Wiring** — **Implemented:** All 18 skills in `SkillPointHelper` have helper methods and are fully wired into event handlers. Iron Will wired in `BloodVolumeEvents.onPlayerDamaged`; Scar Affinity/Resonance/Mastery wired in `ScarEntityEventHandler` and `ItemScar`.
+- **Skill Effect Wiring** — **Implemented:** All 21 skills in `SkillPointHelper` have helper methods and are fully wired into event handlers. Iron Will wired in `BloodVolumeEvents.onPlayerDamaged`; Scar Affinity/Resonance/Mastery wired in `ScarEntityEventHandler` and `ItemScar`; puppeteer summon cap/health/damage/range are wired through the Marionette Crossbar and bound summon behavior.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **Visceral Organs System** — **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** (+1000 max blood per level, announces capacity expansion on first reach); **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 — Cardiac Autonomy fully mastered; blood drain 10÷level per 2 s). **Iron Brazier** reagent system is organ-specific. See §13.8.
 - **Armor Set Bonuses** — **Implemented:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
@@ -2526,7 +2552,7 @@ All packets are registered in `PacketHandler.registerChannels()` using the NeoFo
 |--------------|----------|-------------------|
 | Player state sync | Blood volume, blood tendency, vascular system, degree, Unstained progress, Liber knowledge | Mostly server → client |
 | Manipulations and Still Arts | Selected manip/art, use key packets, cooldowns, vein teleport, avatar tracking | Client → server plus sync responses |
-| Scars, binders, morphlings | Scar inventories, gourd sync, morphling jar/staff actions, equipped morphling sync | Bidirectional / mixed |
+| Scars, binders, morphlings, summons | Scar inventories, gourd sync, morphling jar/staff actions, equipped morphling sync, known-summon sync | Bidirectional / mixed |
 | Rites and machines | Cardinal rite activation/sync, crafting rings, centrifuge/loom buttons, SSC screen | Mixed |
 | Dialogue and world events | NPC dialogue, Qliphoth blooms, Blood Moon, particles, structure placement | Mixed |
 
@@ -2534,6 +2560,7 @@ Notable packets:
 - `PacketUnlockSkill` / `PacketSyncSkills` — Skill tree progression (via `CHANNELBLOODVOLUME`)
 - `PacketSyncActiveRites` — Cardinal rite boundary sync for client-side rendering
 - `PacketSyncDegree` / `PacketSyncUnstainedProgress` — Path progression sync
+- `KnownSummonsRequestPacket` / `KnownSummonsServerPacket` — Puppeteer summon unlock sync, refreshed on login/respawn/dimension change/screen open/unlock
 - `SyncTrackingAvatarPacket` — Blood Avatar visual state sync to all nearby players
 - `TeleportToVeinPacket` — Venous Travel teleportation
 - `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Mnemonist, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)

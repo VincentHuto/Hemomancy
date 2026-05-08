@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " T ",
+    "SIS",
+    "PPP"
+  ],
+  "key": {
+    "T": {
+      "item": "hemomancy:puppeteering_thread"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "P": {
+      "item": "hemomancy:polished_venous_stone_bricks"
+    }
+  },
+  "result": {
+    "id": "hemomancy:puppeteers_spindle"
+  }
+}
