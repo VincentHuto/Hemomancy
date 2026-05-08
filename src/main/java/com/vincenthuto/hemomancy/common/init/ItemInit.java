@@ -291,6 +291,8 @@ public class ItemInit {
     // Hematic Memories
     public static final DeferredHolder<Item, Item> drudge_electrode = BASEITEMS.register("drudge_electrode",
             () -> new DrudgeElectrodeItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> marionette_crossbar = SPECIALITEMS.register("marionette_crossbar",
+            () -> new MarionetteCrossbarItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
             () -> new DrudgeSubmissionDeviceItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> fervent_husk = BASEITEMS.register("fervent_husk",
@@ -970,6 +972,15 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
             "spawn_egg_enthralled_doll",
             () -> new DeferredSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_veinwing_vulture = SPAWNEGGS.register(
+            "spawn_egg_veinwing_vulture",
+            () -> new DeferredSpawnEggItem(EntityInit.veinwing_vulture, 0x5A0B1B, 0xC04050, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_marrow_spitter = SPAWNEGGS.register(
+            "spawn_egg_marrow_spitter",
+            () -> new DeferredSpawnEggItem(EntityInit.marrow_spitter, 0xE7D6C3, 0x8A1020, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_gorebound_hulk = SPAWNEGGS.register(
+            "spawn_egg_gorebound_hulk",
+            () -> new DeferredSpawnEggItem(EntityInit.gorebound_hulk, 0x3A0508, 0xAA1A22, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));

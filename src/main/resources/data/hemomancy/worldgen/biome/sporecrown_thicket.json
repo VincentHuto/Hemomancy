@@ -70,6 +70,12 @@
         "weight": 6,
         "minCount": 1,
         "maxCount": 3
+      },
+      {
+        "type": "hemomancy:blood_drunk_puppeteer",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 1
       }
     ],
     "underground_water_creature": [],

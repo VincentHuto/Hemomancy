@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -30,10 +29,12 @@ import java.util.UUID;
 
 public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
-	protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamableAnimal.class,
+	protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EnthralledDollEntity.class,
 			EntityDataSerializers.BYTE);
 	protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData
-			.defineId(TamableAnimal.class, EntityDataSerializers.OPTIONAL_UUID);
+			.defineId(EnthralledDollEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	protected static final EntityDataAccessor<Boolean> DATA_SUMMONED_BY_PUPPETEER =
+			SynchedEntityData.defineId(EnthralledDollEntity.class, EntityDataSerializers.BOOLEAN);
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
@@ -48,6 +49,8 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
 	public EnthralledDollEntity(Level worldIn, LivingEntity owner) {
 		super(EntityInit.enthralled_doll.get(), worldIn);
+		setOwnerUUID(owner.getUUID());
+		setSummonedByPuppeteer(owner instanceof BloodDrunkPuppeteerEntity);
 		this.reassessTameGoals();
 	}
 
@@ -63,9 +66,14 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	}
 
 	public BloodDrunkPuppeteerEntity getPuppeteer() {
-		List<BloodDrunkPuppeteerEntity> owners = level().getNearbyEntities(BloodDrunkPuppeteerEntity.class,
-				TargetingConditions.DEFAULT, this, getBoundingBox().inflate(12.0D, 6.0D, 12.0D));
-		Optional<BloodDrunkPuppeteerEntity> owner = owners.stream().filter(o -> o.getUUID().equals(getOwnerUUID()))
+		UUID ownerId = getOwnerUUID();
+		if (ownerId == null) {
+			return null;
+		}
+		List<BloodDrunkPuppeteerEntity> owners = level().getEntitiesOfClass(BloodDrunkPuppeteerEntity.class,
+				getBoundingBox().inflate(BloodDrunkPuppeteerTuning.DOLL_OWNER_SEARCH_RANGE));
+		Optional<BloodDrunkPuppeteerEntity> owner = owners.stream()
+				.filter(o -> o.getUUID().equals(ownerId) && o.isAlive())
 				.findFirst();
 		if (owner.isPresent()) {
 			return owner.get();
@@ -76,10 +84,9 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if(this.getPuppeteer() == null) {
-			this.kill();
+		if (!level().isClientSide) {
+			tickPuppeteerBond();
 		}
-
 	}
 
 	@Override
@@ -88,6 +95,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 		if (this.getOwnerUUID() != null) {
 			pCompound.putUUID("Owner", this.getOwnerUUID());
 		}
+		pCompound.putBoolean("SummonedByPuppeteer", isSummonedByPuppeteer());
 
 	}
 
@@ -96,6 +104,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 		super.defineSynchedData(builder);
 		builder.define(DATA_FLAGS_ID, (byte) 0);
 		builder.define(DATA_OWNERUUID_ID, Optional.empty());
+		builder.define(DATA_SUMMONED_BY_PUPPETEER, false);
 
 	}
 
@@ -155,6 +164,9 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 				this.setTame(false);
 			}
 		}
+		if (pCompound.contains("SummonedByPuppeteer")) {
+			setSummonedByPuppeteer(pCompound.getBoolean("SummonedByPuppeteer"));
+		}
 	}
 
 	public boolean isTame() {
@@ -187,5 +199,63 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
 	public boolean isOwnedBy(LivingEntity pEntity) {
 		return pEntity == this.getOwner();
+	}
+
+	public boolean isSummonedByPuppeteer() {
+		return this.entityData.get(DATA_SUMMONED_BY_PUPPETEER);
+	}
+
+	public void setSummonedByPuppeteer(boolean summonedByPuppeteer) {
+		this.entityData.set(DATA_SUMMONED_BY_PUPPETEER, summonedByPuppeteer);
+		if (summonedByPuppeteer) {
+			this.xpReward = 0;
+		}
+	}
+
+	@Override
+	public boolean canAttack(net.minecraft.world.entity.LivingEntity target) {
+		return !(target instanceof BloodDrunkPuppeteerEntity)
+				&& !(target instanceof EnthralledDollEntity)
+				&& super.canAttack(target);
+	}
+
+	@Override
+	protected boolean shouldDropLoot() {
+		return (BloodDrunkPuppeteerTuning.SUMMONED_DOLLS_DROP_LOOT || !isSummonedByPuppeteer())
+				&& super.shouldDropLoot();
+	}
+
+	@Override
+	protected int getBaseExperienceReward() {
+		return isSummonedByPuppeteer() ? 0 : super.getBaseExperienceReward();
+	}
+
+	private void tickPuppeteerBond() {
+		if (!isSummonedByPuppeteer()) {
+			return;
+		}
+		BloodDrunkPuppeteerEntity puppeteer = getPuppeteer();
+		if (puppeteer == null) {
+			discard();
+			return;
+		}
+		LivingEntity puppeteerTarget = puppeteer.getTarget();
+		if (puppeteerTarget != null && canAttack(puppeteerTarget)) {
+			setTarget(puppeteerTarget);
+		}
+		double distanceToPuppeteer = distanceToSqr(puppeteer);
+		double teleportDistance = BloodDrunkPuppeteerTuning.DOLL_TELEPORT_DISTANCE;
+		if (distanceToPuppeteer > teleportDistance * teleportDistance) {
+			double[] offset = BloodDrunkPuppeteerTuning.dollSpawnOffset(getId());
+			moveTo(puppeteer.getX() + offset[0], puppeteer.getY() + offset[1],
+					puppeteer.getZ() + offset[2], getYRot(), getXRot());
+			getNavigation().stop();
+			return;
+		}
+		double followDistance = BloodDrunkPuppeteerTuning.DOLL_FOLLOW_START_DISTANCE;
+		if ((getTarget() == null || !getTarget().isAlive())
+				&& distanceToPuppeteer > followDistance * followDistance) {
+			getNavigation().moveTo(puppeteer, BloodDrunkPuppeteerTuning.DOLL_FOLLOW_SPEED);
+		}
 	}
 }

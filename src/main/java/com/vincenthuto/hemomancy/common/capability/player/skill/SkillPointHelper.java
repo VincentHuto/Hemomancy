@@ -186,4 +186,22 @@ public final class SkillPointHelper {
 		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
 		return 1.0 + sp.getCurrentLevel() * 0.20;
 	}
+
+	public static int getPuppetSkeinLevel() {
+		SkillPoint sp = SkillPointInit.skill_puppet_skein;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel();
+	}
+
+	public static int getLivingSinewLevel() {
+		SkillPoint sp = SkillPointInit.skill_living_sinew;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel();
+	}
+
+	public static int getFarTetherLevel() {
+		SkillPoint sp = SkillPointInit.skill_far_tether;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel();
+	}
 }

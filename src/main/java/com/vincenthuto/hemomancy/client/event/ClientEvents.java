@@ -356,6 +356,7 @@ public class ClientEvents {
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
+            PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
         }
     }
 
@@ -477,6 +478,9 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
             event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_thrall.get(), BloodThrallRenderer::new);
+            event.registerEntityRenderer(EntityInit.veinwing_vulture.get(), VeinwingVultureRenderer::new);
+            event.registerEntityRenderer(EntityInit.marrow_spitter.get(), MarrowSpitterRenderer::new);
+            event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), GoreboundHulkRenderer::new);
             event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
             event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
             event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);

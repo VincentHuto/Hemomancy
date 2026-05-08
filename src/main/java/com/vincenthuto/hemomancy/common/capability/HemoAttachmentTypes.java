@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowled
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsContainer;
+import com.vincenthuto.hemomancy.common.capability.player.summon.KnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystem;
@@ -56,6 +57,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<KnownStillArts>> KNOWN_STILL_ARTS =
             ATTACHMENT_TYPES.register("known_still_arts",
                     () -> AttachmentType.serializable(KnownStillArts::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<KnownSummons>> KNOWN_SUMMONS =
+            ATTACHMENT_TYPES.register("known_summons",
+                    () -> AttachmentType.serializable(KnownSummons::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LiberKnowledge>> LIBER_KNOWLEDGE =
             ATTACHMENT_TYPES.register("liber_knowledge",

@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.capa.*;
 import com.vincenthuto.hemomancy.common.network.capa.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.scars.*;
+import com.vincenthuto.hemomancy.common.network.capa.summon.KnownSummonsRequestPacket;
+import com.vincenthuto.hemomancy.common.network.capa.summon.KnownSummonsServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.KnownStillArtsServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.StillArtCooldownPacket;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UpdateSelectedStillArtPacket;
@@ -126,6 +128,8 @@ public class PacketHandler {
         net.playToServer(UpdateSelectedStillArtPacket.TYPE, UpdateSelectedStillArtPacket.STREAM_CODEC, UpdateSelectedStillArtPacket::handle);
         net.playToServer(UseStillArtKeyPacket.TYPE, UseStillArtKeyPacket.STREAM_CODEC, UseStillArtKeyPacket::handle);
         net.playToClient(StillArtCooldownPacket.TYPE, StillArtCooldownPacket.STREAM_CODEC, StillArtCooldownPacket::handle);
+        net.playToServer(KnownSummonsRequestPacket.TYPE, KnownSummonsRequestPacket.STREAM_CODEC, KnownSummonsRequestPacket::handle);
+        net.playToClient(KnownSummonsServerPacket.TYPE, KnownSummonsServerPacket.STREAM_CODEC, KnownSummonsServerPacket::handle);
 
         // ── Key-bind packets ──────────────────────────────────────────────────
         net.playToServer(BloodFormationKeyPressPacket.TYPE, BloodFormationKeyPressPacket.STREAM_CODEC, BloodFormationKeyPressPacket::handle);

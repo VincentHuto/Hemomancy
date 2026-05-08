@@ -51,6 +51,12 @@
         "maxCount": 2
       },
       {
+        "type": "hemomancy:blood_drunk_puppeteer",
+        "weight": 3,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
         "type": "minecraft:ghast",
         "weight": 10,
         "minCount": 1,

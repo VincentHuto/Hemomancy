@@ -232,6 +232,27 @@ public class EntityInit {
                             .sized(0.6F, 0.7F)
                             .build(Hemomancy.rloc("blood_thrall").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<VeinwingVultureEntity>> veinwing_vulture = ENTITY_TYPES
+            .register("veinwing_vulture",
+                    () -> EntityType.Builder.<VeinwingVultureEntity>of(VeinwingVultureEntity::new, MobCategory.CREATURE)
+                            .sized(0.5F, 0.8F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("veinwing_vulture").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MarrowSpitterEntity>> marrow_spitter = ENTITY_TYPES
+            .register("marrow_spitter",
+                    () -> EntityType.Builder.<MarrowSpitterEntity>of(MarrowSpitterEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.8F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("marrow_spitter").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<GoreboundHulkEntity>> gorebound_hulk = ENTITY_TYPES
+            .register("gorebound_hulk",
+                    () -> EntityType.Builder.<GoreboundHulkEntity>of(GoreboundHulkEntity::new, MobCategory.CREATURE)
+                            .sized(0.9F, 2.4F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("gorebound_hulk").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<DrudgeEntity>> drudge = ENTITY_TYPES
             .register("drudge",
                     () -> EntityType.Builder.<DrudgeEntity>of(DrudgeEntity::new, MobCategory.CREATURE)
@@ -512,6 +533,9 @@ public class EntityInit {
         event.register(EntityInit.erythromycelium_eruptus.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ErythromyceliumEruptusEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.blood_drunk_puppeteer.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BloodDrunkPuppeteerEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.chthonian.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChthonianEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -549,6 +573,9 @@ public class EntityInit {
         event.put(EntityInit.morphling_polyp.get(), MorphlingPolypEntity.setAttributes().build());
         event.put(EntityInit.enthralled_doll.get(), EnthralledDollEntity.setAttributes().build());
         event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());
+        event.put(EntityInit.veinwing_vulture.get(), VeinwingVultureEntity.setAttributes().build());
+        event.put(EntityInit.marrow_spitter.get(), MarrowSpitterEntity.setAttributes().build());
+        event.put(EntityInit.gorebound_hulk.get(), GoreboundHulkEntity.setAttributes().build());
         event.put(EntityInit.drudge.get(), DrudgeEntity.setAttributes().build());
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.unstained_guardian.get(), UnstainedGuardianEntity.setAttributes().build());

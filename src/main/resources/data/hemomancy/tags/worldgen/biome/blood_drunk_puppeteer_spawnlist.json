@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:dark_forest",
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "hemomancy:sporecrown_thicket",
+    "hemomancy:hemorrhagic_plateau"
+  ]
+}

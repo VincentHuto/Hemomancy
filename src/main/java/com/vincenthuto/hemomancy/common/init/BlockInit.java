@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.*;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.PuppeteersSpindleBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
@@ -483,6 +484,9 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
 			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> puppeteers_spindle = MODELEDBLOCKS
+			.register("puppeteers_spindle", () -> new PuppeteersSpindleBlock(BlockBehaviour.Properties.of()
+					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.WOOD).noOcclusion()));
 	public static final DeferredHolder<Block, Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
 			() -> new EarthenVeinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.STONE)));
