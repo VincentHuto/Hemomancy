@@ -6,7 +6,8 @@
 > **2026-05-04 Machine Access Update:** `MachineAccessEvents` blocks right-click access to selected Harbinger/Unstained machines until that specific block item has been crafted by the player. Locked machines can still be broken, but drop no loot.
 > **2026-05-07 Mycelial Lantern Update:** Adds the Degree 5 Mycelial Lantern enzyme-fruiting machine, all eight aligned spore culture items, the `enzyme_fruiting` recipe type and JSON data, reusable blood-reservoir transfer helpers, reusable blood/white-humor GUI bar widgets, Pallid Retort white humor widget extraction, and Mycelial Lantern entity-model rendering with Blockbench source.
 > **2026-05-07 Early Memory and Mnemonist Update:** Adds shared manipulation rank gates, crude-memory starter learning with auto-equip, Degree 1 default utility manipulations, curated starter crude memories, and the Harbinger Mnemonist outpost guide/reward NPC.
-> **Last Updated:** 2026-05-07 documentation cleanup + early memory/Mnemonist pass. Current code audit refreshed capabilities/attachments, NeoForge payload networking, active vs dormant config status, sound counts, and WIP status labels. Current code remains authoritative when older notes disagree.
+> **2026-05-08 Direct Blood Routing Update:** Adds `HematicSutureNeedleItem`, `HematicSutureNodeBlock`, `BloodRoutingSavedData`, and the `common.routing` API for direct pull-based machine links. Degree 3 nearby routing draws from equipped open Blood Gourds before player blood with safety floors; Degree 5 sanctum routing can enable opt-in bloodline support; Blood Thralls courier capped amounts and Drudges tend linked machines without generating blood.
+> **Last Updated:** 2026-05-08 direct blood routing pass. Current code audit refreshed capabilities/attachments, NeoForge payload networking, active vs dormant config status, sound counts, and WIP status labels. Current code remains authoritative when older notes disagree.
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -19,7 +20,7 @@
 
 Hemomancy is a blood magic mod built around the *quality* of blood manipulation rather than just quantity. It covers topics of gore, magic, exaggerated biology, fungi, secret societies, and cosmic horror. The power to control blood is the result of a **special fungal infection** — a sentient extraterrestrial fungus that deliberately broke off from a larger hive-mind organism (itself the physical manifestation of an outer-god-type entity) and landed on the Minecraft world, slowly taking hold.
 
-> **Current Gameplay State Snapshot (2026-04-28 audit):**
+> **Current Gameplay State Snapshot (2026-05-08 audit):**
 > - The Harbinger endgame loop is now explicitly wired through Qliphoth Communion + Apotheos gating, with the full Harbinger advancement chain implemented in data + programmatic grant flow.
 > - Blood Structure and Cardinal Rite JSONs now use explicit `required_degree` progression gates. Harbinger recipes compare against the player's `IInitiatoryDegree`; Unstained recipes compare against the numbered Unstained progression stage from `HemoCapabilityAccess.getPlayerUnstainedLevel`. Blood cost and `CardinalRiteType`/minor-lesser-greater-grand form no longer imply progression access.
 > - Cardinal Rite JSONs also carry a `rankup` boolean. Degree-advancement rites use it for red/gold rank-up highlighting in the Rites tab, and server activation prevents already-higher-rank players from redundantly starting rank-up rites.
@@ -36,6 +37,7 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - Late-game passive enzyme production is implemented through the **Mycelial Lantern**: a Degree 5 Blood Structure machine that holds one reusable aligned spore culture, consumes stored blood over time, and slowly fruits the matching enzyme without consuming the culture.
 > - All eight aligned spore cultures are registered as items (`vivacious`, `fervent`, `neurotic`, `incandescent`, `ruinous`, `frigid`, `ferric`, `umbral`) and are crafted shapelessly from matching enzyme + Spore Sac + Hyphal Substrate.
 > - Blood-reservoir machines now share the `IBloodReservoirContainer` / `BloodContainerTransfer` helper path for filled blood containers, empty flask output, and Blood Gourd transfer math. Screen-side reservoir bars now use reusable `BloodVolumeBarWidget` and `WhiteHumorBarWidget` helpers where applicable.
+> - Direct Blood Routing is implemented through Suture Needle links and optional Hematic Suture Nodes. Links store owner/mode/permissions, not blood; machines pull only toward a small working reserve, using open equipped gourds first, then safe player blood, then sanctum-gated bloodline pool access when authorized.
 > - NPC item inquiries moved out to datapack JSON under `data/hemomancy/dialogue_inquiry/<npc>/<item_namespace>/<item>.json`, loaded by `ItemInquiryLoader` with optional degree/purity conditions.
 > - Early blood manipulation learning now has a crude-memory lane: crude memory shards teach and auto-equip weak starter manipulations without requiring the Mnemonic Reliquary, while full Blood Memory items and Somatic Loom recipes remain the refined midgame path.
 > - Harbinger Outposts now include a **Harbinger Mnemonist**, a non-hostile memory mentor who explains crude memories, active manipulation slots, the Mnemonic Reliquary, and the Somatic Loom, and gives eligible Degree 1+ Harbingers one starter crude memory choice.
@@ -53,6 +55,8 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
    - 3.6 [The Fungal Spine and The Realm Beyond](#36-the-fungal-spine-and-the-realm-beyond)
    - 3.7 [The Founding Sanctum (Degree 5)](#37-the-founding-sanctum-degree-5)
    - 3.8 [The Saints System (Degree 3–4)](#38-the-saints-system-degree-34)
+   - 3.9 [Qliphoth Communion (Degree 7 -> 8 Prerequisites)](#39-qliphoth-communion-degree-7--8-prerequisites)
+   - 3.10 [Direct Blood Routing (Degree 3-5)](#310-direct-blood-routing-degree-3-5)
 4. [The Unstained Path (Anti-Hemomancy)](#4-the-unstained-path-anti-hemomancy)
 5. [Mutual Exclusion of Paths](#5-mutual-exclusion-of-paths)
 6. [Blood Manipulations](#6-blood-manipulations)
@@ -108,7 +112,7 @@ All player-attached NeoForge attachments and exposed capabilities are registered
 
 | Capability | Interface | Purpose |
 |---|---|---|
-| Blood Volume | `IBloodVolume` | Current/max blood, active state, bloodline link, trickle/auto-draw settings, blood debt tracking (Hemorath encounter) |
+| Blood Volume | `IBloodVolume` | Current/max blood, active state, bloodline link, trickle/auto-draw settings, direct-routing bloodline opt-in, blood debt tracking (Hemorath encounter) |
 | Known Still Arts | `IKnownStillArts` | Set of Still Arts granted by Our Lady / Unstained rites; selected art; synced via `KnownStillArtsServerPacket` |
 | Known Summons | `IKnownSummons` | Permanently unlocked puppeteer summon shapes; synced via `KnownSummonsServerPacket` and refreshed on progress-screen open |
 | Blood Tendency | `IBloodTendency` | 8-axis alignment scores (kinship with blood tendencies) |
@@ -139,6 +143,7 @@ The default/primary progression. The player embraces hemomancy and rises through
 - Stored in Blood Gourds for portable use; equipped gourds receive overflow blood from valid blooded kills after the player is topped off
 - Direct emergency restores (`blood_rock`, `bloody_flask`, `vitality_chalice`) apply **Blood Drunkenness** for 3 minutes, stacking to amplifier 3 and adding +15%/+30%/+45%/+60% manipulation blood cost; amplifier 3 also increases manipulation cooldowns by 25%
 - Has **trickle donation** and **auto-draw** settings for Bloodline pool interaction
+- Has a **blood routing opt-in** flag used by sanctum-only direct routing when a bloodline member allows their membership to authorize shared-pool machine links
 - Has **Blood Debt Tracking** for the Hemorath saint encounter: `addDamage(amount)`, `addBloodSpend(amount)`, `consumeDebt()`, `getBloodDebt()`, `resetBloodDebt()` — debt accumulates from manipulation casts and direct damage during the Hemorath fight, then is collected on fight resolution
 
 ### 3.2 Initiatory Degrees
@@ -425,6 +430,42 @@ When degree rites actually advance the player to Degrees 5, 6, and 7, `FungalWhi
 | `pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
 | `pome_total_consumed` | Int | Total pome counter for HUD display, capped at 9 |
 | `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` — set when Archon resolves the Fungal Dimension choice fork |
+
+---
+
+### 3.10 Direct Blood Routing (Degree 3-5)
+
+Direct Blood Routing is the no-basin automation model for blood-fed machines. It intentionally avoids a NeoForge blood fluid, external pipe compatibility, and new bulk blood storage blocks. Links persist owner, mode, bloodline permission, and target working reserve in `BloodRoutingSavedData`; they do not persist blood.
+
+**Core routing API:**
+- `IBloodSourceContract` models a permitted source contract that can validate ownership, range, and maximum draw rate.
+- Current source contracts are `EquippedGourdSource`, `LinkedPlayerSource`, `BloodlineSource`, `ThrallCourierSource`, and `DrudgeTenderSource`.
+- `IBloodRoutingTarget` lets a machine request only current recipe demand or a capped working reserve.
+- `BloodRoutingHelper` performs pull-based transfer, source priority, safety floors, bloodline checks, and target sync.
+- Existing `IBloodTile` / `IBloodReservoirContainer` reservoirs remain valid targets. If a block entity does not implement `IBloodRoutingTarget`, routing fills only toward `BloodRoutingRules.DEFAULT_WORKING_RESERVE` (600 blood), not the whole reservoir.
+
+**Hematic Suture Needle:**
+- Registry item: `hematic_suture_needle`; class: `HematicSutureNeedleItem`.
+- Degree 3+ can bind a blood-capable block entity or a `HematicSutureNodeBlockEntity` to the player in nearby mode.
+- Sneak-use on the player's own bound link cycles modes: nearby -> sanctum -> sanctum + bloodline -> nearby. Sanctum mode requires Degree 5 and the link position to be inside the owner's Founding Sanctum radius.
+- Sneak-use in air toggles the player's `IBloodVolume#isBloodRoutingOptInEnabled()` flag for bloodline routing permission.
+
+**Source priority and limits:**
+- Nearby links require the bound player to be online, alive, active in `IBloodVolume`, Degree 3+, in the same level, and within `BloodRoutingHelper.NEARBY_RANGE` (16 blocks).
+- Sanctum links require Degree 5+ and a link position inside the owner's Founding Sanctum.
+- Routing ticks every 10 ticks with a default pass budget of 100 blood (`DEFAULT_MAX_RATE_PER_TICK` 10 x interval).
+- Source order is: open equipped Blood Gourd first (scar slot, main hand, then offhand, using that gourd's tier transfer rate), then owner blood at up to 80 blood per pass while staying above the 50% safety floor, then optional bloodline pool at up to 60 blood per pass.
+- Bloodline draw only works in sanctum mode with bloodline mode enabled. The linked player must belong to a valid bloodline, the shared pool must contain blood, and the linked player must be the bloodline leader or have their routing opt-in enabled.
+
+**Hematic Suture Node:**
+- Registry block: `hematic_suture_node`; block entity: `HematicSutureNodeBlockEntity`.
+- Optional visible anchor for longer or clearer sanctum infrastructure. Machines can still be bound directly for simple setups.
+- Holds no blood capability and no persistent reservoir; it emits subtle red dust routing particles when it moves blood.
+- Every routing interval it attempts to feed adjacent linked targets from the same saved link budget.
+
+**Servitor behavior:**
+- `BloodThrallEntity` can bind a direct-routing source/node, physically carry a capped amount of blood, and deposit into a destination reservoir. It draws through the same linked source contracts, so it cannot duplicate blood or bypass safety limits.
+- `DrudgeTenderSource` lets Drudges near their Semi-Sentient Construct tend nearby linked machines. A Drudge scans saved Suture links around its SSC, spends internal charge only when routing succeeds, and does not generate or bulk-store blood for machines.
 
 ---
 
@@ -908,6 +949,7 @@ A multiplayer social system where players form blood-bound groups.
 - **Shared Pool:** Each member contributes 5,000 blood to a communal pool
 - **Trickle Donation:** Optionally auto-donate blood to the shared pool at a configurable rate
 - **Auto-Draw:** Optionally auto-draw from the shared pool when personal blood falls below a threshold
+- **Direct Routing Contribution:** Sanctum-only routing can draw from the shared pool when the linked player enables bloodline mode. The current implementation requires the linked player to be the bloodline leader or to have their routing opt-in enabled before the pool is used.
 - **Member Expulsion:** Bloodline progenitors can expel member players through `BloodlinePoolScreen` (server-validated via `PacketKickBloodlinePlayer`)
 - **Persistence:** Bloodline data is stored in world-level `BloodlineSavedData`
 - **Monitoring:** The **Bloodline Pool Monitor** item shows pool status; the **BloodlinePoolScreen** provides a GUI
@@ -1239,6 +1281,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | **Hematic Field Ink** | Harbinger Field Notes refill item crafted from Dicentra Sap, Hematic Iron Powder, a water bottle, and an ink sac. |
 | **Pale Field Ink** | Unstained Field Notes refill item crafted from Tears of Silthmere, Pale Distillate, a water bottle, and an ink sac. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/unsigned_ancestral_ledger.png) Unsigned Ancestral Ledger | Creates/joins bloodlines |
+| **Hematic Suture Needle** | Direct blood routing tool. Degree 3+ binds blood-capable machines or Hematic Suture Nodes to the player; sneak-use on a bound link cycles nearby/sanctum/bloodline modes, and sneak-use in air toggles the player's bloodline routing opt-in. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/engram_stamp.png) Engram Stamp | Engram-related tool. Right-click on a solid surface (face-sturdy from above, empty block above) to place an engram block; right-click on an existing engram block to cycle its character. Consumes 1 durability per use. |
 | **Scratch-Engraving (no stamp)** | Emergency / early-game method. Hold a sharp shard — `hemomancy:vivianite_cluster`, `minecraft:flint`, `minecraft:quartz`, or `hutoslib:obsidian_flakes` — in the main hand and right-click any solid surface (face-sturdy from above, empty block above). Places a random-character engram block at the cost of **1 heart (2 HP)** of generic damage. Creative players receive the engram without taking damage. Handled by `ScratchEngramHandler` (`@EventBusSubscriber` on `PlayerInteractEvent.RightClickBlock`). |
 | ![](../src/main/resources/assets/hemomancy/textures/item/vivianite_scalpel.png) Vivianite Scalpel | Vivianite-based tool |
@@ -1438,7 +1481,8 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Central interaction block for the Unstained path. Four recognized interaction modes (server-side only, degree-gated at > Illuminatus): **Hemolytic Solution** — first use begins purification (`begunPurification = true`, +5 purity, resets Harbinger degree); subsequent uses add +10 purity per flask while unpurified. **Consecrated Copper Ingot** — requires `isPurified() == true` and `!hasClarityUnlocked()`; performs the Rite of Clarity: sets `clarityUnlocked = true`, disables blood magic permanently (`IBloodVolume.active = false`), grants first Still Art (Silver Rebuke), runs `enforceHarbingerResetOnClarity()`, and syncs both capabilities. **Hemolytic Plating** — requires `hasClarityUnlocked()`; adds +15 clarity per plating while not yet enlightened. **Empty hand** — prints current purity stage + percent; if clarity is unlocked, also prints clarity stage + percent. Scrying Dish item converts the podium into a Scrying Podium. |
 | **Altar of Cleansing**               | `AltarOfCleansingBlockEntity`              | Sacred altar of Our Lady of Still Waters — grants one-time purity boost with Tears of Silthmere; accepts Lethean Poppy Wreaths and Silver Chalices for repeatable offerings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| **Semi-Sentient Construct**          | `SemiSentientConstructBlockEntity`         | Blood construct-related block                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **Semi-Sentient Construct**          | `SemiSentientConstructBlockEntity`         | Blood construct-related block and Drudge home anchor; nearby Drudges can tend linked direct-routing machines around their SSC without creating blood                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Hematic Suture Node**              | `HematicSutureNodeBlockEntity`             | Optional direct-routing anchor. Stores its link in `BloodRoutingSavedData`, holds no persistent blood/reservoir, emits red routing particles, and routes adjacent linked machines from the bound source contract                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | **Earthen Vein**                     | `EarthenVeinBlockEntity`                   | Vein location marker for teleportation (Venous Travel) ![](../src/main/resources/assets/hemomancy/textures/entity/earthen_vein/model_earthen_vein.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | **Iron Brazier**                     | `IronBrazierBlockEntity`                   | Decorative/functional brazier                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | **Suspended Blood Crystal**          | `SuspendedBloodCrystalBlockEntity`         | Floating blood crystal display ![](../src/main/resources/assets/hemomancy/textures/entity/model_suspended_blood_crystal.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -1823,7 +1867,7 @@ The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/
 
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
-| **Blood Thrall** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_thrall/blood_thrall.png) | Creature | Small (0.6×0.7), summoned blood transport creature |
+| **Blood Thrall** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_thrall/blood_thrall.png) | Creature | Small (0.6×0.7), summoned blood transport creature. Can bind direct-routing sources/nodes, carry a capped amount, and deposit into target reservoirs without duplicating source blood. |
 | **Blood Drunk Puppeteer** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png) | Monster | Rare blood-themed hostile in dark/spooky and fungal biomes; summons four bonded Enthralled Dolls, drops Puppeteering Thread, and is a bloody-jug drop candidate |
 | **Enthralled Doll** | | Monster | Puppeteer-bound support minion. Summoned dolls follow/assist their puppeteer and vanish without loot if the owner is gone |
 | **Unstained Zealot** | ![](../src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
@@ -2344,14 +2388,14 @@ This section now separates current status from older audit history. "Implemented
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 18 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting |
+| Implemented | Entity loot JSONs, all 18 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta dedicated art/rendering and final combat polish, JEI display wiring for Mycelial Lantern |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
-| Planned | Placeable blood fluid, forced manipulation rank-up rituals, deep-sea iron snail, Ghost Pipe Unstained material role, Cleansed Stone and Pallid Lantern recipes |
+| Planned | Direct-routing polish, forced manipulation rank-up rituals, deep-sea iron snail, Ghost Pipe Unstained material role, Cleansed Stone and Pallid Lantern recipes |
 
 - **Entity Loot Tables** — **Implemented:** 37 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum / Liber Immaculatus** — `HemoProgressionScreen.setupEntries()` is still commented out (Java renderer WIP). However, the HutosLib JSON book framework is wired: the `sanctumsanguinium` book folder now has normal lore/mechanics chapters, and the `liberimmaculatus` book folder has 4 chapters (intro, sacred_tools, our_lady, the_path) with 12 pages covering the full Unstained path. The Field Notes / memo slice is implemented: `memo_capture:<id>` dialogue events write memo IDs into Field Notes, and the Dictation Table dictates those IDs into the player's `LiberKnowledge` attachment rather than into the Liber item stack. Field Notes are now ink-bound: Hematic Field Ink captures Harbinger memos for Liber Sanguinum, while Pale Field Ink captures Unstained memos for Liber Immaculatus. `LiberKnowledge` stores `KnownMemos`, `UnlockedLiberEntries`, and per-entry discovery sources, syncs to clients with `PacketSyncLiberKnowledge`, and can be granted through `LiberKnowledgeHelper` by memos, advancements, rites, item pickups, degree changes, dialogue, or other future triggers. `LiberEntryDefinitions` is the central code-side page map: it lists visible book entries and maps initial rites, Harbinger degree advancements, Unstained milestones, selected item pickups, and `liber_unlock:<entry_id>` dialogue events to normal book page IDs. The Liber items now behave like personal viewers/keys: borrowed books show the reader's own unlocked pages, not the owner's. Legacy stack data is migrated into the player attachment when an old Liber is used or placed for dictation. `MemoBookFilter` treats `LiberEntryDefinitions` as the source of visible pages for both Liber books; pages not mapped by a definition remain hidden, and chapters with zero unlocked pages are omitted. Current memos include `first_rite_notes`, `pale_lady_notes`, and Harbinger fungal whisper memos (`fungal_whisper_adept`, `fungal_whisper_illuminatus`, `fungal_whisper_sanctified`, `fungal_whisper_archon`, `fungal_whisper_truth`, `qliphoth_communion`) that unlock the Hyphae, Entity, Truth, and Qliphoth Liber Sanguinum pages through Hematic Field Ink. Remaining WIP: re-enable `setupEntries()` if that older renderer is revived, move entry definitions to data-driven JSON if desired, and author more entry definitions across existing chapters.
-- **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
+- **Blood Fluid** (`FluidInit`) — Legacy/placeable blood fluid remains commented out and is superseded by the current direct-routing design; it is not part of the active automation plan.
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Skill Effect Wiring** — **Implemented:** All 21 skills in `SkillPointHelper` have helper methods and are fully wired into event handlers. Iron Will wired in `BloodVolumeEvents.onPlayerDamaged`; Scar Affinity/Resonance/Mastery wired in `ScarEntityEventHandler` and `ItemScar`; puppeteer summon cap/health/damage/range are wired through the Marionette Crossbar and bound summon behavior.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
@@ -2364,6 +2408,7 @@ This section now separates current status from older audit history. "Implemented
 - **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipe/incubator/`.
 - **Fungal Scar Cultivation** — **Implemented:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
 - **Mycelial Lantern / Enzyme Fruiting** — **Implemented:** `MycelialLanternBlockEntity`, `EnzymeFruitingRecipe`, `EnzymeFruitingRecipeSerializer`, eight spore culture items, eight enzyme-fruiting JSON recipes, Blood Structure recipe, menu/screen, block entity renderer, item renderer, and Blockbench source are present. **Remaining polish:** `EnzymeFruitingRecipeCategory` exists but `JEIPlugin` is not yet registering it, so JEI display/catalyst wiring still needs a pass.
+- **Direct Blood Routing** — **Implemented:** `HematicSutureNeedleItem`, `HematicSutureNodeBlockEntity`, `BloodRoutingSavedData`, `IBloodSourceContract`, `IBloodRoutingTarget`, and `BloodRoutingHelper` provide pull-based machine feeding without a basin, fluid, or bulk storage block. Current behavior supports nearby personal/gourd links, Degree 5 sanctum links, optional bloodline-pool draw with leader/opt-in checks, Blood Thrall courier draw/deposit, and Drudge tendering around an SSC.
 - **Mnemonic Reliquary** — New functional block with animated lid (open/close), custom 3D block entity renderer (`MnemonicReliquaryRenderer`), item renderer (`MnemonicReliquaryItemRenderer`), block model (`MnemonicReliquaryModel`), menu (`MnemonicReliquaryMenu`), and screen (`MnemonicReliquaryScreen`). Tracks open count and syncs lid angle via block events.
 - **Suspended Cleansed Blood Crystal** — Purified variant of the Suspended Blood Crystal with custom block, block entity (random time offset for desynchronized animations), block item with custom renderer, 3D model, and blockstate.
 - **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
@@ -2566,6 +2611,8 @@ Notable packets:
 - `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Mnemonist, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)
 - `PlaceStructurePacket` — Debug structure spawner
 
+Direct Blood Routing adds no dedicated payload. Link state persists in `BloodRoutingSavedData`, node visuals are server-tick/particle driven, and source drains reuse existing player volume sync (`BloodVolumeServerPacket`) after transfer.
+
 ---
 
 ## 33. Sound Events
@@ -2608,7 +2655,7 @@ Registered in `ParticleInit`:
 
 ## 35. Drudge System
 
-*Last Updated: 2026-05-07*
+*Last Updated: 2026-05-08*
 
 The Drudge is a persistent, player-owned semi-organic construct that holds a single **Blood Memory** (`BloodManipulation`) and executes it autonomously within a leash radius anchored to a **Semi-Sentient Construct (SSC)** block. Unlike the Blood Thrall (a transient courier), the Drudge is a long-term servant that "learns a job" and keeps doing it.
 
@@ -2630,6 +2677,8 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 - Health: 20 HP, Speed: 0.22, Armor: 4, Attack: 3, Follow Range: 32
 
 **Blood economy:** The Drudge has an internal blood pool (`bloodCharge`, max 3 000 mL). The SSC refills it at 50 mL/tick when the Drudge is within 3 blocks of the SSC. The Drudge does **not** draw from the player's `IBloodVolume` cap in real time.
+
+**Direct routing tender behavior:** Drudges near their SSC scan nearby saved Suture links every 40 ticks and can feed linked machines through `DrudgeTenderSource`. A successful tender action spends 20 internal blood charge, respects the linked source contract and target request, and does not create blood or act as bulk storage.
 
 **Action cost:** Each manipulation fires at `cost × DRUDGE_ACTION_COST_MULTIPLIER` (default 1.5×) and a cooldown of `cooldown × DRUDGE_COOLDOWN_MULTIPLIER` (default 2×).
 

@@ -18,6 +18,7 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 	private double trickleRate = 0.5;
 	private boolean autoDrawEnabled = false;
 	private double autoDrawThreshold = 0.25;
+	private boolean bloodRoutingOptInEnabled = false;
 
 	/***
 	 * only use if you want to explicitly bypass max volume limits
@@ -227,6 +228,16 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 	}
 
 	@Override
+	public boolean isBloodRoutingOptInEnabled() {
+		return bloodRoutingOptInEnabled;
+	}
+
+	@Override
+	public void setBloodRoutingOptInEnabled(boolean enabled) {
+		this.bloodRoutingOptInEnabled = enabled;
+	}
+
+	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag entry = new CompoundTag();
 		entry.putBoolean("Active", active);
@@ -237,6 +248,7 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 		entry.putDouble("TrickleRate", trickleRate);
 		entry.putBoolean("AutoDrawEnabled", autoDrawEnabled);
 		entry.putDouble("AutoDrawThreshold", autoDrawThreshold);
+		entry.putBoolean("BloodRoutingOptInEnabled", bloodRoutingOptInEnabled);
 		return entry;
 	}
 
@@ -252,6 +264,7 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 			trickleRate = entry.getDouble("TrickleRate");
 			autoDrawEnabled = entry.getBoolean("AutoDrawEnabled");
 			autoDrawThreshold = entry.getDouble("AutoDrawThreshold");
+			bloodRoutingOptInEnabled = entry.getBoolean("BloodRoutingOptInEnabled");
 		}
 	}
 

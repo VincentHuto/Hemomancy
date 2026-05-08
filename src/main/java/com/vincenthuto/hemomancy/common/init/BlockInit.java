@@ -93,6 +93,15 @@ public class BlockInit {
 						.lightLevel(state -> 4)
 						.noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> hematic_suture_node = MODELEDBLOCKS.register("hematic_suture_node",
+			() -> new HematicSutureNodeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.requiresCorrectToolForDrops()
+					.strength(2.0f, 6.0f)
+					.sound(SoundType.BONE_BLOCK)
+					.lightLevel(state -> 3)
+					.noOcclusion()));
+
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",
 			() -> new LiquidBlock(

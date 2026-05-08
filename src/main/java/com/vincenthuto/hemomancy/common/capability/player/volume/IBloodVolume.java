@@ -74,4 +74,8 @@ public interface IBloodVolume {
 
 	public void setAutoDrawThreshold(double threshold);
 
+	public boolean isBloodRoutingOptInEnabled();
+
+	public void setBloodRoutingOptInEnabled(boolean enabled);
+
 }

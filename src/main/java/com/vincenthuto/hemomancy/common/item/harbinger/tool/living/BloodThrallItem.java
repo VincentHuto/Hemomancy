@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.functional.HematicSutureNodeBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -55,11 +56,10 @@ public class BloodThrallItem extends Item {
         BlockEntity be = level.getBlockEntity(pos);
 
         // ── Shift+click on an IBloodTile → bind source/dest ──
-        if (player.isShiftKeyDown() && be != null
-                && HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
+        if (player.isShiftKeyDown() && be != null) {
             CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
-            if (!tag.contains(TAG_SOURCE)) {
+            if (!tag.contains(TAG_SOURCE) && isValidThrallSource(be)) {
                 // First bind → source
                 tag.put(TAG_SOURCE, NbtUtils.writeBlockPos(pos));
                 tag.remove(TAG_DEST); // reset dest if re-binding
@@ -70,7 +70,7 @@ public class BloodThrallItem extends Item {
                 }
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                 return InteractionResult.sidedSuccess(level.isClientSide);
-            } else {
+            } else if (tag.contains(TAG_SOURCE) && HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
                 // Second bind → destination
                 BlockPos src = NbtUtils.readBlockPos(tag, TAG_SOURCE).orElse(BlockPos.ZERO);
                 if (src.equals(pos)) {
@@ -168,5 +168,9 @@ public class BloodThrallItem extends Item {
     public boolean isFoil(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return tag.contains(TAG_SOURCE) && tag.contains(TAG_DEST);
+    }
+
+    private boolean isValidThrallSource(BlockEntity be) {
+        return be instanceof HematicSutureNodeBlockEntity || HemoCapabilityAccess.getBloodVolume(be).isPresent();
     }
 }

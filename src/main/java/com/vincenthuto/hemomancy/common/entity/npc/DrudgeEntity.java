@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.routing.DrudgeTenderSource;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -90,6 +92,10 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
 
     /** Ticks the drudge has spent unable to return to the SSC (rogue timer). */
     private int rogueTimer = 0;
+    private int routingTenderTimer = 0;
+    private static final int ROUTING_TEND_INTERVAL = 40;
+    private static final double ROUTING_TEND_RANGE = 12.0;
+    private static final float ROUTING_TEND_CHARGE_COST = 20f;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -302,10 +308,26 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                 // Far beyond leash range — something went wrong; go rogue
                 setRogue(true);
             }
+            tendNearbyBloodRoutes(home);
         }
     }
 
     // ── Interaction ───────────────────────────────────────────────────────────
+
+    private void tendNearbyBloodRoutes(BlockPos home) {
+        if (--routingTenderTimer > 0 || getBloodCharge() < ROUTING_TEND_CHARGE_COST) {
+            return;
+        }
+        routingTenderTimer = ROUTING_TEND_INTERVAL;
+        if (!(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        double routed = DrudgeTenderSource.tendNearbyRoutes(serverLevel, home, getOwnerUUID(), ROUTING_TEND_RANGE);
+        if (routed > 0) {
+            drainBloodCharge(ROUTING_TEND_CHARGE_COST);
+        }
+    }
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {

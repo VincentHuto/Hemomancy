@@ -5,6 +5,10 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.routing.BloodRoutingHelper;
+import com.vincenthuto.hemomancy.common.routing.BloodRoutingSavedData;
+import com.vincenthuto.hemomancy.common.routing.DirectBloodLinkData;
+import com.vincenthuto.hemomancy.common.routing.ThrallCourierSource;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -13,6 +17,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -474,6 +479,20 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         private boolean tryAbsorb() {
             BlockEntity be = thrall.level().getBlockEntity(thrall.getSourcePos());
             if (be == null) return false;
+
+            if (thrall.level() instanceof ServerLevel serverLevel) {
+                DirectBloodLinkData link = BloodRoutingSavedData.get(serverLevel).getLink(thrall.getSourcePos());
+                if (link != null) {
+                    float space = MAX_CARRY - thrall.getCarriedBlood();
+                    double drawn = BloodRoutingHelper.drawForCourier(serverLevel, thrall.getSourcePos(), link,
+                            space, Math.min(TRANSFER_RATE, space));
+                    if (drawn > 0) {
+                        thrall.setCarriedBlood(thrall.getCarriedBlood() + (float) drawn);
+                        return true;
+                    }
+                }
+            }
+
             IBloodVolume srcVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (srcVol == null) return false;
 
@@ -497,12 +516,10 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             IBloodVolume destVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (destVol == null) return false;
 
-            float toTransfer = Math.min(TRANSFER_RATE, thrall.getCarriedBlood());
-            if (toTransfer <= 0) return false;
-
-            if (!destVol.isFull()) {
-                destVol.fill(toTransfer);
-                thrall.setCarriedBlood(thrall.getCarriedBlood() - toTransfer);
+            ThrallCourierSource courier = new ThrallCourierSource(thrall.getCarriedBlood(), TRANSFER_RATE);
+            double transferred = courier.transferTo(destVol, TRANSFER_RATE);
+            if (transferred > 0) {
+                thrall.setCarriedBlood((float) courier.getCarriedBlood());
                 if (be instanceof IBloodTile bt) bt.sendUpdates();
                 return true;
             }

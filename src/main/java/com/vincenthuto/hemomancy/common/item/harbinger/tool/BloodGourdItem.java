@@ -79,6 +79,10 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 		return tier.getKillSiphonMultiplier();
 	}
 
+	public double getTransferRate() {
+		return tier.getTransferRate();
+	}
+
 	@Override
 	public ScarType getScarType() {
 		return ScarType.GOURD;

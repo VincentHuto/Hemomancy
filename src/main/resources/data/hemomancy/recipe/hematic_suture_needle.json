@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  I",
+    " T ",
+    "B  "
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "T": {
+      "item": "hemomancy:puppeteering_thread"
+    },
+    "B": {
+      "item": "hemomancy:blood_crystal_shard"
+    }
+  },
+  "result": {
+    "id": "hemomancy:hematic_suture_needle"
+  }
+}

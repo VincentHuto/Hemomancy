@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ITI",
+    "SCS",
+    "ITI"
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "T": {
+      "item": "hemomancy:puppeteering_thread"
+    },
+    "S": {
+      "item": "hemomancy:sanguine_formation"
+    },
+    "C": {
+      "item": "hemomancy:chiseled_hematic_iron_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:hematic_suture_node"
+  }
+}

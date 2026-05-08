@@ -18,6 +18,7 @@ public class ItemStackBloodVolume implements IBloodVolume {
 	private double trickleRate = 0.5;
 	private boolean autoDrawEnabled;
 	private double autoDrawThreshold = 0.25;
+	private boolean bloodRoutingOptInEnabled;
 
 	public ItemStackBloodVolume(ItemStack stack, double defaultMaxVolume) {
 		this.stack = stack;
@@ -236,5 +237,15 @@ public class ItemStackBloodVolume implements IBloodVolume {
 	@Override
 	public void setAutoDrawThreshold(double threshold) {
 		this.autoDrawThreshold = threshold;
+	}
+
+	@Override
+	public boolean isBloodRoutingOptInEnabled() {
+		return bloodRoutingOptInEnabled;
+	}
+
+	@Override
+	public void setBloodRoutingOptInEnabled(boolean enabled) {
+		this.bloodRoutingOptInEnabled = enabled;
 	}
 }

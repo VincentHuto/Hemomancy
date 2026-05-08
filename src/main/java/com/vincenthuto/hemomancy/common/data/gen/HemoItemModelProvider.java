@@ -68,6 +68,10 @@ public class HemoItemModelProvider extends ItemModelProvider {
 			} else if (item.get() == ItemInit.hemolymphopoda_headpiece.get()) {
 				getBuilder("hemolymphopoda_headpiece")
 						.parent(new ModelFile.UncheckedModelFile("builtin/entity"));
+			} else if (item.get() == ItemInit.hematic_suture_needle.get()) {
+				getBuilder("hematic_suture_needle")
+						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+						.texture("layer0", modLoc("item/blood_projection"));
 			} else {
 				basicItem(item.get());
 			}

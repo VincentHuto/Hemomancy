@@ -150,6 +150,10 @@ public class BlockEntityInit {
 			.register("sanguine_conduit", () -> BlockEntityType.Builder
 					.of(SanguineConduitBlockEntity::new, BlockInit.sanguine_conduit.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HematicSutureNodeBlockEntity>> hematic_suture_node = TILES
+			.register("hematic_suture_node", () -> BlockEntityType.Builder
+					.of(HematicSutureNodeBlockEntity::new, BlockInit.hematic_suture_node.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MycelialCrucibleBlockEntity>> mycelial_crucible = TILES
 			.register("mycelial_crucible", () -> BlockEntityType.Builder
 					.of(MycelialCrucibleBlockEntity::new, BlockInit.mycelial_crucible.get()).build(null));
