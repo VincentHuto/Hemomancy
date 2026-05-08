@@ -26,8 +26,8 @@ public final class CrudeMemoryModelDataTest {
 	public static void main(String[] args) throws IOException {
 		for (String memory : CRUDE_MEMORIES) {
 			String model = Files.readString(MODEL_ROOT.resolve("crude_memory_" + memory + ".json"));
-			assertContains(memory + " uses the memory blank base", model,
-					"\"layer0\": \"hemomancy:item/memories/memory_blank\"");
+			assertContains(memory + " keeps the crude hematic base", model,
+					"\"layer0\": \"hemomancy:item/hematic_memory\"");
 			assertContains(memory + " uses its matching memory overlay", model,
 					"\"layer1\": \"hemomancy:item/memories/memory_" + memory + "_overlay\"");
 		}
