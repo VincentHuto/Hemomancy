@@ -1,0 +1,17 @@
+{
+  "type": "hemomancy:add_item",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.025
+    },
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "hemomancy:venous_stone"
+    },
+    {
+      "condition": "minecraft:survives_explosion"
+    }
+  ],
+  "item": "hemomancy:blood_rock"
+}

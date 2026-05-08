@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSecti
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
+import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
@@ -227,6 +228,8 @@ public class BloodManipulation  {
 					.map(ManipLevel::getCooldownMultiplier)
 					.orElse(1.0);
 			effectiveCooldown = (long) (effectiveCooldown * levelCooldownMultiplier);
+			effectiveCooldown = (long) (effectiveCooldown
+					* CheapBloodInfusionHelper.getManipulationCooldownMultiplier(player));
 
 			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
 		}
@@ -362,6 +365,7 @@ public class BloodManipulation  {
 				if (pomesConsumed > 0) {
 					effectiveCost *= (1.0 + pomesConsumed * 0.12);
 				}
+				effectiveCost *= CheapBloodInfusionHelper.getManipulationCostMultiplier(player);
 
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {

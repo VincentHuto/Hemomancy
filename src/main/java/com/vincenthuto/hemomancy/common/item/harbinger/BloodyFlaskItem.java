@@ -54,6 +54,7 @@ public class BloodyFlaskItem extends Item {
 							(ServerLevel) worldIn);
 				}
 				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
+				CheapBloodInfusionHelper.applySuccessfulInfusion(playerIn, stack.getItem());
 				stack.shrink(1);
 			}
 

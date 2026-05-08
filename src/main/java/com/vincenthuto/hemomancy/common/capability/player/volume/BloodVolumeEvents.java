@@ -3,8 +3,10 @@ package com.vincenthuto.hemomancy.common.capability.player.volume;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -252,13 +254,38 @@ public class BloodVolumeEvents {
 				// Skill: Feeding Frenzy â€” bonus blood from kills
 				gain *= SkillPointHelper.getFeedingFrenzyMultiplier();
 
-				volume.fill(gain);
+				fillPlayerThenEquippedGourd(player, volume, gain);
 				syncVolume((ServerPlayer) player, volume);
 			}
 		});
 	}
 
 	// â”€â”€â”€â”€â”€ Utility â”€â”€â”€â”€â”€
+
+	private static void fillPlayerThenEquippedGourd(Player player, IBloodVolume playerVolume, double gain) {
+		double before = playerVolume.getBloodVolume();
+		playerVolume.fill(gain);
+		double accepted = Math.max(0, playerVolume.getBloodVolume() - before);
+		double overflow = Math.max(0, gain - accepted);
+		if (overflow > 0) {
+			fillFirstEquippedGourd(player, overflow);
+		}
+	}
+
+	private static void fillFirstEquippedGourd(Player player, double amount) {
+		HemoCapabilityAccess.getScars(player).ifPresent(scars -> fillFirstEquippedGourd(scars, amount));
+	}
+
+	private static void fillFirstEquippedGourd(IScarsItemHandler scars, double amount) {
+		for (int slot = 0; slot < scars.getSlots(); slot++) {
+			ItemStack stack = scars.getStackInSlot(slot);
+			if (stack.getItem() instanceof BloodGourdItem gourd) {
+				double siphoned = amount * gourd.getKillSiphonMultiplier();
+				HemoCapabilityAccess.getBloodVolume(stack).ifPresent(gourdVolume -> gourdVolume.fill(siphoned));
+				return;
+			}
+		}
+	}
 
 	public static void syncVolume(ServerPlayer player, IBloodVolume volume) {
 		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));

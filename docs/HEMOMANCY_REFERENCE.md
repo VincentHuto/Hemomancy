@@ -134,7 +134,8 @@ The default/primary progression. The player embraces hemomancy and rises through
 - Activated by clicking a Blood Temple's Mortal Display
 - Blood is spent to cast manipulations and power rituals
 - Can be expanded via the Capacity skill (+500 per level)
-- Stored in Blood Gourds for portable use
+- Stored in Blood Gourds for portable use; equipped gourds receive overflow blood from valid blooded kills after the player is topped off
+- Direct emergency restores (`blood_rock`, `bloody_flask`, `vitality_chalice`) apply **Blood Drunkenness** for 3 minutes, stacking to amplifier 3 and adding +15%/+30%/+45%/+60% manipulation blood cost; amplifier 3 also increases manipulation cooldowns by 25%
 - Has **trickle donation** and **auto-draw** settings for Bloodline pool interaction
 - Has **Blood Debt Tracking** for the Hemorath saint encounter: `addDamage(amount)`, `addBloodSpend(amount)`, `consumeDebt()`, `getBloodDebt()`, `resetBloodDebt()` — debt accumulates from manipulation casts and direct damage during the Hemorath fight, then is collected on fight resolution
 
@@ -672,7 +673,7 @@ Blood manipulations are abilities fueled by blood. Lore-wise, they are dormant m
 
 Each manipulation has:
 - **Name** — registry ID
-- **Blood cost** — drained from the player's blood volume (modified by Efficiency skill and purity penalty)
+- **Blood cost** — drained from the player's blood volume (modified by Efficiency skill, purity penalty, and Blood Drunkenness)
 - **XP cost** — additional experience cost
 - **Alignment level** — required tendency alignment
 - **Type** — `QUICK`, `CHARGED`, `PASSIVE`, or `CONTINUOUS`
@@ -1132,17 +1133,22 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 
 ### 13.2 Blood Storage Items
 
-| Item | Capacity |
-|------|----------|
-| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_flask.png) Bloody Flask | 2,500 |
-| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_jug.png) Bloody Jug | 5,000 |
-| ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Stabilized Sanguine Formation | 5,000 |
-| ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_white.png) Blood Gourd White | Simple tier |
-| ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_red.png) Blood Gourd Red | Crimson tier |
-| ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_black.png) Blood Gourd Black | Ashen tier |
-| ![](../src/main/resources/assets/hemomancy/textures/item/curved_horn.png) Curved Horn | Horn tier |
-| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_vial.png) Bloody Vial | Holds extracted blood for centrifuging |
-| ![](../src/main/resources/assets/hemomancy/textures/item/vial_rack.png) Vial Rack | Holds 8 vials for Living Syringe/Centrifuge workflows (item-state visual variants: empty/partial/full) |
+| Item | Role | Capacity | Flow | Kill Siphon | Passive |
+|------|------|----------|------|-------------|---------|
+| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_flask.png) Bloody Flask | Cheap infusion | 2,500 | Instant use | None | Blood Drunkenness |
+| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_jug.png) Bloody Jug | Cheap infusion | 5,000 | Instant use | None | Blood Drunkenness |
+| ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Stabilized Sanguine Formation | Stored restore | 5,000 | Instant use | None | None |
+| ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_white.png) Blood Gourd White | Steady Vessel | 1,000 | 1.0 ml/tick | 75% | None |
+| ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_red.png) Blood Gourd Red | Combat Siphon | 1,800 | 3.0 ml/tick | 125% | None |
+| ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_black.png) Blood Gourd Black | Deep Reservoir | 3,500 | 0.75 ml/tick | 100% | None |
+| ![](../src/main/resources/assets/hemomancy/textures/item/curved_horn.png) Curved Horn | Burst Vessel | 1,500 | 5.0 ml/tick | 50% | None |
+| ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/hemorath_rib.png) Hemorath Rib | Living Marrow | 5,000 | 2.5 ml/tick | 125% | +0.25 ml/tick |
+| ![](../src/main/resources/assets/hemomancy/textures/item/bloody_vial.png) Bloody Vial | Sample container | N/A | Syringe/rack use | None | Centrifuge workflow |
+| ![](../src/main/resources/assets/hemomancy/textures/item/vial_rack.png) Vial Rack | Sample rack | 8 vials | Syringe/rack use | None | Centrifuge workflow |
+
+Direct blood restores are emergency infusions: they restore blood immediately, apply a 60-tick use cooldown, and build Blood Drunkenness. Sampled Bloody Vials and Vial Racks remain extraction/centrifuge containers and are not drinkable infusion fuel. Blood Gourds avoid the mismatch penalty because their reserve is bonded through the equipped gourd/scar slot rather than carried as loose foreign blood.
+
+Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a `blood_rock` when mined. Bloody Jugs have a rare 2% killed-by-player global loot modifier chance from the curated `hemomancy:bloody_jug_drop_candidates` entity tag, currently blood-drunk puppeteers, crimson does, cruor fiends, hemojellies, hemolymphopoda, thirsters, and venous striders.
 
 > **Blood Gourd 3D models (open/closed):**
 >

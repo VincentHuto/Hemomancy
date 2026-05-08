@@ -46,10 +46,21 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		HemoCapabilityAccess.getBloodVolume(stack).ifPresent(bloodVolume -> {
 			CompoundTag data = getCustomData(stack);
-			tooltip.add(Component.literal("Max Blood Volume: " + tier.getMaxVolume())
+			tooltip.add(Component.literal(tier.getRoleName()).withStyle(ChatFormatting.DARK_RED));
+			tooltip.add(Component.literal("Capacity: " + tier.getMaxVolume() + " ml")
 					.withStyle(ChatFormatting.GOLD));
+			tooltip.add(Component.literal("Flow Rate: " + tier.getTransferRate() + " ml/tick")
+					.withStyle(ChatFormatting.RED));
+			tooltip.add(Component.literal("Kill Siphon: " + Math.round(tier.getKillSiphonMultiplier() * 100) + "%")
+					.withStyle(ChatFormatting.RED));
+			if (tier.getPassiveGenerationRate() > 0) {
+				tooltip.add(Component.literal("Marrow Growth: " + tier.getPassiveGenerationRate() + " ml/tick")
+						.withStyle(ChatFormatting.DARK_RED));
+			}
+			tooltip.add(Component.literal("Proper vessel: no Blood Drunkenness")
+					.withStyle(ChatFormatting.GRAY));
 			if (!data.isEmpty()) {
-				tooltip.add(Component.literal("Blood Volume: " + bloodVolume.getBloodVolume())
+				tooltip.add(Component.literal("Blood Volume: " + bloodVolume.getBloodVolume() + " ml")
 						.withStyle(ChatFormatting.RED));
 				if (data.getBoolean(TAG_STATE)) {
 					tooltip.add(Component.literal("State: Open").withStyle(ChatFormatting.RED));
@@ -62,6 +73,10 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 
 	public double getMaxBlood() {
 		return tier.getMaxVolume();
+	}
+
+	public double getKillSiphonMultiplier() {
+		return tier.getKillSiphonMultiplier();
 	}
 
 	@Override
@@ -111,15 +126,18 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 		if (bloodVolume.getBloodVolume() > tier.getMaxVolume()) {
 			bloodVolume.setBloodVolume(tier.getMaxVolume());
 		}
+		if (tier.getPassiveGenerationRate() > 0 && bloodVolume.getBloodVolume() < tier.getMaxVolume()) {
+			bloodVolume.fill(tier.getPassiveGenerationRate());
+		}
 		if (data.getBoolean(TAG_STATE)) {
 			// Restore player blood
 			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 			if (playerVolume == null) {
 				return;
 			}
-			if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
-				double transfer = Math.min(this.tier.getTierLevel() / 2f, bloodVolume.getBloodVolume());
-				transfer = Math.min(transfer, 5000 - playerVolume.getBloodVolume());
+			if (playerVolume.getBloodVolume() < playerVolume.getMaxBloodVolume() && bloodVolume.getBloodVolume() > 0) {
+				double transfer = Math.min(this.tier.getTransferRate(), bloodVolume.getBloodVolume());
+				transfer = Math.min(transfer, playerVolume.getMaxBloodVolume() - playerVolume.getBloodVolume());
 				bloodVolume.drain(transfer);
 				playerVolume.fill(transfer);
 			}

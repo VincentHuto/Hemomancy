@@ -41,6 +41,9 @@ public class EffectInit {
     public static final DeferredHolder<Potion, Potion> potion_of_blood_loss = POTION_TYPES.register("potion_of_blood_loss",
             () -> new Potion("potion_of_blood_loss", new MobEffectInstance(blood_loss, 1000, 3)));
 
+    public static final DeferredHolder<MobEffect, MobEffect> blood_drunkenness = EFFECTS.register("blood_drunkenness",
+            () -> new BloodDrunkennessEffect(MobEffectCategory.HARMFUL, 0x6E0E1C));
+
     public static final DeferredHolder<MobEffect, MobEffect> blood_rush = EFFECTS.register("blood_rush",
             () -> new BloodRushEffect(MobEffectCategory.BENEFICIAL, 16711680)
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_rush_movement_speed"), 0.2F,

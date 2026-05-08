@@ -16,6 +16,7 @@ public class HemorathRibItem extends BloodGourdItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
         tooltip.add(Component.translatable("tooltip.hemomancy.hemorath_rib_bonus").withStyle(ChatFormatting.GOLD));
     }
 }

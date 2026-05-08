@@ -2,6 +2,8 @@
   "replace": false,
   "entries": [
     "hemomancy:gourd_seeds_from_grass",
-    "hemomancy:gourd_seeds_from_tall_grass"
+    "hemomancy:gourd_seeds_from_tall_grass",
+    "hemomancy:blood_rocks_from_venous_stone",
+    "hemomancy:bloody_jugs_from_blood_mobs"
   ]
 }

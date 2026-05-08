@@ -1,0 +1,20 @@
+{
+  "type": "hemomancy:add_item",
+  "conditions": [
+    {
+      "condition": "minecraft:killed_by_player"
+    },
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.02
+    },
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": "#hemomancy:bloody_jug_drop_candidates"
+      }
+    }
+  ],
+  "item": "hemomancy:bloody_jug"
+}
