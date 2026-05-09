@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Lodge Minutes V — Redacted Line",
+  "obscured_text": [
+    "A sentence has been scratched out until only grooves remain."
+  ],
+  "revealed_text": [
+    "There was once a name here. The ink was removed with practiced shame.",
+    "Some secrets protect the Lodge. Some only protect the pride of those who made mistakes."
+  ],
+  "liber_entries": []
+}
+

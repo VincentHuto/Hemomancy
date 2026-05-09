@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Surveyor Log IV — The Tithe Candle",
+  "obscured_text": [
+    "Wax, blood, and salt. A small light that refuses to be holy."
+  ],
+  "revealed_text": [
+    "We burn a tithe candle each night: not as bribe, but as proof of presence.",
+    "The Brotherhood teaches inheritance. The body teaches exchange."
+  ],
+  "liber_entries": []
+}
+

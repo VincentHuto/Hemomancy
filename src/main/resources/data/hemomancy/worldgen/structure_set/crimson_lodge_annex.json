@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:crimson_lodge_annex",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 2014736802,
+    "spacing": 40,
+    "separation": 12,
+    "type": "minecraft:random_spread"
+  }
+}
+

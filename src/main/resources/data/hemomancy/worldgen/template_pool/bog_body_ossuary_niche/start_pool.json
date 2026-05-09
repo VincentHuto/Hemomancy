@@ -1,0 +1,16 @@
+{
+  "name": "hemomancy:bog_body_ossuary_niche/start_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "hemomancy:bog_body_ossuary_niche",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}
+

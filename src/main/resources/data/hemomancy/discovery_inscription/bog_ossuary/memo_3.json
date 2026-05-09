@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Ossuary Memo III — Clean Tools",
+  "obscured_text": [
+    "A blade laid out like an accusation."
+  ],
+  "revealed_text": [
+    "We keep one tool immaculate in the niche. Not for use — for restraint.",
+    "When the blood calls for certainty, let the untouched steel remind you: not every question deserves an incision."
+  ],
+  "liber_entries": []
+}
+

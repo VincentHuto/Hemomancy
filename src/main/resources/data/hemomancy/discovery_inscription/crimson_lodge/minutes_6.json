@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Lodge Minutes VI — The Annex Kept",
+  "obscured_text": [
+    "A closing note, warm as embers."
+  ],
+  "revealed_text": [
+    "If you find this place empty, do not take it as abandonment.",
+    "Camps move. Families move. The covenant remains — carried in blood, carried in breath, carried in the spaces we keep for each other."
+  ],
+  "liber_entries": []
+}
+

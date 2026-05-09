@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Ossuary Memo I — Peat Benediction",
+  "obscured_text": [
+    "Cold water. Colder silence."
+  ],
+  "revealed_text": [
+    "We laid the body in peat, not to hide it, but to slow the world enough for names to stick.",
+    "The swamp is a library that catalogs with rot."
+  ],
+  "liber_entries": []
+}
+

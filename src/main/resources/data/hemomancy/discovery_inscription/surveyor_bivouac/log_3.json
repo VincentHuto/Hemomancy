@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Surveyor Log III — Redstone Silence",
+  "obscured_text": [
+    "A careful hand wrote here, and then scrubbed the ink away."
+  ],
+  "revealed_text": [
+    "In the crimson forest, redstone behaves like a prayer spoken without conviction — it carries, but weakly.",
+    "Scribe’s note: this is not a failing of the world, but a warning. The Nether does not like being made predictable."
+  ],
+  "liber_entries": []
+}
+

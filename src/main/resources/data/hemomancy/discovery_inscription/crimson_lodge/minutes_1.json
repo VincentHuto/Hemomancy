@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Lodge Minutes I — Shelter and Secrecy",
+  "obscured_text": [
+    "Many voices speak, but only one hand writes."
+  ],
+  "revealed_text": [
+    "Resolved: the annex remains small. The Crimson Lodge is a family before it is a monument.",
+    "Resolved: no banners in the open. Let the world keep its rumors; we will keep our meals warm."
+  ],
+  "liber_entries": []
+}
+

@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Ossuary Memo V — The Niche Is Not a Tomb",
+  "obscured_text": [
+    "A warning pressed into stone."
+  ],
+  "revealed_text": [
+    "Do not make a shrine of this place. The niche is a stop, not a destination.",
+    "Leave what you must. Take what you can bear. The swamp will do the rest, without ceremony."
+  ],
+  "liber_entries": []
+}
+

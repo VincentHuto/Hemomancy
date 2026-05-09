@@ -3,9 +3,12 @@ package com.vincenthuto.hemomancy.common.init;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BloodTempleStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.BogBodyOssuaryNicheStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BrokenChurchStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.CrimsonLodgeAnnexStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.MausoleumStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.SanguineSurveyorBivouacStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.UnstainedChurchStructure;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -41,6 +44,15 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<MausoleumStructure>> mausoleum = STRUCTURES
 			.register("mausoleum", () -> explicitStructureTypeTyping(MausoleumStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<SanguineSurveyorBivouacStructure>> sanguine_surveyor_bivouac = STRUCTURES
+			.register("sanguine_surveyor_bivouac", () -> explicitStructureTypeTyping(SanguineSurveyorBivouacStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<BogBodyOssuaryNicheStructure>> bog_body_ossuary_niche = STRUCTURES
+			.register("bog_body_ossuary_niche", () -> explicitStructureTypeTyping(BogBodyOssuaryNicheStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<CrimsonLodgeAnnexStructure>> crimson_lodge_annex = STRUCTURES
+			.register("crimson_lodge_annex", () -> explicitStructureTypeTyping(CrimsonLodgeAnnexStructure.CODEC));
 
 	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
 		return () -> structureCodec;

@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Ossuary Memo IV — A Borrowed Prayer",
+  "obscured_text": [
+    "Words half-remembered, as if overheard from another faith."
+  ],
+  "revealed_text": [
+    "We spoke the village prayer over the dead, though they would have shunned us in life.",
+    "Inheritance is not only blood. Sometimes it is the courage to carry someone else’s rites without mocking them."
+  ],
+  "liber_entries": []
+}
+

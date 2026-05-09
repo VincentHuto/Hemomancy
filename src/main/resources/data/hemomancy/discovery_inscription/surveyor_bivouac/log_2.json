@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Surveyor Log II — Spore-Wind",
+  "obscured_text": [
+    "A wind that carries no cold brushes the inside of your veins."
+  ],
+  "revealed_text": [
+    "The wind moves the way a story moves: not by force, but by hunger for mouths.",
+    "Do not unmask in the open. The spores do not seek malice — only purchase."
+  ],
+  "liber_entries": []
+}
+

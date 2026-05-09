@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Surveyor Log VI — Bearings Kept",
+  "obscured_text": [
+    "A map sketched in pulses, not ink."
+  ],
+  "revealed_text": [
+    "We keep bearings by counting heartbeats between landmarks: the basalt tooth, the crimson canopy, the warm fog.",
+    "If the map fails, trust the covenant. If the covenant fails, trust the body. It will always tell the truth of distance."
+  ],
+  "liber_entries": []
+}
+

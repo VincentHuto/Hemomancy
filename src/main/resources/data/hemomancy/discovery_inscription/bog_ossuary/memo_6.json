@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Ossuary Memo VI — Names in the Water",
+  "obscured_text": [
+    "A list that dissolves as you read it."
+  ],
+  "revealed_text": [
+    "We wrote the names on paper and floated them in the basin. The ink bled out and vanished.",
+    "Not forgetting — returning. The body does not keep what it cannot afford to carry."
+  ],
+  "liber_entries": []
+}
+
