@@ -64,6 +64,12 @@ public class SeraphaeWingGlowLayer<T extends SeraphaeEntity> extends RenderLayer
 			float flicker = ((float) Math.sin(ageInTicks * 0.5F) + 1.0F) * 0.5F;
 			g = Math.min(1.0F, g + 0.1F * flicker);
 			b = Math.min(1.0F, b + 0.2F * flicker);
+		} else if (entity.getSeraphaeState() == SeraphaeState.CONDENSING) {
+			float closing = Mth.clamp((80.0F - entity.getStateTimer()) / 80.0F, 0.0F, 1.0F);
+			float flicker = ((float) Math.sin(ageInTicks * 0.9F) + 1.0F) * 0.5F;
+			g = Mth.clamp(0.92F + 0.08F * flicker, 0.0F, 1.0F);
+			b = Mth.clamp(0.72F + 0.28F * closing, 0.0F, 1.0F);
+			r = Mth.clamp(0.85F + 0.15F * closing, 0.0F, 1.0F);
 		}
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(GLOW);

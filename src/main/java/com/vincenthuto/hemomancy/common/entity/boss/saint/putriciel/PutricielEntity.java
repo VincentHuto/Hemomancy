@@ -57,6 +57,16 @@ public class PutricielEntity extends Monster {
             SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_ABSOLUTION_COUNT =
             SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
+            SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
+            SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ABSOLUTION_TIMER =
+            SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
+
+    public static final int VISUAL_NONE = 0;
+    public static final int VISUAL_ROT_NOVA = 1;
+    public static final int VISUAL_ABSOLUTION_HIT = 2;
 
     // ── victory condition ─────────────────────────────────────────────────
     private static final int ABSOLUTIONS_NEEDED = 5;
@@ -125,6 +135,9 @@ public class PutricielEntity extends Monster {
         super.defineSynchedData(builder);
         builder.define(DATA_ABSOLVED, false);
         builder.define(DATA_ABSOLUTION_COUNT, 0);
+        builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
+        builder.define(DATA_VISUAL_TICKS, 0);
+        builder.define(DATA_ABSOLUTION_TIMER, 0);
     }
 
     public boolean isAbsolved() {
@@ -137,6 +150,23 @@ public class PutricielEntity extends Monster {
 
     public int getAbsolutionCount() {
         return this.entityData.get(DATA_ABSOLUTION_COUNT);
+    }
+
+    public int getVisualState() {
+        return this.entityData.get(DATA_VISUAL_STATE);
+    }
+
+    public int getVisualTicks() {
+        return this.entityData.get(DATA_VISUAL_TICKS);
+    }
+
+    public int getAbsolutionWindowTimer() {
+        return this.entityData.get(DATA_ABSOLUTION_TIMER);
+    }
+
+    private void setVisualState(int visualState, int ticks) {
+        this.entityData.set(DATA_VISUAL_STATE, visualState);
+        this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
     }
 
     private void incrementAbsolution() {
@@ -172,6 +202,7 @@ public class PutricielEntity extends Monster {
 
         if (defeated) return;
         ServerLevel server = (ServerLevel) this.level();
+        tickVisualState();
 
         bossEvent.setProgress((float) getAbsolutionCount() / ABSOLUTIONS_NEEDED);
 
@@ -183,6 +214,10 @@ public class PutricielEntity extends Monster {
         // Absolution cycle
         if (isAbsolved()) {
             absolveWindowTimer--;
+            this.entityData.set(DATA_ABSOLUTION_TIMER, Math.max(0, absolveWindowTimer));
+            if (this.tickCount % 10 == 0) {
+                sendFloorRing(server, 3.0D + getAbsolutionCount(), ParticleTypes.MYCELIUM, 24, this.getY() + 0.08D);
+            }
             if (absolveWindowTimer <= 0) {
                 endAbsolutionWindow(server);
             }
@@ -194,11 +229,23 @@ public class PutricielEntity extends Monster {
         }
     }
 
+    private void tickVisualState() {
+        int ticks = getVisualTicks();
+        if (ticks > 0) {
+            this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
+            if (ticks == 1) {
+                this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
+            }
+        }
+    }
+
     private void fireRotNova(ServerLevel server) {
         boolean escalated = this.getHealth() < this.getMaxHealth() * 0.5F;
         double radius = escalated ? ROT_NOVA_RADIUS_ESCALATED : ROT_NOVA_RADIUS;
         int witherAmp = escalated ? 1 : 0;
 
+        setVisualState(VISUAL_ROT_NOVA, 18);
+        sendFloorRing(server, radius, ParticleTypes.SOUL_FIRE_FLAME, 44, this.getY() + 0.1D);
         server.sendParticles(ParticleTypes.SOUL,
                 this.getX(), this.getY() + 0.5, this.getZ(),
                 60, radius * 0.5, 0.3, radius * 0.5, 0.05);
@@ -216,6 +263,7 @@ public class PutricielEntity extends Monster {
     private void openAbsolutionWindow(ServerLevel server) {
         setAbsolved(true);
         absolveWindowTimer = ABSOLUTION_WINDOW_DURATION;
+        this.entityData.set(DATA_ABSOLUTION_TIMER, absolveWindowTimer);
         absolveCycleTimer = ABSOLUTION_CYCLE;
 
         server.sendParticles(ParticleTypes.MYCELIUM,
@@ -230,6 +278,7 @@ public class PutricielEntity extends Monster {
     private void endAbsolutionWindow(ServerLevel server) {
         setAbsolved(false);
         absolveWindowTimer = 0;
+        this.entityData.set(DATA_ABSOLUTION_TIMER, 0);
 
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 1.0F, 0.9F);
@@ -246,6 +295,12 @@ public class PutricielEntity extends Monster {
         }
         if (!this.level().isClientSide && isAbsolved()) {
             incrementAbsolution();
+            setVisualState(VISUAL_ABSOLUTION_HIT, 12);
+            if (this.level() instanceof ServerLevel server) {
+                server.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                        this.getX(), this.getY() + 1.4D, this.getZ(),
+                        12 + getAbsolutionCount() * 3, 0.6D, 0.8D, 0.6D, 0.03D);
+            }
             if (getAbsolutionCount() >= ABSOLUTIONS_NEEDED) {
                 onTrialComplete((ServerLevel) this.level());
                 return true;
@@ -264,6 +319,15 @@ public class PutricielEntity extends Monster {
         // Spawn Hallowed Residuum of Putriciel
         this.spawnAtLocation(new ItemStack(ItemInit.hallowed_residuum_putriciel.get(), 1));
         this.discard();
+    }
+
+    private void sendFloorRing(ServerLevel server, double radius, net.minecraft.core.particles.SimpleParticleType particle, int points, double y) {
+        for (int i = 0; i < points; i++) {
+            double angle = i * Math.PI * 2.0D / points;
+            double x = this.getX() + Math.cos(angle) * radius;
+            double z = this.getZ() + Math.sin(angle) * radius;
+            server.sendParticles(particle, x, y, z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
+        }
     }
 
     // ── drops ─────────────────────────────────────────────────────────────

@@ -61,6 +61,17 @@ public class HollowVesselEntity extends Monster {
 			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Float> DATA_ABSORBED_BLOOD =
 			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
+			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
+			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
+
+	public static final int VISUAL_NONE = 0;
+	public static final int VISUAL_COLLAPSE_WINDUP = 1;
+	public static final int VISUAL_COLLAPSE_IMPACT = 2;
+	public static final int VISUAL_EMPTY_PULSE = 3;
+	public static final int VISUAL_EMPTY_PULSE_IMPACT = 4;
+	public static final int VISUAL_OVERLOAD = 5;
 
 	private static final float PHASE_2_HEALTH_FRACTION = 0.5F;
 	private static final float SIPHON_HEAL_FRACTION = 0.35F;
@@ -71,6 +82,7 @@ public class HollowVesselEntity extends Monster {
 	private static final float OVERLOAD_PHASE_2_MULTIPLIER = 1.35F;
 
 	private boolean overloaded;
+	private int overloadTicks;
 
 	public final AnimationState idleAnimationState = new AnimationState();
 	public final AnimationState collapseChargeAnimationState = new AnimationState();
@@ -116,6 +128,8 @@ public class HollowVesselEntity extends Monster {
 		builder.define(DATA_COLLAPSE_CHARGING, false);
 		builder.define(DATA_PHASE, 1);
 		builder.define(DATA_ABSORBED_BLOOD, 0.0F);
+		builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
+		builder.define(DATA_VISUAL_TICKS, 0);
 	}
 
 	public boolean isCollapseCharging() {
@@ -138,6 +152,19 @@ public class HollowVesselEntity extends Monster {
 		return this.entityData.get(DATA_ABSORBED_BLOOD);
 	}
 
+	public int getVisualState() {
+		return this.entityData.get(DATA_VISUAL_STATE);
+	}
+
+	public int getVisualTicks() {
+		return this.entityData.get(DATA_VISUAL_TICKS);
+	}
+
+	public void setVisualState(int visualState, int ticks) {
+		this.entityData.set(DATA_VISUAL_STATE, visualState);
+		this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
+	}
+
 	public void addAbsorbedBlood(Player source, double amount) {
 		if (this.level().isClientSide || overloaded || amount <= 0) {
 			return;
@@ -157,6 +184,9 @@ public class HollowVesselEntity extends Monster {
 
 	@Override
 	public boolean doHurtTarget(Entity target) {
+		if (overloaded) {
+			return false;
+		}
 		boolean dealt = super.doHurtTarget(target);
 		if (dealt && target instanceof LivingEntity) {
 			float steal = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * SIPHON_HEAL_FRACTION);
@@ -171,9 +201,22 @@ public class HollowVesselEntity extends Monster {
 	}
 
 	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		if (overloaded) {
+			return false;
+		}
+		return super.hurt(source, amount);
+	}
+
+	@Override
 	public void aiStep() {
 		super.aiStep();
 		if (!this.level().isClientSide) {
+			tickVisualState();
+			if (overloaded) {
+				tickOverloadDeath();
+				return;
+			}
 			int desiredPhase = this.getHealth() <= this.getMaxHealth() * PHASE_2_HEALTH_FRACTION ? 2 : 1;
 			if (desiredPhase != getPhase()) {
 				this.entityData.set(DATA_PHASE, desiredPhase);
@@ -194,6 +237,30 @@ public class HollowVesselEntity extends Monster {
 							1, 0.3, 0.2, 0.3, 0.02);
 				}
 			}
+		}
+	}
+
+	private void tickVisualState() {
+		int ticks = getVisualTicks();
+		if (ticks > 0) {
+			this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
+			if (ticks == 1 && getVisualState() != VISUAL_OVERLOAD) {
+				this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
+			}
+		}
+	}
+
+	private void tickOverloadDeath() {
+		if (this.level() instanceof ServerLevel server && overloadTicks % 4 == 0) {
+			server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+					this.getX(), this.getY() + 1.1, this.getZ(),
+					18, 0.8, 1.0, 0.8, 0.08);
+			server.sendParticles(ParticleTypes.LARGE_SMOKE,
+					this.getX(), this.getY() + 1.0, this.getZ(),
+					10, 0.7, 0.8, 0.7, 0.05);
+		}
+		if (--overloadTicks <= 0) {
+			this.discard();
 		}
 	}
 
@@ -256,7 +323,7 @@ public class HollowVesselEntity extends Monster {
 
 	@Override
 	public void die(DamageSource source) {
-		if (!this.level().isClientSide && source.getEntity() instanceof Player player) {
+		if (!overloaded && !this.level().isClientSide && source.getEntity() instanceof Player player) {
 			awardResiduum(player);
 		}
 		super.die(source);
@@ -304,6 +371,10 @@ public class HollowVesselEntity extends Monster {
 
 	private void triggerOverload(Player source) {
 		overloaded = true;
+		overloadTicks = 36;
+		this.setVisualState(VISUAL_OVERLOAD, overloadTicks);
+		this.setTarget(null);
+		this.getNavigation().stop();
 		if (this.level() instanceof ServerLevel server) {
 			server.playSound(null, this.getX(), this.getY(), this.getZ(),
 					SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 2.0F, 0.6F);
@@ -321,7 +392,6 @@ public class HollowVesselEntity extends Monster {
 					false);
 			awardResiduum(source);
 		}
-		this.discard();
 	}
 
 	private void awardResiduum(Player player) {

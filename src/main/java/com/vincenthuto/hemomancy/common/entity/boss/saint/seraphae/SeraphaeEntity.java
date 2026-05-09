@@ -35,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Saint Seraphae — The Bound Radiance.
@@ -54,6 +55,8 @@ public class SeraphaeEntity extends Monster {
 			SynchedEntityData.defineId(SeraphaeEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Float> DATA_INTEGRITY =
 			SynchedEntityData.defineId(SeraphaeEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_STATE_TIMER =
+			SynchedEntityData.defineId(SeraphaeEntity.class, EntityDataSerializers.INT);
 
 	// ── containment integrity ─────────────────────────────────────────
 	private static final float INITIAL_INTEGRITY = 50.0F;
@@ -109,7 +112,7 @@ public class SeraphaeEntity extends Monster {
 	public final AnimationState condensingAnimationState = new AnimationState();
 
 	// ── server-side fields (not synched beyond DATA_*) ────────────────
-	private int stateTimer;
+	private int stateTimer = STABLE_DURATION;
 	private boolean anchorsPlaced;
 	private boolean defeated;
 
@@ -157,6 +160,7 @@ public class SeraphaeEntity extends Monster {
 		super.defineSynchedData(builder);
 		builder.define(DATA_STATE, SeraphaeState.STABLE.ordinal());
 		builder.define(DATA_INTEGRITY, INITIAL_INTEGRITY);
+		builder.define(DATA_STATE_TIMER, STABLE_DURATION);
 	}
 
 	public SeraphaeState getSeraphaeState() {
@@ -165,6 +169,15 @@ public class SeraphaeEntity extends Monster {
 
 	private void setSeraphaeState(SeraphaeState state) {
 		this.entityData.set(DATA_STATE, state.ordinal());
+	}
+
+	public int getStateTimer() {
+		return this.entityData.get(DATA_STATE_TIMER);
+	}
+
+	private void setStateTimer(int ticks) {
+		stateTimer = ticks;
+		this.entityData.set(DATA_STATE_TIMER, ticks);
 	}
 
 	public float getContainmentIntegrity() {
@@ -246,6 +259,7 @@ public class SeraphaeEntity extends Monster {
 
 		// ── state machine ──
 		stateTimer--;
+		this.entityData.set(DATA_STATE_TIMER, stateTimer);
 		if (stateTimer <= 0) {
 			advanceState(server);
 		}
@@ -282,7 +296,7 @@ public class SeraphaeEntity extends Monster {
 		}
 
 		setSeraphaeState(SeraphaeState.STABLE);
-		stateTimer = STABLE_DURATION;
+		setStateTimer(STABLE_DURATION);
 		this.setInvisible(false);
 
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -292,7 +306,7 @@ public class SeraphaeEntity extends Monster {
 
 	private void enterFracturing(ServerLevel server) {
 		setSeraphaeState(SeraphaeState.FRACTURING);
-		stateTimer = FRACTURING_DURATION;
+		setStateTimer(FRACTURING_DURATION);
 
 		int count = MIN_FRAGMENTS + server.random.nextInt(MAX_FRAGMENTS - MIN_FRAGMENTS + 1);
 		// Escalation: more fragments when integrity is low
@@ -312,7 +326,7 @@ public class SeraphaeEntity extends Monster {
 
 	private void enterDispersed(ServerLevel server) {
 		setSeraphaeState(SeraphaeState.DISPERSED);
-		stateTimer = DISPERSED_DURATION;
+		setStateTimer(DISPERSED_DURATION);
 		this.setInvisible(true); // untargetable
 
 		server.sendParticles(ParticleTypes.FLASH,
@@ -324,7 +338,7 @@ public class SeraphaeEntity extends Monster {
 
 	private void enterCondensing(ServerLevel server) {
 		setSeraphaeState(SeraphaeState.CONDENSING);
-		stateTimer = CONDENSING_DURATION;
+		setStateTimer(CONDENSING_DURATION);
 		this.setInvisible(false);
 
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -356,9 +370,10 @@ public class SeraphaeEntity extends Monster {
 	private void tickFracturing(ServerLevel server) {
 		// Pulsing disruption particles
 		if (this.tickCount % 8 == 0) {
+			float urgency = 1.0F - Math.max(0.0F, Math.min(1.0F, stateTimer / (float) FRACTURING_DURATION));
 			server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
 					this.getX(), this.getY() + 1.0, this.getZ(),
-					8, 0.6, 0.8, 0.6, 0.04);
+					8 + (int) (8 * urgency), 0.6 + urgency * 0.4, 0.8, 0.6 + urgency * 0.4, 0.04);
 		}
 	}
 
@@ -399,10 +414,26 @@ public class SeraphaeEntity extends Monster {
 						px, this.getY() + 0.5 + server.random.nextDouble() * 2.0, pz,
 						1, 0.0, 0.0, 0.0, 0.0);
 			}
+			for (ContainmentAnchorEntity anchor : server.getEntitiesOfClass(
+					ContainmentAnchorEntity.class,
+					new AABB(this.blockPosition()).inflate(ARENA_RADIUS),
+					a -> this.getUUID().equals(a.getParentId()))) {
+				sendContainmentLine(server, anchor.position().add(0.0, 0.8, 0.0), this.position().add(0.0, 1.3, 0.0));
+			}
 		}
 
 		// Award condense burst when window closes (handled in advanceState)
 		// Player can deal damage during this window; each hit adds small integrity
+	}
+
+	private void sendContainmentLine(ServerLevel server, Vec3 from, Vec3 to) {
+		Vec3 delta = to.subtract(from);
+		for (int i = 1; i <= 8; i++) {
+			Vec3 point = from.add(delta.scale(i / 9.0D));
+			server.sendParticles(ParticleTypes.END_ROD,
+					point.x, point.y, point.z,
+					1, 0.025, 0.025, 0.025, 0.0);
+		}
 	}
 
 	@Override
@@ -613,7 +644,9 @@ public class SeraphaeEntity extends Monster {
 		if (tag.contains("SeraphaeState")) {
 			setSeraphaeState(SeraphaeState.fromId(tag.getInt("SeraphaeState")));
 		}
-		stateTimer = tag.getInt("StateTimer");
+		if (tag.contains("StateTimer")) {
+			setStateTimer(tag.getInt("StateTimer"));
+		}
 		anchorsPlaced = tag.getBoolean("AnchorsPlaced");
 		defeated = tag.getBoolean("Defeated");
 	}

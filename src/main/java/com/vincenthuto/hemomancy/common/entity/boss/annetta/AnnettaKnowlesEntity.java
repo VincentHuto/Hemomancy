@@ -53,6 +53,16 @@ import net.minecraft.world.phys.Vec3;
 public class AnnettaKnowlesEntity extends Monster {
     private static final EntityDataAccessor<Integer> DATA_STATE =
             SynchedEntityData.defineId(AnnettaKnowlesEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
+            SynchedEntityData.defineId(AnnettaKnowlesEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
+            SynchedEntityData.defineId(AnnettaKnowlesEntity.class, EntityDataSerializers.INT);
+
+    public static final int VISUAL_NONE = 0;
+    public static final int VISUAL_SILVER_AURA = 1;
+    public static final int VISUAL_VIAL_THROW = 2;
+    public static final int VISUAL_KERATIN_SLASH = 3;
+    public static final int VISUAL_CURED_SUPPORT = 4;
 
     private static final int SILVER_AURA_INTERVAL = 60;
     private static final int VIAL_INTERVAL = 90;
@@ -100,6 +110,8 @@ public class AnnettaKnowlesEntity extends Monster {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_STATE, EncounterState.COWERING.id);
+        builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
+        builder.define(DATA_VISUAL_TICKS, 0);
     }
 
     public EncounterState getEncounterState() {
@@ -109,6 +121,19 @@ public class AnnettaKnowlesEntity extends Monster {
     private void setEncounterState(EncounterState state) {
         this.entityData.set(DATA_STATE, state.id);
         this.bossEvent.setVisible(state == EncounterState.PHASE_ONE);
+    }
+
+    public int getVisualState() {
+        return this.entityData.get(DATA_VISUAL_STATE);
+    }
+
+    public int getVisualTicks() {
+        return this.entityData.get(DATA_VISUAL_TICKS);
+    }
+
+    private void setVisualState(int visualState, int ticks) {
+        this.entityData.set(DATA_VISUAL_STATE, visualState);
+        this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
     }
 
     public void setCowering() {
@@ -249,6 +274,7 @@ public class AnnettaKnowlesEntity extends Monster {
             return;
         }
 
+        tickVisualState();
         EncounterState state = this.getEncounterState();
         if (state != EncounterState.PHASE_ONE) {
             this.setTarget(null);
@@ -264,8 +290,20 @@ public class AnnettaKnowlesEntity extends Monster {
         tickPhaseOne((ServerLevel) this.level());
     }
 
+    private void tickVisualState() {
+        int ticks = getVisualTicks();
+        if (ticks > 0) {
+            this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
+            if (ticks == 1) {
+                this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
+            }
+        }
+    }
+
     private void tickPhaseOne(ServerLevel server) {
         if (this.tickCount % SILVER_AURA_INTERVAL == 0) {
+            setVisualState(VISUAL_SILVER_AURA, 18);
+            sendFloorRing(server, SILVER_AURA_RADIUS, ParticleTypes.END_ROD, 32, this.getY() + 0.08D);
             server.sendParticles(ParticleTypes.SOUL, this.getX(), this.getY() + 1.0D, this.getZ(),
                     30, SILVER_AURA_RADIUS * 0.5D, 0.8D, SILVER_AURA_RADIUS * 0.5D, 0.02D);
             server.playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -292,6 +330,7 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     private void throwHemolyticVial(ServerLevel server, LivingEntity target) {
+        setVisualState(VISUAL_VIAL_THROW, 16);
         HemolyticVialEntity vial = new HemolyticVialEntity(server, this);
         vial.setPos(this.getX(), this.getEyeY() - 0.1D, this.getZ());
         Vec3 delta = target.getEyePosition().subtract(vial.position());
@@ -301,7 +340,9 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     private void slashWithHairAndNails(ServerLevel server) {
+        setVisualState(VISUAL_KERATIN_SLASH, 14);
         AABB area = new AABB(this.blockPosition()).inflate(5.0D);
+        sendFloorRing(server, 5.0D, ParticleTypes.CRIT, 28, this.getY() + 0.12D);
         server.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY() + 1.0D, this.getZ(),
                 40, 2.0D, 0.7D, 2.0D, 0.05D);
         server.playSound(null, this.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 1.0F, 0.55F);
@@ -312,6 +353,7 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     private void tickCuredSupport(ServerLevel server) {
+        setVisualState(VISUAL_CURED_SUPPORT, 24);
         AABB supportArea = new AABB(this.blockPosition()).inflate(18.0D);
         for (LatentAnnettaInfectionEntity infection : server.getEntitiesOfClass(LatentAnnettaInfectionEntity.class, supportArea)) {
             infection.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1, false, true));
@@ -324,6 +366,15 @@ public class AnnettaKnowlesEntity extends Monster {
             }
             player.removeEffect(EffectInit.blood_loss);
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0, false, true));
+        }
+    }
+
+    private void sendFloorRing(ServerLevel server, double radius, net.minecraft.core.particles.SimpleParticleType particle, int points, double y) {
+        for (int i = 0; i < points; i++) {
+            double angle = i * Math.PI * 2.0D / points;
+            double x = this.getX() + Math.cos(angle) * radius;
+            double z = this.getZ() + Math.sin(angle) * radius;
+            server.sendParticles(particle, x, y, z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
         }
     }
 

@@ -29,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Velorum — The Frozen Martyr.
@@ -61,6 +62,15 @@ public class VelorumEntity extends Monster {
     // ── synched data ──────────────────────────────────────────────────────
     private static final EntityDataAccessor<Boolean> DATA_MARTYRDOM =
             SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
+            SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
+            SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+
+    public static final int VISUAL_NONE = 0;
+    public static final int VISUAL_FROST_NOVA = 1;
+    public static final int VISUAL_VEIL = 2;
+    public static final int VISUAL_SILENCE_DRAIN = 3;
 
     // ── frost nova ────────────────────────────────────────────────────────
     private static final int FROST_NOVA_INTERVAL = 100;
@@ -132,6 +142,8 @@ public class VelorumEntity extends Monster {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_MARTYRDOM, false);
+        builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
+        builder.define(DATA_VISUAL_TICKS, 0);
     }
 
     public boolean isMartyrdom() {
@@ -140,6 +152,19 @@ public class VelorumEntity extends Monster {
 
     private void setMartyrdom(boolean active) {
         this.entityData.set(DATA_MARTYRDOM, active);
+    }
+
+    public int getVisualState() {
+        return this.entityData.get(DATA_VISUAL_STATE);
+    }
+
+    public int getVisualTicks() {
+        return this.entityData.get(DATA_VISUAL_TICKS);
+    }
+
+    private void setVisualState(int visualState, int ticks) {
+        this.entityData.set(DATA_VISUAL_STATE, visualState);
+        this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
     }
 
     // ── boss bar ──────────────────────────────────────────────────────────
@@ -170,6 +195,7 @@ public class VelorumEntity extends Monster {
 
         if (defeated) return;
         ServerLevel server = (ServerLevel) this.level();
+        tickVisualState();
 
         bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 
@@ -204,7 +230,19 @@ public class VelorumEntity extends Monster {
         }
     }
 
+    private void tickVisualState() {
+        int ticks = getVisualTicks();
+        if (ticks > 0) {
+            this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
+            if (ticks == 1) {
+                this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
+            }
+        }
+    }
+
     private void fireFrostNova(ServerLevel server) {
+        setVisualState(VISUAL_FROST_NOVA, 18);
+        sendFloorRing(server, FROST_NOVA_RADIUS, ParticleTypes.SNOWFLAKE, 44, this.getY() + 0.08D);
         server.sendParticles(ParticleTypes.SNOWFLAKE,
                 this.getX(), this.getY() + 0.5, this.getZ(),
                 80, FROST_NOVA_RADIUS * 0.5, 0.3, FROST_NOVA_RADIUS * 0.5, 0.05);
@@ -221,6 +259,8 @@ public class VelorumEntity extends Monster {
     }
 
     private void fireVeilOfDarkness(ServerLevel server) {
+        setVisualState(VISUAL_VEIL, 22);
+        sendFloorRing(server, DARKNESS_RADIUS, ParticleTypes.SQUID_INK, 48, this.getY() + 0.12D);
         server.sendParticles(ParticleTypes.SQUID_INK,
                 this.getX(), this.getY() + 1.0, this.getZ(),
                 60, DARKNESS_RADIUS * 0.4, 0.8, DARKNESS_RADIUS * 0.4, 0.04);
@@ -243,6 +283,7 @@ public class VelorumEntity extends Monster {
     }
 
     private void fireSilenceDrain(ServerLevel server) {
+        setVisualState(VISUAL_SILENCE_DRAIN, 20);
         server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
                 this.getX(), this.getY() + 1.0, this.getZ(),
                 30, SILENCE_DRAIN_RADIUS * 0.3, 0.5, SILENCE_DRAIN_RADIUS * 0.3, 0.02);
@@ -251,9 +292,27 @@ public class VelorumEntity extends Monster {
                 new AABB(this.blockPosition()).inflate(SILENCE_DRAIN_RADIUS))) {
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
                 if (vol.isActive() && vol.getBloodVolume() >= SILENCE_BLOOD_DRAIN) {
+                    sendParticleLine(server, player.position().add(0.0D, 1.0D, 0.0D), this.position().add(0.0D, 1.2D, 0.0D), ParticleTypes.SOUL_FIRE_FLAME, 8);
                     vol.setBloodVolume(vol.getBloodVolume() - SILENCE_BLOOD_DRAIN);
                 }
             });
+        }
+    }
+
+    private void sendFloorRing(ServerLevel server, double radius, net.minecraft.core.particles.SimpleParticleType particle, int points, double y) {
+        for (int i = 0; i < points; i++) {
+            double angle = i * Math.PI * 2.0D / points;
+            double x = this.getX() + Math.cos(angle) * radius;
+            double z = this.getZ() + Math.sin(angle) * radius;
+            server.sendParticles(particle, x, y, z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
+        }
+    }
+
+    private void sendParticleLine(ServerLevel server, Vec3 from, Vec3 to, net.minecraft.core.particles.SimpleParticleType particle, int points) {
+        Vec3 delta = to.subtract(from);
+        for (int i = 1; i <= points; i++) {
+            Vec3 point = from.add(delta.scale(i / (double) (points + 1)));
+            server.sendParticles(particle, point.x, point.y, point.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
         }
     }
 

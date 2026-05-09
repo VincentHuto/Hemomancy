@@ -3,6 +3,9 @@ package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +33,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 public class LatentAnnettaInfectionEntity extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
+            SynchedEntityData.defineId(LatentAnnettaInfectionEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
+            SynchedEntityData.defineId(LatentAnnettaInfectionEntity.class, EntityDataSerializers.INT);
+
+    public static final int VISUAL_NONE = 0;
+    public static final int VISUAL_INFECTION_BLOOM = 1;
+    public static final int VISUAL_PRESSURE_SPIKE = 2;
+
     private static final int INFECTION_BLOOM_INTERVAL = 70;
     private static final int PRESSURE_SPIKE_INTERVAL = 110;
 
@@ -66,6 +78,26 @@ public class LatentAnnettaInfectionEntity extends Monster {
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
+        builder.define(DATA_VISUAL_TICKS, 0);
+    }
+
+    public int getVisualState() {
+        return this.entityData.get(DATA_VISUAL_STATE);
+    }
+
+    public int getVisualTicks() {
+        return this.entityData.get(DATA_VISUAL_TICKS);
+    }
+
+    private void setVisualState(int visualState, int ticks) {
+        this.entityData.set(DATA_VISUAL_STATE, visualState);
+        this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
+    }
+
+    @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossEvent.addPlayer(player);
@@ -85,6 +117,7 @@ public class LatentAnnettaInfectionEntity extends Monster {
         }
 
         ServerLevel server = (ServerLevel) this.level();
+        tickVisualState();
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.tickCount % 12 == 0) {
             server.sendParticles(ParticleTypes.SPORE_BLOSSOM_AIR, this.getX(), this.getY() + 1.0D, this.getZ(),
@@ -98,8 +131,20 @@ public class LatentAnnettaInfectionEntity extends Monster {
         }
     }
 
+    private void tickVisualState() {
+        int ticks = getVisualTicks();
+        if (ticks > 0) {
+            this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
+            if (ticks == 1) {
+                this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
+            }
+        }
+    }
+
     private void infectionBloom(ServerLevel server) {
+        setVisualState(VISUAL_INFECTION_BLOOM, 18);
         AABB area = new AABB(this.blockPosition()).inflate(6.0D);
+        sendFloorRing(server, 6.0D, ParticleTypes.SPORE_BLOSSOM_AIR, 32);
         server.sendParticles(ParticleTypes.MYCELIUM, this.getX(), this.getY() + 0.8D, this.getZ(),
                 85, 2.5D, 0.7D, 2.5D, 0.04D);
         server.playSound(null, this.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE, 1.0F, 0.7F);
@@ -111,12 +156,23 @@ public class LatentAnnettaInfectionEntity extends Monster {
     }
 
     private void pressureSpike(ServerLevel server) {
+        setVisualState(VISUAL_PRESSURE_SPIKE, 16);
         AABB area = new AABB(this.blockPosition()).inflate(9.0D);
+        sendFloorRing(server, 9.0D, ParticleTypes.SOUL_FIRE_FLAME, 40);
         server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 1.0D, this.getZ(),
                 55, 4.0D, 0.5D, 4.0D, 0.03D);
         for (Player player : server.getEntitiesOfClass(Player.class, area)) {
             player.hurt(this.damageSources().indirectMagic(this, this), 4.0F);
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0, false, true));
+        }
+    }
+
+    private void sendFloorRing(ServerLevel server, double radius, net.minecraft.core.particles.SimpleParticleType particle, int points) {
+        for (int i = 0; i < points; i++) {
+            double angle = i * Math.PI * 2.0D / points;
+            double x = this.getX() + Math.cos(angle) * radius;
+            double z = this.getZ() + Math.sin(angle) * radius;
+            server.sendParticles(particle, x, this.getY() + 0.1D, z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
         }
     }
 
