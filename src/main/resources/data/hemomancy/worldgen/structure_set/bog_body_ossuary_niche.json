@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:bog_body_ossuary_niche",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 116938227,
+    "spacing": 28,
+    "separation": 8,
+    "type": "minecraft:random_spread"
+  }
+}
+

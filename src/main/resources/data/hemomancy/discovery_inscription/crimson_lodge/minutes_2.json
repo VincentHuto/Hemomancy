@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Lodge Minutes II — The Cost of Blood",
+  "obscured_text": [
+    "An argument. A pause. A compromise."
+  ],
+  "revealed_text": [
+    "It is forbidden to call the art a curse in the Lodge hall.",
+    "It is also forbidden to call it free. The body remembers every debt, even when the Order pretends it does not."
+  ],
+  "liber_entries": []
+}
+

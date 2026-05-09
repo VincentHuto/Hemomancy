@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Surveyor Log I — Crimson Bearings",
+  "obscured_text": [
+    "Soot and sweetness cling to the air. Your blood cannot keep a straight line here."
+  ],
+  "revealed_text": [
+    "We pitched the bivouac in the crimson boughs where the fungus burns but does not become ash.",
+    "The Nether is not dead stone. It is an organ with no skin — everything is exposed and still breathing."
+  ],
+  "liber_entries": []
+}
+

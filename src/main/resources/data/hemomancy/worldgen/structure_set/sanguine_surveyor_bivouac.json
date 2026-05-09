@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:sanguine_surveyor_bivouac",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1324073154,
+    "spacing": 28,
+    "separation": 8,
+    "type": "minecraft:random_spread"
+  }
+}
+

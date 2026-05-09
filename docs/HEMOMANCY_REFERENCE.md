@@ -2060,6 +2060,9 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Broken Church** | `BrokenChurchStructure` | Jigsaw-based overworld structure (registered in `StructureInit`). Spawns Annetta Knowles in COWERING state at `afterPlace()` by scanning the bounding box floor for a valid air-over-solid position. The corner scene includes: a **ToothPecks Specimen Jar** placed 1 block east of Annetta (facing her); three **Devil's Tooth** blocks nearby; and a scatter of random Hemolytic Plating or Bone Blocks within a 7×7 area as environmental debris. |
 | **Blood Temple** | `BloodTempleStructure` | Contains the Mortal Display; gateway to hemomancy |
 | **Harbinger Outpost** | `HarbingerOutpostStructure` | Harbinger exploration structure. Its `afterPlace()` hook spawns outpost NPCs: Vicar/Alchemist guidance and one **Harbinger Mnemonist** in the unused opposite corner from one Alchemist, giving the structure an early manipulation teacher without requiring NBT edits. Chest loot now favors crude memory starter rewards over overly generous early full-memory rewards. |
+| **Sanguine Surveyor Bivouac** | `SanguineSurveyorBivouacStructure` | Harbinger camp structure that can appear in the Nether’s Crimson Forest and in Hemomancy’s fungal Nether biomes. Uses placeholder discovery inscriptions (`hemomancy:random/surveyor_log`) which are replaced at generation time with one of the Surveyor Log inscriptions. |
+| **Bog-Body Ossuary Niche** | `BogBodyOssuaryNicheStructure` | Small Harbinger burial/cache niche intended for swamp biomes. Uses placeholder discovery inscriptions (`hemomancy:random/ossuary_memo`) which are replaced at generation time with one of the Ossuary Memo inscriptions. Placement is more tolerant of water depth than other overworld structures. |
+| **Crimson Lodge Annex** | `CrimsonLodgeAnnexStructure` | Rare Harbinger “hall-camp” structure that implies ongoing covenant life (bunks, table, lectern, pantry). Uses placeholder discovery inscriptions (`hemomancy:random/lodge_minutes`) which are replaced at generation time with one of the Lodge Minutes inscriptions. |
 | **Unstained Church** | `UnstainedChurchStructure` | Contains the Unstained Podium; gateway to the Unstained path |
 | **Qliphoth Sanctum** | NBT structure | Dark sanctum used for the Qliphoth-related endgame content; contains Engram Block |
 | **Qliphoth Bloom** | NBT structure | Qliphoth Bloom block structure placement |
@@ -2073,7 +2076,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Snowy Hemopothecary** | Village structure | Hemopothecary villager house for snowy biome villages |
 | **Savanna Hemopothecary** | Village structure | Hemopothecary villager house for savanna biome villages |
 
-> Structure NBT files are in `data/hemomancy/structures/`. The Blood Temple and Unstained Church are registered as worldgen structures with template pools. The hemopothecary village variants are integrated via `HemopothecaryProcessor` and `VillageEvents`.
+> Structure NBT files are in `data/hemomancy/structure/`. Worldgen structures are registered via `StructureInit` and the datapack `worldgen/structure*` JSONs. The hemopothecary village variants are integrated via `HemopothecaryProcessor` and `VillageEvents`.
 
 ---
 
@@ -2804,4 +2807,3 @@ Located in `assets/hemomancy/textures/entity/drudge/`:
 | `drudge_electrode` (`DrudgeElectrodeItem`) | ON mode + SSC click = birth; ON mode + swing = signal |
 | `dsd` (`DSDItem`) | Shift+right-click Drudge = dissolve + 1 500 mL refund |
 | Blood Memory items (`BloodMemoryItem`) | Install into Drudge to assign its task |
-

@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Ossuary Memo II — Vivianite Dust",
+  "obscured_text": [
+    "Blue grit stains your fingertips like a bruise."
+  ],
+  "revealed_text": [
+    "Vivianite blooms where iron learns humility.",
+    "The Order calls it a reagent. The swamp calls it a testimony: even metal remembers being alive."
+  ],
+  "liber_entries": []
+}
+

@@ -7,6 +7,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 final class StructurePlacementChecks {
 	private static final int MAX_LAND_STRUCTURE_HEIGHT = 150;
 	private static final int MAX_ALLOWED_WATER_DEPTH = 2;
+	private static final int MAX_ALLOWED_SWAMP_WATER_DEPTH = 8;
 	private static final int MAUSOLEUM_FOOTPRINT_RADIUS = 32;
 	private static final int MAUSOLEUM_SAMPLE_STEP = 16;
 	private static final int MAX_MAUSOLEUM_SURFACE_VARIATION = 10;
@@ -15,6 +16,14 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean isSuitableLandChunk(Structure.GenerationContext context) {
+		return isSuitableLandChunk(context, MAX_ALLOWED_WATER_DEPTH);
+	}
+
+	static boolean isSuitableSwampChunk(Structure.GenerationContext context) {
+		return isSuitableLandChunk(context, MAX_ALLOWED_SWAMP_WATER_DEPTH);
+	}
+
+	private static boolean isSuitableLandChunk(Structure.GenerationContext context, int maxAllowedWaterDepth) {
 		ChunkPos chunkPos = context.chunkPos();
 		int minX = chunkPos.getMinBlockX();
 		int minZ = chunkPos.getMinBlockZ();
@@ -27,7 +36,7 @@ final class StructurePlacementChecks {
 		};
 
 		for (int[] sample : samples) {
-			if (!isSuitableLandColumn(context, minX + sample[0], minZ + sample[1])) {
+			if (!isSuitableLandColumn(context, minX + sample[0], minZ + sample[1], maxAllowedWaterDepth)) {
 				return false;
 			}
 		}
@@ -44,7 +53,7 @@ final class StructurePlacementChecks {
 		int centerZ = chunkPos.getMinBlockZ() + 8;
 		int centerSurface = getSurfaceHeight(context, centerX, centerZ);
 
-		if (!isSuitableLandColumn(context, centerX, centerZ)) {
+		if (!isSuitableLandColumn(context, centerX, centerZ, MAX_ALLOWED_WATER_DEPTH)) {
 			return false;
 		}
 
@@ -52,7 +61,7 @@ final class StructurePlacementChecks {
 			for (int zOffset = -MAUSOLEUM_FOOTPRINT_RADIUS; zOffset <= MAUSOLEUM_FOOTPRINT_RADIUS; zOffset += MAUSOLEUM_SAMPLE_STEP) {
 				int x = centerX + xOffset;
 				int z = centerZ + zOffset;
-				if (!isSuitableLandColumn(context, x, z)) {
+				if (!isSuitableLandColumn(context, x, z, MAX_ALLOWED_WATER_DEPTH)) {
 					return false;
 				}
 
@@ -66,7 +75,7 @@ final class StructurePlacementChecks {
 		return true;
 	}
 
-	private static boolean isSuitableLandColumn(Structure.GenerationContext context, int x, int z) {
+	private static boolean isSuitableLandColumn(Structure.GenerationContext context, int x, int z, int maxAllowedWaterDepth) {
 		int surface = getSurfaceHeight(context, x, z);
 		if (surface >= MAX_LAND_STRUCTURE_HEIGHT) {
 			return false;
@@ -74,7 +83,7 @@ final class StructurePlacementChecks {
 
 		int oceanFloor = context.chunkGenerator().getFirstOccupiedHeight(x, z,
 				Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
-		return surface - oceanFloor <= MAX_ALLOWED_WATER_DEPTH;
+		return surface - oceanFloor <= maxAllowedWaterDepth;
 	}
 
 	private static int getSurfaceHeight(Structure.GenerationContext context, int x, int z) {

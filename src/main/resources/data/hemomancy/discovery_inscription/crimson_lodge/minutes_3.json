@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Lodge Minutes III — Found-Family Covenant",
+  "obscured_text": [
+    "A promise made aloud so it cannot be misunderstood."
+  ],
+  "revealed_text": [
+    "When a Harbinger is cast out by their kin, the Lodge receives them without questions that require wounds.",
+    "The covenant binds by choice. Whatever else blood may be, it is not the only inheritance."
+  ],
+  "liber_entries": []
+}
+

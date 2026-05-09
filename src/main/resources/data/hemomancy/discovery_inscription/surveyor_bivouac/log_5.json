@@ -1,0 +1,15 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Surveyor Log V — False Mercy",
+  "obscured_text": [
+    "Someone tried to be kind. The kindness hurt."
+  ],
+  "revealed_text": [
+    "A novice offered water to the crimson soil. It hissed like a wound being washed too hard.",
+    "Mercy is not a universal solvent. Some things heal only when left to scar."
+  ],
+  "liber_entries": []
+}
+
