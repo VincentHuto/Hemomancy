@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberDiscoveryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
+import com.vincenthuto.hemomancy.common.discovery.inscription.DiscoveryInscriptionLoader;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -212,6 +213,7 @@ public class Hemomancy {
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new ItemInquiryLoader());
+        event.addListener(new DiscoveryInscriptionLoader());
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

@@ -65,8 +65,8 @@ public class ScarEntityEventHandler {
 	private static final int SCAR_SLOT_MAX = 4;
 
 	/** Effective max scar slot, expanded by the Scar Resonance skill (up to +3). */
-	private static int getEffectiveScarSlotMax() {
-		return SCAR_SLOT_MAX + SkillPointHelper.getScarResonanceSlots();
+	private static int getEffectiveScarSlotMax(Player player) {
+		return SCAR_SLOT_MAX + SkillPointHelper.getScarResonanceSlots(player);
 	}
 
 	// --- Synergy bonus definitions (one per tendency) ---
@@ -278,7 +278,7 @@ public class ScarEntityEventHandler {
 		// Player attacks another entity
 		if (sourceEntity instanceof Player player && !player.level().isClientSide) {
 			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
+				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
 						scar.onPlayerAttack(player, harmed);
@@ -304,7 +304,7 @@ public class ScarEntityEventHandler {
 		if (harmed instanceof Player player && !player.level().isClientSide) {
 			if (sourceEntity instanceof LivingEntity attacker) {
 				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-					for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
+					for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
 						ItemStack stack = scars.getStackInSlot(i);
 						if (stack.getItem() instanceof ItemScar scar) {
 							scar.onPlayerDefend(player, attacker);
@@ -320,7 +320,7 @@ public class ScarEntityEventHandler {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity killed = event.getEntity();
 			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
+				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
 						scar.onPlayerKill(player, killed);
@@ -352,7 +352,7 @@ public class ScarEntityEventHandler {
 	private static void checkScarSynergy(Player player) {
 		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
-			for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
+			for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemScar scar) {
 					counts.merge(scar.getAssignedTendency(), 1, Integer::sum);
@@ -370,7 +370,7 @@ public class ScarEntityEventHandler {
 
 				boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
 				boolean hasModifier = attr.getModifier(bonus.modifierId()) != null;
-				double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier();
+				double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier(player);
 
 				if (hasSynergy) {
 					// Remove and re-add so Scar Affinity level changes take effect immediately

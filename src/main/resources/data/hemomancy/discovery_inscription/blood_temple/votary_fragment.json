@@ -1,0 +1,18 @@
+{
+  "kind": "rite_fragment",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Fragment: Votary Rite",
+  "obscured_text": [
+    "The text knots into a red lattice. It can be traced, but not understood.",
+    "A faint pressure answers your pulse and then falls silent."
+  ],
+  "revealed_text": [
+    "The Votary Rite is a second promise: not mastery, but membership. The Hematic Order names the practitioner as one who may carry another portion of the old inheritance.",
+    "The mark warns that hunger and devotion share a doorway. Enter carefully."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_hematic_order/pages/degrees"
+  ],
+  "rite_id": "hemomancy:cardinal_rite/votary_rite"
+}

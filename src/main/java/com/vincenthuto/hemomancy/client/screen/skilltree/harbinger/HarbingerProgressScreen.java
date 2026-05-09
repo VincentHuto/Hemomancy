@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -233,7 +233,7 @@ public class HarbingerProgressScreen extends Screen {
         }
 
         if (activeTab == Tab.SKILLS) {
-            String spText = "Skill Points: " + SkillPointInit.skillPoints;
+            String spText = "Skill Points: " + SkillProgressClientCache.current().getSkillPoints();
             gfx.drawString(font, Component.literal(spText).withStyle(s -> s.withColor(0xFFBB8833).withBold(true)),
                     guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
                     guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);

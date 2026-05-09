@@ -216,7 +216,7 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	protected void applyTierThreeTickEffect(LivingEntity entity) {
-		double masteryMult = (entity instanceof Player) ? SkillPointHelper.getScarMasteryDurationMultiplier() : 1.0;
+		double masteryMult = (entity instanceof Player player) ? SkillPointHelper.getScarMasteryDurationMultiplier(player) : 1.0;
 		switch (assignedTendency) {
 		case CONGEATIO:
 			// T2+ Glacier: slow nearby monsters every 2 seconds
@@ -262,7 +262,7 @@ public class ItemScar extends Item implements IScar {
 	 * Called when a player wearing this scar attacks another entity.
 	 */
 	public void onPlayerAttack(Player player, LivingEntity target) {
-		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
+		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier(player);
 		if (assignedTendency == EnumBloodTendency.MORTEM) {
 			if (tier >= 3) {
 				target.addEffect(new MobEffectInstance(MobEffects.WITHER, (int)(80 * masteryMult), 1));
@@ -280,7 +280,7 @@ public class ItemScar extends Item implements IScar {
 	 * Called when a player wearing this scar is attacked by another entity.
 	 */
 	public void onPlayerDefend(Player player, LivingEntity attacker) {
-		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
+		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier(player);
 		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
 			attacker.igniteForSeconds(tier >= 3 ? 4.0F : 2.0F);
 		}
@@ -309,7 +309,7 @@ public class ItemScar extends Item implements IScar {
 	 * Called when a player wearing this scar kills another entity.
 	 */
 	public void onPlayerKill(Player player, LivingEntity killed) {
-		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
+		double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier(player);
 		// ANIMUS: T2+ Marrow/Phoenix heal on kill
 		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 2) {
 			player.heal(tier);

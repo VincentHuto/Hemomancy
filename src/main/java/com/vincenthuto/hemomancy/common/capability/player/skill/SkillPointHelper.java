@@ -1,207 +1,305 @@
 package com.vincenthuto.hemomancy.common.capability.player.skill;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import net.minecraft.world.entity.player.Player;
+
+import javax.annotation.Nullable;
 
 /**
- * Central utility that converts skill levels into gameplay bonuses.
- * <p>
- * All methods are pure functions of the current {@link SkillPointInit} state,
- * so they work on both the client (for display) and the server (for gameplay).
+ * Converts skill progress into gameplay bonuses.
+ * Server gameplay must pass the player so bonuses are read from that player's
+ * persistent attachment. No-arg overloads are client display helpers backed by
+ * the latest skill sync packet.
  */
 public final class SkillPointHelper {
-
 	private SkillPointHelper() {}
 
-	// ──────────────── Capacity ────────────────
-	// Each level grants +500 max blood volume.
+	public static SkillProgress progress(@Nullable Player player) {
+		return player == null
+				? SkillProgressClientCache.current()
+				: HemoCapabilityAccess.getSkillProgress(player).orElseGet(SkillProgressClientCache::current);
+	}
 
-	/** Flat bonus to max blood volume from skill_capacity. */
+	public static int getSkillLevel(@Nullable Player player, SkillPoint skill) {
+		return progress(player).getLevel(skill);
+	}
+
+	public static boolean isUnlocked(@Nullable Player player, SkillPoint skill) {
+		return progress(player).isUnlocked(skill);
+	}
+
+	public static double getCapacityBonus(Player player) {
+		return getCapacityBonus(progress(player));
+	}
+
 	public static double getCapacityBonus() {
+		return getCapacityBonus(progress(null));
+	}
+
+	private static double getCapacityBonus(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_capacity;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel() * 500.0;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp) * 500.0;
 	}
 
-	// ──────────────── Efficiency ────────────────
-	// Each level reduces manipulation blood cost by 8% (multiplicative).
-	// At max level (5) → ~34% discount.
+	public static double getEfficiencyMultiplier(Player player) {
+		return getEfficiencyMultiplier(progress(player));
+	}
 
-	/** Multiplier for manipulation blood cost. e.g. 0.72 = 28% discount */
 	public static double getEfficiencyMultiplier() {
+		return getEfficiencyMultiplier(progress(null));
+	}
+
+	private static double getEfficiencyMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_efficiency;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return Math.pow(0.92, sp.getCurrentLevel());
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return Math.pow(0.92, progress.getLevel(sp));
 	}
 
-	// ──────────────── Last Wind ────────────────
-	// When blood drops below 10% of max, passively regenerate extra blood
-	// per tick. Each level adds +2 regen per tick in the danger zone.
+	public static double getLastWindRegenPerTick(Player player) {
+		return getLastWindRegenPerTick(progress(player));
+	}
 
-	/** Extra blood regen per tick while below the 10% threshold. */
 	public static double getLastWindRegenPerTick() {
-		SkillPoint sp = SkillPointInit.skill_last_wind;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel() * 2.0;
+		return getLastWindRegenPerTick(progress(null));
 	}
 
-	/** Threshold ratio below which Last Wind triggers. */
+	private static double getLastWindRegenPerTick(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_last_wind;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp) * 2.0;
+	}
+
 	public static double getLastWindThreshold() {
 		return 0.10;
 	}
 
-	// ──────────────── Dynamic Use ────────────────
-	// Manipulations whose tendency matches the player's highest tendency
-	// deal/do more. Each level grants +10% bonus effectiveness.
+	public static double getDynamicUseMultiplier(Player player) {
+		return getDynamicUseMultiplier(progress(player));
+	}
 
-	/** Bonus multiplier for tendency-matched manipulations. e.g. 1.2 = +20% */
 	public static double getDynamicUseMultiplier() {
+		return getDynamicUseMultiplier(progress(null));
+	}
+
+	private static double getDynamicUseMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_dynamic_use;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return 1.0 + sp.getCurrentLevel() * 0.10;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return 1.0 + progress.getLevel(sp) * 0.10;
 	}
 
-	// ──────────────── Feeding Frenzy ────────────────
-	// Increases blood gained from kills. Each level adds +25% bonus.
+	public static double getFeedingFrenzyMultiplier(Player player) {
+		return getFeedingFrenzyMultiplier(progress(player));
+	}
 
-	/** Multiplier for blood gained on kill. e.g. 1.5 = +50% */
 	public static double getFeedingFrenzyMultiplier() {
+		return getFeedingFrenzyMultiplier(progress(null));
+	}
+
+	private static double getFeedingFrenzyMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_feeding_frenzy;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return 1.0 + sp.getCurrentLevel() * 0.25;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return 1.0 + progress.getLevel(sp) * 0.25;
 	}
 
-	// ──────────────── Hemostasis ────────────────
-	// Reduces blood lost when taking damage. Each level reduces loss by 10%.
+	public static double getHemostasisMultiplier(Player player) {
+		return getHemostasisMultiplier(progress(player));
+	}
 
-	/** Multiplier for blood lost on damage. e.g. 0.7 = 30% less blood lost */
 	public static double getHemostasisMultiplier() {
+		return getHemostasisMultiplier(progress(null));
+	}
+
+	private static double getHemostasisMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_hemostasis;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return Math.max(0.4, 1.0 - sp.getCurrentLevel() * 0.10);
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return Math.max(0.4, 1.0 - progress.getLevel(sp) * 0.10);
 	}
 
-	// ──────────────── Sanguine Surge ────────────────
-	// Passive blood regeneration per tick. Each level adds +1 regen/tick.
+	public static double getSanguineSurgeRegen(Player player) {
+		return getSanguineSurgeRegen(progress(player));
+	}
 
-	/** Extra blood regen per tick from Sanguine Surge. */
 	public static double getSanguineSurgeRegen() {
+		return getSanguineSurgeRegen(progress(null));
+	}
+
+	private static double getSanguineSurgeRegen(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_sanguine_surge;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel() * 1.0;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp) * 1.0;
 	}
 
-	// ──────────────── Crimson Mastery ────────────────
-	// Increases manipulation damage/effectiveness. Each level adds +15%.
+	public static double getCrimsonMasteryMultiplier(Player player) {
+		return getCrimsonMasteryMultiplier(progress(player));
+	}
 
-	/** Bonus multiplier for manipulation damage. e.g. 1.45 = +45% */
 	public static double getCrimsonMasteryMultiplier() {
+		return getCrimsonMasteryMultiplier(progress(null));
+	}
+
+	private static double getCrimsonMasteryMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_crimson_mastery;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return 1.0 + sp.getCurrentLevel() * 0.15;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return 1.0 + progress.getLevel(sp) * 0.15;
 	}
 
-	// ──────────────── Vital Link ────────────────
-	// Chance to heal when dealing damage with manipulations.
-	// Each level adds +10% chance.
+	public static double getVitalLinkChance(Player player) {
+		return getVitalLinkChance(progress(player));
+	}
 
-	/** Probability (0..1) of healing on hit. */
 	public static double getVitalLinkChance() {
+		return getVitalLinkChance(progress(null));
+	}
+
+	private static double getVitalLinkChance(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_vital_link;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel() * 0.10;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp) * 0.10;
 	}
 
-	// ──────────────── Iron Will ────────────────
-	// Damage reduction while blood is below 15%. Each level adds +10%.
+	public static double getIronWillMultiplier(Player player) {
+		return getIronWillMultiplier(progress(player));
+	}
 
-	/** Damage reduction multiplier when low blood. e.g. 0.7 = 30% less damage */
 	public static double getIronWillMultiplier() {
-		SkillPoint sp = SkillPointInit.skill_iron_will;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return Math.max(0.4, 1.0 - sp.getCurrentLevel() * 0.10);
+		return getIronWillMultiplier(progress(null));
 	}
 
-	/** Threshold ratio below which Iron Will triggers. */
+	private static double getIronWillMultiplier(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_iron_will;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return Math.max(0.4, 1.0 - progress.getLevel(sp) * 0.10);
+	}
+
 	public static double getIronWillThreshold() {
 		return 0.15;
 	}
 
-	// ──────────────── Blood Flow ────────────────
-	// Reduces manipulation cooldown. Each level reduces cooldown by 5%.
+	public static double getBloodFlowMultiplier(Player player) {
+		return getBloodFlowMultiplier(progress(player));
+	}
 
-	/** Cooldown multiplier. e.g. 0.75 = 25% faster cooldowns */
 	public static double getBloodFlowMultiplier() {
+		return getBloodFlowMultiplier(progress(null));
+	}
+
+	private static double getBloodFlowMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_blood_flow;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return Math.max(0.5, 1.0 - sp.getCurrentLevel() * 0.05);
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return Math.max(0.5, 1.0 - progress.getLevel(sp) * 0.05);
 	}
 
-	// ──────────────── Coagulation ────────────────
-	// Chance to block incoming bleed/blood-drain effects. Each level +15%.
+	public static double getCoagulationChance(Player player) {
+		return getCoagulationChance(progress(player));
+	}
 
-	/** Probability (0..1) of blocking a bleed effect. */
 	public static double getCoagulationChance() {
+		return getCoagulationChance(progress(null));
+	}
+
+	private static double getCoagulationChance(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_coagulation;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel() * 0.15;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp) * 0.15;
 	}
 
-	// ──────────────── Sanguine Reach ────────────────
-	// Increases effective range of ranged blood manipulations.
-	// Each level adds +15% range bonus.
+	public static double getSanguineReachMultiplier(Player player) {
+		return getSanguineReachMultiplier(progress(player));
+	}
 
-	/** Range multiplier for ranged manipulations. e.g. 1.45 = +45% range */
 	public static double getSanguineReachMultiplier() {
+		return getSanguineReachMultiplier(progress(null));
+	}
+
+	private static double getSanguineReachMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_sanguine_reach;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return 1.0 + sp.getCurrentLevel() * 0.15;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return 1.0 + progress.getLevel(sp) * 0.15;
 	}
 
-	// ──────────────── Scar Affinity ────────────────
-	// Increases scar effect potency (synergy bonus amounts). Each level adds +10%.
+	public static double getScarAffinityMultiplier(Player player) {
+		return getScarAffinityMultiplier(progress(player));
+	}
 
-	/** Multiplier applied to scar synergy attribute bonuses. e.g. 1.2 = +20% potency */
 	public static double getScarAffinityMultiplier() {
+		return getScarAffinityMultiplier(progress(null));
+	}
+
+	private static double getScarAffinityMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_scar_affinity;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return 1.0 + sp.getCurrentLevel() * 0.10;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return 1.0 + progress.getLevel(sp) * 0.10;
 	}
 
-	// ──────────────── Scar Resonance ────────────────
-	// Adds extra equippable scar slots. Each level adds +1 slot (base 4, max 7).
+	public static int getScarResonanceSlots(Player player) {
+		return getScarResonanceSlots(progress(player));
+	}
 
-	/** Number of bonus scar slots granted by Scar Resonance. */
 	public static int getScarResonanceSlots() {
-		SkillPoint sp = SkillPointInit.skill_scar_resonance;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel();
+		return getScarResonanceSlots(progress(null));
 	}
 
-	// ──────────────── Scar Mastery ────────────────
-	// Increases duration of finite effects applied via scar abilities. Each level adds +20%.
+	private static int getScarResonanceSlots(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_scar_resonance;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
 
-	/** Duration multiplier for scar-triggered status effects. e.g. 1.4 = +40% longer */
+	public static double getScarMasteryDurationMultiplier(Player player) {
+		return getScarMasteryDurationMultiplier(progress(player));
+	}
+
 	public static double getScarMasteryDurationMultiplier() {
+		return getScarMasteryDurationMultiplier(progress(null));
+	}
+
+	private static double getScarMasteryDurationMultiplier(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_scar_mastery;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
-		return 1.0 + sp.getCurrentLevel() * 0.20;
+		if (sp == null || !progress.isUnlocked(sp)) return 1.0;
+		return 1.0 + progress.getLevel(sp) * 0.20;
+	}
+
+	public static int getPuppetSkeinLevel(Player player) {
+		return getPuppetSkeinLevel(progress(player));
 	}
 
 	public static int getPuppetSkeinLevel() {
+		return getPuppetSkeinLevel(progress(null));
+	}
+
+	private static int getPuppetSkeinLevel(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_puppet_skein;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel();
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getLivingSinewLevel(Player player) {
+		return getLivingSinewLevel(progress(player));
 	}
 
 	public static int getLivingSinewLevel() {
+		return getLivingSinewLevel(progress(null));
+	}
+
+	private static int getLivingSinewLevel(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_living_sinew;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel();
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getFarTetherLevel(Player player) {
+		return getFarTetherLevel(progress(player));
 	}
 
 	public static int getFarTetherLevel() {
+		return getFarTetherLevel(progress(null));
+	}
+
+	private static int getFarTetherLevel(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_far_tether;
-		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
-		return sp.getCurrentLevel();
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
 	}
 }

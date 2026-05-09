@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/rite_fragment_inscription" },
+    "facing=east": { "model": "hemomancy:block/rite_fragment_inscription" },
+    "facing=south": { "model": "hemomancy:block/rite_fragment_inscription" },
+    "facing=west": { "model": "hemomancy:block/rite_fragment_inscription" }
+  }
+}

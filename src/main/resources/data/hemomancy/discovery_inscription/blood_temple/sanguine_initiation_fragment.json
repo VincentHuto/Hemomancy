@@ -1,0 +1,20 @@
+{
+  "kind": "rite_fragment",
+  "path": "harbinger",
+  "required_level": 0,
+  "title": "Fragment: Sanguine Initiation",
+  "obscured_text": [
+    "The marks are wet-dark and close together. They refuse to become words.",
+    "Only one phrase keeps surfacing: give blood, receive witness."
+  ],
+  "revealed_text": [
+    "A novice hand recorded the first rite here. Blood is not paid to a god. It is offered as proof that the body can remember more than fear.",
+    "The basin opens only when the wound is honest. The Order calls this the first courtesy of the vein."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_hematic_order/pages/first_rite_notes",
+    "hemomancy:sanctumsanguinium/intro/pages/hemomancy",
+    "hemomancy:sanctumsanguinium/intro/pages/the_harbingers"
+  ],
+  "rite_id": "hemomancy:cardinal_rite/sanguine_initiation"
+}

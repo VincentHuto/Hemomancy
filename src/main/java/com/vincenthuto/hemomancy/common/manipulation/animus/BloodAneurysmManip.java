@@ -65,7 +65,7 @@ public class BloodAneurysmManip extends BloodManipulation {
 		}
 
 		LivingEntity target = targetOpt.get();
-		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier();
+		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 
 		target.hurt(world.damageSources().magic(), DIRECT_DAMAGE * masteryMult);
 		Vec3 current = target.getDeltaMovement();

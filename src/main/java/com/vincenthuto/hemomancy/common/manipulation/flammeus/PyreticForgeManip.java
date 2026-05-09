@@ -70,7 +70,7 @@ public class PyreticForgeManip extends BloodManipulation {
 		int held = heldItemMainhand.getCount();
 		// Scale smelt count with Crimson Mastery skill
 		int smeltCount = (int) Math.min(held,
-				Math.ceil(BASE_SMELT_COUNT * SkillPointHelper.getCrimsonMasteryMultiplier()));
+				Math.ceil(BASE_SMELT_COUNT * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 
 		ItemStack smeltedStack = result.copy();
 		smeltedStack.setCount(smeltCount);

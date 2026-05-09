@@ -1,0 +1,17 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 3,
+  "title": "Saints' Blood Echo",
+  "obscured_text": [
+    "The script is layered with old names. None of them will look at you yet.",
+    "A pressure like preserved breath gathers in the stone."
+  ],
+  "revealed_text": [
+    "The echo is not a sermon. It is a preserved bruise of memory: Saints who were neither gentle nor wicked, bodies made into landmarks after the blood learned too much.",
+    "Their remnants do not forgive. They remember, and remembrance is already a kind of weather."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/cosmic_forces/pages/the_saints"
+  ]
+}

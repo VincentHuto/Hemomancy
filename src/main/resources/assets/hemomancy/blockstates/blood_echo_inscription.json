@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/blood_echo_inscription", "y": 180 },
+    "facing=east": { "model": "hemomancy:block/blood_echo_inscription", "y": 270 },
+    "facing=south": { "model": "hemomancy:block/blood_echo_inscription" },
+    "facing=west": { "model": "hemomancy:block/blood_echo_inscription", "y": 90 }
+  }
+}

@@ -58,7 +58,7 @@ public class BloodEclipseManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier();
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		Vec3 look = player.getViewVector(1.0F).normalize();
 		double cosThreshold = Math.cos(Math.toRadians(CONE_HALF_ANGLE_DEG));
 
@@ -82,7 +82,7 @@ public class BloodEclipseManip extends BloodManipulation {
 					BLINDNESS_TICKS, BLINDNESS_AMP, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
 					WEAKNESS_TICKS, WEAKNESS_AMP, false, true));
-			target.hurt(world.damageSources().magic(), (float) (SHADOW_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
+			target.hurt(world.damageSources().magic(), (float) (SHADOW_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 			hit++;
 		}
 

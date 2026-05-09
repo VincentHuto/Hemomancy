@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -40,7 +41,7 @@ public class BloodVolumeEvents {
 
 			// â”€â”€ Skill: Capacity â€” add flat bonus to max blood â”€â”€
 			double baseMax = 5000.0;
-			double capacityBonus = SkillPointHelper.getCapacityBonus();
+			double capacityBonus = SkillPointHelper.getCapacityBonus(player);
 			double desiredMax = baseMax + capacityBonus;
 			if (Math.abs(volume.getMaxBloodVolume() - desiredMax) > 0.01) {
 				volume.setMaxBloodVolume(desiredMax);
@@ -57,14 +58,14 @@ public class BloodVolumeEvents {
 			}
 
 			// â”€â”€ Skill: Sanguine Surge â€” passive blood regen per tick â”€â”€
-			double surgeRegen = SkillPointHelper.getSanguineSurgeRegen();
+			double surgeRegen = SkillPointHelper.getSanguineSurgeRegen(player);
 			if (surgeRegen > 0 && !volume.isFull()) {
 				volume.fill(surgeRegen);
 				syncVolume((ServerPlayer) player, volume);
 			}
 
 			// â”€â”€ Skill: Last Wind â€” emergency regen when blood is critically low â”€â”€
-			double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick();
+			double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick(player);
 			if (lastWindRegen > 0) {
 				double threshold = volume.getMaxBloodVolume() * SkillPointHelper.getLastWindThreshold();
 				if (volume.getBloodVolume() < threshold && volume.getBloodVolume() > 0) {
@@ -182,12 +183,12 @@ public class BloodVolumeEvents {
 				double ironWillThreshold = volume.getMaxBloodVolume() * SkillPointHelper.getIronWillThreshold();
 				float damage = event.getNewDamage();
 				if (volume.getBloodVolume() < ironWillThreshold && volume.getBloodVolume() > 0) {
-					damage *= (float) SkillPointHelper.getIronWillMultiplier();
+					damage *= (float) SkillPointHelper.getIronWillMultiplier(player);
 					event.setNewDamage(damage);
 				}
 
 				double drainAmount = damage * HemoServerConfig.BLOOD_DRAIN_PER_DAMAGE.get()
-						* SkillPointHelper.getHemostasisMultiplier();
+						* SkillPointHelper.getHemostasisMultiplier(player);
 				volume.drain(drainAmount);
 				volume.addDamage(damage);
 				syncVolume((ServerPlayer) player, volume);
@@ -252,7 +253,7 @@ public class BloodVolumeEvents {
 				}
 
 				// Skill: Feeding Frenzy â€” bonus blood from kills
-				gain *= SkillPointHelper.getFeedingFrenzyMultiplier();
+				gain *= SkillPointHelper.getFeedingFrenzyMultiplier(player);
 
 				fillPlayerThenEquippedGourd(player, volume, gain);
 				syncVolume((ServerPlayer) player, volume);
@@ -326,8 +327,7 @@ public class BloodVolumeEvents {
 		syncVolume(player, volume);
 
 		// Sync skill tree to client
-		com.vincenthuto.hemomancy.common.network.PacketHandler.sendToPlayer(player, new com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills(
-						com.vincenthuto.hemomancy.common.init.SkillPointInit.serializeAll()));
+		SkillPointGainEvents.syncSkills(player);
 	}
 
 	@SubscribeEvent

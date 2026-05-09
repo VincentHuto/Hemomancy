@@ -1,0 +1,18 @@
+{
+  "kind": "rite_fragment",
+  "path": "unstained",
+  "required_level": 5,
+  "title": "Pale Fragment: Clarity Ascension",
+  "obscured_text": [
+    "The white script is intact, but your sight skates over it as if the letters were polished silver.",
+    "It waits for a steadier self to read it."
+  ],
+  "revealed_text": [
+    "Clarity Ascension is not triumph. It is the moment after cleansing when the world becomes sharp enough to hurt cleanly.",
+    "The fragment names Our Lady of Still Waters as listener, not judge. Yet it also warns that perfect defense can learn to strike the body it meant to save."
+  ],
+  "liber_entries": [
+    "hemomancy:liberimmaculatus/our_lady/pages/clarity_and_its_price"
+  ],
+  "rite_id": "hemomancy:cardinal_rite/clarity_ascension"
+}

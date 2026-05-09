@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
+import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.TendencyViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
@@ -357,6 +358,7 @@ public class ClientEvents {
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
+            HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
         }
     }
 
@@ -713,6 +715,7 @@ public class ClientEvents {
             event.register(ContainerInit.mycelial_crucible.get(), MycelialCrucibleScreen::new);
             event.register(ContainerInit.mycelial_lantern.get(), MycelialLanternScreen::new);
             event.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
+            event.register(ContainerInit.puppeteers_spindle.get(), PuppeteersSpindleScreen::new);
             event.register(ContainerInit.mnemonic_reliquary.get(), MnemonicReliquaryScreen::new);
         }
 

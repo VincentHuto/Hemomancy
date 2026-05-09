@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
@@ -50,6 +51,9 @@ public final class HemoCapabilityKeys {
 
     public static final EntityCapability<IBookKnowledge, Void> LIBER_KNOWLEDGE =
             EntityCapability.createVoid(Hemomancy.rloc("liber_knowledge"), IBookKnowledge.class);
+
+    public static final EntityCapability<SkillProgress, Void> SKILL_PROGRESS =
+            EntityCapability.createVoid(Hemomancy.rloc("skill_progress"), SkillProgress.class);
 
     public static final EntityCapability<IWhiteHumorVolume, Void> WHITE_HUMOR_VOLUME =
             EntityCapability.createVoid(Hemomancy.rloc("white_humor_volume"), IWhiteHumorVolume.class);

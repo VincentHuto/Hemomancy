@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
@@ -97,7 +98,7 @@ public class MarionetteCrossbarItem extends Item {
 			cycleSelectedSummon(stack, player);
 			return InteractionResultHolder.consume(stack);
 		}
-		useSelectedSummon(stack, (ServerPlayer) player);
+		callOrRecallSelectedSummon(stack, (ServerPlayer) player);
 		return InteractionResultHolder.consume(stack);
 	}
 
@@ -108,6 +109,38 @@ public class MarionetteCrossbarItem extends Item {
 		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
 			ItemStack stack = player.getInventory().getItem(slot);
 			if (stack.getItem() instanceof MarionetteCrossbarItem && crossbarId.equals(readCrossbarId(stack))) {
+				return Optional.of(stack);
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<ItemStack> findFirstCrossbar(Player player) {
+		if (player == null) {
+			return Optional.empty();
+		}
+		for (InteractionHand hand : InteractionHand.values()) {
+			ItemStack held = player.getItemInHand(hand);
+			if (held.getItem() instanceof MarionetteCrossbarItem) {
+				return Optional.of(held);
+			}
+		}
+		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+			ItemStack stack = player.getInventory().getItem(slot);
+			if (stack.getItem() instanceof MarionetteCrossbarItem) {
+				return Optional.of(stack);
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<ItemStack> findFirstItem(Player player, Item item) {
+		if (player == null) {
+			return Optional.empty();
+		}
+		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+			ItemStack stack = player.getInventory().getItem(slot);
+			if (stack.getItem() == item) {
 				return Optional.of(stack);
 			}
 		}
@@ -165,6 +198,92 @@ public class MarionetteCrossbarItem extends Item {
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
+	public static void bindCrossbar(ItemStack crossbar, ServerPlayer player) {
+		List<String> known = HemoCapabilityAccess.getKnownSummons(player)
+				.map(k -> k.getKnownSummonNames())
+				.orElse(List.of());
+		if (known.isEmpty()) {
+			player.displayClientMessage(Component.translatable("hemomancy.summon.bind.none")
+					.withStyle(ChatFormatting.GRAY), true);
+			return;
+		}
+		String selected = getSelectedSummonName(crossbar);
+		if (selected == null || selected.isBlank() || !known.contains(selected)) {
+			selected = known.get(0);
+			setSelectedSummonName(crossbar, selected);
+		}
+		ensureCrossbarId(crossbar);
+		HemoCapabilityAccess.getKnownSummons(player)
+				.ifPresent(knownSummons -> KnownSummonEvents.sync(player, knownSummons));
+		player.playSound(SoundEvents.CHAIN_PLACE, 0.5F, 0.8F);
+		player.displayClientMessage(Component.translatable("hemomancy.summon.bind.success",
+				Component.translatable("entity.hemomancy." + selected)), true);
+	}
+
+	public static void windCrossbar(ItemStack crossbar, ItemStack threadStack, ServerPlayer player) {
+		int before = getThread(crossbar);
+		if (before >= PuppeteerSummonRules.THREAD_CAPACITY) {
+			player.displayClientMessage(Component.translatable("hemomancy.summon.refill.full")
+					.withStyle(ChatFormatting.GRAY), true);
+			return;
+		}
+		int after = addThread(crossbar, PuppeteerSummonRules.THREAD_PER_ITEM);
+		if (!player.getAbilities().instabuild) {
+			threadStack.shrink(1);
+		}
+		player.playSound(SoundEvents.WOOL_PLACE, 0.45F, 0.75F);
+		player.displayClientMessage(Component.translatable("hemomancy.summon.refill.success",
+				after, PuppeteerSummonRules.THREAD_CAPACITY), true);
+	}
+
+	public static void unlockNextSummon(ItemStack quintessence, ServerPlayer player) {
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		Optional<PuppeteerSummonDefinition> next = HemoCapabilityAccess.getKnownSummons(player)
+				.flatMap(known -> PuppeteerSummonDefinitions.all().stream()
+						.filter(definition -> definition.requiredDegree() <= degree)
+						.filter(definition -> !known.isKnown(definition))
+						.findFirst());
+		if (next.isEmpty()) {
+			player.displayClientMessage(Component.translatable("hemomancy.summon.unlock.none")
+					.withStyle(ChatFormatting.GRAY), true);
+			return;
+		}
+		PuppeteerSummonDefinition definition = next.get();
+		if (KnownSummonEvents.grantSummon(player, definition)) {
+			if (!player.getAbilities().instabuild) {
+				quintessence.shrink(1);
+			}
+			player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.65F, 0.65F);
+			player.displayClientMessage(Component.translatable("hemomancy.summon.unlock.success",
+					Component.translatable(definition.translationKey())).withStyle(ChatFormatting.RED), false);
+		}
+	}
+
+	public static boolean selectSummon(ItemStack stack, ServerPlayer player, String summonName) {
+		if (summonName == null || summonName.isBlank()) {
+			return false;
+		}
+		Optional<PuppeteerSummonDefinition> definition = PuppeteerSummonDefinitions.byName(summonName);
+		if (definition.isEmpty()) {
+			player.displayClientMessage(Component.translatable("hemomancy.summon.select.invalid")
+					.withStyle(ChatFormatting.GRAY), true);
+			return false;
+		}
+		boolean known = HemoCapabilityAccess.getKnownSummons(player)
+				.map(k -> k.isKnown(definition.get()))
+				.orElse(false);
+		if (!known) {
+			player.displayClientMessage(Component.translatable("hemomancy.summon.select.unknown")
+					.withStyle(ChatFormatting.GRAY), true);
+			return false;
+		}
+		setSelectedSummonName(stack, summonName);
+		player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, 0.35F, 0.8F);
+		player.displayClientMessage(Component.translatable("hemomancy.summon.select.success",
+				Component.translatable(definition.get().translationKey())), true);
+		return true;
+	}
+
 	public static UUID ensureCrossbarId(ItemStack stack) {
 		UUID existing = readCrossbarId(stack);
 		if (existing != null) {
@@ -195,7 +314,7 @@ public class MarionetteCrossbarItem extends Item {
 				Component.translatable("entity.hemomancy." + next)), true);
 	}
 
-	private void useSelectedSummon(ItemStack stack, ServerPlayer player) {
+	public static void callOrRecallSelectedSummon(ItemStack stack, ServerPlayer player) {
 		String selected = getSelectedSummonName(stack);
 		if (selected == null || selected.isBlank()) {
 			List<String> known = HemoCapabilityAccess.getKnownSummons(player)
@@ -237,7 +356,7 @@ public class MarionetteCrossbarItem extends Item {
 					Component.translatable(definition.translationKey())), true);
 			return;
 		}
-		int activeCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel());
+		int activeCap = PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(player));
 		if (activeSummonsForOwner(player).size() >= activeCap) {
 			player.displayClientMessage(Component.translatable("hemomancy.summon.cap.reached", activeCap)
 					.withStyle(ChatFormatting.GRAY), true);
@@ -249,7 +368,7 @@ public class MarionetteCrossbarItem extends Item {
 			return;
 		}
 		Optional<Mob> mobOpt = PuppeteerSummonFactory.create(definition, player.level(), player,
-				crossbarId, SkillPointHelper.getLivingSinewLevel());
+				crossbarId, SkillPointHelper.getLivingSinewLevel(player));
 		if (mobOpt.isEmpty()) {
 			player.displayClientMessage(Component.translatable("hemomancy.summon.failed")
 					.withStyle(ChatFormatting.GRAY), true);
@@ -260,13 +379,13 @@ public class MarionetteCrossbarItem extends Item {
 		}
 		Mob mob = mobOpt.get();
 		player.level().addFreshEntity(mob);
-		player.getCooldowns().addCooldown(this, 20);
+		player.getCooldowns().addCooldown(stack.getItem(), 20);
 		player.playSound(SoundEvents.EVOKER_PREPARE_SUMMON, 0.55F, 0.75F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.called",
 				Component.translatable(definition.translationKey())), true);
 	}
 
-	private static List<Mob> activeSummonsForOwner(Player player) {
+	public static List<Mob> activeSummonsForOwner(Player player) {
 		if (player == null) {
 			return List.of();
 		}

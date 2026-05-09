@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -55,7 +55,7 @@ public final class MilestoneDrawerView {
         gfx.drawCenteredString(ctx.font(), Component.literal("Milestones"), centerX, y, 0xFFCC3333);
         y += 12;
 
-        int completed = SkillPointInit.completedMilestones.size();
+        int completed = SkillProgressClientCache.current().getCompletedMilestoneCount();
         int visible = 0;
         for (HemoMilestone m : HemoMilestone.values()) {
             if (m.getRequiredDegree() <= ctx.playerDegree()) visible++;
@@ -82,7 +82,7 @@ public final class MilestoneDrawerView {
                 y += 11;
             }
 
-            boolean complete = SkillPointInit.completedMilestones.contains(m);
+            boolean complete = SkillProgressClientCache.current().isMilestoneCompleted(m);
             String icon = complete ? "\u2713" : "\u2717";
             int iconCol = complete ? 0xFF60CC60 : 0xFF605050;
             int labelCol = complete ? 0xFFBBAAAA : 0xFF776666;

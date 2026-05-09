@@ -57,9 +57,8 @@ public class VeinwingVultureEntity extends Vex implements BoundPuppeteerSummon {
 		super.tick();
 		if (!level().isClientSide && BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
-			if (getTarget() == null && owner.isPresent() && distanceToSqr(owner.get()) > 16.0) {
-				getMoveControl().setWantedPosition(owner.get().getX(), owner.get().getY() + 1.4,
-						owner.get().getZ(), 1.05);
+			if (owner.isPresent() && (getTarget() == null || distanceToSqr(owner.get()) > 144.0)) {
+				BoundSummonBehavior.followFlyingOwner(this, owner.get(), 1.12, 18.0);
 			}
 		}
 	}

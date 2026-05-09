@@ -1,0 +1,19 @@
+{
+  "kind": "rite_fragment",
+  "path": "unstained",
+  "required_level": 1,
+  "title": "Pale Fragment: Still Waters",
+  "obscured_text": [
+    "Silver letters lie under a white film. The shapes are clean, but they will not yield.",
+    "A chill gathers in the cuts of the stone."
+  ],
+  "revealed_text": [
+    "Still Waters is written as refusal before it is written as prayer. The first cleansing asks the body to stop mistaking pain for belonging.",
+    "Lethean water does not erase because it hates memory. It silences what keeps biting after the wound should close."
+  ],
+  "liber_entries": [
+    "hemomancy:liberimmaculatus/intro/pages/first_steps",
+    "hemomancy:liberimmaculatus/our_lady/pages/she_who_listens"
+  ],
+  "rite_id": "hemomancy:cardinal_rite/still_waters"
+}

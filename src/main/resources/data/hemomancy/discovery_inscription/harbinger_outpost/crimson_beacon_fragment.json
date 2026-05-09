@@ -1,0 +1,18 @@
+{
+  "kind": "rite_fragment",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Fragment: Crimson Beacon",
+  "obscured_text": [
+    "The inscription answers with a distant heat, then smears into unreadable red.",
+    "It is waiting for a stronger name in the blood."
+  ],
+  "revealed_text": [
+    "The Crimson Beacon is a call cast through the vascular dark. It does not shout. It teaches blood to recognize a chosen point as kin.",
+    "The fragment cautions that a beacon is also a confession. Anything listening through the same inheritance may notice the flare."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_infection/pages/blood_memories"
+  ],
+  "rite_id": "hemomancy:cardinal_rite/crimson_beacon"
+}

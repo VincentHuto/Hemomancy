@@ -64,7 +64,7 @@ public class SanguineExcavationManip extends BloodManipulation {
 			return;
 		}
 
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier();
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 
 		Vec3 eyePos = player.getEyePosition(1.0F);
 		Vec3 lookVec = player.getViewVector(1.0F);
@@ -89,7 +89,7 @@ public class SanguineExcavationManip extends BloodManipulation {
 		}
 
 		// Scale excavation AoE with Sanguine Reach skill
-		double reachMult = SkillPointHelper.getSanguineReachMultiplier();
+		double reachMult = SkillPointHelper.getSanguineReachMultiplier(player);
 		int maxBlocks = (int) Math.min(CAP_MAX_BLOCKS,
 				BASE_MAX_BLOCKS * reachMult);
 		double radiusSq = Math.min(CAP_RADIUS_SQ,

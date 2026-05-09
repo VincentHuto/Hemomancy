@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +33,7 @@ public final class ManipSlotHelper {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		int skillBonus = 0;
 		if (SkillPointInit.skill_manip_slots != null) {
-			skillBonus = SkillPointInit.skill_manip_slots.getCurrentLevel();
+			skillBonus = SkillPointHelper.getSkillLevel(player, SkillPointInit.skill_manip_slots);
 		}
 		int raw = BASE_SLOTS + (degree / 2) + skillBonus;
 		return Math.min(raw, MAX_SLOTS);
@@ -48,7 +49,7 @@ public final class ManipSlotHelper {
 		int baseAndDegree = BASE_SLOTS + (degree / 2);
 		int skillBonus = 0;
 		if (SkillPointInit.skill_manip_slots != null) {
-			skillBonus = SkillPointInit.skill_manip_slots.getCurrentLevel();
+			skillBonus = SkillPointHelper.getSkillLevel(player, SkillPointInit.skill_manip_slots);
 		}
 		if (baseAndDegree >= MAX_SLOTS) {
 			// All skill levels are excess

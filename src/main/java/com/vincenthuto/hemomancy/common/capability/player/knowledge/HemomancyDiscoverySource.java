@@ -20,4 +20,8 @@ public enum HemomancyDiscoverySource implements IDiscoverySource {
 	DEGREE,
 	/** Entry was unlocked by a dialogue event (NPC conversation choice). */
 	DIALOGUE,
+	/** Entry was unlocked by reading a blood-memory inscription. */
+	BLOOD_ECHO,
+	/** Entry was unlocked by reading a rite fragment inscription. */
+	RITE_FRAGMENT,
 }

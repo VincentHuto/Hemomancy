@@ -48,32 +48,41 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation IMMACULATUS_ANNETTA_GEODE = immaculatusEntry("the_path/pages/annetta_geode_memo");
 
 	static {
-		register(FIRST_RITE_NOTES, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE);
-		register(HEMOMANCY, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE);
+		register(FIRST_RITE_NOTES, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT);
+		register(HEMOMANCY, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE,
+				HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(ERYTHROMYCELIUM, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.DIALOGUE);
-		register(THE_HARBINGERS, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ADVANCEMENT, CommonDiscoverySource.ITEM_PICKUP);
-		register(THE_UNSTAINED, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ADVANCEMENT, CommonDiscoverySource.ITEM_PICKUP);
-		register(DEGREES, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ADVANCEMENT);
+		register(THE_HARBINGERS, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT,
+				CommonDiscoverySource.ADVANCEMENT, CommonDiscoverySource.ITEM_PICKUP);
+		register(THE_UNSTAINED, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT,
+				CommonDiscoverySource.ADVANCEMENT, CommonDiscoverySource.ITEM_PICKUP);
+		register(DEGREES, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT,
+				CommonDiscoverySource.ADVANCEMENT);
 		register(HERMITS, HemomancyDiscoverySource.DIALOGUE, HemomancyDiscoverySource.RITE);
 		register(ORDER_BELIEFS, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE);
-		register(HISTORICAL_RECORD, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE);
-		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE);
-		register(HYPHAE, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.DIALOGUE);
+		register(HISTORICAL_RECORD, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT);
+		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE,
+				HemomancyDiscoverySource.BLOOD_ECHO, HemomancyDiscoverySource.RITE_FRAGMENT);
+		register(HYPHAE, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.DIALOGUE,
+				HemomancyDiscoverySource.BLOOD_ECHO);
 		register(ENTITY, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE, CommonDiscoverySource.ITEM_PICKUP);
 		register(TRUTH, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.DIALOGUE);
 		register(BLOOD_MOONS, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ADVANCEMENT);
 		register(QLIPHOTH, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DEGREE, CommonDiscoverySource.ITEM_PICKUP);
-		register(SAINTS, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE);
+		register(SAINTS, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.BLOOD_ECHO);
 		register(HEMORATH, CommonDiscoverySource.ITEM_PICKUP);
 		register(UNSTAINED_REJECTION, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ADVANCEMENT);
 		register(COPPER_AND_SILVER, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
 		register(PURIFIED, CommonDiscoverySource.ADVANCEMENT, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
-		register(IMMACULATUS_FIRST_STEPS, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE);
+		register(IMMACULATUS_FIRST_STEPS, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE,
+				HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(IMMACULATUS_INFECTION, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP);
 		register(IMMACULATUS_HEMOLYTIC_SOLUTION, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP);
 		register(IMMACULATUS_COPPER_AND_SILVER, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
-		register(IMMACULATUS_SHE_WHO_LISTENS, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DIALOGUE);
-		register(IMMACULATUS_CLARITY_PRICE, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE);
+		register(IMMACULATUS_SHE_WHO_LISTENS, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DIALOGUE,
+				HemomancyDiscoverySource.RITE_FRAGMENT);
+		register(IMMACULATUS_CLARITY_PRICE, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE,
+				HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(ANNETTA_KNOWLES_GEODE, HemomancyDiscoverySource.MEMO);
 		register(IMMACULATUS_ANNETTA_GEODE, HemomancyDiscoverySource.MEMO);
 
@@ -103,6 +112,7 @@ public final class LiberEntryDefinitions {
 		registerRite("cardinal_rite/sanguine_attunement",       THE_HARBINGERS);
 		registerRite("cardinal_rite/exsanguination",            BLOOD_MEMORIES);
 		registerRite("cardinal_rite/crimson_beacon",            BLOOD_MEMORIES);
+		registerRite("cardinal_rite/sanguine_brotherhood",      HISTORICAL_RECORD);
 		registerRite("cardinal_rite/sanguine_dominion",         BLOOD_MEMORIES);
 		registerRite("cardinal_rite/hematic_unbinding",         BLOOD_MEMORIES);
 		registerRite("cardinal_rite/scarlet_summons",           BLOOD_MEMORIES);

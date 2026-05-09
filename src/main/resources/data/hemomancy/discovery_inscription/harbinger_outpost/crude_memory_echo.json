@@ -1,0 +1,18 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Crude Memory Echo",
+  "obscured_text": [
+    "The stone beads with red dew. Shapes swim beneath it, but your blood cannot hold them.",
+    "You hear many voices breathing through one throat."
+  ],
+  "revealed_text": [
+    "The echo opens like a vein under glass. Someone once pressed a memory here before it spoiled: red hands, fungal thread, a lesson repeated until the body learned it.",
+    "Hyphae pass through blood the way stories pass through families. The Brotherhood calls it inheritance because infection sounds less like home."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_infection/pages/blood_memories",
+    "hemomancy:sanctumsanguinium/the_infection/pages/hyphae"
+  ]
+}

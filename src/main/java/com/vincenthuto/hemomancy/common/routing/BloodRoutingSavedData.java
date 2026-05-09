@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public final class BloodRoutingSavedData extends SavedData {
     private static final String DATA_NAME = "hemomancy_direct_blood_routes";
@@ -78,6 +79,19 @@ public final class BloodRoutingSavedData extends SavedData {
         List<Map.Entry<BlockPos, DirectBloodLinkData>> snapshot = new ArrayList<>();
         for (Map.Entry<Long, DirectBloodLinkData> entry : links.entrySet()) {
             snapshot.add(Map.entry(BlockPos.of(entry.getKey()), entry.getValue()));
+        }
+        return snapshot;
+    }
+
+    public List<Map.Entry<BlockPos, DirectBloodLinkData>> entriesForOwner(UUID owner) {
+        List<Map.Entry<BlockPos, DirectBloodLinkData>> snapshot = new ArrayList<>();
+        if (owner == null) {
+            return snapshot;
+        }
+        for (Map.Entry<Long, DirectBloodLinkData> entry : links.entrySet()) {
+            if (owner.equals(entry.getValue().owner())) {
+                snapshot.add(Map.entry(BlockPos.of(entry.getKey()), entry.getValue()));
+            }
         }
         return snapshot;
     }

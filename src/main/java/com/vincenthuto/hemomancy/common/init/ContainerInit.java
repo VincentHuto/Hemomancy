@@ -57,6 +57,9 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<StructureSpawnerMenu>> structure_spawner = CONTAINERS
 			.register("structure_spawner", () -> IMenuTypeExtension.create(StructureSpawnerMenu::new));
 
+	public static final DeferredHolder<MenuType<?>, MenuType<PuppeteersSpindleMenu>> puppeteers_spindle = CONTAINERS
+			.register("puppeteers_spindle", () -> IMenuTypeExtension.create(PuppeteersSpindleMenu::new));
+
 	public static final DeferredHolder<MenuType<?>, MenuType<MnemonicReliquaryMenu>> mnemonic_reliquary = CONTAINERS
 			.register("mnemonic_reliquary", () -> IMenuTypeExtension.create(MnemonicReliquaryMenu::new));
 

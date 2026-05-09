@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
 import com.vincenthuto.hemomancy.common.routing.BloodRoutingHelper;
 import com.vincenthuto.hemomancy.common.routing.BloodRoutingMode;
 import com.vincenthuto.hemomancy.common.routing.BloodRoutingSavedData;
@@ -66,6 +68,7 @@ public class HematicSutureNeedleItem extends Item {
         if (player.isShiftKeyDown() && existing != null && existing.owner().equals(player.getUUID())) {
             DirectBloodLinkData next = cycleLink(serverLevel, serverPlayer, pos, existing, degree);
             savedData.setLink(pos, next);
+            syncLinks(serverLevel, serverPlayer);
             play(level, pos, SoundEvents.AMETHYST_BLOCK_CHIME);
             return InteractionResult.SUCCESS;
         }
@@ -74,6 +77,7 @@ public class HematicSutureNeedleItem extends Item {
                 ? existing
                 : DirectBloodLinkData.nearby(player.getUUID());
         savedData.setLink(pos, link);
+        syncLinks(serverLevel, serverPlayer);
         message(serverPlayer, "item.hemomancy.hematic_suture_needle.bound", ChatFormatting.DARK_RED,
                 describeMode(link));
         play(level, pos, SoundEvents.BONE_BLOCK_PLACE);
@@ -99,6 +103,7 @@ public class HematicSutureNeedleItem extends Item {
                     message(serverPlayer, "item.hemomancy.hematic_suture_needle.inactive", ChatFormatting.GRAY);
                 }
             } else {
+                syncLinks((ServerLevel) level, serverPlayer);
                 message(serverPlayer, "item.hemomancy.hematic_suture_needle.status", ChatFormatting.GRAY);
             }
         }
@@ -166,5 +171,15 @@ public class HematicSutureNeedleItem extends Item {
 
     private void play(Level level, BlockPos pos, net.minecraft.sounds.SoundEvent sound) {
         level.playSound(null, pos, sound, SoundSource.PLAYERS, 0.6f, 1.1f);
+    }
+
+    private void syncLinks(ServerLevel level, ServerPlayer player) {
+        PacketHandler.sendToPlayer(player, new PacketSyncSutureLinks(
+                BloodRoutingSavedData.get(level).entriesForOwner(player.getUUID()).stream()
+                        .map(entry -> new PacketSyncSutureLinks.Entry(
+                                entry.getKey(),
+                                entry.getValue().mode(),
+                                entry.getValue().bloodlineEnabled()))
+                        .toList()));
     }
 }

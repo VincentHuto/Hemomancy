@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hemomancy Follow-up Mockup</title>
+<style>
+  :root {
+    --blood: #b91c1c;
+    --deep: #12090b;
+    --panel: #211719;
+    --line: #4b2529;
+    --text: #f4e7df;
+    --muted: #b89a96;
+    --gold: #d8b15e;
+    --silver: #aebdc2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #0d090a;
+    color: var(--text);
+  }
+  main {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 28px;
+  }
+  h1 {
+    font-size: 30px;
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  .sub {
+    color: var(--muted);
+    margin: 0 0 24px;
+    font-size: 15px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: stretch;
+  }
+  section {
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, #211516, #160f10);
+    border-radius: 8px;
+    min-height: 430px;
+    overflow: hidden;
+  }
+  section h2 {
+    margin: 0;
+    padding: 14px 16px;
+    font-size: 17px;
+    border-bottom: 1px solid var(--line);
+    color: #ffe7d8;
+  }
+  .scene {
+    height: 250px;
+    position: relative;
+    background: linear-gradient(#1a1414, #120d0e);
+    overflow: hidden;
+  }
+  .floor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 76px;
+    background:
+      repeating-linear-gradient(90deg, #242020 0 42px, #2b2524 42px 44px),
+      linear-gradient(#211b1a, #141010);
+    border-top: 2px solid #3a2d2d;
+    transform: skewX(-8deg);
+    transform-origin: bottom;
+  }
+  .wall {
+    position: absolute;
+    left: 34px;
+    right: 34px;
+    top: 22px;
+    height: 184px;
+    border: 2px solid #3d3130;
+    background:
+      repeating-linear-gradient(0deg, #282020 0 28px, #342827 28px 30px),
+      repeating-linear-gradient(90deg, transparent 0 58px, rgba(255,255,255,.04) 58px 60px);
+    box-shadow: inset 0 0 34px #080606;
+  }
+  .echo {
+    position: absolute;
+    width: 114px;
+    height: 134px;
+    left: 50%;
+    top: 52px;
+    transform: translateX(-50%);
+    border-radius: 8px 8px 18px 18px;
+    background:
+      radial-gradient(circle at 50% 34%, rgba(255,58,58,.5), transparent 18px),
+      linear-gradient(180deg, rgba(117,7,18,.75), rgba(24,6,8,.15));
+    border: 1px solid rgba(255,80,80,.45);
+    box-shadow: 0 0 18px rgba(255,0,35,.55), inset 0 0 22px rgba(255,27,27,.24);
+  }
+  .echo:before,
+  .echo:after {
+    content: "";
+    position: absolute;
+    background: rgba(255,80,80,.8);
+    box-shadow: 0 0 10px rgba(255,0,0,.8);
+  }
+  .echo:before {
+    left: 28px;
+    top: 22px;
+    width: 58px;
+    height: 3px;
+    transform: rotate(8deg);
+  }
+  .echo:after {
+    left: 48px;
+    top: 22px;
+    width: 3px;
+    height: 88px;
+    transform: rotate(-8deg);
+  }
+  .glyph {
+    position: absolute;
+    border: 1px solid rgba(255,110,90,.8);
+    border-radius: 50%;
+    box-shadow: 0 0 8px #e22;
+  }
+  .g1 { left: 24px; top: 54px; width: 18px; height: 18px; }
+  .g2 { right: 22px; top: 70px; width: 22px; height: 22px; }
+  .g3 { left: 43px; bottom: 22px; width: 27px; height: 27px; }
+  .fragment {
+    position: absolute;
+    left: 52%;
+    bottom: 68px;
+    width: 86px;
+    height: 46px;
+    transform: translateX(-50%) rotate(-3deg);
+    border-radius: 4px;
+    background: linear-gradient(135deg, #70625f, #201818);
+    border: 1px solid #86736d;
+    box-shadow: 0 4px 0 #100b0b;
+  }
+  .fragment.pale {
+    background: linear-gradient(135deg, #e8f4f1, #6d7c7f);
+    border-color: #f8ffff;
+    box-shadow: 0 0 12px rgba(180,235,255,.28);
+  }
+  .caption {
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .callout { color: #ffd2ca; }
+  .screenmock {
+    height: 250px;
+    padding: 12px;
+    background: #140d0f;
+    display: grid;
+    grid-template-columns: 120px 1fr 126px;
+    gap: 10px;
+  }
+  .inv,
+  .center,
+  .side {
+    border: 1px solid #4a252a;
+    border-radius: 6px;
+    background: #1d1215;
+    padding: 8px;
+  }
+  .slotgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .slot {
+    aspect-ratio: 1;
+    border: 1px solid #553236;
+    background: #100b0c;
+    border-radius: 3px;
+  }
+  .select {
+    border: 1px solid var(--blood);
+    background: #2a0e12;
+    color: #ffd8d0;
+    padding: 6px;
+    border-radius: 4px;
+    margin: 6px 0;
+    font-size: 12px;
+  }
+  .meter {
+    height: 12px;
+    background: #080607;
+    border: 1px solid #5a3338;
+    border-radius: 8px;
+    margin: 8px 0;
+    overflow: hidden;
+  }
+  .meter div {
+    width: 68%;
+    height: 100%;
+    background: linear-gradient(90deg, #6b0d19, #e04444, #caa15a);
+    box-shadow: 0 0 8px #e33;
+  }
+  .btn {
+    border: 1px solid #6f3b42;
+    background: #34151a;
+    padding: 7px;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 7px;
+    font-size: 12px;
+    color: #ffe1d7;
+  }
+  .vulture {
+    position: absolute;
+    left: 224px;
+    top: 72px;
+    width: 54px;
+    height: 28px;
+    border-radius: 50% 50% 30% 30%;
+    background: #5b1822;
+    box-shadow: 0 0 12px rgba(180,20,35,.45);
+  }
+  .vulture:before,
+  .vulture:after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    width: 54px;
+    height: 12px;
+    background: #331116;
+    border-radius: 70% 20%;
+  }
+  .vulture:before { right: 32px; transform: rotate(-22deg); }
+  .vulture:after { left: 32px; transform: rotate(22deg); }
+  .player {
+    position: absolute;
+    left: 86px;
+    bottom: 72px;
+    width: 34px;
+    height: 72px;
+    background: linear-gradient(#3b1b20, #1a0f12);
+    border: 1px solid #684149;
+    border-radius: 14px 14px 5px 5px;
+  }
+  .threadline {
+    position: absolute;
+    left: 112px;
+    top: 126px;
+    width: 146px;
+    height: 48px;
+    border-top: 2px solid #e53b3b;
+    transform: rotate(-10deg);
+    filter: drop-shadow(0 0 5px #e22);
+    opacity: .85;
+  }
+  .suture-line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,40,40,.1), #ff4242, #ffd08a);
+    box-shadow: 0 0 8px #f33;
+    transform-origin: left center;
+  }
+  .target {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border: 2px solid #d94040;
+    background: #24181a;
+    box-shadow: 0 0 12px #d22;
+  }
+  .node {
+    position: absolute;
+    left: 80px;
+    bottom: 88px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: radial-gradient(#e84545, #3a1116 65%);
+    box-shadow: 0 0 16px #e22;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
+  }
+  .pill {
+    border: 1px solid #5b3438;
+    border-radius: 99px;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #d9beb9;
+  }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hemomancy Follow-up Pass</h1>
+  <p class="sub">A compact visual target for the next implementation: wall Blood Echoes, a proper Puppeteer's Spindle screen, summon tether reliability, and visible suture contracts.</p>
+  <div class="grid">
+    <section>
+      <h2>Wall-Hung Blood Echoes</h2>
+      <div class="scene">
+        <div class="wall"></div>
+        <div class="echo"><i class="glyph g1"></i><i class="glyph g2"></i><i class="glyph g3"></i></div>
+        <div class="floor"></div>
+        <div class="fragment pale"></div>
+      </div>
+      <div class="caption"><span class="callout">Blood Echo:</span> thin wall-attached block with horizontal facing, no collision, support check, and interior-wall placement. <span class="callout">Rite Fragments:</span> can stay as placed relic fragments, with Unstained fragments remaining pale and non-echoic.</div>
+    </section>
+    <section>
+      <h2>Puppeteer's Spindle Screen</h2>
+      <div class="screenmock">
+        <div class="inv">Crossbar<div class="slotgrid"><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div></div></div>
+        <div class="center">Known Pattern<div class="select">Veinwing Vulture</div><div class="meter"><div></div></div><div class="btn">Wind Thread</div><div class="btn">Bind Crossbar</div><div class="btn">Call / Recall</div></div>
+        <div class="side">Costs<div class="select">Thread 24</div><div class="select">Upkeep 2/min</div><div class="select">Cap 1/2</div></div>
+      </div>
+      <div class="caption">Right-click opens one screen. The screen owns selection, thread winding, crossbar binding, unlock display, and summon/recall actions instead of spreading meaning across item/block click combinations.</div>
+    </section>
+    <section>
+      <h2>Suture + Tether Visibility</h2>
+      <div class="scene">
+        <div class="wall"></div>
+        <div class="floor"></div>
+        <div class="player"></div>
+        <div class="vulture"></div>
+        <div class="threadline"></div>
+        <div class="node"></div>
+        <div class="target" style="right:72px;bottom:118px"></div>
+        <div class="target" style="right:118px;bottom:70px"></div>
+        <div class="suture-line" style="left:118px;bottom:108px;width:190px;transform:rotate(-8deg)"></div>
+        <div class="suture-line" style="left:118px;bottom:108px;width:145px;transform:rotate(16deg)"></div>
+      </div>
+      <div class="caption">When holding the needle or looking at a suture node, render owner-visible red/gold sutures to linked tiles. For the vulture, add a flight-aware follow correction and closer teleport fail-safe when it loses owner pursuit.</div>
+    </section>
+  </div>
+  <div class="legend">
+    <span class="pill">Uses existing render event path</span>
+    <span class="pill">Server remains authority for links</span>
+    <span class="pill">No Unstained echo terminology</span>
+    <span class="pill">Screen can be packet-driven</span>
+  </div>
+</main>
+</body>
+</html>

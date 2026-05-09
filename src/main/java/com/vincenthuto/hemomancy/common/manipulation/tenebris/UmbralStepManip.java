@@ -50,7 +50,7 @@ public class UmbralStepManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier();
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 
 		Vec3 eyePos = player.getEyePosition(1.0F);
 		Vec3 lookVec = player.getViewVector(1.0F);

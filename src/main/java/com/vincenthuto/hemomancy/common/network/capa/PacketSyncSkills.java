@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,7 +38,7 @@ public class PacketSyncSkills implements CustomPacketPayload {
 
 	public static void handle(final PacketSyncSkills msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			SkillPointInit.deserializeAll(msg.data);
+			SkillProgressClientCache.apply(msg.data);
 		});
 	}
 

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -19,9 +20,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * Client → Server packet: player requests to unlock or level-up a skill.
- * The server validates prerequisites, checks blood cost, drains blood,
- * applies the change, and syncs back to the client.
+ * Client -> Server packet: player requests to unlock or level-up a skill.
+ * The server validates prerequisites against that player's SkillProgress.
  */
 public class PacketUnlockSkill implements CustomPacketPayload {
 
@@ -49,110 +49,86 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 
 			SkillPoint skill = SkillPointInit.getById(msg.skillId);
 			if (skill == null) return;
+			SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
 
-			// ── Degree gate: block if player hasn't reached the required initiation tier ──
 			if (skill.getRequiredDegree() > 0) {
 				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 				if (playerDegree < skill.getRequiredDegree()) {
 					EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(skill.getRequiredDegree());
 					String degreeName = needed != null ? needed.getTitle() : ("Degree " + skill.getRequiredDegree());
-					player.displayClientMessage(
-							Component.literal("Requires initiation: " + degreeName)
-									.withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(Component.literal("Requires initiation: " + degreeName)
+							.withStyle(ChatFormatting.RED), true);
 					return;
 				}
 			}
 
-			// ── Case 1: Skill is LOCKED → unlock it (first purchase) ──
-			if (skill.getState() == EnumSkillStates.LOCKED) {
-				// Check prerequisite parent is unlocked
-				if (skill.getParent() != null && skill.getParent().getState() != EnumSkillStates.UNLOCKED) {
-					player.displayClientMessage(
-							Component.literal("Prerequisite skill not yet unlocked!")
-									.withStyle(ChatFormatting.RED), true);
+			EnumSkillStates state = progress.getState(skill);
+			if (state == EnumSkillStates.LOCKED) {
+				if (skill.getParent() != null && progress.getState(skill.getParent()) != EnumSkillStates.UNLOCKED) {
+					player.displayClientMessage(Component.literal("Prerequisite skill not yet unlocked!")
+							.withStyle(ChatFormatting.RED), true);
 					return;
 				}
-				double cost = skill.getLevelUpCost();
+				double bloodCost = progress.getLevelUpCost(skill);
 				int spCost = skill.getSkillPointCost();
-				if (!tryDrainSkillPoints(player, spCost)) return;
-				if (!tryDrainBlood(player, cost)) {
-					// Refund skill points if blood drain failed
-					SkillPointInit.skillPoints += spCost;
+				if (!tryDrainSkillPoints(player, progress, spCost)) return;
+				if (!tryDrainBlood(player, bloodCost)) {
+					progress.refundSkillPoints(spCost);
+					syncSkills(player);
 					return;
 				}
-
-				skill.setState(EnumSkillStates.UNLOCKED);
-				skill.setCurrentLevel(1);
-				player.displayClientMessage(
-						Component.literal("Unlocked: " + skill.getName().replace("_", " "))
-								.withStyle(ChatFormatting.DARK_RED), true);
-
-				// Sync updated skills back to client
+				progress.setSkill(skill, EnumSkillStates.UNLOCKED, 1);
+				player.displayClientMessage(Component.literal("Unlocked: " + skill.getName().replace("_", " "))
+						.withStyle(ChatFormatting.DARK_RED), true);
 				syncSkills(player);
 				return;
 			}
 
-			// ── Case 2: Skill is UNLOCKED → level it up ──
-			if (skill.getState() == EnumSkillStates.UNLOCKED) {
-				if (skill.isMaxed()) {
-					player.displayClientMessage(
-							Component.literal("Skill already at max level!")
-									.withStyle(ChatFormatting.GRAY), true);
+			if (state == EnumSkillStates.UNLOCKED) {
+				if (progress.isMaxed(skill)) {
+					player.displayClientMessage(Component.literal("Skill already at max level!")
+							.withStyle(ChatFormatting.GRAY), true);
 					return;
 				}
-				double cost = skill.getLevelUpCost();
+				double bloodCost = progress.getLevelUpCost(skill);
 				int spCost = skill.getSkillPointCost();
-				if (!tryDrainSkillPoints(player, spCost)) return;
-				if (!tryDrainBlood(player, cost)) {
-					// Refund skill points if blood drain failed
-					SkillPointInit.skillPoints += spCost;
+				if (!tryDrainSkillPoints(player, progress, spCost)) return;
+				if (!tryDrainBlood(player, bloodCost)) {
+					progress.refundSkillPoints(spCost);
+					syncSkills(player);
 					return;
 				}
-
-				skill.tryLevelUp();
-				player.displayClientMessage(
-						Component.literal(skill.getName().replace("_", " ")
-								+ " → Level " + skill.getCurrentLevel())
-								.withStyle(ChatFormatting.DARK_RED), true);
-
+				progress.unlockOrLevel(skill);
+				player.displayClientMessage(Component.literal(skill.getName().replace("_", " ")
+								+ " -> Level " + progress.getLevel(skill))
+						.withStyle(ChatFormatting.DARK_RED), true);
 				syncSkills(player);
 			}
 		});
 	}
 
-	/**
-	 * Check and consume skill points. Returns true on success.
-	 */
-	private static boolean tryDrainSkillPoints(ServerPlayer player, int cost) {
+	private static boolean tryDrainSkillPoints(ServerPlayer player, SkillProgress progress, int cost) {
 		if (cost <= 0) return true;
-		if (SkillPointInit.skillPoints < cost) {
-			player.displayClientMessage(
-					Component.literal("Not enough skill points! Need " + cost
-							+ " (have " + SkillPointInit.skillPoints + ")")
-							.withStyle(ChatFormatting.RED), true);
+		if (progress.getSkillPoints() < cost) {
+			player.displayClientMessage(Component.literal("Not enough skill points! Need " + cost
+							+ " (have " + progress.getSkillPoints() + ")")
+					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		SkillPointInit.skillPoints -= cost;
+		progress.spendSkillPoints(cost);
 		return true;
 	}
 
-	/**
-	 * Attempt to drain the given blood cost from the player.
-	 * @return true if the drain succeeded; false (with message) otherwise.
-	 */
 	private static boolean tryDrainBlood(ServerPlayer player, double cost) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (volume == null || !volume.isActive()) {
-			player.displayClientMessage(
-					Component.literal("Blood system is not active!")
-							.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.literal("Blood system is not active!")
+					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		if (volume.getBloodVolume() < cost) {
-			player.displayClientMessage(
-					Component.literal("Not enough blood! Need "
-							+ (int) cost + " mL")
-							.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.literal("Not enough blood! Need " + (int) cost + " mL")
+					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		volume.drain(cost);
@@ -160,12 +136,9 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 		return true;
 	}
 
-	/**
-	 * Sends the full skill tree state back to the client via
-	 * {@link PacketSyncSkills}.
-	 */
 	private static void syncSkills(ServerPlayer player) {
-		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
+		PacketHandler.sendToPlayer(player,
+				new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
 	}
 
 	@Override

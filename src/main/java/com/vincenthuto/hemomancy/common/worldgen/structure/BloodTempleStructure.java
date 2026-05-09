@@ -3,7 +3,9 @@ package com.vincenthuto.hemomancy.common.worldgen.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -116,6 +118,12 @@ public class BloodTempleStructure extends Structure {
 		if (!chunkBox.isInside(centerX, centerY, centerZ)) {
 			return;
 		}
+
+		BlockPos inscriptionOrigin = new BlockPos(centerX, fullBox.minY() + 1, centerZ);
+		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(-4, 0, 0),
+				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("blood_temple/sanguine_initiation_fragment"));
+		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(4, 0, 0),
+				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("blood_temple/votary_fragment"));
 
 		BlockPos spawnPos = new BlockPos(centerX, centerY + 1, centerZ);
 

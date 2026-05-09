@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.knowledge.LiberKnowled
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsContainer;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.summon.KnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
@@ -65,6 +66,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LiberKnowledge>> LIBER_KNOWLEDGE =
             ATTACHMENT_TYPES.register("liber_knowledge",
                     () -> AttachmentType.serializable(LiberKnowledge::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SkillProgress>> SKILL_PROGRESS =
+            ATTACHMENT_TYPES.register("skill_progress",
+                    () -> AttachmentType.serializable(SkillProgress::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<WhiteHumorVolume>> WHITE_HUMOR_VOLUME =
             ATTACHMENT_TYPES.register("white_humor_volume",

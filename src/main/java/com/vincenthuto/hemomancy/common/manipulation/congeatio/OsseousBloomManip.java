@@ -65,7 +65,7 @@ public class OsseousBloomManip extends BloodManipulation {
 			return;
 		}
 
-		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier();
+		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 
 		for (LivingEntity target : targets) {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodBasinBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodPylonBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodTrialAltarBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock;
+import com.vincenthuto.hemomancy.common.block.shared.DiscoveryInscriptionBlock;
 import com.vincenthuto.hemomancy.common.block.shared.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
@@ -101,6 +102,20 @@ public class BlockInit {
 					.sound(SoundType.BONE_BLOCK)
 					.lightLevel(state -> 3)
 					.noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> blood_echo_inscription = MODELEDBLOCKS.register(
+			"blood_echo_inscription",
+			() -> new DiscoveryInscriptionBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F), true));
+
+	public static final DeferredHolder<Block, Block> rite_fragment_inscription = MODELEDBLOCKS.register(
+			"rite_fragment_inscription",
+			() -> new DiscoveryInscriptionBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.SNOW)
+					.requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F)));
 
 	public static final DeferredHolder<Block, LiquidBlock> MORPHIC_NECTAR_BLOCK = LIQUIDBLOCKS.register(
 			"morphic_nectar_block",

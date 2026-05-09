@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.skill;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
@@ -15,256 +16,124 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 
-/**
- * Forge event handlers that award skill points through diverse gameplay
- * milestones on the Hemomancy / Harbinger path. This complements the
- * per-use skill-point drip from {@code KnownManipulationEvents} with
- * larger one-time and tiered milestone rewards.
- *
- * <h3>Advancement-Triggered Milestones</h3>
- * Earning a Hemomancy advancement (under the {@code hemomancy:hemomancy/} path)
- * awards skill points for the corresponding discovery milestone. Tiered
- * scholarship milestones trigger at 5 and 10 total Hemomancy advancements.
- *
- * <h3>Combat Milestones</h3>
- * Killing hostile mobs while the player's blood volume is active increments
- * a kill counter. Tiered milestones trigger at 10, 50, and 100 kills.
- *
- * <h3>Programmatic Milestones</h3>
- * Degree advancement, rite completion, manipulation use, morphling equipping,
- * Memory weaving, and bloodline joining are awarded by calling
- * {@link #onDegreeReached}, {@link #onRiteCompleted},
- * {@link #onManipulationUsed}, {@link #onMorphlingEquipped},
- * {@link #onMemoryWeavingCompleted}, and {@link #onBloodlineJoined}
- * from the relevant systems.
- */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SkillPointGainEvents {
+	private static final String HEMO_ADV_PREFIX = "hemomancy:hemomancy/";
+	private static final java.util.Map<String, String> ADV_TO_MILESTONE = java.util.Map.of(
+			"root", "strange_seeds"
+	);
 
-    /** Hemomancy advancement path prefix used to identify mod-specific advancements. */
-    private static final String HEMO_ADV_PREFIX = "hemomancy:hemomancy/";
+	public static void syncSkills(ServerPlayer player) {
+		PacketHandler.sendToPlayer(player,
+				new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
+	}
 
-    /**
-     * Maps advancement names (the final path segment) to milestone IDs when they
-     * differ. For example, the {@code root} advancement corresponds to finding
-     * gourd seeds, which is the {@code strange_seeds} milestone.
-     */
-    private static final java.util.Map<String, String> ADV_TO_MILESTONE = java.util.Map.of(
-            "root", "strange_seeds"
-    );
+	@SubscribeEvent
+	public static void onAdvancement(AdvancementEvent.AdvancementEarnEvent event) {
+		Player player = event.getEntity();
+		if (player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) return;
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    //  SYNC HELPER
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+		ResourceLocation advId = event.getAdvancement().id();
+		String fullId = advId.toString();
+		if (!fullId.startsWith(HEMO_ADV_PREFIX)) return;
 
-    /** Sends the current skill tree state (including milestones) to the given client. */
-    private static void syncSkills(ServerPlayer player) {
-        PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
-    }
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(serverPlayer);
+		boolean changed = false;
+		String advName = fullId.substring(HEMO_ADV_PREFIX.length());
+		String milestoneId = ADV_TO_MILESTONE.getOrDefault(advName, advName);
+		changed |= progress.tryAwardMilestone(HemoMilestone.byId(milestoneId));
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    //  ADVANCEMENT-TRIGGERED MILESTONES
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+		int total = progress.incrementHemoAdvancements();
+		if (total >= 5) changed |= progress.tryAwardMilestone(HemoMilestone.HEMO_SCHOLAR_I);
+		if (total >= 10) changed |= progress.tryAwardMilestone(HemoMilestone.HEMO_SCHOLAR_II);
 
-    /**
-     * When a player earns a Hemomancy advancement, check whether a matching
-     * discovery milestone exists and award it. Also increment the Hemomancy
-     * advancement counter and check scholarship milestones.
-     */
-    @SubscribeEvent
-    public static void onAdvancement(AdvancementEvent.AdvancementEarnEvent event) {
-        Player player = event.getEntity();
-        if (player.level().isClientSide) return;
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
+		if (changed) syncSkills(serverPlayer);
+	}
 
-        ResourceLocation advId = event.getAdvancement().id();
-        String fullId = advId.toString(); // e.g. "hemomancy:hemomancy/iron_in_the_blood"
+	@SubscribeEvent
+	public static void onLivingDeath(LivingDeathEvent event) {
+		LivingEntity victim = event.getEntity();
+		if (victim.level().isClientSide) return;
+		if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+		if (victim.getType().getCategory() != MobCategory.MONSTER) return;
 
-        if (!fullId.startsWith(HEMO_ADV_PREFIX)) return;
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
+				.map(vol -> vol.isActive() && vol.getBloodVolume() > 0)
+				.orElse(false);
+		if (!bloodActive) return;
 
-        boolean changed = false;
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		int total = progress.incrementKillsWithBlood();
+		boolean changed = false;
+		if (total >= 10) changed |= progress.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_I);
+		if (total >= 50) changed |= progress.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_II);
+		if (total >= 100) changed |= progress.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_III);
 
-        // Extract the advancement name after the prefix
-        String advName = fullId.substring(HEMO_ADV_PREFIX.length()); // e.g. "iron_in_the_blood"
+		if (changed) syncSkills(player);
+	}
 
-        // Map advancement names that differ from milestone IDs
-        String milestoneId = ADV_TO_MILESTONE.getOrDefault(advName, advName);
+	public static void onManipulationUsed(ServerPlayer player) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		int total = progress.incrementManipulationUses();
+		boolean changed = false;
 
-        // Try to match to a discovery milestone by ID
-        HemoMilestone milestone = HemoMilestone.byId(milestoneId);
-        if (milestone != null) {
-            changed = SkillPointInit.tryAwardMilestone(milestone);
-        }
+		changed |= progress.tryAwardMilestone(HemoMilestone.FIRST_MANIPULATION);
+		if (total >= 25) changed |= progress.tryAwardMilestone(HemoMilestone.MANIPULATION_NOVICE);
+		if (total >= 100) changed |= progress.tryAwardMilestone(HemoMilestone.MANIPULATION_ADEPT);
+		if (total >= 500) changed |= progress.tryAwardMilestone(HemoMilestone.MANIPULATION_MASTER);
 
-        // Increment Hemomancy advancement counter and check scholarship tiers
-        SkillPointInit.totalHemoAdvancements++;
-        if (SkillPointInit.totalHemoAdvancements >= 5) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.HEMO_SCHOLAR_I);
-        }
-        if (SkillPointInit.totalHemoAdvancements >= 10) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.HEMO_SCHOLAR_II);
-        }
+		if (changed) syncSkills(player);
+	}
 
-        if (changed) {
-            syncSkills(serverPlayer);
-        }
-    }
+	public static void onRiteCompleted(ServerPlayer player) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		int total = progress.incrementRitesCompleted();
+		boolean changed = false;
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    //  COMBAT â€” Kill Counter Milestones
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+		changed |= progress.tryAwardMilestone(HemoMilestone.FIRST_RITE);
+		if (total >= 3) changed |= progress.tryAwardMilestone(HemoMilestone.RITE_PRACTITIONER);
+		if (total >= 10) changed |= progress.tryAwardMilestone(HemoMilestone.RITE_VETERAN);
 
-    /**
-     * Killing a hostile or hemomancy mob while the player's blood volume is
-     * active increments the kill counter and checks tiered milestones.
-     */
-    @SubscribeEvent
-    public static void onLivingDeath(LivingDeathEvent event) {
-        LivingEntity victim = event.getEntity();
-        if (victim.level().isClientSide) return;
-        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+		if (changed) syncSkills(player);
+	}
 
-        // Only count hostile mob kills
-        if (victim.getType().getCategory() != MobCategory.MONSTER) return;
+	public static void onDegreeReached(ServerPlayer player, int degree) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		boolean changed = switch (degree) {
+			case 1 -> progress.tryAwardMilestone(HemoMilestone.SANGUINE_INITIATION);
+			case 2 -> progress.tryAwardMilestone(HemoMilestone.VOTARY_ASCENSION);
+			case 3 -> progress.tryAwardMilestone(HemoMilestone.INITIATE_ASCENSION);
+			case 4 -> progress.tryAwardMilestone(HemoMilestone.ADEPT_ASCENSION);
+			case 5 -> progress.tryAwardMilestone(HemoMilestone.ILLUMINATUS_ASCENSION);
+			case 6 -> progress.tryAwardMilestone(HemoMilestone.SANCTIFIED_ASCENSION);
+			case 7 -> progress.tryAwardMilestone(HemoMilestone.ARCHON_ASCENSION);
+			case 8 -> progress.tryAwardMilestone(HemoMilestone.APOTHEOS_ASCENSION);
+			default -> false;
+		};
 
-        // Only count when blood volume is active
-        boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.isActive() && vol.getBloodVolume() > 0)
-                .orElse(false);
-        if (!bloodActive) return;
+		int excess = ManipSlotHelper.getExcessSkillLevels(player);
+		if (excess > 0 && SkillPointInit.skill_manip_slots != null) {
+			int currentLevel = progress.getLevel(SkillPointInit.skill_manip_slots);
+			progress.setSkillLevel(SkillPointInit.skill_manip_slots, currentLevel - excess);
+			progress.addSkillPoints(excess);
+			changed = true;
+		}
 
-        SkillPointInit.totalKillsWithBlood++;
-        boolean changed = false;
+		if (changed) syncSkills(player);
+	}
 
-        if (SkillPointInit.totalKillsWithBlood >= 10) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_I);
-        }
-        if (SkillPointInit.totalKillsWithBlood >= 50) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_II);
-        }
-        if (SkillPointInit.totalKillsWithBlood >= 100) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_III);
-        }
+	public static void onMorphlingEquipped(ServerPlayer player) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		if (progress.tryAwardMilestone(HemoMilestone.FIRST_MORPHLING_BOND)) syncSkills(player);
+	}
 
-        if (changed) {
-            syncSkills(player);
-        }
-    }
+	public static void onMemoryWeavingCompleted(ServerPlayer player) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		if (progress.tryAwardMilestone(HemoMilestone.FIRST_MEMORY_WEAVING)) syncSkills(player);
+	}
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    //  PUBLIC API â€” Called by other systems
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /**
-     * Called from {@code KnownManipulationEvents.onManipulationUsed} after a
-     * blood manipulation is used. Increments the manipulation counter and
-     * checks first-use and tiered milestones.
-     */
-    public static void onManipulationUsed(ServerPlayer player) {
-        SkillPointInit.totalManipulationUses++;
-        boolean changed = false;
-
-        changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_MANIPULATION);
-
-        if (SkillPointInit.totalManipulationUses >= 25) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.MANIPULATION_NOVICE);
-        }
-        if (SkillPointInit.totalManipulationUses >= 100) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.MANIPULATION_ADEPT);
-        }
-        if (SkillPointInit.totalManipulationUses >= 500) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.MANIPULATION_MASTER);
-        }
-
-        if (changed) {
-            syncSkills(player);
-        }
-    }
-
-    /**
-     * Called from {@code HarbingerCardinalRiteEvents.completeRite} when a cardinal rite
-     * finishes successfully. Awards the first-rite milestone and checks tiered
-     * rite-completion milestones.
-     */
-    public static void onRiteCompleted(ServerPlayer player) {
-        SkillPointInit.totalRitesCompleted++;
-        boolean changed = false;
-
-        changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_RITE);
-
-        if (SkillPointInit.totalRitesCompleted >= 3) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.RITE_PRACTITIONER);
-        }
-        if (SkillPointInit.totalRitesCompleted >= 10) {
-            changed |= SkillPointInit.tryAwardMilestone(HemoMilestone.RITE_VETERAN);
-        }
-
-        if (changed) {
-            syncSkills(player);
-        }
-    }
-
-    /**
-     * Called from {@code HarbingerCardinalRiteEvents.completeRite} when a degree rite
-     * grants a new initiatory degree. Awards the corresponding degree milestone.
-     * Also converts any excess skill_manip_slots levels into skill points
-     * when the hard cap of 9 slots is reached.
-     */
-    public static void onDegreeReached(ServerPlayer player, int degree) {
-        boolean changed = switch (degree) {
-            case 1 -> SkillPointInit.tryAwardMilestone(HemoMilestone.SANGUINE_INITIATION);
-            case 2 -> SkillPointInit.tryAwardMilestone(HemoMilestone.VOTARY_ASCENSION);
-            case 3 -> SkillPointInit.tryAwardMilestone(HemoMilestone.INITIATE_ASCENSION);
-            case 4 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ADEPT_ASCENSION);
-            case 5 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ILLUMINATUS_ASCENSION);
-            case 6 -> SkillPointInit.tryAwardMilestone(HemoMilestone.SANCTIFIED_ASCENSION);
-            case 7 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ARCHON_ASCENSION);
-            case 8 -> SkillPointInit.tryAwardMilestone(HemoMilestone.APOTHEOS_ASCENSION);
-            default -> false;
-        };
-
-        // Convert excess skill_manip_slots levels into skill points
-        int excess = com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper
-                .getExcessSkillLevels(player);
-        if (excess > 0 && SkillPointInit.skill_manip_slots != null) {
-            int currentLevel = SkillPointInit.skill_manip_slots.getCurrentLevel();
-            SkillPointInit.skill_manip_slots.setCurrentLevel(currentLevel - excess);
-            SkillPointInit.skillPoints += excess;
-            changed = true;
-        }
-
-        if (changed) {
-            syncSkills(player);
-        }
-    }
-
-    /**
-     * Called when a player equips a morphling for the first time.
-     * Awards the morphling bond milestone.
-     */
-    public static void onMorphlingEquipped(ServerPlayer player) {
-        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_MORPHLING_BOND)) {
-            syncSkills(player);
-        }
-    }
-
-    /**
-     * Called when a player completes a Somatic Loom recipe.
-     * Awards the first-memory-weaving milestone.
-     */
-    public static void onMemoryWeavingCompleted(ServerPlayer player) {
-        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_MEMORY_WEAVING)) {
-            syncSkills(player);
-        }
-    }
-
-    /**
-     * Called when a player joins or creates a bloodline.
-     * Awards the first-bloodline milestone.
-     */
-    public static void onBloodlineJoined(ServerPlayer player) {
-        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_BLOODLINE)) {
-            syncSkills(player);
-        }
-    }
+	public static void onBloodlineJoined(ServerPlayer player) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		if (progress.tryAwardMilestone(HemoMilestone.FIRST_BLOODLINE)) syncSkills(player);
+	}
 }

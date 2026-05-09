@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
@@ -106,7 +107,7 @@ public class SkillsTabController implements IProgressTab {
             if (pPos == null) continue;
             int x1 = sx(ctx, pPos[0]), y1 = sy(ctx, pPos[1]);
             int x2 = sx(ctx, cPos[0]), y2 = sy(ctx, cPos[1]);
-            boolean parentUnlocked = sp.getParent().getState() == EnumSkillStates.UNLOCKED;
+            boolean parentUnlocked = SkillProgressClientCache.current().getState(sp.getParent()) == EnumSkillStates.UNLOCKED;
             int col = parentUnlocked ? COL_LINE_UNLOCKED : COL_LINE_LOCKED;
             int lw = Math.max(1, (int)(panZoom.zoom * 1.5f));
             int midY = (y1 + y2) / 2;
@@ -132,7 +133,7 @@ private float animTime = 0f;
             if (degreeLocked) {
                 border = COL_NODE_BORDER_LOCK;
             } else {
-                switch (sp.getState()) {
+                switch (SkillProgressClientCache.current().getState(sp)) {
                     case UNLOCKED -> {
                         border = COL_NODE_BORDER_UNLOCK;
                         float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
@@ -141,7 +142,7 @@ private float animTime = 0f;
                     }
                     case LOCKED -> {
                         border = COL_NODE_BORDER_LOCK;
-                        if (sp.getParent() != null && sp.getParent().getState() == EnumSkillStates.UNLOCKED)
+                        if (sp.getParent() != null && SkillProgressClientCache.current().getState(sp.getParent()) == EnumSkillStates.UNLOCKED)
                             border = COL_NODE_BORDER_AVAIL;
                     }
                     default -> border = COL_NODE_BORDER_LOCK;
@@ -164,13 +165,14 @@ private float animTime = 0f;
                         ScreenDrawUtils.renderScaledItem(gfx, iconStack, nx, ny, hn);
                     } else {
                         String ini = getSkillInitial(sp);
-                        int textCol = sp.getState() == EnumSkillStates.UNLOCKED ? 0xFFFFAAAA : 0xFF888888;
+                        int textCol = SkillProgressClientCache.current().getState(sp) == EnumSkillStates.UNLOCKED ? 0xFFFFAAAA : 0xFF888888;
                         gfx.drawCenteredString(ctx.font(), ini, nx, ny - 4, textCol);
                     }
                 }
                 if (sp.getMaxLevels() > 0) {
-                    String lvlStr = sp.getCurrentLevel() + "/" + sp.getMaxLevels();
-                    int lvlCol = sp.isMaxed() ? 0xFF44AA44 : 0xFF888888;
+                    int level = SkillProgressClientCache.current().getLevel(sp);
+                    String lvlStr = level + "/" + sp.getMaxLevels();
+                    int lvlCol = SkillProgressClientCache.current().isMaxed(sp) ? 0xFF44AA44 : 0xFF888888;
                     gfx.drawCenteredString(ctx.font(), lvlStr, nx, ny + hn + 3, lvlCol);
                 }
             }
@@ -198,24 +200,25 @@ private float animTime = 0f;
                 String pretty = HLTextUtils.toProperCase(sp.getName().replace("skill_", "").replace("_", " "));
                 tip.add(Component.literal(pretty).withStyle(s -> s.withColor(0xCC3333).withBold(true)));
                 if (sp.getMaxLevels() > 0) {
-                    tip.add(Component.literal("Level: " + sp.getCurrentLevel() + " / " + sp.getMaxLevels())
-                            .withStyle(s -> s.withColor(sp.isMaxed() ? 0x44AA44 : 0x888888)));
+                    tip.add(Component.literal("Level: " + SkillProgressClientCache.current().getLevel(sp) + " / " + sp.getMaxLevels())
+                            .withStyle(s -> s.withColor(SkillProgressClientCache.current().isMaxed(sp) ? 0x44AA44 : 0x888888)));
                 }
                 tip.add(Component.translatable("skill.hemomancy." + sp.getName() + ".desc")
                         .withStyle(s -> s.withColor(0x999999).withItalic(true)));
-                if (sp.getState() == EnumSkillStates.LOCKED) {
-                    if (sp.getParent() != null && sp.getParent().getState() != EnumSkillStates.UNLOCKED) {
+                EnumSkillStates state = SkillProgressClientCache.current().getState(sp);
+                if (state == EnumSkillStates.LOCKED) {
+                    if (sp.getParent() != null && SkillProgressClientCache.current().getState(sp.getParent()) != EnumSkillStates.UNLOCKED) {
                         String pn = HLTextUtils.toProperCase(sp.getParent().getName().replace("skill_", "").replace("_", " "));
                         tip.add(Component.literal("Requires: " + pn).withStyle(s -> s.withColor(0xAA4444)));
                     } else {
-                        tip.add(Component.literal("Click to unlock! Cost: " + (int)sp.getLevelUpCost() + " mL + "
+                        tip.add(Component.literal("Click to unlock! Cost: " + (int)SkillProgressClientCache.current().getLevelUpCost(sp) + " mL + "
                                 + sp.getSkillPointCost() + " SP").withStyle(s -> s.withColor(0xBB8833)));
                     }
-                } else if (sp.getState() == EnumSkillStates.UNLOCKED) {
-                    if (sp.isMaxed()) {
+                } else if (state == EnumSkillStates.UNLOCKED) {
+                    if (SkillProgressClientCache.current().isMaxed(sp)) {
                         tip.add(Component.literal("MAX LEVEL").withStyle(s -> s.withColor(0x44AA44).withBold(true)));
                     } else {
-                        tip.add(Component.literal("Click to level up! Cost: " + (int)sp.getLevelUpCost() + " mL + "
+                        tip.add(Component.literal("Click to level up! Cost: " + (int)SkillProgressClientCache.current().getLevelUpCost(sp) + " mL + "
                                 + sp.getSkillPointCost() + " SP").withStyle(s -> s.withColor(0xBB8833)));
                     }
                 }

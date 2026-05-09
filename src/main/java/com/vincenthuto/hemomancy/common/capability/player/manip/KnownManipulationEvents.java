@@ -4,13 +4,12 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -152,7 +151,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend());
 
 		// 3. Skill: Vital Link â€” chance to heal when using a manipulation
-		double vitalLinkChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getVitalLinkChance();
+		double vitalLinkChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getVitalLinkChance(player);
 		if (vitalLinkChance > 0 && player.level().random.nextDouble() < vitalLinkChance) {
 			player.heal(2.0f); // Heal 2.0 health (1 heart) on successful proc
 		}
@@ -182,13 +181,14 @@ public class KnownManipulationEvents {	@SubscribeEvent
 			case MAGISTER      -> 4;
 			case PERFECTUS     -> 5;
 		};
-		SkillPointInit.skillPoints += spGain;
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		progress.addSkillPoints(spGain);
 
 		// 6. Check manipulation-use milestones (first use, tiered totals)
 		SkillPointGainEvents.onManipulationUsed(player);
 
 		// Sync skill tree (which includes skill-point balance) back to client
-		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
+		SkillPointGainEvents.syncSkills(player);
 	}
 
 }

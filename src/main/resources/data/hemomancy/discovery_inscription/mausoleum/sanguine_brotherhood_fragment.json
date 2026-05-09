@@ -1,0 +1,18 @@
+{
+  "kind": "rite_fragment",
+  "path": "harbinger",
+  "required_level": 3,
+  "title": "Fragment: Sanguine Brotherhood",
+  "obscured_text": [
+    "You can make out the word brotherhood, but the rest pulls away like a clot in water.",
+    "The stone is warm where the letters cross."
+  ],
+  "revealed_text": [
+    "This fragment calls the rite a covenant of mutual witness. The Sanguine Brotherhood is not bloodline in the ordinary sense. It is chosen kinship written through risk.",
+    "The mark is affectionate and severe: no one joins a shared vein without accepting what may flow back."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_hematic_order/pages/historical_record"
+  ],
+  "rite_id": "hemomancy:cardinal_rite/sanguine_brotherhood"
+}

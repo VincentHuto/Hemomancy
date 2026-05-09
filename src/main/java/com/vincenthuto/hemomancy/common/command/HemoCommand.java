@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -22,7 +23,6 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrga
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
@@ -136,8 +136,8 @@ public class HemoCommand {
 												.executes(ctx -> resetPomeProgress(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))))
 
 				.then(Commands.literal("skills")
-						.then(Commands.literal("get")
-								.executes(ctx -> getSkills(ctx.getSource())))
+								.then(Commands.literal("get")
+								.executes(ctx -> getSkills(ctx.getSource(), ctx.getSource().getPlayerOrException())))
 						.then(Commands.literal("setpoints")
 								.then(Commands.argument("amount", IntegerArgumentType.integer(0))
 										.executes(ctx -> setSkillPoints(ctx.getSource(), ctx.getSource().getPlayerOrException(),
@@ -368,24 +368,25 @@ public class HemoCommand {
 		return 1;
 	}
 
-	private static int getSkills(CommandSourceStack source) {
+	private static int getSkills(CommandSourceStack source, ServerPlayer player) {
+		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
 		source.sendSuccess(() -> Component.literal("Skill Points: ")
-				.append(Component.literal(String.valueOf(SkillPointInit.skillPoints)).withStyle(ChatFormatting.AQUA)),
+				.append(Component.literal(String.valueOf(progress.getSkillPoints())).withStyle(ChatFormatting.AQUA)),
 				false);
 		source.sendSuccess(() -> Component.literal("Milestones: ")
-				.append(Component.literal(SkillPointInit.completedMilestones.size() + "/" + HemoMilestone.values().length)
+				.append(Component.literal(progress.getCompletedMilestoneCount() + "/" + HemoMilestone.values().length)
 						.withStyle(ChatFormatting.GOLD)),
 				false);
-		source.sendSuccess(() -> Component.literal("  Manip Uses: " + SkillPointInit.totalManipulationUses
-				+ "  Kills: " + SkillPointInit.totalKillsWithBlood
-				+ "  Rites: " + SkillPointInit.totalRitesCompleted
-				+ "  Advancements: " + SkillPointInit.totalHemoAdvancements)
+		source.sendSuccess(() -> Component.literal("  Manip Uses: " + progress.getTotalManipulationUses()
+				+ "  Kills: " + progress.getTotalKillsWithBlood()
+				+ "  Rites: " + progress.getTotalRitesCompleted()
+				+ "  Advancements: " + progress.getTotalHemoAdvancements())
 				.withStyle(ChatFormatting.GRAY), false);
 		return 1;
 	}
 
 	private static int setSkillPoints(CommandSourceStack source, ServerPlayer player, int amount) {
-		SkillPointInit.skillPoints = amount;
+		HemoCapabilityAccess.requireSkillProgress(player).setSkillPoints(amount);
 		syncSkills(player);
 		source.sendSuccess(() -> Component.literal("Set skill points to ")
 				.append(Component.literal(String.valueOf(amount)).withStyle(ChatFormatting.AQUA)),
@@ -394,15 +395,7 @@ public class HemoCommand {
 	}
 
 	private static int resetSkills(CommandSourceStack source, ServerPlayer player) {
-		SkillPointInit.SKILL_TREE.clear();
-		SkillPointInit.BASE.clear();
-		SkillPointInit.skillPoints = 0;
-		SkillPointInit.completedMilestones.clear();
-		SkillPointInit.totalManipulationUses = 0;
-		SkillPointInit.totalKillsWithBlood = 0;
-		SkillPointInit.totalRitesCompleted = 0;
-		SkillPointInit.totalHemoAdvancements = 0;
-		SkillPointInit.init();
+		HemoCapabilityAccess.requireSkillProgress(player).reset();
 		syncSkills(player);
 		source.sendSuccess(() -> Component.literal("Reset all skills, milestones, and skill points").withStyle(ChatFormatting.YELLOW),
 				true);
@@ -410,7 +403,7 @@ public class HemoCommand {
 	}
 
 	private static void syncSkills(ServerPlayer player) {
-		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
+		PacketHandler.sendToPlayer(player, new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
 	}
 
 	// ═══════════════════ Unstained Progression ═══════════════════

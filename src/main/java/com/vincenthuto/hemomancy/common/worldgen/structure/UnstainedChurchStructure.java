@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.worldgen.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
 import net.minecraft.core.BlockPos;
@@ -124,6 +126,11 @@ public class UnstainedChurchStructure extends Structure {
 
 		// Cap scan height to the lower half to stay inside the church interior
 		int maxY = (fullBox.minY() + fullBox.maxY()) / 2;
+		BlockPos inscriptionOrigin = new BlockPos(centerX, floorY + 1, centerZ);
+		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(-4, 0, 2),
+				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("unstained_church/still_waters_fragment"));
+		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(4, 0, -2),
+				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("unstained_church/clarity_ascension_fragment"));
 
 		// --- 1 Zealot (the priest) near the centre ---
 		spawnOnFloor(level, random, EntityInit.unstained_zealot.get(),

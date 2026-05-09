@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
@@ -167,6 +168,22 @@ public static IBookKnowledge requireLiberKnowledge(Player player) {
 
 public static IBookKnowledge requireLiberKnowledge(Entity entity) {
     return getLiberKnowledge(entity).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<SkillProgress> getSkillProgress(Player player) {
+    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.SKILL_PROGRESS));
+}
+
+public static Optional<SkillProgress> getSkillProgress(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.SKILL_PROGRESS));
+}
+
+public static SkillProgress requireSkillProgress(Player player) {
+    return getSkillProgress(player).orElseThrow(IllegalStateException::new);
+}
+
+public static SkillProgress requireSkillProgress(Entity entity) {
+    return getSkillProgress(entity).orElseThrow(IllegalStateException::new);
 }
 
 // ── Initiatory Degree ─────────────────────────────────────────────────────

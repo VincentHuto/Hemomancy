@@ -220,7 +220,7 @@ public class BloodManipulation  {
 		if (cooldownTicks > 0) {
 			// ── Skill: Blood Flow — reduce cooldown duration ──
 			long effectiveCooldown = (long) (cooldownTicks
-					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier());
+					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier(player));
 
 			// ── ManipLevel — per-use mastery further reduces cooldown ──
 			double levelCooldownMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
@@ -308,7 +308,7 @@ public class BloodManipulation  {
 
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
-				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
+				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier(player) * costMultiplier;
 
 				// ── ManipLevel — per-use mastery reduces cost ──
 				double levelCostMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
@@ -331,7 +331,7 @@ public class BloodManipulation  {
 				if (strongest != null && strongest.equals(tend)) {
 					// Dynamic Use returns e.g. 1.2 at level 2 — invert to
 					// get a discount: cost / 1.2 ≈ 17% discount.
-					effectiveCost /= com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getDynamicUseMultiplier();
+					effectiveCost /= com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getDynamicUseMultiplier(player);
 				}
 
 				// MnA Combo System: Arcane Resonance reduces blood cost

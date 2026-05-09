@@ -16,11 +16,14 @@ import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtr
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.*;
 import com.vincenthuto.hemomancy.common.network.particle.*;
+import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
+import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -130,6 +133,8 @@ public class PacketHandler {
         net.playToClient(StillArtCooldownPacket.TYPE, StillArtCooldownPacket.STREAM_CODEC, StillArtCooldownPacket::handle);
         net.playToServer(KnownSummonsRequestPacket.TYPE, KnownSummonsRequestPacket.STREAM_CODEC, KnownSummonsRequestPacket::handle);
         net.playToClient(KnownSummonsServerPacket.TYPE, KnownSummonsServerPacket.STREAM_CODEC, KnownSummonsServerPacket::handle);
+        net.playToServer(PacketPuppeteersSpindleAction.TYPE, PacketPuppeteersSpindleAction.STREAM_CODEC, PacketPuppeteersSpindleAction::handle);
+        net.playToClient(PacketSyncSutureLinks.TYPE, PacketSyncSutureLinks.STREAM_CODEC, PacketSyncSutureLinks::handle);
 
         // ── Key-bind packets ──────────────────────────────────────────────────
         net.playToServer(BloodFormationKeyPressPacket.TYPE, BloodFormationKeyPressPacket.STREAM_CODEC, BloodFormationKeyPressPacket::handle);
@@ -185,6 +190,7 @@ public class PacketHandler {
         // ── Dialogue system ───────────────────────────────────────────────────
         net.playToClient(OpenDialoguePacket.TYPE, OpenDialoguePacket.STREAM_CODEC, OpenDialoguePacket::handle);
         net.playToServer(DialogueOptionPacket.TYPE, DialogueOptionPacket.STREAM_CODEC, DialogueOptionPacket::handle);
+        net.playToClient(OpenInscriptionPacket.TYPE, OpenInscriptionPacket.STREAM_CODEC, OpenInscriptionPacket::handle);
 
         // ── World events ──────────────────────────────────────────────────────
         net.playToClient(PacketSyncQliphothBlooms.TYPE, PacketSyncQliphothBlooms.STREAM_CODEC, PacketSyncQliphothBlooms::handle);

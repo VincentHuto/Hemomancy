@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -104,7 +105,7 @@ public final class BoundSummonBehavior {
 			summon.hemomancy$setDismissalTicks(0);
 			mob.setNoAi(false);
 		}
-		double range = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel());
+		double range = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel(owner));
 		if (mob.distanceToSqr(owner) > range * range * 9.0) {
 			mob.teleportTo(owner.getX(), owner.getY(), owner.getZ());
 		}
@@ -139,6 +140,19 @@ public final class BoundSummonBehavior {
 			return false;
 		}
 		return !(target instanceof BoundPuppeteerSummon);
+	}
+
+	public static void followFlyingOwner(Mob mob, Player owner, double speed, double teleportDistance) {
+		Vec3 anchor = owner.position().add(0.0, owner.getBbHeight() + 0.6, 0.0);
+		Vec3 delta = anchor.subtract(mob.position());
+		if (delta.lengthSqr() > 0.01) {
+			mob.getMoveControl().setWantedPosition(anchor.x, anchor.y, anchor.z, speed);
+			mob.setDeltaMovement(mob.getDeltaMovement().scale(0.86).add(delta.normalize().scale(0.055)));
+		}
+		if (mob.distanceToSqr(owner) > teleportDistance * teleportDistance && mob.tickCount % 20 == 0) {
+			mob.teleportTo(owner.getX(), owner.getY() + 1.2, owner.getZ());
+			mob.setDeltaMovement(Vec3.ZERO);
+		}
 	}
 
 	private static Optional<LivingEntity> findTarget(Mob mob, BoundPuppeteerSummon summon, double range) {

@@ -79,7 +79,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		}
 
 		LivingEntity target = targetOpt.get();
-		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier();
+		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		target.hurt(world.damageSources().magic(), drainDamage);
 
 		// Restore blood to caster

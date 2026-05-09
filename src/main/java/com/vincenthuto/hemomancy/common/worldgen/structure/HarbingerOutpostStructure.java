@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.worldgen.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
 import net.minecraft.core.BlockPos;
@@ -114,6 +116,11 @@ public class HarbingerOutpostStructure extends Structure {
 		}
 
 		int maxY = (fullBox.minY() + fullBox.maxY()) / 2;
+		BlockPos inscriptionOrigin = new BlockPos(centerX, floorY + 1, centerZ);
+		DiscoveryInscriptionPlacement.placeOnInteriorWall(level, fullBox, inscriptionOrigin.offset(-3, 1, 3),
+				BlockInit.blood_echo_inscription.get(), Hemomancy.rloc("harbinger_outpost/crude_memory_echo"));
+		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(3, 0, -3),
+				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("harbinger_outpost/crimson_beacon_fragment"));
 
 		spawnOnFloor(level, random, EntityInit.harbinger_vicar.get(),
 				centerX, centerZ, floorY, maxY, VICAR_SPAWN_SPREAD);

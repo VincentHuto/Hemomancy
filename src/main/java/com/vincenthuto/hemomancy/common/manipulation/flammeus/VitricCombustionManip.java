@@ -57,7 +57,7 @@ public class VitricCombustionManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier();
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		Vec3 eyePos = player.getEyePosition(1.0F);
 		Vec3 lookVec = player.getViewVector(1.0F);
 		Vec3 endPos = eyePos.add(lookVec.scale(range));
@@ -73,7 +73,7 @@ public class VitricCombustionManip extends BloodManipulation {
 			blastCenter = Vec3.atCenterOf(hit.getBlockPos().relative(hit.getDirection()));
 		}
 
-		double blastRadius = BASE_BLAST_RADIUS * SkillPointHelper.getCrimsonMasteryMultiplier();
+		double blastRadius = BASE_BLAST_RADIUS * SkillPointHelper.getCrimsonMasteryMultiplier(player);
 
 		BlockPos blastPos = BlockPos.containing(blastCenter);
 		AABB searchBox = new AABB(blastPos).inflate(blastRadius);
@@ -84,7 +84,7 @@ public class VitricCombustionManip extends BloodManipulation {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
 			target.igniteForSeconds(FIRE_SECONDS);
-			target.hurt(world.damageSources().explosion(null, player), (float) (BLAST_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
+			target.hurt(world.damageSources().explosion(null, player), (float) (BLAST_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 			target.push(toTarget.x * KNOCKBACK_STRENGTH,
 					0.4 * KNOCKBACK_STRENGTH,
 					toTarget.z * KNOCKBACK_STRENGTH);

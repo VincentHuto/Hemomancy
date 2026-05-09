@@ -66,7 +66,7 @@ public class CryogenicPulseManip extends BloodManipulation {
 						SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
 						FATIGUE_DURATION, FATIGUE_AMPLIFIER, false, true));
-				target.hurt(world.damageSources().freeze(), (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
+				target.hurt(world.damageSources().freeze(), (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 			}
 		}
 

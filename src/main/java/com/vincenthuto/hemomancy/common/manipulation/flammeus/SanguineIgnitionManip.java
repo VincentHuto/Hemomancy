@@ -57,7 +57,7 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		for (LivingEntity target : targets) {
 			if (target.distanceTo(player) <= RADIUS) {
 				target.igniteForSeconds((float) FIRE_SECONDS);
-				target.hurt(world.damageSources().onFire(), (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
+				target.hurt(world.damageSources().onFire(), (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
 				hit++;
 			}
 		}
