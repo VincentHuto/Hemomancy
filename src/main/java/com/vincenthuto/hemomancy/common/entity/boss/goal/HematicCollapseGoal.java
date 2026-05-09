@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 
@@ -63,6 +64,7 @@ public class HematicCollapseGoal extends Goal {
 		telegraphTicks = boss.isInPhase2() ? TELEGRAPH_TICKS / 2 : TELEGRAPH_TICKS;
 		firing = true;
 		boss.setCollapseCharging(true);
+		boss.setVisualState(HollowVesselEntity.VISUAL_COLLAPSE_WINDUP, telegraphTicks);
 		if (boss.level() instanceof ServerLevel server) {
 			server.playSound(null, boss.getX(), boss.getY(), boss.getZ(),
 					SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 2.0F, 0.6F);
@@ -79,6 +81,9 @@ public class HematicCollapseGoal extends Goal {
 	public void stop() {
 		firing = false;
 		boss.setCollapseCharging(false);
+		if (boss.getVisualState() == HollowVesselEntity.VISUAL_COLLAPSE_WINDUP) {
+			boss.setVisualState(HollowVesselEntity.VISUAL_NONE, 0);
+		}
 		cooldownTicks = boss.isInPhase2() ? PHASE_2_COOLDOWN_TICKS : PHASE_1_COOLDOWN_TICKS;
 	}
 
@@ -100,6 +105,7 @@ public class HematicCollapseGoal extends Goal {
 				server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
 						boss.getX(), boss.getY() + 1.0, boss.getZ(),
 						10, 0.5, 0.8, 0.5, 0.02);
+				sendDebtTether(server, target);
 			}
 			return;
 		}
@@ -123,11 +129,24 @@ public class HematicCollapseGoal extends Goal {
 
 		server.playSound(null, target.getX(), target.getY(), target.getZ(),
 				SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 2.0F, 0.5F);
+		boss.setVisualState(HollowVesselEntity.VISUAL_COLLAPSE_IMPACT, 14);
 		server.sendParticles(ParticleTypes.SCULK_SOUL,
 				target.getX(), target.getY() + 1.0, target.getZ(),
 				40, 0.6, 1.0, 0.6, 0.1);
 		server.sendParticles(ParticleTypes.LARGE_SMOKE,
 				target.getX(), target.getY() + 1.0, target.getZ(),
 				25, 0.8, 0.8, 0.8, 0.05);
+	}
+
+	private void sendDebtTether(ServerLevel server, LivingEntity target) {
+		Vec3 from = boss.position().add(0.0, 1.2, 0.0);
+		Vec3 to = target.position().add(0.0, target.getBbHeight() * 0.65, 0.0);
+		Vec3 delta = to.subtract(from);
+		for (int i = 1; i <= 10; i++) {
+			Vec3 point = from.add(delta.scale(i / 11.0D));
+			server.sendParticles(ParticleTypes.SCULK_SOUL,
+					point.x, point.y, point.z,
+					1, 0.02, 0.02, 0.02, 0.0);
+		}
 	}
 }

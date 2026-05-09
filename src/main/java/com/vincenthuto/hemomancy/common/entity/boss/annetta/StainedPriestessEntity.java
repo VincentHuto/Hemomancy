@@ -5,6 +5,9 @@ import com.vincenthuto.hemomancy.common.entity.projectile.SanguisLanceaEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,6 +38,16 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class StainedPriestessEntity extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
+            SynchedEntityData.defineId(StainedPriestessEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
+            SynchedEntityData.defineId(StainedPriestessEntity.class, EntityDataSerializers.INT);
+
+    public static final int VISUAL_NONE = 0;
+    public static final int VISUAL_LANCE = 1;
+    public static final int VISUAL_LUNGE = 2;
+    public static final int VISUAL_PRESSURE_BLOOM = 3;
+
     private static final int LANCE_INTERVAL = 70;
     private static final int LUNGE_INTERVAL = 100;
     private static final int AREA_PRESSURE_INTERVAL = 85;
@@ -73,6 +86,26 @@ public class StainedPriestessEntity extends Monster {
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
+        builder.define(DATA_VISUAL_TICKS, 0);
+    }
+
+    public int getVisualState() {
+        return this.entityData.get(DATA_VISUAL_STATE);
+    }
+
+    public int getVisualTicks() {
+        return this.entityData.get(DATA_VISUAL_TICKS);
+    }
+
+    private void setVisualState(int visualState, int ticks) {
+        this.entityData.set(DATA_VISUAL_STATE, visualState);
+        this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
+    }
+
+    @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossEvent.addPlayer(player);
@@ -92,6 +125,7 @@ public class StainedPriestessEntity extends Monster {
         }
 
         ServerLevel server = (ServerLevel) this.level();
+        tickVisualState();
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.tickCount % 10 == 0) {
             server.sendParticles(ParticleTypes.FALLING_LAVA, this.getX(), this.getY() + 1.0D, this.getZ(),
@@ -113,7 +147,18 @@ public class StainedPriestessEntity extends Monster {
         }
     }
 
+    private void tickVisualState() {
+        int ticks = getVisualTicks();
+        if (ticks > 0) {
+            this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
+            if (ticks == 1) {
+                this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
+            }
+        }
+    }
+
     private void throwBloodLance(ServerLevel server, LivingEntity target) {
+        setVisualState(VISUAL_LANCE, 18);
         ItemStack stack = new ItemStack(ItemInit.annettas_sanguis_lancea.get());
         SanguisLanceaEntity lance = new SanguisLanceaEntity(server, this, stack);
         lance.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
@@ -121,25 +166,49 @@ public class StainedPriestessEntity extends Monster {
         Vec3 delta = target.getEyePosition().subtract(lance.position());
         lance.shoot(delta.x, delta.y, delta.z, 1.35F, 4.0F);
         server.addFreshEntity(lance);
+        sendParticleLine(server, lance.position(), target.getEyePosition(), ParticleTypes.FALLING_LAVA, 10);
         server.playSound(null, this.blockPosition(), SoundEvents.TRIDENT_THROW.value(), SoundSource.HOSTILE, 1.0F, 0.55F);
     }
 
     private void lungeAt(LivingEntity target) {
+        setVisualState(VISUAL_LUNGE, 14);
         Vec3 delta = target.position().subtract(this.position());
         if (delta.lengthSqr() > 0.001D) {
             this.setDeltaMovement(this.getDeltaMovement().add(delta.normalize().scale(0.75D)).add(0.0D, 0.12D, 0.0D));
             this.hasImpulse = true;
+            if (this.level() instanceof ServerLevel server) {
+                sendParticleLine(server, this.position().add(0.0D, 0.8D, 0.0D), target.position().add(0.0D, 0.8D, 0.0D), ParticleTypes.DRIPPING_LAVA, 8);
+            }
         }
     }
 
     private void bloodPressureBloom(ServerLevel server) {
+        setVisualState(VISUAL_PRESSURE_BLOOM, 16);
         AABB area = new AABB(this.blockPosition()).inflate(7.0D);
+        sendFloorRing(server, 7.0D, ParticleTypes.FALLING_LAVA, 36);
         server.sendParticles(ParticleTypes.DRIPPING_LAVA, this.getX(), this.getY() + 1.0D, this.getZ(),
                 70, 3.0D, 0.7D, 3.0D, 0.03D);
         server.playSound(null, this.blockPosition(), SoundEvents.GENERIC_SPLASH, SoundSource.HOSTILE, 1.0F, 0.45F);
         for (Player player : server.getEntitiesOfClass(Player.class, area)) {
             player.hurt(this.damageSources().magic(), 6.0F);
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1, false, true));
+        }
+    }
+
+    private void sendFloorRing(ServerLevel server, double radius, net.minecraft.core.particles.SimpleParticleType particle, int points) {
+        for (int i = 0; i < points; i++) {
+            double angle = i * Math.PI * 2.0D / points;
+            double x = this.getX() + Math.cos(angle) * radius;
+            double z = this.getZ() + Math.sin(angle) * radius;
+            server.sendParticles(particle, x, this.getY() + 0.12D, z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
+        }
+    }
+
+    private void sendParticleLine(ServerLevel server, Vec3 from, Vec3 to, net.minecraft.core.particles.SimpleParticleType particle, int points) {
+        Vec3 delta = to.subtract(from);
+        for (int i = 1; i <= points; i++) {
+            Vec3 point = from.add(delta.scale(i / (double) (points + 1)));
+            server.sendParticles(particle, point.x, point.y, point.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
         }
     }
 
