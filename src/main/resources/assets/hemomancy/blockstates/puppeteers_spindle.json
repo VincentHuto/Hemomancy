@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "hemomancy:block/puppeteers_spindle"
+    },
+    "facing=south": {
+      "model": "hemomancy:block/puppeteers_spindle",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/puppeteers_spindle",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "hemomancy:block/puppeteers_spindle",
+      "y": 90
     }
   }
 }

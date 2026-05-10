@@ -34,6 +34,10 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.STRING);
 	private static final EntityDataAccessor<Integer> DATA_DISMISSAL_TICKS =
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> DATA_TRIAL_SUMMON =
+			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
+			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
 	public MarrowSpitterEntity(EntityType<? extends Skeleton> type, Level level) {
 		super(type, level);
@@ -60,6 +64,8 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 		builder.define(DATA_CROSSBAR_UUID, Optional.empty());
 		builder.define(DATA_SUMMON_NAME, "marrow_spitter");
 		builder.define(DATA_DISMISSAL_TICKS, 0);
+		builder.define(DATA_TRIAL_SUMMON, false);
+		builder.define(DATA_TRIAL_CASTER_UUID, Optional.empty());
 	}
 
 	@Nullable
@@ -74,7 +80,14 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 	@Override
 	public void tick() {
 		super.tick();
-		if (!level().isClientSide && BoundSummonBehavior.commonServerTick(this, this)) {
+		if (level().isClientSide) {
+			return;
+		}
+		if (hemomancy$isTrialSummon()) {
+			BoundSummonBehavior.trialServerTick(this, this);
+			return;
+		}
+		if (BoundSummonBehavior.commonServerTick(this, this)) {
 			Optional<Player> owner = BoundSummonBehavior.ownerFor(this, this);
 			if (getTarget() == null && owner.isPresent() && distanceToSqr(owner.get()) > 36.0) {
 				getNavigation().moveTo(owner.get(), 1.0);
@@ -109,4 +122,8 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 	@Override public void hemomancy$setDismissalTicks(int ticks) {
 		entityData.set(DATA_DISMISSAL_TICKS, Math.max(0, Math.min(PuppeteerSummonRules.CROSSBAR_DISMISSAL_TICKS, ticks)));
 	}
+	@Override public boolean hemomancy$isTrialSummon() { return entityData.get(DATA_TRIAL_SUMMON); }
+	@Override public void hemomancy$setTrialSummon(boolean trialSummon) { entityData.set(DATA_TRIAL_SUMMON, trialSummon); }
+	@Override public UUID hemomancy$getTrialCasterUUID() { return entityData.get(DATA_TRIAL_CASTER_UUID).orElse(null); }
+	@Override public void hemomancy$setTrialCasterUUID(UUID casterUuid) { entityData.set(DATA_TRIAL_CASTER_UUID, Optional.ofNullable(casterUuid)); }
 }

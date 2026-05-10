@@ -60,6 +60,25 @@ public class MarionetteCrossbarItem extends Item {
 	}
 
 	@Override
+	public boolean isBarVisible(ItemStack stack) {
+		return true;
+	}
+
+	@Override
+	public int getBarWidth(ItemStack stack) {
+		return Math.round(13.0F * getThread(stack) / PuppeteerSummonRules.THREAD_CAPACITY);
+	}
+
+	@Override
+	public int getBarColor(ItemStack stack) {
+		float fill = Math.max(0.0F, Math.min(1.0F, getThread(stack) / (float) PuppeteerSummonRules.THREAD_CAPACITY));
+		int red = 96 + Math.round(128 * fill);
+		int green = 8 + Math.round(24 * fill);
+		int blue = 16 + Math.round(20 * fill);
+		return (red << 16) | (green << 8) | blue;
+	}
+
+	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, level, entity, itemSlot, isSelected);
 		if (level.isClientSide || !(entity instanceof Player player) || player.tickCount % 1200 != 0) {
@@ -218,45 +237,6 @@ public class MarionetteCrossbarItem extends Item {
 		player.playSound(SoundEvents.CHAIN_PLACE, 0.5F, 0.8F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.bind.success",
 				Component.translatable("entity.hemomancy." + selected)), true);
-	}
-
-	public static void windCrossbar(ItemStack crossbar, ItemStack threadStack, ServerPlayer player) {
-		int before = getThread(crossbar);
-		if (before >= PuppeteerSummonRules.THREAD_CAPACITY) {
-			player.displayClientMessage(Component.translatable("hemomancy.summon.refill.full")
-					.withStyle(ChatFormatting.GRAY), true);
-			return;
-		}
-		int after = addThread(crossbar, PuppeteerSummonRules.THREAD_PER_ITEM);
-		if (!player.getAbilities().instabuild) {
-			threadStack.shrink(1);
-		}
-		player.playSound(SoundEvents.WOOL_PLACE, 0.45F, 0.75F);
-		player.displayClientMessage(Component.translatable("hemomancy.summon.refill.success",
-				after, PuppeteerSummonRules.THREAD_CAPACITY), true);
-	}
-
-	public static void unlockNextSummon(ItemStack quintessence, ServerPlayer player) {
-		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		Optional<PuppeteerSummonDefinition> next = HemoCapabilityAccess.getKnownSummons(player)
-				.flatMap(known -> PuppeteerSummonDefinitions.all().stream()
-						.filter(definition -> definition.requiredDegree() <= degree)
-						.filter(definition -> !known.isKnown(definition))
-						.findFirst());
-		if (next.isEmpty()) {
-			player.displayClientMessage(Component.translatable("hemomancy.summon.unlock.none")
-					.withStyle(ChatFormatting.GRAY), true);
-			return;
-		}
-		PuppeteerSummonDefinition definition = next.get();
-		if (KnownSummonEvents.grantSummon(player, definition)) {
-			if (!player.getAbilities().instabuild) {
-				quintessence.shrink(1);
-			}
-			player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.65F, 0.65F);
-			player.displayClientMessage(Component.translatable("hemomancy.summon.unlock.success",
-					Component.translatable(definition.translationKey())).withStyle(ChatFormatting.RED), false);
-		}
 	}
 
 	public static boolean selectSummon(ItemStack stack, ServerPlayer player, String summonName) {

@@ -18,4 +18,12 @@ public interface BoundPuppeteerSummon {
 	int hemomancy$getDismissalTicks();
 
 	void hemomancy$setDismissalTicks(int ticks);
+
+	boolean hemomancy$isTrialSummon();
+
+	void hemomancy$setTrialSummon(boolean trialSummon);
+
+	UUID hemomancy$getTrialCasterUUID();
+
+	void hemomancy$setTrialCasterUUID(UUID casterUuid);
 }

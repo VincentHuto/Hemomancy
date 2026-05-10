@@ -1,0 +1,18 @@
+{
+  "parent": "hemomancy:hemomancy/degree_4_adept",
+  "rewards": {
+    "recipes": [
+      "hemomancy:puppeteer_trial/gorebound_hulk"
+    ]
+  },
+  "criteria": {
+    "has_degree": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "has_degree"
+    ]
+  ]
+}

@@ -23,6 +23,8 @@ public final class BoundSummonBehavior {
 	private static final String TAG_CROSSBAR = "HemomancyCrossbar";
 	private static final String TAG_SUMMON = "HemomancySummon";
 	private static final String TAG_DISMISSAL_TICKS = "HemomancyDismissalTicks";
+	private static final String TAG_TRIAL = "HemomancyTrial";
+	private static final String TAG_TRIAL_CASTER = "HemomancyTrialCaster";
 
 	private BoundSummonBehavior() {
 	}
@@ -43,6 +45,13 @@ public final class BoundSummonBehavior {
 		if (summon.hemomancy$getDismissalTicks() > 0) {
 			tag.putInt(TAG_DISMISSAL_TICKS, summon.hemomancy$getDismissalTicks());
 		}
+		if (summon.hemomancy$isTrialSummon()) {
+			tag.putBoolean(TAG_TRIAL, true);
+		}
+		UUID trialCaster = summon.hemomancy$getTrialCasterUUID();
+		if (trialCaster != null) {
+			tag.putUUID(TAG_TRIAL_CASTER, trialCaster);
+		}
 	}
 
 	public static void load(BoundPuppeteerSummon summon, CompoundTag tag) {
@@ -57,6 +66,10 @@ public final class BoundSummonBehavior {
 		}
 		if (tag.contains(TAG_DISMISSAL_TICKS)) {
 			summon.hemomancy$setDismissalTicks(tag.getInt(TAG_DISMISSAL_TICKS));
+		}
+		summon.hemomancy$setTrialSummon(tag.getBoolean(TAG_TRIAL));
+		if (tag.hasUUID(TAG_TRIAL_CASTER)) {
+			summon.hemomancy$setTrialCasterUUID(tag.getUUID(TAG_TRIAL_CASTER));
 		}
 	}
 
@@ -84,6 +97,33 @@ public final class BoundSummonBehavior {
 		if (mob.getAttribute(Attributes.FLYING_SPEED) != null) {
 			mob.getAttribute(Attributes.FLYING_SPEED).setBaseValue(definition.movementSpeed() * 1.2);
 		}
+	}
+
+	public static void applyTrialStats(Mob mob, PuppeteerSummonDefinition definition) {
+		if (mob.getAttribute(Attributes.MAX_HEALTH) != null) {
+			mob.getAttribute(Attributes.MAX_HEALTH).setBaseValue(definition.baseHealth() * 1.5);
+			mob.setHealth(mob.getMaxHealth());
+		}
+		if (mob.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+			mob.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(definition.baseDamage() * 1.25);
+		}
+		if (mob.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
+			mob.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(definition.movementSpeed());
+		}
+		if (mob.getAttribute(Attributes.FLYING_SPEED) != null) {
+			mob.getAttribute(Attributes.FLYING_SPEED).setBaseValue(definition.movementSpeed() * 1.2);
+		}
+	}
+
+	public static void trialServerTick(Mob mob, BoundPuppeteerSummon summon) {
+		if (mob.getTarget() != null && mob.getTarget().isAlive() && canAttack(mob, summon, mob.getTarget())) {
+			return;
+		}
+		mob.level().getEntitiesOfClass(Player.class, mob.getBoundingBox().inflate(24.0),
+						player -> player.isAlive() && !player.isSpectator() && !player.isCreative())
+				.stream()
+				.min(Comparator.comparingDouble(mob::distanceToSqr))
+				.ifPresent(mob::setTarget);
 	}
 
 	public static boolean commonServerTick(Mob mob, BoundPuppeteerSummon summon) {
@@ -134,6 +174,9 @@ public final class BoundSummonBehavior {
 	public static boolean canAttack(Mob mob, BoundPuppeteerSummon summon, LivingEntity target) {
 		if (target == null || !target.isAlive() || target == mob) {
 			return false;
+		}
+		if (summon.hemomancy$isTrialSummon()) {
+			return target instanceof Player player && !player.isSpectator() && !player.isCreative();
 		}
 		UUID ownerId = summon.hemomancy$getOwnerUUID();
 		if (ownerId != null && ownerId.equals(target.getUUID())) {

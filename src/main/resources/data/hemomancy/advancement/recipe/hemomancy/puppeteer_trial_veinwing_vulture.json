@@ -1,0 +1,18 @@
+{
+  "parent": "hemomancy:hemomancy/degree_2_votary",
+  "rewards": {
+    "recipes": [
+      "hemomancy:puppeteer_trial/veinwing_vulture"
+    ]
+  },
+  "criteria": {
+    "has_degree": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "has_degree"
+    ]
+  ]
+}

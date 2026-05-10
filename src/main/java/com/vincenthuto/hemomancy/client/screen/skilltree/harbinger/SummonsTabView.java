@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
@@ -99,6 +100,7 @@ public final class SummonsTabView {
 					PuppeteerSummonDefinition definition = definitions.get(i);
 					boolean known = state.isKnown(definition);
 					boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
+					boolean recipeUnlocked = hasTrialRecipe(definition);
 					boolean summonSelected = i == state.selectedSummonIndex;
 					boolean summonHovered = mouseX >= sx + 4 && mouseX <= sx + sw - 4
 							&& mouseY >= sy && mouseY <= sy + 16
@@ -110,7 +112,7 @@ public final class SummonsTabView {
 						gfx.fill(sx + 2, sy, sx + 3, sy + 16, TAB_COLOR);
 					}
 
-					int textColor = !degreeOk ? 0xFF444444 : (known ? 0xFFFFCED6 : 0xFFB07A86);
+					int textColor = !degreeOk ? 0xFF444444 : (known ? 0xFFFFCED6 : (recipeUnlocked ? 0xFFB07A86 : 0xFF73545C));
 					String name = Component.translatable(definition.translationKey()).getString();
 					gfx.drawString(ctx.font(), ScreenDrawUtils.truncateText(ctx.font(), name, sw - 18),
 							sx + 8, sy + 4, textColor, false);
@@ -147,7 +149,8 @@ public final class SummonsTabView {
 		int statusY = y + 22;
 		boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
 		boolean known = state.isKnown(definition);
-		Component status = statusComponent(degreeOk, known, definition.requiredDegree());
+		boolean recipeUnlocked = hasTrialRecipe(definition);
+		Component status = statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree());
 		gfx.drawCenteredString(ctx.font(), status, x + w / 2, statusY, 0);
 
 		int entityTop = y + 34;
@@ -167,14 +170,23 @@ public final class SummonsTabView {
 		}
 	}
 
-	private static Component statusComponent(boolean degreeOk, boolean known, int requiredDegree) {
+	private static Component statusComponent(boolean degreeOk, boolean recipeUnlocked, boolean known, int requiredDegree) {
 		if (!degreeOk) {
 			return Component.literal("Locked: Degree " + requiredDegree).withStyle(ChatFormatting.DARK_GRAY);
 		}
 		if (known) {
 			return Component.literal("Unlocked").withStyle(ChatFormatting.DARK_RED);
 		}
-		return Component.literal("Catalyst required").withStyle(ChatFormatting.GRAY);
+		if (!recipeUnlocked) {
+			return Component.literal("Recipe locked").withStyle(ChatFormatting.GRAY);
+		}
+		return Component.literal("Trial required").withStyle(ChatFormatting.GRAY);
+	}
+
+	private static boolean hasTrialRecipe(PuppeteerSummonDefinition definition) {
+		Minecraft mc = Minecraft.getInstance();
+		return mc.player != null && mc.player.getRecipeBook()
+				.contains(Hemomancy.rloc("puppeteer_trial/" + definition.name()));
 	}
 
 	private static void renderPreviewEntity(GuiGraphics gfx, ProgressScreenContext ctx, SummonsTabState state,
@@ -256,7 +268,8 @@ public final class SummonsTabView {
 
 		boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
 		boolean known = state.isKnown(definition);
-		drawY = drawLine(gfx, ctx, "Status", statusComponent(degreeOk, known, definition.requiredDegree()).getString(), textX, drawY, lineH);
+		boolean recipeUnlocked = hasTrialRecipe(definition);
+		drawY = drawLine(gfx, ctx, "Status", statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree()).getString(), textX, drawY, lineH);
 		drawY = drawLine(gfx, ctx, "Role", definition.role(), textX, drawY, lineH);
 		drawY = drawLine(gfx, ctx, "Required", "Degree " + definition.requiredDegree(), textX, drawY, lineH);
 		drawY += 4;
@@ -273,8 +286,9 @@ public final class SummonsTabView {
 
 		drawY = drawLine(gfx, ctx, "Summon Thread", definition.threadSummonCost() + " charge", textX, drawY, lineH);
 		drawY = drawLine(gfx, ctx, "Upkeep", definition.threadUpkeepPerMinute() + " charge/min", textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Catalyst", Component.translatable("item.hemomancy.sanguine_quintessence").getString(),
+		drawY = drawLine(gfx, ctx, "Trial Catalyst", Component.translatable("item.hemomancy.sanguine_quintessence").getString(),
 				textX, drawY, lineH);
+		drawY = drawLine(gfx, ctx, "Unlock", "Blood Crafting effigy trial", textX, drawY, lineH);
 		drawY += 4;
 
 		int skein = SkillPointHelper.getPuppetSkeinLevel();

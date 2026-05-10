@@ -7,7 +7,8 @@
 > **2026-05-07 Mycelial Lantern Update:** Adds the Degree 5 Mycelial Lantern enzyme-fruiting machine, all eight aligned spore culture items, the `enzyme_fruiting` recipe type and JSON data, reusable blood-reservoir transfer helpers, reusable blood/white-humor GUI bar widgets, Pallid Retort white humor widget extraction, and Mycelial Lantern entity-model rendering with Blockbench source.
 > **2026-05-07 Early Memory and Mnemonist Update:** Adds shared manipulation rank gates, crude-memory starter learning with auto-equip, Degree 1 default utility manipulations, curated starter crude memories, and the Harbinger Mnemonist outpost guide/reward NPC.
 > **2026-05-08 Direct Blood Routing Update:** Adds `HematicSutureNeedleItem`, `HematicSutureNodeBlock`, `BloodRoutingSavedData`, and the `common.routing` API for direct pull-based machine links. Degree 3 nearby routing draws from equipped open Blood Gourds before player blood with safety floors; Degree 5 sanctum routing can enable opt-in bloodline support; Blood Thralls courier capped amounts and Drudges tend linked machines without generating blood.
-> **Last Updated:** 2026-05-08 direct blood routing pass. Current code audit refreshed capabilities/attachments, NeoForge payload networking, active vs dormant config status, sound counts, and WIP status labels. Current code remains authoritative when older notes disagree.
+> **2026-05-10 Puppeteer Spindle and Summon Trials Update:** Reworks the Puppeteer's Spindle into a persistent two-slot block entity with a 512-thread buffer, slotted crossbar attunement/fill controls, custom block/item rendering, and facing-aware placement. Summon unlocks now use instant Blood Crafting puppeteer trial recipes instead of direct spindle quintessence unlocks.
+> **Last Updated:** 2026-05-10 puppeteer spindle and summon trial pass. Current code audit refreshed capabilities/attachments, NeoForge payload networking, active vs dormant config status, sound counts, and WIP status labels. Current code remains authoritative when older notes disagree.
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -41,7 +42,7 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 > - NPC item inquiries moved out to datapack JSON under `data/hemomancy/dialogue_inquiry/<npc>/<item_namespace>/<item>.json`, loaded by `ItemInquiryLoader` with optional degree/purity conditions.
 > - Early blood manipulation learning now has a crude-memory lane: crude memory shards teach and auto-equip weak starter manipulations without requiring the Mnemonic Reliquary, while full Blood Memory items and Somatic Loom recipes remain the refined midgame path.
 > - Harbinger Outposts now include a **Harbinger Mnemonist**, a non-hostile memory mentor who explains crude memories, active manipulation slots, the Mnemonic Reliquary, and the Somatic Loom, and gives eligible Degree 1+ Harbingers one starter crude memory choice.
-> - Puppeteer summons are implemented as a separate Harbinger utility path: `Marionette Crossbar` uses `puppeteering_thread` charge, `Puppeteer's Spindle` binds/refills/unlocks summons, `sanguine_quintessence` permanently unlocks summon shapes, active summons render red owner threads, and the Harbinger progress screen has a Summons tab with degree gates, stats, and safe client-side previews.
+> - Puppeteer summons are implemented as a separate Harbinger utility path: `Marionette Crossbar` uses `puppeteering_thread` charge with an inventory item bar, `Puppeteer's Spindle` is a two-slot container that stores/refills thread and attunes slotted crossbars, summon unlocks come from Blood Crafting puppeteer trial recipes using Sanguine Quintessence as the catalyst, active summons render red owner threads, and the Harbinger progress screen has a Summons tab with degree/recipe/trial gates, stats, and safe client-side previews.
 > - Client progression UIs were modularized (`HarbingerProgressScreen` + shared tab controllers used by both Harbinger and Unstained screens), and manipulation star overlays now include numeric tendency values.
 
 ---
@@ -345,21 +346,24 @@ There are **four Saints** in total; which one a player encounters first is parti
 
 The puppeteer summon system is a Harbinger-side control-tool path rather than another blood manipulation category.
 
-- **Control tool:** `marionette_crossbar` / **Marionette Crossbar**. It stores a stable crossbar UUID, selected summon name, and up to 256 thread charge. Use calls or recalls the selected summon; sneak-use cycles known summons.
-- **Station:** `puppeteers_spindle` / **Puppeteer's Spindle**. Using a crossbar on it binds the first known summon shape if none is selected. Using `puppeteering_thread` refills the first held/carried crossbar by 16 charge. Using `sanguine_quintessence` unlocks the next eligible summon type for the player permanently.
-- **Catalyst economy:** `sanguine_quintessence` is consumed only for the first permanent unlock of a summon shape. Future crossbar binding does not consume another quintessence.
+- **Control tool:** `marionette_crossbar` / **Marionette Crossbar**. It stores a stable crossbar UUID, selected summon name, and up to 256 thread charge. Use calls or recalls the selected summon; sneak-use cycles known summons. The item bar is always visible on crossbars and acts as the thread meter: full at 256 thread, empty at 0, using a crimson/red color ramp even though the item is not damageable.
+- **Station:** `puppeteers_spindle` / **Puppeteer's Spindle**. It is a persistent block entity with two menu slots: a crossbar slot and a thread feeder slot. Placed thread is consumed immediately into the spindle's internal `threadBuffer` at 1 buffer per item count, capped at 512. A slotted Marionette Crossbar automatically draws from that buffer until the crossbar reaches its 256-thread cap. Binding, summon selection, and call/recall preparation are controlled from the spindle screen/packets and operate on the slotted crossbar rather than the player's first inventory crossbar.
+- **Spindle rendering/UI:** The placed spindle stores horizontal facing, faces the placing player, and renders through `PuppeteersSpindleRenderer` / `PuppeteersSpindleModel` with a custom item renderer instead of appearing as a venous stone brick cube. Its screen uses a vein-pattern background, styled slot frames, crossbar/thread meters, summon list, and themed buttons/tooltips.
+- **Unlock economy:** Direct "unlock next summon with Sanguine Quintessence" spindle use is retired. `sanguine_quintessence` is now the held catalyst for instant Blood Crafting puppeteer trial recipes; defeating the spawned unbound trial boss permanently grants that summon shape to the trial caster.
 - **Thread economy and tether:** Summoning spends the definition's `threadSummonCost`; active summons drain `threadUpkeepPerMinute` from their owning crossbar every minute. Each bound summon renders a red thread back to its owner. If the matching crossbar is not equipped in either hand, the summon and thread flicker/fade for 100 ticks (5 seconds); re-equipping the crossbar stabilizes the summon, while failing to do so unravels it. If upkeep cannot be paid, the crossbar's active summons still unravel immediately.
 - **Anti-stockpile rule:** active summon cap is calculated from the player's `skill_puppet_skein` level and checks active bound summons by owner, not by crossbar. Carrying extra crossbars cannot exceed the learned cap.
 - **Skills:** `skill_puppet_skein` increases active summon cap, `skill_living_sinew` increases summon health/damage, and `skill_far_tether` increases command range.
-- **Harbinger UI:** `HarbingerProgressScreen` includes a `SUMMONS` tab. It groups summons by degree, shows locked requirements, displays known/eligible status, reports base and skill-modified stats, and creates a client-only preview entity for the selected summon. Preview render failures fall back to an icon/text placeholder rather than crashing the screen.
+- **Harbinger UI:** `HarbingerProgressScreen` includes a `SUMMONS` tab. It groups summons by degree, shows degree-locked, recipe-locked, trial-required, and known states, reports base and skill-modified stats, and creates a client-only preview entity for the selected summon. Preview render failures fall back to an icon/text placeholder rather than crashing the screen.
+
+Puppeteer trial recipes unlock when the matching degree is obtained and are also re-awarded on login for existing saves. The recipe `required_degree` is sourced from the matching `PuppeteerSummonDefinition.requiredDegree()` at runtime so the Blood Crafting gate cannot drift from the summon definition gate. Trial bosses reuse the summon definitions as unbound hostile versions with default boss tuning: 1.5x health, 1.25x damage, no owner/crossbar upkeep, no active-summon cap accounting, and caster-only unlock credit on death.
 
 Current summon definitions:
 
-| Summon | Degree | Role | Base HP | Base Damage | Thread Call | Upkeep |
-|---|---:|---|---:|---:|---:|---:|
-| `veinwing_vulture` | 2 | Fast flying striker | 14 | 4 | 28 | 18/min |
-| `marrow_spitter` | 3 | Ranged support | 22 | 5 | 38 | 12/min |
-| `gorebound_hulk` | 4 | Slow heavy bruiser | 55 | 9 | 56 | 8/min |
+| Summon | Degree | Role | Base HP | Base Damage | Thread Call | Upkeep | Trial Blood |
+|---|---:|---|---:|---:|---:|---:|---:|
+| `veinwing_vulture` | 2 | Fast flying striker | 14 | 4 | 28 | 18/min | 500 |
+| `marrow_spitter` | 3 | Ranged support | 22 | 5 | 38 | 12/min | 750 |
+| `gorebound_hulk` | 4 | Slow heavy bruiser | 55 | 9 | 56 | 8/min | 1100 |
 
 Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
 
@@ -1184,10 +1188,11 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 | ![](../src/main/resources/assets/hemomancy/textures/item/foul_paste.png) Foul Paste | Crafting ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_rock.png) Blood Rock | Crafting ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient / covenant anchor. **Block form gated behind Degree 5 (Illuminatus).** Right-clicking a surface places the block only when `IInitiatoryDegree.getDegreeNumber() >= 5`; below that degree the item shows the locked placement message and fails placement. In-air right-click opens the Harbinger skill tree at any degree. **Right-clicking the placed block also opens the Harbinger skill tree.** The placed block has a minimal `SanguineConduitBlockEntity` whose BER (`SanguineConduitBlockRenderer`) draws a slow, dim pulsing crimson ring expanding outward — a quiet mark of covenant presence. Registered in `ItemInit` as `ItemSanguineConduit`, which extends `BlockItem` for `BlockInit.sanguine_conduit`; `BlockInit.shouldSkipAutoBlockItem()` skips the placed block so no duplicate generic `BlockItem` overwrites the custom item on reload. Tooltip changes at Degree 5 to reveal the planting mechanic. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Sanguine Quintessence | Rare Harbinger catalyst produced by the Exsanguination cardinal rite. Used as the placed catalyst for Founding Sanctum and as the held catalyst for puppeteer trial Blood Crafting recipes. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/serpent_scale.png) Serpent Scale | Mob drop |
 | ![](../src/main/resources/assets/hemomancy/textures/item/swollen_leech.png) Swollen / ![](../src/main/resources/assets/hemomancy/textures/item/dried_leech.png) Dried Leech | Mob drops |
 | ![](../src/main/resources/assets/hemomancy/textures/item/chitinous_husk.png) Chitinous Husk | Mob drop |
-| ![](../src/main/resources/assets/hemomancy/textures/item/puppeteering_thread.png) Puppeteering Thread | Mob drop |
+| ![](../src/main/resources/assets/hemomancy/textures/item/puppeteering_thread.png) Puppeteering Thread | Mob drop and puppeteer fuel. The Puppeteer's Spindle consumes it into its 512-thread internal buffer at 1 item count = 1 buffer point, then transfers that thread into slotted Marionette Crossbars up to their 256-thread cap. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/bleeding_bulb.png) Bleeding Bulb | Plant-based ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/dicentra_sap.png) Dicentra Sap | Plant-based ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/spore_sac.png) Spore Sac | Fungal ingredient |
@@ -1203,7 +1208,6 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 |------|------|----------|------|-------------|---------|
 | ![](../src/main/resources/assets/hemomancy/textures/item/bloody_flask.png) Bloody Flask | Cheap infusion | 2,500 | Instant use | None | Blood Drunkenness |
 | ![](../src/main/resources/assets/hemomancy/textures/item/bloody_jug.png) Bloody Jug | Cheap infusion | 5,000 | Instant use | None | Blood Drunkenness |
-| ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Stabilized Sanguine Formation | Stored restore | 5,000 | Instant use | None | None |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_white.png) Blood Gourd White | Steady Vessel | 1,000 | 1.0 ml/tick | 75% | None |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_red.png) Blood Gourd Red | Combat Siphon | 1,800 | 3.0 ml/tick | 125% | None |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_black.png) Blood Gourd Black | Deep Reservoir | 3,500 | 0.75 ml/tick | 100% | None |
@@ -1463,6 +1467,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Mortal Display**                   | `MortalDisplayBlockEntity`                 | Activates blood magic when clicked in a Blood Temple ![](../src/main/resources/assets/hemomancy/textures/entity/model_floating_heart.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | **Scrying Podium**                   | `ScryingPodiumBlockEntity`                 | Opens the Charm/Gourd slot screen for equipping the Charm of Vascularium and Blood Gourds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | **Somatic Loom**                     | `SomaticLoomBlockEntity`                   | Crafting station for creating Hematic Memories using enzymes, blank memories, and catalysts                  ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/somatic_loom.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Puppeteer's Spindle**              | `PuppeteersSpindleBlockEntity`             | Harbinger puppeteer control station. Two-slot container: slot 0 accepts a `marionette_crossbar`, slot 1 accepts `puppeteering_thread`. Thread inserted into the feeder slot is consumed immediately into a persistent `threadBuffer` capped at 512, and the slotted crossbar auto-fills from that buffer up to its 256-thread cap. The screen handles summon selection, crossbar binding/attunement, and call/recall preparation for the slotted crossbar. The placed block stores horizontal facing, faces the placer, and renders through `PuppeteersSpindleRenderer` / `PuppeteersSpindleModel` plus a custom block item renderer. |
 | **Vial Centrifuge**                  | `VialCentrifugeBlockEntity`                | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. Accepts **Vial Rack** right-click bulk inserts, and startup now requires at least one processable vial with valid output fit. ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/vial_centrifuge.png)                                                                                                                                                                                                                                   |
 | **ghastly_alembic**                  | `GhastlyAlembicBlockEntity`                | Squeezes items to extract blood (requires fire below). Has 4 slots: Input (slot 0), Flask (slot 1, fills Cured Clay Flasks into Bloody Flasks), Result (slot 2), and **Catalyst (slot 3)** — an optional catalyst ingredient that modifies or enhances the recipe output. Hopper access: top → input, bottom → result, sides → flask + catalyst. Renders via custom `GhastlyAlembicRenderer` (3D entity model `GhastlyAlembicModel`, facing-aware)![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/ghastly_alembic.png)   .                                                                                                                           |
 > **Ghastly Alembic gourd filling:** The alembic's result/blood output slot also accepts Blood Gourds. When a gourd is placed there, the block entity drains stored blood from its internal tank into the gourd's stack-backed internal blood volume instead of producing bottled blood in that slot.
@@ -1616,6 +1621,7 @@ All applicable flowers have **potted** variants.
 | `enzyme_fruiting` | `EnzymeFruitingRecipeSerializer` | Mycelial Lantern | Reusable aligned spore culture + blood -> matching enzyme. Defaults: 2,400 ticks, 0.25 blood/tick, 600 total blood, output count 1; JSON-tunable per recipe. |
 | `white_humor_purification` | `WhiteHumorPurificationRecipeSerializer` | Physical White Humor pool | Dropped item purification in placed White Humor source pools. JEI-integrated via `WhiteHumorPurificationRecipeCategory` with Pale Humor Flask as catalyst. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
+| `puppeteer_trial_recipe` | `PuppeteerTrialRecipeSerializer` | In-world Blood Crafting pattern | Instant summon unlock trials. Uses Blood Structure-style pattern matching, held Sanguine Quintessence catalyst, blood drain, pattern consumption, and unbound hostile summon boss spawn. |
 | `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
 | Blood Gourd Upgrade | `CopyBloodGourdRecipe.Serializer` | Crafting | Upgrading blood gourds |
@@ -1645,6 +1651,32 @@ The Liber Sanguinum/Immaculatus crafting sidebar and the debug Structure Spawner
 
 > Recipes are in `data/hemomancy/recipe/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, `required_degree`, optional `unstained`, and `result`.
 > **Mycelial Lantern blood structure:** `blood_structure/mycelial_lantern.json` is Degree 5, costs 2,500 blood, uses `spore_sac` on a `hematic_iron_block`, and builds from Sanguine Glass, brown mushroom blocks, Hematic Iron, Polished Venous Stone, and Copper Block.
+
+### 18.1.1 Puppeteer Trial Blood Crafting
+
+Puppeteer summon unlocks use a Blood Crafting-adjacent recipe type rather than Cardinal Rites. Recipes live under `data/hemomancy/recipe/puppeteer_trial/` and use `type: "hemomancy:puppeteer_trial_recipe"`.
+
+Each trial recipe extends the Blood Structure recipe data shape with summon-specific fields:
+
+- `summon`: summon definition id, e.g. `veinwing_vulture`
+- `bloodCost`: blood drained immediately on activation
+- `heldItem`: currently `hemomancy:sanguine_quintessence`
+- `hitBlock`: currently `hemomancy:conscious_mass`
+- `pattern` / `key`: Blood Structure-style multiblock pattern
+- `consume_pattern`: whether the matched pattern is cleared on activation
+- `required_degree`: present in JSON as a fallback, but runtime gates use the matching `PuppeteerSummonDefinition.requiredDegree()` when the summon definition exists
+
+Activation is instant from `BloodCraftingKeyPressPacket`: match the pattern at the hit block, verify the caster's Harbinger degree, ensure the summon is not already known, consume one Sanguine Quintessence unless the player has instabuild, drain blood, optionally clear the pattern, and spawn an unbound hostile trial version of the summon. Trial boss death grants the summon only to the recorded caster through `KnownSummonEvents.grantSummon` and syncs the known-summons capability.
+
+Current trial recipes:
+
+| Trial Recipe | Required Degree | Blood Cost | Held Catalyst | Hit Block | Pattern Notes |
+|--------------|-----------------|-----------:|---------------|-----------|---------------|
+| `puppeteer_trial/veinwing_vulture` | 2 | 500 | Sanguine Quintessence | Conscious Mass | Venous Stone + Engram Block ring |
+| `puppeteer_trial/marrow_spitter` | 3 | 750 | Sanguine Quintessence | Conscious Mass | Venous Stone + Engram Block + Bone Block |
+| `puppeteer_trial/gorebound_hulk` | 4 | 1100 | Sanguine Quintessence | Conscious Mass | Engram Block frame + Gilded Venous Stone core |
+
+`PuppeteerSummonTrialEvents.awardTrialRecipes` grants all trial recipes at or below the player's current degree from degree-grant and login paths, so old saves receive newly eligible trials when the player next logs in.
 
 ### 18.2 Cardinal Rite Recipes
 
@@ -2391,7 +2423,7 @@ This section now separates current status from older audit history. "Implemented
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 18 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing |
+| Implemented | Entity loot JSONs, all 18 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta dedicated art/rendering and final combat polish, JEI display wiring for Mycelial Lantern |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, deep-sea iron snail, Ghost Pipe Unstained material role, Cleansed Stone and Pallid Lantern recipes |
@@ -2412,6 +2444,7 @@ This section now separates current status from older audit history. "Implemented
 - **Fungal Scar Cultivation** — **Implemented:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
 - **Mycelial Lantern / Enzyme Fruiting** — **Implemented:** `MycelialLanternBlockEntity`, `EnzymeFruitingRecipe`, `EnzymeFruitingRecipeSerializer`, eight spore culture items, eight enzyme-fruiting JSON recipes, Blood Structure recipe, menu/screen, block entity renderer, item renderer, and Blockbench source are present. **Remaining polish:** `EnzymeFruitingRecipeCategory` exists but `JEIPlugin` is not yet registering it, so JEI display/catalyst wiring still needs a pass.
 - **Direct Blood Routing** — **Implemented:** `HematicSutureNeedleItem`, `HematicSutureNodeBlockEntity`, `BloodRoutingSavedData`, `IBloodSourceContract`, `IBloodRoutingTarget`, and `BloodRoutingHelper` provide pull-based machine feeding without a basin, fluid, or bulk storage block. Current behavior supports nearby personal/gourd links, Degree 5 sanctum links, optional bloodline-pool draw with leader/opt-in checks, Blood Thrall courier draw/deposit, and Drudge tendering around an SSC.
+- **Puppeteer Spindle and Trial Unlocks** — **Implemented:** `PuppeteersSpindleBlockEntity`, `PuppeteersSpindleMenu`, `PuppeteersSpindleScreen`, `PacketPuppeteersSpindleAction`, `PuppeteersSpindleRenderer`, and `PuppeteersSpindleItemRenderer` provide the two-slot spindle workflow, persistent 512-thread buffer, slotted crossbar filling/binding, themed screen, custom block model, and facing-aware placement. `PuppeteerTrialRecipe`, `PuppeteerTrialRecipeSerializer`, and `PuppeteerSummonTrialEvents` provide the Sanguine Quintessence Blood Crafting trial unlock path for Veinwing Vulture, Marrow Spitter, and Gorebound Hulk.
 - **Mnemonic Reliquary** — New functional block with animated lid (open/close), custom 3D block entity renderer (`MnemonicReliquaryRenderer`), item renderer (`MnemonicReliquaryItemRenderer`), block model (`MnemonicReliquaryModel`), menu (`MnemonicReliquaryMenu`), and screen (`MnemonicReliquaryScreen`). Tracks open count and syncs lid angle via block events.
 - **Suspended Cleansed Blood Crystal** — Purified variant of the Suspended Blood Crystal with custom block, block entity (random time offset for desynchronized animations), block item with custom renderer, 3D model, and blockstate.
 - **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
@@ -2594,7 +2627,7 @@ Preserved for MnA compat, but **not currently registered** because the MnA depen
 
 ## 32. Networking & Packets
 
-All packets are registered in `PacketHandler.registerChannels()` using the NeoForge 1.21 payload API. Each packet implements `CustomPacketPayload` with a static `TYPE` and `STREAM_CODEC`, then registers through `playToClient`, `playToServer`, or `playBidirectional`. The current branch registers **84 payload entries** under the Hemomancy payload registrar; old channel constants are not used.
+All packets are registered in `PacketHandler.registerChannels()` using the NeoForge 1.21 payload API. Each packet implements `CustomPacketPayload` with a static `TYPE` and `STREAM_CODEC`, then registers through `playToClient`, `playToServer`, or `playBidirectional`. Old channel constants are not used.
 
 | Payload Area | Examples | Direction Pattern |
 |--------------|----------|-------------------|
@@ -2609,6 +2642,7 @@ Notable packets:
 - `PacketSyncActiveRites` — Cardinal rite boundary sync for client-side rendering
 - `PacketSyncDegree` / `PacketSyncUnstainedProgress` — Path progression sync
 - `KnownSummonsRequestPacket` / `KnownSummonsServerPacket` — Puppeteer summon unlock sync, refreshed on login/respawn/dimension change/screen open/unlock
+- `PacketPuppeteersSpindleAction` — Server-side spindle screen action packet. Selects summons, binds slotted crossbars, and calls/recalls using the crossbar currently inside the open spindle container.
 - `SyncTrackingAvatarPacket` — Blood Avatar visual state sync to all nearby players
 - `TeleportToVeinPacket` — Venous Travel teleportation
 - `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Mnemonist, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)

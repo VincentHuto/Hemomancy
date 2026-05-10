@@ -106,6 +106,10 @@ public class BlockEntityInit {
 			.register("vial_centrifuge", () -> BlockEntityType.Builder
 					.of(VialCentrifugeBlockEntity::new, BlockInit.vial_centrifuge.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PuppeteersSpindleBlockEntity>> puppeteers_spindle = TILES
+			.register("puppeteers_spindle", () -> BlockEntityType.Builder
+					.of(PuppeteersSpindleBlockEntity::new, BlockInit.puppeteers_spindle.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SuspendedVivianiteBlockEntity>> suspended_vivianite = TILES
 			.register("suspended_vivianite", () -> BlockEntityType.Builder
 					.of(SuspendedVivianiteBlockEntity::new, BlockInit.suspended_vivianite.get()).build(null));

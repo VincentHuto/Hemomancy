@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.summon;
 
 public final class PuppeteerSummonRules {
 	public static final int THREAD_CAPACITY = 256;
-	public static final int THREAD_PER_ITEM = 16;
+	public static final int THREAD_PER_ITEM = 1;
 	public static final double BASE_COMMAND_RANGE = 16.0;
 	public static final double COMMAND_RANGE_PER_TETHER_LEVEL = 8.0;
 	public static final int CROSSBAR_DISMISSAL_TICKS = 100;

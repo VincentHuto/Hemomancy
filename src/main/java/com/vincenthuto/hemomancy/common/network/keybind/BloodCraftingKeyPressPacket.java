@@ -11,9 +11,12 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.PuppeteerTrialRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -77,6 +80,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				BlockPos hitPos = blockResult.getBlockPos();
 				ServerLevel sLevel = (ServerLevel) player.level();
 
+				if (tryActivatePuppeteerTrial(player, sLevel, hitPos)) {
+					handled = true;
+				}
+
+				if (!handled) {
 				for (BloodStructureRecipe targetPattern : BloodStructureRecipe.getAllRecipes(player.level())) {
 					if (player.getMainHandItem().getItem() != targetPattern.getHeldItem().getItem()) continue;
 
@@ -171,6 +179,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 					break;
 				}
+				}
 			}
 
 			// === Missing held item warning ===
@@ -216,6 +225,19 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							break;
 						}
 					}
+					if (!handled) {
+						for (PuppeteerTrialRecipe recipe : PuppeteerTrialRecipe.getAllTrialRecipes(player.level())) {
+							BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
+							if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
+								player.displayClientMessage(
+										Component.translatable("hemomancy.summon.trial.needs_catalyst",
+												recipe.getHeldItem().getHoverName()).withStyle(ChatFormatting.RED),
+										false);
+								handled = true;
+								break;
+							}
+						}
+					}
 				}
 			}
 
@@ -225,6 +247,89 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			}
 
 		});
+	}
+
+	private static boolean tryActivatePuppeteerTrial(Player player, ServerLevel level, BlockPos hitPos) {
+		for (PuppeteerTrialRecipe recipe : PuppeteerTrialRecipe.getAllTrialRecipes(player.level())) {
+			if (player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
+				continue;
+			}
+			BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, level, hitPos);
+			if (match == null) {
+				continue;
+			}
+
+			int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
+			int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
+			if (playerLevel < requiredDegree) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.summon.trial.degree_locked",
+								RecipeDegreeGates.degreeLabel(requiredDegree)).withStyle(ChatFormatting.RED),
+						false);
+				return true;
+			}
+
+			net.minecraft.network.chat.Component alignError = checkPathAlignment(player, recipe);
+			if (alignError != null) {
+				player.displayClientMessage(alignError, false);
+				return true;
+			}
+
+			if (HemoCapabilityAccess.getKnownSummons(player)
+					.map(known -> known.getKnownSummonNames().contains(recipe.getSummonName()))
+					.orElse(false)) {
+				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.already_known")
+						.withStyle(ChatFormatting.GRAY), true);
+				return true;
+			}
+
+			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
+					.orElseThrow(NullPointerException::new);
+			if (bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
+				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.no_blood")
+						.withStyle(ChatFormatting.DARK_RED), true);
+				level.playLocalSound(player.blockPosition().getX(), player.blockPosition().getY(),
+						player.blockPosition().getZ(), SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
+				return true;
+			}
+
+			BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
+			AABB bounds = getMatchBounds(match, blockPattern);
+			BlockPos center = BlockPos.containing(bounds.getCenter());
+			var definition = PuppeteerSummonDefinitions.byName(recipe.getSummonName());
+			if (definition.isEmpty()) {
+				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed")
+						.withStyle(ChatFormatting.GRAY), false);
+				return true;
+			}
+			var trialMob = PuppeteerSummonFactory.createTrial(definition.get(), level, (ServerPlayer) player, center);
+			if (trialMob.isEmpty()) {
+				player.displayClientMessage(Component.translatable("hemomancy.summon.trial.failed")
+						.withStyle(ChatFormatting.GRAY), false);
+				return true;
+			}
+
+			float centerY = (float) bounds.getCenter().y + 0.5f;
+			float startRadius = (float) Math.max(bounds.getXsize(), bounds.getZsize()) / 2.0f + 2.0f;
+			PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(center, startRadius, centerY, 30));
+
+			if (!player.getAbilities().instabuild) {
+				player.getMainHandItem().shrink(1);
+			}
+			bloodVolume.drain(recipe.getBloodCost());
+			PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
+
+			if (recipe.shouldConsumePattern()) {
+				clearMatchedPattern(level, match, blockPattern);
+			}
+
+			level.addFreshEntity(trialMob.get());
+			level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 0.8F, 1.35F);
+			player.displayClientMessage(Component.translatable("hemomancy.summon.trial.started",
+					trialMob.get().getDisplayName()).withStyle(ChatFormatting.DARK_RED), false);
+			return true;
+		}
+		return false;
 	}
 
 	private static void tryStartCardinalRite(Player player) {
@@ -483,6 +588,22 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			entity.setItem(stack);
 		}
 		return true;
+	}
+
+	private static void clearMatchedPattern(ServerLevel level, BlockPattern.BlockPatternMatch match,
+			BlockPattern blockPattern) {
+		int width = blockPattern.getWidth();
+		int height = blockPattern.getHeight();
+		int depth = blockPattern.getDepth();
+		for (int i = 0; i < width; ++i) {
+			for (int j = 0; j < height; ++j) {
+				for (int k = 0; k < depth; ++k) {
+					BlockPos pos = match.getBlock(i, j, k).getPos();
+					level.levelEvent(2001, pos, net.minecraft.world.level.block.Block.getId(level.getBlockState(pos)));
+					level.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+				}
+			}
+		}
 	}
 
 	private static AABB getMatchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {

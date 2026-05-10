@@ -1,0 +1,18 @@
+{
+  "parent": "hemomancy:hemomancy/degree_3_initiate",
+  "rewards": {
+    "recipes": [
+      "hemomancy:puppeteer_trial/marrow_spitter"
+    ]
+  },
+  "criteria": {
+    "has_degree": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "has_degree"
+    ]
+  ]
+}

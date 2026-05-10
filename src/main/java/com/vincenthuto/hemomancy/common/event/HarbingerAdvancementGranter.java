@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
@@ -81,6 +82,7 @@ public final class HarbingerAdvancementGranter {
 			grantIfNotDone(player, DEGREE_ADVANCEMENTS[i - 1]);
 		}
 		LiberKnowledgeHelper.unlockForDegree(player, degree);
+		PuppeteerSummonTrialEvents.awardTrialRecipes(player, degree);
 	}
 
 	/**
