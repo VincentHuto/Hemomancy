@@ -54,6 +54,9 @@ public class BaseFeatureInit {
 	public static final Feature<NoneFeatureConfiguration> DEEP_OCEAN_VENT = register("deep_ocean_vent",
 			new DeepOceanVentFeature(NoneFeatureConfiguration.CODEC));
 
+	public static final Feature<NoneFeatureConfiguration> ERYTHROCORAL_REEF = register("erythrocoral_reef",
+			new ErythrocoralReefFeature(NoneFeatureConfiguration.CODEC));
+
 	public static final Feature<NoneFeatureConfiguration> SPORE_NEXUS_TOWER = register("spore_nexus_tower",
 			new SporeNexusTowerFeature(NoneFeatureConfiguration.CODEC));
 

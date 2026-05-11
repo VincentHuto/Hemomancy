@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.ErythrocoralReefRegion;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion1;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion2;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion3;
@@ -36,6 +37,7 @@ public class BiomeInit {
 	public static final ResourceKey<Biome> SPORECROWN_THICKET = register("sporecrown_thicket");
 	public static final ResourceKey<Biome> MYCELIAL_DEPTHS = register("mycelial_depths");
 	public static final ResourceKey<Biome> HEMORRHAGIC_PLATEAU = register("hemorrhagic_plateau");
+	public static final ResourceKey<Biome> ERYTHROCORAL_REEF = register("erythrocoral_reef");
 
 	private static ResourceKey<Biome> register(String name) {
 		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Hemomancy.rloc(name));
@@ -54,6 +56,7 @@ public class BiomeInit {
 		register(context, SPORECROWN_THICKET, sporecrownThicket(placedFeatureGetter, carverGetter));
 		register(context, MYCELIAL_DEPTHS, mycelialDepths(placedFeatureGetter, carverGetter));
 		register(context, HEMORRHAGIC_PLATEAU, hemorrhagicPlateau(placedFeatureGetter, carverGetter));
+		register(context, ERYTHROCORAL_REEF, erythrocoralReef(placedFeatureGetter, carverGetter));
 	}
 
 	private static Biome fungalIsles(HolderGetter<PlacedFeature> placedFeatureGetter,
@@ -226,6 +229,37 @@ public class BiomeInit {
 		builder.addFeature(step, feature);
 	}
 
+	private static Biome erythrocoralReef(HolderGetter<PlacedFeature> placedFeatureGetter,
+			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
+		spawnBuilder.addSpawn(MobCategory.WATER_AMBIENT,
+				new MobSpawnSettings.SpawnerData(EntityInit.blood_lantern_jelly.get(), 26, 2, 5));
+		spawnBuilder.addSpawn(MobCategory.WATER_AMBIENT,
+				new MobSpawnSettings.SpawnerData(EntityInit.barbed_urchin.get(), 3, 1, 2));
+		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityType.TROPICAL_FISH, 18, 4, 8));
+		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityType.PUFFERFISH, 4, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityType.SQUID, 2, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityType.DOLPHIN, 1, 1, 2));
+
+		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
+				carverGetter);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.ERYTHROCORAL_REEF);
+
+		return new Biome.BiomeBuilder().hasPrecipitation(true).temperature(0.95F).downfall(0.8F)
+				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(0x8A315F).waterFogColor(0x321025)
+						.fogColor(0x4A1734).skyColor(0x7AA0B8)
+						.ambientLoopSound(net.minecraft.core.Holder.direct(SoundEvents.AMBIENT_UNDERWATER_LOOP))
+						.ambientMoodSound(new AmbientMoodSettings(SoundEvents.AMBIENT_CAVE, 6000, 8, 2.0D))
+						.ambientParticle(new AmbientParticleSettings(
+								net.minecraft.core.particles.ParticleTypes.CRIMSON_SPORE, 0.006F))
+						.build())
+				.mobSpawnSettings(spawnBuilder.build()).generationSettings(biomeBuilder.build()).build();
+	}
+
 	/**
 	 * Mycelial Depths â€” cold, dim, cave-like. A bioluminescent underworld where
 	 * calcified hyphae form vast forests of skeletal pillars and sporite crystals
@@ -339,6 +373,7 @@ public class BiomeInit {
 			Regions.register(new TestRegion1(Hemomancy.rloc("overworld_1"), 2));
 			Regions.register(new TestRegion2(Hemomancy.rloc("overworld_2"), 2));
 			Regions.register(new TestRegion3(Hemomancy.rloc("overworld_3"), 2));
+			Regions.register(new ErythrocoralReefRegion(Hemomancy.rloc("erythrocoral_reef_overworld"), 1));
 
 			// Register our surface rules
 			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, Hemomancy.MOD_ID,

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "waterlogged=false": {
+      "model": "hemomancy:block/erythrocoral_fan"
+    },
+    "waterlogged=true": {
+      "model": "hemomancy:block/erythrocoral_fan"
+    }
+  }
+}

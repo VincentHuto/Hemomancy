@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+      "model": "hemomancy:block/erythrocoral_block"
+      }
+    }
+  ]
+}

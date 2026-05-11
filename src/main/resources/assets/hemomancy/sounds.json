@@ -179,6 +179,36 @@
       }
     ]
   },
+  "entity.blood_lantern_jelly.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.blood_lantern_jelly.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.blood_lantern_jelly.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.blood_lantern_jelly.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.blood_lantern_jelly.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.blood_lantern_jelly.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/death",
+        "stream": true
+      }
+    ]
+  },
   "entity.barbed_urchin.ambient": {
     "category": "entity",
     "subtitle": "subtitle.hemomancy.entity.barbed_urchin.ambient",
@@ -796,6 +826,24 @@
       "hemomancy:entity/tooth_pecks/death"
     ],
     "subtitle": "subtitle.hemomancy.entity.tooth_pecks.death"
+  },
+  "entity.brined_votary.ambient": {
+    "sounds": [
+      "hemomancy:entity/fargone/ambient"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.brined_votary.ambient"
+  },
+  "entity.brined_votary.hurt": {
+    "sounds": [
+      "hemomancy:entity/fargone/hurt"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.brined_votary.hurt"
+  },
+  "entity.brined_votary.death": {
+    "sounds": [
+      "hemomancy:entity/fargone/death"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.brined_votary.death"
   },
   "item.qliphoth_pome.eat": {
     "sounds": [

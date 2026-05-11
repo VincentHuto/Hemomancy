@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "format_version": "4.5",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "BloodLanternJellyModel",
+  "model_identifier": "BloodLanternJellyModel",
+  "modded_entity_version": "1.17",
+  "modded_entity_flip_y": true,
+  "visible_box": [1, 1, 0],
+  "resolution": {
+    "width": 64,
+    "height": 64
+  },
+  "elements": [
+    {
+      "name": "bell",
+      "box_uv": true,
+      "from": [-4.5, 9, -4.5],
+      "to": [4.5, 14, 4.5],
+      "origin": [0, 14, 0],
+      "uv_offset": [0, 0],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30001"
+    },
+    {
+      "name": "cap",
+      "box_uv": true,
+      "from": [-3.5, 7, -3.5],
+      "to": [3.5, 9, 3.5],
+      "origin": [0, 14, 0],
+      "uv_offset": [0, 14],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30002"
+    },
+    {
+      "name": "glowCore",
+      "box_uv": true,
+      "from": [-2, 10.75, -2],
+      "to": [2, 14.75, 2],
+      "origin": [0, 14, 0],
+      "uv_offset": [32, 14],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30003"
+    },
+    {
+      "name": "oralArms",
+      "box_uv": true,
+      "from": [-1.5, 14, -1.5],
+      "to": [1.5, 20, 1.5],
+      "origin": [0, 14, 0],
+      "uv_offset": [48, 0],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30004"
+    },
+    {
+      "name": "tendrilNorth",
+      "box_uv": true,
+      "from": [-0.5, 14, -3.5],
+      "to": [0.5, 23, -2.5],
+      "origin": [0, 14, -3],
+      "uv_offset": [0, 24],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30005"
+    },
+    {
+      "name": "tendrilSouth",
+      "box_uv": true,
+      "from": [-0.5, 14, 2.5],
+      "to": [0.5, 23, 3.5],
+      "origin": [0, 14, 3],
+      "uv_offset": [4, 24],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30006"
+    },
+    {
+      "name": "tendrilEast",
+      "box_uv": true,
+      "from": [2.5, 14, -0.5],
+      "to": [3.5, 22, 0.5],
+      "origin": [3, 14, 0],
+      "uv_offset": [8, 24],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30007"
+    },
+    {
+      "name": "tendrilWest",
+      "box_uv": true,
+      "from": [-3.5, 14, -0.5],
+      "to": [-2.5, 22, 0.5],
+      "origin": [-3, 14, 0],
+      "uv_offset": [12, 24],
+      "type": "cube",
+      "uuid": "d87558ab-3886-42b9-a0ed-2ed51fe30008"
+    }
+  ],
+  "outliner": [
+    "bell",
+    "cap",
+    "glowCore",
+    "oralArms",
+    "tendrilNorth",
+    "tendrilSouth",
+    "tendrilEast",
+    "tendrilWest"
+  ],
+  "textures": [
+    {
+      "path": "textures/entity/blood_lantern_jelly/model_blood_lantern_jelly.png",
+      "name": "model_blood_lantern_jelly",
+      "folder": "entity/blood_lantern_jelly",
+      "namespace": "hemomancy",
+      "id": "0",
+      "width": 64,
+      "height": 64,
+      "uv_width": 64,
+      "uv_height": 64
+    }
+  ]
+}

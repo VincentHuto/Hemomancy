@@ -132,6 +132,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedUrchinBigModel.LAYER_LOCATION, BarbedUrchinBigModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
 		event.registerLayerDefinition(ChalybeateSnailModel.LAYER_LOCATION, ChalybeateSnailModel::createBodyLayer);
+		event.registerLayerDefinition(BloodLanternJellyModel.LAYER_LOCATION, BloodLanternJellyModel::createBodyLayer);
+		event.registerLayerDefinition(BrinedVotaryModel.LAYER_LOCATION, BrinedVotaryModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedGuardianModel.LAYER_LOCATION, UnstainedGuardianModel::createBodyLayer);
@@ -141,6 +143,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(HarbingerAlchemistModel.LAYER_LOCATION, HarbingerAlchemistModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerMnemonistModel.LAYER_LOCATION, HarbingerMnemonistModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerVicarModel.LAYER_LOCATION, HarbingerVicarModel::createBodyLayer);
+		event.registerLayerDefinition(HarbingerVoyagerModel.LAYER_LOCATION, HarbingerVoyagerModel::createBodyLayer);
+		event.registerLayerDefinition(HarbingerVotaryWayfarerModel.LAYER_LOCATION,
+				HarbingerVotaryWayfarerModel::createBodyLayer);
 		event.registerLayerDefinition(HollowVesselModel.LAYER_LOCATION, HollowVesselModel::createBodyLayer);
 		event.registerLayerDefinition(AnnettaKnowlesModel.LAYER_LOCATION, AnnettaKnowlesModel::createBodyLayer);
 		event.registerLayerDefinition(StainedPriestessModel.LAYER_LOCATION, StainedPriestessModel::createBodyLayer);

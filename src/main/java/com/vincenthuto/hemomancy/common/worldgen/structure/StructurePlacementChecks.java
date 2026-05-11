@@ -75,6 +75,37 @@ final class StructurePlacementChecks {
 		return true;
 	}
 
+	static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {
+		ChunkPos chunkPos = context.chunkPos();
+		int minX = chunkPos.getMinBlockX();
+		int minZ = chunkPos.getMinBlockZ();
+		int[][] samples = {
+				{ 8, 8 },
+				{ 2, 2 },
+				{ 13, 2 },
+				{ 2, 13 },
+				{ 13, 13 }
+		};
+
+		int minFloor = Integer.MAX_VALUE;
+		int maxFloor = Integer.MIN_VALUE;
+		for (int[] sample : samples) {
+			int x = minX + sample[0];
+			int z = minZ + sample[1];
+			int surface = getSurfaceHeight(context, x, z);
+			int floor = getOceanFloorHeight(context, x, z);
+			minFloor = Math.min(minFloor, floor);
+			maxFloor = Math.max(maxFloor, floor);
+			if (!HarbingerVoyagerWreckPlacementRules.canPlaceWreck(surface > floor, true, false,
+					surface - floor, 0)) {
+				return false;
+			}
+		}
+
+		return HarbingerVoyagerWreckPlacementRules.canPlaceWreck(true, true, false,
+				HarbingerVoyagerWreckPlacementRules.MIN_WATER_DEPTH, maxFloor - minFloor);
+	}
+
 	private static boolean isSuitableLandColumn(Structure.GenerationContext context, int x, int z, int maxAllowedWaterDepth) {
 		int surface = getSurfaceHeight(context, x, z);
 		if (surface >= MAX_LAND_STRUCTURE_HEIGHT) {
@@ -89,5 +120,10 @@ final class StructurePlacementChecks {
 	private static int getSurfaceHeight(Structure.GenerationContext context, int x, int z) {
 		return context.chunkGenerator().getFirstOccupiedHeight(x, z,
 				Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+	}
+
+	private static int getOceanFloorHeight(Structure.GenerationContext context, int x, int z) {
+		return context.chunkGenerator().getFirstOccupiedHeight(x, z,
+				Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
 	}
 }

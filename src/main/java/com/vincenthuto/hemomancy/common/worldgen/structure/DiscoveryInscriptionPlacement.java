@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,7 +68,7 @@ public final class DiscoveryInscriptionPlacement {
 		if (!fullBox.isInside(pos.getX(), pos.getY(), pos.getZ())) {
 			return false;
 		}
-		if (!level.getBlockState(pos).isAir()) {
+		if (!canReplaceForInscription(level, pos)) {
 			return false;
 		}
 		BlockPos below = pos.below();
@@ -91,7 +92,7 @@ public final class DiscoveryInscriptionPlacement {
 		if (!fullBox.isInside(pos.getX(), pos.getY(), pos.getZ())) {
 			return false;
 		}
-		if (!level.getBlockState(pos).isAir()) {
+		if (!canReplaceForInscription(level, pos)) {
 			return false;
 		}
 
@@ -116,6 +117,10 @@ public final class DiscoveryInscriptionPlacement {
 			return true;
 		}
 		return false;
+	}
+
+	private static boolean canReplaceForInscription(WorldGenLevel level, BlockPos pos) {
+		return level.getBlockState(pos).isAir() || level.getFluidState(pos).is(FluidTags.WATER);
 	}
 
 	private static Direction facingToward(BlockPos origin, BlockPos pos) {

@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "format_version": "4.5",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "BrinedVotaryModel",
+  "model_identifier": "BrinedVotaryModel",
+  "modded_entity_version": "1.17",
+  "modded_entity_flip_y": true,
+  "visible_box": [1, 2, 1],
+  "resolution": {
+    "width": 64,
+    "height": 64
+  },
+  "elements": [
+    {
+      "name": "diving_helmet",
+      "box_uv": true,
+      "from": [-4.5, 21.5, -4.5],
+      "to": [4.5, 30.5, 4.5],
+      "origin": [0, 24, 0],
+      "uv_offset": [0, 0],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41001"
+    },
+    {
+      "name": "visor",
+      "box_uv": true,
+      "from": [-3.5, 24, -5.35],
+      "to": [3.5, 27, -4.35],
+      "origin": [0, 24, 0],
+      "uv_offset": [32, 0],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41002"
+    },
+    {
+      "name": "robe_torso",
+      "box_uv": true,
+      "from": [-5, 10, -2.75],
+      "to": [5, 22, 2.75],
+      "origin": [0, 18, 0],
+      "uv_offset": [16, 16],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41003"
+    },
+    {
+      "name": "breather_tank",
+      "box_uv": true,
+      "from": [-3, 12, 3.25],
+      "to": [3, 22, 6.25],
+      "origin": [0, 17, 4.75],
+      "uv_offset": [32, 32],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41004"
+    },
+    {
+      "name": "left_arm",
+      "box_uv": true,
+      "from": [5, 10, -2],
+      "to": [8, 22, 2],
+      "origin": [5, 22, 0],
+      "uv_offset": [0, 32],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41005"
+    },
+    {
+      "name": "right_arm",
+      "box_uv": true,
+      "from": [-8, 10, -2],
+      "to": [-5, 22, 2],
+      "origin": [-5, 22, 0],
+      "uv_offset": [16, 32],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41006"
+    },
+    {
+      "name": "left_boot",
+      "box_uv": true,
+      "from": [1, 0, -2.25],
+      "to": [4.5, 10, 2.25],
+      "origin": [2, 10, 0],
+      "uv_offset": [0, 48],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41007"
+    },
+    {
+      "name": "right_boot",
+      "box_uv": true,
+      "from": [-4.5, 0, -2.25],
+      "to": [-1, 10, 2.25],
+      "origin": [-2, 10, 0],
+      "uv_offset": [16, 48],
+      "type": "cube",
+      "uuid": "5e3ed5ba-b5b3-4108-a203-0e2108b41008"
+    }
+  ],
+  "outliner": [
+    "diving_helmet",
+    "visor",
+    "robe_torso",
+    "breather_tank",
+    "left_arm",
+    "right_arm",
+    "left_boot",
+    "right_boot"
+  ]
+}

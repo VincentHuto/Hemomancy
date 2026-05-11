@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:basalt",
+    "minecraft:smooth_basalt",
+    "minecraft:deepslate",
+    "minecraft:blackstone",
+    "minecraft:magma_block",
+    "hemomancy:infested_venous_stone",
+    "hemomancy:conscious_mass"
+  ]
+}

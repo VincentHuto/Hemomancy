@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:erythrocoral_fragment"
+    },
+    {
+      "item": "hemomancy:spore_sac"
+    },
+    {
+      "item": "hemomancy:hyphal_substrate"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:vivacious_spores"
+  }
+}

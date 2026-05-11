@@ -252,6 +252,39 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> calcified_hyphae = BASEBLOCKS.register("calcified_hyphae",
 			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK)));
 
+	public static final DeferredHolder<Block, Block> erythrocoral_block = BASEBLOCKS.register("erythrocoral_block",
+			() -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.strength(1.2F, 3.0F)
+					.sound(SoundType.WART_BLOCK)
+					.lightLevel(state -> 2)));
+
+	public static final DeferredHolder<Block, Block> calcified_erythrocoral = BASEBLOCKS.register("calcified_erythrocoral",
+			() -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.QUARTZ)
+					.requiresCorrectToolForDrops()
+					.strength(1.8F, 4.0F)
+					.sound(SoundType.BONE_BLOCK)));
+
+	public static final DeferredHolder<Block, Block> erythrocoral_fan = SPECIALBLOCKS.register("erythrocoral_fan",
+			() -> new ErythrocoralGrowthBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.noCollission()
+					.instabreak()
+					.sound(SoundType.WART_BLOCK)
+					.pushReaction(PushReaction.DESTROY),
+					Block.box(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D)));
+
+	public static final DeferredHolder<Block, Block> erythrocoral_tendril = SPECIALBLOCKS.register("erythrocoral_tendril",
+			() -> new ErythrocoralGrowthBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_MAGENTA)
+					.noCollission()
+					.instabreak()
+					.sound(SoundType.WART_BLOCK)
+					.pushReaction(PushReaction.DESTROY)
+					.lightLevel(state -> 3),
+					Block.box(3.0D, 0.0D, 3.0D, 13.0D, 16.0D, 13.0D)));
+
 	public static final DeferredHolder<Block, Block> hemorrhagic_crust = BASEBLOCKS.register("hemorrhagic_crust",
 			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 4.0F).sound(SoundType.NETHERRACK)));
 

@@ -74,6 +74,14 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_HEMOJELLY_DEATH = registerSoundEvent(
 			"entity.hemojelly.death");
 
+	// Blood Lantern Jelly (warm-ocean reef drifter)
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BLOOD_LANTERN_JELLY_AMBIENT = registerSoundEvent(
+			"entity.blood_lantern_jelly.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BLOOD_LANTERN_JELLY_HURT = registerSoundEvent(
+			"entity.blood_lantern_jelly.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BLOOD_LANTERN_JELLY_DEATH = registerSoundEvent(
+			"entity.blood_lantern_jelly.death");
+
 	// Barbed Urchin (spiny aquatic creature)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BARBED_URCHIN_AMBIENT = registerSoundEvent(
 			"entity.barbed_urchin.ambient");
@@ -89,6 +97,14 @@ public class SoundInit {
 			"entity.chalybeate_snail.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CHALYBEATE_SNAIL_DEATH = registerSoundEvent(
 			"entity.chalybeate_snail.death");
+
+	// Brined Votary (drowned Harbinger ship remnant)
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BRINED_VOTARY_AMBIENT = registerSoundEvent(
+			"entity.brined_votary.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BRINED_VOTARY_HURT = registerSoundEvent(
+			"entity.brined_votary.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BRINED_VOTARY_DEATH = registerSoundEvent(
+			"entity.brined_votary.death");
 
 	// ===== Arthropods =====
 

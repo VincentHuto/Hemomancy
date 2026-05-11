@@ -1,0 +1,89 @@
+{
+  "temperature": 0.95,
+  "downfall": 0.8,
+  "has_precipitation": true,
+  "effects": {
+    "sky_color": 8036536,
+    "fog_color": 4855604,
+    "water_color": 9056607,
+    "water_fog_color": 3215397,
+    "ambient_sound": "minecraft:ambient.underwater.loop",
+    "particle": {
+      "options": {
+        "type": "minecraft:crimson_spore"
+      },
+      "probability": 0.006
+    },
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    }
+  },
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "hemomancy:blood_lantern_jelly",
+        "weight": 26,
+        "minCount": 2,
+        "maxCount": 5
+      },
+      {
+        "type": "hemomancy:barbed_urchin",
+        "weight": 3,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "minecraft:tropical_fish",
+        "weight": 18,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "minecraft:pufferfish",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "minecraft:squid",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "minecraft:dolphin",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "hemomancy:erythrocoral_reef"
+    ],
+    []
+  ]
+}

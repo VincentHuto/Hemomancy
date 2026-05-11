@@ -537,6 +537,7 @@ Each faction's relationship with materials reflects their worldview.
 |----------|---------|--------------|
 | **Hematic Iron** | Harbingers | Blood-fused iron — the organic and the mineral made one. The body's mineral content, weaponized. |
 | **Chalybeate Sclerite** | Harbingers | Iron-sulfide armor scale from deep vent snails; a Ferric ocean expression of the same living-mineral philosophy behind hematic iron. It is best taken by careful knapping from a withdrawn living animal, not by slaughter. |
+| **Erythrocoral Fragment** | Harbingers | Warm-ocean fungal-coral tissue: a Vivacious expression of hemomancy as ecology rather than conquest. It supports spore craft through careful shearing, not reef-clearing extraction. |
 | **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |
 | **Living materials** (bone, chitin, organic tools) | Harbingers | Blood magic makes materials *alive* — tools that feed and grow. |
 | **Copper** | Unstained | Antiseptic in nature; the Unstained discovered it historically staved off illness. The foundational material of their practice. |
@@ -563,6 +564,7 @@ Plants in Hemomancy are designed around real-world plant biology and carry both 
 | **Infected Fungus** | Fictional variant | Grants Confusion. Used in Foul Paste and the Potion of Mycorrhizal Mending. |
 | **Rafflesia** | Real parasitic plant (world's largest flower) | Extremely rare. A parasitic plant with no leaves, no chlorophyll — lives entirely inside other plants. Deeply fitting for the infection theme. |
 | **Puffball Mushroom** | Real fungus | Common fungus, used for Harbinger recipes. |
+| **Erythrocoral** | Fictional fungal coral | A warm-ocean shelf ecology where hemomantic tissue behaves like reef life: living mass, pale calcified skeleton, soft fans, and tendrils. It is eerie and biologically wrong to ordinary eyes, but not evil corruption; it is a thriving habitat with its own grazers and drifters. |
 | **Qliphoth Pome** | Fictional fruit | A void-dark fruit grown around a crystallized blood core — one of nine husks of the Qliphoth. Eating causes a brief expansion of awareness into the void-register (perceived as darkness), a surge of blood power, and reduced manipulation costs. Nine drop from a single tree's lifecycle; consuming all nine from one bloom is the unnamed act that precedes the Eighth Degree. |
 
 ### 15.2 Unstained/Pale Lady Plants
@@ -587,7 +589,7 @@ The mod's worldbuilding extends into the animal kingdom: **arthropods** are the 
 | **Barbed Urchins** | Shallow-water expression of iron blood magic — spined aquatic creatures. |
 | **Chalybeate Snails** | Implemented deep-ocean iron snails inspired by the real-world iron-plated snail (Chrysomallon squamiferum). They cluster around hydrothermal vent fields and grow iron-sulfide sclerites that Harbingers prize as Ferric material. Their best harvest is careful knapping while retracted, reinforcing the Order's uneasy covenant with living sources rather than simple predation. |
 
-**Deep ocean ecology V1:** Hydrothermal vent fields are the first ocean-expansion slice. They are mineral heat-scars on the sea floor, not ore nodes: basalt, blackstone, deepslate, magma, and restrained blood-organic accents where Chalybeate Snails graze. Fungal coral reefs and Harbinger exploration vessels remain future hooks for a broader ocean layer, especially for covenant salvage, taboo research, and naval expedition stories without flattening Harbingers into villains.
+**Ocean ecology V1/V2:** Hydrothermal vent fields are the first deep-ocean slice. They are mineral heat-scars on the sea floor, not ore nodes: basalt, blackstone, deepslate, magma, and restrained blood-organic accents where Chalybeate Snails graze. Erythrocoral Reefs are the warm shelf counterpart: fungal-coral habitats with murky red-violet water, Blood Lantern Jellies drifting through the reef, and light Vivacious harvesting. Harbinger Voyager Wrecks are failed reef/vent research craft: covenant field laboratories swallowed by the sea, guarded by Brined Votaries who are tragic remnants of duty rather than a new enemy faction. Active Harbinger voyager expeditions now have their first crew foundation: a captain-scholar Voyager who treats the ship as moving laboratory, chapel, and survey office, with an occasional Votary Wayfarer aboard to learn by witnessing rather than by conquest. Active ships, trade, rumors, and faction tension remain future maritime hooks without flattening Harbingers into villains.
 
 The **Chthonian Queen** is the only creature in the mod associated with gold — a nod to her royal status and to gold's position as a material that sits between but belongs to neither faction.
 

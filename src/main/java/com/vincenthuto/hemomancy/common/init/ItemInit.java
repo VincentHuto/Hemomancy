@@ -146,6 +146,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> chalybeate_sclerite = BASEITEMS.register("chalybeate_sclerite",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> salt_stained_voyager_log = BASEITEMS.register("salt_stained_voyager_log",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_powder = BASEITEMS.register("hematic_iron_powder",
@@ -1018,6 +1022,19 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemojelly = SPAWNEGGS.register(
             "spawn_egg_hemojelly",
             () -> new DeferredSpawnEggItem(EntityInit.hemojelly, 0xFF6B8A, 0xCC2244, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_blood_lantern_jelly = SPAWNEGGS.register(
+            "spawn_egg_blood_lantern_jelly",
+            () -> new DeferredSpawnEggItem(EntityInit.blood_lantern_jelly, 0x8B1E4D, 0xFF8AB0, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_brined_votary = SPAWNEGGS.register(
+            "spawn_egg_brined_votary",
+            () -> new DeferredSpawnEggItem(EntityInit.brined_votary, 0x2B3F45, 0x8A1F2C, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_voyager = SPAWNEGGS.register(
+            "spawn_egg_harbinger_voyager",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_voyager, 0x4A1F27, 0xC29A68, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_votary_wayfarer = SPAWNEGGS.register(
+            "spawn_egg_harbinger_votary_wayfarer",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_votary_wayfarer, 0x63232A, 0x7C8B88,
+                    new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_venous_strider = SPAWNEGGS.register(
             "spawn_egg_venous_strider",
             () -> new DeferredSpawnEggItem(EntityInit.venous_strider, 0xF5DEB3, 0x8B4513, new Item.Properties()));

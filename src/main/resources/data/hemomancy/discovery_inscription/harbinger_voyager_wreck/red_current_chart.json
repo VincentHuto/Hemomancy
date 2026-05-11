@@ -1,0 +1,18 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "Red Current Chart",
+  "obscured_text": [
+    "The chart is water-soft, but red thread still knots around warm reefs and black vents.",
+    "You feel a route trying to remember the hand that drew it."
+  ],
+  "revealed_text": [
+    "The voyager marked Erythrocoral shelves as living roads rather than hazards. The crew followed blood-warm currents where ordinary maps ended.",
+    "One notation repeats beside every reef: observe before harvesting. The Order did not come only to take."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_hematic_order/pages/what_they_believe",
+    "hemomancy:sanctumsanguinium/tendency/pages/vivacious"
+  ]
+}

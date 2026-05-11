@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:harbinger_voyager_wreck",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1704202751,
+    "spacing": 40,
+    "separation": 12,
+    "type": "minecraft:random_spread"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "rite_fragment",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Fragment: Last Covenant Watch",
+  "obscured_text": [
+    "Salt has eaten most of the script. Three names remain, written over each other until they look like one pulse.",
+    "The fragment does not accuse. It keeps vigil."
+  ],
+  "revealed_text": [
+    "A covenant watch is the promise that no Harbinger studies dangerous blood alone. The wreck broke that promise by force, not by choice.",
+    "The last hand to touch this mark wrote: if we do not surface, let our notes be useful and our bodies be forgiven."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/the_hematic_order/pages/historical_record"
+  ]
+}

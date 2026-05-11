@@ -1,0 +1,17 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 2,
+  "title": "Vent Survey Fragment",
+  "obscured_text": [
+    "The inscription tastes of iron, heat, and crushed shell.",
+    "A black chimney rises in the memory, then disappears under silt."
+  ],
+  "revealed_text": [
+    "The crew traced a kinship between vent iron, Chalybeate sclerites, and hematic craft. They were careful enough to call the snails neighbors, not stock.",
+    "Their final note asks whether the sea itself can carry blood-memory without ever becoming blood."
+  ],
+  "liber_entries": [
+    "hemomancy:sanctumsanguinium/tendency/pages/tendency"
+  ]
+}

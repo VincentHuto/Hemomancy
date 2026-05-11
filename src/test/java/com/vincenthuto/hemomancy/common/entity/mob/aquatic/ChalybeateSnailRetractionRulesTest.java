@@ -27,6 +27,14 @@ public final class ChalybeateSnailRetractionRulesTest {
 				ChalybeateSnailRetractionRules.shouldRenderRetracted(true, 0));
 		assertFalse("no flag and no timer renders extended",
 				ChalybeateSnailRetractionRules.shouldRenderRetracted(false, 0));
+		assertFalse("other vent snails are not threats",
+				ChalybeateSnailRetractionRules.isThreat(false, false, true));
+		assertFalse("creative players are not threats",
+				ChalybeateSnailRetractionRules.isThreat(true, false, false));
+		assertFalse("vanilla aquatic mobs are not threats",
+				ChalybeateSnailRetractionRules.isThreat(false, true, false));
+		assertTrue("ordinary non-aquatic mobs are threats",
+				ChalybeateSnailRetractionRules.isThreat(false, false, false));
 	}
 
 	private static void assertEquals(String label, int expected, int actual) {

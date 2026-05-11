@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+      "model": "hemomancy:block/calcified_erythrocoral"
+      }
+    }
+  ]
+}

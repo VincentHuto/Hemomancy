@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:erythrocoral_fragment"
+  },
+  "result": "hemomancy:spore_sac",
+  "count": 1,
+  "experience": 0.2,
+  "cookingtime": 180,
+  "id": "hemomancy:distillation/erythrocoral_fragment"
+}

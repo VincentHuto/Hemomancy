@@ -55,6 +55,8 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> DEEP_OCEAN_VENT = createKey("deep_ocean_vent");
 
+	public static final ResourceKey<PlacedFeature> ERYTHROCORAL_REEF = createKey("erythrocoral_reef");
+
 	public static final ResourceKey<PlacedFeature> TOOTH_GEODE = createKey("tooth_geode");
 
 	// Conscious mass blob
@@ -154,6 +156,13 @@ public class PlacedFeatureInit {
 				.getOrThrow(ConfiguredFeatureInit.DEEP_OCEAN_VENT);
 
 		register(context, PlacedFeatureInit.DEEP_OCEAN_VENT, DEEP_OCEAN_VENT, RarityFilter.onAverageOnceEvery(96),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+
+		// Erythrocoral Reef - clustered shelf growth inside the dedicated warm ocean biome.
+		final Holder<ConfiguredFeature<?, ?>> ERYTHROCORAL_REEF = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.ERYTHROCORAL_REEF);
+
+		register(context, PlacedFeatureInit.ERYTHROCORAL_REEF, ERYTHROCORAL_REEF, CountPlacement.of(9),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
 
 		// Tooth Geode - underground, rare, roughly once per 48 chunks

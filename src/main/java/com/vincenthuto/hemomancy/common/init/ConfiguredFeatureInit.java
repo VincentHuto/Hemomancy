@@ -71,6 +71,8 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> DEEP_OCEAN_VENT = createKey("deep_ocean_vent");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ERYTHROCORAL_REEF = createKey("erythrocoral_reef");
+
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TOOTH_GEODE = createKey("tooth_geode");
 
 	// Spore Nexus Tower - massive rare fungal spire for the fungal dimension
@@ -235,6 +237,8 @@ public class ConfiguredFeatureInit {
 		register(context, TERMITE_MOUND, BaseFeatureInit.TERMITE_MOUND, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, DEEP_OCEAN_VENT, BaseFeatureInit.DEEP_OCEAN_VENT, NoneFeatureConfiguration.INSTANCE);
+
+		register(context, ERYTHROCORAL_REEF, BaseFeatureInit.ERYTHROCORAL_REEF, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, TOOTH_GEODE, BaseFeatureInit.TOOTH_GEODE, NoneFeatureConfiguration.INSTANCE);
 

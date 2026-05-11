@@ -25,6 +25,8 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRendere
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BarbedUrchinRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BloodLanternJellyRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
@@ -324,6 +326,16 @@ public class ClientEvents {
                     .withStyle(ChatFormatting.GRAY));
             event.getToolTip().add(Component.translatable("item.hemomancy.chalybeate_sclerite.tooltip.harvest")
                     .withStyle(ChatFormatting.DARK_GRAY));
+        } else if (item == ItemInit.erythrocoral_fragment.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.erythrocoral_fragment.tooltip")
+                    .withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.translatable("item.hemomancy.erythrocoral_fragment.tooltip.harvest")
+                    .withStyle(ChatFormatting.DARK_GRAY));
+        } else if (item == ItemInit.salt_stained_voyager_log.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.salt_stained_voyager_log.tooltip")
+                    .withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.translatable("item.hemomancy.salt_stained_voyager_log.tooltip.inquiry")
+                    .withStyle(ChatFormatting.DARK_GRAY));
         } else if (item == ItemInit.charm_of_vascularium.get()) {
             event.getToolTip().add(Component.translatable("item.hemomancy.charm_of_vascularium.tooltip.first_hour")
                     .withStyle(ChatFormatting.DARK_RED));
@@ -494,6 +506,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
             event.registerEntityRenderer(EntityInit.barbed_urchin.get(), BarbedUrchinRenderer::new);
             event.registerEntityRenderer(EntityInit.chalybeate_snail.get(), ChalybeateSnailRenderer::new);
+            event.registerEntityRenderer(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyRenderer::new);
+            event.registerEntityRenderer(EntityInit.brined_votary.get(), BrinedVotaryRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
             event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
             event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
@@ -508,6 +522,8 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_mnemonist.get(), HarbingerMnemonistRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
+            event.registerEntityRenderer(EntityInit.harbinger_voyager.get(), HarbingerVoyagerRenderer::new);
+            event.registerEntityRenderer(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerRenderer::new);
             event.registerEntityRenderer(EntityInit.drudge.get(), com.vincenthuto.hemomancy.client.render.entity.npc.DrudgeRenderer::new);
             event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
             event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
@@ -539,6 +555,8 @@ public class ClientEvents {
             event.enqueueWork(() -> {
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_fan.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
             });
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();

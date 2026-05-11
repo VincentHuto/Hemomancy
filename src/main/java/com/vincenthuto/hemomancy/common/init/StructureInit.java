@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.worldgen.structure.BogBodyOssuaryNicheSt
 import com.vincenthuto.hemomancy.common.worldgen.structure.BrokenChurchStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.CrimsonLodgeAnnexStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerVoyagerWreckStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.MausoleumStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.SanguineSurveyorBivouacStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.UnstainedChurchStructure;
@@ -41,6 +42,9 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<HarbingerOutpostStructure>> harbinger_outpost = STRUCTURES
 			.register("harbinger_outpost", () -> explicitStructureTypeTyping(HarbingerOutpostStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<HarbingerVoyagerWreckStructure>> harbinger_voyager_wreck = STRUCTURES
+			.register("harbinger_voyager_wreck", () -> explicitStructureTypeTyping(HarbingerVoyagerWreckStructure.CODEC));
 
 	public static final DeferredHolder<StructureType<?>, StructureType<MausoleumStructure>> mausoleum = STRUCTURES
 			.register("mausoleum", () -> explicitStructureTypeTyping(MausoleumStructure.CODEC));

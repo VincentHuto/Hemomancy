@@ -15,6 +15,8 @@ import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
 import com.vincenthuto.hemomancy.common.entity.item.EntityQliphothSeedItem;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.*;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BloodLanternJellyEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BrinedVotaryEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.ChalybeateSnailEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
@@ -24,6 +26,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistE
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVotaryWayfarerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVoyagerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedGuardianEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
@@ -117,6 +121,18 @@ public class EntityInit {
             () -> EntityType.Builder.of(HarbingerVicarEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_vicar").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HarbingerVoyagerEntity>> harbinger_voyager = ENTITY_TYPES.register(
+            "harbinger_voyager",
+            () -> EntityType.Builder.of(HarbingerVoyagerEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("harbinger_voyager").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HarbingerVotaryWayfarerEntity>> harbinger_votary_wayfarer = ENTITY_TYPES.register(
+            "harbinger_votary_wayfarer",
+            () -> EntityType.Builder.of(HarbingerVotaryWayfarerEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("harbinger_votary_wayfarer").toString()));
 
     // Boss room: Hematic Construct (inner trial minion)
     public static final DeferredHolder<EntityType<?>, EntityType<HematicConstructEntity>> hematic_construct = ENTITY_TYPES.register(
@@ -278,6 +294,20 @@ public class EntityInit {
                     .sized(0.9F, 0.45F)
                     .clientTrackingRange(8)
                     .build(Hemomancy.rloc("chalybeate_snail").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BloodLanternJellyEntity>> blood_lantern_jelly = ENTITY_TYPES.register(
+            "blood_lantern_jelly",
+            () -> EntityType.Builder.of(BloodLanternJellyEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.6F, 0.85F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("blood_lantern_jelly").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BrinedVotaryEntity>> brined_votary = ENTITY_TYPES.register(
+            "brined_votary",
+            () -> EntityType.Builder.of(BrinedVotaryEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("brined_votary").toString()));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<LumpOfThoughtEntity>> lump_of_thought = ENTITY_TYPES.register(
@@ -492,6 +522,9 @@ public class EntityInit {
         event.register(EntityInit.barbed_urchin.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.blood_lantern_jelly.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BloodLanternJellyEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.hemolymphopoda.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -575,6 +608,8 @@ public class EntityInit {
         event.put(EntityInit.lump_of_thought.get(), LumpOfThoughtEntity.setAttributes().build());
         event.put(EntityInit.barbed_urchin.get(), BarbedUrchinEntity.setAttributes().build());
         event.put(EntityInit.chalybeate_snail.get(), ChalybeateSnailEntity.setAttributes().build());
+        event.put(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyEntity.setAttributes().build());
+        event.put(EntityInit.brined_votary.get(), BrinedVotaryEntity.setAttributes().build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());
@@ -595,6 +630,8 @@ public class EntityInit {
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_mnemonist.get(), HarbingerMnemonistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
+        event.put(EntityInit.harbinger_voyager.get(), HarbingerVoyagerEntity.setAttributes().build());
+        event.put(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerEntity.setAttributes().build());
         event.put(EntityInit.hollow_vessel.get(), HollowVesselEntity.setAttributes().build());
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());

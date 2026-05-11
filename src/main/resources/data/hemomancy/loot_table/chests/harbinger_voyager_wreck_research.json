@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "min": 2,
+        "max": 4
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:erythrocoral_fragment",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 3
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:spore_sac",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              },
+              "add": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:specimen_jar",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:mycelial_lantern",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:chalybeate_sclerite",
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "random_sequence": "hemomancy:chests/harbinger_voyager_wreck_research"
+}
