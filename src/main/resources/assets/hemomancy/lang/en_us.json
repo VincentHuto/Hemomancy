@@ -2275,5 +2275,13 @@
   "screen.hemomancy.puppeteers_spindle.status_ready": "ready",
   "screen.hemomancy.puppeteers_spindle.status_degree": "deg %s",
   "screen.hemomancy.puppeteers_spindle.status_recipe": "recipe",
-  "screen.hemomancy.puppeteers_spindle.status_trial": "trial"
+  "screen.hemomancy.puppeteers_spindle.status_trial": "trial",
+  "entity.hemomancy.chalybeate_snail": "Chalybeate Snail",
+  "item.hemomancy.chalybeate_sclerite": "Chalybeate Sclerite",
+  "item.hemomancy.chalybeate_sclerite.tooltip": "Iron-black mantle scales grown beside deep vent heat.",
+  "item.hemomancy.chalybeate_sclerite.tooltip.harvest": "Knap from a retracted Chalybeate Snail; killing rarely preserves useful scrap.",
+  "item.hemomancy.spawn_egg_chalybeate_snail": "Chalybeate Snail Spawn Egg",
+  "subtitle.hemomancy.entity.chalybeate_snail.ambient": "Chalybeate Snail rasps",
+  "subtitle.hemomancy.entity.chalybeate_snail.hurt": "Chalybeate Snail withdraws",
+  "subtitle.hemomancy.entity.chalybeate_snail.death": "Chalybeate Snail cracks"
 }

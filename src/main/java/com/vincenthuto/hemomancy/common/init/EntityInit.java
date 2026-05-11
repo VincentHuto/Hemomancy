@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
 import com.vincenthuto.hemomancy.common.entity.item.EntityQliphothSeedItem;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.*;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.ChalybeateSnailEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
@@ -270,6 +271,13 @@ public class EntityInit {
             "barbed_urchin",
             () -> EntityType.Builder.of(BarbedUrchinEntity::new, MobCategory.WATER_AMBIENT)
                     .sized(1F, 1F).build(Hemomancy.rloc("barbed_urchin").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ChalybeateSnailEntity>> chalybeate_snail = ENTITY_TYPES.register(
+            "chalybeate_snail",
+            () -> EntityType.Builder.of(ChalybeateSnailEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.9F, 0.45F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("chalybeate_snail").toString()));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<LumpOfThoughtEntity>> lump_of_thought = ENTITY_TYPES.register(
@@ -566,6 +574,7 @@ public class EntityInit {
         event.put(EntityInit.chthonian_queen.get(), ChthonianQueenEntity.setAttributes().build());
         event.put(EntityInit.lump_of_thought.get(), LumpOfThoughtEntity.setAttributes().build());
         event.put(EntityInit.barbed_urchin.get(), BarbedUrchinEntity.setAttributes().build());
+        event.put(EntityInit.chalybeate_snail.get(), ChalybeateSnailEntity.setAttributes().build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());

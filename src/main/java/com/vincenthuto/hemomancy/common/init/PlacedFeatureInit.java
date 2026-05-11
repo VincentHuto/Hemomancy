@@ -53,6 +53,8 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> TERMITE_MOUND = createKey("termite_mound");
 
+	public static final ResourceKey<PlacedFeature> DEEP_OCEAN_VENT = createKey("deep_ocean_vent");
+
 	public static final ResourceKey<PlacedFeature> TOOTH_GEODE = createKey("tooth_geode");
 
 	// Conscious mass blob
@@ -147,7 +149,14 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.TERMITE_MOUND, TERMITE_MOUND, RarityFilter.onAverageOnceEvery(60),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
-		// Tooth Geode — underground, rare, roughly once per 48 chunks
+		// Deep Ocean Vent - rare underwater hydrothermal field
+		final Holder<ConfiguredFeature<?, ?>> DEEP_OCEAN_VENT = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.DEEP_OCEAN_VENT);
+
+		register(context, PlacedFeatureInit.DEEP_OCEAN_VENT, DEEP_OCEAN_VENT, RarityFilter.onAverageOnceEvery(96),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+
+		// Tooth Geode - underground, rare, roughly once per 48 chunks
 		final Holder<ConfiguredFeature<?, ?>> TOOTH_GEODE = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.TOOTH_GEODE);
 

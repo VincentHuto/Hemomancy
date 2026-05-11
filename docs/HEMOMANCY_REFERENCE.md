@@ -1598,6 +1598,7 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/active_befouling_ash.png) Active Befouling / ![](../src/main/resources/assets/hemomancy/textures/item/active_smouldering_ash.png) Active Smouldering Ash | Active versions of ash trails |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_scrap.png) Hematic Iron Scrap | Blood-infused iron alloy ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_powder.png) Hematic Iron Powder | Extracted from blood via centrifuge |
+| ![](../src/main/resources/assets/hemomancy/textures/item/chalybeate_sclerite.png) Chalybeate Sclerite | Ferric deep-ocean material nonlethally knapped from retracted Chalybeate Snails with any HutosLib `ItemKnapper`. Distills to Hematic Iron Powder and can substitute for Ferric Enzyme in the Ferric Spores recipe. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/consecrated_copper_ingot.png) Consecrated Copper Ingot | Anti-blood copper, used in Unstained path |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hemolytic_solution.png) Hemolytic Solution | Anti-blood enzyme solution, starts the Unstained path |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hemolytic_plating.png) Hemolytic Plating | Silver-based anti-blood plating |
@@ -2326,6 +2327,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Fervent Chitinite** | ![](../src/main/resources/assets/hemomancy/textures/entity/fervent_chitinite/model_fervent_chitinite.png) | Creature | Fire variant of Chitinite |
 | **Hemolymphopoda** | ![](../src/main/resources/assets/hemomancy/textures/entity/hemolymphopoda/model_hemolymphopoda.png) | Ambient | Small (0.9×0.3), Horseshoe crab drops Cleansing Hemolymph |
 | **Barbed Urchin** | ![](../src/main/resources/assets/hemomancy/textures/entity/barbed_urchin/model_barbed_urchin.png) | Water Ambient | Underwater iron-barbed urchin |
+| **Chalybeate Snail** | ![](../src/main/resources/assets/hemomancy/textures/entity/chalybeate_snail/model_chalybeate_snail.png) | Water Ambient | Slow vent-field grazer with defensive retraction. Does not use ordinary biome spawning; `DeepOceanVentFeature` places persistent 2-5 clusters around valid hydrothermal vent floors. Retracted, off-cooldown snails can be nonlethally harvested with any HutosLib `ItemKnapper` for Chalybeate Sclerites. |
 | **Crimson Doe** | | Creature | Blood-touched deer (ON_GROUND spawn) |
 | **Hemojelly** | | Ambient | Blood jelly creature (ON_GROUND spawn) |
 | **Venous Strider** | | Ambient | Vein-walking strider (ON_GROUND spawn) |
@@ -2352,7 +2354,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 
 ### 26.4 Entity Tags
 
-Mobs are tagged by tendency: `FUNGAL_TAG`, `UMBRAL_TAG`, `INCANDESCENT_TAG`, `FERRIC_TAG`, `VIVACIOUS_TAG`, `RUINOUS_TAG`, `NEUROTIC_TAG`, `FERVENT_TAG`, `FRIGID_TAG`.
+Mobs are tagged by tendency: `FUNGAL_TAG`, `UMBRAL_TAG`, `INCANDESCENT_TAG`, `FERRIC_TAG`, `VIVACIOUS_TAG`, `RUINOUS_TAG`, `NEUROTIC_TAG`, `FERVENT_TAG`, `FRIGID_TAG`. Chalybeate Snails are Ferric-aligned and included in `specimen_jar_capturable`.
 
 ### 26.5 Spawn Placements
 
@@ -2371,10 +2373,11 @@ Registered in `EntityInit.commonSetup`:
 - Crimson Doe → `ON_GROUND`
 - Hemojelly → `ON_GROUND`
 - Venous Strider → `ON_GROUND`
+- Chalybeate Snail -> no ordinary biome spawn placement; spawned persistently by `DeepOceanVentFeature`
 
 ### 26.6 Entity Loot Tables
 
-> **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **38 entity loot tables**.
+> **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **39 entity loot tables**.
 
 Notable implemented drop families:
 
@@ -2384,6 +2387,7 @@ Notable implemented drop families:
 | Leech / Blood aquatic or arthropod mobs | Blood/hemolymph materials such as Swollen Leech or Cleansing Hemolymph |
 | Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob |
 | Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread from the puppeteer; puppeteer-summoned dolls are support minions and do not create extra loot |
+| Chalybeate Snail | Killing gives only a rare small Hematic Iron Scrap fallback; reliable Chalybeate Sclerites come from knapper harvesting while retracted |
 | Saint and boss entities | Direct/special boss rewards are handled in entity code or matching loot JSON depending on encounter |
 
 Do not re-enable `HemoEntityLootProvider` unless the current JSON values are first ported back into the provider.
@@ -2479,6 +2483,7 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 | Hyphae Feature | Ground-level hyphae spread |
 | Hyphae Tendril | Vertical tendril features |
 | Bog Body Feature | Generates bog body blocks |
+| Deep Ocean Vent Feature | Rare code-generated basalt/magma hydrothermal vent field in deep ocean biome tag; spawns persistent Chalybeate Snails and provides atmosphere/hazards rather than direct ore nodes |
 
 ### 28.3 Configured/Placed Features
 
@@ -2487,6 +2492,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 - `PLACED_INFESTED_VENOUS_STONE_BLOB`, `PLACED_MYCELIUM_BLOB`
 - `PLACED_CANOPY_MUSHROOMS_DENSE`, `PLACED_CANOPY_MUSHROOMS_SPARSE`
 - `PATCH_HYPHAE`, `BLEEDING_HEARTS`, `STINK_HORNS`
+- `DEEP_OCEAN_VENT` / `deep_ocean_vent`: placed with `RarityFilter.onAverageOnceEvery(96)`, `HEIGHTMAP_OCEAN_FLOOR`, and a `surface_structures` biome modifier against `#hemomancy:deep_ocean_vent_spawnlist` (`deep_ocean`, `deep_cold_ocean`, `deep_lukewarm_ocean`)
 
 ---
 
@@ -2739,7 +2745,7 @@ Registered in `SoundInit`:
 | Chthonian Queen Death | `entity.chthonian_queen.death` | Death sound for the Chthonian Queen |
 | Synapse Hound Hurt | `entity.synapse_hound.hurt` | Damage sound for the Synapse Hound monster |
 
-> **Status: Implemented.** `SoundInit` currently registers **80 custom sound events** spanning item, creature, aquatic, arthropod, monster, and boss categories. Vanilla sounds are still used in many interactions where dedicated custom audio has not yet been authored.
+> **Status: Implemented.** `SoundInit` currently registers **83 custom sound events** spanning item, creature, aquatic, arthropod, monster, and boss categories. Vanilla sounds are still used in many interactions where dedicated custom audio has not yet been authored.
 
 ---
 
@@ -2860,12 +2866,12 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta dedicated art/rendering and final combat polish, JEI display wiring for Mycelial Lantern |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
-| Planned | Direct-routing polish, forced manipulation rank-up rituals, deep-sea iron snail, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
+| Planned | Direct-routing polish, forced manipulation rank-up rituals, fungal coral reef biomes, Harbinger exploration vessels, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
 
-- **Entity Loot Tables** — `Implemented`: 38 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
+- **Entity Loot Tables** - `Implemented`: 39 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed - loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum / Liber Immaculatus** — `HemoProgressionScreen.setupEntries()` is still commented out (Java renderer WIP). However, the HutosLib JSON book framework is wired: the `sanctumsanguinium` book folder now has normal lore/mechanics chapters, and the `liberimmaculatus` book folder has 4 chapters (intro, sacred_tools, our_lady, the_path) with 12 pages covering the full Unstained path. The Field Notes / memo slice is implemented: `memo_capture:<id>` dialogue events write memo IDs into Field Notes, and the Dictation Table dictates those IDs into the player's `LiberKnowledge` attachment rather than into the Liber item stack. Field Notes are now ink-bound: Hematic Field Ink captures Harbinger memos for Liber Sanguinum, while Pale Field Ink captures Unstained memos for Liber Immaculatus. `LiberKnowledge` stores `KnownMemos`, `UnlockedLiberEntries`, and per-entry discovery sources, syncs to clients with `PacketSyncLiberKnowledge`, and can be granted through `LiberKnowledgeHelper` by memos, advancements, rites, item pickups, degree changes, dialogue, or other future triggers. `LiberEntryDefinitions` is the central code-side page map: it lists visible book entries and maps initial rites, Harbinger degree advancements, Unstained milestones, selected item pickups, and `liber_unlock:<entry_id>` dialogue events to normal book page IDs. The Liber items now behave like personal viewers/keys: borrowed books show the reader's own unlocked pages, not the owner's. Legacy stack data is migrated into the player attachment when an old Liber is used or placed for dictation. `MemoBookFilter` treats `LiberEntryDefinitions` as the source of visible pages for both Liber books; pages not mapped by a definition remain hidden, and chapters with zero unlocked pages are omitted. Current memos include `first_rite_notes`, `pale_lady_notes`, and Harbinger fungal whisper memos (`fungal_whisper_adept`, `fungal_whisper_illuminatus`, `fungal_whisper_sanctified`, `fungal_whisper_archon`, `fungal_whisper_truth`, `qliphoth_communion`) that unlock the Hyphae, Entity, Truth, and Qliphoth Liber Sanguinum pages through Hematic Field Ink. Remaining WIP: re-enable `setupEntries()` if that older renderer is revived, move entry definitions to data-driven JSON if desired, and author more entry definitions across existing chapters.
 - **Blood Fluid** (`FluidInit`) — Legacy/placeable blood fluid remains commented out and is superseded by the current direct-routing design; it is not part of the active automation plan.
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
@@ -2905,7 +2911,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Fungal Dimension** — **Partial:** Fungal Spine access, safe travel placement, dimension mob spawning, and the Archon first-exit choice fork are implemented. Terrain feature population and broader dimension content remain WIP. See §5.6.
 - **Annetta Knowles / Stained Priestess** — **Partial:** The two-route encounter is wired through `AnnettaKnowlesEntity`, `StainedPriestessEntity`, `LatentAnnettaInfectionEntity`, and `BrokenChurchStructure`. Dedicated entity model, texture, GeckoLib animations, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP. See §26.3 and LORE_REFERENCE §11.
 - **Chthonian Termite Mound** — **Implemented:** Savanna structure, guaranteed queen spawn, loot chest, wood-chewing behavior, wooden tool degradation, tuned spawn rate, and spawn placements are present. See §29.
-- **Deep-Sea Iron Snail** — `Planned`: creature concept for deep ocean biomes, inspired by real-world Chrysomallon squamiferum (iron-sulfide shell snail from hydrothermal vents). Part of the arthropods-as-natural-hemomancers theme.
+- **Deep Ocean V1: Chalybeate Snail and Vent Fields** - **Implemented:** `deep_ocean_vent` is a code-generated hydrothermal vent feature registered through feature bootstrap/data JSON and added to deep ocean biomes via `neoforge:add_features`. It builds basalt/smooth basalt/deepslate/blackstone/magma vent fields with restrained Hemomancy organic accents, then spawns persistent `chalybeate_snail` clusters. The snail has defensive retraction, Ferric/specimen-jar tags, a spawn egg, renderer/model/texture, subtitles/sounds, and a nonlethal HutosLib `ItemKnapper` harvest path for `chalybeate_sclerite` with a saved 6000-tick cooldown. Fungal coral reefs and Harbinger exploration vessels remain future ocean hooks.
 - **Ghost Pipes as Unstained Material** — **Implemented:** Ghost Pipe is registered as a plant/potted plant and now has a Pallid Retort distillation recipe into Pale Distillate (`distillation/ghost_pipe.json`, `pallid: true`).
 - **Cleansed Stone and Pallid Lantern** — **Implemented:** `cleansed_stone.json` crafts Cleansed Stone from Stone + Hemolytic Solution, and `pallid_lantern.json` crafts Pallid Lantern from Pale Silver Ingot + Pale Humor Flask + Glowstone Dust. Both are registered blocks and used by Unstained recipes/advancements.
 

@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRendere
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BarbedUrchinRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
@@ -318,6 +319,11 @@ public class ClientEvents {
                     .withStyle(ChatFormatting.GRAY));
             event.getToolTip().add(Component.translatable("item.hemomancy.hematic_iron_scrap.tooltip.nugget")
                     .withStyle(ChatFormatting.DARK_GRAY));
+        } else if (item == ItemInit.chalybeate_sclerite.get()) {
+            event.getToolTip().add(Component.translatable("item.hemomancy.chalybeate_sclerite.tooltip")
+                    .withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.translatable("item.hemomancy.chalybeate_sclerite.tooltip.harvest")
+                    .withStyle(ChatFormatting.DARK_GRAY));
         } else if (item == ItemInit.charm_of_vascularium.get()) {
             event.getToolTip().add(Component.translatable("item.hemomancy.charm_of_vascularium.tooltip.first_hour")
                     .withStyle(ChatFormatting.DARK_RED));
@@ -487,6 +493,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
             event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
             event.registerEntityRenderer(EntityInit.barbed_urchin.get(), BarbedUrchinRenderer::new);
+            event.registerEntityRenderer(EntityInit.chalybeate_snail.get(), ChalybeateSnailRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
             event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
             event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);

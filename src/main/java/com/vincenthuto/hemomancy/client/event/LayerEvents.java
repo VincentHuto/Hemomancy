@@ -131,6 +131,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedUrchinModel.LAYER_LOCATION, BarbedUrchinModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinBigModel.LAYER_LOCATION, BarbedUrchinBigModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
+		event.registerLayerDefinition(ChalybeateSnailModel.LAYER_LOCATION, ChalybeateSnailModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedGuardianModel.LAYER_LOCATION, UnstainedGuardianModel::createBodyLayer);

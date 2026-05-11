@@ -144,6 +144,8 @@ public class ItemInit {
             () -> new ItemNameBlockItem(BlockInit.active_befouling_ash_trail.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, Item> hematic_iron_scrap = BASEITEMS.register("hematic_iron_scrap",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> chalybeate_sclerite = BASEITEMS.register("chalybeate_sclerite",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_powder = BASEITEMS.register("hematic_iron_powder",
@@ -965,6 +967,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_barbed_urchin = SPAWNEGGS.register(
             "spawn_egg_barbed_urchin",
             () -> new DeferredSpawnEggItem(EntityInit.barbed_urchin, 12124160, 4259840, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_chalybeate_snail = SPAWNEGGS.register(
+            "spawn_egg_chalybeate_snail",
+            () -> new DeferredSpawnEggItem(EntityInit.chalybeate_snail, 0x2C3032, 0xB35348, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS.register(
             "spawn_egg_morphling_polyp",
             () -> new DeferredSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0, new Item.Properties()));

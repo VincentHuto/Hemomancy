@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#hemomancy:deep_ocean_vent_spawnlist",
+  "features": "hemomancy:deep_ocean_vent",
+  "step": "surface_structures"
+}

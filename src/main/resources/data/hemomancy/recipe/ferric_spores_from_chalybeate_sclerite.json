@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:chalybeate_sclerite" },
+    { "item": "hemomancy:spore_sac" },
+    { "item": "hemomancy:hyphal_substrate" }
+  ],
+  "result": {
+    "id": "hemomancy:ferric_spores"
+  }
+}

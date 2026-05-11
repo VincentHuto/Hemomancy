@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:chalybeate_sclerite"
+  },
+  "result": "hemomancy:hematic_iron_powder",
+  "count": 2,
+  "experience": 0.6,
+  "cookingtime": 220,
+  "id": "hemomancy:distillation/chalybeate_sclerite"
+}

@@ -536,6 +536,7 @@ Each faction's relationship with materials reflects their worldview.
 | Material | Faction | Significance |
 |----------|---------|--------------|
 | **Hematic Iron** | Harbingers | Blood-fused iron — the organic and the mineral made one. The body's mineral content, weaponized. |
+| **Chalybeate Sclerite** | Harbingers | Iron-sulfide armor scale from deep vent snails; a Ferric ocean expression of the same living-mineral philosophy behind hematic iron. It is best taken by careful knapping from a withdrawn living animal, not by slaughter. |
 | **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |
 | **Living materials** (bone, chitin, organic tools) | Harbingers | Blood magic makes materials *alive* — tools that feed and grow. |
 | **Copper** | Unstained | Antiseptic in nature; the Unstained discovered it historically staved off illness. The foundational material of their practice. |
@@ -584,7 +585,9 @@ The mod's worldbuilding extends into the animal kingdom: **arthropods** are the 
 | **Sea Urchins** | Produce calcified blood spines — the natural equivalent of blood being hardened into barbs. The inspiration for the Barbed armor set and the Urchin Morphling. |
 | **Chthonians (termites)** | Grow iron-infused mandibles — essentially, hematic iron that grew biologically. They chew through wood (and eventually wooden tools) with their metal jaws. Spawn in Savanna biome termite mounds; each mound contains exactly one Queen. |
 | **Barbed Urchins** | Shallow-water expression of iron blood magic — spined aquatic creatures. |
-| **Deep-sea iron snail equivalent** | A planned creature for deep ocean biomes, inspired by the real-world iron-plated snail (Chrysomallon squamiferum) that lives on hydrothermal vents and grows an iron sulfide shell. |
+| **Chalybeate Snails** | Implemented deep-ocean iron snails inspired by the real-world iron-plated snail (Chrysomallon squamiferum). They cluster around hydrothermal vent fields and grow iron-sulfide sclerites that Harbingers prize as Ferric material. Their best harvest is careful knapping while retracted, reinforcing the Order's uneasy covenant with living sources rather than simple predation. |
+
+**Deep ocean ecology V1:** Hydrothermal vent fields are the first ocean-expansion slice. They are mineral heat-scars on the sea floor, not ore nodes: basalt, blackstone, deepslate, magma, and restrained blood-organic accents where Chalybeate Snails graze. Fungal coral reefs and Harbinger exploration vessels remain future hooks for a broader ocean layer, especially for covenant salvage, taboo research, and naval expedition stories without flattening Harbingers into villains.
 
 The **Chthonian Queen** is the only creature in the mod associated with gold — a nod to her royal status and to gold's position as a material that sits between but belongs to neither faction.
 

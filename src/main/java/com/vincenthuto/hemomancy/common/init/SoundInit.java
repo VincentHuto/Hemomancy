@@ -82,6 +82,14 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BARBED_URCHIN_DEATH = registerSoundEvent(
 			"entity.barbed_urchin.death");
 
+	// Chalybeate Snail (iron-sulfide vent grazer)
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CHALYBEATE_SNAIL_AMBIENT = registerSoundEvent(
+			"entity.chalybeate_snail.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CHALYBEATE_SNAIL_HURT = registerSoundEvent(
+			"entity.chalybeate_snail.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CHALYBEATE_SNAIL_DEATH = registerSoundEvent(
+			"entity.chalybeate_snail.death");
+
 	// ===== Arthropods =====
 
 	// Chitinite (armored insectoid, rolls into a ball)

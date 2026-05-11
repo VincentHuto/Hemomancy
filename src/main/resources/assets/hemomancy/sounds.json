@@ -209,6 +209,36 @@
       }
     ]
   },
+  "entity.chalybeate_snail.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chalybeate_snail.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/barbed_urchin/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chalybeate_snail.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chalybeate_snail.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/barbed_urchin/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chalybeate_snail.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chalybeate_snail.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/barbed_urchin/death",
+        "stream": true
+      }
+    ]
+  },
   "entity.chitinite.ambient": {
     "category": "entity",
     "subtitle": "subtitle.hemomancy.entity.chitinite.ambient",
