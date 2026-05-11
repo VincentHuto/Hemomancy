@@ -1,6 +1,6 @@
 # Hemomancy - Developer Reference
 
-> **Last audited:** 2026-05-10
+> **Last audited:** 2026-05-11
 > **Mod ID / package:** `hemomancy` / `com.vincenthuto.hemomancy`
 > **Target:** Minecraft `1.21.1`, NeoForge `21.1.219`, Java `21`
 > **Version:** `6.0.1-neoforge.1.21.1.0`
@@ -38,44 +38,48 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 6. [The Unstained Path (Anti-Hemomancy)](#6-the-unstained-path-anti-hemomancy)
 7. [Mutual Exclusion of Paths](#7-mutual-exclusion-of-paths)
 
-**Blood Systems**
+**Hematic Body & Blood Systems**
 8. [Blood Manipulations](#8-blood-manipulations)
 9. [Blood Tendency (Kinship) System](#9-blood-tendency-kinship-system)
 10. [Vascular System](#10-vascular-system)
 11. [Skill Tree](#11-skill-tree)
 12. [Bloodlines](#12-bloodlines)
-13. [Status Effects & Potions](#13-status-effects--potions)
+13. [Scars & Spores](#13-scars--spores)
+14. [Status Effects & Potions](#14-status-effects--potions)
 
-**Companions & Autonomy**
-14. [Morphlings](#14-morphlings)
-15. [Drudge System](#15-drudge-system)
-16. [Scars & Spores](#16-scars--spores)
+**Unstained Systems**
+15. [Unstained Systems](#15-unstained-systems)
+
+**Companions, Summons & Automation**
+16. [Morphlings](#16-morphlings)
+17. [Puppeteering & Summons](#17-puppeteering--summons)
+18. [Drudge System](#18-drudge-system)
+19. [Direct Blood Routing & Servitors](#19-direct-blood-routing--servitors)
 
 **Content Catalogs**
-17. [Items & Materials](#17-items--materials)
-18. [Tools & Weapons](#18-tools--weapons)
-19. [Armor Sets](#19-armor-sets)
-20. [Functional Blocks & Block Entities](#20-functional-blocks--block-entities)
-21. [Decorative & Building Blocks](#21-decorative--building-blocks)
-22. [Recipe Systems](#22-recipe-systems)
-23. [Mob Entities](#23-mob-entities)
-24. [Projectile & Blood Construct Entities](#24-projectile--blood-construct-entities)
+20. [Items & Materials](#20-items--materials)
+21. [Tools & Weapons](#21-tools--weapons)
+22. [Armor Sets](#22-armor-sets)
+23. [Functional Blocks & Block Entities](#23-functional-blocks--block-entities)
+24. [Decorative & Building Blocks](#24-decorative--building-blocks)
+25. [Recipe Systems](#25-recipe-systems)
+26. [Mob Entities](#26-mob-entities)
+27. [Projectile & Blood Construct Entities](#27-projectile--blood-construct-entities)
 
 **World, Client & Appendices**
-25. [World Generation & Biomes](#25-world-generation--biomes)
-26. [Structures](#26-structures)
-27. [Villagers & Professions](#27-villagers--professions)
-28. [GUIs & Overlays](#28-guis--overlays)
-29. [Advancements](#29-advancements)
-30. [Keybindings](#30-keybindings)
-31. [Commands](#31-commands)
-32. [Sound Events](#32-sound-events)
-33. [Particle Types](#33-particle-types)
-34. [Mod Compatibility](#34-mod-compatibility)
-35. [Known WIP / Incomplete Systems](#35-known-wip--incomplete-systems)
+28. [World Generation & Biomes](#28-world-generation--biomes)
+29. [Structures](#29-structures)
+30. [Villagers & Professions](#30-villagers--professions)
+31. [GUIs & Overlays](#31-guis--overlays)
+32. [Advancements](#32-advancements)
+33. [Keybindings](#33-keybindings)
+34. [Commands](#34-commands)
+35. [Sound Events](#35-sound-events)
+36. [Particle Types](#36-particle-types)
+37. [Mod Compatibility](#37-mod-compatibility)
+38. [Known WIP / Incomplete Systems](#38-known-wip--incomplete-systems)
 
 ---
-
 ## 1. Getting Started
 
 1. **Find Gourd Seeds** ![Gourd Seeds](../src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) — obtained from breaking grass (advancement: *Strange Seeds*).
@@ -220,7 +224,7 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 
 ### 3.3 MnA Cross-Mod Config (`HemoMnAConfig`)
 
-Preserved for MnA compat, but **not currently registered** because the MnA dependency and `Hemomancy.java` registration block are commented out on the NeoForge 1.21.1 branch. See §34.1 for the dormant compat status.
+Preserved for MnA compat, but **not currently registered** because the MnA dependency and `Hemomancy.java` registration block are commented out on the NeoForge 1.21.1 branch. See §37.1 for the dormant compat status.
 
 **Conversion** (`conversion`):
 
@@ -508,33 +512,6 @@ There are **four Saints** in total; which one a player encounters first is parti
 
 > **Status: Partial.** The shared sarcophagus encounter spine is implemented for all four saints: peaceful aligned extraction, unaligned rejection/awakening, Foul Paste forced awakening, saint-specific boss dispatch, Consecrated Syringe tagging, and direct boss residuum rewards. Hemorath's basin/altar/gate trial remains the first complete trial flow. Seraphae, Putriciel, and Velorum have boss AI implemented and registered, but bespoke Trial Chamber rooms, world placement tuning, models/textures/GeckoLib animations, and final balance are still WIP.
 
-### 5.8.1 Puppeteer Summons (Degree 2+)
-
-The puppeteer summon system is a Harbinger-side control-tool path rather than another blood manipulation category.
-
-- **Control tool:** `marionette_crossbar` / **Marionette Crossbar**. It stores a stable crossbar UUID, selected summon name, and up to 256 thread charge. Use calls or recalls the selected summon; sneak-use cycles known summons. The item bar is always visible on crossbars and acts as the thread meter: full at 256 thread, empty at 0, using a crimson/red color ramp even though the item is not damageable.
-- **Station:** `puppeteers_spindle` / **Puppeteer's Spindle**. It is a persistent block entity with two menu slots: a crossbar slot and a thread feeder slot. Placed thread is consumed immediately into the spindle's internal `threadBuffer` at 1 buffer per item count, capped at 512. A slotted Marionette Crossbar automatically draws from that buffer until the crossbar reaches its 256-thread cap. Binding, summon selection, and call/recall preparation are controlled from the spindle screen/packets and operate on the slotted crossbar rather than the player's first inventory crossbar.
-- **Spindle rendering/UI:** The placed spindle stores horizontal facing, faces the placing player, and renders through `PuppeteersSpindleRenderer` / `PuppeteersSpindleModel` with a custom item renderer instead of appearing as a venous stone brick cube. Its screen uses a vein-pattern background, styled slot frames, crossbar/thread meters, summon list, and themed buttons/tooltips.
-- **Unlock economy:** Direct "unlock next summon with Sanguine Quintessence" spindle use is retired. `sanguine_quintessence` is now the held catalyst for instant Blood Crafting puppeteer trial recipes; defeating the spawned unbound trial boss permanently grants that summon shape to the trial caster.
-- **Thread economy and tether:** Summoning spends the definition's `threadSummonCost`; active summons drain `threadUpkeepPerMinute` from their owning crossbar every minute. Each bound summon renders a red thread back to its owner. If the matching crossbar is not equipped in either hand, the summon and thread flicker/fade for 100 ticks (5 seconds); re-equipping the crossbar stabilizes the summon, while failing to do so unravels it. If upkeep cannot be paid, the crossbar's active summons still unravel immediately.
-- **Anti-stockpile rule:** active summon cap is calculated from the player's `skill_puppet_skein` level and checks active bound summons by owner, not by crossbar. Carrying extra crossbars cannot exceed the learned cap.
-- **Skills:** `skill_puppet_skein` increases active summon cap, `skill_living_sinew` increases summon health/damage, and `skill_far_tether` increases command range.
-- **Harbinger UI:** `HarbingerProgressScreen` includes a `SUMMONS` tab. It groups summons by degree, shows degree-locked, recipe-locked, trial-required, and known states, reports base and skill-modified stats, and creates a client-only preview entity for the selected summon. Preview render failures fall back to an icon/text placeholder rather than crashing the screen.
-
-Puppeteer trial recipes unlock when the matching degree is obtained and are also re-awarded on login for existing saves. The recipe `required_degree` is sourced from the matching `PuppeteerSummonDefinition.requiredDegree()` at runtime so the Blood Crafting gate cannot drift from the summon definition gate. Trial bosses reuse the summon definitions as unbound hostile versions with default boss tuning: 1.5x health, 1.25x damage, no owner/crossbar upkeep, no active-summon cap accounting, and caster-only unlock credit on death.
-
-Current summon definitions:
-
-| Summon | Degree | Role | Base HP | Base Damage | Thread Call | Upkeep | Trial Blood |
-|---|---:|---|---:|---:|---:|---:|---:|
-| `veinwing_vulture` | 2 | Fast flying striker | 14 | 4 | 28 | 18/min | 500 |
-| `marrow_spitter` | 3 | Ranged support | 22 | 5 | 38 | 12/min | 750 |
-| `gorebound_hulk` | 4 | Slow heavy bruiser | 55 | 9 | 56 | 8/min | 1100 |
-
-Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
-
----
-
 ### 5.9 Qliphoth Communion (Degree 7 → 8 Prerequisites)
 
 Qliphoth Communion is the multi-step prerequisite chain that unlocks the Rite of Apotheos. It is **fully implemented**. The five stages are:
@@ -600,42 +577,6 @@ When degree rites actually advance the player to Degrees 5, 6, and 7, `FungalWhi
 | `pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
 | `pome_total_consumed` | Int | Total pome counter for HUD display, capped at 9 |
 | `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` — set when Archon resolves the Fungal Dimension choice fork |
-
----
-
-### 5.10 Direct Blood Routing (Degree 3-5)
-
-Direct Blood Routing is the no-basin automation model for blood-fed machines. It intentionally avoids a NeoForge blood fluid, external pipe compatibility, and new bulk blood storage blocks. Links persist owner, mode, bloodline permission, and target working reserve in `BloodRoutingSavedData`; they do not persist blood.
-
-**Core routing API:**
-- `IBloodSourceContract` models a permitted source contract that can validate ownership, range, and maximum draw rate.
-- Current source contracts are `EquippedGourdSource`, `LinkedPlayerSource`, `BloodlineSource`, `ThrallCourierSource`, and `DrudgeTenderSource`.
-- `IBloodRoutingTarget` lets a machine request only current recipe demand or a capped working reserve.
-- `BloodRoutingHelper` performs pull-based transfer, source priority, safety floors, bloodline checks, and target sync.
-- Existing `IBloodTile` / `IBloodReservoirContainer` reservoirs remain valid targets. If a block entity does not implement `IBloodRoutingTarget`, routing fills only toward `BloodRoutingRules.DEFAULT_WORKING_RESERVE` (600 blood), not the whole reservoir.
-
-**Hematic Suture Needle:**
-- Registry item: `hematic_suture_needle`; class: `HematicSutureNeedleItem`.
-- Degree 3+ can bind a blood-capable block entity or a `HematicSutureNodeBlockEntity` to the player in nearby mode.
-- Sneak-use on the player's own bound link cycles modes: nearby -> sanctum -> sanctum + bloodline -> nearby. Sanctum mode requires Degree 5 and the link position to be inside the owner's Founding Sanctum radius.
-- Sneak-use in air toggles the player's `IBloodVolume#isBloodRoutingOptInEnabled()` flag for bloodline routing permission.
-
-**Source priority and limits:**
-- Nearby links require the bound player to be online, alive, active in `IBloodVolume`, Degree 3+, in the same level, and within `BloodRoutingHelper.NEARBY_RANGE` (16 blocks).
-- Sanctum links require Degree 5+ and a link position inside the owner's Founding Sanctum.
-- Routing ticks every 10 ticks with a default pass budget of 100 blood (`DEFAULT_MAX_RATE_PER_TICK` 10 x interval).
-- Source order is: open equipped Blood Gourd first (scar slot, main hand, then offhand, using that gourd's tier transfer rate), then owner blood at up to 80 blood per pass while staying above the 50% safety floor, then optional bloodline pool at up to 60 blood per pass.
-- Bloodline draw only works in sanctum mode with bloodline mode enabled. The linked player must belong to a valid bloodline, the shared pool must contain blood, and the linked player must be the bloodline leader or have their routing opt-in enabled.
-
-**Hematic Suture Node:**
-- Registry block: `hematic_suture_node`; block entity: `HematicSutureNodeBlockEntity`.
-- Optional visible anchor for longer or clearer sanctum infrastructure. Machines can still be bound directly for simple setups.
-- Holds no blood capability and no persistent reservoir; it emits subtle red dust routing particles when it moves blood.
-- Every routing interval it attempts to feed adjacent linked targets from the same saved link budget.
-
-**Servitor behavior:**
-- `BloodThrallEntity` can bind a direct-routing source/node, physically carry a capped amount of blood, and deposit into a destination reservoir. It draws through the same linked source contracts, so it cannot duplicate blood or bypass safety limits.
-- `DrudgeTenderSource` lets Drudges near their Semi-Sentient Construct tend nearby linked machines. A Drudge scans saved Suture links around its SSC, spends internal charge only when routing succeeds, and does not generate or bulk-store blood for machines.
 
 ---
 
@@ -778,42 +719,6 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 - **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
 - Reaching 100 clarity = **Enlightenment**, the final state
 
-#### Still Arts
-
-Still Arts are the Clarity-phase counterpart to Blood Manipulations, but they are not crafted Hematic Memories. They are granted by Our Lady of Still Waters and by Unstained rites as the player's silvery vital humor becomes stable enough to carry them.
-
-Implementation spine:
-- Registry: `StillArtInit.STILL_ARTS` (`hemomancy:still_arts`)
-- Art definition: `common/unstained/stillarts/StillArt`
-- Player state: `IKnownStillArts` / `KnownStillArts`, exposed through `HemoCapabilityAccess.getKnownStillArts(player)`
-- Sync and use packets: `KnownStillArtsServerPacket`, `UpdateSelectedStillArtPacket`, `UseStillArtKeyPacket`
-- Client selection: `RadialChooseStillArtScreen`, opened from the existing charm/radial key after Clarity is unlocked
-
-Current basic Still Arts:
-
-| Art | Required Clarity Stage | Role |
-|-----|------------------------|------|
-| Silver Rebuke | Awakened | Short-range pale knockback and slowing rebuke |
-| Lethean Mute | Awakened | Silences hostile bodies through weakness and confusion |
-| Still Pulse | Discerning | Brief defensive stillness and area slowing |
-| Pale Diagnosis | Discerning | Reveals nearby suspicious or afflicted bodies |
-| Memory Shear | Vigilant | Cuts a monster's immediate hostile fixation and disorients it |
-| Absolving Step | Vigilant | Purging step that clears fire, poison, and wither while lunging forward |
-| Quietus Bell | Resolute | Protective bell pulse that weakens surrounding hostiles |
-| Autoimmune Edge | Enlightened | Dangerous pale backlash against nearby living bodies |
-
-The Rite of Clarity (Consecrated Copper at the Unstained Podium) directly grants **Silver Rebuke** as the first Still Art via `KnownStillArtEvents.grantArt(player, StillArtInit.silver_rebuke)`. The remaining arts are granted by **advancements** through `StillArtRewardTable` — `KnownStillArtEvents.onAdvancementEarned` maps specific Unstained advancements to their eligible `EnumClarityStage` and calls `grantArtsForStage()`, which grants all arts whose required stage is ≤ the earned stage:
-
-| Advancement | Clarity Stage | Arts Granted |
-|---|---|---|
-| `hemomancy/clarity_awakened` | AWAKENED | Silver Rebuke, Lethean Mute |
-| `hemomancy/discerning` | DISCERNING | Still Pulse, Pale Diagnosis |
-| `hemomancy/vigilant` | VIGILANT | Memory Shear, Absolving Step |
-| `hemomancy/resolute_stage` | RESOLUTE | Quietus Bell |
-| `hemomancy/enlightened_seeker` | ENLIGHTENED | Autoimmune Edge |
-
-On login, `playerLoggedIn` calls `grantEligibleArts()` to backfill any arts the player should already have based on current `IUnstainedProgress` clarity. The radial selection screen (`RadialChooseStillArtScreen`) is opened from the existing charm/radial key once Clarity is unlocked.
-
 ### 6.6 Unstained Progression Level (`getPlayerUnstainedLevel`)
 
 To gate Unstained cardinal rites the same way Harbinger degree gates Harbinger rites, the full purity → clarity path is divided into **8 numbered levels** by `HemoCapabilityAccess.getPlayerUnstainedLevel(Player)`:
@@ -830,64 +735,7 @@ To gate Unstained cardinal rites the same way Harbinger degree gates Harbinger r
 | 7 | Vigilant | clarity ≥ 50 |
 | 8 | Enlightened | `isEnlightened()` (clarity ≥ 100) |
 
-These levels are compared against each recipe's explicit `required_degree` value through `RecipeDegreeGates`, using the same field name as Harbinger Cardinal Rites and Blood Structure recipes. `CardinalRiteType` still controls ritual form and cast behavior, but it does not imply progression access for Unstained rites.
-
-### 6.7 Unstained Cardinal Rites
-
-All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather than the blood reservoir.
-
-**Purity-Phase Rites (levels 0–5):**
-
-| Rite | File | Rite Form | Required Stage | Effect |
-|------|------|-----------|----------------|--------|
-| Rite of Lethean Baptism | `lethean_baptism` | Minor | 0 | Begins the Unstained path; sets `begunPurification = true`, grants starting purity |
-| Rite of Still Waters | `still_waters` | Minor | 1 (Begun) | Creates a 5-min zone (16 block radius) reducing magic damage by 30% |
-| Rite of Pale Consecration | `pale_consecration` | Lesser | 2 (Tainted) | 10-min zone that sears and slows hostile mobs entering the consecrated ground |
-| Rite of the Silver Veil | `silver_veil` | Lesser | 2 (Tainted) | Grants Silver Ward effect (30 min, amplifier 1) to the caster |
-| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 5 (Purified) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
-| Rite of the Lethean Tide | `lethean_tide` | Greater | 3 (Cleansing) | Forcibly ends an active Blood Moon; grants the caster +10 purity |
-| Rite of Clarity Ascension | `clarity_ascension` | Greater | 5 (Purified) | Unlocks the clarity phase (`clarityUnlocked = true`); requires full purity enforced in handler |
-| Rite of the Closed Vein | `closed_vein` | Minor | 5 (Purified) | Reusable, non-breaking rite; clears Blood Loss, grants Silver Ward, slows nearby hostiles, and grants Lethean Mute after Clarity |
-| Rite of the Lethe Covenant | `lethe_covenant` | Grand | 8 (Enlightened) | Establishes a Lethe Covenant domain: 5 chunks, 30 min. Halves spawns, shields Silver Ward from bleed, passively grows purity for Unstained inside |
-| Rite of Lethean Judgment | `lethean_judgment` | Grand | 8 (Enlightened) | Offensive: applies Hemolysis (amp 2, 30 s) and disrupts vascular system of all blood-active players within 16 blocks |
-
-**Clarity-Phase Rites (levels 6–8):**
-
-| Rite | File | Rite Form | Required Stage | Effect |
-|------|------|-----------|----------------|--------|
-| Rite of the Silver Dawn | `silver_dawn` | Greater | 6 (Discerning) | Converts blood-faction blocks to cleansed equivalents in 8-block radius; grants Verdigris Aura (amp 2, 10 min) and +5 clarity |
-| Rite of Antiseptic Ground | `antiseptic_ground` | Lesser | 6 (Discerning) | Reusable, non-breaking rite; creates a 15-min antiseptic ground zone and grants Still Pulse + Pale Diagnosis |
-| Rite of Glass Lungs | `glass_lungs` | Lesser | 7 (Vigilant) | Reusable, non-breaking rite; clears poison/wither/fire, grants clean breath and slow falling, and grants Memory Shear + Absolving Step |
-| Rite of the Pale Vigil | `pale_vigil` | Greater | 7 (Vigilant) | Bursts +10 clarity, Silver Ward (amp 2, 30 min), and Verdigris Aura (amp 2, 30 min) to all clarity-bearing Unstained within 40 blocks. Grants `ADV_VIGILANT`. |
-| Rite of Moon-Washed Copper | `moon_washed_copper` | Greater | 7 (Vigilant) | Reusable, non-breaking rite; grants Verdigris Aura/Silver Ward, +5 clarity (+10 at night), Quietus Bell, and Autoimmune Edge if Enlightened |
-| Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`. |
-
-### 6.8 HUD
-
-Unstained players see a dedicated top-right reliquary orb overlay (`UnstainedGaugeOverlay`). It only renders once `hasBegunPurification()` is true.
-
-The overlay is built from **layered PNG textures** in `assets/hemomancy/textures/gui/unstained_overlay/`:
-
-| Layer | Count | Purpose |
-|-------|-------|---------|
-| `orb_purity_0` – `orb_purity_20` | 21 frames | Orb fill color — washes from blood-red (0) toward silver-white (20) as purity rises |
-| `halo_0` – `halo_10` | 11 frames | Glow halo around the diamond frame; appears at full purity, intensifies with clarity |
-| `diamond_clarity_0` – `diamond_clarity_10` | 11 frames | Faceted diamond frame — brightens through 11 clarity stages |
-| `diamond_purified` | 1 | Static frame used when purity is complete but clarity not yet unlocked |
-| `pips_purity_0` – `pips_purity_4` | 5 frames | Angular purity stage pips along the bottom V of the diamond frame |
-| `pips_clarity_0` – `pips_clarity_4` | 5 frames | Same pip geometry, verdigris-colored for the clarity phase |
-
-Animated fluid fills the interior of the orb (circle geometry using inverse binary search for constant-area fill):
-- A **meniscus line** with a sine-wave animation renders at the fluid surface; amplitude is reduced as the orb fills
-- **Blood particle sprites** rise through the fluid while purity < 100%; they fade out as purity increases
-- The fluid color transitions from blood-red to white across the purity range
-- When `clarityUnlocked = true` the orb shows full white fill and the halo+diamond tracks the clarity step instead
-
-Text rendered to the right of the orb:
-- Stage title (e.g. "Cleansing") — color lerps from red to pale white as purity rises; verdigris when clarity is active
-- Percentage line (e.g. "Purity 54%")
-
-The overlay sits in the top-right corner (`screenWidth - 34, centerY = 54`). Position is not configurable (right-side only).
+These levels are compared against each Unstained recipe's explicit `required_degree` value through `RecipeDegreeGates`. The field intentionally mirrors Harbinger degree gates for shared tooling, but Unstained recipes are cataloged separately from Harbinger Blood Structure and Cardinal Rite recipes in §15.
 
 ---
 
@@ -1133,7 +981,131 @@ A multiplayer social system where players form blood-bound groups.
 
 ---
 
-## 13. Status Effects & Potions
+## 13. Scars & Spores
+
+### 13.1 Scars
+
+Scars are equippable items stored in a **Scar Binder** ![Scar Binder](../src/main/resources/assets/hemomancy/textures/item/scar_binder.png) (18 slots) or **Scar Binder Upgraded** ![Scar Binder Upgraded](../src/main/resources/assets/hemomancy/textures/item/scar_binder_upgraded.png) (27 slots). They are crafted at the **Cerebral Scarring Station**. Scar crafting requires **Initiatory Degree 4 (Adept)** minimum.
+
+Scars are organized in **three tiers** by `deepenAmount` — how strongly they shift tendency alignment per equipped slot. The current NeoForge branch also gives standard scars real passive/combat effects through `ItemScar`: attribute modifiers, persistent effects, blood upkeep, max-blood modifiers, and event hooks for attack/defense/kill/tick behavior. `Scar Affinity` scales synergy modifiers, `Scar Resonance` increases effective combat slots, and `Scar Mastery` extends triggered scar effect durations.
+
+**Tier 1 Scars (deepenAmount = 1) — Basic, available at Degree 4:**
+
+| Scar | Tendency | Effect |
+|------|----------|--------|
+| ![](../src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Legacy override scar / mind spike slot behavior |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | +2 Max Health |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_pyre.png) Scar of the Pyre | Flammeus | +1 Attack Damage, -1 Armor |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | +5% Attack Speed, -1 Armor |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_halo.png) Scar of the Halo | Lux | +1 Armor Toughness, -5% Movement Speed; blinds attackers |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_blight.png) Scar of Blight | Mortem | +1 Attack Damage; poison backtracks onto wearer after kills |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_rime.png) Scar of Rime | Congeatio | +5% Movement Speed, -5% Attack Speed; slows struck foes |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_thorn.png) Scar of the Thorn | Ferric | +1 Armor, -5% Movement Speed; reflects 1 thorns damage |
+| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_shade.png) Scar of the Shade | Tenebris | +5% Movement Speed, -1 Attack Damage; invisibility in darkness |
+
+**Tier 2 Scars (deepenAmount = 2) — Advanced, available at Degree 4:**
+
+| Scar | Tendency | Effect |
+|------|----------|--------|
+| Scar of Marrow | Animus | +4 Max Health, -5% Movement Speed; heals wearer on kill |
+| Scar of Sol | Flammeus | +2 Attack Damage, -2 Armor; briefly ignites attackers |
+| Scar of Flux | Ductilis | +10% Attack Speed, -2 Armor; grants Haste on kill |
+| Scar of the Veil | Lux | +2 Armor Toughness, -10% Movement Speed; blinds + marks attackers with Glowing |
+| Scar of Withering | Mortem | +2 Attack Damage, -2 Max Health; poisons struck foes |
+| Scar of the Glacier | Congeatio | +10% Movement Speed, -10% Attack Speed; slows struck and nearby foes |
+| Scar of the Anvil | Ferric | +2 Armor, +1 Armor Toughness, -10% Movement Speed; reflects 2 thorns damage |
+| Scar of the Moon | Tenebris | +10% Movement Speed, -2 Attack Damage; invisibility in darkness and when struck in darkness |
+
+**Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5 (planned: move gate to Degree 6):**
+
+| Scar | Tendency | Effect |
+|------|----------|--------|
+| Scar of the Phoenix | Animus | +6 Max Health, -10% Movement Speed; heals on kill and regenerates when gravely wounded |
+| Scar of the Corona | Flammeus | +3 Attack Damage, +0.3 Knockback Resistance, -3 Armor; ignites attackers |
+| Scar of the Chimera | Ductilis | +15% Attack Speed, -3 Armor, -4 Max Health; Haste/Speed/Strength on kill |
+| Scar of Transcendence | Lux | +2 Armor Toughness, -15% Movement Speed; blinds/marks attackers and grants Resistance in bright light |
+| Scar of Oblivion | Mortem | +3 Attack Damage, -4 Max Health; withers struck foes |
+| Scar of Descendence | Congeatio | +15% Movement Speed, -15% Attack Speed, -2 Attack Damage; slows struck/nearby foes and grants slow fall |
+| Scar of the Crucible | Ferric | +3 Armor, +2 Armor Toughness, -15% Movement Speed, -5% Attack Speed; reflects 3 thorns damage |
+| Scar of the Eye | Tenebris | +15% Movement Speed, -3 Attack Damage; invisibility in darkness and when struck |
+
+> **Scar Mechanic:** All standard scars extend `ItemScar`; when equipped in a valid Scar Binder slot they deepen the player's Blood Tendency alignment and apply their configured modifiers/effects. A stale `scar_ichor` recipe/lang/model entry still exists in resources, but `ItemInit` does **not** currently register `scar_ichor`; the active Animus tier-3 scar is `scar_phoenix`.
+
+Each scar has a corresponding **Scar Pattern** item used in crafting.
+
+### 13.2 Functional Fungal Scars (Scar-type items)
+
+Special fungal scar items with active effects extend `ItemFungalScar`, render as rotating 3D scar items on the player, have rare rarity/foil visuals, and occupy the dedicated fungal scar slot (`ScarType.FUNGAL`, slot 0). The current implementation uses the **Mycelial Crucible**, not the Morphling Incubator, and the old four-scar incubator plan has been superseded.
+
+The basic saint-linked set remains tuned at 1,200 blood / 1,200 ticks / 2,000 enzyme-power threshold:
+
+| Item | Tendency | Active Effect |
+|------|----------|---------------|
+| ![](../src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the `fungal_elytra` effect while equipped; glide support is maintained by `ScarEntityEventHandler.onGlideTick()` |
+| ![](../src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Grants Water Breathing while equipped |
+| ![](../src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste while worn and enables shift-mining ore vein mining through `VeinMinerHelper` |
+| ![](../src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Grants Night Vision, Strength, and Resistance while equipped |
+
+The new advanced set is also registered and has live event handlers for the non-tooltip effects:
+
+| Item | Tendency | Active Effect | Cultivation Cost |
+|------|----------|---------------|------------------|
+| **Saprovitta vestigium** | Flammeus | **Feeding Wake** — movement leaves a brief damaging blood-fungal trail (1.5 magic damage pulses every 6 ticks while moving) | 1,200 blood / 1,200 ticks / 2,000 enzyme power |
+| **Antiphonomyces resonans** | Ductilis | **Crawling Choir** — 20% chance for a successful blood manipulation to echo-cast at no extra blood cost | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Sanguiflora cadens** | Mortem | **Vein Orchard** — 30% chance on kill to bloom blood resources at the death site (Spore Sac, sometimes Hematic Iron Scrap) | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Thanomyces resurgens** | Congeatio | **Split Husk** — prevents death once, drains all active blood, reforms at 25% health, 15-minute per-stack cooldown | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+| **Anastocordyceps nexus** | Lux | **Latching Vein** — striking an enemy tethers nearby foes for 6 seconds; tethered targets share 20% of damage taken | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
+
+**Mycelial Crucible recipe format** (`data/hemomancy/recipe/fungal_scar/*.json`):
+```json
+{
+  "type": "hemomancy:fungal_scar_cultivation",
+  "tendency": "LUX",
+  "blood_cost_phase1": 2400,
+  "phase1_duration": 2400,
+  "maturation_threshold": 3000,
+  "immature_result": { "id": "hemomancy:immature_fungal_scar" },
+  "result": { "id": "hemomancy:anastocordyceps_nexus" }
+}
+```
+
+### 13.3 Spore Cultures (Enzyme Fruiting)
+
+Aligned spores are now functional reusable culture items for the **Mycelial Lantern** enzyme-fruiting loop. Each is registered as an uncommon item that stacks to 16 and is crafted shapelessly from the matching enzyme + `spore_sac` + `hyphal_substrate`. The culture remains in the Lantern while blood is converted into the matching enzyme output.
+
+One culture exists for each enzyme/tendency vocabulary pair:
+![](../src/main/resources/assets/hemomancy/textures/item/vivacious_spores.png) Vivacious,
+![](../src/main/resources/assets/hemomancy/textures/item/fervent_spores.png) Fervent,
+![](../src/main/resources/assets/hemomancy/textures/item/neurotic_spores.png) Neurotic,
+![](../src/main/resources/assets/hemomancy/textures/item/incandescent_spores.png) Incandescent,
+![](../src/main/resources/assets/hemomancy/textures/item/ruinous_spores.png) Ruinous,
+![](../src/main/resources/assets/hemomancy/textures/item/frigid_spores.png) Frigid,
+![](../src/main/resources/assets/hemomancy/textures/item/ferric_spores.png) Ferric,
+![](../src/main/resources/assets/hemomancy/textures/item/umbral_spores.png) Umbral.
+
+The JSON recipes live at `data/hemomancy/recipe/<spore_id>.json`, e.g. `vivacious_spores.json` combines `vivacious_enzyme`, `spore_sac`, and `hyphal_substrate` into `vivacious_spores`.
+
+### 13.4 Mycelial Crucible & Immature Fungal Scar Cultures
+
+The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-scar cultivation station. It has 8 slots:
+
+- Center (slot 0): finished fungal scar seed for Phase 1, or `immature_fungal_scar` for Phase 2
+- Enzyme slots (1–4): aligned `EnzymeItem` / `RecycledEnzymeItem`; only matching tendency contributes
+- Output (5): immature culture or finished scar
+- Blood input (6): Bloody Flask or Blood Gourd
+- Flask output (7): empty/cured flask return
+
+**Phase 1 — Implantation:** The center scar plus aligned enzymes start a timed cultivation run. The crucible deducts the recipe's flat blood cost, then drains 1.5 blood/tick for the recipe duration. On completion it consumes the center/enzymes and outputs the single consolidated `immature_fungal_scar`.
+
+**Phase 2 — Maturation:** The immature culture stores `Tendency`, `MatureThreshold`, `MatureProgress`, and `TargetScarId` in `DataComponents.CUSTOM_DATA`. Feeding aligned enzymes advances `MatureProgress`; when progress reaches the threshold, the crucible converts it into the target `ItemFungalScar`. Progress is preserved on the item stack, and blood shortages pause the process rather than resetting it.
+
+`Hyphal Substrate` is registered as a supporting crafting ingredient, and `immature_fungal_scar` uses one model/texture with dynamic translated names such as `item.hemomancy.immature_scar.anastocordyceps_nexus`.
+
+> **Design status:** The extractor / harvested Fungal Gardens scar plan has been replaced for now by crucible cultivation. The deeper Apotheos-tier fungal scar concept remains open-ended design space, but the implemented fourth scar family is already live through `ItemFungalScar` + `MycelialCrucible`.
+
+---
+
+## 14. Status Effects & Potions
 
 Each effect has a corresponding potion, splash potion, lingering potion, and tipped arrow variant:
 
@@ -1163,11 +1135,159 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 
 ---
 
-## 14. Morphlings
+## 15. Unstained Systems
+
+This section collects the reusable anti-hemomancy systems. The Unstained path section explains how a player enters and advances through Purity/Clarity; this section tracks the powers, rites, purification mechanics, client surfaces, and data anchors that support that path.
+
+### 15.1 Still Arts
+
+Still Arts are the Clarity-phase counterpart to Blood Manipulations, but they are not crafted Hematic Memories. They are granted by Our Lady of Still Waters and by Unstained rites as the player's silvery vital humor becomes stable enough to carry them.
+
+Implementation spine:
+- Registry: `StillArtInit.STILL_ARTS` (`hemomancy:still_arts`)
+- Art definition: `common/unstained/stillarts/StillArt`
+- Player state: `IKnownStillArts` / `KnownStillArts`, exposed through `HemoCapabilityAccess.getKnownStillArts(player)`
+- Sync and use packets: `KnownStillArtsServerPacket`, `UpdateSelectedStillArtPacket`, `UseStillArtKeyPacket`
+- Client selection: `RadialChooseStillArtScreen`, opened from the existing charm/radial key after Clarity is unlocked
+
+Current basic Still Arts:
+
+| Art | Required Clarity Stage | Role |
+|-----|------------------------|------|
+| Silver Rebuke | Awakened | Short-range pale knockback and slowing rebuke |
+| Lethean Mute | Awakened | Silences hostile bodies through weakness and confusion |
+| Still Pulse | Discerning | Brief defensive stillness and area slowing |
+| Pale Diagnosis | Discerning | Reveals nearby suspicious or afflicted bodies |
+| Memory Shear | Vigilant | Cuts a monster's immediate hostile fixation and disorients it |
+| Absolving Step | Vigilant | Purging step that clears fire, poison, and wither while lunging forward |
+| Quietus Bell | Resolute | Protective bell pulse that weakens surrounding hostiles |
+| Autoimmune Edge | Enlightened | Dangerous pale backlash against nearby living bodies |
+
+The Rite of Clarity (Consecrated Copper at the Unstained Podium) directly grants **Silver Rebuke** as the first Still Art via `KnownStillArtEvents.grantArt(player, StillArtInit.silver_rebuke)`. The remaining arts are granted by **advancements** through `StillArtRewardTable` — `KnownStillArtEvents.onAdvancementEarned` maps specific Unstained advancements to their eligible `EnumClarityStage` and calls `grantArtsForStage()`, which grants all arts whose required stage is ≤ the earned stage:
+
+| Advancement | Clarity Stage | Arts Granted |
+|---|---|---|
+| `hemomancy/clarity_awakened` | AWAKENED | Silver Rebuke, Lethean Mute |
+| `hemomancy/discerning` | DISCERNING | Still Pulse, Pale Diagnosis |
+| `hemomancy/vigilant` | VIGILANT | Memory Shear, Absolving Step |
+| `hemomancy/resolute_stage` | RESOLUTE | Quietus Bell |
+| `hemomancy/enlightened_seeker` | ENLIGHTENED | Autoimmune Edge |
+
+On login, `playerLoggedIn` calls `grantEligibleArts()` to backfill any arts the player should already have based on current `IUnstainedProgress` clarity. The radial selection screen (`RadialChooseStillArtScreen`) is opened from the existing charm/radial key once Clarity is unlocked.
+
+### 15.2 Unstained Cardinal Rites
+
+All Unstained rites have `bloodCost: 0` — they draw from purity/clarity rather than the blood reservoir.
+
+**Purity-Phase Rites (levels 0–5):**
+
+| Rite | File | Rite Form | Required Stage | Effect |
+|------|------|-----------|----------------|--------|
+| Rite of Lethean Baptism | `lethean_baptism` | Minor | 0 | Begins the Unstained path; sets `begunPurification = true`, grants starting purity |
+| Rite of Still Waters | `still_waters` | Minor | 1 (Begun) | Creates a 5-min zone (16 block radius) reducing magic damage by 30% |
+| Rite of Pale Consecration | `pale_consecration` | Lesser | 2 (Tainted) | 10-min zone that sears and slows hostile mobs entering the consecrated ground |
+| Rite of the Silver Veil | `silver_veil` | Lesser | 2 (Tainted) | Grants Silver Ward effect (30 min, amplifier 1) to the caster |
+| Rite of Silthmere's Remembrance | `silthmeres_remembrance` | Greater | 5 (Purified) | Bursts +5 purity and refreshes Silver Ward for all Unstained within 32 blocks |
+| Rite of the Lethean Tide | `lethean_tide` | Greater | 3 (Cleansing) | Forcibly ends an active Blood Moon; grants the caster +10 purity |
+| Rite of Clarity Ascension | `clarity_ascension` | Greater | 5 (Purified) | Unlocks the clarity phase (`clarityUnlocked = true`); requires full purity enforced in handler |
+| Rite of the Closed Vein | `closed_vein` | Minor | 5 (Purified) | Reusable, non-breaking rite; clears Blood Loss, grants Silver Ward, slows nearby hostiles, and grants Lethean Mute after Clarity |
+| Rite of the Lethe Covenant | `lethe_covenant` | Grand | 8 (Enlightened) | Establishes a Lethe Covenant domain: 5 chunks, 30 min. Halves spawns, shields Silver Ward from bleed, passively grows purity for Unstained inside |
+| Rite of Lethean Judgment | `lethean_judgment` | Grand | 8 (Enlightened) | Offensive: applies Hemolysis (amp 2, 30 s) and disrupts vascular system of all blood-active players within 16 blocks |
+
+**Clarity-Phase Rites (levels 6–8):**
+
+| Rite | File | Rite Form | Required Stage | Effect |
+|------|------|-----------|----------------|--------|
+| Rite of the Silver Dawn | `silver_dawn` | Greater | 6 (Discerning) | Converts blood-faction blocks to cleansed equivalents in 8-block radius; grants Verdigris Aura (amp 2, 10 min) and +5 clarity |
+| Rite of Antiseptic Ground | `antiseptic_ground` | Lesser | 6 (Discerning) | Reusable, non-breaking rite; creates a 15-min antiseptic ground zone and grants Still Pulse + Pale Diagnosis |
+| Rite of Glass Lungs | `glass_lungs` | Lesser | 7 (Vigilant) | Reusable, non-breaking rite; clears poison/wither/fire, grants clean breath and slow falling, and grants Memory Shear + Absolving Step |
+| Rite of the Pale Vigil | `pale_vigil` | Greater | 7 (Vigilant) | Bursts +10 clarity, Silver Ward (amp 2, 30 min), and Verdigris Aura (amp 2, 30 min) to all clarity-bearing Unstained within 40 blocks. Grants `ADV_VIGILANT`. |
+| Rite of Moon-Washed Copper | `moon_washed_copper` | Greater | 7 (Vigilant) | Reusable, non-breaking rite; grants Verdigris Aura/Silver Ward, +5 clarity (+10 at night), Quietus Bell, and Autoimmune Edge if Enlightened |
+| Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`. |
+
+### 15.3 Unstained Crafting & Recipe Data
+
+Unstained crafting is kept apart from the Harbinger Blood Structure/Cardinal Rite catalogs even when it reuses the same serializer or pattern-matching helper. The player-facing gates, resources, and fiction belong to the Purity/Clarity path rather than blood reservoir progression.
+
+| Recipe lane | Data/type | Gate | Notes |
+|---|---|---|---|
+| Unstained Blood Structure recipes | `data/hemomancy/recipe/blood_structure/` entries with `unstained: true` | `HemoCapabilityAccess.getPlayerUnstainedLevel(player)` via `RecipeDegreeGates` | Examples include `unstained_pillar.json` (Glowstone Dust on Hematic Iron Block -> Unstained Podium, stage 1) and `pallid_retort.json` (Pale Distillate on Cauldron -> Pallid Retort, stage 2, `bloodCost: 0`). |
+| Unstained Cardinal Rites | `data/hemomancy/recipe/cardinal_rite/` | numbered Unstained stage 0-8 | See §15.2. These rites set `bloodCost: 0` and spend purity/clarity semantics instead of blood. |
+| White Humor Purification | `data/hemomancy/recipe/white_humor_purification/`, `white_humor_purification` | physical White Humor pool charges | See §15.4. Dropped items transform while submerged in charged White Humor sources. |
+| Pallid Retort distillation | `data/hemomancy/recipe/distillation/` entries with `pallid: true` | Pallid Retort station access | Includes Ghost Pipe -> Pale Distillate, Lethean Dew/Brew, Hemolytic Solution, Consecrated Copper Ingot, Pale Silver, Pallid Infusion, and still-water draughts. |
+| Unstained vanilla crafting | `data/hemomancy/recipe/` shaped/shapeless recipes | material/tool progression | Includes Lethean Chalice, Lethean Poppy Wreath, Pale Distillate, Tears of Silthmere, Cleansed Stone, Pallid Lantern, Pale Silver blocks/items, Hemolytic Plating, Unstained armor/tools, Verdigris Censer, Pallid Icon, and Tome of the Unstained. |
+
+### 15.4 White Humor Purification
+
+White Humor Purification is an Unstained in-world recipe system handled by `WhiteHumorPurificationRecipe`, `WhiteHumorPurificationEvents`, and persisted pool charge data in `WhiteHumorPoolSavedData`.
+
+The player creates a pool by using a **Pale Humor Flask** on a replaceable block. This places a `white_humor` source block, returns an empty cured clay flask when not in creative mode, and resets that source to **32 purification charges**. Dropped item entities sitting in White Humor check for `hemomancy:white_humor_purification` recipes. Matching stacks keep extended lifetime while submerged, accumulate purification progress, then transform once their recipe's `transform_time` is reached and a charged source block is found within a 2-block search radius.
+
+Each transformed item consumes one source charge. Large stacks are split by the nearest source's remaining charges: the transformed result entity is spawned, the original stack shrinks by the transformed count, and the source is removed when its charges are spent. If no charged source is available, progress holds at completion until one is available.
+
+Clean Unstained witness blocks within 4 blocks accelerate the process. Bloomed Lethean Poppies count as 2 progress bonus; white/light gray/gray candles and unwaxed copper/cut copper/stairs/slabs count as 1. Every 80 item ticks, one participating witness may absorb the shed taint: Lethean Poppies become dormant, candles darken toward black, and copper advances one oxidation step.
+
+| Input | Output | Transform Time |
+|---|---|---|
+| Blood Crystal Shard | Cleansed Blood Crystal Shard | 300 ticks |
+| Hematic Iron Block | Pale Silver Block | 600 ticks |
+| Venous Stone | Cleansed Stone | 240 ticks |
+| Infested Venous Stone | Cleansed Stone | 260 ticks |
+| Sanguine Glass | Cleansed Sanguine Glass | 240 ticks |
+| Sanguine Pane | Cleansed Sanguine Pane | 240 ticks |
+
+The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/sacred_tools/pages/white_humor_purification.json`. JEI displays the recipe category as **White Humor Purification** and notes that each source purifies 32 items.
+
+### 15.5 Unstained HUD
+
+Unstained players see a dedicated top-right reliquary orb overlay (`UnstainedGaugeOverlay`). It only renders once `hasBegunPurification()` is true.
+
+The overlay is built from **layered PNG textures** in `assets/hemomancy/textures/gui/unstained_overlay/`:
+
+| Layer | Count | Purpose |
+|-------|-------|---------|
+| `orb_purity_0` – `orb_purity_20` | 21 frames | Orb fill color — washes from blood-red (0) toward silver-white (20) as purity rises |
+| `halo_0` – `halo_10` | 11 frames | Glow halo around the diamond frame; appears at full purity, intensifies with clarity |
+| `diamond_clarity_0` – `diamond_clarity_10` | 11 frames | Faceted diamond frame — brightens through 11 clarity stages |
+| `diamond_purified` | 1 | Static frame used when purity is complete but clarity not yet unlocked |
+| `pips_purity_0` – `pips_purity_4` | 5 frames | Angular purity stage pips along the bottom V of the diamond frame |
+| `pips_clarity_0` – `pips_clarity_4` | 5 frames | Same pip geometry, verdigris-colored for the clarity phase |
+
+Animated fluid fills the interior of the orb (circle geometry using inverse binary search for constant-area fill):
+- A **meniscus line** with a sine-wave animation renders at the fluid surface; amplitude is reduced as the orb fills
+- **Blood particle sprites** rise through the fluid while purity < 100%; they fade out as purity increases
+- The fluid color transitions from blood-red to white across the purity range
+- When `clarityUnlocked = true` the orb shows full white fill and the halo+diamond tracks the clarity step instead
+
+Text rendered to the right of the orb:
+- Stage title (e.g. "Cleansing") — color lerps from red to pale white as purity rises; verdigris when clarity is active
+- Percentage line (e.g. "Purity 54%")
+
+The overlay sits in the top-right corner (`screenWidth - 34, centerY = 54`). Position is not configurable (right-side only).
+
+### 15.6 Unstained Materials, Facilities, and Data Anchors
+
+Unstained implementation crosses several catalogs, so this section is the system map rather than a duplicate item/block list.
+
+| Area | Primary anchors |
+|---|---|
+| Player state | `IUnstainedProgress`, `IKnownStillArts`, `IWhiteHumorVolume`, `HemoCapabilityAccess.getPlayerUnstainedLevel(player)` |
+| Entry and progression blocks | `UnstainedPodiumBlockEntity`, `AltarOfCleansingBlockEntity`, `PallidRetortBlockEntity` |
+| Purifying resources | Hemolytic Solution, Lethean Dew, Lethean Brew, Tears of Silthmere, Pale Humor Flask, Pale Distillate, Consecrated Copper, Pale Silver, Pallid Infusion |
+| Cleansed building palette | Cleansed Blood Crystal, Cleansed Stone, Cleansed Sanguine Glass/Pane, Pallid Lantern, Pale Silver Bells, oxidized copper, white/gray candles, Lethean Poppy witness blocks |
+| Unstained NPC/world anchors | Unstained Church, Unstained Zealot, Unstained Acolyte, Unstained Guardian, Our Lady whisper dialogue, Spectral Companion entity shell |
+| Data paths | `data/hemomancy/recipe/blood_structure/` (`unstained: true` entries), `data/hemomancy/recipe/cardinal_rite/`, `data/hemomancy/recipe/white_humor_purification/`, `data/hemomancy/recipe/distillation/` (`pallid: true` entries), `data/hemomancy/books/liberimmaculatus/`, `data/hemomancy/dialogue_inquiry/zealot/`, `data/hemomancy/dialogue_inquiry/guardian/` |
+| Client surfaces | `UnstainedGaugeOverlay`, `UnstainedProgressScreen`, `RadialChooseStillArtScreen`, `StillArtCooldownOverlay`, `WhiteHumorBarWidget`, `UnstainedRiteBoundaryRenderer` |
+
+Keep Harbinger and Unstained systems mutually exclusive: completing a Harbinger degree rite clears Unstained progress and known Still Arts, while Clarity disables blood magic and strips remaining Harbinger degree state.
+
+---
+
+## 16. Morphlings
 
 Symbiotic parasites derived from the fungal infection. They provide the Living Staff with different attack/ability modes.
 
-### 14.1 Types
+### 16.1 Types
 
 | Morphling | Item Class | Preferred / Secondary Tendency | Base Effect | Maturity Abilities (Developing → Mature → Apex) |
 |-----------|-----------|-------------------------------|-------------|--------------------------------------------------|
@@ -1184,14 +1304,14 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio / Ferric | Venomous Resilience (poison immunity + speed boost) | Burrowing Strike (Weakness on hit to simulate armor bypass) → Segmented Defense (Regeneration to offset heavy hits) → Myriapod Swarm (Invisibility + Speed III escape at low HP) |
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_mole.png) Mole | `MoleMorphlingItem` | Ferric / Mortem | Burrower's Instinct (mining speed + underground regen/night vision) | Burrow Sense (reveal entities underground via Glowing) → Earthen Bulwark (Resistance when taking damage underground) → Seismic Slam (shockwave attack while sneaking+jumping underground) |
 
-### 14.2 Cultivation
+### 16.2 Cultivation
 
 - Start with a **Morphling Polyp** ![Morphling Polyp](../src/main/resources/assets/hemomancy/textures/item/morphling_polyp.png) (base form)
 - Incubate in a **Morphling Incubator** block with enzymes to grow into specific morphling types
 - Store morphlings in a **Morphling Jar** ![Morphling Jar](../src/main/resources/assets/hemomancy/textures/item/morphling_jar.png) (6 slots, Uncommon rarity) — they bounce around inside
 - The **Living Staff** cycles through equipped morphlings and changes its topper model accordingly
 
-### 14.3 Maturity System
+### 16.3 Maturity System
 
 **Current implementation note:** Morphling maturity is now a five-stage system: `Unfed -> Fledgling -> Developing -> Mature -> Apex -> Primal` in code-facing terminology, with player-facing Primal treated as maturity level `5`. Incubator feeding and enzyme power still mature a morphling only up to **Apex**. **Primal** is a nectar-only capstone state and is backed by the stack marker `Primalized`, so it cannot be reached by simply adding more enzyme power.
 
@@ -1207,7 +1327,7 @@ Each morphling has a **maturity level** (1–5) that determines its power and wh
 
 Each morphling type has a **preferred tendency** and **secondary tendency** — feeding the corresponding enzymes during incubation accelerates maturity. The passive effect's amplifier scales with maturity level.
 
-### 14.3.1 Primal Morphlings
+### 16.3.1 Primal Morphlings
 
 Primal morphlings are the true fourth player-facing capstone above Apex. To primalize a morphling, throw an **Apex** morphling item into a pool of **Morphic Nectar** while a nearby/throwing `ServerPlayer` has completed **Apotheos** (`IInitiatoryDegree >= 8`). The special Primal transform path runs before normal Morphic Nectar recipes. It refuses non-Apex morphlings, already-Primal morphlings, and players below Apotheos degree 8.
 
@@ -1230,13 +1350,13 @@ Successful Primal powers apply **Morphic Strain** as the main fungal drawback al
 | Centipede | Danger traversal / de-aggro | **Hundredfold Molt** sheds a decoy husk, grants brief invulnerability/invisibility/speed, and clears poison, wither, and slowness. |
 | Mole | Excavation / domain utility | **Deep Tremor Sense** maps nearby ores, entities, and caves; charged use releases a tunneling shockwave. In the Fungal Gardens, it can reveal morphic pools or buried fungal features. |
 
-### 14.3.2 Morphic Nectar Mutation Display
+### 16.3.2 Morphic Nectar Mutation Display
 
 Any item transformed through Morphic Nectar receives the `MorphicNectarMutated` stack marker via `MorphicNectarMutationRules.markMutated`. Mutated items gain a tooltip line (`Morphic Nectar-mutated`) and a client-side inventory decorator. Generic nectar-mutated items use a dark organic green frame. Primal morphlings use a stronger red/green/yellow animated tendril overlay rendered procedurally over the item slot.
 
 The Primal decorator is intentionally not a static frame: it uses a small set of animated, high-resolution procedural tendrils drawn with the GUI render type so the item reads as actively writhing while staying legible at inventory scale. The current tuning uses 5 tendrils, 42 curve samples, 3 layered passes, a 1.25 px body width, and trimmed endpoints to avoid a filled-in slot mask.
 
-### 14.4 Morphling Cradle
+### 16.4 Morphling Cradle
 
 The **Morphling Cradle** (`MorphlingCradleBlockEntity`) is an owner-bound support station for hosting a single morphling item outside the staff.
 
@@ -1249,7 +1369,34 @@ The **Morphling Cradle** (`MorphlingCradleBlockEntity`) is an owner-bound suppor
 
 ---
 
-## 15. Drudge System
+## 17. Puppeteering & Summons
+
+The puppeteer summon system is a Harbinger-side control-tool path rather than another blood manipulation category.
+
+- **Control tool:** `marionette_crossbar` / **Marionette Crossbar**. It stores a stable crossbar UUID, selected summon name, and up to 256 thread charge. Use calls or recalls the selected summon; sneak-use cycles known summons. The item bar is always visible on crossbars and acts as the thread meter: full at 256 thread, empty at 0, using a crimson/red color ramp even though the item is not damageable.
+- **Station:** `puppeteers_spindle` / **Puppeteer's Spindle**. It is a persistent block entity with two menu slots: a crossbar slot and a thread feeder slot. Placed thread is consumed immediately into the spindle's internal `threadBuffer` at 1 buffer per item count, capped at 512. A slotted Marionette Crossbar automatically draws from that buffer until the crossbar reaches its 256-thread cap. Binding, summon selection, and call/recall preparation are controlled from the spindle screen/packets and operate on the slotted crossbar rather than the player's first inventory crossbar.
+- **Spindle rendering/UI:** The placed spindle stores horizontal facing, faces the placing player, and renders through `PuppeteersSpindleRenderer` / `PuppeteersSpindleModel` with a custom item renderer instead of appearing as a venous stone brick cube. Its screen uses a vein-pattern background, styled slot frames, crossbar/thread meters, summon list, and themed buttons/tooltips.
+- **Unlock economy:** Direct "unlock next summon with Sanguine Quintessence" spindle use is retired. `sanguine_quintessence` is now the held catalyst for instant Blood Crafting puppeteer trial recipes; defeating the spawned unbound trial boss permanently grants that summon shape to the trial caster.
+- **Thread economy and tether:** Summoning spends the definition's `threadSummonCost`; active summons drain `threadUpkeepPerMinute` from their owning crossbar every minute. Each bound summon renders a red thread back to its owner. If the matching crossbar is not equipped in either hand, the summon and thread flicker/fade for 100 ticks (5 seconds); re-equipping the crossbar stabilizes the summon, while failing to do so unravels it. If upkeep cannot be paid, the crossbar's active summons still unravel immediately.
+- **Anti-stockpile rule:** active summon cap is calculated from the player's `skill_puppet_skein` level and checks active bound summons by owner, not by crossbar. Carrying extra crossbars cannot exceed the learned cap.
+- **Skills:** `skill_puppet_skein` increases active summon cap, `skill_living_sinew` increases summon health/damage, and `skill_far_tether` increases command range.
+- **Harbinger UI:** `HarbingerProgressScreen` includes a `SUMMONS` tab. It groups summons by degree, shows degree-locked, recipe-locked, trial-required, and known states, reports base and skill-modified stats, and creates a client-only preview entity for the selected summon. Preview render failures fall back to an icon/text placeholder rather than crashing the screen.
+
+Puppeteer trial recipes unlock when the matching degree is obtained and are also re-awarded on login for existing saves. The recipe `required_degree` is sourced from the matching `PuppeteerSummonDefinition.requiredDegree()` at runtime so the Blood Crafting gate cannot drift from the summon definition gate. Trial bosses reuse the summon definitions as unbound hostile versions with default boss tuning: 1.5x health, 1.25x damage, no owner/crossbar upkeep, no active-summon cap accounting, and caster-only unlock credit on death.
+
+Current summon definitions:
+
+| Summon | Degree | Role | Base HP | Base Damage | Thread Call | Upkeep | Trial Blood |
+|---|---:|---|---:|---:|---:|---:|---:|
+| `veinwing_vulture` | 2 | Fast flying striker | 14 | 4 | 28 | 18/min | 500 |
+| `marrow_spitter` | 3 | Ranged support | 22 | 5 | 38 | 12/min | 750 |
+| `gorebound_hulk` | 4 | Slow heavy bruiser | 55 | 9 | 56 | 8/min | 1100 |
+
+Legacy summon/test entities (`enthralled_doll`, `wretched_will`, and `blood_thrall`) remain mechanically unchanged by this pass.
+
+---
+
+## 18. Drudge System
 
 **Status:** `Implemented` for the persistent Drudge entity, SSC birthing/refill loop, memory execution spine, direct-routing tender behavior, rogue-state rules, and interaction controls.
 
@@ -1404,133 +1551,45 @@ Located in `assets/hemomancy/textures/entity/drudge/`:
 
 ---
 
-## 16. Scars & Spores
+## 19. Direct Blood Routing & Servitors
 
-### 16.1 Scars
+Direct Blood Routing is the no-basin automation model for blood-fed machines. It intentionally avoids a NeoForge blood fluid, external pipe compatibility, and new bulk blood storage blocks. Links persist owner, mode, bloodline permission, and target working reserve in `BloodRoutingSavedData`; they do not persist blood.
 
-Scars are equippable items stored in a **Scar Binder** ![Scar Binder](../src/main/resources/assets/hemomancy/textures/item/scar_binder.png) (18 slots) or **Scar Binder Upgraded** ![Scar Binder Upgraded](../src/main/resources/assets/hemomancy/textures/item/scar_binder_upgraded.png) (27 slots). They are crafted at the **Cerebral Scarring Station**. Scar crafting requires **Initiatory Degree 4 (Adept)** minimum.
+**Core routing API:**
+- `IBloodSourceContract` models a permitted source contract that can validate ownership, range, and maximum draw rate.
+- Current source contracts are `EquippedGourdSource`, `LinkedPlayerSource`, `BloodlineSource`, `ThrallCourierSource`, and `DrudgeTenderSource`.
+- `IBloodRoutingTarget` lets a machine request only current recipe demand or a capped working reserve.
+- `BloodRoutingHelper` performs pull-based transfer, source priority, safety floors, bloodline checks, and target sync.
+- Existing `IBloodTile` / `IBloodReservoirContainer` reservoirs remain valid targets. If a block entity does not implement `IBloodRoutingTarget`, routing fills only toward `BloodRoutingRules.DEFAULT_WORKING_RESERVE` (600 blood), not the whole reservoir.
 
-Scars are organized in **three tiers** by `deepenAmount` — how strongly they shift tendency alignment per equipped slot. The current NeoForge branch also gives standard scars real passive/combat effects through `ItemScar`: attribute modifiers, persistent effects, blood upkeep, max-blood modifiers, and event hooks for attack/defense/kill/tick behavior. `Scar Affinity` scales synergy modifiers, `Scar Resonance` increases effective combat slots, and `Scar Mastery` extends triggered scar effect durations.
+**Hematic Suture Needle:**
+- Registry item: `hematic_suture_needle`; class: `HematicSutureNeedleItem`.
+- Degree 3+ can bind a blood-capable block entity or a `HematicSutureNodeBlockEntity` to the player in nearby mode.
+- Sneak-use on the player's own bound link cycles modes: nearby -> sanctum -> sanctum + bloodline -> nearby. Sanctum mode requires Degree 5 and the link position to be inside the owner's Founding Sanctum radius.
+- Sneak-use in air toggles the player's `IBloodVolume#isBloodRoutingOptInEnabled()` flag for bloodline routing permission.
 
-**Tier 1 Scars (deepenAmount = 1) — Basic, available at Degree 4:**
+**Source priority and limits:**
+- Nearby links require the bound player to be online, alive, active in `IBloodVolume`, Degree 3+, in the same level, and within `BloodRoutingHelper.NEARBY_RANGE` (16 blocks).
+- Sanctum links require Degree 5+ and a link position inside the owner's Founding Sanctum.
+- Routing ticks every 10 ticks with a default pass budget of 100 blood (`DEFAULT_MAX_RATE_PER_TICK` 10 x interval).
+- Source order is: open equipped Blood Gourd first (scar slot, main hand, then offhand, using that gourd's tier transfer rate), then owner blood at up to 80 blood per pass while staying above the 50% safety floor, then optional bloodline pool at up to 60 blood per pass.
+- Bloodline draw only works in sanctum mode with bloodline mode enabled. The linked player must belong to a valid bloodline, the shared pool must contain blood, and the linked player must be the bloodline leader or have their routing opt-in enabled.
 
-| Scar | Tendency | Effect |
-|------|----------|--------|
-| ![](../src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Legacy override scar / mind spike slot behavior |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | +2 Max Health |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_pyre.png) Scar of the Pyre | Flammeus | +1 Attack Damage, -1 Armor |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | +5% Attack Speed, -1 Armor |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_halo.png) Scar of the Halo | Lux | +1 Armor Toughness, -5% Movement Speed; blinds attackers |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_blight.png) Scar of Blight | Mortem | +1 Attack Damage; poison backtracks onto wearer after kills |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_rime.png) Scar of Rime | Congeatio | +5% Movement Speed, -5% Attack Speed; slows struck foes |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_thorn.png) Scar of the Thorn | Ferric | +1 Armor, -5% Movement Speed; reflects 1 thorns damage |
-| ![](../src/main/resources/assets/hemomancy/textures/item/scars/scar_shade.png) Scar of the Shade | Tenebris | +5% Movement Speed, -1 Attack Damage; invisibility in darkness |
+**Hematic Suture Node:**
+- Registry block: `hematic_suture_node`; block entity: `HematicSutureNodeBlockEntity`.
+- Optional visible anchor for longer or clearer sanctum infrastructure. Machines can still be bound directly for simple setups.
+- Holds no blood capability and no persistent reservoir; it emits subtle red dust routing particles when it moves blood.
+- Every routing interval it attempts to feed adjacent linked targets from the same saved link budget.
 
-**Tier 2 Scars (deepenAmount = 2) — Advanced, available at Degree 4:**
-
-| Scar | Tendency | Effect |
-|------|----------|--------|
-| Scar of Marrow | Animus | +4 Max Health, -5% Movement Speed; heals wearer on kill |
-| Scar of Sol | Flammeus | +2 Attack Damage, -2 Armor; briefly ignites attackers |
-| Scar of Flux | Ductilis | +10% Attack Speed, -2 Armor; grants Haste on kill |
-| Scar of the Veil | Lux | +2 Armor Toughness, -10% Movement Speed; blinds + marks attackers with Glowing |
-| Scar of Withering | Mortem | +2 Attack Damage, -2 Max Health; poisons struck foes |
-| Scar of the Glacier | Congeatio | +10% Movement Speed, -10% Attack Speed; slows struck and nearby foes |
-| Scar of the Anvil | Ferric | +2 Armor, +1 Armor Toughness, -10% Movement Speed; reflects 2 thorns damage |
-| Scar of the Moon | Tenebris | +10% Movement Speed, -2 Attack Damage; invisibility in darkness and when struck in darkness |
-
-**Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5 (planned: move gate to Degree 6):**
-
-| Scar | Tendency | Effect |
-|------|----------|--------|
-| Scar of the Phoenix | Animus | +6 Max Health, -10% Movement Speed; heals on kill and regenerates when gravely wounded |
-| Scar of the Corona | Flammeus | +3 Attack Damage, +0.3 Knockback Resistance, -3 Armor; ignites attackers |
-| Scar of the Chimera | Ductilis | +15% Attack Speed, -3 Armor, -4 Max Health; Haste/Speed/Strength on kill |
-| Scar of Transcendence | Lux | +2 Armor Toughness, -15% Movement Speed; blinds/marks attackers and grants Resistance in bright light |
-| Scar of Oblivion | Mortem | +3 Attack Damage, -4 Max Health; withers struck foes |
-| Scar of Descendence | Congeatio | +15% Movement Speed, -15% Attack Speed, -2 Attack Damage; slows struck/nearby foes and grants slow fall |
-| Scar of the Crucible | Ferric | +3 Armor, +2 Armor Toughness, -15% Movement Speed, -5% Attack Speed; reflects 3 thorns damage |
-| Scar of the Eye | Tenebris | +15% Movement Speed, -3 Attack Damage; invisibility in darkness and when struck |
-
-> **Scar Mechanic:** All standard scars extend `ItemScar`; when equipped in a valid Scar Binder slot they deepen the player's Blood Tendency alignment and apply their configured modifiers/effects. A stale `scar_ichor` recipe/lang/model entry still exists in resources, but `ItemInit` does **not** currently register `scar_ichor`; the active Animus tier-3 scar is `scar_phoenix`.
-
-Each scar has a corresponding **Scar Pattern** item used in crafting.
-
-### 16.2 Functional Fungal Scars (Scar-type items)
-
-Special fungal scar items with active effects extend `ItemFungalScar`, render as rotating 3D scar items on the player, have rare rarity/foil visuals, and occupy the dedicated fungal scar slot (`ScarType.FUNGAL`, slot 0). The current implementation uses the **Mycelial Crucible**, not the Morphling Incubator, and the old four-scar incubator plan has been superseded.
-
-The basic saint-linked set remains tuned at 1,200 blood / 1,200 ticks / 2,000 enzyme-power threshold:
-
-| Item | Tendency | Active Effect |
-|------|----------|---------------|
-| ![](../src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the `fungal_elytra` effect while equipped; glide support is maintained by `ScarEntityEventHandler.onGlideTick()` |
-| ![](../src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Grants Water Breathing while equipped |
-| ![](../src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste while worn and enables shift-mining ore vein mining through `VeinMinerHelper` |
-| ![](../src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Grants Night Vision, Strength, and Resistance while equipped |
-
-The new advanced set is also registered and has live event handlers for the non-tooltip effects:
-
-| Item | Tendency | Active Effect | Cultivation Cost |
-|------|----------|---------------|------------------|
-| **Saprovitta vestigium** | Flammeus | **Feeding Wake** — movement leaves a brief damaging blood-fungal trail (1.5 magic damage pulses every 6 ticks while moving) | 1,200 blood / 1,200 ticks / 2,000 enzyme power |
-| **Antiphonomyces resonans** | Ductilis | **Crawling Choir** — 20% chance for a successful blood manipulation to echo-cast at no extra blood cost | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-| **Sanguiflora cadens** | Mortem | **Vein Orchard** — 30% chance on kill to bloom blood resources at the death site (Spore Sac, sometimes Hematic Iron Scrap) | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-| **Thanomyces resurgens** | Congeatio | **Split Husk** — prevents death once, drains all active blood, reforms at 25% health, 15-minute per-stack cooldown | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-| **Anastocordyceps nexus** | Lux | **Latching Vein** — striking an enemy tethers nearby foes for 6 seconds; tethered targets share 20% of damage taken | 2,400 blood / 2,400 ticks / 3,000 enzyme power |
-
-**Mycelial Crucible recipe format** (`data/hemomancy/recipe/fungal_scar/*.json`):
-```json
-{
-  "type": "hemomancy:fungal_scar_cultivation",
-  "tendency": "LUX",
-  "blood_cost_phase1": 2400,
-  "phase1_duration": 2400,
-  "maturation_threshold": 3000,
-  "immature_result": { "id": "hemomancy:immature_fungal_scar" },
-  "result": { "id": "hemomancy:anastocordyceps_nexus" }
-}
-```
-
-### 16.3 Spore Cultures (Enzyme Fruiting)
-
-Aligned spores are now functional reusable culture items for the **Mycelial Lantern** enzyme-fruiting loop. Each is registered as an uncommon item that stacks to 16 and is crafted shapelessly from the matching enzyme + `spore_sac` + `hyphal_substrate`. The culture remains in the Lantern while blood is converted into the matching enzyme output.
-
-One culture exists for each enzyme/tendency vocabulary pair:
-![](../src/main/resources/assets/hemomancy/textures/item/vivacious_spores.png) Vivacious,
-![](../src/main/resources/assets/hemomancy/textures/item/fervent_spores.png) Fervent,
-![](../src/main/resources/assets/hemomancy/textures/item/neurotic_spores.png) Neurotic,
-![](../src/main/resources/assets/hemomancy/textures/item/incandescent_spores.png) Incandescent,
-![](../src/main/resources/assets/hemomancy/textures/item/ruinous_spores.png) Ruinous,
-![](../src/main/resources/assets/hemomancy/textures/item/frigid_spores.png) Frigid,
-![](../src/main/resources/assets/hemomancy/textures/item/ferric_spores.png) Ferric,
-![](../src/main/resources/assets/hemomancy/textures/item/umbral_spores.png) Umbral.
-
-The JSON recipes live at `data/hemomancy/recipe/<spore_id>.json`, e.g. `vivacious_spores.json` combines `vivacious_enzyme`, `spore_sac`, and `hyphal_substrate` into `vivacious_spores`.
-
-### 16.4 Mycelial Crucible & Immature Fungal Scar Cultures
-
-The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-scar cultivation station. It has 8 slots:
-
-- Center (slot 0): finished fungal scar seed for Phase 1, or `immature_fungal_scar` for Phase 2
-- Enzyme slots (1–4): aligned `EnzymeItem` / `RecycledEnzymeItem`; only matching tendency contributes
-- Output (5): immature culture or finished scar
-- Blood input (6): Bloody Flask or Blood Gourd
-- Flask output (7): empty/cured flask return
-
-**Phase 1 — Implantation:** The center scar plus aligned enzymes start a timed cultivation run. The crucible deducts the recipe's flat blood cost, then drains 1.5 blood/tick for the recipe duration. On completion it consumes the center/enzymes and outputs the single consolidated `immature_fungal_scar`.
-
-**Phase 2 — Maturation:** The immature culture stores `Tendency`, `MatureThreshold`, `MatureProgress`, and `TargetScarId` in `DataComponents.CUSTOM_DATA`. Feeding aligned enzymes advances `MatureProgress`; when progress reaches the threshold, the crucible converts it into the target `ItemFungalScar`. Progress is preserved on the item stack, and blood shortages pause the process rather than resetting it.
-
-`Hyphal Substrate` is registered as a supporting crafting ingredient, and `immature_fungal_scar` uses one model/texture with dynamic translated names such as `item.hemomancy.immature_scar.anastocordyceps_nexus`.
-
-> **Design status:** The extractor / harvested Fungal Gardens scar plan has been replaced for now by crucible cultivation. The deeper Apotheos-tier fungal scar concept remains open-ended design space, but the implemented fourth scar family is already live through `ItemFungalScar` + `MycelialCrucible`.
+**Servitor behavior:**
+- `BloodThrallEntity` can bind a direct-routing source/node, physically carry a capped amount of blood, and deposit into a destination reservoir. It draws through the same linked source contracts, so it cannot duplicate blood or bypass safety limits.
+- `DrudgeTenderSource` lets Drudges near their Semi-Sentient Construct tend nearby linked machines. A Drudge scans saved Suture links around its SSC, spends internal charge only when routing succeeds, and does not generate or bulk-store blood for machines.
 
 ---
 
-## 17. Items & Materials
+## 20. Items & Materials
 
-### 17.1 Key Materials
+### 20.1 Key Materials
 
 | Item | Purpose |
 |------|---------|
@@ -1560,7 +1619,7 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 | ![](../src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) Gourd Seeds | Plantable, grows gourds |
 | ![](../src/main/resources/assets/hemomancy/textures/item/dried_gourd.png) Dried Gourd | Gourd processing product |
 
-### 17.2 Blood Storage Items
+### 20.2 Blood Storage Items
 
 | Item | Role | Capacity | Flow | Kill Siphon | Passive |
 |------|------|----------|------|-------------|---------|
@@ -1584,7 +1643,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 > |---|---|---|---|
 > | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/white.png) ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/white_open.png) | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/red.png) ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/red_open.png) | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/black.png) ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/black_open.png) | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/curved_horn.png) ![](../src/main/resources/assets/hemomancy/textures/entity/blood_gourd/curved_horn_open.png) |
 
-### 17.3 Memory Items
+### 20.3 Memory Items
 
 | Item | Purpose |
 |------|---------|
@@ -1625,7 +1684,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 
 > **Memory Overlay System:** Memory items use a layered model system: the base Hematic Memory texture is composited with per-memory overlays from `textures/item/memories/memory_*_overlay.png`. Most active memories have unique overlays; the gallery calls out remaining pending overlay art where applicable.
 
-### 17.4 Diagnostic Items
+### 20.4 Diagnostic Items
 
 | Item | Purpose |
 |------|---------|
@@ -1634,7 +1693,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/bloodline_pool_monitor.png) Bloodline Pool Monitor | View bloodline shared pool status |
 | ![](../src/main/resources/assets/hemomancy/textures/item/self_reflection_mirror.png) Self Reflection Mirror | Scar-related inspection |
 
-### 17.5 Miscellaneous
+### 20.5 Miscellaneous
 
 | Item | Purpose |
 |------|---------|
@@ -1657,7 +1716,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/recycled_enzyme.png) Recycled Enzyme | Generic enzyme fallback |
 | ![](../src/main/resources/assets/hemomancy/textures/item/debug_showcase_spawner.png) Debug Showcase | Creative-mode debug item (`DebugShowcaseItem`) — right-click to spawn a complete showcase area containing every Hemomancy feature organized into 4 sections: (1) All items in labeled chests, (2) All blocks placed on platforms, (3) All mob entities in fenced pens, (4) All blood structures and cardinal rites as placed patterns. |
 
-### 17.6 Unstained Materials (Our Lady of Still Waters)
+### 20.6 Unstained Materials (Our Lady of Still Waters)
 
 | Item | Purpose |
 |------|---------|
@@ -1674,7 +1733,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | The Pale Distillate | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
 | ![](../src/main/resources/assets/hemomancy/textures/item/virid_salis_trail.png) Virid Salis | Verdigris-colored salt-ash used as the Unstained counterpart to ritual ash trails. **Harvested** by right-clicking any unwaxed oxidized/weathered/exposed copper block (plain, cut, stairs, or slab) with a vanilla brush — strips one oxidation step, drops 1 Virid Salis, costs 1 brush durability. Handled by `CopperBrushingHandler`. **Warding effect**: when placed as a trail (`hemomancy:virid_salis_trail`), any `Monster` mob that walks across it takes 1 magic damage per second (`ViridSalisTrailHandler`). Blood constructs and blood-type mobs (`IBloodConstruct`, `HematicConstructEntity`, `CruorFiendEntity`, `FrozenClotEntity`, `BloodDrunkPuppeteerEntity`, `ThirsterEntity`, `AbyssalSiphonEntity`, `LeechEntity`, `VenousStriderEntity`) take 2 magic damage per second and receive Slowness II for 3 seconds. **Player effect**: Harbinger players at Initiatory Degree 5 (Perfected) or higher take 1 magic damage per second and receive Slowness I for 3 seconds when crossing the trail. |
 
-### 17.7 Food Items
+### 20.7 Food Items
 
 | Item | Purpose |
 |------|---------|
@@ -1682,7 +1741,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/gourd_stew.png) Gourd Stew | Stew crafted from gourd and other ingredients |
 | Roasted Gourd Seeds | Smelted/smoked/campfire-cooked gourd seeds (3 cooking methods) |
 
-### 17.8 Organ Echo Items
+### 20.8 Organ Echo Items
 
 Produced by the **Visceral Mirror** ritual (requires Degree 3+). Spectral imprints of the player's organs — bound to the player (dissolve if placed in non-player inventory), only one per organ type can exist at a time. Organ "Tier" indicates risk level and degree requirement for extraction:
 
@@ -1694,25 +1753,25 @@ Produced by the **Visceral Mirror** ritual (requires Degree 3+). Spectral imprin
 | Echo of Kidneys | `KIDNEYS` | 3 | Filters impurities and maintains humoral balance |
 | Echo of Heart | `HEART` | 4 | The seat of circulation and will — highest risk, requires Degree 4+ |
 
-> **Status: Implemented.** Organ extraction ritual (Visceral Mirror → cycle organs → confirm → produce Echo items) and all per-organ gameplay effects are fully implemented in `VisceralOrgansEvents` (player tick + capability check): **Spleen** +1000 max blood per organ level (announces expansion on first reach); **Liver** removes Poison (level 2+) and Wither (level 3+) on tick; **Lungs** grants Water Breathing (100×level ticks) while underwater; **Kidneys** grants Regeneration at (level-1) amplifier normally, **level amplifier** during a Blood Moon (overclocked filtration); **Heart** grants Damage Resistance (capped at Resistance II), **Wither immunity at level 3** (Cardiac Autonomy mastered), and drains 10÷level blood per 2 s tick. **Iron Brazier reagent system is organ-specific:** each organ requires its own reagent type — Heart=`blood_crystal_shard`, Spleen=`vivianite_cluster`, Lungs=`fervent_husk`, Kidneys=`consecrated_copper_ingot`, Liver=`dicentra_sap`. The three reagents must all be the same type; the brazier records the locked organ and validates the echo matches before consuming it. See §17.8 and `IronBrazierBlockEntity`.
+> **Status: Implemented.** Organ extraction ritual (Visceral Mirror → cycle organs → confirm → produce Echo items) and all per-organ gameplay effects are fully implemented in `VisceralOrgansEvents` (player tick + capability check): **Spleen** +1000 max blood per organ level (announces expansion on first reach); **Liver** removes Poison (level 2+) and Wither (level 3+) on tick; **Lungs** grants Water Breathing (100×level ticks) while underwater; **Kidneys** grants Regeneration at (level-1) amplifier normally, **level amplifier** during a Blood Moon (overclocked filtration); **Heart** grants Damage Resistance (capped at Resistance II), **Wither immunity at level 3** (Cardiac Autonomy mastered), and drains 10÷level blood per 2 s tick. **Iron Brazier reagent system is organ-specific:** each organ requires its own reagent type — Heart=`blood_crystal_shard`, Spleen=`vivianite_cluster`, Lungs=`fervent_husk`, Kidneys=`consecrated_copper_ingot`, Liver=`dicentra_sap`. The three reagents must all be the same type; the brazier records the locked organ and validates the echo matches before consuming it. See §20.8 and `IronBrazierBlockEntity`.
 
-### 17.9 Banner Patterns
+### 20.9 Banner Patterns
 
 - ![](../src/main/resources/assets/hemomancy/textures/item/heart_pattern.png) **Heart Pattern** — Vascularium Crest
 - ![](../src/main/resources/assets/hemomancy/textures/item/veins_pattern.png) **Veins Pattern** — Vein Border
 
 ---
 
-## 18. Tools & Weapons
+## 21. Tools & Weapons
 
-### 18.1 Tool Tiers
+### 21.1 Tool Tiers
 
 | Tier | Enum |
 |------|------|
 | Hematic Iron | `HEMATIC_IRON` |
 | Living | `LIVING` |
 
-### 18.2 Living Tools (Blood-powered)
+### 21.2 Living Tools (Blood-powered)
 
 All are single-stack, use the `LIVING` tool tier:
 
@@ -1733,14 +1792,14 @@ All are single-stack, use the `LIVING` tool tier:
 >
 > ![](../src/main/resources/assets/hemomancy/textures/entity/model_living_blade_hand.png) ![](../src/main/resources/assets/hemomancy/textures/entity/model_living_axe_hand.png) ![](../src/main/resources/assets/hemomancy/textures/entity/model_living_spear_hand.png)
 
-### 18.3 Hematic Iron Weapons
+### 21.3 Hematic Iron Weapons
 
 | Weapon | Notes |
 |--------|-------|
 | ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_sword.png) Hematic Iron Sword | Standard sword tier |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_knapper.png) Hematic Iron Knapper | Specialized knapping tool (42 dmg) |
 
-### 18.4 Other Weapons
+### 21.4 Other Weapons
 
 | Weapon | Notes |
 |--------|-------|
@@ -1751,9 +1810,9 @@ All are single-stack, use the `LIVING` tool tier:
 
 ---
 
-## 19. Armor Sets
+## 22. Armor Sets
 
-### 19.1 Hematic Iron Armor
+### 22.1 Hematic Iron Armor
 
 Standard blood-infused iron armor set (fire resistant):
 - ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_boots.png) Boots
@@ -1763,7 +1822,7 @@ Standard blood-infused iron armor set (fire resistant):
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_2.png)
 
-### 19.2 Blood Lust Armor
+### 22.2 Blood Lust Armor
 
 Special armor with mask variants:
 - ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm.png) Helm (no mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_tengu.png) Helm (Tengu mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_horned.png) Helm (Horned mask)
@@ -1775,7 +1834,7 @@ Special armor with mask variants:
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_2.png)
 
-### 19.3 Barbed Armor
+### 22.3 Barbed Armor
 
 Defensive barbed armor set:
 - ![](../src/main/resources/assets/hemomancy/textures/item/barbed_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_boots.png) Boots
@@ -1786,7 +1845,7 @@ Defensive barbed armor set:
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_2.png)
 
-### 19.4 Chitinite Armor
+### 22.4 Chitinite Armor
 
 Insectoid/chitin-based armor:
 - ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_boots.png) Boots
@@ -1798,7 +1857,7 @@ Insectoid/chitin-based armor:
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_2.png)
 
-### 19.5 Unstained Armor
+### 22.5 Unstained Armor
 
 Anti-blood zealot armor (for the Unstained path):
 - ![](../src/main/resources/assets/hemomancy/textures/item/unstained_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_boots.png) Boots
@@ -1808,7 +1867,7 @@ Anti-blood zealot armor (for the Unstained path):
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_2.png)
 
-### 19.6 Crown of Sacred Marrow
+### 22.6 Crown of Sacred Marrow
 
 Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 - **Stats:** Same as Hematic Iron (Defense 3/6/8/3, Toughness 3.0, KB Resist 0.1)
@@ -1819,7 +1878,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 ---
 
-## 20. Functional Blocks & Block Entities
+## 23. Functional Blocks & Block Entities
 
 | Block                                | BlockEntity                                | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |--------------------------------------|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1834,7 +1893,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 | **Cerebral Scarring Station**        | `ScarStationBlockEntity`                   | Crafts scars from patterns and blanks                    ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/scar_station.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Morphling Incubator**              | `MorphlingIncubatorBlockEntity`            | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/morphling_incubator.png) 
-| **Mycelial Crucible**                | `MycelialCrucibleBlockEntity`              | Cultivates fungal scars through `FungalScarCultivationRecipe`. Has 8 slots: center scar/immature culture, 4 aligned enzyme slots, output, blood flask/gourd input, and empty flask output. Phase 1 drains the recipe's flat blood cost plus 1.5/tick to produce the consolidated `immature_fungal_scar`; Phase 2 feeds aligned enzymes into the culture's custom-data progress until it matures into its stored target scar. See §16.4. |
+| **Mycelial Crucible**                | `MycelialCrucibleBlockEntity`              | Cultivates fungal scars through `FungalScarCultivationRecipe`. Has 8 slots: center scar/immature culture, 4 aligned enzyme slots, output, blood flask/gourd input, and empty flask output. Phase 1 drains the recipe's flat blood cost plus 1.5/tick to produce the consolidated `immature_fungal_scar`; Phase 2 feeds aligned enzymes into the culture's custom-data progress until it matures into its stored target scar. See §13.4. |
 | **Mycelial Lantern**                 | `MycelialLanternBlockEntity`               | Degree 5 passive enzyme-fruiting machine. A 1x2x1 multiblock (main block below, `filler_block` above) crafted via Blood Structure recipe. Slots: reusable spore culture (0), blood input for Bloody Flasks/Blood Gourds (1), enzyme output (2), empty flask output (3). Uses a 4,000 blood internal reservoir; each default recipe takes 2,400 ticks at 0.25 blood/tick (600 total) for 1 matching enzyme. Progress pauses without reset when blood or output space is unavailable. Automation: top inserts culture, sides insert blood containers, bottom extracts enzyme/empty containers; culture is not auto-extracted. Rendered by `MycelialLanternRenderer` / `MycelialLanternModel`, with translucent glass rendered after the displayed culture/output item and Blockbench source at `assets/hemomancy/models/block/bbmodel/mycelial_lantern.bbmodel`. |
 | **Morphling Cradle**                 | `MorphlingCradleBlockEntity`               | Owner-bound morphling support cradle. Hosts one morphling, runs staged aura/leech logic, and can route blood through internal buffer / owner / bloodline fallback. Supports floor, wall, and ceiling placement. Rendered with custom block entity + item renderers (`MorphlingCradleRenderer`, `MorphlingCradleItemRenderer`). |
 | **Specimen Jar**                     | `SpecimenJarBlockEntity`                   | Vivianite glass and Hematic Iron containment jar for Hemomancy arthropod specimens. Empty jars place normally and face the placer. Right-clicking a capturable Hemomancy arthropod with an empty jar stores that exact entity's NBT in the jar item and removes the live mob. Filled jars place with the specimen displayed inside by `SpecimenJarRenderer` / `SpecimenJarItemRenderer`, rotated with the jar's horizontal facing and animated via the renderer's client-only entity copy. Shift-right-clicking a placed jar picks it back up without releasing the specimen; breaking a filled jar releases the stored entity and drops an empty jar. Capturable scope is data-driven by `data/hemomancy/tags/entity_types/specimen_jar_capturable.json` and currently includes Chthonian, Chthonian Queen, Chitinite, Fervent Chitinite, Hemolymphopoda, Myelin Borer, Fargone, and Tooth Pecks. |
@@ -1863,9 +1922,9 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 ---
 
-## 21. Decorative & Building Blocks
+## 24. Decorative & Building Blocks
 
-### 21.1 Venous Stone Family
+### 24.1 Venous Stone Family
 
 A full block family with variants:
 
@@ -1883,7 +1942,7 @@ A full block family with variants:
 - Gilded Venous Stone
 - Infested Venous Stone
 
-### 21.2 Hematic Iron Family
+### 24.2 Hematic Iron Family
 
 | | | |
 |---|---|---|
@@ -1893,21 +1952,21 @@ A full block family with variants:
 - Hematic Iron Pillar (rotatable)
 - Chiseled Hematic Iron Block
 
-### 21.3 Anti-Blood / Unstained
+### 24.3 Anti-Blood / Unstained
 
 - ![](../src/main/resources/assets/hemomancy/textures/block/hemolytic_plating_block.png) Hemolytic Plating Block
 - Cleansed Stone — pale, smooth stone found in Unstained temples
 - Pallid Lantern — softly glowing lantern sacred to Our Lady of Still Waters
 - Virid Salis Trail — green Unstained salt-ash trail block placed by `hemomancy:virid_salis` / `hemomancy:virid_salis_trail`
 
-### 21.4 Glass & Panes
+### 24.4 Glass & Panes
 
 | | | | |
 |---|---|---|---|
 | ![](../src/main/resources/assets/hemomancy/textures/block/sanguine_glass.png) Sanguine Glass | ![](../src/main/resources/assets/hemomancy/textures/block/sanguine_pane.png) Sanguine Pane | ![](../src/main/resources/assets/hemomancy/textures/block/vivianite_glass.png) Vivianite Glass | ![](../src/main/resources/assets/hemomancy/textures/block/vivianite_pane.png) Vivianite Pane |
 | ![](../src/main/resources/assets/hemomancy/textures/block/cleansed_sanguine_glass.png) Cleansed Sanguine Glass | ![](../src/main/resources/assets/hemomancy/textures/block/cleansed_sanguine_pane.png) Cleansed Sanguine Pane | | |
 
-### 21.5 Wood & Organic
+### 24.5 Wood & Organic
 
 | | | |
 |---|---|---|
@@ -1917,7 +1976,7 @@ A full block family with variants:
 - Blood Wood Planks
 - Conscious Mass (wart-block sound)
 
-### 21.6 Fungal / Plant Blocks
+### 24.6 Fungal / Plant Blocks
 
 | | | | |
 |---|---|---|---|
@@ -1942,7 +2001,7 @@ A full block family with variants:
 
 All applicable flowers have **potted** variants.
 
-### 21.7 Gourd
+### 24.7 Gourd
 
 | | |
 |---|---|
@@ -1951,7 +2010,7 @@ All applicable flowers have **potted** variants.
 - Gourd (pumpkin-like, grows from stem)
 - Gourd Stem / Attached Gourd Stem
 
-### 21.8 Ash Trails
+### 24.8 Ash Trails
 
 | | | | | |
 |---|---|---|---|---|
@@ -1961,52 +2020,77 @@ All applicable flowers have **potted** variants.
 - Befouling Ash Trail / Active Befouling Ash Trail
 - Virid Salis Trail (Unstained-aligned; currently no active variant)
 
-### 21.9 Misc
+### 24.9 Misc
 
 - ![](../src/main/resources/assets/hemomancy/textures/block/crimson_flames.png) Crimson Flames (special fire block)
 - Blood Crystal (modeled block)
 
 ---
 
-## 22. Recipe Systems
+## 25. Recipe Systems
+
+This section tracks shared recipe infrastructure and Harbinger-facing recipe catalogs. Unstained Still Arts, Cardinal Rites, White Humor purification, and Unstained structure recipes live in §15 so those lanes stay separate from the blood-magic path.
+
+**Shared and Harbinger-facing recipe types:**
 
 | Recipe Type | Serializer | Station | Purpose |
 |-------------|-----------|---------|---------|
 | `scar_recipe` | `ScarRecipeSerializer` | Cerebral Scarring Station | Crafting scars |
-| `distillation_recipe` | `DistillationRecipeSerializer` | Ghastly Alembic / Pallid Retort | Shared distillation recipes. `pallid: true` targets Pallid Retort; omitted/false targets Ghastly Alembic. |
+| `distillation_recipe` | `DistillationRecipeSerializer` | Ghastly Alembic / Pallid Retort | Shared distillation serializer. Ghastly Alembic is the Harbinger station; `pallid: true` routes to the Pallid Retort and is cataloged with Unstained crafting in §15.3. |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (13 morphling recipes). JEI-integrated via `IncubatorRecipeCategory`. Fungal scar crafting has moved out to the Mycelial Crucible. |
 | `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 9 finished `ItemFungalScar` variants. |
 | `enzyme_fruiting` | `EnzymeFruitingRecipeSerializer` | Mycelial Lantern | Reusable aligned spore culture + blood -> matching enzyme. Defaults: 2,400 ticks, 0.25 blood/tick, 600 total blood, output count 1; JSON-tunable per recipe. |
-| `white_humor_purification` | `WhiteHumorPurificationRecipeSerializer` | Physical White Humor pool | Dropped item purification in placed White Humor source pools. JEI-integrated via `WhiteHumorPurificationRecipeCategory` with Pale Humor Flask as catalyst. |
-| `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
+| `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Harbinger structure crafting; Unstained entries that share the serializer are cataloged in §15.3. |
 | `puppeteer_trial_recipe` | `PuppeteerTrialRecipeSerializer` | In-world Blood Crafting pattern | Instant summon unlock trials. Uses Blood Structure-style pattern matching, held Sanguine Quintessence catalyst, blood drain, pattern consumption, and unbound hostile summon boss spawn. |
-| `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
+| `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Harbinger Cardinal Rites for degree advancement and blood utility rites; Unstained rites are cataloged in §15.2. |
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
 | Blood Gourd Upgrade | `CopyBloodGourdRecipe.Serializer` | Crafting | Upgrading blood gourds |
 | Blood Gourd Fill | `FillBloodGourdRecipe.Serializer` | Crafting | Filling gourds with blood |
 | Vial Rack | Vanilla shaped recipe | Crafting | 8 Bloody Vials + Hematic Iron Scrap → Vial Rack |
 
-Current datapack paths use the 1.21 singular directory names already present in this repository:
+**Unstained recipe lanes:**
+
+| Lane | Data/type | System reference |
+|---|---|---|
+| Unstained structure recipes | `blood_structure_recipe` entries with `unstained: true` | §15.3 |
+| Unstained Cardinal Rites | `cardinal_rite_recipe` entries with `bloodCost: 0` and Unstained `required_degree` gates | §15.2 |
+| White Humor Purification | `white_humor_purification`, physical White Humor pools | §15.4 |
+| Pallid Retort distillation | `distillation_recipe` entries with `pallid: true` | §15.3 |
+| Unstained material/tool crafting | vanilla shaped/shapeless recipes under `data/hemomancy/recipe/` | §15.3 |
+
+Current datapack paths use the 1.21 singular directory names already present in this repository.
+
+**Shared / Harbinger data paths:**
 
 | Content | Path |
 |---|---|
 | Main recipes | `src/main/resources/data/hemomancy/recipe/` |
-| Blood Structure recipes | `src/main/resources/data/hemomancy/recipe/blood_structure/` |
-| Cardinal Rites | `src/main/resources/data/hemomancy/recipe/cardinal_rite/` |
+| Harbinger Blood Structure recipes | `src/main/resources/data/hemomancy/recipe/blood_structure/` |
+| Harbinger Cardinal Rites | `src/main/resources/data/hemomancy/recipe/cardinal_rite/` |
 | Puppeteer trials | `src/main/resources/data/hemomancy/recipe/puppeteer_trial/` |
 | Enzyme fruiting | `src/main/resources/data/hemomancy/recipe/enzyme_fruiting/` |
-| White Humor purification | `src/main/resources/data/hemomancy/recipe/white_humor_purification/` |
 | Entity loot | `src/main/resources/data/hemomancy/loot_table/entities/` |
 | Item inquiry dialogue | `src/main/resources/data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json` |
 
-### 22.1 Blood Structure Crafting
+**Unstained data paths:**
+
+| Content | Path |
+|---|---|
+| Unstained Blood Structure entries | `src/main/resources/data/hemomancy/recipe/blood_structure/` (`unstained: true`) |
+| Unstained Cardinal Rites | `src/main/resources/data/hemomancy/recipe/cardinal_rite/` |
+| White Humor purification | `src/main/resources/data/hemomancy/recipe/white_humor_purification/` |
+| Pallid Retort distillation | `src/main/resources/data/hemomancy/recipe/distillation/` (`pallid: true`) |
+| Liber Immaculatus book data | `src/main/resources/data/hemomancy/books/liberimmaculatus/` |
+| Zealot and Guardian inquiry dialogue | `src/main/resources/data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json` |
+
+### 25.1 Harbinger Blood Structure Crafting
 
 An in-world system: build a specific block structure, then hit a particular block with a catalyst item while spending blood. The structure transforms into the desired output.
 
-Blood structure crafting is introduced through the Alchemist dialogue around Votary, but individual recipes are no longer inferred from blood-cost tiers. Each JSON carries `required_degree`; Harbinger recipes compare that value against the player's Initiatory Degree, while Unstained recipes compare it against the numbered Unstained progression stage. Blood cost is only the resource cost.
+Harbinger Blood Structure crafting is introduced through the Alchemist dialogue around Votary, but individual recipes are no longer inferred from blood-cost tiers. Each Harbinger JSON carries `required_degree`; `RecipeDegreeGates` compares that value against the player's Initiatory Degree. Blood cost is only the resource cost. Unstained structure recipes that share the serializer are cataloged in §15.3.
 
-The Liber Sanguinum/Immaculatus crafting sidebar and the debug Structure Spawner now group recipes directly by required degree/stage (`No Degree`, `Degree 1`, ..., `Degree 8`) through `RecipeDegreeGates`.
+The Liber Sanguinum crafting sidebar and the debug Structure Spawner group Harbinger recipes directly by required degree (`No Degree`, `Degree 1`, ..., `Degree 8`) through `RecipeDegreeGates`.
 
 | Recipe | Required Degree/Stage | Blood Cost | Held Item | Hit Block | Result |
 |--------|-----------------------|-----------|-----------|-----------|--------|
@@ -2019,12 +2103,11 @@ The Liber Sanguinum/Immaculatus crafting sidebar and the debug Structure Spawner
 | Dendritic Distributor / Consecrated Bloodwell / Morphling Incubator / Mycelial Lantern | 5 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Crimson Lodge machinery, including passive enzyme fruiting |
 | Covenant Throne / Vascular Effigy | 6 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Bloodline Covenant machinery |
 | Sanguine Monolith | 7 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Archon machinery |
-| Unstained Podium | Unstained stage 1 | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
 
-> Recipes are in `data/hemomancy/recipe/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, `required_degree`, optional `unstained`, and `result`.
+> Harbinger recipes are in `data/hemomancy/recipe/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, `required_degree`, and `result`. Unstained entries in the same folder use `unstained: true` and are documented in §15.3.
 > **Mycelial Lantern blood structure:** `blood_structure/mycelial_lantern.json` is Degree 5, costs 2,500 blood, uses `spore_sac` on a `hematic_iron_block`, and builds from Sanguine Glass, brown mushroom blocks, Hematic Iron, Polished Venous Stone, and Copper Block.
 
-### 22.1.1 Puppeteer Trial Blood Crafting
+### 25.1.1 Puppeteer Trial Blood Crafting
 
 Puppeteer summon unlocks use a Blood Crafting-adjacent recipe type rather than Cardinal Rites. Recipes live under `data/hemomancy/recipe/puppeteer_trial/` and use `type: "hemomancy:puppeteer_trial_recipe"`.
 
@@ -2050,11 +2133,11 @@ Current trial recipes:
 
 `PuppeteerSummonTrialEvents.awardTrialRecipes` grants all trial recipes at or below the player's current degree from degree-grant and login paths, so old saves receive newly eligible trials when the player next logs in.
 
-### 22.2 Cardinal Rite Recipes
+### 25.2 Harbinger Cardinal Rite Recipes
 
-Specific cardinal rite recipes include degree advancement rites (section 5.2) plus utility rites. Progression access now comes from each recipe JSON's explicit `required_degree`; the `minor`/`lesser`/`greater`/`grand` `CardinalRiteType` remains as a ritual form that controls size, cast time, and boundary behavior.
+Specific Harbinger cardinal rite recipes include degree advancement rites (section 5.2) plus blood-path utility rites. Progression access now comes from each recipe JSON's explicit `required_degree`; the `minor`/`lesser`/`greater`/`grand` `CardinalRiteType` remains as a ritual form that controls size, cast time, and boundary behavior.
 
-`RecipeDegreeGates` is the shared helper for Blood Structures and Cardinal Rites. Harbinger rites compare `required_degree` against `IInitiatoryDegree`. Unstained rites compare the same field against `getPlayerUnstainedLevel`. The Rites tab groups recipes by this required degree/stage rather than by rite form.
+`RecipeDegreeGates` is the shared helper for Blood Structures and Cardinal Rites. This section covers rite recipes that compare `required_degree` against `IInitiatoryDegree`; Unstained rites compare the same field against `getPlayerUnstainedLevel` and are cataloged in §15.2. The Rites tab groups recipes by required degree/stage rather than by rite form.
 
 **Degree Advancement Rites:** These recipe JSONs set `"rankup": true`, which lets client UI and tooling distinguish degree rites from utility rites. The rank-up target is inferred from the rite ID so a player who already has that degree or higher cannot start a redundant rank-up rite.
 
@@ -2071,7 +2154,7 @@ Specific cardinal rite recipes include degree advancement rites (section 5.2) pl
 
 **Utility Rites:**
 
-Utility rite `required_degree` values are authored per recipe rather than inferred from their form. For example, Vascular Mending is Degree 1, the Bloodline/Beacon/Hungering Earth cluster is Degree 2, Scarlet Summons and Sanguine Eclipse are Degree 3, Crimson Vessel is Degree 4, Founding Sanctum/Pallid Shadow/Sanguine Dominion are Degree 5, Eternal Covenant is Degree 6, and Ancestral Communion/Bloom of the Qliphoth are Degree 7. Unstained utility rites use the same field for Unstained stages 0-8.
+Utility rite `required_degree` values are authored per recipe rather than inferred from their form. For example, Vascular Mending is Degree 1, the Bloodline/Beacon/Hungering Earth cluster is Degree 2, Scarlet Summons and Sanguine Eclipse are Degree 3, Crimson Vessel is Degree 4, Founding Sanctum/Pallid Shadow/Sanguine Dominion are Degree 5, Eternal Covenant is Degree 6, and Ancestral Communion/Bloom of the Qliphoth are Degree 7.
 
 | Rite | Blood Cost | Rite Form | Description |
 |------|-----------|-----------|-------------|
@@ -2091,7 +2174,7 @@ Utility rite `required_degree` values are authored per recipe rather than inferr
 | **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees`: 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
 | **Bloom of the Qliphoth** | 1200 | Grand | Degree 7. Plants a Qliphoth Seed (placed as catalyst within the rite pattern), summons a `QliphothBloomBlock` (1x1x8 tree, 3-chunk radius), and starts the Qliphoth Communion chain. See section 5.9. |
 
-### 22.3 Enzyme Fruiting Recipes
+### 25.3 Enzyme Fruiting Recipes
 
 `data/hemomancy/recipe/enzyme_fruiting/*.json` defines Mycelial Lantern fruiting recipes. Each recipe names a reusable `culture` ingredient, an output `result`, a `duration`, and `blood_per_tick`.
 
@@ -2099,7 +2182,7 @@ Default tuning for the eight enzyme recipes is 2,400 ticks, 0.25 blood/tick, 600
 
 Implemented outputs: `vivacious_enzyme`, `fervent_enzyme`, `neurotic_enzyme`, `incandescent_enzyme`, `ruinous_enzyme`, `frigid_enzyme`, `ferric_enzyme`, and `umbral_enzyme`.
 
-### 22.4 Plant & Fungi Recipes
+### 25.4 Plant & Fungi Recipes
 
 Plants and fungi found in hemomancy biomes serve as ingredients across multiple crafting systems:
 
@@ -2140,7 +2223,7 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | Rafflesia | Potion of Hemolysis |
 | Sarcodes | Potion of Blood Rush |
 
-### 22.5 Food Recipes
+### 25.5 Food Recipes
 
 | Recipe | Type | Notes |
 |--------|------|-------|
@@ -2150,7 +2233,7 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | Roasted Gourd Seeds | Smoking | Gourd seeds in smoker |
 | Roasted Gourd Seeds | Campfire Cooking | Gourd seeds on campfire |
 
-### 22.6 Faction-Associated Block Palettes (Planning Guardrail)
+### 25.6 Faction-Associated Block Palettes (Planning Guardrail)
 
 When drafting new ritual patterns and recipe structures, use faction palettes to avoid repeatedly reusing the same Hemomancy-only block combinations.
 
@@ -2167,7 +2250,7 @@ When drafting new ritual patterns and recipe structures, use faction palettes to
 - Do not reuse the same core `hitBlock` family across multiple adjacent rite tiers unless intentionally signaling a direct progression upgrade.
 - If a Hemomancy-exclusive block is mandatory for function, diversify the surrounding pattern with faction-appropriate Vanilla blocks.
 
-### 22.7 Saint Canon Memory Recipes (Somatic Loom)
+### 25.7 Saint Canon Memory Recipes (Somatic Loom)
 
 Each of the four saints yields a Canon Memory when the player places a Hallowed Residuum into the Somatic Loom's catalyst slot while the loom's tendency alignment matches the saint's paired tendencies (both must reach the TENDENCY_THRESHOLD of 3.0).
 
@@ -2180,7 +2263,7 @@ Each of the four saints yields a Canon Memory when the player places a Hallowed 
 
 > These are SUMMA-rank manipulations — the most costly and powerful tier. They are imprinted rather than learned; no blood cost reduction from Dynamic Use applies.
 
-### 22.7.1 Scar-Catalyst Memory Recipes (Somatic Loom)
+### 25.7.1 Scar-Catalyst Memory Recipes (Somatic Loom)
 
 Five scar items can serve as Somatic Loom catalysts, providing an alternative path to certain memories. These are distinct from the standard routes (different ingredient, and in most cases different tendency combination). They are intended as mid-game rewards for players who have invested in the scar system:
 
@@ -2194,7 +2277,7 @@ Five scar items can serve as Somatic Loom catalysts, providing an alternative pa
 
 > Recipes live in `data/hemomancy/recipe/memory_weaving/memory_*_scarred.json`. The loom's recipe matcher checks both tendencies AND ingredient, so scar-catalyst and standard-catalyst routes for the same memory coexist without conflict.
 
-### 22.8 Hallowed Residuum Extraction (Vial Centrifuge)
+### 25.8 Hallowed Residuum Extraction (Vial Centrifuge)
 
 Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Centrifuge** yields the corresponding Hallowed Residuum. The syringe is obtained by using an empty Blood Vial on a consecrated Saint Sarcophagus.
 
@@ -2205,34 +2288,13 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | `PUTRICIEL` | Hallowed Residuum of Putriciel |
 | `VELORUM` | Hallowed Residuum of Velorum |
 
-### 22.9 White Humor Purification
-
-White Humor Purification is an Unstained in-world recipe system handled by `WhiteHumorPurificationRecipe`, `WhiteHumorPurificationEvents`, and persisted pool charge data in `WhiteHumorPoolSavedData`.
-
-The player creates a pool by using a **Pale Humor Flask** on a replaceable block. This places a `white_humor` source block, returns an empty cured clay flask when not in creative mode, and resets that source to **32 purification charges**. Dropped item entities sitting in White Humor check for `hemomancy:white_humor_purification` recipes. Matching stacks keep extended lifetime while submerged, accumulate purification progress, then transform once their recipe's `transform_time` is reached and a charged source block is found within a 2-block search radius.
-
-Each transformed item consumes one source charge. Large stacks are split by the nearest source's remaining charges: the transformed result entity is spawned, the original stack shrinks by the transformed count, and the source is removed when its charges are spent. If no charged source is available, progress holds at completion until one is available.
-
-Clean Unstained witness blocks within 4 blocks accelerate the process. Bloomed Lethean Poppies count as 2 progress bonus; white/light gray/gray candles and unwaxed copper/cut copper/stairs/slabs count as 1. Every 80 item ticks, one participating witness may absorb the shed taint: Lethean Poppies become dormant, candles darken toward black, and copper advances one oxidation step.
-
-| Input | Output | Transform Time |
-|---|---|---|
-| Blood Crystal Shard | Cleansed Blood Crystal Shard | 300 ticks |
-| Hematic Iron Block | Pale Silver Block | 600 ticks |
-| Venous Stone | Cleansed Stone | 240 ticks |
-| Infested Venous Stone | Cleansed Stone | 260 ticks |
-| Sanguine Glass | Cleansed Sanguine Glass | 240 ticks |
-| Sanguine Pane | Cleansed Sanguine Pane | 240 ticks |
-
-The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/sacred_tools/pages/white_humor_purification.json`. JEI displays the recipe category as **White Humor Purification** and notes that each source purifies 32 items.
-
 ---
 
-## 23. Mob Entities
+## 26. Mob Entities
 
 > **Design Note — Arthropods as Natural Hemomancers:** In the Hemomancy worldbuilding, arthropods and crustaceans are treated as nature's own blood mages. They do not use blood magic consciously, but the same forces that let Hemomancers harden blood into iron or spin it into chitin are expressed instinctively across the insect and crustacean kingdoms (urchins growing blood spines, Chthonians growing iron mandibles, Chitinites growing hematic-iron shells, etc.). This informs the mod's use of these creatures as source material for crafting and the Morphling system.
 
-### 23.1 Hostile / Monster Mobs
+### 26.1 Hostile / Monster Mobs
 
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
@@ -2254,7 +2316,7 @@ The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/
 | **Synapse Hound** | | Monster | Neural creature (ON_GROUND spawn) |
 | **Myelin Borer** | | Monster | Burrowing neural parasite (ON_GROUND spawn) |
 
-### 23.2 Creature / Ambient Mobs
+### 26.2 Creature / Ambient Mobs
 
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
@@ -2268,7 +2330,7 @@ The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/
 | **Hemojelly** | | Ambient | Blood jelly creature (ON_GROUND spawn) |
 | **Venous Strider** | | Ambient | Vein-walking strider (ON_GROUND spawn) |
 
-### 23.3 NPC / Summons / Player-controlled
+### 26.3 NPC / Summons / Player-controlled
 
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
@@ -2282,17 +2344,17 @@ The Liber Immaculatus documents this diegetically under `books/liberimmaculatus/
 | **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
 | **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
 | **Harbinger Mnemonist** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_mnemonist/harbinger_mnemonist.png) | Creature | NPC blood-memory mentor found at Harbinger Outposts; full degree-gated dialogue (`HarbingerMnemonistDialogueTrees`). Teaches crude memories, active manipulation slots, the Mnemonic Reliquary, and Somatic Loom progression. Gives eligible Degree 1+ Harbingers one starter crude memory item; purifying/Clarity players may inquire but cannot claim. |
-| **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see §26), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Her renderer still uses `textures/entity/blank.png` — dedicated model/texture/GeckoLib animations are WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters, Annetta is bitten, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: ① Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) ② Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) ③ Hair-and-Nails Slash at ≤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 — see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4 (if Phase 2 not triggered).<br><br>**Unstained route** (interact while holding a Draught of Still Mercy and `clarityUnlocked == true`): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Unstained-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot ×3. |
+| **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see §29), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Her renderer still uses `textures/entity/blank.png` — dedicated model/texture/GeckoLib animations are WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters, Annetta is bitten, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: ① Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) ② Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) ③ Hair-and-Nails Slash at ≤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 — see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4 (if Phase 2 not triggered).<br><br>**Unstained route** (interact while holding a Draught of Still Mercy and `clarityUnlocked == true`): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Unstained-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot ×3. |
 | **Stained Priestess (`StainedPriestessEntity`)** | | Boss | Phase 2 of the Harbinger-route Annetta encounter. Stats: 420 HP, 12 ATK, 0.32 SPD, 0.9 KB resist, 10 armor. Boss bar: WHITE, NOTCHED_10. Phase abilities: ① Blood Lances (every 70t, fires `SanguisLanceaEntity` projectile in look direction + 2 angled variants) ② Lunge attack (every 100t, moves rapidly toward target and strikes) ③ Blood Pressure Bloom (every 85t, 7-block AoE, 6 magic damage + Slowness to all nearby). Melee hits drain 300 blood from blood-active players (`BLOOD_DRAIN = 300`). Drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4. |
 | **Latent Annetta Infection (`LatentAnnettaInfectionEntity`)** | | Boss | Final challenge of the Unstained-route Annetta encounter: the latent infection given physical form. Stats: 360 HP, 10 ATK, 0.27 SPD, 0.85 KB resist, 8 armor. Boss bar: WHITE, NOTCHED_10. Abilities: ① Infection Bloom (every 70t, MYCELIUM particle burst, Sculk Shrieker sound, 6-block AoE, 5 magic damage + Confusion + Slowness) ② Pressure Spike (every 110t, SOUL_FIRE_FLAME particles, 9-block AoE, 4 indirect magic damage + Weakness). Melee hits apply Poison I. On death: if a linked `AnnettaKnowlesEntity` is in CURED_SUPPORT within 32 blocks, calls `markResolvedAfterCure()`. Drops: `annettas_absolution_dagger` + pale_silver_ingot ×3. |
 | **Spectral Companion** | | Misc | Spectral ally entity |
 | **Sanguilith** | | Misc (MnA, dormant) | Large (1.5×3.25), blood-themed summoned monster from the dormant MnA compat source. `ComponentSummonSanguilith` summons an ownable, duration-limited melee attacker with a max of 4 nearby. Authored in `MnAPluginEntityInit` with custom `SanguilithModel` and `SanguilithRenderer`, but not compiled/registered while MnA compat is excluded on the current NeoForge 1.21.1 branch. |
 
-### 23.4 Entity Tags
+### 26.4 Entity Tags
 
 Mobs are tagged by tendency: `FUNGAL_TAG`, `UMBRAL_TAG`, `INCANDESCENT_TAG`, `FERRIC_TAG`, `VIVACIOUS_TAG`, `RUINOUS_TAG`, `NEUROTIC_TAG`, `FERVENT_TAG`, `FRIGID_TAG`.
 
-### 23.5 Spawn Placements
+### 26.5 Spawn Placements
 
 Registered in `EntityInit.commonSetup`:
 - Barbed Urchin → `IN_WATER`
@@ -2310,7 +2372,7 @@ Registered in `EntityInit.commonSetup`:
 - Hemojelly → `ON_GROUND`
 - Venous Strider → `ON_GROUND`
 
-### 23.6 Entity Loot Tables
+### 26.6 Entity Loot Tables
 
 > **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **38 entity loot tables**.
 
@@ -2328,9 +2390,9 @@ Do not re-enable `HemoEntityLootProvider` unless the current JSON values are fir
 
 ---
 
-## 24. Projectile & Blood Construct Entities
+## 27. Projectile & Blood Construct Entities
 
-### 24.1 Blood Constructs
+### 27.1 Blood Constructs
 
 Extend `BloodConstructEntity` (a `PathfinderMob` implementing `IBloodConstruct`). They are summoned by the player and have a limited lifetime (`deathTicks`):
 
@@ -2342,7 +2404,7 @@ Extend `BloodConstructEntity` (a `PathfinderMob` implementing `IBloodConstruct`)
 | ![](../src/main/resources/assets/hemomancy/textures/entity/iron_spike/model_iron_spike.png) Iron Spike (`EntityIronSpike`) | 1.4×1.5 iron spike trap |
 | ![](../src/main/resources/assets/hemomancy/textures/entity/wretched_will/modelwretchedwill.png) Wretched Will (`EntityWretchedWill`) | Will-based construct |
 
-### 24.2 Projectiles
+### 27.2 Projectiles
 
 | Entity | Texture | Notes |
 |--------|---------|-------|
@@ -2358,7 +2420,7 @@ Extend `BloodConstructEntity` (a `PathfinderMob` implementing `IBloodConstruct`)
 | Sanguis Lancea | ![](../src/main/resources/assets/hemomancy/textures/entity/sanguis_lancea/model_sanguis_lancea.png) | Thrown spear entity |
 | Dark Arrow | | Dark-themed arrow |
 
-### 24.3 Item Entities
+### 27.3 Item Entities
 
 | Entity | Notes |
 |--------|-------|
@@ -2367,9 +2429,9 @@ Extend `BloodConstructEntity` (a `PathfinderMob` implementing `IBloodConstruct`)
 
 ---
 
-## 25. World Generation & Biomes
+## 28. World Generation & Biomes
 
-### 25.1 Custom Biomes (via TerraBlender)
+### 28.1 Custom Biomes (via TerraBlender)
 
 | Biome | Key | Temperature | Precipitation | Notes |
 |-------|-----|-------------|---------------|-------|
@@ -2387,11 +2449,11 @@ The Fungal Gardens dimension uses a datapack `multi_noise` biome source in `data
 > |---|---|---|---|
 > | ![](../src/main/resources/assets/hemomancy/textures/environment/sun.png) Sun | ![](../src/main/resources/assets/hemomancy/textures/environment/moon.png) Moon | ![](../src/main/resources/assets/hemomancy/textures/environment/clouds.png) Clouds | ![](../src/main/resources/assets/hemomancy/textures/environment/blood_moon_phases.png) Blood Moon Phases |
 
-### 25.1.1 Blood Moons
+### 28.1.1 Blood Moons
 
 Blood Moons are a world event distinct from normal nights, with their own moon texture phases (`blood_moon_phases.png`) and a client-side vein/tendril sky overlay.
 
-**Frequency:** Natural trigger checks once per night at tick 12542 and currently has a **1-in-7 chance** to start a 11900-tick Blood Moon. A command can force one for testing; the **Rite of the Sanguine Eclipse** (Greater rite, Degree 3+) also manually triggers one — see §22.2 Cardinal Rite Recipes.
+**Frequency:** Natural trigger checks once per night at tick 12542 and currently has a **1-in-7 chance** to start a 11900-tick Blood Moon. A command can force one for testing; the **Rite of the Sanguine Eclipse** (Greater rite, Degree 3+) also manually triggers one — see §25.2 Harbinger Cardinal Rite Recipes.
 
 **Effects while active:**
 - Harbingers / active Hemomancers: **Strength II and Night Vision**
@@ -2399,14 +2461,14 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 - Thirsters and Fargones spawn near players within the Blood Moon encounter cap via direct Blood Moon event spawns, not biome spawn lists; placement allows open night sky and non-colliding ground clutter, avoids bright block-lit areas, checks full mob clearance, and only counts successful world insertion
 - **Somatic Loom** ritual blood cost reduced by **25%** during a Blood Moon (applied in `SomaticLoomBlockEntity.startRitual()`; parallel to the manipulation discount in `BloodManipulation`)
 - **Founding Sanctum** barrier: hostile mobs (non-player `Monster`) that enter a consecrated sanctum boundary during a Blood Moon take 4 magic damage and are knocked outward every effect interval (handled in `FoundingSanctumEvents.onLevelTick()`)
-- **Kidneys** organ (if extracted): regeneration amplifier increases by +1 during a Blood Moon (overclocked filtration under pressure) — see §17.8 Organ Echo Items
+- **Kidneys** organ (if extracted): regeneration amplifier increases by +1 during a Blood Moon (overclocked filtration under pressure) — see §20.8 Organ Echo Items
 - Clients render the red Blood Moon phase texture and the `BloodMoonVeinSkyRenderer` tendril overlay when `PacketSyncBloodMoon` marks the event active; the RGB-only Blood Moon phase sheet is drawn additively so its black background texels do not appear as a visible square at dawn/dusk
 
 **Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new — she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) §9 for the full cosmological explanation.
 
 > **Status: Implemented.** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, and client sync. Blood drain for uninitiated, loom discount, and sanctum mob-sealing are all implemented. Ritual trigger via the **Rite of the Sanguine Eclipse** is implemented.
 
-### 25.2 World Features
+### 28.2 World Features
 
 | Feature | Notes |
 |---------|-------|
@@ -2418,7 +2480,7 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 | Hyphae Tendril | Vertical tendril features |
 | Bog Body Feature | Generates bog body blocks |
 
-### 25.3 Configured/Placed Features
+### 28.3 Configured/Placed Features
 
 Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 - `HYPHAE_TENDRIL`, `VENOUS_RIDGE`, `HUGE_FUNGUS`, `SMALL_INFECTED_FUNGUS`
@@ -2428,7 +2490,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 
 ---
 
-## 26. Structures
+## 29. Structures
 
 | Structure | Type | Notes |
 |-----------|------|-------|
@@ -2455,7 +2517,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 
 ---
 
-## 27. Villagers & Professions
+## 30. Villagers & Professions
 
 | Profession | POI Block | Notes |
 |-----------|-----------|-------|
@@ -2479,9 +2541,9 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 
 ---
 
-## 28. GUIs & Overlays
+## 31. GUIs & Overlays
 
-### 28.1 HUD Overlays
+### 31.1 HUD Overlays
 
 | Overlay | Location | Shows |
 |---------|----------|-------|
@@ -2493,12 +2555,12 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 > **Gauge fills:** ![](../src/main/resources/assets/hemomancy/textures/gui/blood_fill_tiled.png) Blood fill &nbsp; ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_fill_tiled.png) Purity fill &nbsp; ![](../src/main/resources/assets/hemomancy/textures/gui/unstained_clarity_fill_tiled.png) Clarity fill
 
 
-### 28.1a Reusable Screen Widgets
+### 31.1a Reusable Screen Widgets
 
 - `BloodVolumeBarWidget`: reusable vertical blood reservoir bar with frame, animated red fill, meniscus, highlights, bubbles, tick marks, `Bounds`, and tooltip rendering. Used by internal blood reservoir screens including Ghastly Alembic, Vial Centrifuge, Morphling Incubator, Mycelial Crucible, and Mycelial Lantern.
 - `WhiteHumorBarWidget`: dedicated Unstained counterpart with pale silver-blue fill and tooltip rendering. Extracted from `PallidRetortScreen` so future White Humor machines can reuse the same visual language without forcing a generic fluid widget yet.
 
-### 28.2 Screens
+### 31.2 Screens
 
 **Key GUI Textures:**
 
@@ -2531,9 +2593,9 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 
 ---
 
-## 29. Advancements
+## 32. Advancements
 
-### 29.1 Shared / Early Game
+### 32.1 Shared / Early Game
 
 | Advancement | Trigger |
 |-------------|---------|
@@ -2552,7 +2614,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Old Habits** | Obtain any enzyme |
 | **Bleeding a Stone** | Craft a Ghastly Alembic |
 
-### 29.2 Harbinger Path (programmatic + item triggers)
+### 32.2 Harbinger Path (programmatic + item triggers)
 
 All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree()` inside the `DEGREE_RITE_PATHS` completion block of `CardinalRiteEvents`. They chain from `the_first_awakening`.
 
@@ -2590,7 +2652,7 @@ All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree
 | **Scars of the Mind** | `scars_of_the_mind` | `degree_4_adept` | Obtain Scar Binder or Scar Binder Upgraded (inventory_changed) |
 | **The Land Bleeds for You** | `sanguine_domain` | `degree_5_illuminatus` | Sanguine Dominion rite (programmatic) |
 
-### 29.3 Unstained Path (programmatic)
+### 32.3 Unstained Path (programmatic)
 
 All granted via `UnstainedAdvancementGranter.grantIfNotDone()` from `UnstainedMilestoneHandler` (tick-based threshold checks) and `CardinalRiteEvents` (clarity ascension rite, altar of cleansing).
 
@@ -2613,7 +2675,7 @@ All granted via `UnstainedAdvancementGranter.grantIfNotDone()` from `UnstainedMi
 
 ---
 
-## 30. Keybindings
+## 33. Keybindings
 
 All under the "Hemomancy" category:
 
@@ -2633,7 +2695,7 @@ All under the "Hemomancy" category:
 
 ---
 
-## 31. Commands
+## 34. Commands
 
 The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 
@@ -2666,7 +2728,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 
 ---
 
-## 32. Sound Events
+## 35. Sound Events
 
 Registered in `SoundInit`:
 
@@ -2681,7 +2743,7 @@ Registered in `SoundInit`:
 
 ---
 
-## 33. Particle Types
+## 36. Particle Types
 
 Registered in `ParticleInit`:
 
@@ -2698,9 +2760,9 @@ Registered in `ParticleInit`:
 
 ---
 
-## 34. Mod Compatibility
+## 37. Mod Compatibility
 
-### 34.1 Mana and Artifice (MnA)
+### 37.1 Mana and Artifice (MnA)
 
 > **Status: `Dormant`.** MnA compat source is preserved as the design/implementation target, but it is **not compiled or registered** in the current branch. `build.gradle` excludes `src/main/java/com/vincenthuto/hemomancy/compat/mna/**`, the MnA dependency is commented because no NeoForge 1.21.1 build is available, and the `Hemomancy.java` MnA imports/registration block is commented out. Treat this section as dormant compat until MnA publishes a compatible build and the source exclusion is removed.
 
@@ -2770,29 +2832,29 @@ Designed integration as a faction + spell system:
 - Cross-mod advancements, JEI integration for MnA crafting recipes
 - Harbinger Mana HUD texture (`textures/mna/harbingers_resource_bars.png`) and resource hook (`HarbingersMana` implementing `ICastingResourceGuiProvider`) are authored in dormant compat source and should be treated as port targets until MnA is re-enabled
 
-### 34.2 Curios
+### 37.2 Curios
 
 **Status: `Dormant`.** Curios integration for the Charm of Vascularium and other equippable items is preserved in `compat/curios`, but the current NeoForge 1.21.1 branch does not compile/register it. `build.gradle` comments the Curios dependency and `Hemomancy.java` has the Curios registration block commented out pending a compatible Curios NeoForge build.
 
-### 34.3 JEI
+### 37.3 JEI
 
 **Status: `Partial`.** JEI is currently supplied by a local `libs/jei-1.21.1-neoforge-19.27.0.340.jar` while the old Maven dependency lines remain commented. Recipe category support exists/planned for:
 - Chisel Station recipes
 - Visceral Recaller recipes
-- Blood Structure Crafting recipes
+- Blood Structure Crafting recipes (Harbinger entries; Unstained entries share infrastructure but are documented in §15.3)
 - Morphling Incubator recipes (`IncubatorRecipeCategory`)
 - Mycelial Crucible recipes (`MycelialCrucibleRecipeCategory`)
 - Morphic Nectar recipes (`MorphicNectarRecipeCategory`)
-- White Humor Purification recipes (`WhiteHumorPurificationRecipeCategory`)
+- White Humor Purification recipes (`WhiteHumorPurificationRecipeCategory`; Unstained-only, see §15.4)
 - Enzyme Fruiting recipes have `EnzymeFruitingRecipeCategory` authored, but `JEIPlugin` does not currently register the type/category/catalyst/recipes yet.
 
-### 34.4 HutosLib
+### 37.4 HutosLib
 
 HutosLib is still the required shared runtime library (`com.vincenthuto.hutoslib:hutoslib`, currently `7.3.5`), but local development now uses a Gradle composite build. `settings.gradle` includes `../HutosLib` and substitutes the Maven module with the local project, so Hemomancy builds directly against the workspace HutosLib source when that sibling checkout is present.
 
 ---
 
-## 35. Known WIP / Incomplete Systems
+## 38. Known WIP / Incomplete Systems
 
 This section is a maintenance rollup, not a changelog. It uses the status legend from the top of this reference and only calls out systems whose state is easy to misread from older notes.
 
@@ -2801,7 +2863,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 | Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta dedicated art/rendering and final combat polish, JEI display wiring for Mycelial Lantern |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
-| Planned | Direct-routing polish, forced manipulation rank-up rituals, deep-sea iron snail, Ghost Pipe Unstained material role, Cleansed Stone and Pallid Lantern recipes |
+| Planned | Direct-routing polish, forced manipulation rank-up rituals, deep-sea iron snail, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
 
 - **Entity Loot Tables** — `Implemented`: 38 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum / Liber Immaculatus** — `HemoProgressionScreen.setupEntries()` is still commented out (Java renderer WIP). However, the HutosLib JSON book framework is wired: the `sanctumsanguinium` book folder now has normal lore/mechanics chapters, and the `liberimmaculatus` book folder has 4 chapters (intro, sacred_tools, our_lady, the_path) with 12 pages covering the full Unstained path. The Field Notes / memo slice is implemented: `memo_capture:<id>` dialogue events write memo IDs into Field Notes, and the Dictation Table dictates those IDs into the player's `LiberKnowledge` attachment rather than into the Liber item stack. Field Notes are now ink-bound: Hematic Field Ink captures Harbinger memos for Liber Sanguinum, while Pale Field Ink captures Unstained memos for Liber Immaculatus. `LiberKnowledge` stores `KnownMemos`, `UnlockedLiberEntries`, and per-entry discovery sources, syncs to clients with `PacketSyncLiberKnowledge`, and can be granted through `LiberKnowledgeHelper` by memos, advancements, rites, item pickups, degree changes, dialogue, or other future triggers. `LiberEntryDefinitions` is the central code-side page map: it lists visible book entries and maps initial rites, Harbinger degree advancements, Unstained milestones, selected item pickups, and `liber_unlock:<entry_id>` dialogue events to normal book page IDs. The Liber items now behave like personal viewers/keys: borrowed books show the reader's own unlocked pages, not the owner's. Legacy stack data is migrated into the player attachment when an old Liber is used or placed for dictation. `MemoBookFilter` treats `LiberEntryDefinitions` as the source of visible pages for both Liber books; pages not mapped by a definition remain hidden, and chapters with zero unlocked pages are omitted. Current memos include `first_rite_notes`, `pale_lady_notes`, and Harbinger fungal whisper memos (`fungal_whisper_adept`, `fungal_whisper_illuminatus`, `fungal_whisper_sanctified`, `fungal_whisper_archon`, `fungal_whisper_truth`, `qliphoth_communion`) that unlock the Hyphae, Entity, Truth, and Qliphoth Liber Sanguinum pages through Hematic Field Ink. Remaining WIP: re-enable `setupEntries()` if that older renderer is revived, move entry definitions to data-driven JSON if desired, and author more entry definitions across existing chapters.
@@ -2809,9 +2871,9 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Skill Effect Wiring** — **Implemented:** All 21 skills in `SkillPointHelper` have helper methods and are fully wired into event handlers. Iron Will wired in `BloodVolumeEvents.onPlayerDamaged`; Scar Affinity/Resonance/Mastery wired in `ScarEntityEventHandler` and `ItemScar`; puppeteer summon cap/health/damage/range are wired through the Marionette Crossbar and bound summon behavior.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists; specific loot targets are not yet assigned.
-- **Visceral Organs System** — **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** (+1000 max blood per level, announces capacity expansion on first reach); **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 — Cardiac Autonomy fully mastered; blood drain 10÷level per 2 s). **Iron Brazier** reagent system is organ-specific. See §17.8.
-- **Armor Set Bonuses** — **Implemented:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §19 for details.
-- **Morphling Maturity** — **Implemented:** All 12 morphlings now have named maturity-tier reactive abilities (Developing → Mature → Apex) and secondary tendencies defined. See §14.1.
+- **Visceral Organs System** — **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** (+1000 max blood per level, announces capacity expansion on first reach); **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 — Cardiac Autonomy fully mastered; blood drain 10÷level per 2 s). **Iron Brazier** reagent system is organ-specific. See §20.8.
+- **Armor Set Bonuses** — **Implemented:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §22 for details.
+- **Morphling Maturity** — **Implemented:** All 12 morphlings now have named maturity-tier reactive abilities (Developing → Mature → Apex) and secondary tendencies defined. See §16.1.
 - **Scar Gameplay Effects** — **Implemented:** All standard scars now have full triggered effect implementations. Effect durations respect `getScarMasteryDurationMultiplier()`.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — `Partial`: active memories use the layered memory item model system (`memory_blank` + per-memory overlay), and most manipulations have unique overlay textures under `textures/item/memories/`. Known pending art remains called out in the memory gallery above.
@@ -2831,7 +2893,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
 - **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
 - **New Monster Mobs** — `Partial`: all 10 monster/creature additions (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer, Crimson Doe, Hemojelly, Venous Strider) have AI goals, spawn placements, biome modifier JSONs, and loot table JSONs implemented. GeckoLib animation state machines are stubs awaiting final model work.
-- **New NPC Entities Dialogue** — `Partial`: full dialogue trees are implemented for all 6 main NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, **Harbinger Vicar**, and **Harbinger Mnemonist**. AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
+- **New NPC Entities Dialogue** — `Partial`: full dialogue trees are implemented for the main Harbinger and Unstained NPCs, including Zealot, Acolyte, Guardian item/ambient dialogue, Scout, and Our Lady whisper events. Guardian/Scout/Acolyte renderers and church spawning are active. Spectral Companion is registered with AI/rendering, but its player-facing summon flow remains WIP.
 - **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index, offerMemo)` (per-husk drop announcement; always delivered to the online bloom owner, with memo capture only when still relevant), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
 - **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
 - **Harbinger Outpost NPCs** — Harbinger Alchemist, Vicar, and Mnemonist are implemented with degree-gated dialogue trees. The Alchemist covers machine lore, the Vicar covers faction history/doctrine, and the Mnemonist covers crude memories, active manipulation slots, Mnemonic Reliquary loadout management, Somatic Loom memory weaving, and the one-time Degree 1+ starter crude-memory choice. Entities are registered with textures, lang keys, client render hooks, dialogue handlers, and outpost `afterPlace()` spawning.
@@ -2839,36 +2901,31 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System** — **Partial:** Four canon Saints exist: Hemorath, Seraphae the Chain Saint, Putriciel, and Velorum. The shared sarcophagus spine and boss dispatch are implemented, and Hemorath's trial is the first complete trial flow. Bespoke Trial Chamber rooms/world placement for Seraphae, Putriciel, and Velorum remain WIP. Boss models/textures/GeckoLib animations are stub/placeholder. See §5.8.
 - **Founding Sanctum** — **Partial:** Buff application, Sanguine Quintessence, catalyst requirement, sanctum persistence, and Blood Moon sealing are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §5.7.
-- **Blood Moon Mechanics** — **Implemented:** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, Somatic Loom discount, sanctum sealing, organ synergy, ritual trigger, and client sync/rendering. See §25.1.1.
+- **Blood Moon Mechanics** — **Implemented:** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, Somatic Loom discount, sanctum sealing, organ synergy, ritual trigger, and client sync/rendering. See §28.1.1.
 - **Fungal Dimension** — **Partial:** Fungal Spine access, safe travel placement, dimension mob spawning, and the Archon first-exit choice fork are implemented. Terrain feature population and broader dimension content remain WIP. See §5.6.
-- **Annetta Knowles / Stained Priestess** — **Partial:** The two-route encounter is wired through `AnnettaKnowlesEntity`, `StainedPriestessEntity`, `LatentAnnettaInfectionEntity`, and `BrokenChurchStructure`. Dedicated entity model, texture, GeckoLib animations, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP. See §23.3 and LORE_REFERENCE §11.
-- **Chthonian Termite Mound** — **Implemented:** Savanna structure, guaranteed queen spawn, loot chest, wood-chewing behavior, wooden tool degradation, tuned spawn rate, and spawn placements are present. See §26.
+- **Annetta Knowles / Stained Priestess** — **Partial:** The two-route encounter is wired through `AnnettaKnowlesEntity`, `StainedPriestessEntity`, `LatentAnnettaInfectionEntity`, and `BrokenChurchStructure`. Dedicated entity model, texture, GeckoLib animations, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP. See §26.3 and LORE_REFERENCE §11.
+- **Chthonian Termite Mound** — **Implemented:** Savanna structure, guaranteed queen spawn, loot chest, wood-chewing behavior, wooden tool degradation, tuned spawn rate, and spawn placements are present. See §29.
 - **Deep-Sea Iron Snail** — `Planned`: creature concept for deep ocean biomes, inspired by real-world Chrysomallon squamiferum (iron-sulfide shell snail from hydrothermal vents). Part of the arthropods-as-natural-hemomancers theme.
-- **Ghost Pipes as Unstained Material** — `Planned`: Ghost Pipe plant (real-world Monotropa uniflora, white parasitic plant with no chlorophyll) is registered in the mod. Planned role: Unstained crafting ingredient for alchemical and purification recipes. Acolyte gives "gather Ghost Pipe" as early task.
-- **Cleansed Stone and Pallid Lantern** — `Planned`: Unstained building materials; Cleansed Stone (Stone + Hemolytic Solution) and Pallid Lantern (Pale Silver + Pale Distillate + Glowstone). Neither recipe is yet implemented.
+- **Ghost Pipes as Unstained Material** — **Implemented:** Ghost Pipe is registered as a plant/potted plant and now has a Pallid Retort distillation recipe into Pale Distillate (`distillation/ghost_pipe.json`, `pallid: true`).
+- **Cleansed Stone and Pallid Lantern** — **Implemented:** `cleansed_stone.json` crafts Cleansed Stone from Stone + Hemolytic Solution, and `pallid_lantern.json` crafts Pallid Lantern from Pale Silver Ingot + Pale Humor Flask + Glowstone Dust. Both are registered blocks and used by Unstained recipes/advancements.
 
-### 35.1 Unstained Expansion — Planned Features
+### 38.1 Unstained Expansion - Current Status
 
-The Unstained faction is being expanded with deeper lore around **Our Lady of Still Waters** as their patron. Planned and in-progress features:
+The Unstained faction has moved from mostly planned design notes into a broad implemented gameplay path. This rollup keeps the remaining planned pieces visible without leaving completed systems mislabeled.
 
-- **Altar of Cleansing** — functional block that grants a one-time +25 purity boost when Tears of Silthmere are offered. Also accepts Lethean Poppy Wreaths (repeatable +5 purity) and Silver Chalices (+5 clarity). Will eventually be placed in every Unstained temple structure.
-- **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Pallid Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
-- **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
-- **Unstained Dialogue Expansion** — **Implemented:** Both Unstained Zealot and Unstained Acolyte have full purity-stage-aware dialogue trees. The Acolyte provides Our Lady of Still Waters lore, Silver Veil lore, and Clarity guidance at appropriate stages.
-- **Lethean Crafting Recipes** — implemented recipes:
-  - ✅ Tears of Silthmere = The Pale Distillate + Silver Chalice (crafting)
-  - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
-  - ✅ The Pale Distillate = Lethean Dew + Consecrated Copper Ingot (crafting)
-  - ✅ Pale Silver Ingot = Iron Ingot + The Pale Distillate (crafting)
-  - Pallid Lantern = Pale Silver Ingot + The Pale Distillate + Glowstone (crafting) — planned
-  - Cleansed Stone = Stone + Hemolytic Solution (crafting) — planned
-- **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
-  - Begin the Unstained path
-  - Receive the Altar's blessing
-  - Reach each purity stage (Tainted → Cleansing → Absolved → Purified)
-  - Unlock clarity
-  - Reach each clarity stage (Awakened → Discerning → Vigilant → Resolute → Enlightened)
-  - Collect all Unstained materials
-- **Silver Ward / Verdigris Aura Visual Indicators** — particle effects and visual indicators for active Unstained bonuses, potentially with Our Lady's motifs (silver droplets, pale blue mist).
+| System | Status | Code/data anchors |
+|---|---|---|
+| Altar of Cleansing | `Implemented` | `AltarOfCleansingBlock`, `AltarOfCleansingBlockEntity`, `altar_of_cleansing` block/entity registration, modeled item/BER, inquiry dialogue, and Unstained Church NBT entries. Tears of Silthmere grant the one-time altar blessing; Lethean Poppy Wreaths and Lethean Brew grant repeatable purity; Silver Chalices and Pallid Icons grant clarity once unlocked. |
+| Unstained temple/church expansion | `Partial` | `UnstainedChurchStructure` spawns one Zealot, two Guardians, three-to-five Acolytes, and rite-fragment inscriptions; `unstained_church.nbt` includes the Altar of Cleansing and Unstained Podium. Pallid Lantern/cleansed decorative density is still a tuning/art pass. |
+| Our Lady presence | `Partial` | `OurLadyWhisperEvents` and `OurLadyWhisperDialogueTrees` now deliver purity/clarity-stage whispers with memo capture. A physical Our Lady apparition/entity remains a future concept; `SpectralCompanionEntity` exists as an Unstained summon shell, not the Lady herself. |
+| Unstained dialogue expansion | `Implemented` | Zealot, Acolyte, Guardian, Scout, and Our Lady whisper dialogue trees exist. Unstained inquiry data covers Zealot/Guardian item dialogue, and the church structure now spawns the relevant NPCs. |
+| Lethean / pale crafting recipes | `Implemented` | Tears of Silthmere, Lethean Poppy Wreath, Pale Distillate, Pale Silver, Cleansed Stone, Pallid Lantern, Pale Field Ink, Lethean Chalice, Pallid Icon, Verdigris Censer, Unstained armor/tools, Pallid Retort distillation, and White Humor purification recipes are present under `data/hemomancy/recipe/`. Ghost Pipe now has a Pallid Retort recipe into Pale Distillate. |
+| Unstained advancement branch | `Implemented` | `UnstainedAdvancementGranter` and `UnstainedMilestoneHandler` grant altar, purity-stage, and clarity-stage advancements. JSONs exist for `unstained`, `path_of_purity`, `blessed_by_the_altar`, `tainted`, `cleansing`, `absolved`, `purified`, `clarity_awakened`, `discerning`, `vigilant`, `resolute_stage`, `enlightened_seeker`, and `lady_of_forgotten_waters`. |
+| Silver Ward / Verdigris Aura indicators | `Implemented` | `SilverWardEffect` spawns ambient END_ROD particles and reduces hemomancy-mob damage; `VerdigrisAuraEffect` spawns SCRAPE ring particles and weakens hemomancy mobs. `UnstainedProgressScreen` exposes toggles through `PacketToggleUnstainedBonus`, and `PacketSyncUnstainedProgress` syncs toggle state. |
+| Still Arts | `Implemented` | `StillArtInit`, `IKnownStillArts`, `KnownStillArtEvents`, Still Art packets, radial screen, cooldown overlay, and advancement-backed grants are active. See §15.1. |
+| Unstained Cardinal Rites | `Implemented` | Purity and clarity rites are authored under `data/hemomancy/recipe/cardinal_rite/` and handled by Unstained rite event systems. See §15.2. |
+| White Humor purification | `Implemented` | Recipe type/serializer, placed White Humor pools, finite pool charges, witness-block acceleration, JEI category, and Liber Immaculatus page are present. See §15.4. |
+
+Remaining work should now be tracked as polish/expansion rather than baseline implementation: finish any desired Unstained Church block-palette pass, decide whether Our Lady ever receives a visible apparition entity, wire any Spectral Companion summoning flow if it becomes player-facing, and continue balancing purity/clarity rewards.
 
 ---
