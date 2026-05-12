@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 public final class ErythrocoralReefRules {
-	public static final int MIN_WATER_DEPTH = 9;
-	public static final int MIN_FLOOR_BELOW_SEA_LEVEL = 8;
-	public static final int MAX_FLOOR_DELTA = 2;
+	public static final int MIN_WATER_DEPTH = 12;
+	public static final int MIN_FLOOR_BELOW_SEA_LEVEL = 10;
+	public static final int MAX_FLOOR_DELTA = 1;
 
 	private ErythrocoralReefRules() {
 	}

@@ -15,6 +15,14 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
+	private static final int MIN_CLUSTERS_PER_PASS = 1;
+	private static final int CLUSTER_VARIANCE = 2;
+	private static final int CLUSTER_MIN_OFFSET = 2;
+	private static final int CLUSTER_OFFSET_VARIANCE = 3;
+	private static final int MIN_CLUSTER_RADIUS = 2;
+	private static final int CLUSTER_RADIUS_VARIANCE = 2;
+	private static final int STABLE_SHELF_MIN_MATCHES = 18;
+
 	public ErythrocoralReefFeature(Codec<NoneFeatureConfiguration> codec) {
 		super(codec);
 	}
@@ -29,15 +37,15 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 			return false;
 		}
 
-		int clusters = 2 + random.nextInt(3);
+		int clusters = MIN_CLUSTERS_PER_PASS + random.nextInt(CLUSTER_VARIANCE);
 		for (int i = 0; i < clusters; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
-			int distance = i == 0 ? 0 : 2 + random.nextInt(5);
+			int distance = i == 0 ? 0 : CLUSTER_MIN_OFFSET + random.nextInt(CLUSTER_OFFSET_VARIANCE);
 			int x = floor.getX() + Mth.floor(Mth.cos(angle) * distance);
 			int z = floor.getZ() + Mth.floor(Mth.sin(angle) * distance);
 			BlockPos localFloor = findLocalFloor(level, x, z, floor.getY() + 6, mutable);
 			if (localFloor != null && Math.abs(localFloor.getY() - floor.getY()) <= ErythrocoralReefRules.MAX_FLOOR_DELTA) {
-				buildCluster(level, localFloor, 3 + random.nextInt(3), random, mutable);
+				buildCluster(level, localFloor, MIN_CLUSTER_RADIUS + random.nextInt(CLUSTER_RADIUS_VARIANCE), random, mutable);
 			}
 		}
 		return true;
@@ -88,7 +96,7 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 				}
 			}
 		}
-		return found >= 15;
+		return found >= STABLE_SHELF_MIN_MATCHES;
 	}
 
 	private void buildCluster(WorldGenLevel level, BlockPos center, int radius, RandomSource random,

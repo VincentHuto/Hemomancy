@@ -162,7 +162,7 @@ public class PlacedFeatureInit {
 		final Holder<ConfiguredFeature<?, ?>> ERYTHROCORAL_REEF = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.ERYTHROCORAL_REEF);
 
-		register(context, PlacedFeatureInit.ERYTHROCORAL_REEF, ERYTHROCORAL_REEF, CountPlacement.of(9),
+		register(context, PlacedFeatureInit.ERYTHROCORAL_REEF, ERYTHROCORAL_REEF, CountPlacement.of(4),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
 
 		// Tooth Geode - underground, rare, roughly once per 48 chunks
