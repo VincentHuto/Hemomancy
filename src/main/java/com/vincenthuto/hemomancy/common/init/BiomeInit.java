@@ -244,6 +244,8 @@ public class BiomeInit {
 				new MobSpawnSettings.SpawnerData(EntityType.SQUID, 2, 1, 3));
 		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
 				new MobSpawnSettings.SpawnerData(EntityType.DOLPHIN, 1, 1, 2));
+		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.mnemonic_whale.get(), 1, 1, 1));
 
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
@@ -381,4 +383,3 @@ public class BiomeInit {
 		});
 	}
 }
-

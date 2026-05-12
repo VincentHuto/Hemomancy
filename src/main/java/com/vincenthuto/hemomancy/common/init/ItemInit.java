@@ -148,6 +148,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> salt_stained_voyager_log = BASEITEMS.register("salt_stained_voyager_log",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
@@ -1025,6 +1027,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_blood_lantern_jelly = SPAWNEGGS.register(
             "spawn_egg_blood_lantern_jelly",
             () -> new DeferredSpawnEggItem(EntityInit.blood_lantern_jelly, 0x8B1E4D, 0xFF8AB0, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_mnemonic_whale = SPAWNEGGS.register(
+            "spawn_egg_mnemonic_whale",
+            () -> new DeferredSpawnEggItem(EntityInit.mnemonic_whale, 0x5A3145, 0xC26F8D, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_brined_votary = SPAWNEGGS.register(
             "spawn_egg_brined_votary",
             () -> new DeferredSpawnEggItem(EntityInit.brined_votary, 0x2B3F45, 0x8A1F2C, new Item.Properties()));

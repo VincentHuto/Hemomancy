@@ -209,6 +209,36 @@
       }
     ]
   },
+  "entity.mnemonic_whale.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.mnemonic_whale.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.mnemonic_whale.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.mnemonic_whale.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.mnemonic_whale.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.mnemonic_whale.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/death",
+        "stream": true
+      }
+    ]
+  },
   "entity.barbed_urchin.ambient": {
     "category": "entity",
     "subtitle": "subtitle.hemomancy.entity.barbed_urchin.ambient",

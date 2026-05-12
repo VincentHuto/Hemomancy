@@ -29,6 +29,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BloodLanternJe
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
@@ -507,6 +508,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.barbed_urchin.get(), BarbedUrchinRenderer::new);
             event.registerEntityRenderer(EntityInit.chalybeate_snail.get(), ChalybeateSnailRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyRenderer::new);
+            event.registerEntityRenderer(EntityInit.mnemonic_whale.get(), MnemonicWhaleRenderer::new);
             event.registerEntityRenderer(EntityInit.brined_votary.get(), BrinedVotaryRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
             event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
@@ -884,4 +886,3 @@ public class ClientEvents {
         }
     }
 }
-

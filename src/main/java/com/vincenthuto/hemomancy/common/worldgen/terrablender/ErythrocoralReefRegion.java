@@ -27,7 +27,7 @@ public class ErythrocoralReefRegion extends Region {
 				.humidity(ErythrocoralReefClimateRules.humidities())
 				.continentalness(ErythrocoralReefClimateRules.continentalness())
 				.erosion(ErythrocoralReefClimateRules.erosions())
-				.depth(Depth.SURFACE)
+				.depth(Depth.FLOOR)
 				.weirdness(ErythrocoralReefClimateRules.weirdnesses())
 				.offset(0.0F)
 				.build()

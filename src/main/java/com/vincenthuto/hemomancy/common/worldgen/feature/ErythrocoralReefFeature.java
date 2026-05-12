@@ -44,8 +44,8 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	private BlockPos findReefFloor(WorldGenLevel level, BlockPos origin, BlockPos.MutableBlockPos mutable) {
-		int startY = Math.min(level.getSeaLevel() + 3, level.getMaxBuildHeight() - 2);
-		return findLocalFloor(level, origin.getX(), origin.getZ(), Math.max(origin.getY() + 3, startY), mutable);
+		int startY = Math.min(level.getSeaLevel() - 1, level.getMaxBuildHeight() - 2);
+		return findLocalFloor(level, origin.getX(), origin.getZ(), Math.max(origin.getY() + 1, startY), mutable);
 	}
 
 	private BlockPos findLocalFloor(WorldGenLevel level, int x, int z, int startY, BlockPos.MutableBlockPos mutable) {
@@ -58,7 +58,7 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 			BlockState below = level.getBlockState(mutable);
 			boolean sturdyFloor = below.isFaceSturdy(level, mutable, Direction.UP);
 			boolean valid = ErythrocoralReefRules.canUseFloor(isWaterSource(originState), isWaterSource(aboveState),
-					sturdyFloor, below.liquid(), waterDepthAbove(level, mutable.above()));
+					sturdyFloor, below.liquid(), waterDepthAbove(level, mutable.above()), mutable.getY() + 1, level.getSeaLevel());
 			mutable.move(Direction.UP);
 			if (valid) {
 				return mutable.immutable();
