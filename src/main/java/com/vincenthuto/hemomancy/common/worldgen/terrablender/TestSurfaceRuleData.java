@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.terrablender;
 
 
-import com.vincenthuto.hemomancy.common.init.BiomeInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.world.level.block.Block;
@@ -20,16 +19,18 @@ public class TestSurfaceRuleData
     public static SurfaceRules.RuleSource makeRules()
     {
         SurfaceRules.ConditionSource isAtOrAboveWaterLevel = SurfaceRules.waterBlockCheck(-1, 0);
-        SurfaceRules.RuleSource grassSurface = SurfaceRules.sequence(SurfaceRules.ifTrue(isAtOrAboveWaterLevel, GRASS_BLOCK), DIRT);
+        SurfaceRules.RuleSource grassSurface = SurfaceRules.sequence(
+            SurfaceRules.ifTrue(isAtOrAboveWaterLevel, GRASS_BLOCK), DIRT);
+        SurfaceRules.RuleSource fungalSurface = SurfaceRules.sequence(
+            SurfaceRules.ifTrue(isAtOrAboveWaterLevel, ERYTHROCYTIC_MYCELIUM), ERYTHROCYTIC_DIRT);
 
         return SurfaceRules.sequence(
-            SurfaceRules.ifTrue(SurfaceRules.isBiome(BiomeInit.FUNGAL_GARDENS),
+            SurfaceRules.ifTrue(SurfaceRules.isBiome(FungalSurfaceBiomeRules.fungalSurfaceBiomes()),
                 SurfaceRules.sequence(
-                    SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR,
-                        SurfaceRules.ifTrue(isAtOrAboveWaterLevel, ERYTHROCYTIC_MYCELIUM)),
-                    SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, ERYTHROCYTIC_DIRT),
+                    SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, hemorrhagic_crust),
                     SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, VENOUS_STONE),
-                        SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, hemorrhagic_crust)
+                    SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, ERYTHROCYTIC_DIRT),
+                    SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, fungalSurface)
 
                 )
             ),
