@@ -31,6 +31,8 @@ import net.minecraft.world.phys.Vec3;
 public class MnemonicWhaleEntity extends WaterAnimal {
 	private static final int SAMPLE_COOLDOWN_TICKS = 6000;
 	private static final int AMBIENT_SHEDDING_CHECK_INTERVAL = 4800;
+	private static final int MIN_SPAWN_DEPTH_BELOW_SEA_LEVEL = 9;
+	private static final int SHALLOW_WATER_PUSH_DEPTH = 7;
 
 	private int sampleCooldownTicks;
 
@@ -62,7 +64,7 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 		return level.getFluidState(pos).is(FluidTags.WATER)
 				&& level.getFluidState(pos.above()).is(FluidTags.WATER)
 				&& level.getFluidState(pos.below()).is(FluidTags.WATER)
-				&& pos.getY() <= level.getSeaLevel() - 10;
+				&& pos.getY() <= level.getSeaLevel() - MIN_SPAWN_DEPTH_BELOW_SEA_LEVEL;
 	}
 
 	@Override
@@ -77,7 +79,7 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 			}
 		}
 
-		if (this.isInWater() && this.getY() > this.level().getSeaLevel() - 6) {
+		if (this.isInWater() && this.getY() > this.level().getSeaLevel() - SHALLOW_WATER_PUSH_DEPTH) {
 			Vec3 current = this.getDeltaMovement();
 			this.setDeltaMovement(current.x, Math.max(current.y - 0.02D, -0.05D), current.z);
 		}

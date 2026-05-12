@@ -245,7 +245,7 @@ public class BiomeInit {
 		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
 				new MobSpawnSettings.SpawnerData(EntityType.DOLPHIN, 1, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityInit.mnemonic_whale.get(), 1, 1, 1));
+				new MobSpawnSettings.SpawnerData(EntityInit.mnemonic_whale.get(), 2, 1, 1));
 
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
