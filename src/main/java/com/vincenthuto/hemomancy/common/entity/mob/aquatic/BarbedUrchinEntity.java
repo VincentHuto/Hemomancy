@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
@@ -107,10 +108,11 @@ public class BarbedUrchinEntity extends AbstractFish {
 	public static boolean canSpawnHere(EntityType<? extends AbstractFish> fish, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		int seaLevel = world.getSeaLevel();
-		int minY = seaLevel - 13;
+		int minY = seaLevel - ErythrocoralReefTuning.URCHIN_MAX_DEPTH_BELOW_SEA_LEVEL;
+		int maxY = seaLevel - ErythrocoralReefTuning.URCHIN_MIN_DEPTH_BELOW_SEA_LEVEL;
 		boolean isAllNeighborsSource = isSourceBlock(world, pos.north()) && isSourceBlock(world, pos.south())
 				&& isSourceBlock(world, pos.west()) && isSourceBlock(world, pos.east());
-		return isSourceBlock(world, pos) && isAllNeighborsSource && pos.getY() >= minY && pos.getY() <= seaLevel;
+		return isSourceBlock(world, pos) && isAllNeighborsSource && pos.getY() >= minY && pos.getY() <= maxY;
 	}
     private static boolean isSourceBlock(LevelAccessor world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);

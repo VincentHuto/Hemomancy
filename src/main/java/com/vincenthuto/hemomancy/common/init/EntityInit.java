@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BrinedVotaryEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.ChalybeateSnailEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.MnemonicWhaleEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.MnemonicWhaleTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
@@ -306,7 +307,7 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<MnemonicWhaleEntity>> mnemonic_whale = ENTITY_TYPES.register(
             "mnemonic_whale",
             () -> EntityType.Builder.of(MnemonicWhaleEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(2.8F, 1.2F)
+                    .sized(MnemonicWhaleTuning.HITBOX_WIDTH, MnemonicWhaleTuning.HITBOX_HEIGHT)
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("mnemonic_whale").toString()));
 
