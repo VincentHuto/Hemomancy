@@ -82,6 +82,14 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BLOOD_LANTERN_JELLY_DEATH = registerSoundEvent(
 			"entity.blood_lantern_jelly.death");
 
+	// Mnemonic Whale (reef megafauna)
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MNEMONIC_WHALE_AMBIENT = registerSoundEvent(
+			"entity.mnemonic_whale.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MNEMONIC_WHALE_HURT = registerSoundEvent(
+			"entity.mnemonic_whale.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MNEMONIC_WHALE_DEATH = registerSoundEvent(
+			"entity.mnemonic_whale.death");
+
 	// Barbed Urchin (spiny aquatic creature)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_BARBED_URCHIN_AMBIENT = registerSoundEvent(
 			"entity.barbed_urchin.ambient");

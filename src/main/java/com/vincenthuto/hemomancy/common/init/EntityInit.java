@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BloodLanternJellyEnti
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BrinedVotaryEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.ChalybeateSnailEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.MnemonicWhaleEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
@@ -302,6 +303,13 @@ public class EntityInit {
                     .clientTrackingRange(8)
                     .build(Hemomancy.rloc("blood_lantern_jelly").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<MnemonicWhaleEntity>> mnemonic_whale = ENTITY_TYPES.register(
+            "mnemonic_whale",
+            () -> EntityType.Builder.of(MnemonicWhaleEntity::new, MobCategory.WATER_CREATURE)
+                    .sized(2.8F, 1.2F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("mnemonic_whale").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<BrinedVotaryEntity>> brined_votary = ENTITY_TYPES.register(
             "brined_votary",
             () -> EntityType.Builder.of(BrinedVotaryEntity::new, MobCategory.MONSTER)
@@ -525,6 +533,9 @@ public class EntityInit {
         event.register(EntityInit.blood_lantern_jelly.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BloodLanternJellyEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.mnemonic_whale.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MnemonicWhaleEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.hemolymphopoda.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -609,6 +620,7 @@ public class EntityInit {
         event.put(EntityInit.barbed_urchin.get(), BarbedUrchinEntity.setAttributes().build());
         event.put(EntityInit.chalybeate_snail.get(), ChalybeateSnailEntity.setAttributes().build());
         event.put(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyEntity.setAttributes().build());
+        event.put(EntityInit.mnemonic_whale.get(), MnemonicWhaleEntity.setAttributes().build());
         event.put(EntityInit.brined_votary.get(), BrinedVotaryEntity.setAttributes().build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
