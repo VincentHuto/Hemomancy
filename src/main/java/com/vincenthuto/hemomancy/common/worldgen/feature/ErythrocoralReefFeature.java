@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.common.block.harbinger.ErythrocoralGrowthBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -15,14 +16,6 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
-	private static final int MIN_CLUSTERS_PER_PASS = 1;
-	private static final int CLUSTER_VARIANCE = 2;
-	private static final int CLUSTER_MIN_OFFSET = 2;
-	private static final int CLUSTER_OFFSET_VARIANCE = 3;
-	private static final int MIN_CLUSTER_RADIUS = 2;
-	private static final int CLUSTER_RADIUS_VARIANCE = 2;
-	private static final int STABLE_SHELF_MIN_MATCHES = 18;
-
 	public ErythrocoralReefFeature(Codec<NoneFeatureConfiguration> codec) {
 		super(codec);
 	}
@@ -37,15 +30,18 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 			return false;
 		}
 
-		int clusters = MIN_CLUSTERS_PER_PASS + random.nextInt(CLUSTER_VARIANCE);
+		int clusters = ErythrocoralReefTuning.MIN_CLUSTERS_PER_PASS
+				+ random.nextInt(ErythrocoralReefTuning.CLUSTER_VARIANCE);
 		for (int i = 0; i < clusters; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
-			int distance = i == 0 ? 0 : CLUSTER_MIN_OFFSET + random.nextInt(CLUSTER_OFFSET_VARIANCE);
+			int distance = i == 0 ? 0 : ErythrocoralReefTuning.CLUSTER_MIN_OFFSET
+					+ random.nextInt(ErythrocoralReefTuning.CLUSTER_OFFSET_VARIANCE);
 			int x = floor.getX() + Mth.floor(Mth.cos(angle) * distance);
 			int z = floor.getZ() + Mth.floor(Mth.sin(angle) * distance);
 			BlockPos localFloor = findLocalFloor(level, x, z, floor.getY() + 6, mutable);
 			if (localFloor != null && Math.abs(localFloor.getY() - floor.getY()) <= ErythrocoralReefRules.MAX_FLOOR_DELTA) {
-				buildCluster(level, localFloor, MIN_CLUSTER_RADIUS + random.nextInt(CLUSTER_RADIUS_VARIANCE), random, mutable);
+				buildCluster(level, localFloor, ErythrocoralReefTuning.MIN_CLUSTER_RADIUS
+						+ random.nextInt(ErythrocoralReefTuning.CLUSTER_RADIUS_VARIANCE), random, mutable);
 			}
 		}
 		return true;
@@ -96,7 +92,7 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 				}
 			}
 		}
-		return found >= STABLE_SHELF_MIN_MATCHES;
+		return found >= ErythrocoralReefTuning.STABLE_SHELF_MIN_MATCHES;
 	}
 
 	private void buildCluster(WorldGenLevel level, BlockPos center, int radius, RandomSource random,

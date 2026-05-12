@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.ErythrocoralReefRegion;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion1;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion2;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion3;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.FungalGardensOverworldRegion;
 import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestSurfaceRuleData;
+import com.vincenthuto.hemomancy.config.HemoCommonConfig;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -233,19 +233,36 @@ public class BiomeInit {
 			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 		spawnBuilder.addSpawn(MobCategory.WATER_AMBIENT,
-				new MobSpawnSettings.SpawnerData(EntityInit.blood_lantern_jelly.get(), 26, 2, 5));
+				new MobSpawnSettings.SpawnerData(EntityInit.blood_lantern_jelly.get(),
+						ErythrocoralReefTuning.BLOOD_LANTERN_JELLY_WEIGHT,
+						ErythrocoralReefTuning.BLOOD_LANTERN_JELLY_MIN_COUNT,
+						ErythrocoralReefTuning.BLOOD_LANTERN_JELLY_MAX_COUNT));
 		spawnBuilder.addSpawn(MobCategory.WATER_AMBIENT,
-				new MobSpawnSettings.SpawnerData(EntityInit.barbed_urchin.get(), 3, 1, 2));
+				new MobSpawnSettings.SpawnerData(EntityInit.barbed_urchin.get(),
+						ErythrocoralReefTuning.BARBED_URCHIN_WEIGHT,
+						ErythrocoralReefTuning.BARBED_URCHIN_MIN_COUNT,
+						ErythrocoralReefTuning.BARBED_URCHIN_MAX_COUNT));
+		spawnBuilder.addSpawn(MobCategory.WATER_AMBIENT,
+				new MobSpawnSettings.SpawnerData(EntityType.TROPICAL_FISH,
+						ErythrocoralReefTuning.TROPICAL_FISH_WEIGHT,
+						ErythrocoralReefTuning.TROPICAL_FISH_MIN_COUNT,
+						ErythrocoralReefTuning.TROPICAL_FISH_MAX_COUNT));
+		spawnBuilder.addSpawn(MobCategory.WATER_AMBIENT,
+				new MobSpawnSettings.SpawnerData(EntityType.PUFFERFISH,
+						ErythrocoralReefTuning.PUFFERFISH_WEIGHT,
+						ErythrocoralReefTuning.PUFFERFISH_MIN_COUNT,
+						ErythrocoralReefTuning.PUFFERFISH_MAX_COUNT));
 		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityType.TROPICAL_FISH, 18, 4, 8));
+				new MobSpawnSettings.SpawnerData(EntityType.SQUID, ErythrocoralReefTuning.SQUID_WEIGHT,
+						ErythrocoralReefTuning.SQUID_MIN_COUNT, ErythrocoralReefTuning.SQUID_MAX_COUNT));
 		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityType.PUFFERFISH, 4, 1, 3));
+				new MobSpawnSettings.SpawnerData(EntityType.DOLPHIN, ErythrocoralReefTuning.DOLPHIN_WEIGHT,
+						ErythrocoralReefTuning.DOLPHIN_MIN_COUNT, ErythrocoralReefTuning.DOLPHIN_MAX_COUNT));
 		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityType.SQUID, 2, 1, 3));
-		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityType.DOLPHIN, 1, 1, 2));
-		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityInit.mnemonic_whale.get(), 2, 1, 1));
+				new MobSpawnSettings.SpawnerData(EntityInit.mnemonic_whale.get(),
+						ErythrocoralReefTuning.MNEMONIC_WHALE_WEIGHT,
+						ErythrocoralReefTuning.MNEMONIC_WHALE_MIN_COUNT,
+						ErythrocoralReefTuning.MNEMONIC_WHALE_MAX_COUNT));
 
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
@@ -372,10 +389,11 @@ public class BiomeInit {
 
 		event.enqueueWork(() -> {
 
-			Regions.register(new TestRegion1(Hemomancy.rloc("overworld_1"), 2));
-			Regions.register(new TestRegion2(Hemomancy.rloc("overworld_2"), 2));
-			Regions.register(new TestRegion3(Hemomancy.rloc("overworld_3"), 2));
 			Regions.register(new ErythrocoralReefRegion(Hemomancy.rloc("erythrocoral_reef_overworld"), 1));
+			if (HemoCommonConfig.enableOverworldFungalGardensRegion()) {
+				Regions.register(new FungalGardensOverworldRegion(
+						Hemomancy.rloc(FungalGardensOverworldRegion.REGION_PATH), 2));
+			}
 
 			// Register our surface rules
 			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, Hemomancy.MOD_ID,

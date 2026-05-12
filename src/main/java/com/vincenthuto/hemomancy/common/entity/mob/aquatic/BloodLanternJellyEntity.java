@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.phys.Vec3;
 
 public class BloodLanternJellyEntity extends PathfinderMob {
@@ -46,6 +47,11 @@ public class BloodLanternJellyEntity extends PathfinderMob {
 		return level.getFluidState(pos).is(FluidTags.WATER)
 				&& level.getFluidState(pos.above()).is(FluidTags.WATER)
 				&& pos.getY() <= level.getSeaLevel();
+	}
+
+	@Override
+	public boolean checkSpawnObstruction(LevelReader level) {
+		return BloodLanternJellySpawnRules.shouldIgnoreLiquidSpawnObstruction() && level.isUnobstructed(this);
 	}
 
 	@Override
