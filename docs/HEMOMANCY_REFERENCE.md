@@ -2794,6 +2794,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 - `morphling stage get` — show the equipped morphling's current maturity stage
 - `morphling stage set <0-5|stage_name>` — force the equipped morphling to Unfed, Fledgling, Developing, Mature, Apex, or Primal
 - `morphling stage next` / `morphling stage previous` — cycle the equipped morphling through all visual maturity stages without incubating copies
+- Stage changes update both the equipped morphling capability and the matching morphling item stored in the player's Morphling Jar when an exact jar-slot match is found.
 
 **Unstained Progress:**
 - `unstained get` — full overview (purity, clarity, stages)

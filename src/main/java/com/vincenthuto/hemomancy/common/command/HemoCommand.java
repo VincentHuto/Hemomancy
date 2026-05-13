@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
@@ -24,8 +25,10 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrga
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
+import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
@@ -42,6 +45,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Locale;
@@ -438,7 +442,9 @@ public class HemoCommand {
 			return 0;
 		}
 
+		ItemStack original = cap.getEquippedMorphling().copy();
 		applyMorphlingStage(updated, stage);
+		boolean sourceUpdated = writeBackEquippedMorphlingSource(player, original, updated);
 		cap.setEquippedMorphling(updated);
 		EquippedMorphlingEvents.syncToClient(player);
 		int actualStage = MorphlingItem.getMaturityLevel(updated);
@@ -446,7 +452,10 @@ public class HemoCommand {
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" equipped morphling to stage "))
 				.append(Component.literal(actualStage + " - " + MorphlingItem.getMaturityName(actualStage))
-						.withStyle(MorphlingItem.MATURITY_COLORS[actualStage])),
+						.withStyle(MorphlingItem.MATURITY_COLORS[actualStage]))
+				.append(sourceUpdated
+						? Component.literal(" and updated its jar item.").withStyle(ChatFormatting.GRAY)
+						: Component.literal("; no matching jar item was found.").withStyle(ChatFormatting.YELLOW)),
 				true);
 		return 1;
 	}
@@ -488,6 +497,59 @@ public class HemoCommand {
 			tag.remove(MorphlingItem.PRIMALIZED_KEY);
 		}
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	private static boolean writeBackEquippedMorphlingSource(ServerPlayer player, ItemStack original, ItemStack updated) {
+		boolean changed = false;
+		ItemStack inventoryJar = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+		if (!inventoryJar.isEmpty()) {
+			changed |= updateMorphlingJarStack(inventoryJar, original, updated);
+		}
+		ItemStack scarJar = HemoCapabilityAccess.getScars(player)
+				.map(scars -> scars.getStackInSlot(7))
+				.filter(stack -> stack.getItem() instanceof ItemMorphlingJar)
+				.orElse(ItemStack.EMPTY);
+		if (!scarJar.isEmpty() && scarJar != inventoryJar) {
+			changed |= updateMorphlingJarStack(scarJar, original, updated);
+		}
+		if (changed) {
+			player.getInventory().setChanged();
+			player.containerMenu.broadcastChanges();
+		}
+		return changed;
+	}
+
+	private static boolean updateMorphlingJarStack(ItemStack jarStack, ItemStack original, ItemStack updated) {
+		var rawHandler = jarStack.getCapability(Capabilities.ItemHandler.ITEM);
+		if (!(rawHandler instanceof MorphlingJarItemHandler handler)) {
+			return false;
+		}
+		handler.load();
+
+		int fallbackSlot = -1;
+		for (int i = 0; i < handler.getSlots(); i++) {
+			ItemStack candidate = handler.getStackInSlot(i);
+			if (candidate.isEmpty()) {
+				continue;
+			}
+			if (ItemStack.isSameItemSameComponents(candidate, original)) {
+				handler.setStackInSlot(i, updated.copy());
+				handler.save();
+				return true;
+			}
+			if (fallbackSlot == -1 && candidate.is(original.getItem())) {
+				fallbackSlot = i;
+			} else if (fallbackSlot >= 0 && candidate.is(original.getItem())) {
+				fallbackSlot = -2;
+			}
+		}
+
+		if (fallbackSlot >= 0) {
+			handler.setStackInSlot(fallbackSlot, updated.copy());
+			handler.save();
+			return true;
+		}
+		return false;
 	}
 
 	private static int parseMorphlingStage(String rawStage) {
