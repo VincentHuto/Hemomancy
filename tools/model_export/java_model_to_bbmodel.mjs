@@ -91,6 +91,36 @@ const MODEL_SETS = {
         source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingSerpentLegAttachmentModel.java",
         texture: "textures/models/morphling/serpent_leg_attachment.png",
       },
+      {
+        name: "MorphlingUrchinBodyAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingUrchinBodyAttachmentModel.java",
+        texture: "textures/models/morphling/urchin_body_attachment.png",
+      },
+      {
+        name: "MorphlingMothHeadAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingMothHeadAttachmentModel.java",
+        texture: "textures/models/morphling/moth_head_attachment.png",
+      },
+      {
+        name: "MorphlingCentipedeBodyAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingCentipedeBodyAttachmentModel.java",
+        texture: "textures/models/morphling/centipede_body_attachment.png",
+      },
+      {
+        name: "MorphlingPestsBodyAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingPestsBodyAttachmentModel.java",
+        texture: "textures/models/morphling/pests_body_attachment.png",
+      },
+      {
+        name: "MorphlingTickBodyAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingTickBodyAttachmentModel.java",
+        texture: "textures/models/morphling/tick_body_attachment.png",
+      },
+      {
+        name: "MorphlingMoleArmAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingMoleArmAttachmentModel.java",
+        texture: "textures/models/morphling/mole_arm_attachment.png",
+      },
     ],
   },
 };

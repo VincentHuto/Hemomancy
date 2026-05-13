@@ -2,9 +2,13 @@ package com.vincenthuto.hemomancy.client.morphling;
 
 import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment.AttachmentPoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -16,6 +20,8 @@ import java.util.Set;
 @OnlyIn(Dist.CLIENT)
 public final class MorphlingPlayerPartVisibility {
     private static final Map<PlayerModel<?>, VisibilitySnapshot> SNAPSHOTS = new IdentityHashMap<>();
+    private static final ThreadLocal<Set<AttachmentPoint>> ACTIVE_HIDDEN_PARTS =
+            ThreadLocal.withInitial(Set::of);
 
     private MorphlingPlayerPartVisibility() {
     }
@@ -32,6 +38,7 @@ public final class MorphlingPlayerPartVisibility {
             return;
         }
 
+        ACTIVE_HIDDEN_PARTS.set(hiddenParts);
         PlayerModel<?> model = renderer.getModel();
         SNAPSHOTS.put(model, VisibilitySnapshot.capture(model));
         hiddenParts.forEach(part -> setVisible(model, part, false));
@@ -43,14 +50,70 @@ public final class MorphlingPlayerPartVisibility {
         if (snapshot != null) {
             snapshot.restore(model);
         }
+        ACTIVE_HIDDEN_PARTS.remove();
+    }
+
+    public static void applyToArmorModel(HumanoidModel<?> model, EquipmentSlot slot) {
+        Set<AttachmentPoint> hiddenParts = ACTIVE_HIDDEN_PARTS.get();
+        if (hiddenParts.isEmpty()) {
+            return;
+        }
+
+        switch (slot) {
+            case HEAD -> {
+                if (hiddenParts.contains(AttachmentPoint.HEAD)) {
+                    model.head.visible = false;
+                    model.hat.visible = false;
+                }
+            }
+            case CHEST -> {
+                if (hiddenParts.contains(AttachmentPoint.BODY)) {
+                    model.body.visible = false;
+                }
+                if (hiddenParts.contains(AttachmentPoint.ARMS)) {
+                    model.rightArm.visible = false;
+                    model.leftArm.visible = false;
+                }
+            }
+            case LEGS -> {
+                if (hiddenParts.contains(AttachmentPoint.BODY)) {
+                    model.body.visible = false;
+                }
+                if (hiddenParts.contains(AttachmentPoint.LEGS)) {
+                    model.rightLeg.visible = false;
+                    model.leftLeg.visible = false;
+                }
+            }
+            case FEET -> {
+                if (hiddenParts.contains(AttachmentPoint.LEGS)) {
+                    model.rightLeg.visible = false;
+                    model.leftLeg.visible = false;
+                }
+            }
+            default -> {
+            }
+        }
+    }
+
+    public static boolean shouldHideHeldItem(HumanoidArm arm) {
+        return ACTIVE_HIDDEN_PARTS.get().contains(AttachmentPoint.ARMS);
+    }
+
+    public static boolean isHeadHidden() {
+        return ACTIVE_HIDDEN_PARTS.get().contains(AttachmentPoint.HEAD);
     }
 
     private static Set<AttachmentPoint> hiddenPartsFor(Player player) {
         return HemoCapabilityAccess.getEquippedMorphling(player)
                 .map(cap -> cap.getEquippedMorphling())
-                .map(MorphlingMutationRegistry::get)
-                .map(mutation -> mutation.modelAttachment)
-                .map(MorphlingModelAttachment::hiddenPlayerParts)
+                .map(stack -> {
+                    MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(stack);
+                    if (mutation == null || mutation.modelAttachment == null) {
+                        return Set.<AttachmentPoint>of();
+                    }
+                    int maturity = MorphlingItem.getMaturityLevel(stack);
+                    return mutation.modelAttachment.hiddenPlayerParts(maturity);
+                })
                 .orElse(Set.of());
     }
 
@@ -64,19 +127,15 @@ public final class MorphlingPlayerPartVisibility {
                 model.body.visible = visible;
                 model.jacket.visible = visible;
             }
-            case RIGHT_ARM -> {
+            case ARMS -> {
                 model.rightArm.visible = visible;
                 model.rightSleeve.visible = visible;
-            }
-            case LEFT_ARM -> {
                 model.leftArm.visible = visible;
                 model.leftSleeve.visible = visible;
             }
-            case RIGHT_LEG -> {
+            case LEGS -> {
                 model.rightLeg.visible = visible;
                 model.rightPants.visible = visible;
-            }
-            case LEFT_LEG -> {
                 model.leftLeg.visible = visible;
                 model.leftPants.visible = visible;
             }

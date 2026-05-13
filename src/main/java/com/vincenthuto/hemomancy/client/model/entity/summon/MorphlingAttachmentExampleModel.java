@@ -20,14 +20,10 @@ public class MorphlingAttachmentExampleModel extends EntityModel<LivingEntity> {
             new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_head"), "main");
     public static final ModelLayerLocation BODY_LAYER =
             new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_body"), "main");
-    public static final ModelLayerLocation RIGHT_ARM_LAYER =
-            new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_right_arm"), "main");
-    public static final ModelLayerLocation LEFT_ARM_LAYER =
-            new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_left_arm"), "main");
-    public static final ModelLayerLocation RIGHT_LEG_LAYER =
-            new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_right_leg"), "main");
-    public static final ModelLayerLocation LEFT_LEG_LAYER =
-            new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_left_leg"), "main");
+    public static final ModelLayerLocation ARMS_LAYER =
+            new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_arms"), "main");
+    public static final ModelLayerLocation LEGS_LAYER =
+            new ModelLayerLocation(Hemomancy.rloc("morphling_attachment_example_legs"), "main");
 
     private final ModelPart root;
 
@@ -39,10 +35,8 @@ public class MorphlingAttachmentExampleModel extends EntityModel<LivingEntity> {
         return switch (point) {
             case HEAD -> HEAD_LAYER;
             case BODY -> BODY_LAYER;
-            case RIGHT_ARM -> RIGHT_ARM_LAYER;
-            case LEFT_ARM -> LEFT_ARM_LAYER;
-            case RIGHT_LEG -> RIGHT_LEG_LAYER;
-            case LEFT_LEG -> LEFT_LEG_LAYER;
+            case ARMS -> ARMS_LAYER;
+            case LEGS -> LEGS_LAYER;
         };
     }
 

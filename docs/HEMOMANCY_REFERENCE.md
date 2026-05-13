@@ -1378,10 +1378,14 @@ Equipped morphlings can now alter the player model through the client-only morph
 
 - `MorphlingMutationRegistry` maps morphling items to `MorphlingVisualMutation` definitions.
 - `MorphlingMutationLayer` redraws the animated player silhouette with the configured tint, pulse, emissive mode, or energy-swirl texture.
-- `MorphlingModelAttachment` optionally renders extra model geometry parented to the animated humanoid `HEAD`, `BODY`, `RIGHT_ARM`, `LEFT_ARM`, `RIGHT_LEG`, or `LEFT_LEG`.
+- `MorphlingModelAttachment` optionally renders extra model geometry parented to the animated humanoid `HEAD`, `BODY`, `ARMS`, or `LEGS` sections. `ARMS` and `LEGS` render once on each matching limb.
 - `render_layers.renderMorphlingMutationLayer=false` disables both the glow/tint pass and the model attachment pass.
 
-The glow/tint alpha still scales by maturity and pulse. Simple model attachments render opaque by default so they read as solid geometry; call `SimpleBodyAttachment.fadeWithOverlay()` only for intentionally translucent/spectral attachments. Call `SimpleBodyAttachment.hideAttachedPart()` when an attachment is meant to replace its parent part, such as the fungal mushroom head replacing the vanilla player head. `MorphlingPlayerPartVisibility` hides requested vanilla humanoid parts during `RenderPlayerEvent.Pre` and restores them during `RenderPlayerEvent.Post`, so replacement parts do not permanently affect later render layers.
+The glow/tint alpha still scales by maturity and pulse. Simple model attachments render with `AttachmentRenderType.CUTOUT_NO_CULL` by default so mostly opaque atlases with transparent empty space avoid translucent depth-sorting artifacts. Per-attachment render type can be changed with `SimpleBodyAttachment.renderType(...)`; available simple modes are `CUTOUT_NO_CULL`, `CUTOUT`, `SOLID`, `TRANSLUCENT`, and `TRANSLUCENT_EMISSIVE`. Call `SimpleBodyAttachment.fadeWithOverlay()` only for intentionally translucent/spectral attachments; if a fading attachment uses a non-alpha render type, the simple renderer automatically submits it through a translucent render type for that frame.
+
+Geometry now grows by maturity instead of appearing at full size immediately. The visual mapping is: `Unfed`/`Fledgling` = tint only, `Developing` = small protrusions, `Mature` = larger visible organism, `Apex` = full authored attachment silhouette, and `Primal` = oversized or replacement anatomy. `SimpleBodyAttachment.visibleFrom(...)` controls the first visible maturity, and `SimpleBodyAttachment.growthScale(...)` controls the scale ramp through full and Primal maturity.
+
+Call `SimpleBodyAttachment.hideAttachedPart()` or `hideAttachedPartAt(...)` when an attachment is meant to replace its parent part. The fungal mushroom head is visible from `Developing`, reaches its normal silhouette at `Apex`, and hides/replaces the vanilla player head only at `Primal`. `MorphlingPlayerPartVisibility` hides requested vanilla humanoid parts during `RenderPlayerEvent.Pre` and restores them during `RenderPlayerEvent.Post`, so replacement parts do not permanently affect later render layers. The active hidden-part set is also applied to `HumanoidArmorLayer#setPartVisibility` via the client mixin `MixinHumanoidArmorLayer`, which keeps helmets, chestplates, leggings, boots, and compatible humanoid custom armor models coherent with replacement heads/limbs. `MixinPlayerItemInHandLayer` suppresses third-person held-item rendering for hidden arms and suppresses the spyglass head render case when the head is hidden. Simple `ARMS`/`LEGS` attachment models are authored on the positive-X limb side and mirrored onto the opposite limb by the renderer.
 
 Multiplayer sync relies on the existing equipped-morphling capability and `SyncEquippedMorphlingPacket`. `EquippedMorphlingEvents` syncs the owner and nearby tracking players, and also refreshes state when another player starts tracking the morphling owner. This is the path that lets other clients see the same mutation overlay, hidden limb/head state, and model attachment.
 
@@ -1391,12 +1395,18 @@ Current registered mutation attachments:
 |---|---|---|---|
 | Bat | `HEAD` | `MorphlingBatHeadAttachmentModel` / `textures/models/morphling/bat_head_attachment.png` | Head crest/ear silhouette |
 | Spider | `BODY` | `MorphlingSpiderBodyAttachmentModel` / `textures/models/morphling/spider_body_attachment.png` | Torso carapace and legs |
-| Fungal | `HEAD` | `MorphlingFungalHeadModel` / `textures/models/morphling/fungal_head.png` | Large red/orange/black-white mushroom-parasite head; hides the vanilla head |
-| Leeches | `LEFT_ARM` | `MorphlingLeechArmAttachmentModel` / `textures/models/morphling/leech_arm_attachment.png` | Arm leech cluster |
-| Chitinite | `RIGHT_LEG` | `MorphlingChitiniteLegAttachmentModel` / `textures/models/morphling/chitinite_leg_attachment.png` | Ferric chitin plating |
-| Serpent | `LEFT_LEG` | `MorphlingSerpentLegAttachmentModel` / `textures/models/morphling/serpent_leg_attachment.png` | Solid leg coil and serpent head |
+| Fungal | `HEAD` | `MorphlingFungalHeadModel` / `textures/models/morphling/fungal_head.png` | Red/orange/black-white mushroom-parasite head; grows from Developing and hides the vanilla head at Primal |
+| Leeches | `ARMS` | `MorphlingLeechArmAttachmentModel` / `textures/models/morphling/leech_arm_attachment.png` | Paired arm leech clusters |
+| Chitinite | `LEGS` | `MorphlingChitiniteLegAttachmentModel` / `textures/models/morphling/chitinite_leg_attachment.png` | Paired ferric chitin plating |
+| Serpent | `LEGS` | `MorphlingSerpentLegAttachmentModel` / `textures/models/morphling/serpent_leg_attachment.png` | Paired solid leg coils and serpent heads |
+| Urchin | `BODY` | `MorphlingUrchinBodyAttachmentModel` / `textures/models/morphling/urchin_body_attachment.png` | Calcareous back plate with pulsing reef spines |
+| Moth | `HEAD` | `MorphlingMothHeadAttachmentModel` / `textures/models/morphling/moth_head_attachment.png` | Dust mask, antennae, and pale scale fins around the head |
+| Centipede | `BODY` | `MorphlingCentipedeBodyAttachmentModel` / `textures/models/morphling/centipede_body_attachment.png` | Segmented torso carapace with side legs and feelers |
+| Pests | `BODY` | `MorphlingPestsBodyAttachmentModel` / `textures/models/morphling/pests_body_attachment.png` | Vermin brood-hive plate with pulsing brood nodes and skitter legs |
+| Tick | `BODY` | `MorphlingTickBodyAttachmentModel` / `textures/models/morphling/tick_body_attachment.png` | Engorged blood sac with claspers and feeding latch |
+| Mole | `ARMS` | `MorphlingMoleArmAttachmentModel` / `textures/models/morphling/mole_arm_attachment.png` | Paired digging forearm plates and spade claws |
 
-Pests, Moth, Tick, Urchin, Centipede, and Mole currently remain overlay-only until bespoke attachments are added.
+All 12 morphlings now have registered mutation attachments. Lower maturity still keeps the biology mostly as tint/glow, with attachment geometry appearing from Developing onward and scaling into Mature/Apex/Primal silhouettes.
 
 Java model sources live under `src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/`. Editable Blockbench examples live under `src/main/resources/assets/hemomancy/models/entity/bbmodel/morphling/`, with matching PNG atlases under `textures/models/morphling/`.
 
@@ -2780,6 +2790,11 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) provides:
 - `degree set <number>` — set degree (0–8)
 - `qliphoth pome reset` — reset pome progress and reseal the Qliphoth Communion gate
 
+**Morphling Debug:**
+- `morphling stage get` — show the equipped morphling's current maturity stage
+- `morphling stage set <0-5|stage_name>` — force the equipped morphling to Unfed, Fledgling, Developing, Mature, Apex, or Primal
+- `morphling stage next` / `morphling stage previous` — cycle the equipped morphling through all visual maturity stages without incubating copies
+
 **Unstained Progress:**
 - `unstained get` — full overview (purity, clarity, stages)
 - `unstained begin` — toggle begun purification
@@ -2943,7 +2958,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Visceral Organs System** — **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** (+1000 max blood per level, announces capacity expansion on first reach); **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 — Cardiac Autonomy fully mastered; blood drain 10÷level per 2 s). **Iron Brazier** reagent system is organ-specific. See §20.8.
 - **Armor Set Bonuses** — **Implemented:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §22 for details.
 - **Morphling Maturity** — **Implemented:** All 12 morphlings now have named maturity-tier reactive abilities (Developing → Mature → Apex) and secondary tendencies defined. See §16.1.
-- **Morphling Mutation Visual Layer** — **Implemented:** Equipped morphlings can render player tint/swirl overlays and optional animated model attachments through `MorphlingMutationLayer`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, and `MorphlingMutationRegistry`. Attachment state syncs to tracking players through `SyncEquippedMorphlingPacket`; replacement attachments can hide vanilla humanoid parts through `MorphlingPlayerPartVisibility`. Current attachment-bearing examples are Bat, Spider, Fungal, Leeches, Chitinite, and Serpent; the other morphlings are overlay-only. See §16.5.
+- **Morphling Mutation Visual Layer** — **Implemented:** Equipped morphlings can render player tint/swirl overlays and animated model attachments through `MorphlingMutationLayer`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, and `MorphlingMutationRegistry`. Attachment state syncs to tracking players through `SyncEquippedMorphlingPacket`; replacement attachments can hide vanilla humanoid parts through `MorphlingPlayerPartVisibility`. All 12 morphlings now have registered attachment examples. See §16.5.
 - **Scar Gameplay Effects** — **Implemented:** All standard scars now have full triggered effect implementations. Effect durations respect `getScarMasteryDurationMultiplier()`.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — `Partial`: active memories use the layered memory item model system (`memory_blank` + per-memory overlay), and most manipulations have unique overlay textures under `textures/item/memories/`. Known pending art remains called out in the memory gallery above.

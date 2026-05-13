@@ -105,7 +105,6 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
             poseStack.popPose();
 
             // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
-            // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
             // SimpleBodyAttachment already does its own pushPose/popPose internally.
             MorphlingModelAttachment attachment = mutation.modelAttachment;
             if (attachment != null) {
@@ -113,7 +112,7 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
                         (HumanoidModel<?>) model,
                         limbSwing, limbSwingAmount, partialTicks,
                         ageInTicks, netHeadYaw, headPitch,
-                        finalAlpha);
+                        finalAlpha, maturity);
             }
         });
     }

@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegr
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
@@ -23,6 +24,8 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrga
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
@@ -31,11 +34,17 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.Locale;
 
 /**
  * Unified console commands for testing all progression systems.
@@ -128,6 +137,39 @@ public class HemoCommand {
 														IntegerArgumentType.getInteger(ctx, "degree")))))))
 
 				// ── Skill Points (global static state, not per-player) ──
+				.then(Commands.literal("morphling")
+						.then(Commands.literal("stage")
+								.then(Commands.literal("get")
+										.executes(ctx -> getMorphlingStage(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> getMorphlingStage(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
+								.then(Commands.literal("set")
+										.then(Commands.argument("stage", StringArgumentType.word())
+												.suggests((ctx, builder) -> {
+													for (int i = 0; i < MorphlingItem.MATURITY_NAMES.length; i++) {
+														builder.suggest(String.valueOf(i));
+														builder.suggest(MorphlingItem.MATURITY_NAMES[i].toLowerCase(Locale.ROOT));
+													}
+													return builder.buildFuture();
+												})
+												.executes(ctx -> setMorphlingStage(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+														StringArgumentType.getString(ctx, "stage")))
+												.then(Commands.argument("player", EntityArgument.player())
+														.executes(ctx -> setMorphlingStage(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
+																StringArgumentType.getString(ctx, "stage"))))))
+								.then(Commands.literal("next")
+										.executes(ctx -> cycleMorphlingStage(ctx.getSource(), ctx.getSource().getPlayerOrException(), 1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleMorphlingStage(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"), 1))))
+								.then(Commands.literal("previous")
+										.executes(ctx -> cycleMorphlingStage(ctx.getSource(), ctx.getSource().getPlayerOrException(), -1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleMorphlingStage(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"), -1))))
+								.then(Commands.literal("prev")
+										.executes(ctx -> cycleMorphlingStage(ctx.getSource(), ctx.getSource().getPlayerOrException(), -1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleMorphlingStage(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"), -1))))))
+
 				.then(Commands.literal("qliphoth")
 						.then(Commands.literal("pome")
 								.then(Commands.literal("reset")
@@ -353,6 +395,119 @@ public class HemoCommand {
 	}
 
 	// ═══════════════════ Skill Points ═══════════════════
+
+	private static int getMorphlingStage(CommandSourceStack source, ServerPlayer player) {
+		ItemStack stack = getEquippedMorphlingStack(source, player);
+		if (stack.isEmpty()) {
+			return 0;
+		}
+		int stage = MorphlingItem.getMaturityLevel(stack);
+		source.sendSuccess(() -> Component.literal("")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" equipped morphling: ").withStyle(ChatFormatting.GRAY))
+				.append(stack.getHoverName().copy().withStyle(ChatFormatting.DARK_GREEN))
+				.append(Component.literal(" stage "))
+				.append(Component.literal(stage + " - " + MorphlingItem.getMaturityName(stage))
+						.withStyle(MorphlingItem.MATURITY_COLORS[stage])),
+				false);
+		return 1;
+	}
+
+	private static int setMorphlingStage(CommandSourceStack source, ServerPlayer player, String rawStage) {
+		int stage = parseMorphlingStage(rawStage);
+		if (stage < 0) {
+			source.sendFailure(Component.literal("Unknown morphling stage: " + rawStage
+					+ ". Use 0-5, unfed, fledgling, developing, mature, apex, or primal."));
+			return 0;
+		}
+		return setMorphlingStage(source, player, stage);
+	}
+
+	private static int setMorphlingStage(CommandSourceStack source, ServerPlayer player, int stage) {
+		stage = Math.max(0, Math.min(stage, PrimalMorphlingRules.PRIMAL_LEVEL));
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player)
+				.orElseThrow(IllegalStateException::new);
+		if (!cap.hasMorphling() || cap.getEquippedMorphling().isEmpty()) {
+			source.sendFailure(Component.literal(player.getName().getString() + " has no equipped morphling."));
+			return 0;
+		}
+		ItemStack updated = cap.getEquippedMorphling().copy();
+		if (!(updated.getItem() instanceof MorphlingItem)) {
+			source.sendFailure(Component.literal("Equipped stack is not a morphling: ")
+					.append(updated.getHoverName()));
+			return 0;
+		}
+
+		applyMorphlingStage(updated, stage);
+		cap.setEquippedMorphling(updated);
+		EquippedMorphlingEvents.syncToClient(player);
+		int actualStage = MorphlingItem.getMaturityLevel(updated);
+		source.sendSuccess(() -> Component.literal("Set ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" equipped morphling to stage "))
+				.append(Component.literal(actualStage + " - " + MorphlingItem.getMaturityName(actualStage))
+						.withStyle(MorphlingItem.MATURITY_COLORS[actualStage])),
+				true);
+		return 1;
+	}
+
+	private static int cycleMorphlingStage(CommandSourceStack source, ServerPlayer player, int delta) {
+		ItemStack stack = getEquippedMorphlingStack(source, player);
+		if (stack.isEmpty()) {
+			return 0;
+		}
+		int current = MorphlingItem.getMaturityLevel(stack);
+		int next = Math.floorMod(current + delta, PrimalMorphlingRules.PRIMAL_LEVEL + 1);
+		return setMorphlingStage(source, player, next);
+	}
+
+	private static ItemStack getEquippedMorphlingStack(CommandSourceStack source, ServerPlayer player) {
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player)
+				.orElseThrow(IllegalStateException::new);
+		if (!cap.hasMorphling() || cap.getEquippedMorphling().isEmpty()) {
+			source.sendFailure(Component.literal(player.getName().getString() + " has no equipped morphling."));
+			return ItemStack.EMPTY;
+		}
+		ItemStack stack = cap.getEquippedMorphling();
+		if (!(stack.getItem() instanceof MorphlingItem)) {
+			source.sendFailure(Component.literal("Equipped stack is not a morphling: ")
+					.append(stack.getHoverName()));
+			return ItemStack.EMPTY;
+		}
+		return stack;
+	}
+
+	private static void applyMorphlingStage(ItemStack stack, int stage) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		int enzymeStage = Math.min(stage, PrimalMorphlingRules.APEX_LEVEL);
+		tag.putFloat("EnzymePower", MorphlingItem.MATURITY_THRESHOLDS[enzymeStage]);
+		tag.putInt("EnzymeFeedings", stage == 0 ? 0 : Math.max(tag.getInt("EnzymeFeedings"), 1));
+		if (stage >= PrimalMorphlingRules.PRIMAL_LEVEL) {
+			tag.putBoolean(MorphlingItem.PRIMALIZED_KEY, true);
+		} else {
+			tag.remove(MorphlingItem.PRIMALIZED_KEY);
+		}
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	private static int parseMorphlingStage(String rawStage) {
+		String stage = rawStage.toLowerCase(Locale.ROOT);
+		try {
+			int parsed = Integer.parseInt(stage);
+			return parsed >= 0 && parsed <= PrimalMorphlingRules.PRIMAL_LEVEL ? parsed : -1;
+		} catch (NumberFormatException ignored) {
+		}
+		for (int i = 0; i < MorphlingItem.MATURITY_NAMES.length; i++) {
+			if (MorphlingItem.MATURITY_NAMES[i].equalsIgnoreCase(stage)) {
+				return i;
+			}
+		}
+		return switch (stage) {
+			case "develop", "dev" -> 2;
+			case "max" -> PrimalMorphlingRules.PRIMAL_LEVEL;
+			default -> -1;
+		};
+	}
 
 	private static int resetPomeProgress(CommandSourceStack source, ServerPlayer player) {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
