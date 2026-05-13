@@ -122,6 +122,12 @@ public class LayerEvents {
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.LEFT_ARM_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.RIGHT_LEG_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.LEFT_LEG_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingBatHeadAttachmentModel.LAYER_LOCATION, MorphlingBatHeadAttachmentModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingSpiderBodyAttachmentModel.LAYER_LOCATION, MorphlingSpiderBodyAttachmentModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingFungalHeadModel.LAYER_LOCATION, MorphlingFungalHeadModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingLeechArmAttachmentModel.LAYER_LOCATION, MorphlingLeechArmAttachmentModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingChitiniteLegAttachmentModel.LAYER_LOCATION, MorphlingChitiniteLegAttachmentModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingSerpentLegAttachmentModel.LAYER_LOCATION, MorphlingSerpentLegAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(ThirsterModel.LAYER_LOCATION, ThirsterModel::createBodyLayer);
 		event.registerLayerDefinition(BloodArmModel.blood_arm, BloodArmModel::createHeadLayer);
 		event.registerLayerDefinition(EarthenVeinModel.LAYER_LOCATION, EarthenVeinModel::createBodyLayer);

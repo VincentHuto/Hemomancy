@@ -230,6 +230,13 @@ public class EquippedMorphlingEvents {
 	}
 
 	@SubscribeEvent
+	public static void onStartTracking(PlayerEvent.StartTracking event) {
+		if (!(event.getEntity() instanceof ServerPlayer tracker)) return;
+		if (!(event.getTarget() instanceof ServerPlayer trackedPlayer)) return;
+		syncToPlayer(trackedPlayer, tracker);
+	}
+
+	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		syncToClient((ServerPlayer) event.getEntity());
 	}
@@ -244,7 +251,14 @@ public class EquippedMorphlingEvents {
 	public static void syncToClient(ServerPlayer player) {
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
-					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling()));
+					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling().copy()));
+		});
+	}
+
+	public static void syncToPlayer(ServerPlayer source, ServerPlayer receiver) {
+		HemoCapabilityAccess.getEquippedMorphling(source).ifPresent(cap -> {
+			PacketDistributor.sendToPlayer(receiver,
+					new SyncEquippedMorphlingPacket(source.getUUID(), cap.getEquippedMorphling().copy()));
 		});
 	}
 

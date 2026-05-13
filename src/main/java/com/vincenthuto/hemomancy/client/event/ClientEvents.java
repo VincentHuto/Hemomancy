@@ -40,6 +40,7 @@ import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
+import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.client.render.tile.SuspendedBloodCrystalRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.SuspendedCleansedBloodCrystalRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
@@ -127,6 +128,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
@@ -444,13 +446,19 @@ public class ClientEvents {
 
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderPlayerSize(RenderPlayerEvent.Pre event) {
+        MorphlingPlayerPartVisibility.apply(event.getEntity(), event.getRenderer());
         HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent((manip) -> {
             if (manip.isAvatarActive()) {
                 event.getPoseStack().translate(0, 2, 0);
             }
         });
+    }
+
+    @SubscribeEvent
+    public static void restoreMorphlingHiddenPlayerParts(RenderPlayerEvent.Post event) {
+        MorphlingPlayerPartVisibility.restore(event.getRenderer());
     }
 
     @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)

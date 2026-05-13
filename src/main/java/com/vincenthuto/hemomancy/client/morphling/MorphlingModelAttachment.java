@@ -13,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -86,12 +87,24 @@ public abstract class MorphlingModelAttachment {
      * @param ageInTicks      total age in ticks (use for animation)
      * @param netHeadYaw      head yaw for head-space calculations
      * @param headPitch       head pitch
-     * @param alpha           final opacity (0–1), already scaled by maturity and pulse
+     * @param alpha           final overlay opacity (0–1), already scaled by maturity and pulse
      */
     public abstract void render(PoseStack poseStack, MultiBufferSource buffer,
             int packedLight, LivingEntity entity, HumanoidModel<?> parentModel,
             float limbSwing, float limbSwingAmount, float partialTicks,
             float ageInTicks, float netHeadYaw, float headPitch, float alpha);
+
+    /**
+     * Player model parts this attachment replaces while rendering.
+     *
+     * <p>The mutation render hooks hide these parts before the vanilla player
+     * model draws, then restore them after all player layers finish. Custom
+     * attachments can override this to hide multiple parts for full-body
+     * transformations.
+     */
+    public Set<AttachmentPoint> hiddenPlayerParts() {
+        return Set.of();
+    }
 
     // -------------------------------------------------------------------------
     // Convenience factory
@@ -122,7 +135,8 @@ public abstract class MorphlingModelAttachment {
     /**
      * Ready-to-use attachment base for attaching a single {@link EntityModel} to
      * one of the player's body parts with a fixed offset, uniform scale, and a
-     * plain translucent texture. Extend this class if you need more control (e.g.
+     * plain translucent texture. Simple attachments render opaque by default so
+     * they read as solid extra geometry. Extend this class if you need more control (e.g.
      * per-frame animation, emissive pass, multi-part rendering).
      *
      * <pre>{@code
@@ -132,6 +146,7 @@ public abstract class MorphlingModelAttachment {
      *     Lazy.of(() -> new MyModel(Minecraft.getInstance()
      *         .getEntityModels().bakeLayer(MyModel.LAYER_LOCATION))),
      *     Hemomancy.rloc("textures/models/morphling/my_model.png"))
+     *     .hideAttachedPart()
      * }</pre>
      */
     public static class SimpleBodyAttachment extends MorphlingModelAttachment {
@@ -141,6 +156,8 @@ public abstract class MorphlingModelAttachment {
         private final Supplier<EntityModel<?>> modelSupply;
         private EntityModel<?> modelCache;
         protected final ResourceLocation texture;
+        private boolean hideAttachedPart;
+        private boolean fadeWithOverlay;
 
         protected SimpleBodyAttachment(AttachmentPoint point,
                 float offX, float offY, float offZ, float scale,
@@ -154,6 +171,29 @@ public abstract class MorphlingModelAttachment {
             this.texture = texture;
         }
 
+        /**
+         * Hide the humanoid body part this attachment is parented to, allowing
+         * the attachment to visually replace that limb/head/body part.
+         */
+        public SimpleBodyAttachment hideAttachedPart() {
+            this.hideAttachedPart = true;
+            return this;
+        }
+
+        /**
+         * Let this attachment share the glow layer's maturity/pulse opacity.
+         * Use this only for spectral or intentionally translucent geometry.
+         */
+        public SimpleBodyAttachment fadeWithOverlay() {
+            this.fadeWithOverlay = true;
+            return this;
+        }
+
+        @Override
+        public Set<AttachmentPoint> hiddenPlayerParts() {
+            return hideAttachedPart ? Set.of(point) : Set.of();
+        }
+
         private EntityModel<?> model() {
             if (modelCache == null) modelCache = modelSupply.get();
             return modelCache;
@@ -164,14 +204,26 @@ public abstract class MorphlingModelAttachment {
                 int packedLight, LivingEntity entity, HumanoidModel<?> parentModel,
                 float limbSwing, float limbSwingAmount, float partialTicks,
                 float ageInTicks, float netHeadYaw, float headPitch, float alpha) {
+            EntityModel<?> attachmentModel = model();
+            setupAttachmentAnim(attachmentModel, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+
             poseStack.pushPose();
             point.applyTo(poseStack, parentModel);
             poseStack.translate(offX / 16f, offY / 16f, offZ / 16f);
             poseStack.scale(scale, scale, scale);
             VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(texture));
-            model().renderToBuffer(poseStack, consumer, packedLight,
-                    OverlayTexture.NO_OVERLAY, packColor(1f, 1f, 1f, alpha));
+            float attachmentAlpha = fadeWithOverlay ? alpha : 1.0f;
+            attachmentModel.renderToBuffer(poseStack, consumer, packedLight,
+                    OverlayTexture.NO_OVERLAY, packColor(1f, 1f, 1f, attachmentAlpha));
             poseStack.popPose();
+        }
+
+        @SuppressWarnings("unchecked")
+        private static void setupAttachmentAnim(EntityModel<?> model, LivingEntity entity,
+                float limbSwing, float limbSwingAmount, float ageInTicks,
+                float netHeadYaw, float headPitch) {
+            ((EntityModel<LivingEntity>) model).setupAnim(entity, limbSwing, limbSwingAmount,
+                    ageInTicks, netHeadYaw, headPitch);
         }
     }
 }

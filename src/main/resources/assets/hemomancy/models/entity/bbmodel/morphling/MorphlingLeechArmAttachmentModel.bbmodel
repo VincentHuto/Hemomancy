@@ -1,0 +1,659 @@
+{
+  "meta": {
+    "format_version": "4.0",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "MorphlingLeechArmAttachmentModel",
+  "model_identifier": "MorphlingLeechArmAttachmentModel",
+  "modded_entity_version": "1.17",
+  "modded_entity_flip_y": true,
+  "visible_box": [
+    0.4275,
+    0.62,
+    0
+  ],
+  "variable_placeholders": "",
+  "variable_placeholder_buttons": [],
+  "timeline_setups": [],
+  "resolution": {
+    "width": 64,
+    "height": 64
+  },
+  "elements": [
+    {
+      "name": "upper_leech_0_0_bef9e0c4",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        2.42,
+        17.22,
+        -2.38
+      ],
+      "to": [
+        5.98,
+        22.18,
+        2.38
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.4,
+            4.4,
+            7.6,
+            9
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            4.4,
+            4.4,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            4.4,
+            15.2,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7.6,
+            4.4,
+            12,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7.6,
+            4.4,
+            4.4,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            10.8,
+            0,
+            7.6,
+            4.4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "bef9e0c4-b7cc-fae6-e91a-e16852d30376",
+      "inflate": 0.18
+    },
+    {
+      "name": "upper_leech_20_0_a96193b8",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        5.2,
+        18.4,
+        -1.4
+      ],
+      "to": [
+        6.8,
+        20.8,
+        1.4
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        20,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            22.8,
+            2.8,
+            24.4,
+            5.2
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            20,
+            2.8,
+            22.8,
+            5.2
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            27.2,
+            2.8,
+            28.8,
+            5.2
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            24.4,
+            2.8,
+            27.2,
+            5.2
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            24.4,
+            2.8,
+            22.8,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            26,
+            0,
+            24.4,
+            2.8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "a96193b8-6b7e-29cc-866f-8bad37779e08"
+    },
+    {
+      "name": "lower_leech_0_14_6222c5a5",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        2.16,
+        12.26,
+        -1.94
+      ],
+      "to": [
+        5.24,
+        17.34,
+        1.94
+      ],
+      "autouv": 0,
+      "color": 2,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        0,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.6,
+            17.6,
+            6.4,
+            22.4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            17.6,
+            3.6,
+            22.4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10,
+            17.6,
+            12.8,
+            22.4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6.4,
+            17.6,
+            10,
+            22.4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6.4,
+            17.6,
+            3.6,
+            14
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.2,
+            14,
+            6.4,
+            17.6
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "6222c5a5-b6b6-9c4e-ceaa-29de8125e580",
+      "inflate": 0.14
+    },
+    {
+      "name": "lower_leech_18_14_094bb785",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        4.7,
+        13.6,
+        -1
+      ],
+      "to": [
+        6.3,
+        15.6,
+        1
+      ],
+      "autouv": 0,
+      "color": 2,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        18,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            20,
+            16,
+            21.6,
+            18
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            18,
+            16,
+            20,
+            18
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            23.6,
+            16,
+            25.2,
+            18
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            21.6,
+            16,
+            23.6,
+            18
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            21.6,
+            16,
+            20,
+            14
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            23.2,
+            14,
+            21.6,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "094bb785-c538-7fd4-b24d-af70e640c11c"
+    },
+    {
+      "name": "tendrils_34_0_516c85cc",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        5.8,
+        17.8,
+        -0.4
+      ],
+      "to": [
+        9,
+        18.6,
+        0.4
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        34,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            34.8,
+            0.8,
+            38,
+            1.6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            34,
+            0.8,
+            34.8,
+            1.6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            38.8,
+            0.8,
+            42,
+            1.6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            38,
+            0.8,
+            38.8,
+            1.6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            38,
+            0.8,
+            34.8,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            41.2,
+            0,
+            38,
+            0.8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "516c85cc-2d34-c6bf-7dec-c75ecb3a2bed"
+    },
+    {
+      "name": "tendrils_34_4_80cd86aa",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        5,
+        13.1,
+        0.2
+      ],
+      "to": [
+        8.6,
+        13.8,
+        0.9
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        34,
+        4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            34.7,
+            4.7,
+            38.3,
+            5.4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            34,
+            4.7,
+            34.7,
+            5.4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            39,
+            4.7,
+            42.6,
+            5.4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            38.3,
+            4.7,
+            39,
+            5.4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            38.3,
+            4.7,
+            34.7,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            41.9,
+            4,
+            38.3,
+            4.7
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "80cd86aa-e74a-ced3-044b-7c6cde2a387e"
+    },
+    {
+      "name": "tendrils_34_8_83a31d21",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        4.9,
+        16.3,
+        -2.2
+      ],
+      "to": [
+        7.3,
+        17,
+        -1.5
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        34,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            34.7,
+            8.7,
+            37.1,
+            9.4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            34,
+            8.7,
+            34.7,
+            9.4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            37.8,
+            8.7,
+            40.2,
+            9.4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            37.1,
+            8.7,
+            37.8,
+            9.4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            37.1,
+            8.7,
+            34.7,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            39.5,
+            8,
+            37.1,
+            8.7
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "83a31d21-ef60-bdac-b486-a0e632b9e822"
+    }
+  ],
+  "outliner": [
+    {
+      "name": "root",
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "color": 0,
+      "uuid": "c67d8502-f149-66ff-a9ae-0a2eadb18647",
+      "export": true,
+      "mirror_uv": false,
+      "isOpen": true,
+      "locked": false,
+      "visibility": true,
+      "autouv": 0,
+      "children": [
+        "3407d1c1-1c33-31f8-04ac-87d4d1fe40b3",
+        "653f959a-b365-d368-dc57-bec4edc062fe",
+        "b0d1345f-ebde-4797-6ea1-171399c2a19b"
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\resources\\assets\\hemomancy\\textures\\models\\morphling\\leech_arm_attachment.png",
+      "name": "leech_arm_attachment.png",
+      "folder": "textures/models/morphling",
+      "namespace": "hemomancy",
+      "id": "0",
+      "particle": false,
+      "render_mode": "default",
+      "render_sides": "auto",
+      "frame_time": 1,
+      "frame_order_type": "loop",
+      "frame_order": "",
+      "frame_interpolate": false,
+      "visible": true,
+      "mode": "bitmap",
+      "saved": true,
+      "uuid": "ee963331-5511-676b-0cbd-950e7be19a10",
+      "relative_path": "../../../../textures/models/morphling/leech_arm_attachment.png"
+    }
+  ]
+}

@@ -16,7 +16,9 @@ import javax.annotation.Nullable;
  *       Intensity scales with maturity.</li>
  *   <li><b>Model attachment</b> – an optional {@link MorphlingModelAttachment}
  *       renders additional 3-D geometry (wings, tendrils, plating, etc.) parented
- *       to one of the player's body parts.  Attach with {@link Builder#attach}.</li>
+ *       to one of the player's body parts. Attachments may also hide player
+ *       parts when they are meant to replace a limb/head/body part. Attach
+ *       with {@link Builder#attach}.</li>
  * </ol>
  */
 @OnlyIn(Dist.CLIENT)
@@ -115,8 +117,10 @@ public class MorphlingVisualMutation {
 
         /**
          * Attach a custom 3-D model to the player while this morphling is equipped.
-         * The attachment receives the same scaled alpha as the color overlay so
-         * model opacity also grows with maturity.
+         * The attachment receives the same scaled alpha as the color overlay for
+         * custom renderers that need it. Simple model attachments render opaque by
+         * default unless {@link MorphlingModelAttachment.SimpleBodyAttachment#fadeWithOverlay()}
+         * is enabled.
          *
          * <p>Use {@link MorphlingModelAttachment#of} for simple single-model
          * attachments, or extend {@link MorphlingModelAttachment} for full control.

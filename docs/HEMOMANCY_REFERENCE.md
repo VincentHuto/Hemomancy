@@ -1,6 +1,6 @@
 # Hemomancy - Developer Reference
 
-> **Last audited:** 2026-05-11
+> **Last audited:** 2026-05-13
 > **Mod ID / package:** `hemomancy` / `com.vincenthuto.hemomancy`
 > **Target:** Minecraft `1.21.1`, NeoForge `21.1.219`, Java `21`
 > **Version:** `6.0.1-neoforge.1.21.1.0`
@@ -11,7 +11,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Status legend:** `Implemented` means present in the current NeoForge 1.21.1 runtime path. `Partial` means a playable or compiled spine exists with explicit remaining work. `Dormant` means source/design is preserved but excluded or unregistered. `Planned` means design/lore intent without active runtime behavior.
 
-**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, direct blood routing, puppeteer summon trials, Mycelial Crucible/Lantern, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -292,6 +292,7 @@ Notable packets:
 - `KnownSummonsRequestPacket` / `KnownSummonsServerPacket` — Puppeteer summon unlock sync, refreshed on login/respawn/dimension change/screen open/unlock
 - `PacketPuppeteersSpindleAction` — Server-side spindle screen action packet. Selects summons, binds slotted crossbars, and calls/recalls using the crossbar currently inside the open spindle container.
 - `SyncTrackingAvatarPacket` — Blood Avatar visual state sync to all nearby players
+- `SyncEquippedMorphlingPacket` — Living Staff equipped-morphling sync. The server refreshes the owning client and tracking players, including on `PlayerEvent.StartTracking`, so remote players see the correct morphling hand layer and mutation render layer in multiplayer.
 - `TeleportToVeinPacket` — Venous Travel teleportation
 - `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Mnemonist, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)
 - `PlaceStructurePacket` — Debug structure spawner
@@ -1370,6 +1371,47 @@ The **Morphling Cradle** (`MorphlingCradleBlockEntity`) is an owner-bound suppor
 - Uses staged upkeep/action blood costs, with fallback draw from owner bloodline pool when enabled
 - Can leech nearby valid hostile targets into a cradle blood buffer and redistribute that blood to nearby cradles / owner blood volume
 - Recognizes Primal maturity (`level 5`) but only cradle-suitable morphlings gain special Primal area behavior: Fungal, Leeches, Chitinite, Pests, and Urchin.
+
+### 16.5 Client Mutation Rendering
+
+Equipped morphlings can now alter the player model through the client-only morphling mutation layer in addition to their gameplay effects. The active runtime path is:
+
+- `MorphlingMutationRegistry` maps morphling items to `MorphlingVisualMutation` definitions.
+- `MorphlingMutationLayer` redraws the animated player silhouette with the configured tint, pulse, emissive mode, or energy-swirl texture.
+- `MorphlingModelAttachment` optionally renders extra model geometry parented to the animated humanoid `HEAD`, `BODY`, `RIGHT_ARM`, `LEFT_ARM`, `RIGHT_LEG`, or `LEFT_LEG`.
+- `render_layers.renderMorphlingMutationLayer=false` disables both the glow/tint pass and the model attachment pass.
+
+The glow/tint alpha still scales by maturity and pulse. Simple model attachments render opaque by default so they read as solid geometry; call `SimpleBodyAttachment.fadeWithOverlay()` only for intentionally translucent/spectral attachments. Call `SimpleBodyAttachment.hideAttachedPart()` when an attachment is meant to replace its parent part, such as the fungal mushroom head replacing the vanilla player head. `MorphlingPlayerPartVisibility` hides requested vanilla humanoid parts during `RenderPlayerEvent.Pre` and restores them during `RenderPlayerEvent.Post`, so replacement parts do not permanently affect later render layers.
+
+Multiplayer sync relies on the existing equipped-morphling capability and `SyncEquippedMorphlingPacket`. `EquippedMorphlingEvents` syncs the owner and nearby tracking players, and also refreshes state when another player starts tracking the morphling owner. This is the path that lets other clients see the same mutation overlay, hidden limb/head state, and model attachment.
+
+Current registered mutation attachments:
+
+| Morphling | Attachment anchor | Model / texture | Notes |
+|---|---|---|---|
+| Bat | `HEAD` | `MorphlingBatHeadAttachmentModel` / `textures/models/morphling/bat_head_attachment.png` | Head crest/ear silhouette |
+| Spider | `BODY` | `MorphlingSpiderBodyAttachmentModel` / `textures/models/morphling/spider_body_attachment.png` | Torso carapace and legs |
+| Fungal | `HEAD` | `MorphlingFungalHeadModel` / `textures/models/morphling/fungal_head.png` | Large red/orange/black-white mushroom-parasite head; hides the vanilla head |
+| Leeches | `LEFT_ARM` | `MorphlingLeechArmAttachmentModel` / `textures/models/morphling/leech_arm_attachment.png` | Arm leech cluster |
+| Chitinite | `RIGHT_LEG` | `MorphlingChitiniteLegAttachmentModel` / `textures/models/morphling/chitinite_leg_attachment.png` | Ferric chitin plating |
+| Serpent | `LEFT_LEG` | `MorphlingSerpentLegAttachmentModel` / `textures/models/morphling/serpent_leg_attachment.png` | Solid leg coil and serpent head |
+
+Pests, Moth, Tick, Urchin, Centipede, and Mole currently remain overlay-only until bespoke attachments are added.
+
+Java model sources live under `src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/`. Editable Blockbench examples live under `src/main/resources/assets/hemomancy/models/entity/bbmodel/morphling/`, with matching PNG atlases under `textures/models/morphling/`.
+
+The helper script `tools/model_export/java_model_to_bbmodel.mjs` can regenerate the morphling `.bbmodel` examples with:
+
+```powershell
+node tools/model_export/java_model_to_bbmodel.mjs --set=morphling
+node tools/model_export/java_model_to_bbmodel.mjs --set=morphling --check
+```
+
+It also supports direct Java model conversion, including drag-and-drop style paths in PowerShell:
+
+```powershell
+node tools/model_export/java_model_to_bbmodel.mjs "C:\path\DroppedModel.java" --texture textures/entity/my_texture.png
+```
 
 ---
 
@@ -2887,7 +2929,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta dedicated art/rendering and final combat polish, JEI display wiring for Mycelial Lantern |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, active Harbinger voyager expeditions with neutral crews/trade/dialogue, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
@@ -2901,6 +2943,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Visceral Organs System** — **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** (+1000 max blood per level, announces capacity expansion on first reach); **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 — Cardiac Autonomy fully mastered; blood drain 10÷level per 2 s). **Iron Brazier** reagent system is organ-specific. See §20.8.
 - **Armor Set Bonuses** — **Implemented:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §22 for details.
 - **Morphling Maturity** — **Implemented:** All 12 morphlings now have named maturity-tier reactive abilities (Developing → Mature → Apex) and secondary tendencies defined. See §16.1.
+- **Morphling Mutation Visual Layer** — **Implemented:** Equipped morphlings can render player tint/swirl overlays and optional animated model attachments through `MorphlingMutationLayer`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, and `MorphlingMutationRegistry`. Attachment state syncs to tracking players through `SyncEquippedMorphlingPacket`; replacement attachments can hide vanilla humanoid parts through `MorphlingPlayerPartVisibility`. Current attachment-bearing examples are Bat, Spider, Fungal, Leeches, Chitinite, and Serpent; the other morphlings are overlay-only. See §16.5.
 - **Scar Gameplay Effects** — **Implemented:** All standard scars now have full triggered effect implementations. Effect durations respect `getScarMasteryDurationMultiplier()`.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — `Partial`: active memories use the layered memory item model system (`memory_blank` + per-memory overlay), and most manipulations have unique overlay textures under `textures/item/memories/`. Known pending art remains called out in the memory gallery above.
@@ -2915,6 +2958,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Debug Showcase Item** — Creative-mode testing tool (`DebugShowcaseItem`) that generates an organized showcase of all mod content in 4 sections: items in chests, blocks on platforms, mobs in fenced pens, and multiblock structures placed as patterns.
 - **Cardinal Rite Boundary Renderer** — Client-side visual renderer (`CardinalRiteBoundaryRenderer`) for cardinal rite boundaries during active rites.
 - **Morphling Item Textures** — All morphling types now have individual item textures and item models (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin).
+- **Morphling Attachment Models/Textures** — Bat, Spider, Fungal, Leeches, Chitinite, and Serpent have Java attachment models, matching Blockbench `.bbmodel` examples, and per-attachment PNG atlases under `textures/models/morphling/`. The Java-to-Blockbench exporter under `tools/model_export/java_model_to_bbmodel.mjs` supports the `morphling` batch and direct Java model conversion.
 - **MnA Compatibility Expansion** — Extensive brainstorming and dormant compat source are documented in `MNA_COMPATIBILITY_BRAINSTORM.md` and `compat/mna/**`. Current NeoForge 1.21.1 branch excludes MnA compat from compilation because no compatible MnA build is available; `Hemomancy.java` registration is commented. Treat spell components, Blood Tithe, Spell ↔ Manipulation combo, and `HemoMnAConfig` as preserved design/port targets rather than active runtime features until compat is re-enabled.
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.

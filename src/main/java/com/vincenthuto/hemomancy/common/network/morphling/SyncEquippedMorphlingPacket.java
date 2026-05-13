@@ -27,7 +27,7 @@ public class SyncEquippedMorphlingPacket implements CustomPacketPayload {
 
 	public SyncEquippedMorphlingPacket(UUID playerUUID, ItemStack stack) {
 		this.playerUUID = playerUUID;
-		this.morphlingStack = stack == null ? ItemStack.EMPTY : stack;
+		this.morphlingStack = stack == null ? ItemStack.EMPTY : stack.copy();
 	}
 
 	public static void encode(FriendlyByteBuf buf, SyncEquippedMorphlingPacket msg) {
@@ -48,7 +48,7 @@ public class SyncEquippedMorphlingPacket implements CustomPacketPayload {
 			Player target = receiver.level().getPlayerByUUID(msg.playerUUID);
 			if (target == null) return;
 			HemoCapabilityAccess.getEquippedMorphling(target)
-					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack));
+					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack.copy()));
 		});
 	}
 

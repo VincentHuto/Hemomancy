@@ -46,5 +46,7 @@ repo/
 *.args
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
-/tools/
+/tools/*
+!/tools/model_export/
+!/tools/model_export/java_model_to_bbmodel.mjs
 /docs/superpowers/
