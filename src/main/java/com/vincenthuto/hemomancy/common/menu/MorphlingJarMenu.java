@@ -22,6 +22,15 @@ import net.neoforged.neoforge.items.IItemHandler;
 
 public class MorphlingJarMenu extends AbstractContainerMenu {
 
+	public static final int SCREEN_WIDTH = 232;
+	public static final int SCREEN_HEIGHT = 214;
+	public static final int JAR_LEFT_SLOT_X = 26;
+	public static final int JAR_RIGHT_SLOT_X = 190;
+	public static final int JAR_SLOT_FIRST_Y = 26;
+	public static final int JAR_SLOT_SPACING = 24;
+	public static final int PLAYER_INV_X = 35;
+	public static final int PLAYER_INV_Y = 124;
+
 	public int slotcount = 0;
 	/** Inventory slot index, or -106 for offhand, or -200 for scar-equip slot. */
 	private int slotID;
@@ -82,20 +91,15 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			return;
 
 		// 3 columns – jars hold 6 morphlings (3×2)
-		final int COLS = 3;
-		int rows = (int) Math.ceil((double) slotcount / COLS);
 		int slotIndex = 0;
 
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < COLS; col++) {
-				if (slotIndex >= slotcount)
-					break;
-				// 61 centres a 3-wide (54px) block in a 176-wide GUI
-				int x = 62 + col * 18;
-				int y = 36 + row * 18;
-				this.addSlot(new MorphlingJarSlot(handler, slotIndex, x, y));
-				slotIndex++;
-			}
+		while (slotIndex < slotcount) {
+			int row = slotIndex % 3;
+			int column = slotIndex / 3;
+			int x = column == 0 ? JAR_LEFT_SLOT_X : JAR_RIGHT_SLOT_X;
+			int y = JAR_SLOT_FIRST_Y + row * JAR_SLOT_SPACING;
+			this.addSlot(new MorphlingJarSlot(handler, slotIndex, x, y));
+			slotIndex++;
 		}
 	}
 
@@ -105,8 +109,8 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 	 */
 	private void addPlayerSlots(Inventory playerInventory) {
 		// Fits a standard 176×166 GUI: inventory at y=84, hotbar at y=142
-		final int originX = 8;
-		final int originY = 86;
+		final int originX = PLAYER_INV_X;
+		final int originY = PLAYER_INV_Y;
 
 		// Main inventory (3 rows × 9 cols)
 		for (int row = 0; row < 3; row++) {

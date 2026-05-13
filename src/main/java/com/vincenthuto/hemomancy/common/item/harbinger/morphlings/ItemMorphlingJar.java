@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -24,9 +28,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class ItemMorphlingJar extends Item implements IScar {
 
@@ -56,15 +57,15 @@ public class ItemMorphlingJar extends Item implements IScar {
 			for (int i = 0; i < jarHandler.getSlots(); i++) {
 				ItemStack contained = jarHandler.getStackInSlot(i);
 				if (!contained.isEmpty()) {
-					tooltip.add(Component.literal("§7• ").append(contained.getHoverName()));
+					tooltip.add(Component.literal("\u00A77\u2022 ").append(contained.getHoverName()));
 					hasAny = true;
 				}
 			}
-			if (!hasAny)
+			if (!hasAny) {
 				tooltip.add(Component.translatable("hemomancy.jar.empty").withStyle(s -> s.withColor(0x888888)));
+			}
 		}
 	}
-
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
@@ -80,29 +81,20 @@ public class ItemMorphlingJar extends Item implements IScar {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack held = playerIn.getItemInHand(handIn);
 
-		if (worldIn.isClientSide) {
-			// Light click → open the morph selection viewer
-			if (!playerIn.isShiftKeyDown()) {
-				MorphlingJarViewerScreen.openScreenViaItem();
-				playerIn.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-			}
-		} else {
-			// Shift-click server-side → open the insertion menu
-			if (playerIn.isShiftKeyDown() && playerIn instanceof ServerPlayer sp) {
-				sp.openMenu(new MenuProvider() {
-					@Nullable
-					@Override
-					public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player p) {
-						return new MorphlingJarMenu(windowId, p.level(),
-								p.blockPosition(), inv, p);
-					}
+		if (!worldIn.isClientSide && playerIn instanceof ServerPlayer sp) {
+			sp.openMenu(new MenuProvider() {
+				@Nullable
+				@Override
+				public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player p) {
+					return new MorphlingJarMenu(windowId, p.level(), p.blockPosition(), inv, p);
+				}
 
-					@Override
-					public Component getDisplayName() {
-						return held.getHoverName();
-					}
-				});
-			}
+				@Override
+				public Component getDisplayName() {
+					return held.getHoverName();
+				}
+			});
+			playerIn.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
 		}
 		return InteractionResultHolder.success(held);
 	}

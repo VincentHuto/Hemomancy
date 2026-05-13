@@ -54,7 +54,6 @@ import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
-import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
@@ -96,7 +95,6 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -211,11 +209,7 @@ public class ClientEvents {
             BloodBallClientData.drop();
         }
         if (openMorphlingJarViewer.consumeClick()) {
-            if (Screen.hasShiftDown()) {
-                PacketHandler.sendToServer(new OpenMorphlingJarPacket());
-            } else {
-                MorphlingJarViewerScreen.openScreen();
-            }
+            PacketHandler.sendToServer(new OpenMorphlingJarPacket());
         }
         if (cycleSelectedManip.consumeClick()) {
             PacketHandler.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
