@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/stem_growth2",
-  "textures": {
-    "stem": "hemomancy:block/gourd_stem"
-  }
-}

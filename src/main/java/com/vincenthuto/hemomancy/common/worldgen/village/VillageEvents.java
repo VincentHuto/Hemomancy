@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -20,7 +19,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -128,18 +126,12 @@ public class VillageEvents {
 	private static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry,
 			Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL,
 			int weight) {
-		Holder<StructureProcessorList> emptyProcessorList = processorListRegistry
-				.getHolderOrThrow(TAILOR_SHOP_PROCESSOR_LIST_KEY);
-
 		StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
 		if (pool == null)
 			return;
 
-		SinglePoolElement piece = SinglePoolElement.single(nbtPieceRL, emptyProcessorList)
-				.apply(StructureTemplatePool.Projection.RIGID);
-
-		// TODO(1.21 port): StructureTemplatePool internals are now encapsulated;
-		// re-implement village pool injection through the supported API.
+		// No-op for the alpha branch: 1.21 encapsulates StructureTemplatePool internals, and the
+		// hemopothecary house should not be promised until this injection has a supported API path.
 	}
 
 

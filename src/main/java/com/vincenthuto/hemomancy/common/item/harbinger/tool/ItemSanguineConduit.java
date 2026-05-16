@@ -1,9 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,7 +29,7 @@ public class ItemSanguineConduit extends BlockItem {
 	public InteractionResultHolder<ItemStack> use(Level lvl, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (lvl.isClientSide) {
-			HarbingerProgressScreen.openScreen();
+			openClientProgressScreen();
 		}
 		return InteractionResultHolder.sidedSuccess(stack, lvl.isClientSide());
 	}
@@ -67,8 +65,7 @@ public class ItemSanguineConduit extends BlockItem {
 			TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
 
-		// appendHoverText is only ever called client-side; Minecraft instance is safe.
-		Player viewer = Minecraft.getInstance().player;
+		Player viewer = getClientPlayer();
 		int degree = (viewer != null) ? HemoCapabilityAccess.getPlayerDegreeNumber(viewer) : 0;
 
 		if (degree >= 5) {
@@ -79,6 +76,26 @@ public class ItemSanguineConduit extends BlockItem {
 		} else {
 			tooltip.add(Component.translatable("hemomancy.item.sanguine_conduit.tooltip.locked")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		}
+	}
+
+	private static void openClientProgressScreen() {
+		try {
+			Class<?> screen = Class.forName(
+					"com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen");
+			screen.getMethod("openScreen").invoke(null);
+		} catch (ReflectiveOperationException | RuntimeException ignored) {
+		}
+	}
+
+	private static Player getClientPlayer() {
+		try {
+			Class<?> minecraftClass = Class.forName("net.minecraft.client.Minecraft");
+			Object minecraft = minecraftClass.getMethod("getInstance").invoke(null);
+			Object player = minecraftClass.getField("player").get(minecraft);
+			return player instanceof Player clientPlayer ? clientPlayer : null;
+		} catch (ReflectiveOperationException | RuntimeException ignored) {
+			return null;
 		}
 	}
 }

@@ -1,10 +1,10 @@
-Hemomancy Modding Agent Instructions (Minecraft Forge 1.20.1)
+Hemomancy Modding Agent Instructions (Minecraft NeoForge 1.21.1)
 1) Project identity
 
    Repository: VincentHuto/Hemomancy
    Mod ID: hemomancy
-   MC/Forge: 1.20.1 / 47.2.20
-   Java: 17
+   MC/NeoForge: 1.21.1 / 21.1.x
+   Java: 21
    Root package: com.vincenthuto.hemomancy
 
 2) Source of truth
@@ -36,7 +36,7 @@ Before making claims or changes, check in this order:
    IBloodVolume.active == false means blood systems are not enabled yet.
    Memory items require both overlay texture + model/provider wiring.
    Some skills have math but incomplete event wiring; verify before claiming behavior.
-   Entity loot tables are hand-authored JSON; don’t re-enable disabled data-gen providers casually.
+   Entity loot tables are hand-authored JSON under the 1.21 singular `data/hemomancy/loot_table/entities/` path; don’t re-enable disabled data-gen providers casually.
 
 6) Workflow
 

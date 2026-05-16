@@ -1,6 +1,5 @@
 {
 	"credit": "Made with Blockbench",
-	"parent": "16",
 	"render_type": "cutout",
 	"texture_size": [64, 64],
 	"textures": {

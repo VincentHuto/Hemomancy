@@ -56,7 +56,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	public void render(ItemStack pItemStack, VertexConsumer swirlConsumer, ItemDisplayContext pItemDisplayContext,
 			boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
 			int pCombinedOverlay, BakedModel pModel) {
-		// TODO: implement with 1.21 rendering API
+		// Legacy baked-quad tint hook kept dormant; the active 1.21 path delegates to ItemRenderer below.
 	}
 
 	@SuppressWarnings("unused")

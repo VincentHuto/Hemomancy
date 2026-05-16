@@ -60,7 +60,7 @@ public class UseContManipKeyPacket implements CustomPacketPayload {
 										player.getMainHandItem(), player.blockPosition());
 							} else {
 								player.displayClientMessage(Component.literal(
-										"Selected Manipulation is not a Continous or Charged MobEffect")
+										"Selected Manipulation is not a Continuous or Charged MobEffect")
 												.withStyle(ChatFormatting.RED),
 										true);
 							}

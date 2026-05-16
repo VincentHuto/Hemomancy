@@ -1,7 +1,7 @@
 # AGENTS.md — Hemomancy
 
 ## Project snapshot
-- Hemomancy is a Minecraft **NeoForge mod, not legacy Forge**: Minecraft `1.21.1`, NeoForge `21.1.172` (`21.1.x` range), Java `21` (`mod_id=hemomancy`, package `com.vincenthuto.hemomancy`).
+- Hemomancy is a Minecraft **NeoForge mod, not legacy Forge**: Minecraft `1.21.1`, NeoForge `21.1.219` (`21.1.x` range), Java `21` (`mod_id=hemomancy`, package `com.vincenthuto.hemomancy`).
 - Entrypoint: `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`; build/version source of truth: `gradle.properties` and `build.gradle`.
 - Source-of-truth docs: `HEMOMANCY_REFERENCE.md` for implementation/status, `LORE_REFERENCE.md` for tone/worldbuilding, `MNA_COMPATIBILITY_BRAINSTORM.md` for Mana and Artifice ideas. Prefer current code when docs disagree.
 - Theme matters: morally gray blood magic + fungal cosmic horror. Do not frame Harbingers as simple villains or Unstained as simple heroes.
@@ -24,7 +24,7 @@
 - From the project root on Windows/PowerShell: `./gradlew.bat build`, `./gradlew.bat runClient`, `./gradlew.bat runServer`, `./gradlew.bat runData`.
 - `settings.gradle` includes `../HutosLib` as a composite build; Hemomancy also relies on local jars in `libs/` for TerraBlender, GeckoLib, and JEI.
 - `runData` writes `src/generated/resources`; `build.gradle` includes that directory but lets `src/main/resources` win on duplicates. `DataGeneration.java` currently only enables blockstates, item models, and language; server recipe/tag/loot providers are intentionally commented out.
-- There are no normal files under `src/test` currently; validate code changes with `build` or the relevant NeoForge run config.
+- Focused tests exist under `src/test`; validate code changes with `build` or the relevant NeoForge run config.
 
 ## Project conventions
 - Use NeoForge 1.21 APIs/imports (`net.neoforged.*`, `DeferredHolder`, payload networking, attachments); do not add old `net.minecraftforge.*` imports or Forge-era registration/networking patterns.

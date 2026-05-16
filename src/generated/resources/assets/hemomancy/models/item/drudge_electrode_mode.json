@@ -1,6 +1,0 @@
-{
-   "parent": "item/handheld",
-   "textures": {
-       "layer0": "hemomancy:item/drudge_electrode_mode"
-   }
-}

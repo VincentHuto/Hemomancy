@@ -5,7 +5,7 @@
 
 ## What this project is
 
-**Hemomancy** is a Minecraft Forge mod (MC 1.20.1, Forge 47.2.20, Java 17) by VincentHuto. It is a blood-magic + fungal-horror mod organized around the *quality* of blood manipulation rather than just quantity. Players can pursue one of two mutually-exclusive paths: the **Harbinger** path (embrace blood magic, ascend through 7+1 degrees of a secret society called the Hematic Order) or the **Unstained** path (purify blood corruption out of yourself with hemolytic solution and copper rituals, guided by Our Lady of Still Waters).
+**Hemomancy** is a Minecraft NeoForge mod (MC 1.21.1, NeoForge 21.1.x, Java 21) by VincentHuto. It is a blood-magic + fungal-horror mod organized around the *quality* of blood manipulation rather than just quantity. Players can pursue one of two mutually-exclusive paths: the **Harbinger** path (embrace blood magic, ascend through 7+1 degrees of a secret society called the Hematic Order) or the **Unstained** path (purify blood corruption out of yourself with hemolytic solution and copper rituals, guided by Our Lady of Still Waters).
 
 - `mod_id` = `hemomancy`, `mod_version` = `5.0.1`, package root = `com.vincenthuto.hemomancy`
 - Main class: `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`
@@ -67,7 +67,7 @@ src/main/java/com/vincenthuto/hemomancy/
 
 `src/main/resources/`
 - `assets/hemomancy/textures/{item,block,entity,gui,mob_effect,environment,models/armor,mna,memories,scars}/` — textures (the reference doc embeds many of these inline as image links — useful for quick visual lookup).
-- `data/hemomancy/{recipes,structures,loot_tables,tags,advancements}/` — datapack content.
+- `data/hemomancy/{recipe,structure,loot_table,tags,advancement}/` — datapack content. Recipes, loot tables, and advancements use the 1.21 singular folder names in this repo.
 - `META-INF/accesstransformer.cfg` — AT entries (touch carefully).
 - `hemomancy.mixins.json`, `hemomancy.mna.mixins.json` — mixin configs.
 
@@ -102,18 +102,18 @@ src/main/java/com/vincenthuto/hemomancy/
 - **Memory items use a 2-layer model** (base `hematic_memory.png` + per-manip overlay at `memories/memory_<name>_overlay.png`). When adding a new manipulation, the overlay texture and the model entry in `HemoItemModelProvider` both need to be added.
 - **Skill wiring**: `SkillPointHelper` has the math for every skill, but a few skills (Iron Will, Scar Affinity, Scar Resonance, Scar Mastery) currently have no event-handler caller. If asked "does skill X do anything," check the wiring table in `HEMOMANCY_REFERENCE.md` §9 before answering.
 - **Fungal Whisper events** are *somewhat disabled during development* per the reference. Don't assume they fire on every degree-up.
-- **Entity loot tables** now live as hand-authored JSON in `data/hemomancy/loot_tables/entities/` — the data-generator provider is intentionally commented out. Don't re-enable it without porting the JSON values into the provider first.
+- **Entity loot tables** now live as hand-authored JSON in `data/hemomancy/loot_table/entities/` — the data-generator provider is intentionally commented out. Don't re-enable it without porting the JSON values into the provider first.
 
 ## Active WIP areas (do not assume these are finished)
 
-Check `HEMOMANCY_REFERENCE.md` §30 for the full list, but the big ones:
+Check `HEMOMANCY_REFERENCE.md` §38 for the full list, but the big ones:
 
 - **Fungal Dimension** — endgame post-Archon astral-projection dimension. Terrain, alien creatures, exit mechanics still in progress.
 - **Saints system** — only Hemorath and the Chain Saint are designed; Saints 3 & 4 TBD; trial chamber gen WIP.
-- **Annetta Knowles (Stained Priestess)** — boss designed but no model/AI yet.
+- **Annetta Knowles (Stained Priestess)** — two-route Broken Church encounter is wired with dedicated Java models/textures; final animation, projectile rendering, and combat polish remain WIP.
 - **Blood Moons** — frequency and ritual trigger designed; full gameplay effects partially wired.
 - **Founding Sanctum** — Degree-5 area-consecration system; buffs work, boundary detection still being tuned.
-- **Visceral Organs** — extraction ritual works and produces Echo items, but the per-organ gameplay effects are not yet implemented.
+- **Visceral Organs** — extraction ritual and per-organ gameplay effects are implemented; check the reference before changing tuning.
 - **Liber Sanguinum guidebook** — opens but renders no content (`HemoProgressionScreen.setupEntries()` is commented out).
 - **Blood as a placeable fluid** (`FluidInit`) — commented out.
 

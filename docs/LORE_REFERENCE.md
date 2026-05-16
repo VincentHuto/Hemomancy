@@ -8,7 +8,7 @@
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
-> - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, while dedicated model/texture/animations, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP.
+> - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and final animation polish, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP.
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
@@ -475,7 +475,7 @@ Her sanity broke under the weight of this question. And in that fracture, the la
 
 After either route concludes she either lies broken (Harbinger) or stands resolved and at peace (Unstained).
 
-**Remaining WIP:** Dedicated entity model, texture, and GeckoLib animations; the fuller teeth/nails/hair biological domain for Phase 1; Sanguis Lancea projectile rendering.
+**Remaining WIP:** GeckoLib animation polish; the fuller teeth/nails/hair biological domain for Phase 1; Sanguis Lancea projectile rendering.
 
 ---
 

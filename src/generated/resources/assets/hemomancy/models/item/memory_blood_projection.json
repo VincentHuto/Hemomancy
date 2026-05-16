@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "hemomancy:item/memories/memory_blank",
-    "layer1": "hemomancy:item/memories/memory_blood_projection_overlay"
-  }
-}

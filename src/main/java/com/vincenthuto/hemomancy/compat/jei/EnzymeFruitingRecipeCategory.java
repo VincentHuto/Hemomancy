@@ -40,7 +40,7 @@ public class EnzymeFruitingRecipeCategory implements IRecipeCategory<EnzymeFruit
     @Override
     @Nonnull
     public Component getTitle() {
-        return Component.literal("Enzyme Fruiting");
+        return Component.translatable("hemomancy.jei.enzyme_fruiting");
     }
 
     @Override

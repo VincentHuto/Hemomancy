@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "hemomancy:block/altar_of_cleansing",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "hemomancy:block/altar_of_cleansing"
+    },
+    "facing=south": {
+      "model": "hemomancy:block/altar_of_cleansing",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/altar_of_cleansing",
+      "y": 270
+    }
+  }
+}

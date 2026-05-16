@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "": {
-    	"uvlock": false,
-    	"model": "hemomancy:block/infected_cap"
-    }
-  }
-}

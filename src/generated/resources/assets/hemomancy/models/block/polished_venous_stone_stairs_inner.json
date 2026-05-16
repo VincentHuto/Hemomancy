@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/inner_stairs",
-  "textures": {
-    "bottom": "hemomancy:block/polished_venous_stone",
-    "top": "hemomancy:block/polished_venous_stone",
-    "side": "hemomancy:block/polished_venous_stone"
-  }
-}

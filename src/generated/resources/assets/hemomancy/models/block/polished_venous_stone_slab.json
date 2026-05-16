@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab",
-  "textures": {
-    "bottom": "hemomancy:block/polished_venous_stone_slab",
-    "top": "hemomancy:block/polished_venous_stone_slab",
-    "side": "hemomancy:block/polished_venous_stone_slab"
-  }
-}

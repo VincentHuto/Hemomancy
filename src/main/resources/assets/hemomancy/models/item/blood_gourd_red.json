@@ -1,8 +1,8 @@
 {
 	"parent": "builtin/entity",
 	"textures": {
-		"layer0": "hemomancy:item/blood_gourd_red",
-		"particle": "hemomancy:item/blood_gourd_red"
+		"layer0": "hemomancy:item/blood_gourd_red_open",
+		"particle": "hemomancy:item/blood_gourd_red_open"
 	},
 	"gui_light": "front",
 	"display": {

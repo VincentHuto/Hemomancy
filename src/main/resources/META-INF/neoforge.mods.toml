@@ -5,8 +5,6 @@ loaderVersion="${loader_version_range}" #mandatory
 
 license="${mod_license}"
 
-issueTrackerURL="http://my.issue.tracker/" #optional
-
 [[mods]] #mandatory
 
 modId="${mod_id}" #mandatory
@@ -15,31 +13,26 @@ version="${mod_version}" #mandatory
 
 displayName="Hemomancy; Sanguine Mastery" #mandatory
 
-updateJSONURL="http://myurl.me/" #optional
-
-displayURL="http://curseforge.com/" #optional
-
 logoFile="logo.png" #optional
 
 credits='''
-Thanks to these Folks! Who I looked to for help!
-Vazkii,WolfShotz,Direwolf20,baileyholl, and many others!
-And to the entire NeoForge & Forge Discords!
+Thanks to these folks, who I looked to for help:
+Vazkii, WolfShotz, Direwolf20, baileyholl, and many others.
+And to the entire NeoForge and Forge Discords.
 '''
 
 authors="${mod_authors}" #optional
 
 description='''
-Channel the carnal fluid flowing through your veins, dont let it go to waste.
-Use it to crush your enemies, or boost yourself!
-After all its just sitting there!
-~Huto
+Hemomancy is a NeoForge blood-magic mod about sacred inheritance, visceral craft,
+and the fungal blood-memory beneath the Hematic Order.
+
+This alpha focuses on the playable Harbinger and Unstained progression loops,
+with later boss, compat, and world-placement systems still being hardened.
 '''
 
-# ──────────────────────────────────────────────────────────────────────────────
-#  Dependencies
-#  NeoForge format uses type="required" / type="optional" instead of mandatory=
-# ──────────────────────────────────────────────────────────────────────────────
+# Dependencies
+# NeoForge format uses type="required" / type="optional" instead of mandatory=
 
 [[dependencies.hemomancy]]
     modId="neoforge"
@@ -83,7 +76,7 @@ After all its just sitting there!
     ordering="NONE"
     side="BOTH"
 
-# Mana and Artifice — optional, compat/mna is gated behind ModList.isLoaded("mna")
+# Mana and Artifice - optional, compat/mna is gated behind ModList.isLoaded("mna")
 # [[dependencies.hemomancy]]
 #     modId="mna"
 #     type="optional"
@@ -91,12 +84,10 @@ After all its just sitting there!
 #     ordering="NONE"
 #     side="BOTH"
 
-# Curios — optional, compat/curios gated behind ModList.isLoaded("curios")
+# Curios - optional, compat/curios gated behind ModList.isLoaded("curios")
 # [[dependencies.hemomancy]]
 #     modId="curios"
 #     type="optional"
 #     versionRange="[1,)"
 #     ordering="NONE"
 #     side="BOTH"
-
-    

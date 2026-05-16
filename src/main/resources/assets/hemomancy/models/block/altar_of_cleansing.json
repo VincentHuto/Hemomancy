@@ -1,0 +1,7 @@
+{
+  "ambientocclusion": false,
+  "render_type": "cutout",
+  "textures": {
+    "particle": "hemomancy:block/pale_silver_block"
+  }
+}

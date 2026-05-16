@@ -1,7 +1,0 @@
-{
-  "parent" : "block/cube_column",
-  "textures" : {
-    "end" : "hemomancy:block/blood_wood_log_top",
-    "side" : "hemomancy:block/blood_wood_log"
-  }
-}

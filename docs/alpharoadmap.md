@@ -2,7 +2,9 @@
 
 ## Context
 
-VincentHuto's Hemomancy is a sophisticated blood-magic + fungal-horror Minecraft Forge mod (1.20.1, Forge 47.2.20) with two mutually exclusive player paths (Harbinger and Unstained). The goal is to assess its current state against "what makes a good Minecraft mod good" and produce a prioritized roadmap for alpha release.
+VincentHuto's Hemomancy is a sophisticated blood-magic + fungal-horror Minecraft NeoForge mod (Minecraft 1.21.1, NeoForge 21.1.x, Java 21) with two mutually exclusive player paths (Harbinger and Unstained). The goal is to assess its current state against "what makes a good Minecraft mod good" and produce a prioritized roadmap for alpha release.
+
+> 2026-05-15 refresh: the current code is ahead of several older audit notes below. Treat `HEMOMANCY_REFERENCE.md` as the canonical status doc. Confirmed cleanup since the original roadmap includes 1.21 singular resource paths, wired skill effects, implemented Hematic Salvage tests/rules, blood crystal growth from alembic leaks, Annetta Broken Church spawning, dedicated Annetta encounter models/textures, and JEI registration for Mycelial Lantern enzyme fruiting.
 
 The mod is approximately **85-90% feature-complete**, with both core paths playable end-to-end. WIP areas are clearly documented in `HEMOMANCY_REFERENCE.md`. The gaps are primarily in **onboarding clarity**, **boss visual assets**, and **a few endgame systems**.
 
@@ -72,7 +74,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 #### CRITICAL — Blocks Alpha Release
 
 **G1. Boss Visual Assets (3 of 4 Saints + Annetta)**
-- **Issue**: Seraphae, Putriciel, and Velorum have full AI and combat mechanics but placeholder models/textures/GeckoLib animations. Annetta Knowles has Phase 1+2 AI but no model, no texture, and no encounter trigger.
+- **Issue**: Seraphae, Putriciel, and Velorum have full AI and combat mechanics but placeholder or unfinished presentation. Annetta Knowles now has a Broken Church trigger plus dedicated Java models/textures, but her final animations, Sanguis Lancea rendering, and Phase 1 combat polish remain WIP.
 - **Impact**: Placeholder humanoid models in boss fights destroy first impressions. This is the single highest-visibility gap.
 - **Files**:
     - `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/SeraphaeEntity.java`
@@ -94,7 +96,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 - **Issue**: No "Welcome to Hemomancy" guidance. Players finding their first Blood Temple have no hint of what to do. The Hermit dialogue starts abruptly without context. Breadcrumbs to Harbinger Outpost don't exist. The Unstained Church discovery path is unclear.
 - **Impact**: Most alpha testers will quit in the first 10 minutes without guidance.
 - **Files**:
-    - `src/main/resources/data/hemomancy/advancements/` (advancement chain)
+    - `src/main/resources/data/hemomancy/advancement/` (advancement chain)
     - `src/main/java/com/vincenthuto/hemomancy/common/event/CommonEvents.java`
     - `src/main/java/com/vincenthuto/hemomancy/client/screen/` (any tutorial overlays)
 - **Resolution**:
@@ -106,7 +108,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 **G4. Advancements Folder Audit**
 - **Issue**: The exploration agent noted the advancements directory structure may not be complete. `HarbingerAdvancementGranter` references degree advancements but their presence in the resource pack needs verification.
 - **Impact**: If advancement JSON files are missing or malformed, the entire progression signposting system silently fails.
-- **Files**: `src/main/resources/data/hemomancy/advancements/`
+- **Files**: `src/main/resources/data/hemomancy/advancement/`
 - **Resolution**: Run `./gradlew runData` and inspect generated output; or manually verify each referenced advancement JSON exists and is valid.
 
 ---
@@ -126,10 +128,10 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 - **Files**: `src/main/java/com/vincenthuto/hemomancy/common/worldgen/` (fungal dimension features)
 - **Resolution**: Add at minimum 3-4 biome feature variants (fungal trees, hyphae columns, meat-terrain surface variety) before alpha. The choice fork and mob spawning already working is a strong base.
 
-**G7. Annetta Knowles Encounter Trigger**
-- **Issue**: Her Phase 1+2 AI is implemented but there's no defined spawn trigger, no encounter location, and no narrative beat integration.
+**G7. Annetta Knowles Encounter Polish**
+- **Issue**: Her two-route encounter now spawns through `BrokenChurchStructure`, but final presentation and Phase 1 identity still need polish before being treated as final content.
 - **Files**: `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/AnnettaKnowlesEntity.java`
-- **Resolution**: Option A — define a spawn condition (Clarity-stage 5 + entering Unstained Church triggers encounter). Option B — disable for alpha and note in HEMOMANCY_REFERENCE as pre-alpha WIP.
+- **Resolution**: Keep the Broken Church flow available for alpha testers, but label it partial and avoid presenting it as final boss content until animation/projectile polish lands.
 
 ---
 
@@ -166,7 +168,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 
 | Priority | Task | Effort |
 |----------|------|--------|
-| B1 | Wire the 4 unwired skills (Iron Will, Scar Affinity, Scar Resonance, Scar Mastery) | Medium |
+| B1 | Re-audit skill UI wording now that all 21 skills have event/effect wiring | Low |
 | B2 | Add Morphling system page to Liber Sanguinum | Low |
 | B3 | Fungal Dimension: add 3-4 terrain feature variants | Medium-High |
 | B4 | Annetta Knowles: define spawn condition or disable | Low (disable) |
@@ -200,7 +202,7 @@ From grepping 23 TODO/FIXME/HACK comments across the codebase:
 - **`HemoProgressionScreen.setupEntries()` commented out** (confirmed — Java renderer WIP, HutosLib JSON fallback works but needs verification).
 
 ### Confirmed Placeholder Assets
-- `Annetta Knowles` — `blank.png` placeholder texture confirmed.
+- `Annetta Knowles` — no longer uses the old `blank.png` placeholder path; dedicated encounter models/textures exist, with animation/final polish still pending.
 - `Putriciel` — placeholder renderer confirmed.
 - `Spectral Companion` — placeholder texture.
 - Curved Horn armor + Blood Gourd armor — placeholder models.
@@ -208,17 +210,17 @@ From grepping 23 TODO/FIXME/HACK comments across the codebase:
 ### Balance/Design Issues (from WHATS NEXT developer notes)
 - **Mind Spike manipulation**: Currently assigned to Degree 1 — developer notes say it should be Degree 4.
 - **Dendritic Distributor**: Placed in early-game — developer notes say it should be late-game.
-- **Hematic Iron Scrap**: Should drop from worn/damaged armor, not currently implemented.
-- **Blood Crystal growth**: Planned feature (dripping from alembic leaks) — not implemented.
+- **Hematic Iron Scrap**: Hematic Salvage rules/tests now cover salvage behavior; use `HematicSalvageRulesTest` and current loot docs as source of truth.
+- **Blood Crystal growth**: Implemented through alembic leak growth behavior; see `GhastlyAlembicBlockEntity.tryLeakBloodOntoBlock()`.
 - **Natural sanguine progression**: Players should find scrap when hurt early-game as organic hook — not implemented.
 
 ---
 
 ## Critical Files to Audit First
 
-- `src/main/resources/data/hemomancy/advancements/` — verify JSON chain
+- `src/main/resources/data/hemomancy/advancement/` — verify JSON chain
 - `src/main/java/com/vincenthuto/hemomancy/client/screen/HemoProgressionScreen.java` — `setupEntries()` commented state
-- `src/main/java/com/vincenthuto/hemomancy/common/capability/player/skillpoint/SkillPointHelper.java` — unwired skills
+- `src/main/java/com/vincenthuto/hemomancy/common/capability/player/skillpoint/SkillPointHelper.java` — skill math and any UI wording drift
 - `src/main/java/com/vincenthuto/hemomancy/common/init/StructureInit.java` — which saint trial structures are placed
 - `src/main/java/com/vincenthuto/hemomancy/common/entity/boss/AnnettaKnowlesEntity.java` — encounter trigger status
 - `src/main/resources/assets/hemomancy/textures/entity/` — confirm which bosses have real textures vs blank.png
