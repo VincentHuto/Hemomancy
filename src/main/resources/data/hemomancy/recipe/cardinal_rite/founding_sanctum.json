@@ -7,15 +7,105 @@
   "riteName": "Rite of the Founding Sanctum",
   "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, consecrating the surrounding ground as a Harbinger Sanctum. All Harbingers who dwell within its radius will be strengthened and sustained.",
   "pattern": [
-    ["HGCGCGCGH", "G       G", "C       C", "G       G", "C   C   C", "G       G", "C       C", "G       G", "HGCGCGCGH"],
-    ["         ", " H     H ", "         ", "   G G   ", "         ", "   G G   ", "         ", " H     H ", "         "],
-    ["         ", " H     H ", "   CCC   ", "  C   C  ", "  C G C  ", "  C   C  ", "   CCC   ", " H     H ", "         "],
-    ["         ", "   G G   ", "  G   G  ", " G     G ", "   G G   ", " G     G ", "  G   G  ", "   G G   ", "         "],
-    ["H       H", "  G   G  ", "         ", "G       G", "         ", "G       G", "         ", "  G   G  ", "H       H"],
-    ["         ", "   G G   ", "  G   G  ", " G     G ", "   G G   ", " G     G ", "  G   G  ", "   G G   ", "         "],
-    ["         ", " H     H ", "   CCC   ", "  C   C  ", "  C G C  ", "  C   C  ", "   CCC   ", " H     H ", "         "],
-    ["         ", " H     H ", "         ", "   G G   ", "         ", "   G G   ", "         ", " H     H ", "         "],
-    ["HGCGCGCGH", "G       G", "C       C", "G       G", "C   C   C", "G       G", "C       C", "G       G", "HGCGCGCGH"]
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    G    "
+    ],
+    [
+      "         ",
+      "         ",
+      " G     G ",
+      " H     H ",
+      " H  G  H ",
+      " H  H  H ",
+      " H  H  H ",
+      " H  H  H ",
+      " H CHC H "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "  C G C  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " C  G  C "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " G     G ",
+      " H     H ",
+      " H  H  H ",
+      " H  G  H ",
+      "GHGGGGGHG"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " C  G  C "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "  C G C  "
+    ],
+    [
+      "         ",
+      "         ",
+      " G     G ",
+      " H     H ",
+      " H  G  H ",
+      " H  H  H ",
+      " H  H  H ",
+      " H  H  H ",
+      " H CHC H "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    G    "
+    ]
   ],
   "key": {
     "H": {

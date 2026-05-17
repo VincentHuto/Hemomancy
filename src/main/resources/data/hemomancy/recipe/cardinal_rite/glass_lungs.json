@@ -7,11 +7,41 @@
   "riteName": "Rite of Glass Lungs",
   "riteDescription": "White glass, pale water, and copper still the breath. Poison and wither are rinsed from the chest, leaving the supplicant able to breathe where corruption would choke them.",
   "pattern": [
-    ["GPCPG", "P   P", "C L C", "P   P", "GPCPG"],
-    ["     ", " GGG ", " GCG ", " GGG ", "     "],
-    ["  P  ", " PGP ", "PGLGP", " PGP ", "  P  "],
-    ["     ", " GGG ", " GCG ", " GGG ", "     "],
-    ["GPCPG", "P   P", "C L C", "P   P", "GPCPG"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PPP "
+    ],
+    [
+      " L L ",
+      " P P ",
+      " P P ",
+      " PPP ",
+      "PPLPP"
+    ],
+    [
+      "     ",
+      "     ",
+      "  G  ",
+      " PGP ",
+      "PLLLP"
+    ],
+    [
+      " L L ",
+      " P P ",
+      " P P ",
+      " PPP ",
+      "PPLPP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PPP "
+    ]
   ],
   "key": {
     "C": {

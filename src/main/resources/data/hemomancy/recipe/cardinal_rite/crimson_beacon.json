@@ -6,11 +6,41 @@
   "riteName": "Rite of the Crimson Beacon",
   "riteDescription": "A binding rite that anchors the caster's dying essence to this location. Upon taking a fatal blow, the caster's body will be returned here before death claims them.",
   "pattern": [
-    ["E   E", " V V ", "  C  ", " V V ", "E   E"],
-    ["     ", " E E ", " EGE ", " E E ", "     "],
-    ["  B  ", " BVB ", "BVPVB", " BVB ", "  B  "],
-    ["     ", " E E ", " EGE ", " E E ", "     "],
-    ["E   E", " V V ", "  C  ", " V V ", "E   E"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "  B  ",
+      " PVP "
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " G G ",
+      " PGP ",
+      " PPP ",
+      "BPGPB",
+      "VPVPV"
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " BPB ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "  B  ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

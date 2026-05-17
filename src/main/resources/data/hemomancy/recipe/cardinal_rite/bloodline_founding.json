@@ -6,11 +6,41 @@
   "riteName": "Rite of Bloodline Founding",
   "riteDescription": "A lesser rite that binds the caster's essence into a new bloodline, producing a presigned ancestral ledger that others may use to join.",
   "pattern": [
-    ["E   E", " V V ", "  C  ", " V V ", "E   E"],
-    ["     ", " E E ", " ELE ", " E E ", "     "],
-    ["  B  ", " BCB ", "BCPCB", " BCB ", "  B  "],
-    ["     ", " E E ", " ELE ", " E E ", "     "],
-    ["E   E", " V V ", "  C  ", " V V ", "E   E"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ],
+    [
+      "  C  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " C C ",
+      " PCP ",
+      " PPP ",
+      " PCP ",
+      "VPVPV"
+    ],
+    [
+      "  C  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

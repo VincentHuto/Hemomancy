@@ -5,9 +5,33 @@
   "riteName": "Rite of the Pale Vigil",
   "riteDescription": "Performed by those who have crossed halfway into clarity, the Pale Vigil calls upon Our Lady's watchful gaze. All Unstained souls within 40 blocks draw clarity from the light, their Silver Ward and Verdigris Aura strengthened for thirty minutes.",
   "pattern": [
-    ["SLCSCLS", "L     L", "C     C", "S  P  S", "C     C", "L     L", "SLCSCLS"],
-    ["       ", " SCSCS ", " C   C ", " S P S ", " C   C ", " SCSCS ", "       "],
-    ["       ", "       ", "  C C  ", "  CPC  ", "  C C  ", "       ", "       "]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "   P   "
+    ],
+    [
+      "       ",
+      " L   L ",
+      " L L L ",
+      " P P P ",
+      " P L P ",
+      " P P P ",
+      "SPPPPPS"
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "   P   "
+    ]
   ],
   "key": {
     "S": {

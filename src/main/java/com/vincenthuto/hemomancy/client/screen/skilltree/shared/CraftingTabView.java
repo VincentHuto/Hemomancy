@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -36,6 +37,7 @@ public final class CraftingTabView {
 
 	private static final int LAYER_BTN_SIZE = 16;
 	private static final long MATERIAL_CYCLE_MILLIS = 2000L;
+	private static final double SURFACE_DECORATION_Y_OFFSET = 0.015D;
 
 	private static long materialCycleIndex() {
 		return System.currentTimeMillis() / MATERIAL_CYCLE_MILLIS;
@@ -272,6 +274,9 @@ public final class CraftingTabView {
 
 			pose.pushPose();
 			pose.translate(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
+			if (isSurfaceDecorationBlock(block)) {
+				pose.translate(0.0D, SURFACE_DECORATION_Y_OFFSET, 0.0D);
+			}
 			boolean dimmed = state.craftingVisibleLayer >= 0 && relY < state.craftingVisibleLayer;
 			try {
 				if (dimmed) {
@@ -293,6 +298,15 @@ public final class CraftingTabView {
 			RenderSystem.disableBlend();
 		}
 		pose.popPose();
+	}
+
+	private static boolean isSurfaceDecorationBlock(Block block) {
+		return block == BlockInit.engram_block.get()
+				|| block == BlockInit.befouling_ash_trail.get()
+				|| block == BlockInit.smouldering_ash_trail.get()
+				|| block == BlockInit.active_befouling_ash_trail.get()
+				|| block == BlockInit.active_smouldering_ash_trail.get()
+				|| block == BlockInit.virid_salis_trail.get();
 	}
 
 	// ────────────────────────────────────────────────────────────

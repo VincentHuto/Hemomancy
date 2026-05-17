@@ -8,13 +8,69 @@
   "breakBlocksOnCreation": false,
   "rankup": true,
   "pattern": [
-    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"],
-    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
-    ["       ", " C   C ", "   HGH ", "   G G ", "   GGG ", "   HGH ", " C   C "],
-    ["       ", " C G C ", "   G G ", "   GWG ", "  GCG  ", "   GWG ", " C G C "],
-    ["       ", " C   C ", "   HGH ", "   G G ", "   GGG ", "   HGH ", " C   C "],
-    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
-    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  GCG  "
+    ],
+    [
+      "       ",
+      " G   G ",
+      " H   H ",
+      " H G H ",
+      " H H H ",
+      " H H H ",
+      " H H H "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "G  C  G"
+    ],
+    [
+      "       ",
+      "       ",
+      "   H   ",
+      " G G G ",
+      " H H H ",
+      " H G H ",
+      "CHCCCHC"
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "G  C  G"
+    ],
+    [
+      "       ",
+      " G   G ",
+      " H   H ",
+      " H G H ",
+      " H H H ",
+      " H H H ",
+      " H H H "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  GCG  "
+    ]
   ],
   "key": {
     "H": {

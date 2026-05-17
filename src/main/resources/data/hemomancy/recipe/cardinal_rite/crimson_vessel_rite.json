@@ -6,13 +6,69 @@
   "riteName": "Rite of the Crimson Vessel",
   "riteDescription": "The pallid vessel is steeped in the deepest scarlet, its walls drinking in the vitality of the blood arts until they flush crimson with purpose.",
   "pattern": [
-    ["VGVGVGV", "G     G", "V     V", "G  G  G", "V     V", "G     G", "VGVGVGV"],
-    ["       ", " VVVVV ", " V   V ", " V G V ", " V   V ", " VVVVV ", "       "],
-    ["       ", " V   V ", "  GBG  ", "  B B  ", "  GBG  ", " V   V ", "       "],
-    ["       ", " V G V ", "  B B  ", "  GEG  ", " GBGBG ", "  GEG  ", " V G V "],
-    ["       ", " V   V ", "  GBG  ", "  B B  ", "  GBG  ", " V   V ", "       "],
-    ["       ", " VVVVV ", " V   V ", " V G V ", " V   V ", " VVVVV ", "       "],
-    ["VGVGVGV", "G     G", "V     V", "G  G  G", "V     V", "G     G", "VGVGVGV"]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "   E   ",
+      "  GVG  "
+    ],
+    [
+      "       ",
+      " G   G ",
+      " V   V ",
+      " V G V ",
+      " V V V ",
+      " VBVBV ",
+      " VVVVV "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      " E E B ",
+      "GV V VG"
+    ],
+    [
+      "       ",
+      "       ",
+      "   V   ",
+      " G G G ",
+      " V V V ",
+      "EVEGEVE",
+      "VVVVVVV"
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      " E E B ",
+      "GV V VG"
+    ],
+    [
+      "       ",
+      " G   G ",
+      " V   V ",
+      " V G V ",
+      " V V V ",
+      " VEVEV ",
+      " VVVVV "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "   E   ",
+      "  GVG  "
+    ]
   ],
   "key": {
     "V": {

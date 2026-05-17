@@ -6,11 +6,41 @@
   "riteName": "Rite of Exsanguination",
   "riteDescription": "A dark sacrifice rite that drains the lifeblood of a named creature within the ritual circle, crystallizing their essence into Sanguine Quintessence â€” a rare and potent material.",
   "pattern": [
-    ["V   V", " E E ", "  G  ", " E E ", "V   V"],
-    ["     ", " V V ", " VBV ", " V V ", "     "],
-    ["  E  ", " EGE ", "EGPGE", " EGE ", "  E  "],
-    ["     ", " V V ", " VBV ", " V V ", "     "],
-    ["V   V", " E E ", "  G  ", " E E ", "V   V"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " G G ",
+      " PGP ",
+      " PPP ",
+      " PGP ",
+      "VPVPV"
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

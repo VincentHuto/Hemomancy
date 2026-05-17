@@ -6,9 +6,15 @@
   "riteName": "Rite of Sanguine Attunement",
   "riteDescription": "A cleansing rite that purges and resets the caster's blood tendency alignments, allowing them to realign their kinship from a blank slate.",
   "pattern": [
-    ["EVE"],
-    ["VPV"],
-    ["EVE"]
+    [
+      "VEV"
+    ],
+    [
+      "EPE"
+    ],
+    [
+      "VEV"
+    ]
   ],
   "key": {
     "E": {

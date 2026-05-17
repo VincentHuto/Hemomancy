@@ -2223,6 +2223,8 @@ Specific Harbinger cardinal rite recipes include degree advancement rites (secti
 
 `RecipeDegreeGates` is the shared helper for Blood Structures and Cardinal Rites. This section covers rite recipes that compare `required_degree` against `IInitiatoryDegree`; Unstained rites compare the same field against `getPlayerUnstainedLevel` and are cataloged in §15.2. The Rites tab groups recipes by required degree/stage rather than by rite form.
 
+Cardinal rite patterns now follow a function-first visual pass: Harbinger rites favor organic veins, ribs, roots, vessels, covenant knots, wounds, and fungal growth, while Unstained rites keep cleaner font, chapel, ward, clamp, lens, and tribunal shapes. This pass intentionally changed only multiblock `pattern` arrays; costs, gates, results, rank-up flags, Unstained flags, and completion behavior stayed stable. Pattern rows are authored top-to-bottom inside each aisle; the last row of each aisle is the ground/bottom layer. Any Engram Block, Befouling Ash Trail, Virid Salis Trail, or similar fragile surface decoration used above ground level must have a non-fragile support block directly underneath it in the same pattern column.
+
 **Degree Advancement Rites:** These recipe JSONs set `"rankup": true`, which lets client UI and tooling distinguish degree rites from utility rites. The rank-up target is inferred from the rite ID so a player who already has that degree or higher cannot start a redundant rank-up rite.
 
 | Rite | Blood Cost | Rite Form | Required Degree | Degree -> | Description |

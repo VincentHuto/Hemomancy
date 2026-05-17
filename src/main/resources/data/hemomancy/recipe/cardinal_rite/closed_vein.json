@@ -7,9 +7,21 @@
   "riteName": "Rite of the Closed Vein",
   "riteDescription": "The purified vessel is taught to close around old wounds. Blood loss is denied, hostile bodies are slowed, and the first mute arts of stillness settle more deeply.",
   "pattern": [
-    ["PCP", "V V", "PCP"],
-    [" C ", "VPV", " C "],
-    ["PCP", "V V", "PCP"]
+    [
+      "C C",
+      "PVP",
+      "PPP"
+    ],
+    [
+      "   ",
+      "V V",
+      "PCP"
+    ],
+    [
+      "C C",
+      "PVP",
+      "PPP"
+    ]
   ],
   "key": {
     "C": {

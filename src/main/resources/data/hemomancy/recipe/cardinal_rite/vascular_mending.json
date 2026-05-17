@@ -6,11 +6,41 @@
   "riteName": "Rite of Vascular Mending",
   "riteDescription": "A restorative rite that floods the caster's vascular system with purified blood, fully healing all seven vein sections from strain and damage.",
   "pattern": [
-    ["E   E", " V V ", "  G  ", " V V ", "E   E"],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["  C  ", " CGC ", "CGPGC", " CGC ", "  C  "],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["E   E", " V V ", "  G  ", " V V ", "E   E"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " G G ",
+      " PGP ",
+      " PPP ",
+      " PGP ",
+      "VVVVV"
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

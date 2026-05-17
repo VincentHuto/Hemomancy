@@ -6,11 +6,41 @@
   "riteName": "Rite of the Hungering Earth",
   "riteDescription": "A corruption rite that feeds the caster's blood into the earth, converting the surrounding terrain into blood-touched stone and befouling ash.",
   "pattern": [
-    ["V   V", " E E ", "  C  ", " E E ", "V   V"],
-    ["     ", " V V ", " VBV ", " V V ", "     "],
-    ["  E  ", " ECE ", "ECPCE", " ECE ", "  E  "],
-    ["     ", " V V ", " VBV ", " V V ", "     "],
-    ["V   V", " E E ", "  C  ", " E E ", "V   V"]
+    [
+      "C   C",
+      "P   P",
+      "P   P",
+      "P   P",
+      "P P P"
+    ],
+    [
+      "     ",
+      "  C  ",
+      "  P  ",
+      " EPE ",
+      " VPV "
+    ],
+    [
+      "     ",
+      " C C ",
+      " PPP ",
+      " PCP ",
+      "PPPPP"
+    ],
+    [
+      "     ",
+      "  C  ",
+      "  P  ",
+      " EPE ",
+      " VPV "
+    ],
+    [
+      "C   C",
+      "P   P",
+      "P   P",
+      "P   P",
+      "P P P"
+    ]
   ],
   "key": {
     "E": {

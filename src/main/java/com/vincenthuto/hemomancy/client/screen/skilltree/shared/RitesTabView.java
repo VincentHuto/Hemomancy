@@ -43,6 +43,7 @@ public final class RitesTabView {
 	// ── Shared layer-button size (matches ScreenDrawUtils) ────────
 	private static final int LAYER_BTN_SIZE = 16;
 	private static final long MATERIAL_CYCLE_MILLIS = 2000L;
+	private static final double SURFACE_DECORATION_Y_OFFSET = 0.015D;
 
 	// ────────────────────────────────────────────────────────────
 	//  Degree gate
@@ -348,6 +349,9 @@ public final class RitesTabView {
 
 			pose.pushPose();
 			pose.translate(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
+			if (isSurfaceDecorationBlock(block)) {
+				pose.translate(0.0D, SURFACE_DECORATION_Y_OFFSET, 0.0D);
+			}
 			boolean dimmed = state.riteVisibleLayer >= 0 && relY < state.riteVisibleLayer;
 			try {
 				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
@@ -360,6 +364,15 @@ public final class RitesTabView {
 
 		buf.endBatch();
 		pose.popPose();
+	}
+
+	private static boolean isSurfaceDecorationBlock(Block block) {
+		return block == BlockInit.engram_block.get()
+				|| block == BlockInit.befouling_ash_trail.get()
+				|| block == BlockInit.smouldering_ash_trail.get()
+				|| block == BlockInit.active_befouling_ash_trail.get()
+				|| block == BlockInit.active_smouldering_ash_trail.get()
+				|| block == BlockInit.virid_salis_trail.get();
 	}
 
 	// ────────────────────────────────────────────────────────────

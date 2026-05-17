@@ -6,9 +6,15 @@
   "riteName": "Pruning of the Qliphoth",
   "riteDescription": "A small counter-rite that severs the roots of a nearby Qliphoth bloom, causing the dark tree to wither and vanish. Must be performed within the same chunk as the bloom.",
   "pattern": [
-    ["EVE"],
-    ["VGV"],
-    ["EVE"]
+    [
+      "GEG"
+    ],
+    [
+      "EVE"
+    ],
+    [
+      "GEG"
+    ]
   ],
   "key": {
     "E": {

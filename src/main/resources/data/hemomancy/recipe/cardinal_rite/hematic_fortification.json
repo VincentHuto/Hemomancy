@@ -6,11 +6,41 @@
   "riteName": "Rite of Hematic Fortification",
   "riteDescription": "A lesser rite that strengthens the caster's connection to the blood arts.",
   "pattern": [
-    ["E   E", " V V ", "  C  ", " V V ", "E   E"],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["  P  ", " PCP ", "PCPCP", " PCP ", "  P  "],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["E   E", " V V ", "  C  ", " V V ", "E   E"]
+    [
+      "C   C",
+      "P   P",
+      "P   P",
+      "P   P",
+      "P P P"
+    ],
+    [
+      "     ",
+      "  C  ",
+      "  P  ",
+      " EPE ",
+      " VPV "
+    ],
+    [
+      "     ",
+      " C C ",
+      " PPP ",
+      " PCP ",
+      "PPPPP"
+    ],
+    [
+      "     ",
+      "  C  ",
+      "  P  ",
+      " EPE ",
+      " VPV "
+    ],
+    [
+      "C   C",
+      "P   P",
+      "P   P",
+      "P   P",
+      "P P P"
+    ]
   ],
   "key": {
     "E": {

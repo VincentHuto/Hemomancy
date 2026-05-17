@@ -6,15 +6,105 @@
   "riteName": "Rite of the Curved Horn",
   "riteDescription": "The final vessel transcends flesh and gourd alike. Shaped from gilded venous stone and ancient blood, the curved horn is the apex of sanguine containment â€” a relic that drinks the very essence of its bearer.",
   "pattern": [
-    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   G   H", "G       G", "H       H", "G       G", "HGHGHGHGH"],
-    ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  G  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],
-    ["         ", " H     H ", "   GGGGG ", "   G   G ", "   G E G ", "   G   G ", "   GGGGG ", " H     H ", "         "],
-    ["         ", " H     H ", "   G   G ", "     B   ", "    BEB  ", "     B   ", "   G   G ", " H     H ", "         "],
-    ["H       H", " G     G ", "  G   G  ", "   G G   ", "    E    ", "   G G   ", "  G   G  ", " G     G ", "H       H"],
-    ["         ", " H     H ", "   G   G ", "     B   ", "    BEB  ", "     B   ", "   G   G ", " H     H ", "         "],
-    ["         ", " H     H ", "   GGGGG ", "   G   G ", "   G E G ", "   G   G ", "   GGGGG ", " H     H ", "         "],
-    ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  G  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],
-    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   G   H", "G       G", "H       H", "G       G", "HGHGHGHGH"]
+    [
+      "         ",
+      "         ",
+      "         ",
+      "        G",
+      "        H",
+      "        H",
+      "        H",
+      "        H",
+      "   BGB  H"
+    ],
+    [
+      "         ",
+      "         ",
+      " G     G ",
+      " H     H ",
+      " H  B  H ",
+      " H  H  H ",
+      " H  H  H ",
+      " H EHE H ",
+      " HBGHGBG "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      G  ",
+      "      H  ",
+      "  E   H  ",
+      " BG G HB "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " E   E E ",
+      "BG  GG GB"
+    ],
+    [
+      "         ",
+      "         ",
+      "    H    ",
+      "    G    ",
+      " B  G  B ",
+      " H  H  H ",
+      " H  H  H ",
+      " H  H  H ",
+      "GHGGHGGHG"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " E E   E ",
+      "BG GG  GB"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "  G      ",
+      "  H      ",
+      "  H      ",
+      "  H      ",
+      "  H   E  ",
+      " BH G GB "
+    ],
+    [
+      "         ",
+      "         ",
+      " G     G ",
+      " H     H ",
+      " H  B  H ",
+      " H  H  H ",
+      " H  H  H ",
+      " H EHE H ",
+      " GBGHGBH "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "G        ",
+      "H        ",
+      "H        ",
+      "H  BGB   "
+    ]
   ],
   "key": {
     "H": {

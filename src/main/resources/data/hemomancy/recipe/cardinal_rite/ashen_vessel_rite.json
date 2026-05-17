@@ -6,13 +6,69 @@
   "riteName": "Rite of the Ashen Vessel",
   "riteDescription": "Through fire and ash the vessel is reborn â€” blackened, hardened, and hungry. The ashen gourd drinks deeper than any before it.",
   "pattern": [
-    ["PGVGVGP", "G     G", "V     V", "G  G  G", "V     V", "G     G", "PGVGVGP"],
-    ["       ", " PPPPP ", " P   P ", " P G P ", " P   P ", " PPPPP ", "       "],
-    ["       ", " P   P ", "  GBG  ", "  B B  ", "  GBG  ", " P   P ", "       "],
-    ["       ", " P G P ", "  B B  ", "  GEG  ", " GBEBG ", "  GEG  ", " P G P "],
-    ["       ", " P   P ", "  GBG  ", "  B B  ", "  GBG  ", " P   P ", "       "],
-    ["       ", " PPPPP ", " P   P ", " P G P ", " P   P ", " PPPPP ", "       "],
-    ["PGVGVGP", "G     G", "V     V", "G  G  G", "V     V", "G     G", "PGVGVGP"]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "   E   ",
+      "  PVP  "
+    ],
+    [
+      "       ",
+      " G   G ",
+      " P   P ",
+      " P P P ",
+      " P P P ",
+      " PBPBP ",
+      " VVPVV "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      " E E B ",
+      "PV V VP"
+    ],
+    [
+      "       ",
+      "       ",
+      "   P   ",
+      " P G P ",
+      " P P P ",
+      "EPEGEPE",
+      "VVVVVVV"
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      " E E B ",
+      "PV V VP"
+    ],
+    [
+      "       ",
+      " G   G ",
+      " P   P ",
+      " P P P ",
+      " P P P ",
+      " PEPEP ",
+      " VVPVV "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "   E   ",
+      "  PVP  "
+    ]
   ],
   "key": {
     "V": {

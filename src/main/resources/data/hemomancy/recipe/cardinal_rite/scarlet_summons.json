@@ -6,13 +6,69 @@
   "riteName": "Rite of the Scarlet Summons",
   "riteDescription": "A commanding rite that draws upon the shared bloodline pool to teleport all online bloodline members to the rite location. The cost scales with the number of members summoned.",
   "pattern": [
-    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"],
-    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
-    ["       ", " C   C ", "   EGE ", "   G G ", "   EGE ", "       ", " C   C "],
-    ["       ", " C G C ", "   G G ", "   GPG ", "  GCGCG", "   GGG ", " C G C "],
-    ["       ", " C   C ", "   EGE ", "   G G ", "   EGE ", "       ", " C   C "],
-    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
-    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  PCP  "
+    ],
+    [
+      "       ",
+      " P   P ",
+      " H   H ",
+      " H P H ",
+      " H H H ",
+      " HEHEH ",
+      " HCHCH "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      " E   E ",
+      "PC C CP"
+    ],
+    [
+      "       ",
+      "       ",
+      "   H   ",
+      " P P P ",
+      " H H H ",
+      " H P H ",
+      "CHCCCHC"
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      " E   E ",
+      "PC C CP"
+    ],
+    [
+      "       ",
+      " P   P ",
+      " H   H ",
+      " H P H ",
+      " H H H ",
+      " HEHEH ",
+      " HCHCH "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  PCP  "
+    ]
   ],
   "key": {
     "H": {

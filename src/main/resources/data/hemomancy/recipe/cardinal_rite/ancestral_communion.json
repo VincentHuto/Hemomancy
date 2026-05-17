@@ -6,15 +6,105 @@
   "riteName": "Rite of Ancestral Communion",
   "riteDescription": "The ultimate rite of revelation. The caster opens a channel to the ancient fungal consciousness, receiving cryptic lore and hidden truths about the origins of hemomancy itself.",
   "pattern": [
-    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   C   H", "G       G", "H       H", "G       G", "HGHGHGHGH"],
-    ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  E  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],
-    ["         ", " H     H ", "   GGGGG ", "   G   G ", "   G E G ", "   G   G ", "   GGGGG ", " H     H ", "         "],
-    ["         ", " H     H ", "   G   G ", "     G   ", "    GEG  ", "     G   ", "   G   G ", " H     H ", "         "],
-    ["H       H", " G     G ", "  G   G  ", "   G G   ", "    P    ", "   G G   ", "  G   G  ", " G     G ", "H       H"],
-    ["         ", " H     H ", "   G   G ", "     G   ", "    GEG  ", "     G   ", "   G   G ", " H     H ", "         "],
-    ["         ", " H     H ", "   GGGGG ", "   G   G ", "   G E G ", "   G   G ", "   GGGGG ", " H     H ", "         "],
-    ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  E  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],
-    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   C   H", "G       G", "H       H", "G       G", "HGHGHGHGH"]
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "       P ",
+      "       H ",
+      "   E E H ",
+      "   C C HP"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      E  ",
+      "      P  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      P  ",
+      "      H  ",
+      "      H  ",
+      "    E HE ",
+      "    CPHC "
+    ],
+    [
+      "         ",
+      "    P    ",
+      "    H    ",
+      "    H    ",
+      "    H    ",
+      "    H    ",
+      "    H    ",
+      "   EHE E ",
+      "   CHC C "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "  P      ",
+      "  H      ",
+      "  H E  E ",
+      "  HPC  C "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      E  ",
+      "  P C C  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      " P       ",
+      " H       ",
+      " H       ",
+      " H       ",
+      " H  E    ",
+      "PH  C    "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    C    "
+    ]
   ],
   "key": {
     "H": {

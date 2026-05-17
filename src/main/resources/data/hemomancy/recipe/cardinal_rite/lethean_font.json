@@ -5,9 +5,39 @@
   "riteName": "Rite of the Lethean Font",
   "riteDescription": "The pinnacle of the Unstained path. The Enlightened supplicant opens the primordial source of Lethe's purifying waters. All clarity-bearing souls within 50 blocks receive a surge of clarity and an hour-long blessing of silver and verdigris. A domain of ultimate stillness spreads 8 chunks in every direction for one hour â€” the full inverse of Sanguine Dominion.",
   "pattern": [
-    ["SLCSCSCLS", "L       L", "C       C", "S       S", "C   Q   C", "S       S", "C       C", "L       L", "SLCSCSCLS"],
-    ["         ", " SCSCSCS ", " C     C ", " S     S ", " C  Q  C ", " S     S ", " C     C ", " SCSCSCS ", "         "],
-    ["         ", "         ", "  SCSCS  ", "  C   C  ", "  S Q S  ", "  C   C  ", "  SCSCS  ", "         ", "         "]
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " SSSSSSS "
+    ],
+    [
+      "         ",
+      "         ",
+      " L     L ",
+      " L  L  L ",
+      " S  S  S ",
+      " S  S  S ",
+      " S  L  S ",
+      " SL S LS ",
+      "SSSCSCSSS"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " SSSSSSS "
+    ]
   ],
   "key": {
     "S": {

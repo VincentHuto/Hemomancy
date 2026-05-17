@@ -6,13 +6,69 @@
   "riteName": "Rite of the Eternal Covenant",
   "riteDescription": "A transcendent rite that permanently expands the caster's maximum blood volume. This rite may only be performed once â€” the covenant does not grant its boon twice.",
   "pattern": [
-    ["HGCGCGH", "G     G", "C     C", "G  C  G", "C     C", "G     G", "HGCGCGH"],
-    ["       ", " GGGGG ", " G   G ", " G C G ", " G   G ", " GGGGG ", "       "],
-    ["       ", " G   G ", "   HCH ", "   C G ", "   HCH ", "       ", " G   G "],
-    ["       ", " G C G ", "   C G ", "   GPG ", "  GCGCG", "   CGC ", " G C G "],
-    ["       ", " G   G ", "   HCH ", "   C G ", "   HCH ", "       ", " G   G "],
-    ["       ", " GGGGG ", " G   G ", " G C G ", " G   G ", " GGGGG ", "       "],
-    ["HGCGCGH", "G     G", "C     C", "G  C  G", "C     C", "G     G", "HGCGCGH"]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  GPG  "
+    ],
+    [
+      "       ",
+      " P   P ",
+      " H   H ",
+      " H G H ",
+      " H H H ",
+      " H H H ",
+      " H H H "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "G  P  G"
+    ],
+    [
+      "       ",
+      "       ",
+      "   H   ",
+      " G P G ",
+      " H H H ",
+      " H P H ",
+      "PHPPPHP"
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "G  P  G"
+    ],
+    [
+      "       ",
+      " P   P ",
+      " H   H ",
+      " H G H ",
+      " H H H ",
+      " H H H ",
+      " H H H "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  GPG  "
+    ]
   ],
   "key": {
     "H": {

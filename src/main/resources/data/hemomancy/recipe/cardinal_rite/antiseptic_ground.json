@@ -7,11 +7,41 @@
   "riteName": "Rite of Antiseptic Ground",
   "riteDescription": "Virid salis and cleansed stone are laid as a warded floor. The ground refuses blood gathering, searing hostile bodies that cross it.",
   "pattern": [
-    ["VCSCV", "C   C", "S P S", "C   C", "VCSCV"],
-    ["     ", " VVV ", " VCV ", " VVV ", "     "],
-    ["  C  ", " CVC ", "CVPVC", " CVC ", "  C  "],
-    ["     ", " VVV ", " VCV ", " VVV ", "     "],
-    ["VCSCV", "C   C", "S P S", "C   C", "VCSCV"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PPP "
+    ],
+    [
+      " C C ",
+      " P P ",
+      " P P ",
+      " PVP ",
+      "PPCPP"
+    ],
+    [
+      "     ",
+      "     ",
+      "  C  ",
+      " VCV ",
+      "PCCCP"
+    ],
+    [
+      " C C ",
+      " P P ",
+      " P P ",
+      " PVP ",
+      "PPCPP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PPP "
+    ]
   ],
   "key": {
     "C": {

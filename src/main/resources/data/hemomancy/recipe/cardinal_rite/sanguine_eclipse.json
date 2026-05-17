@@ -6,11 +6,51 @@
   "riteName": "Rite of the Sanguine Eclipse",
   "riteDescription": "A forbidden rite that tears the veil between night and will. The caster forces a Blood Moon to rise, empowering all Harbingers while weakening the uninitiated.",
   "pattern": [
-    ["ESESESE", "S     S", "E     E", "S     S", "E     E", "S     S", "ESESESE"],
-    ["       ", " I   I ", "       ", "   G   ", "       ", " I   I ", "       "],
-    ["  ESE  ", " E   E ", "S     S", "E     E", "S     S", " E   E ", "  ESE  "],
-    ["       ", " I   I ", "       ", "   G   ", "       ", " I   I ", "       "],
-    ["ESESESE", "S     S", "E     E", "S     S", "E     E", "S     S", "ESESESE"]
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  GIG  "
+    ],
+    [
+      "       ",
+      " S   S ",
+      " G   G ",
+      " G G G ",
+      " G G G ",
+      " GEGEG ",
+      " GIGIG "
+    ],
+    [
+      "       ",
+      "       ",
+      "   G   ",
+      " G S G ",
+      " G G G ",
+      " GESEG ",
+      "IGIIIGI"
+    ],
+    [
+      "       ",
+      " S   S ",
+      " G   G ",
+      " G G G ",
+      " G G G ",
+      " GEGEG ",
+      " GIGIG "
+    ],
+    [
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "       ",
+      "  GIG  "
+    ]
   ],
   "key": {
     "E": {

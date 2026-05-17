@@ -6,15 +6,33 @@
   "riteName": "Rite of the Lethe Covenant",
   "riteDescription": "The most powerful Unstained rite â€” a grand consecration that claims the surrounding land for Lethe's dominion. Within 5 chunks for 30 minutes: mob spawns are halved, Silver Ward fully shields against all blood-magic bleeding, and Unstained practitioners passively gain purity each minute. A direct counter to the Rite of Sanguine Dominion.",
   "pattern": [
-    ["SLSCSLSCS"],
-    ["L       L"],
-    ["S       S"],
-    ["C       C"],
-    ["S   P   S"],
-    ["C       C"],
-    ["S       S"],
-    ["L       L"],
-    ["SLSCSLSCS"]
+    [
+      "   SPS   "
+    ],
+    [
+      " SS P SS "
+    ],
+    [
+      " S  P  S "
+    ],
+    [
+      "S   P   S"
+    ],
+    [
+      "PPPPCPPPP"
+    ],
+    [
+      "S   P   S"
+    ],
+    [
+      " S  P  S "
+    ],
+    [
+      " SS P SS "
+    ],
+    [
+      "   SPS   "
+    ]
   ],
   "key": {
     "S": {

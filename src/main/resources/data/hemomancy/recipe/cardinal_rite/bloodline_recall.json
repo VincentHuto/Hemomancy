@@ -6,11 +6,41 @@
   "riteName": "Rite of Bloodline Recall",
   "riteDescription": "A penitent rite that reconjures a lost ancestral ledger from the caster's blood memory. The covenant does not forget â€” but neither does it forgive carelessness lightly.",
   "pattern": [
-    ["G   G", " E E ", "  C  ", " E E ", "G   G"],
-    ["     ", " G G ", " GBG ", " G G ", "     "],
-    ["  L  ", " LCL ", "LCPLC", " LCL ", "  L  "],
-    ["     ", " G G ", " GBG ", " G G ", "     "],
-    ["G   G", " E E ", "  C  ", " E E ", "G   G"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PCP "
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PCPCP"
+    ],
+    [
+      " G G ",
+      " PGP ",
+      " PPP ",
+      " PGP ",
+      "CPCPC"
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PCPCP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PCP "
+    ]
   ],
   "key": {
     "G": {

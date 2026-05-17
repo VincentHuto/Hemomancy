@@ -7,9 +7,15 @@
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
   "rankup": true,
   "pattern": [
-    ["ECE"],
-    ["EPE"],
-    ["ECE"]
+    [
+      "CEC"
+    ],
+    [
+      "EPE"
+    ],
+    [
+      "CEC"
+    ]
   ],
   "key": {
     "E": {

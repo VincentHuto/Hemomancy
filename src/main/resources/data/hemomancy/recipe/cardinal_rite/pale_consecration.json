@@ -6,11 +6,21 @@
   "riteName": "Rite of Pale Consecration",
   "riteDescription": "The supplicant lays down a grid of cleansed stone, pale silver, and suspended crystals, calling down Lethe's judgment upon the ground itself. For 10 minutes, hostile creatures that enter the consecrated area are seared and slowed â€” a ward against the blood-touched.",
   "pattern": [
-    ["SLSLS"],
-    ["L   L"],
-    ["SLCLS"],
-    ["L   L"],
-    ["SLSLS"]
+    [
+      " SCS "
+    ],
+    [
+      "S C S"
+    ],
+    [
+      "CCCCC"
+    ],
+    [
+      "S C S"
+    ],
+    [
+      " SCS "
+    ]
   ],
   "key": {
     "S": {

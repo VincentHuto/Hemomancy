@@ -6,11 +6,41 @@
   "riteName": "Rite of Sanguine Fervor",
   "riteDescription": "A hunting rite that saturates the earth with vital blood-heat, drawing creatures from the dark. For a short time, mobs spawn at greatly increased rates within a 3-chunk radius, making the area ideal for farming.",
   "pattern": [
-    ["V B V", " E E ", "EBCBE", " E E ", "V B V"],
-    ["     ", " V V ", " VPV ", " V V ", "     "],
-    ["  E  ", " EBE ", "EBPBE", " EBE ", "  E  "],
-    ["     ", " V V ", " VPV ", " V V ", "     "],
-    ["V B V", " E E ", "EBCBE", " E E ", "V B V"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "  B  ",
+      " PVP "
+    ],
+    [
+      "  C  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " C C ",
+      " PCP ",
+      " PPP ",
+      "BPCPB",
+      "VPVPV"
+    ],
+    [
+      "  C  ",
+      "  P  ",
+      "  P  ",
+      " BPB ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "  B  ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

@@ -6,11 +6,41 @@
   "riteName": "Rite of Hematic Unbinding",
   "riteDescription": "A severance rite that dissolves the caster's bloodline, freeing all members and returning any shared blood deposits. The covenant is broken â€” what was bound by blood is unbound.",
   "pattern": [
-    ["E   E", " G G ", "  V  ", " G G ", "E   E"],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["  V  ", " VCV ", "VCPVC", " VCV ", "  V  "],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["E   E", " G G ", "  V  ", " G G ", "E   E"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " G G ",
+      " PGP ",
+      " PPP ",
+      " PGP ",
+      "VPVPV"
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

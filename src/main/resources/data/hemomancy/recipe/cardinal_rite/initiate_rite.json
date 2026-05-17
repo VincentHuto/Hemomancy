@@ -7,11 +7,41 @@
   "riteDescription": "The third rite of the Hematic Order, granting formal entry into the Scarlet Sanctum.",
   "rankup": true,
   "pattern": [
-    ["E C E", " V V ", "  P  ", " V V ", "E C E"],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["  G  ", " GNG ", "GCGCG", " GNG ", "  G  "],
-    ["     ", " E E ", " EBE ", " E E ", "     "],
-    ["E C E", " V V ", "  P  ", " V V ", "E C E"]
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      " G G ",
+      " PGP ",
+      " PPP ",
+      " PGP ",
+      "VPVPV"
+    ],
+    [
+      "  G  ",
+      "  P  ",
+      "  P  ",
+      " EPE ",
+      "PVPVP"
+    ],
+    [
+      "     ",
+      "     ",
+      "     ",
+      "     ",
+      " PVP "
+    ]
   ],
   "key": {
     "E": {

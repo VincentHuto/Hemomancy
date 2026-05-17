@@ -6,15 +6,105 @@
   "riteName": "Rite of the Pallid Shadow",
   "riteDescription": "A blasphemous rite that corrupts the still waters, stripping the Unstained purification from a nearby player. A direct assault on those who walk the path of Our Lady â€” and an unforgivable act of hematic aggression.",
   "pattern": [
-    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   E   H", "G       G", "H       H", "G       G", "HGHGHGHGH"],
-    ["         ", " GGGGGGG ", " G     G ", " G     G ", " G  E  G ", " G     G ", " G     G ", " GGGGGGG ", "         "],
-    ["         ", " G     G ", "   CCCCC ", "   C   C ", "   C E C ", "   C   C ", "   CCCCC ", " G     G ", "         "],
-    ["         ", " G     G ", "   C   C ", "     C   ", "    CEC  ", "     C   ", "   C   C ", " G     G ", "         "],
-    ["H       H", " G     G ", "  C   C  ", "   C C   ", "    P    ", "   C C   ", "  C   C  ", " G     G ", "H       H"],
-    ["         ", " G     G ", "   C   C ", "     C   ", "    CEC  ", "     C   ", "   C   C ", " G     G ", "         "],
-    ["         ", " G     G ", "   CCCCC ", "   C   C ", "   C E C ", "   C   C ", "   CCCCC ", " G     G ", "         "],
-    ["         ", " GGGGGGG ", " G     G ", " G     G ", " G  E  G ", " G     G ", " G     G ", " GGGGGGG ", "         "],
-    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   E   H", "G       G", "H       H", "G       G", "HGHGHGHGH"]
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "       P ",
+      "       H ",
+      "   E E H ",
+      "   C C HP"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      E  ",
+      "      P  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      P  ",
+      "      H  ",
+      "      H  ",
+      "    E HE ",
+      "    CPHC "
+    ],
+    [
+      "         ",
+      "    P    ",
+      "    H    ",
+      "    H    ",
+      "    H    ",
+      "    H    ",
+      "    H    ",
+      "   EHE E ",
+      "   CHC C "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "  P      ",
+      "  H      ",
+      "  H E  E ",
+      "  HPC  C "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "      E  ",
+      "  P C C  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      " P       ",
+      " H       ",
+      " H       ",
+      " H       ",
+      " H  E    ",
+      "PH  C    "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    C    "
+    ]
   ],
   "key": {
     "H": {
