@@ -89,7 +89,7 @@ public class DiscoveryInscriptionBlockRenderer implements BlockEntityRenderer<Di
                     continue;
                 }
 
-                // Use engram texture brightness to modulate colour per pixel
+                // Use engram texture brightness to modulate color per pixel
                 int argb = colors[px][py];
                 float brightness = (((argb >> 16) & 0xFF) + ((argb >> 8) & 0xFF) + (argb & 0xFF)) / 765.0f;
                 float scale = 0.55f + 0.45f * brightness;
