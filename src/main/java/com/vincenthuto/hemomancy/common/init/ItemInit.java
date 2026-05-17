@@ -613,7 +613,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> unstained_boots = BASEITEMS.register("unstained_boots",
             () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
-            () -> new UnstainedWarhammerItem(8f, -3.0f, EnumModToolTiers.UNSTAINED,
+            () -> new UnstainedWarhammerItem(8f, -3.4f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> unstained_shield = SPECIALITEMS.register("unstained_shield",
             () -> new UnstainedShieldItem(new Item.Properties()));

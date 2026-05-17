@@ -41,6 +41,7 @@ import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.render.tile.DiscoveryInscriptionBlockRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.SuspendedBloodCrystalRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.SuspendedCleansedBloodCrystalRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
@@ -579,6 +580,8 @@ public class ClientEvents {
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
             // Tiles
+            BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
+                    DiscoveryInscriptionBlockRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scar_station.get(), ScarStationRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.pallid_retort.get(), PallidRetortRenderer::new);

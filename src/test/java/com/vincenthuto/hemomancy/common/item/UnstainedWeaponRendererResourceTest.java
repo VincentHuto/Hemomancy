@@ -12,16 +12,43 @@ public class UnstainedWeaponRendererResourceTest {
 		assertCustomRenderedItemModel("silthmere_glaive");
 		assertCustomRenderedItemModel("absolution_dagger");
 		assertCustomRenderedItemModel("annettas_absolution_dagger");
+		assertBbModelExport("UnstainedWarhammerModel", "textures/block/pale_silver_bell_body.png", true);
+		assertBbModelExport("SilthmereGlaiveModel", "textures/block/pale_silver_block.png", true);
+		assertBbModelExport("AbsolutionDaggerModel", "textures/block/pale_silver_block.png", false);
+		assertContains("src/main/resources/assets/hemomancy/models/item/bbmodel/SilthmereGlaiveModel.bbmodel",
+				"-10.31324",
+				"Glaive main blade must invert Java Z rotation for Blockbench's flipped Y axis");
+		assertContains("src/main/resources/assets/hemomancy/models/item/bbmodel/SilthmereGlaiveModel.bbmodel",
+				"31.512679",
+				"Glaive back hook must invert Java Z rotation for Blockbench's flipped Y axis");
 
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"UnstainedWarhammerItem must expose client item extensions for its 3D renderer");
+		assertNotContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
+				"applyForgeHandTransform",
+				"UnstainedWarhammerItem should leave first-person swing timing to the shared event handler");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
+				"DiggerItem.createAttributes(tier, attackDamage, attackSpeed)",
+				"UnstainedWarhammerItem must apply its configured damage and attack speed attributes");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java",
+				"new UnstainedWarhammerItem(8f, -3.4f",
+				"Unstained warhammer should have a slower heavy-weapon attack cooldown");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
+				"On hit: cripples enemies with Slowness and Weakness.",
+				"Unstained warhammer should display weapon info like the glaive and dagger");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/SilthmereGlaiveItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"SilthmereGlaiveItem must expose client item extensions for its 3D renderer");
+		assertNotContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/SilthmereGlaiveItem.java",
+				"applyForgeHandTransform",
+				"SilthmereGlaiveItem should leave first-person swing timing to the shared event handler");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/AbsolutionDaggerItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"AbsolutionDaggerItem must expose client item extensions for its 3D renderer");
+		assertNotContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/AbsolutionDaggerItem.java",
+				"applyForgeHandTransform",
+				"AbsolutionDaggerItem should keep the previously working event-handler thrust animation");
 
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java",
 				"UnstainedWarhammerModel.LAYER_LOCATION",
@@ -72,6 +99,27 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
 				"case FIRST_PERSON_LEFT_HAND -> poseStack.translate(0.42F, -0.38F, -0.42F);",
 				"Left-hand first-person transform should mirror the tuned first-person anchor");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"@EventBusSubscriber",
+				"Unstained weapon swing adjustments should run through the old shared RenderHandEvent path");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"RenderHandEvent",
+				"Unstained weapon swing adjustments should run through the old shared RenderHandEvent path");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"public static void onRenderHand(RenderHandEvent event)",
+				"Unstained weapon swing adjustments should use the previously working render event hook");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"float sqrtSwing = Mth.sqrt(swing);",
+				"Silthmere glaive should use the older event-path arc instead of the failed replacement sweep");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"float raisePhase = Mth.clamp(1.0F - swing * 2.0F, 0.0F, 1.0F);",
+				"Unstained warhammer should use the older raise/slam event-path swing");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"Axis.XP.rotationDegrees(48.0F * thrust + 18.0F * lift)",
+				"Absolution dagger special swing should drive upward as a thrust");
+		assertNotContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"public static boolean applyForgeHandTransform",
+				"Unstained weapon swings should not replace vanilla hand transforms");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/model/item/unstained/UnstainedWarhammerModel.java",
 				"bell_flared_face",
 				"Warhammer bell head should rotate the flared mouth into the striking face");
@@ -101,6 +149,20 @@ public class UnstainedWeaponRendererResourceTest {
 				itemId + " must use builtin/entity so the custom item renderer is used");
 		assertTrue(!json.contains("\"minecraft:item/handheld\"") && !json.contains("\"item/handheld\""),
 				itemId + " must not regress to a flat handheld sprite model");
+	}
+
+	private static void assertBbModelExport(String modelName, String texturePath, boolean expectsRotation) throws IOException {
+		String json = read("src/main/resources/assets/hemomancy/models/item/bbmodel/" + modelName + ".bbmodel");
+		assertTrue(json.contains("\"model_format\": \"modded_entity\""),
+				modelName + " must export as a Blockbench modded entity model");
+		assertTrue(json.contains("\"box_uv\": true"),
+				modelName + " must preserve box UVs for Java model parity");
+		assertTrue(json.contains("\"elements\": ["),
+				modelName + " must include exported cube elements");
+		assertTrue(json.contains("\"relative_path\": \"../../../" + texturePath + "\""),
+				modelName + " must point at its renderer texture");
+		assertTrue(!expectsRotation || json.contains("\"rotation\": ["),
+				modelName + " must preserve rotated Java PartPose groups");
 	}
 
 	private static void assertContains(String path, String expected, String message) throws IOException {

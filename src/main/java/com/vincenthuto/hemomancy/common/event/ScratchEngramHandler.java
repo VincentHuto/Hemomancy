@@ -85,18 +85,22 @@ public class ScratchEngramHandler {
 
         BlockPos pos = event.getPos();
         BlockState clickedState = level.getBlockState(pos);
-        BlockPos abovePos = pos.above();
+        Direction clickedFace = event.getFace();
+        if (clickedFace == Direction.DOWN) return;
 
-        // Require a sturdy top face and an empty space above for the engram.
-        if (!clickedState.isFaceSturdy(level, pos, Direction.UP)) return;
-        if (!level.isEmptyBlock(abovePos)) return;
+        Direction engramFacing = clickedFace.getAxis().isHorizontal() ? clickedFace : Direction.UP;
+        BlockPos targetPos = clickedFace == Direction.UP ? pos.above() : pos.relative(clickedFace);
+
+        // Require a sturdy clicked face and an empty target space for the engram.
+        if (!clickedState.isFaceSturdy(level, pos, clickedFace)) return;
+        if (!level.isEmptyBlock(targetPos)) return;
 
         // Place the engram block.
         BlockState engramState = BlockInit.engram_block.get().defaultBlockState()
-                .setValue(EngramBlock.CHARACTERINDEX,
-                        (int) Math.floor(level.getRandom().nextFloat()
-                                * EngramBlock.CHARACTERINDEX.getPossibleValues().size()));
-        level.setBlockAndUpdate(abovePos, engramState);
+                .setValue(EngramBlock.CHARACTERINDEX, EngramBlock.randomCharacterIndex())
+                .setValue(EngramBlock.FACING, engramFacing)
+                .setValue(EngramBlock.LIT, false);
+        level.setBlockAndUpdate(targetPos, engramState);
 
         // Cost: one heart.  Creative players are exempt from the damage.
         if (!player.isCreative()) {
@@ -108,7 +112,7 @@ public class ScratchEngramHandler {
         level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 0.3f, 1.4f);
         if (level instanceof ServerLevel serverLevel) {
             com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
-                    serverLevel, abovePos,
+                    serverLevel, targetPos,
                     BloodCellParticleFactory.createData(ParticleColor.BLOOD));
         }
 

@@ -74,12 +74,14 @@ public class UnstainedWeaponSwingAnimationHandler {
 	}
 
 	private static void applyDaggerSwing(PoseStack poseStack, float swing, float side) {
-		float drawBack = Mth.sin((1.0F - swing) * (float) Math.PI);
-		float drive = Mth.sin(swing * (float) Math.PI);
+		float tuck = Mth.clamp(1.0F - swing * 2.0F, 0.0F, 1.0F);
+		float thrust = Mth.sin(swing * (float) Math.PI);
+		float lift = Mth.clamp((swing - 0.18F) / 0.82F, 0.0F, 1.0F);
 
-		poseStack.translate(side * -0.07F * drawBack, 0.10F * drawBack + 0.06F * drive, -0.18F * drawBack);
-		poseStack.mulPose(Axis.YP.rotationDegrees(side * (18.0F * drawBack + 28.0F * drive)));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(side * (14.0F * drawBack + 52.0F * drive)));
-		poseStack.mulPose(Axis.XP.rotationDegrees(-20.0F * drawBack - 64.0F * drive));
+		poseStack.translate(side * -0.04F * tuck, 0.16F * thrust + 0.10F * lift, -0.10F * tuck + 0.18F * thrust);
+		poseStack.mulPose(Axis.YP.rotationDegrees(side * (8.0F * tuck + 10.0F * thrust)));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(side * (8.0F * tuck + 16.0F * thrust)));
+		poseStack.mulPose(Axis.XP.rotationDegrees(48.0F * thrust + 18.0F * lift));
 	}
+
 }
