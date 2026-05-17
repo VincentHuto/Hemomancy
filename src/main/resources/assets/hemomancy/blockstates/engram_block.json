@@ -1,57 +1,654 @@
 {
-	"variants": {
-		"character=0": {
-			"model": "hemomancy:block/engrams/engram_a"
-		},	"character=1": {
-			"model": "hemomancy:block/engrams/engram_b"
-		},	"character=2": {
-			"model": "hemomancy:block/engrams/engram_c"
-		},	"character=3": {
-			"model": "hemomancy:block/engrams/engram_d"
-		},	"character=4": {
-			"model": "hemomancy:block/engrams/engram_e"
-		},	"character=5": {
-			"model": "hemomancy:block/engrams/engram_f"
-		},	"character=6": {
-			"model": "hemomancy:block/engrams/engram_g"
-		},	"character=7": {
-			"model": "hemomancy:block/engrams/engram_h"
-		},	"character=8": {
-			"model": "hemomancy:block/engrams/engram_i"
-		},	"character=9": {
-			"model": "hemomancy:block/engrams/engram_j"
-		},	"character=10": {
-			"model": "hemomancy:block/engrams/engram_k"
-		},	"character=11": {
-			"model": "hemomancy:block/engrams/engram_l"
-		},	"character=12": {
-			"model": "hemomancy:block/engrams/engram_m"
-		},	"character=13": {
-			"model": "hemomancy:block/engrams/engram_n"
-		},	"character=14": {
-			"model": "hemomancy:block/engrams/engram_o"
-		},	"character=15": {
-			"model": "hemomancy:block/engrams/engram_p"
-		},	"character=16": {
-			"model": "hemomancy:block/engrams/engram_q"
-		},	"character=17": {
-			"model": "hemomancy:block/engrams/engram_r"
-		},	"character=18": {
-			"model": "hemomancy:block/engrams/engram_s"
-		},	"character=19": {
-			"model": "hemomancy:block/engrams/engram_t"
-		},	"character=20": {
-			"model": "hemomancy:block/engrams/engram_u"
-		},	"character=21": {
-			"model": "hemomancy:block/engrams/engram_v"
-		},	"character=22": {
-			"model": "hemomancy:block/engrams/engram_w"
-		},	"character=23": {
-			"model": "hemomancy:block/engrams/engram_x"
-		},	"character=24": {
-			"model": "hemomancy:block/engrams/engram_y"
-		},	"character=25": {
-			"model": "hemomancy:block/engrams/engram_z"
-		}
-	}
+  "variants": {
+    "character=0,facing=up": {
+      "model": "hemomancy:block/engrams/engram_a"
+    },
+    "character=0,facing=north": {
+      "model": "hemomancy:block/engrams/engram_a",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=0,facing=east": {
+      "model": "hemomancy:block/engrams/engram_a",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=0,facing=south": {
+      "model": "hemomancy:block/engrams/engram_a",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=0,facing=west": {
+      "model": "hemomancy:block/engrams/engram_a",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=1,facing=up": {
+      "model": "hemomancy:block/engrams/engram_b"
+    },
+    "character=1,facing=north": {
+      "model": "hemomancy:block/engrams/engram_b",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=1,facing=east": {
+      "model": "hemomancy:block/engrams/engram_b",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=1,facing=south": {
+      "model": "hemomancy:block/engrams/engram_b",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=1,facing=west": {
+      "model": "hemomancy:block/engrams/engram_b",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=2,facing=up": {
+      "model": "hemomancy:block/engrams/engram_c"
+    },
+    "character=2,facing=north": {
+      "model": "hemomancy:block/engrams/engram_c",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=2,facing=east": {
+      "model": "hemomancy:block/engrams/engram_c",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=2,facing=south": {
+      "model": "hemomancy:block/engrams/engram_c",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=2,facing=west": {
+      "model": "hemomancy:block/engrams/engram_c",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=3,facing=up": {
+      "model": "hemomancy:block/engrams/engram_d"
+    },
+    "character=3,facing=north": {
+      "model": "hemomancy:block/engrams/engram_d",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=3,facing=east": {
+      "model": "hemomancy:block/engrams/engram_d",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=3,facing=south": {
+      "model": "hemomancy:block/engrams/engram_d",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=3,facing=west": {
+      "model": "hemomancy:block/engrams/engram_d",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=4,facing=up": {
+      "model": "hemomancy:block/engrams/engram_e"
+    },
+    "character=4,facing=north": {
+      "model": "hemomancy:block/engrams/engram_e",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=4,facing=east": {
+      "model": "hemomancy:block/engrams/engram_e",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=4,facing=south": {
+      "model": "hemomancy:block/engrams/engram_e",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=4,facing=west": {
+      "model": "hemomancy:block/engrams/engram_e",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=5,facing=up": {
+      "model": "hemomancy:block/engrams/engram_f"
+    },
+    "character=5,facing=north": {
+      "model": "hemomancy:block/engrams/engram_f",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=5,facing=east": {
+      "model": "hemomancy:block/engrams/engram_f",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=5,facing=south": {
+      "model": "hemomancy:block/engrams/engram_f",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=5,facing=west": {
+      "model": "hemomancy:block/engrams/engram_f",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=6,facing=up": {
+      "model": "hemomancy:block/engrams/engram_g"
+    },
+    "character=6,facing=north": {
+      "model": "hemomancy:block/engrams/engram_g",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=6,facing=east": {
+      "model": "hemomancy:block/engrams/engram_g",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=6,facing=south": {
+      "model": "hemomancy:block/engrams/engram_g",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=6,facing=west": {
+      "model": "hemomancy:block/engrams/engram_g",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=7,facing=up": {
+      "model": "hemomancy:block/engrams/engram_h"
+    },
+    "character=7,facing=north": {
+      "model": "hemomancy:block/engrams/engram_h",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=7,facing=east": {
+      "model": "hemomancy:block/engrams/engram_h",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=7,facing=south": {
+      "model": "hemomancy:block/engrams/engram_h",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=7,facing=west": {
+      "model": "hemomancy:block/engrams/engram_h",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=8,facing=up": {
+      "model": "hemomancy:block/engrams/engram_i"
+    },
+    "character=8,facing=north": {
+      "model": "hemomancy:block/engrams/engram_i",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=8,facing=east": {
+      "model": "hemomancy:block/engrams/engram_i",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=8,facing=south": {
+      "model": "hemomancy:block/engrams/engram_i",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=8,facing=west": {
+      "model": "hemomancy:block/engrams/engram_i",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=9,facing=up": {
+      "model": "hemomancy:block/engrams/engram_j"
+    },
+    "character=9,facing=north": {
+      "model": "hemomancy:block/engrams/engram_j",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=9,facing=east": {
+      "model": "hemomancy:block/engrams/engram_j",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=9,facing=south": {
+      "model": "hemomancy:block/engrams/engram_j",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=9,facing=west": {
+      "model": "hemomancy:block/engrams/engram_j",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=10,facing=up": {
+      "model": "hemomancy:block/engrams/engram_k"
+    },
+    "character=10,facing=north": {
+      "model": "hemomancy:block/engrams/engram_k",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=10,facing=east": {
+      "model": "hemomancy:block/engrams/engram_k",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=10,facing=south": {
+      "model": "hemomancy:block/engrams/engram_k",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=10,facing=west": {
+      "model": "hemomancy:block/engrams/engram_k",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=11,facing=up": {
+      "model": "hemomancy:block/engrams/engram_l"
+    },
+    "character=11,facing=north": {
+      "model": "hemomancy:block/engrams/engram_l",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=11,facing=east": {
+      "model": "hemomancy:block/engrams/engram_l",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=11,facing=south": {
+      "model": "hemomancy:block/engrams/engram_l",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=11,facing=west": {
+      "model": "hemomancy:block/engrams/engram_l",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=12,facing=up": {
+      "model": "hemomancy:block/engrams/engram_m"
+    },
+    "character=12,facing=north": {
+      "model": "hemomancy:block/engrams/engram_m",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=12,facing=east": {
+      "model": "hemomancy:block/engrams/engram_m",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=12,facing=south": {
+      "model": "hemomancy:block/engrams/engram_m",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=12,facing=west": {
+      "model": "hemomancy:block/engrams/engram_m",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=13,facing=up": {
+      "model": "hemomancy:block/engrams/engram_n"
+    },
+    "character=13,facing=north": {
+      "model": "hemomancy:block/engrams/engram_n",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=13,facing=east": {
+      "model": "hemomancy:block/engrams/engram_n",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=13,facing=south": {
+      "model": "hemomancy:block/engrams/engram_n",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=13,facing=west": {
+      "model": "hemomancy:block/engrams/engram_n",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=14,facing=up": {
+      "model": "hemomancy:block/engrams/engram_o"
+    },
+    "character=14,facing=north": {
+      "model": "hemomancy:block/engrams/engram_o",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=14,facing=east": {
+      "model": "hemomancy:block/engrams/engram_o",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=14,facing=south": {
+      "model": "hemomancy:block/engrams/engram_o",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=14,facing=west": {
+      "model": "hemomancy:block/engrams/engram_o",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=15,facing=up": {
+      "model": "hemomancy:block/engrams/engram_p"
+    },
+    "character=15,facing=north": {
+      "model": "hemomancy:block/engrams/engram_p",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=15,facing=east": {
+      "model": "hemomancy:block/engrams/engram_p",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=15,facing=south": {
+      "model": "hemomancy:block/engrams/engram_p",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=15,facing=west": {
+      "model": "hemomancy:block/engrams/engram_p",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=16,facing=up": {
+      "model": "hemomancy:block/engrams/engram_q"
+    },
+    "character=16,facing=north": {
+      "model": "hemomancy:block/engrams/engram_q",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=16,facing=east": {
+      "model": "hemomancy:block/engrams/engram_q",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=16,facing=south": {
+      "model": "hemomancy:block/engrams/engram_q",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=16,facing=west": {
+      "model": "hemomancy:block/engrams/engram_q",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=17,facing=up": {
+      "model": "hemomancy:block/engrams/engram_r"
+    },
+    "character=17,facing=north": {
+      "model": "hemomancy:block/engrams/engram_r",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=17,facing=east": {
+      "model": "hemomancy:block/engrams/engram_r",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=17,facing=south": {
+      "model": "hemomancy:block/engrams/engram_r",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=17,facing=west": {
+      "model": "hemomancy:block/engrams/engram_r",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=18,facing=up": {
+      "model": "hemomancy:block/engrams/engram_s"
+    },
+    "character=18,facing=north": {
+      "model": "hemomancy:block/engrams/engram_s",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=18,facing=east": {
+      "model": "hemomancy:block/engrams/engram_s",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=18,facing=south": {
+      "model": "hemomancy:block/engrams/engram_s",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=18,facing=west": {
+      "model": "hemomancy:block/engrams/engram_s",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=19,facing=up": {
+      "model": "hemomancy:block/engrams/engram_t"
+    },
+    "character=19,facing=north": {
+      "model": "hemomancy:block/engrams/engram_t",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=19,facing=east": {
+      "model": "hemomancy:block/engrams/engram_t",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=19,facing=south": {
+      "model": "hemomancy:block/engrams/engram_t",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=19,facing=west": {
+      "model": "hemomancy:block/engrams/engram_t",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=20,facing=up": {
+      "model": "hemomancy:block/engrams/engram_u"
+    },
+    "character=20,facing=north": {
+      "model": "hemomancy:block/engrams/engram_u",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=20,facing=east": {
+      "model": "hemomancy:block/engrams/engram_u",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=20,facing=south": {
+      "model": "hemomancy:block/engrams/engram_u",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=20,facing=west": {
+      "model": "hemomancy:block/engrams/engram_u",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=21,facing=up": {
+      "model": "hemomancy:block/engrams/engram_v"
+    },
+    "character=21,facing=north": {
+      "model": "hemomancy:block/engrams/engram_v",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=21,facing=east": {
+      "model": "hemomancy:block/engrams/engram_v",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=21,facing=south": {
+      "model": "hemomancy:block/engrams/engram_v",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=21,facing=west": {
+      "model": "hemomancy:block/engrams/engram_v",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=22,facing=up": {
+      "model": "hemomancy:block/engrams/engram_w"
+    },
+    "character=22,facing=north": {
+      "model": "hemomancy:block/engrams/engram_w",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=22,facing=east": {
+      "model": "hemomancy:block/engrams/engram_w",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=22,facing=south": {
+      "model": "hemomancy:block/engrams/engram_w",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=22,facing=west": {
+      "model": "hemomancy:block/engrams/engram_w",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=23,facing=up": {
+      "model": "hemomancy:block/engrams/engram_x"
+    },
+    "character=23,facing=north": {
+      "model": "hemomancy:block/engrams/engram_x",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=23,facing=east": {
+      "model": "hemomancy:block/engrams/engram_x",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=23,facing=south": {
+      "model": "hemomancy:block/engrams/engram_x",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=23,facing=west": {
+      "model": "hemomancy:block/engrams/engram_x",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=24,facing=up": {
+      "model": "hemomancy:block/engrams/engram_y"
+    },
+    "character=24,facing=north": {
+      "model": "hemomancy:block/engrams/engram_y",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=24,facing=east": {
+      "model": "hemomancy:block/engrams/engram_y",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=24,facing=south": {
+      "model": "hemomancy:block/engrams/engram_y",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=24,facing=west": {
+      "model": "hemomancy:block/engrams/engram_y",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    },
+    "character=25,facing=up": {
+      "model": "hemomancy:block/engrams/engram_z"
+    },
+    "character=25,facing=north": {
+      "model": "hemomancy:block/engrams/engram_z",
+      "x": 90,
+      "uvlock": true
+    },
+    "character=25,facing=east": {
+      "model": "hemomancy:block/engrams/engram_z",
+      "x": 90,
+      "y": 90,
+      "uvlock": true
+    },
+    "character=25,facing=south": {
+      "model": "hemomancy:block/engrams/engram_z",
+      "x": 270,
+      "uvlock": true
+    },
+    "character=25,facing=west": {
+      "model": "hemomancy:block/engrams/engram_z",
+      "x": 90,
+      "y": 270,
+      "uvlock": true
+    }
+  }
 }

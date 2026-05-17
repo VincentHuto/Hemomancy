@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.particle;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.shared.DiscoveryInscriptionVisuals;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -157,15 +158,15 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 								boolean[][] pixels = EngramTextureCache.getPixels(charIndex);
 								int[][] colors = EngramTextureCache.getColors(charIndex);
 								if (pixels != null && colors != null) {
+									DiscoveryInscriptionVisuals.Face face = toVisualFace(hitState.getValue(EngramBlock.FACING));
 									for (int px = 0; px < 16; px++) {
 										for (int pz = 0; pz < 16; pz++) {
 											if (pixels[px][pz]) {
-												// Map pixel grid to world position on the block face
-												// px maps to X axis (0-15 -> 0/16 to 15/16)
-												// pz maps to Z axis (texture Y -> world Z)
-												double particleX = x + (px + 0.5) / 16.0;
-												double particleY = y + 0.1; // Slightly above the engram surface
-												double particleZ = z + (pz + 0.5) / 16.0;
+												DiscoveryInscriptionVisuals.PixelCenter center =
+														DiscoveryInscriptionVisuals.particleCenter(face, px, pz);
+												double particleX = x + center.x();
+												double particleY = y + center.y();
+												double particleZ = z + center.z();
 
 												int argb = colors[px][pz];
 												int r = (argb >> 16) & 0xFF;
@@ -225,5 +226,15 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	private static DiscoveryInscriptionVisuals.Face toVisualFace(Direction facing) {
+		return switch (facing) {
+			case NORTH -> DiscoveryInscriptionVisuals.Face.NORTH;
+			case SOUTH -> DiscoveryInscriptionVisuals.Face.SOUTH;
+			case EAST -> DiscoveryInscriptionVisuals.Face.EAST;
+			case WEST -> DiscoveryInscriptionVisuals.Face.WEST;
+			default -> DiscoveryInscriptionVisuals.Face.UP;
+		};
 	}
 }

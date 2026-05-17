@@ -1,6 +1,19 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "ambientocclusion": false,
   "textures": {
-    "all": "hemomancy:block/cleansed_stone"
-  }
+    "blueprint": "hemomancy:item/rite_hint",
+    "particle": "hemomancy:item/rite_hint"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 2, 14],
+      "faces": {
+        "down": { "uv": [0, 0, 16, 16], "texture": "#blueprint", "cullface": "down" },
+        "up": { "uv": [0, 0, 16, 16], "texture": "#blueprint" }
+      }
+    }
+  ]
 }

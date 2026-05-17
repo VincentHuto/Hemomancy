@@ -1,0 +1,792 @@
+{
+  "meta": {
+    "format_version": "4.0",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "UnstainedWarhammerModel",
+  "model_identifier": "UnstainedWarhammerModel",
+  "modded_entity_version": "1.17",
+  "modded_entity_flip_y": true,
+  "visible_box": [
+    0.5,
+    2.5,
+    0
+  ],
+  "variable_placeholders": "",
+  "variable_placeholder_buttons": [],
+  "timeline_setups": [],
+  "resolution": {
+    "width": 32,
+    "height": 32
+  },
+  "elements": [
+    {
+      "name": "haft_0_0_f72e67fd",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -0.5,
+        7,
+        -0.5
+      ],
+      "to": [
+        0.5,
+        37,
+        0.5
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            1,
+            2,
+            31
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            1,
+            1,
+            31
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            3,
+            1,
+            4,
+            31
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2,
+            1,
+            3,
+            31
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            3,
+            0,
+            2,
+            1
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "f72e67fd-fab4-3396-1cf9-432194db2c49"
+    },
+    {
+      "name": "haft_4_0_d4a3bb8e",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -0.75,
+        8,
+        -0.75
+      ],
+      "to": [
+        0.75,
+        16,
+        0.75
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        4,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.5,
+            1.5,
+            7,
+            9.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            1.5,
+            5.5,
+            9.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8.5,
+            1.5,
+            10,
+            9.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7,
+            1.5,
+            8.5,
+            9.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7,
+            1.5,
+            5.5,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.5,
+            0,
+            7,
+            1.5
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "d4a3bb8e-f62f-3007-b997-2e7c5bdb43f8"
+    },
+    {
+      "name": "bell_crown_8_0_47ec7daf",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -2,
+        44,
+        -2
+      ],
+      "to": [
+        2,
+        46,
+        2
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        39,
+        0
+      ],
+      "uv_offset": [
+        8,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            4,
+            16,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            20,
+            4,
+            24,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            4,
+            20,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            4,
+            12,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            20,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "47ec7daf-584c-b571-4dbc-ba15e7977f94"
+    },
+    {
+      "name": "bell_body_0_9_c8405969",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -3,
+        39,
+        -3
+      ],
+      "to": [
+        3,
+        44,
+        3
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        0,
+        39,
+        0
+      ],
+      "uv_offset": [
+        0,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            15,
+            12,
+            20
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            15,
+            6,
+            20
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            18,
+            15,
+            24,
+            20
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            15,
+            18,
+            20
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            15,
+            6,
+            9
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            18,
+            9,
+            12,
+            15
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "c8405969-feeb-70c8-afbd-bd120883c2b2"
+    },
+    {
+      "name": "bell_flared_face_0_20_89af9f79",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -4,
+        37,
+        -4
+      ],
+      "to": [
+        4,
+        40,
+        4
+      ],
+      "autouv": 0,
+      "color": 5,
+      "origin": [
+        0,
+        39,
+        0
+      ],
+      "uv_offset": [
+        0,
+        20
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            28,
+            16,
+            31
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            28,
+            8,
+            31
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            24,
+            28,
+            32,
+            31
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            28,
+            24,
+            31
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            28,
+            8,
+            20
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            24,
+            20,
+            16,
+            28
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "89af9f79-f537-1532-ffcf-0496f21584fe"
+    },
+    {
+      "name": "pale_clapper_24_0_a312837b",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -1,
+        35.5,
+        -1
+      ],
+      "to": [
+        1,
+        37.5,
+        1
+      ],
+      "autouv": 0,
+      "color": 6,
+      "origin": [
+        0,
+        39,
+        0
+      ],
+      "uv_offset": [
+        24,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            26,
+            2,
+            28,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            24,
+            2,
+            26,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            30,
+            2,
+            32,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            28,
+            2,
+            30,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            28,
+            2,
+            26,
+            0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            30,
+            0,
+            28,
+            2
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "a312837b-1384-3753-6301-2a8ff4c5aa31"
+    },
+    {
+      "name": "pommel_24_4_83e2c096",
+      "rescale": false,
+      "locked": false,
+      "from": [
+        -1.5,
+        6,
+        -1.5
+      ],
+      "to": [
+        1.5,
+        8,
+        1.5
+      ],
+      "autouv": 0,
+      "color": 7,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "uv_offset": [
+        24,
+        4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            27,
+            7,
+            30,
+            9
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            24,
+            7,
+            27,
+            9
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            33,
+            7,
+            36,
+            9
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            30,
+            7,
+            33,
+            9
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            30,
+            7,
+            27,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            33,
+            4,
+            30,
+            7
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "83e2c096-6184-7bbb-dca0-5cde8cddd77f"
+    }
+  ],
+  "outliner": [
+    {
+      "name": "root",
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "color": 0,
+      "uuid": "ae881832-5f03-9fd7-4496-87e793875e33",
+      "export": true,
+      "mirror_uv": false,
+      "isOpen": true,
+      "locked": false,
+      "visibility": true,
+      "autouv": 0,
+      "children": [
+        {
+          "name": "haft",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "9e42ea93-cd41-957a-d237-5292f39a1d83",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "f72e67fd-fab4-3396-1cf9-432194db2c49",
+            "d4a3bb8e-f62f-3007-b997-2e7c5bdb43f8"
+          ]
+        },
+        {
+          "name": "bell_head",
+          "origin": [
+            0,
+            39,
+            0
+          ],
+          "color": 2,
+          "uuid": "c686972b-5259-94dd-2312-5f9a12f406f5",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            {
+              "name": "bell_crown",
+              "origin": [
+                0,
+                39,
+                0
+              ],
+              "color": 3,
+              "uuid": "711ed605-458e-03e2-17f2-52139594959b",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": true,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                "47ec7daf-584c-b571-4dbc-ba15e7977f94"
+              ]
+            },
+            {
+              "name": "bell_body",
+              "origin": [
+                0,
+                39,
+                0
+              ],
+              "color": 4,
+              "uuid": "59d18ef9-379a-f6bd-b260-970c6dcbff85",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": true,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                "c8405969-feeb-70c8-afbd-bd120883c2b2"
+              ]
+            },
+            {
+              "name": "bell_flared_face",
+              "origin": [
+                0,
+                39,
+                0
+              ],
+              "color": 5,
+              "uuid": "b1fc6afe-ee57-30ff-e094-ab3eb22ec7a6",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": true,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                "89af9f79-f537-1532-ffcf-0496f21584fe"
+              ]
+            },
+            {
+              "name": "pale_clapper",
+              "origin": [
+                0,
+                39,
+                0
+              ],
+              "color": 6,
+              "uuid": "e34ea720-f3fe-622d-77ec-fb381d8b963b",
+              "export": true,
+              "mirror_uv": false,
+              "isOpen": true,
+              "locked": false,
+              "visibility": true,
+              "autouv": 0,
+              "children": [
+                "a312837b-1384-3753-6301-2a8ff4c5aa31"
+              ]
+            }
+          ],
+          "rotation": [
+            0,
+            0,
+            90.00021
+          ]
+        },
+        {
+          "name": "pommel",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 7,
+          "uuid": "4040c4df-0be0-0eca-1558-f16f782c6642",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "83e2c096-6184-7bbb-dca0-5cde8cddd77f"
+          ]
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "path": "C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\src\\main\\resources\\assets\\hemomancy\\textures\\block\\pale_silver_bell_body.png",
+      "name": "pale_silver_bell_body.png",
+      "folder": "textures/block",
+      "namespace": "hemomancy",
+      "id": "0",
+      "particle": false,
+      "render_mode": "default",
+      "render_sides": "auto",
+      "frame_time": 1,
+      "frame_order_type": "loop",
+      "frame_order": "",
+      "frame_interpolate": false,
+      "visible": true,
+      "mode": "bitmap",
+      "saved": true,
+      "uuid": "0e59800e-149e-022b-1d81-03c6a8a568d2",
+      "relative_path": "../../../textures/block/pale_silver_bell_body.png"
+    }
+  ]
+}

@@ -18,10 +18,14 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+
+import java.util.List;
 
 /**
  * Unstained Warhammer — a blunt, heavy weapon for followers of the Path of the
@@ -34,7 +38,22 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 	private static final int CRIPPLE_AMPLIFIER = 0;
 
 	public UnstainedWarhammerItem(float attackDamage, float attackSpeed, Tier tier, Properties properties) {
-		super(tier, BlockTags.MINEABLE_WITH_PICKAXE, properties);
+		super(tier, BlockTags.MINEABLE_WITH_PICKAXE,
+				properties.attributes(DiggerItem.createAttributes(tier, attackDamage, attackSpeed)));
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		tooltip.add(Component.literal(
+				"A bell-headed pale silver hammer for breaking blood-borne corruption without drawing blood.")
+				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		tooltip.add(Component.literal("On hit: cripples enemies with Slowness and Weakness.")
+				.withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.literal("Heavy impact: knocks enemies back, scaling with purity.")
+				.withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.literal("White Humor coated: applies Hemolysis on hit.")
+				.withStyle(ChatFormatting.AQUA));
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 import { createHash } from "crypto";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
 
-const ROOT = process.cwd();
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(SCRIPT_DIR, "../..");
 const OUT_DIR = "src/main/resources/assets/hemomancy/models/entity/bbmodel/bosses";
 
 const MODELS = [
@@ -162,10 +164,10 @@ async function generateModels({ outDir, models }) {
   for (const model of models) {
     const source = await readFile(resolveFromRoot(model.source), "utf8");
     const parsed = parseJavaModel(source, model);
-    const bbmodel = toBlockbenchModel(model, parsed);
     const outputPath = model.outputFile
       ? resolveFromRoot(model.outputFile)
       : path.join(resolveFromRoot(outDir), `${model.name}.bbmodel`);
+    const bbmodel = toBlockbenchModel(model, parsed, outputPath);
     await mkdir(path.dirname(outputPath), { recursive: true });
     await writeFile(outputPath, `${JSON.stringify(bbmodel, null, 2)}\n`, "utf8");
     written.push(`${model.name}.bbmodel (${parsed.parts.length} parts, ${bbmodel.elements.length} cubes)`);
@@ -208,6 +210,12 @@ async function checkGeneratedModels({ outDir, models }) {
     }
     if (!Array.isArray(data.outliner) || data.outliner.length === 0) {
       throw new Error(`${model.name}.bbmodel has no outliner groups`);
+    }
+    const groupIds = new Set();
+    collectOutlinerGroupIds(data.outliner, groupIds);
+    const unresolvedGroupReference = findGroupUuidReference(data.outliner, groupIds);
+    if (unresolvedGroupReference) {
+      throw new Error(`${model.name}.bbmodel references nested group '${unresolvedGroupReference}' by UUID instead of embedding it`);
     }
     if (!Array.isArray(data.textures) || data.textures.length !== 1) {
       throw new Error(`${model.name}.bbmodel should have exactly one texture reference`);
@@ -331,7 +339,7 @@ function parsePose(poseExpression) {
   throw new Error(`Unsupported PartPose expression: ${pose}`);
 }
 
-function toBlockbenchModel(model, parsed) {
+function toBlockbenchModel(model, parsed, outputPath) {
   const elements = [];
   const groups = [];
   const partToGroup = new Map();
@@ -340,7 +348,7 @@ function toBlockbenchModel(model, parsed) {
     const partUuid = uuidFor(`${model.name}:${part.name}:part`);
     const cubeUuids = [];
     const origin = toBlockbenchOrigin(part.worldOffset);
-    const rotation = part.pose.rotation.map(radToDeg);
+    const rotation = toBlockbenchRotation(part.pose.rotation);
 
     for (const [cubeIndex, cube] of part.cubes.entries()) {
       const cubeUuid = uuidFor(`${model.name}:${part.name}:cube:${cubeIndex}`);
@@ -376,7 +384,7 @@ function toBlockbenchModel(model, parsed) {
       continue;
     }
 
-    parentGroup.children.push(group.uuid);
+    parentGroup.children.push(group);
     childPartVars.add(part.varName);
   }
 
@@ -402,7 +410,7 @@ function toBlockbenchModel(model, parsed) {
     resolution: parsed.resolution,
     elements,
     outliner,
-    textures: [textureFor(model)],
+    textures: [textureFor(model, outputPath)],
   };
 }
 
@@ -460,7 +468,7 @@ function facesFor(cube) {
   };
 }
 
-function textureFor(model) {
+function textureFor(model, outputPath) {
   const texturePath = resolveTexturePath(model.texture);
   return {
     path: texturePath,
@@ -479,7 +487,7 @@ function textureFor(model) {
     mode: "bitmap",
     saved: true,
     uuid: uuidFor(`${model.name}:texture:${model.texture}`),
-    relative_path: relativeTexturePath(model.texture),
+    relative_path: relativeTexturePath(model.texture, outputPath),
   };
 }
 
@@ -495,6 +503,11 @@ function visibleBoxFor(elements) {
 
 function toBlockbenchOrigin(offset) {
   return roundArray([offset[0], 24 - offset[1], offset[2]]);
+}
+
+function toBlockbenchRotation(rotation) {
+  const [x, y, z] = rotation;
+  return [radToDeg(-x), radToDeg(y), radToDeg(-z)];
 }
 
 function findMatching(text, openIndex, openChar, closeChar) {
@@ -648,8 +661,42 @@ function parseParentVariable(source, callAt) {
 function parseAssignedVariable(source, callAt) {
   const statementStart = Math.max(source.lastIndexOf(";", callAt), source.lastIndexOf("{", callAt)) + 1;
   const prefix = source.slice(statementStart, callAt);
-  const match = prefix.match(/\bPartDefinition\s+([A-Za-z_$][\w$]*)\s*=\s*[A-Za-z_$][\w$]*\s*$/);
+  const match = prefix.match(/\bPartDefinition\s+([A-Za-z_$][\w$]*)\s*=\s*[\s\S]*$/);
   return match?.[1] ?? null;
+}
+
+function collectOutlinerGroupIds(nodes, groupIds) {
+  for (const node of nodes) {
+    if (!node || typeof node !== "object") {
+      continue;
+    }
+    if (typeof node.uuid === "string") {
+      groupIds.add(node.uuid);
+    }
+    if (Array.isArray(node.children)) {
+      collectOutlinerGroupIds(node.children.filter((child) => child && typeof child === "object"), groupIds);
+    }
+  }
+}
+
+function findGroupUuidReference(nodes, groupIds) {
+  for (const node of nodes) {
+    if (!node || typeof node !== "object" || !Array.isArray(node.children)) {
+      continue;
+    }
+    const groupReference = node.children.find((child) => typeof child === "string" && groupIds.has(child));
+    if (groupReference) {
+      return groupReference;
+    }
+    const nestedReference = findGroupUuidReference(
+      node.children.filter((child) => child && typeof child === "object"),
+      groupIds
+    );
+    if (nestedReference) {
+      return nestedReference;
+    }
+  }
+  return null;
 }
 
 function withWorldOffsets(parts) {
@@ -721,6 +768,10 @@ function printUsage() {
   node tools/model_export/java_model_to_bbmodel.mjs --source path/to/Model.java [--texture textures/entity/model.png] [--out path/to/bbmodels] [--name ModelName]
   node tools/model_export/java_model_to_bbmodel.mjs "C:\\dragged\\Model.java" --texture textures/entity/model.png
 
+Drag-and-drop:
+  Drop one or more Model.java files onto tools/model_export/drop_java_model_to_bbmodel.bat.
+  The wrapper exports to src/main/resources/assets/hemomancy/models/item/bbmodel by default.
+
 Options:
   --source <path>   Java model source path. A positional file path also works for drag-and-drop.
   --name <name>     Output model name. Defaults to the Java class name.
@@ -742,8 +793,12 @@ function resolveTexturePath(texture) {
     : path.join(ROOT, "src/main/resources/assets/hemomancy", texture);
 }
 
-function relativeTexturePath(texture) {
-  return path.isAbsolute(texture) ? texture : `../../../../${texture}`;
+function relativeTexturePath(texture, outputPath) {
+  if (path.isAbsolute(texture)) {
+    return texture;
+  }
+  const texturePath = resolveTexturePath(texture);
+  return path.relative(path.dirname(outputPath), texturePath).replaceAll("\\", "/");
 }
 
 function parseNumber(value) {
