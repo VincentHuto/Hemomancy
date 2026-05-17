@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/door_top_left_open",
+  "render_type": "cutout",
+  "textures": {
+    "bottom": "hemomancy:block/hematic_iron_door_bottom",
+    "top": "hemomancy:block/hematic_iron_door_top"
+  }
+}

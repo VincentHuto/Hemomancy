@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/chain",
+  "textures": {
+    "particle": "hemomancy:block/pallid_silver_chain",
+    "all": "hemomancy:block/pallid_silver_chain"
+  }
+}

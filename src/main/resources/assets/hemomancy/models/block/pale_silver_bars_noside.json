@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_noside",
+  "render_type": "cutout",
+  "textures": {
+    "pane": "hemomancy:block/pale_silver_bars"
+  }
+}

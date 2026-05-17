@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_glass_pane_post",
+  "render_type": "cutout",
+  "textures": {
+    "pane": "hemomancy:block/pale_silver_bars",
+    "edge": "hemomancy:block/pale_silver_bars_top"
+  }
+}

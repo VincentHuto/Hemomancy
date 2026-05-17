@@ -1,3 +1,6 @@
 {
-  "parent": "hemomancy:block/pallid_lantern"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/pallid_lantern"
+  }
 }

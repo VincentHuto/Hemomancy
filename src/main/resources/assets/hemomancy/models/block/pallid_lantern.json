@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/template_lantern",
   "textures": {
-    "all": "hemomancy:block/pallid_lantern"
+    "lantern": "hemomancy:block/pallid_lantern"
   }
 }

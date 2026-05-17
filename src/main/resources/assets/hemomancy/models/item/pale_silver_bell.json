@@ -1,3 +1,6 @@
 {
-  "parent": "hemomancy:block/pale_silver_bells"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/pale_silver_bells"
+  }
 }

@@ -4,6 +4,7 @@
 	  "hemomancy:venous_stone",
 	  "hemomancy:venous_stone_slab",
 	  "hemomancy:venous_stone_stairs",
+	  "hemomancy:venous_stone_wall",
 	  "hemomancy:blood_echo_inscription",
 	  "hemomancy:rite_fragment_inscription",
 	  "hemomancy:gilded_venous_stone",
@@ -16,9 +17,13 @@
 	  "hemomancy:polished_venous_stone_bricks",
 	  "hemomancy:polished_venous_stone_brick_slab", 
 	  "hemomancy:polished_venous_stone_brick_stairs",
+	  "hemomancy:polished_venous_stone_brick_wall",
 	  "hemomancy:hematic_iron_block",
 	  "hemomancy:hematic_iron_pillar",
 	  "hemomancy:chiseled_hematic_iron_block",
+	  "hemomancy:hematic_iron_bars",
+	  "hemomancy:hematic_iron_door",
+	  "hemomancy:hematic_iron_trapdoor",
 	  "hemomancy:hemolytic_plating_block",
 	  "hemomancy:humane_idol",
 	  "hemomancy:serpentine_idol",
@@ -43,6 +48,9 @@
 	  "hemomancy:hemorrhagic_crust",
 	  "hemomancy:sporite_crystal",
 	  "hemomancy:saint_sarcophagus",
-	  "hemomancy:pale_silver_bells"
+	  "hemomancy:pale_silver_bars",
+	  "hemomancy:pale_silver_bells",
+	  "hemomancy:pallid_silver_chain",
+	  "hemomancy:hematic_iron_chain"
   ]
 }

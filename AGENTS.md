@@ -3,7 +3,7 @@
 ## Project snapshot
 - Hemomancy is a Minecraft **NeoForge mod, not legacy Forge**: Minecraft `1.21.1`, NeoForge `21.1.219` (`21.1.x` range), Java `21` (`mod_id=hemomancy`, package `com.vincenthuto.hemomancy`).
 - Entrypoint: `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`; build/version source of truth: `gradle.properties` and `build.gradle`.
-- Source-of-truth docs: `HEMOMANCY_REFERENCE.md` for implementation/status, `LORE_REFERENCE.md` for tone/worldbuilding, `MNA_COMPATIBILITY_BRAINSTORM.md` for Mana and Artifice ideas. Prefer current code when docs disagree.
+- Source-of-truth docs: `docs/HEMOMANCY_REFERENCE.md` for implementation/status, `docs/LORE_REFERENCE.md` for tone/worldbuilding, `docs/MNA_COMPATIBILITY_BRAINSTORM.md` for Mana and Artifice ideas. Prefer current code when docs disagree.
 - Theme matters: morally gray blood magic + fungal cosmic horror. Do not frame Harbingers as simple villains or Unstained as simple heroes.
 
 ## Lore guardrails

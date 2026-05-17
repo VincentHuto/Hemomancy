@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S",
+    "S"
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:hematic_iron_chain",
+    "count": 2
+  }
+}

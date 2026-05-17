@@ -1,10 +1,68 @@
 {
-  "variants": {
-    "rung=false": {
-      "model": "hemomancy:block/pale_silver_bells"
+  "multipart": [
+    {
+      "when": { "attachment": "floor", "facing": "north" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells" }
     },
-    "rung=true": {
-      "model": "hemomancy:block/pale_silver_bells"
+    {
+      "when": { "attachment": "floor", "facing": "east" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells", "y": 90 }
+    },
+    {
+      "when": { "attachment": "floor", "facing": "south" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells", "y": 180 }
+    },
+    {
+      "when": { "attachment": "floor", "facing": "west" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells", "y": 270 }
+    },
+    {
+      "when": { "attachment": "ceiling", "facing": "north" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_ceiling" }
+    },
+    {
+      "when": { "attachment": "ceiling", "facing": "east" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_ceiling", "y": 90 }
+    },
+    {
+      "when": { "attachment": "ceiling", "facing": "south" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_ceiling", "y": 180 }
+    },
+    {
+      "when": { "attachment": "ceiling", "facing": "west" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_ceiling", "y": 270 }
+    },
+    {
+      "when": { "attachment": "single_wall", "facing": "east" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_wall" }
+    },
+    {
+      "when": { "attachment": "single_wall", "facing": "north" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_wall", "y": 270 }
+    },
+    {
+      "when": { "attachment": "single_wall", "facing": "south" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_wall", "y": 90 }
+    },
+    {
+      "when": { "attachment": "single_wall", "facing": "west" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_wall", "y": 180 }
+    },
+    {
+      "when": { "attachment": "double_wall", "facing": "east" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_between_walls" }
+    },
+    {
+      "when": { "attachment": "double_wall", "facing": "north" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_between_walls", "y": 270 }
+    },
+    {
+      "when": { "attachment": "double_wall", "facing": "south" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_between_walls", "y": 90 }
+    },
+    {
+      "when": { "attachment": "double_wall", "facing": "west" },
+      "apply": { "model": "hemomancy:block/pale_silver_bells_between_walls", "y": 180 }
     }
-  }
+  ]
 }

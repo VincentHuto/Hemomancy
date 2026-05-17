@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS",
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:hematic_iron_door",
+    "count": 3
+  }
+}

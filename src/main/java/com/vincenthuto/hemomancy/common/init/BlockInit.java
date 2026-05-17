@@ -38,6 +38,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -210,6 +211,8 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> venous_stone_stairs = BASEBLOCKS.register(("venous_stone_stairs"),
 			() -> new StairBlock(Blocks.STONE.defaultBlockState(),
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+	public static final DeferredHolder<Block, Block> venous_stone_wall = BASEBLOCKS.register("venous_stone_wall",
+			() -> new WallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
 	public static final DeferredHolder<Block, Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -233,6 +236,9 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> polished_venous_stone_brick_stairs = STAIRBLOCKS.register(
 			("polished_venous_stone_brick_stairs"), () -> new StairBlock(Blocks.STONE.defaultBlockState(),
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+	public static final DeferredHolder<Block, Block> polished_venous_stone_brick_wall = BASEBLOCKS.register(
+			"polished_venous_stone_brick_wall",
+			() -> new WallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> cracked_polished_venous_stone_bricks = BASEBLOCKS.register(
 			"cracked_polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -302,6 +308,15 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> chiseled_hematic_iron_block = BASEBLOCKS
 			.register("chiseled_hematic_iron_block", () -> new Block(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
+
+	public static final DeferredHolder<Block, Block> hematic_iron_bars = BASEBLOCKS.register("hematic_iron_bars",
+			() -> new IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
+
+	public static final DeferredHolder<Block, Block> hematic_iron_door = BASEBLOCKS.register("hematic_iron_door",
+			() -> new DoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));
+
+	public static final DeferredHolder<Block, Block> hematic_iron_trapdoor = BASEBLOCKS.register("hematic_iron_trapdoor",
+			() -> new TrapDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR)));
 
 	public static final DeferredHolder<Block, Block> hemolytic_plating_block = BASEBLOCKS.register("hemolytic_plating_block",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
@@ -488,13 +503,21 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 6.0F).sound(SoundType.METAL)));
 
+	public static final DeferredHolder<Block, Block> pale_silver_bars = BASEBLOCKS.register("pale_silver_bars",
+			() -> new IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
+
 	public static final DeferredHolder<Block, Block> pale_silver_bells = BASEBLOCKS.register("pale_silver_bells",
 			() -> new PaleSilverBellsBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 5.0F).sound(SoundType.METAL).lightLevel(s -> 10)));
+					.strength(2.0F, 5.0F).sound(SoundType.METAL).lightLevel(s -> 10).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> pallid_lantern = BASEBLOCKS.register("pallid_lantern",
-			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.0F, 3.0F).sound(SoundType.LANTERN).lightLevel(s -> 12)));
+			() -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN)));
+
+	public static final DeferredHolder<Block, Block> pallid_silver_chain = BASEBLOCKS.register("pallid_silver_chain",
+			() -> new ChainBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHAIN)));
+
+	public static final DeferredHolder<Block, Block> hematic_iron_chain = BASEBLOCKS.register("hematic_iron_chain",
+			() -> new ChainBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHAIN)));
 
 	public static final DeferredHolder<Block, Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
 			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()

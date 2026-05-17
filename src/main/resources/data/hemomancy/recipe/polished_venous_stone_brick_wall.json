@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:polished_venous_stone_bricks"
+    }
+  },
+  "result": {
+    "id": "hemomancy:polished_venous_stone_brick_wall",
+    "count": 6
+  }
+}

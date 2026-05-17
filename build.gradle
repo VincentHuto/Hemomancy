@@ -92,7 +92,7 @@ neoForge {
     runs {
         client {
             client()
-
+            jvmArguments.addAll("-Xms8G", "-Xmx24G")
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -174,7 +174,7 @@ dependencies {
     
     // Optional client-side LOD testing mod. Disabled for alpha smoke tests because
     // 3.0.3-b crashes during its startup updater on NeoForge dev launch.
-    // localRuntime files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
+    implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
 
 
     // ── HutosLib – use the local workspace build when available ─────────────────

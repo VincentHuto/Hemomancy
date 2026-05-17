@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "hanging=false": {
       "model": "hemomancy:block/pallid_lantern"
+    },
+    "hanging=true": {
+      "model": "hemomancy:block/pallid_lantern_hanging"
     }
   }
 }

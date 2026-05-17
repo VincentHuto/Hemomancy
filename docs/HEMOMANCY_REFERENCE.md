@@ -1,6 +1,6 @@
 # Hemomancy - Developer Reference
 
-> **Last audited:** 2026-05-13
+> **Last audited:** 2026-05-17
 > **Mod ID / package:** `hemomancy` / `com.vincenthuto.hemomancy`
 > **Target:** Minecraft `1.21.1`, NeoForge `21.1.219`, Java `21`
 > **Version:** `6.0.1-neoforge.1.21.1.0`
@@ -11,7 +11,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Status legend:** `Implemented` means present in the current NeoForge 1.21.1 runtime path. `Partial` means a playable or compiled spine exists with explicit remaining work. `Dormant` means source/design is preserved but excluded or unregistered. `Planned` means design/lore intent without active runtime behavior.
 
-**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, alpha building/decorative blocks and recipes, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -142,7 +142,7 @@ Block and item storage use the same attachment/capability style. Current block a
 
 `runData` writes into `src/generated/resources`, with `src/main/resources` taking precedence on duplicates. The active providers are `HemoBlockStateProvider`, `HemoItemModelProvider`, and `HemoLanguageProvider`; server recipe/tag/loot providers remain commented in `DataGeneration.java`.
 
-Focused unit-style tests now exist under `src/test/java` for newer gameplay rules and serialization seams, including direct blood routing, blood container transfer, Mycelial Lantern automation, puppeteer summon trials, morphic nectar/primal morphlings, blood gourd tier stats, crude-memory model data, manipulation rank gates, known-manipulation grants, dialogue starter memory choice, loot data, and overlay rendering rules. Use `./gradlew.bat build` for docs-adjacent safety checks only if code or generated data changes.
+Focused unit-style tests now exist under `src/test/java` for newer gameplay rules and serialization seams, including direct blood routing, blood container transfer, Mycelial Lantern automation, puppeteer summon trials, morphic nectar/primal morphlings, blood gourd tier stats, crude-memory model data, manipulation rank gates, known-manipulation grants, dialogue starter memory choice, loot data, building-block resource coverage, and overlay rendering rules. Use `./gradlew.bat build` for docs-adjacent safety checks only if code or generated data changes.
 
 ---
 
@@ -1677,6 +1677,13 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/vivianite_cluster.png) Vivianite Cluster | Mineral material |
 | ![](../src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) Gourd Seeds | Plantable, grows gourds |
 | ![](../src/main/resources/assets/hemomancy/textures/item/dried_gourd.png) Dried Gourd | Gourd processing product |
+| ![](../src/main/resources/assets/hemomancy/textures/item/desiccated_membrane.png) Desiccated Membrane | Drops from Dessicants; used for `sanguine_formation_from_membrane`, distills to Dicentra Sap, and serves as the `antiphonomyces_resonans` fungal-scar substrate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/molten_scab.png) Molten Scab | Drops from Cruor Fiends; smelts/crafts into Hematic Iron Scrap through `hematic_iron_scrap_from_molten_clot` and has a Ghastly Alembic distillation route. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/void_ichor.png) Void Ichor | Drops from Void Drinkers; converts into Sanguine Quintessence through `sanguine_quintessence_from_void_ichor`, distills to Dicentra Sap, and serves as the `lumina_devorans` fungal-scar substrate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/frozen_clot.png) Frozen Clot | Drops from Frozen Clot mobs; used in `sanguine_salve_from_frozen_cruor`, distills to Dicentra Sap, and serves as the `thanomyces_resurgens` fungal-scar substrate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/abyssal_ichor.png) Abyssal Ichor | Drops from Abyssal Siphons; present in the Ghastly Alembic distillation lane and exposed as a Materials-tab entity reagent. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/nerve_bundle.png) Nerve Bundle | Drops from Myelin Borers; crafts the alternate `sanguine_conduit_from_nerve_bundle` recipe with Puppeteering Thread and has a Ghastly Alembic distillation route. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/mnemonic_ambergris.png) Mnemonic Ambergris | Nonlethal Mnemonic Whale sample/shed material; used as reef-memory ambience and future-facing Mnemonist material rather than a standard combat drop. |
 
 ### 20.2 Blood Storage Items
 
@@ -1993,9 +2000,9 @@ A full block family with variants:
 | ![](../src/main/resources/assets/hemomancy/textures/block/chiseled_polished_venous_stone.png) Chiseled Polished | ![](../src/main/resources/assets/hemomancy/textures/block/cracked_polished_venous_stone_bricks.png) Cracked Bricks | ![](../src/main/resources/assets/hemomancy/textures/block/gilded_venous_stone.png) Gilded Venous Stone |
 | ![](../src/main/resources/assets/hemomancy/textures/block/infested_venous_stone.png) Infested Venous Stone | | |
 
-- Venous Stone, Slab, Stairs
+- Venous Stone, Slab, Stairs, Wall
 - Polished Venous Stone, Slab, Stairs
-- Polished Venous Stone Bricks, Slab, Stairs
+- Polished Venous Stone Bricks, Slab, Stairs, Wall
 - Chiseled Polished Venous Stone
 - Cracked Polished Venous Stone Bricks
 - Gilded Venous Stone
@@ -2006,10 +2013,15 @@ A full block family with variants:
 | | | |
 |---|---|---|
 | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_block.png) Hematic Iron Block | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_pillar.png) Hematic Iron Pillar | ![](../src/main/resources/assets/hemomancy/textures/block/chiseled_hematic_iron_block.png) Chiseled Hematic Iron |
+| ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_bars.png) Hematic Iron Bars | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_chain.png) Hematic Iron Chain | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_trapdoor.png) Hematic Iron Trapdoor |
 
 - Hematic Iron Block
 - Hematic Iron Pillar (rotatable)
 - Chiseled Hematic Iron Block
+- Hematic Iron Bars (vanilla iron-bars behavior, cutout render layer)
+- Hematic Iron Chain (vanilla chain behavior, axis placement, cutout render layer)
+- Hematic Iron Door (vanilla iron-door behavior, redstone-opened)
+- Hematic Iron Trapdoor (vanilla iron-trapdoor behavior, redstone-opened)
 
 ### 24.3 Anti-Blood / Unstained
 
@@ -2017,6 +2029,12 @@ A full block family with variants:
 - Cleansed Stone — pale, smooth stone found in Unstained temples
 - Pallid Lantern — softly glowing lantern sacred to Our Lady of Still Waters
 - Virid Salis Trail — green Unstained salt-ash trail block placed by `hemomancy:virid_salis` / `hemomancy:virid_salis_trail`
+
+- Pallid Silver Chain - pale-silver vanilla-chain variant for Unstained hanging decor
+- Pale Silver Bars - pale-silver vanilla-bars variant for Unstained churches and cells
+- Pale Silver Bells - vanilla-bell-style Unstained ritual bell with floor, wall, between-wall, and ceiling attachments
+
+The alpha building pass intentionally favors vanilla behavior for compatibility: chains use `ChainBlock`, bars use `IronBarsBlock`, walls use `WallBlock`, and hematic iron door/trapdoor use the vanilla iron block set behavior. Recipes, loot tables, blockstates, item models, pickaxe mineability, and cutout render layers are present for the new fixture blocks. `BuildingBlockResourceCoverageTest` guards the expected resource files for the current alpha fixture set.
 
 ### 24.4 Glass & Panes
 
@@ -2108,6 +2126,8 @@ This section tracks shared recipe infrastructure and Harbinger-facing recipe cat
 | Blood Gourd Fill | `FillBloodGourdRecipe.Serializer` | Crafting | Filling gourds with blood |
 | Vial Rack | Vanilla shaped recipe | Crafting | 8 Bloody Vials + Hematic Iron Scrap → Vial Rack |
 
+Alpha building fixtures are regular vanilla shaped recipes under `data/hemomancy/recipe/`: Hematic Iron Scrap / Pale Silver Ingot / Venous Stone variants craft chains, bars, walls, and hematic iron door/trapdoor fixtures.
+
 **Unstained recipe lanes:**
 
 | Lane | Data/type | System reference |
@@ -2129,6 +2149,7 @@ Current datapack paths use the 1.21 singular directory names already present in 
 | Harbinger Cardinal Rites | `src/main/resources/data/hemomancy/recipe/cardinal_rite/` |
 | Puppeteer trials | `src/main/resources/data/hemomancy/recipe/puppeteer_trial/` |
 | Enzyme fruiting | `src/main/resources/data/hemomancy/recipe/enzyme_fruiting/` |
+| Block loot tables | `src/main/resources/data/hemomancy/loot_table/blocks/` |
 | Entity loot | `src/main/resources/data/hemomancy/loot_table/entities/` |
 | Item inquiry dialogue | `src/main/resources/data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json` |
 
@@ -2948,7 +2969,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta final animation/combat polish |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, active Harbinger voyager expeditions with neutral crews/trade/dialogue, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
@@ -3013,7 +3034,7 @@ The Unstained faction has moved from mostly planned design notes into a broad im
 | Unstained temple/church expansion | `Partial` | `UnstainedChurchStructure` spawns one Zealot, two Guardians, three-to-five Acolytes, and rite-fragment inscriptions; `unstained_church.nbt` includes the Altar of Cleansing and Unstained Podium. Pallid Lantern/cleansed decorative density is still a tuning/art pass. |
 | Our Lady presence | `Partial` | `OurLadyWhisperEvents` and `OurLadyWhisperDialogueTrees` now deliver purity/clarity-stage whispers with memo capture. A physical Our Lady apparition/entity remains a future concept; `SpectralCompanionEntity` exists as an Unstained summon shell, not the Lady herself. |
 | Unstained dialogue expansion | `Implemented` | Zealot, Acolyte, Guardian, Scout, and Our Lady whisper dialogue trees exist. Unstained inquiry data covers Zealot/Guardian item dialogue, and the church structure now spawns the relevant NPCs. |
-| Lethean / pale crafting recipes | `Implemented` | Tears of Silthmere, Lethean Poppy Wreath, Pale Distillate, Pale Silver, Cleansed Stone, Pallid Lantern, Pale Field Ink, Lethean Chalice, Pallid Icon, Verdigris Censer, Unstained armor/tools, Pallid Retort distillation, and White Humor purification recipes are present under `data/hemomancy/recipe/`. Ghost Pipe now has a Pallid Retort recipe into Pale Distillate. |
+| Lethean / pale crafting recipes | `Implemented` | Tears of Silthmere, Lethean Poppy Wreath, Pale Distillate, Pale Silver, Cleansed Stone, Pallid Lantern, Pallid Silver Chain, Pale Silver Bars, Pale Silver Bells, Pale Field Ink, Lethean Chalice, Pallid Icon, Verdigris Censer, Unstained armor/tools, Pallid Retort distillation, and White Humor purification recipes are present under `data/hemomancy/recipe/`. Ghost Pipe now has a Pallid Retort recipe into Pale Distillate. |
 | Unstained advancement branch | `Implemented` | `UnstainedAdvancementGranter` and `UnstainedMilestoneHandler` grant altar, purity-stage, and clarity-stage advancements. JSONs exist for `unstained`, `path_of_purity`, `blessed_by_the_altar`, `tainted`, `cleansing`, `absolved`, `purified`, `clarity_awakened`, `discerning`, `vigilant`, `resolute_stage`, `enlightened_seeker`, and `lady_of_forgotten_waters`. |
 | Silver Ward / Verdigris Aura indicators | `Implemented` | `SilverWardEffect` spawns ambient END_ROD particles and reduces hemomancy-mob damage; `VerdigrisAuraEffect` spawns SCRAPE ring particles and weakens hemomancy mobs. `UnstainedProgressScreen` exposes toggles through `PacketToggleUnstainedBonus`, and `PacketSyncUnstainedProgress` syncs toggle state. |
 | Still Arts | `Implemented` | `StillArtInit`, `IKnownStillArts`, `KnownStillArtEvents`, Still Art packets, radial screen, cooldown overlay, and advancement-backed grants are active. See §15.1. |

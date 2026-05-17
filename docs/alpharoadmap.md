@@ -4,7 +4,7 @@
 
 VincentHuto's Hemomancy is a sophisticated blood-magic + fungal-horror Minecraft NeoForge mod (Minecraft 1.21.1, NeoForge 21.1.x, Java 21) with two mutually exclusive player paths (Harbinger and Unstained). The goal is to assess its current state against "what makes a good Minecraft mod good" and produce a prioritized roadmap for alpha release.
 
-> 2026-05-15 refresh: the current code is ahead of several older audit notes below. Treat `HEMOMANCY_REFERENCE.md` as the canonical status doc. Confirmed cleanup since the original roadmap includes 1.21 singular resource paths, wired skill effects, implemented Hematic Salvage tests/rules, blood crystal growth from alembic leaks, Annetta Broken Church spawning, dedicated Annetta encounter models/textures, and JEI registration for Mycelial Lantern enzyme fruiting.
+> 2026-05-17 refresh: the current code is ahead of several older audit notes below. Treat `HEMOMANCY_REFERENCE.md` as the canonical status doc. Confirmed cleanup since the original roadmap includes 1.21 singular resource paths, wired skill effects, implemented Hematic Salvage tests/rules, blood crystal growth from alembic leaks, Annetta Broken Church spawning, dedicated Annetta encounter models/textures, JEI registration for Mycelial Lantern enzyme fruiting, and an alpha building fixture pass with vanilla-behavior chains, bars, walls, hematic iron door/trapdoor, recipes, loot tables, and resource coverage tests.
 
 The mod is approximately **85-90% feature-complete**, with both core paths playable end-to-end. WIP areas are clearly documented in `HEMOMANCY_REFERENCE.md`. The gaps are primarily in **onboarding clarity**, **boss visual assets**, and **a few endgame systems**.
 
@@ -38,11 +38,11 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 - Unstained: Full 5-stage purity path (Corrupted → Purified → Clarity) with Still Arts is implemented.
 - Both paths are mutually exclusive and properly gate each other.
 - 40 blood manipulations all have `getAction()` implementations.
-- 342 JSON recipes covering all crafting progressions.
+- 375 JSON recipes covering all crafting progressions and the alpha building/decorative fixture set.
 
 **2. In-game recipe discoverability — LARGELY PASSES**
 - Custom JEI categories exist for Chisel Station, Visceral Recaller, Blood Structure, and Morphling Incubator (`compat/jei/`).
-- 342 recipes cover all paths.
+- 375 recipes cover all paths and the alpha building/decorative fixture set.
 - *Gap: JEI categories need audit to confirm all custom machine recipes surface correctly.*
 
 **3. Functional guidebook — MOSTLY PASSES**
@@ -51,7 +51,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 - *Gap: The `HemoProgressionScreen.setupEntries()` is commented out; the Java renderer is WIP, but the HutosLib JSON reader works. Players can read it — but the Harbinger-side progress screen tabs may not fully surface.*
 
 **4. Content density — PASSES**
-- 323 items, 113 blocks, 87 entities (including 4 bosses, 5 NPCs, 10+ monsters).
+- 323+ items, 127 registered block declarations, and 87 entities (including 4 bosses, 5 NPCs, 10+ monsters).
 - 12 morphling variants, 20+ scar types, 9 fungal scar cultivars.
 - 8 blood tendency trees + Unstained Still Arts.
 - Qliphoth Bloom, Founding Sanctum, Bloodline pool system — all functional.

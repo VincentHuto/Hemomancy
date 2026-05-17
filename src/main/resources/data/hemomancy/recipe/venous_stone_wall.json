@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:venous_stone_wall",
+    "count": 6
+  }
+}

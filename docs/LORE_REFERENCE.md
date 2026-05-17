@@ -551,6 +551,8 @@ Each faction's relationship with materials reflects their worldview.
 
 ---
 
+**Faction architecture note:** The current alpha building palettes use these material philosophies directly. Harbinger fixtures lean on hematic iron for chains, bars, doors, and trapdoors: blood-fused iron as containment, machinery, and covenant infrastructure. Unstained fixtures lean on pale silver for bells, bars, lanterns, and chains: clean metal, pale light, and ritual restraint rather than blood-conductive machinery.
+
 ## 15. Flora of the World
 
 Plants in Hemomancy are designed around real-world plant biology and carry both gameplay and symbolic meaning.

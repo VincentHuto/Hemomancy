@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:pale_silver_ingot"
+    }
+  },
+  "result": {
+    "id": "hemomancy:pale_silver_bars",
+    "count": 16
+  }
+}

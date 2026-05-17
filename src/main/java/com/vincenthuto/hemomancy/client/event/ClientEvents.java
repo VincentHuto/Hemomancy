@@ -561,6 +561,13 @@ public class ClientEvents {
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_fan.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_lantern.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_silver_chain.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_chain.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_bars.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.pale_silver_bars.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_door.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_trapdoor.get(), RenderType.cutout());
             });
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();
