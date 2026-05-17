@@ -561,6 +561,8 @@ public class ClientEvents {
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_fan.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_lantern.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_silver_chain.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_chain.get(), RenderType.cutout());

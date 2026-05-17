@@ -443,7 +443,7 @@ public class BlockInit {
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> attached_gourd_stem = MODELEDBLOCKS.register("attached_gourd_stem",
-			() -> new AttachedStemBlock(GOURD_BLOCK_KEY, GOURD_STEM_BLOCK_KEY, GOURD_SEED_ITEM_KEY, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.WOOD)
+			() -> new AttachedStemBlock(GOURD_STEM_BLOCK_KEY, GOURD_BLOCK_KEY, GOURD_SEED_ITEM_KEY, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.WOOD)
 					.pushReaction(PushReaction.DESTROY)));
 
 	public static final DeferredHolder<Block, Block> gourd_stem = MODELEDBLOCKS.register("gourd_stem",

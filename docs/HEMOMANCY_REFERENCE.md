@@ -142,7 +142,7 @@ Block and item storage use the same attachment/capability style. Current block a
 
 `runData` writes into `src/generated/resources`, with `src/main/resources` taking precedence on duplicates. The active providers are `HemoBlockStateProvider`, `HemoItemModelProvider`, and `HemoLanguageProvider`; server recipe/tag/loot providers remain commented in `DataGeneration.java`.
 
-Focused unit-style tests now exist under `src/test/java` for newer gameplay rules and serialization seams, including direct blood routing, blood container transfer, Mycelial Lantern automation, puppeteer summon trials, morphic nectar/primal morphlings, blood gourd tier stats, crude-memory model data, manipulation rank gates, known-manipulation grants, dialogue starter memory choice, loot data, building-block resource coverage, and overlay rendering rules. Use `./gradlew.bat build` for docs-adjacent safety checks only if code or generated data changes.
+Focused unit-style tests now exist under `src/test/java` for newer gameplay rules and serialization seams, including direct blood routing, blood container transfer, Mycelial Lantern automation, puppeteer summon trials, morphic nectar/primal morphlings, blood gourd tier stats, crude-memory model data, manipulation rank gates, known-manipulation grants, dialogue starter memory choice, loot data, building-block resource coverage, gourd presentation resources, Unstained weapon renderer resources, and overlay rendering rules. Use `./gradlew.bat build` for docs-adjacent safety checks only if code or generated data changes.
 
 ---
 
@@ -1933,6 +1933,8 @@ Anti-blood zealot armor (for the Unstained path):
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_2.png)
 
+Unstained weapon items now render through 3D custom item models rather than flat handheld sprites. `unstained_warhammer`, `silthmere_glaive`, `absolution_dagger`, and `annettas_absolution_dagger` use `builtin/entity` item model JSONs and `HemoClientItemExtensionsProvider` to route to `UnstainedWeaponItemRenderer`. Model layers are registered in `LayerEvents`: `UnstainedWarhammerModel` uses a Pale Silver Bell-inspired striking head, `SilthmereGlaiveModel` uses a long polearm shaft with a swept blade, and `AbsolutionDaggerModel` uses a narrow stiletto profile shared by Annetta's boss-drop variant. `UnstainedWeaponRendererResourceTest` guards against these items regressing to 2D handheld model JSONs or losing their client renderer/model layer wiring.
+
 ### 22.6 Crown of Sacred Marrow
 
 Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
@@ -2086,6 +2088,8 @@ All applicable flowers have **potted** variants.
 
 - Gourd (pumpkin-like, grows from stem)
 - Gourd Stem / Attached Gourd Stem
+
+The mature `hemomancy:gourd` still uses vanilla pumpkin/melon-style ground growth through `StemBlock` and `AttachedStemBlock`, but its visible model is intentionally smaller than a pumpkin: a low cocoa-pod-like gourd centered near the ground, with small edge connector pads so attached stems meet the fruit visually from any horizontal side. `GourdBlock` supplies compact selection and collision shapes (`3,0,4` to `13,7,12`) for the main pod body, while the stem blocks render on the cutout layer. `BlockInit.attached_gourd_stem` must pass the custom stem key before the fruit key to `AttachedStemBlock`, so breaking the grown fruit restores an age-7 `gourd_stem` instead of turning the stem into another gourd. `GourdPresentationResourceTest` guards against accidentally reverting the asset back to a full cube/pumpkin column or losing stem cutout/connector/cleanup coverage.
 
 ### 24.8 Ash Trails
 

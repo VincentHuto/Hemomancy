@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWeaponItemRenderer;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -14,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +34,7 @@ import java.util.stream.Collectors;
  * At ABSOLVED+ purity: killing a mob grants +0.5 purity.
  * This is handled by {@link SilthmereGlaiveEvents}.
  */
-public class SilthmereGlaiveItem extends SwordItem {
+public class SilthmereGlaiveItem extends SwordItem implements HemoClientItemExtensionsProvider {
 
 	/** Extra entity reach granted by this weapon (in blocks). */
 	public static final double REACH_BONUS = 1.5;
@@ -105,5 +109,18 @@ public class SilthmereGlaiveItem extends SwordItem {
 	@Override
 	public Component getName(ItemStack stack) {
 		return Component.translatable(this.getDescriptionId(stack)).withStyle(ChatFormatting.WHITE);
+	}
+
+	@Override
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWeaponItemRenderer(
+					UnstainedWeaponItemRenderer.Kind.GLAIVE, null, null);
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
+			}
+		};
 	}
 }

@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.client.model.entity.npc.*;
 import com.vincenthuto.hemomancy.client.model.entity.summon.*;
 import com.vincenthuto.hemomancy.client.model.item.*;
+import com.vincenthuto.hemomancy.client.model.item.unstained.*;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedBloodCrystalModel;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
@@ -62,6 +63,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);
 		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
+		event.registerLayerDefinition(UnstainedWarhammerModel.LAYER_LOCATION, UnstainedWarhammerModel::createBodyLayer);
+		event.registerLayerDefinition(SilthmereGlaiveModel.LAYER_LOCATION, SilthmereGlaiveModel::createBodyLayer);
+		event.registerLayerDefinition(AbsolutionDaggerModel.LAYER_LOCATION, AbsolutionDaggerModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedVivianiteModel.LAYER_LOCATION, SuspendedVivianiteModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedCleansedBloodCrystalModel.LAYER_LOCATION, SuspendedCleansedBloodCrystalModel::createBodyLayer);

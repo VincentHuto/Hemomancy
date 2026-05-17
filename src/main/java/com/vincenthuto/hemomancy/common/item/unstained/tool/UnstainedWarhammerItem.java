@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWeaponItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -18,6 +21,7 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 /**
  * Unstained Warhammer — a blunt, heavy weapon for followers of the Path of the
@@ -25,7 +29,7 @@ import net.minecraft.world.item.component.CustomData;
  * so it does not aid opponents who use hemomancy. Damage scales with the
  * wielder's purity level.
  */
-public class UnstainedWarhammerItem extends DiggerItem {
+public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItemExtensionsProvider {
 	private static final int CRIPPLE_DURATION = 100;
 	private static final int CRIPPLE_AMPLIFIER = 0;
 
@@ -78,5 +82,18 @@ public class UnstainedWarhammerItem extends DiggerItem {
 	public Component getName(ItemStack stack) {
 		return Component.translatable(this.getDescriptionId(stack))
 				.withStyle(ChatFormatting.WHITE);
+	}
+
+	@Override
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWeaponItemRenderer(
+					UnstainedWeaponItemRenderer.Kind.WARHAMMER, null, null);
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
+			}
+		};
 	}
 }

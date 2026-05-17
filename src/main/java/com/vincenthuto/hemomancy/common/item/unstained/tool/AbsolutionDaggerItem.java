@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWeaponItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -14,6 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +33,7 @@ import java.util.stream.Collectors;
  * At CLEANSING+ purity: every 10th hit strips one random beneficial effect from
  * the target (a small cleanse).
  */
-public class AbsolutionDaggerItem extends SwordItem {
+public class AbsolutionDaggerItem extends SwordItem implements HemoClientItemExtensionsProvider {
 
 	private static final String TAG_HIT_COUNT = "absolution_hit_count";
 
@@ -115,5 +119,18 @@ public class AbsolutionDaggerItem extends SwordItem {
 	@Override
 	public Component getName(ItemStack stack) {
 		return Component.translatable(this.getDescriptionId(stack)).withStyle(ChatFormatting.WHITE);
+	}
+
+	@Override
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWeaponItemRenderer(
+					UnstainedWeaponItemRenderer.Kind.DAGGER, null, null);
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
+			}
+		};
 	}
 }
