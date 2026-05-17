@@ -33,10 +33,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
@@ -44,10 +44,10 @@ import java.util.List;
 public class DiscoveryInscriptionBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape FLOOR_SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0);
-	private static final VoxelShape WALL_NORTH_SHAPE = Block.box(1.0, 1.0, 14.5, 15.0, 15.0, 16.0);
-	private static final VoxelShape WALL_SOUTH_SHAPE = Block.box(1.0, 1.0, 0.0, 15.0, 15.0, 1.5);
-	private static final VoxelShape WALL_EAST_SHAPE = Block.box(0.0, 1.0, 1.0, 1.5, 15.0, 15.0);
-	private static final VoxelShape WALL_WEST_SHAPE = Block.box(14.5, 1.0, 1.0, 16.0, 15.0, 15.0);
+	private static final VoxelShape WALL_NORTH_SHAPE = Block.box(1.0, 1.0, 14.0, 15.0, 15.0, 16.0);
+	private static final VoxelShape WALL_SOUTH_SHAPE = Block.box(1.0, 1.0, 0.0, 15.0, 15.0, 2.0);
+	private static final VoxelShape WALL_EAST_SHAPE = Block.box(0.0, 1.0, 1.0, 2.0, 15.0, 15.0);
+	private static final VoxelShape WALL_WEST_SHAPE = Block.box(14.0, 1.0, 1.0, 16.0, 15.0, 15.0);
 	private final boolean wallMounted;
 
 	public DiscoveryInscriptionBlock(BlockBehaviour.Properties properties) {
@@ -93,8 +93,6 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		// Wall-mounted inscriptions are rendered entirely by the block entity renderer;
-		// suppress the static model so the old venous-stone slab face doesn't show.
 		return wallMounted ? RenderShape.ENTITYBLOCK_ANIMATED : RenderShape.MODEL;
 	}
 
