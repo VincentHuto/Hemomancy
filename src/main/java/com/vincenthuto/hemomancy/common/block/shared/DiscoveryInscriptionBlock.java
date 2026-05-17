@@ -93,7 +93,9 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.MODEL;
+		// Wall-mounted inscriptions are rendered entirely by the block entity renderer;
+		// suppress the static model so the old venous-stone slab face doesn't show.
+		return wallMounted ? RenderShape.ENTITYBLOCK_ANIMATED : RenderShape.MODEL;
 	}
 
 	@Override
