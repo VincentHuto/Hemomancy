@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import { readFileSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -230,6 +231,8 @@ async function checkGeneratedModels({ outDir, models }) {
 }
 
 function parseJavaModel(source, model) {
+  const numericConstants = collectNumericConstants(source, model.source);
+  const loopContexts = collectSimpleForLoopContexts(source, numericConstants);
   const resolutionMatch = source.match(/LayerDefinition\.create\s*\(\s*[^,]+,\s*(\d+)\s*,\s*(\d+)\s*\)/);
   if (!resolutionMatch) {
     throw new Error(`Could not find LayerDefinition.create resolution in ${model.source}`);
@@ -253,16 +256,21 @@ function parseJavaModel(source, model) {
       throw new Error(`Could not parse addOrReplaceChild call in ${model.source} near ${callAt}`);
     }
 
-    const name = parseQuoted(callArgs[0]);
-    const cubes = parseCubes(callArgs[1]);
-    const pose = parsePose(callArgs.slice(2).join(","));
-    parts.push({
-      name,
-      varName: assignedVar ?? `${name}_${parts.length}`,
-      parentVar,
-      cubes,
-      pose,
-    });
+    const loopContext = innermostLoopContextFor(loopContexts, callAt);
+    const iterationLocals = loopContext?.iterations ?? [new Map()];
+    for (const locals of iterationLocals) {
+      const parseNumeric = (value) => parseNumber(value, numericConstants, locals);
+      const name = parseNameExpression(callArgs[0], parseNumeric);
+      const cubes = parseCubes(callArgs[1], parseNumeric);
+      const pose = parsePose(callArgs.slice(2).join(","), parseNumeric);
+      parts.push({
+        name,
+        varName: assignedVar ?? `${name}_${parts.length}`,
+        parentVar,
+        cubes,
+        pose,
+      });
+    }
     searchAt = closeParen + 1;
   }
 
@@ -279,7 +287,7 @@ function parseJavaModel(source, model) {
   };
 }
 
-function parseCubes(builderExpression) {
+function parseCubes(builderExpression, parseNumeric = parseNumber) {
   const cubes = [];
   let uv = [0, 0];
   let mirrored = false;
@@ -294,7 +302,7 @@ function parseCubes(builderExpression) {
     methodPattern.lastIndex = closeParen + 1;
 
     if (method === "texOffs") {
-      const values = splitTopLevel(body, ",").map(parseNumber);
+      const values = splitTopLevel(body, ",").map(parseNumeric);
       uv = [values[0], values[1]];
     } else if (method === "mirror") {
       mirrored = body.trim() === "" ? true : body.trim() !== "false";
@@ -303,8 +311,8 @@ function parseCubes(builderExpression) {
       if (values.length < 6) {
         throw new Error(`Expected addBox to have at least 6 arguments, got ${values.length}`);
       }
-      const [x, y, z, width, height, depth] = values.slice(0, 6).map(parseNumber);
-      const inflate = values.length > 6 ? parseCubeDeformation(values[6]) : 0;
+      const [x, y, z, width, height, depth] = values.slice(0, 6).map(parseNumeric);
+      const inflate = values.length > 6 ? parseCubeDeformation(values[6], parseNumeric) : 0;
       cubes.push({ x, y, z, width, height, depth, inflate, uv, mirrored });
     }
   }
@@ -312,7 +320,7 @@ function parseCubes(builderExpression) {
   return cubes;
 }
 
-function parsePose(poseExpression) {
+function parsePose(poseExpression, parseNumeric = parseNumber) {
   const pose = poseExpression.trim();
   if (pose === "PartPose.ZERO") {
     return { offset: [0, 0, 0], rotation: [0, 0, 0] };
@@ -320,7 +328,7 @@ function parsePose(poseExpression) {
 
   const offsetAndRotation = pose.match(/PartPose\.offsetAndRotation\s*\(([\s\S]*)\)/);
   if (offsetAndRotation) {
-    const values = splitTopLevel(offsetAndRotation[1], ",").map(parseNumber);
+    const values = splitTopLevel(offsetAndRotation[1], ",").map(parseNumeric);
     if (values.length !== 6) {
       throw new Error(`PartPose.offsetAndRotation expected 6 arguments, got ${values.length}`);
     }
@@ -329,7 +337,7 @@ function parsePose(poseExpression) {
 
   const offset = pose.match(/PartPose\.offset\s*\(([\s\S]*)\)/);
   if (offset) {
-    const values = splitTopLevel(offset[1], ",").map(parseNumber);
+    const values = splitTopLevel(offset[1], ",").map(parseNumeric);
     if (values.length !== 3) {
       throw new Error(`PartPose.offset expected 3 arguments, got ${values.length}`);
     }
@@ -599,7 +607,24 @@ function parseQuoted(value) {
   return match[1];
 }
 
-function parseCubeDeformation(value) {
+function parseNameExpression(value, parseNumeric) {
+  const terms = splitTopLevel(value, "+");
+  if (terms.length === 1) {
+    return parseQuoted(value);
+  }
+
+  return terms
+    .map((term) => {
+      const stringMatch = term.match(/^"([^"]*)"$/);
+      if (stringMatch) {
+        return stringMatch[1];
+      }
+      return String(parseNumeric(term));
+    })
+    .join("");
+}
+
+function parseCubeDeformation(value, parseNumeric = parseNumber) {
   if (value.trim() === "CubeDeformation.NONE") {
     return 0;
   }
@@ -608,7 +633,180 @@ function parseCubeDeformation(value) {
   if (!match) {
     throw new Error(`Expected CubeDeformation, got ${value}`);
   }
-  return parseNumber(match[1]);
+  return parseNumeric(match[1]);
+}
+
+function collectNumericConstants(source, sourcePath) {
+  const constants = new Map();
+  const resolvedSourcePath = resolveFromRoot(sourcePath);
+  const modelClassName = path.basename(resolvedSourcePath, path.extname(resolvedSourcePath));
+
+  addNumericConstantsFromSource(source, modelClassName, constants, true);
+
+  for (const importMatch of source.matchAll(/^\s*import\s+(?!static\b)([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+)\s*;/gm)) {
+    const importName = importMatch[1];
+    const className = importName.slice(importName.lastIndexOf(".") + 1);
+    const importedSourcePath = resolveFromRoot(path.join("src/main/java", ...importName.split(".")) + ".java");
+
+    let importedSource;
+    try {
+      importedSource = readFileSync(importedSourcePath, "utf8");
+    } catch (error) {
+      if (error?.code === "ENOENT") {
+        continue;
+      }
+      throw error;
+    }
+
+    addNumericConstantsFromSource(importedSource, className, constants, false);
+  }
+
+  for (const importMatch of source.matchAll(
+    /^\s*import\s+static\s+([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+)\.(\*|[A-Za-z_$][\w$]*)\s*;/gm
+  )) {
+    const importClassName = importMatch[1];
+    const memberName = importMatch[2];
+    const className = importClassName.slice(importClassName.lastIndexOf(".") + 1);
+    const importedSourcePath = resolveFromRoot(path.join("src/main/java", ...importClassName.split(".")) + ".java");
+
+    let importedSource;
+    try {
+      importedSource = readFileSync(importedSourcePath, "utf8");
+    } catch (error) {
+      if (error?.code === "ENOENT") {
+        continue;
+      }
+      throw error;
+    }
+
+    addNumericConstantsFromSource(importedSource, className, constants, memberName === "*", memberName);
+  }
+
+  return constants;
+}
+
+function addNumericConstantsFromSource(source, className, constants, exposeSimpleNames, onlyName = null) {
+  const sourceWithoutComments = stripJavaComments(source);
+  const constantPattern =
+    /\b(?:(?:public|private|protected)\s+)?static\s+final\s+(?:byte|short|int|long|float|double)\s+([A-Za-z_$][\w$]*)\s*=\s*([^;]+);/g;
+  let match;
+
+  while ((match = constantPattern.exec(sourceWithoutComments)) !== null) {
+    const name = match[1];
+    if (onlyName && onlyName !== name) {
+      continue;
+    }
+
+    const value = parseNumberLiteral(match[2]);
+    if (value === null) {
+      continue;
+    }
+
+    constants.set(`${className}.${name}`, value);
+    if (exposeSimpleNames) {
+      constants.set(name, value);
+    }
+  }
+}
+
+function stripJavaComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
+
+function collectSimpleForLoopContexts(source, constants) {
+  const contexts = [];
+  const forPattern = /\bfor\s*\(([^)]*)\)\s*\{/g;
+  let match;
+
+  while ((match = forPattern.exec(source)) !== null) {
+    const openBrace = source.indexOf("{", match.index);
+    const closeBrace = findMatching(source, openBrace, "{", "}");
+    const loop = parseSimpleForLoop(match[1], constants);
+    if (loop) {
+      contexts.push({
+        start: openBrace,
+        end: closeBrace,
+        iterations: loop.values.map((value) => new Map([[loop.varName, value]])),
+      });
+    }
+    forPattern.lastIndex = closeBrace + 1;
+  }
+
+  return contexts;
+}
+
+function parseSimpleForLoop(header, constants) {
+  const pieces = splitTopLevel(header, ";");
+  if (pieces.length !== 3) {
+    return null;
+  }
+
+  const init = pieces[0].match(/(?:int|short|byte|long)\s+([A-Za-z_$][\w$]*)\s*=\s*([\s\S]+)/);
+  if (!init) {
+    return null;
+  }
+
+  const varName = init[1];
+  const start = parseNumber(init[2], constants);
+  const condition = pieces[1].match(new RegExp(`^\\s*${escapeRegExp(varName)}\\s*(<=|<|>=|>)\\s*([\\s\\S]+)$`));
+  if (!condition) {
+    return null;
+  }
+
+  const operator = condition[1];
+  const limit = parseNumber(condition[2], constants, new Map([[varName, start]]));
+  const update = pieces[2].trim();
+  let step;
+  const compoundUpdate = update.match(new RegExp(`^${escapeRegExp(varName)}\\s*([+-])=\\s*([\\s\\S]+)$`));
+  if (compoundUpdate) {
+    step = parseNumber(compoundUpdate[2], constants, new Map([[varName, start]]));
+    if (compoundUpdate[1] === "-") {
+      step = -step;
+    }
+  } else if (update === `${varName}++` || update === `++${varName}`) {
+    step = 1;
+  } else if (update === `${varName}--` || update === `--${varName}`) {
+    step = -1;
+  } else {
+    return null;
+  }
+
+  if (step === 0 || !Number.isInteger(start) || !Number.isInteger(limit) || !Number.isInteger(step)) {
+    return null;
+  }
+
+  const values = [];
+  for (let value = start; loopCondition(value, operator, limit); value += step) {
+    values.push(value);
+    if (values.length > 1000) {
+      throw new Error(`Refusing to expand for loop '${header}' beyond 1000 iterations`);
+    }
+  }
+
+  return { varName, values };
+}
+
+function innermostLoopContextFor(contexts, index) {
+  return contexts
+    .filter((context) => context.start < index && index < context.end)
+    .sort((left, right) => left.end - left.start - (right.end - right.start))[0] ?? null;
+}
+
+function loopCondition(value, operator, limit) {
+  if (operator === "<=") {
+    return value <= limit;
+  }
+  if (operator === "<") {
+    return value < limit;
+  }
+  if (operator === ">=") {
+    return value >= limit;
+  }
+  return value > limit;
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 async function directModelSet(sourcePath, options) {
@@ -801,13 +999,155 @@ function relativeTexturePath(texture, outputPath) {
   return path.relative(path.dirname(outputPath), texturePath).replaceAll("\\", "/");
 }
 
-function parseNumber(value) {
-  const normalized = value.trim().replace(/[fFdD]$/, "");
-  const number = Number(normalized);
-  if (!Number.isFinite(number)) {
-    throw new Error(`Expected numeric literal, got ${value}`);
+function parseNumber(value, constants = new Map(), locals = new Map()) {
+  const normalized = value.trim();
+  const literal = parseNumberLiteral(normalized);
+  if (literal !== null) {
+    return literal;
   }
-  return number;
+
+  const constant = constants.get(normalized);
+  if (typeof constant === "number") {
+    return constant;
+  }
+
+  const local = locals.get(normalized);
+  if (typeof local === "number") {
+    return local;
+  }
+
+  const expression = parseNumericExpression(normalized, constants, locals);
+  if (expression !== null) {
+    return expression;
+  }
+
+  throw new Error(`Expected numeric literal or resolvable numeric constant, got ${value}`);
+}
+
+function parseNumberLiteral(value) {
+  const normalized = value.trim().replace(/[fFdDlL]$/, "");
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(normalized)) {
+    return null;
+  }
+
+  const number = Number(normalized);
+  return Number.isFinite(number) ? number : null;
+}
+
+function parseNumericExpression(value, constants, locals) {
+  const tokens = tokenizeNumericExpression(value);
+  if (!tokens) {
+    return null;
+  }
+
+  let index = 0;
+
+  function parseExpression() {
+    let result = parseTerm();
+    while (matchSymbol("+") || matchSymbol("-")) {
+      const operator = tokens[index - 1].value;
+      const right = parseTerm();
+      result = operator === "+" ? result + right : result - right;
+    }
+    return result;
+  }
+
+  function parseTerm() {
+    let result = parseFactor();
+    while (matchSymbol("*") || matchSymbol("/")) {
+      const operator = tokens[index - 1].value;
+      const right = parseFactor();
+      result = operator === "*" ? result * right : result / right;
+    }
+    return result;
+  }
+
+  function parseFactor() {
+    if (matchSymbol("+")) {
+      return parseFactor();
+    }
+    if (matchSymbol("-")) {
+      return -parseFactor();
+    }
+    if (matchSymbol("(")) {
+      const result = parseExpression();
+      if (!matchSymbol(")")) {
+        throw new Error(`Expected ')' in numeric expression '${value}'`);
+      }
+      return result;
+    }
+
+    const token = tokens[index++];
+    if (!token) {
+      throw new Error(`Unexpected end of numeric expression '${value}'`);
+    }
+    if (token.type === "number") {
+      return token.value;
+    }
+    if (token.type === "identifier") {
+      if (locals.has(token.value)) {
+        return locals.get(token.value);
+      }
+      if (constants.has(token.value)) {
+        return constants.get(token.value);
+      }
+    }
+
+    throw new Error(`Unknown numeric token '${token.value}' in expression '${value}'`);
+  }
+
+  function matchSymbol(symbol) {
+    if (tokens[index]?.type === "symbol" && tokens[index].value === symbol) {
+      index++;
+      return true;
+    }
+    return false;
+  }
+
+  try {
+    const result = parseExpression();
+    return index === tokens.length && Number.isFinite(result) ? result : null;
+  } catch {
+    return null;
+  }
+}
+
+function tokenizeNumericExpression(value) {
+  const tokens = [];
+  let index = 0;
+
+  while (index < value.length) {
+    const rest = value.slice(index);
+    const whitespace = rest.match(/^\s+/);
+    if (whitespace) {
+      index += whitespace[0].length;
+      continue;
+    }
+
+    const numberMatch = rest.match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?[fFdDlL]?/);
+    if (numberMatch) {
+      tokens.push({ type: "number", value: parseNumberLiteral(numberMatch[0]) });
+      index += numberMatch[0].length;
+      continue;
+    }
+
+    const identifierMatch = rest.match(/^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*/);
+    if (identifierMatch) {
+      tokens.push({ type: "identifier", value: identifierMatch[0] });
+      index += identifierMatch[0].length;
+      continue;
+    }
+
+    if ("+-*/()".includes(value[index])) {
+      tokens.push({ type: "symbol", value: value[index] });
+      index++;
+      continue;
+    }
+
+    return null;
+  }
+
+  return tokens.length > 0 ? tokens : null;
 }
 
 function radToDeg(value) {

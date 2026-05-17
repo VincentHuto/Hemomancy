@@ -3,18 +3,17 @@ setlocal
 
 set "SCRIPT_DIR=%~dp0"
 set "REPO_ROOT=%SCRIPT_DIR%..\.."
-set "OUT_DIR=src/main/resources/assets/hemomancy/models/item/bbmodel"
 
 pushd "%REPO_ROOT%" >nul
 
 if "%~1"=="" (
   echo Drag one or more Model.java files onto this file to export BBModel files.
   echo.
-  echo Output folder:
-  echo   %OUT_DIR%
+  echo Output:
+  echo   Each .bbmodel is written beside the dropped .java file.
   echo.
   echo Advanced command-line use:
-  echo   node tools/model_export/java_model_to_bbmodel.mjs --source path/to/Model.java --out %OUT_DIR%
+  echo   node tools/model_export/java_model_to_bbmodel.mjs --source path/to/Model.java --out path/to/output/folder
   echo.
   pause
   popd >nul
@@ -35,6 +34,9 @@ if not exist "%~1" (
   goto next_file
 )
 
+set "OUT_DIR=%~dp1"
+if "%OUT_DIR:~-1%"=="\" set "OUT_DIR=%OUT_DIR:~0,-1%"
+echo Output folder: "%OUT_DIR%"
 node tools/model_export/java_model_to_bbmodel.mjs --source "%~1" --out "%OUT_DIR%"
 if errorlevel 1 (
   set "FAILED=1"
