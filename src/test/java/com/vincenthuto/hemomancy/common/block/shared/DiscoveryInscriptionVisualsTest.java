@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.shared;
 
+import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionVisuals;
+
 public final class DiscoveryInscriptionVisualsTest {
 	private DiscoveryInscriptionVisualsTest() {
 	}

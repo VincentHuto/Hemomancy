@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.summon.IKnownSummons;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

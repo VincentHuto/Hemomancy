@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.block.harbinger.EngramTextureCache;
-import com.vincenthuto.hemomancy.common.block.shared.DiscoveryInscriptionBlock;
-import com.vincenthuto.hemomancy.common.block.shared.DiscoveryInscriptionVisuals;
+import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBlock;
+import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionVisuals;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;

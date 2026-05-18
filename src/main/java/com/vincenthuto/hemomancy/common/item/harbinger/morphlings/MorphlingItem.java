@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;

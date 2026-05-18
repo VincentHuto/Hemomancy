@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;

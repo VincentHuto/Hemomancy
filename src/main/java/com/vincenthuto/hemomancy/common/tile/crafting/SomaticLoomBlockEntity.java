@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -473,7 +474,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 
 		// Award Memory Weaving milestone
 		if (player instanceof ServerPlayer serverPlayer) {
-			com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents
+			SkillPointGainEvents
 					.onMemoryWeavingCompleted(serverPlayer);
 		}
 

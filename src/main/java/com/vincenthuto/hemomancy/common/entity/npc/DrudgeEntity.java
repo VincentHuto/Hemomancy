@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.routing.DrudgeTenderSource;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DrudgeTenderSource;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

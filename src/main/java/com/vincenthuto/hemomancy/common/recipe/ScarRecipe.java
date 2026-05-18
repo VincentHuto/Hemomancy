@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;

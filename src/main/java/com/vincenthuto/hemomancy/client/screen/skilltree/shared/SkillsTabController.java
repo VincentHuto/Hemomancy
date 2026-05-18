@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
-import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;

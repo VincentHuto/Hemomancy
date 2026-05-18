@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IRenderScar;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IRenderScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hutoslib.math.Vector3;
 

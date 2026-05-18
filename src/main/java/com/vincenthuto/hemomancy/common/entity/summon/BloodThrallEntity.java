@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.routing.BloodRoutingHelper;
-import com.vincenthuto.hemomancy.common.routing.BloodRoutingSavedData;
-import com.vincenthuto.hemomancy.common.routing.DirectBloodLinkData;
-import com.vincenthuto.hemomancy.common.routing.ThrallCourierSource;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DirectBloodLinkData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.ThrallCourierSource;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;

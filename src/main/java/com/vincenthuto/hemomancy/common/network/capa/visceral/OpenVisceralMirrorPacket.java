@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

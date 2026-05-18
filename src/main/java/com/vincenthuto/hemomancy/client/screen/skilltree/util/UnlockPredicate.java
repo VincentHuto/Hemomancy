@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -56,7 +57,7 @@ public interface UnlockPredicate {
 	 * on login, respawn, and dimension change, so the check is reliable client-side.
 	 *
 	 * @param entryId a constant from
-	 *                {@link com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberEntryDefinitions}
+	 *                {@link LiberEntryDefinitions}
 	 */
 	static UnlockPredicate hasLiberEntry(ResourceLocation entryId) {
 		return player -> LiberKnowledgeHelper.hasEntry(player, entryId);

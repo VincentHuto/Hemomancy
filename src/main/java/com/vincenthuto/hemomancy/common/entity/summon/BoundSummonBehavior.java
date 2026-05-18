@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import com.vincenthuto.hemomancy.common.routing.BloodRoutingMode;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 

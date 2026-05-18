@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.KnownStillArtsServerPacket;
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArtRewardTable;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtRewardTable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

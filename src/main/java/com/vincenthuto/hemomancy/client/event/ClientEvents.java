@@ -67,7 +67,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.MnemonicReliquary
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScreen;
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
@@ -131,7 +131,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.ModelEvent.BakingCompleted;

@@ -1,20 +1,21 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgress;
-import com.vincenthuto.hemomancy.common.capability.player.summon.IKnownSummons;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumorVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;
 import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
@@ -322,7 +323,7 @@ public static IVisceralOrgans requireVisceralOrgans(Player player) {
 
 public static Optional<IScarsItemHandler> getScars(Player player) {
     IScarsItemHandler scars = player.getCapability(HemoCapabilityKeys.SCARS);
-    if (scars instanceof com.vincenthuto.hemomancy.common.capability.player.scar.ScarsContainer container) {
+    if (scars instanceof ScarsContainer container) {
         container.bindHolder(player);
     }
     return Optional.ofNullable(scars);

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 

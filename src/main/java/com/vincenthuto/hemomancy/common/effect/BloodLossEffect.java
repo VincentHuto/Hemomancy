@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -35,7 +36,7 @@ public class BloodLossEffect extends MobEffect {
 					Player playerIn = (Player) entity;
 
 					// ── Skill: Coagulation — chance to block this blood-drain tick ──
-					double coagChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getCoagulationChance(playerIn);
+					double coagChance = SkillPointHelper.getCoagulationChance(playerIn);
 					if (coagChance > 0 && playerIn.level().random.nextDouble() < coagChance) {
 						return true; // Blocked by Coagulation skill
 					}

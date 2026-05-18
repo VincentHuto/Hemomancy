@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.routing;
 
-import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingRules;
 
 public final class BloodRoutingRulesTest {
 

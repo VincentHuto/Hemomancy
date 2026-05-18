@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.FoundRecipe;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.RecipeKind;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

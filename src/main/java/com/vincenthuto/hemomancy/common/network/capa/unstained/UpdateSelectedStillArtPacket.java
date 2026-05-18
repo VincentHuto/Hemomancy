@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.unstained;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;

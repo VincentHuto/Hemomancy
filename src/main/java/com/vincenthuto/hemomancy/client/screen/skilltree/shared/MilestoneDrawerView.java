@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillProgressClientCache;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.HemoMilestone;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineVigilBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;

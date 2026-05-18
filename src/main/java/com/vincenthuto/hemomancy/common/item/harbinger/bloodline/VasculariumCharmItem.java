@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;

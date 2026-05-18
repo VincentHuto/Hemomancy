@@ -1,14 +1,15 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.scar.CrawlingChoirHandler;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
@@ -220,7 +221,7 @@ public class BloodManipulation  {
 		if (cooldownTicks > 0) {
 			// ── Skill: Blood Flow — reduce cooldown duration ──
 			long effectiveCooldown = (long) (cooldownTicks
-					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier(player));
+					* SkillPointHelper.getBloodFlowMultiplier(player));
 
 			// ── ManipLevel — per-use mastery further reduces cooldown ──
 			double levelCooldownMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
@@ -308,7 +309,7 @@ public class BloodManipulation  {
 
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
-				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier(player) * costMultiplier;
+				double effectiveCost = cost * SkillPointHelper.getEfficiencyMultiplier(player) * costMultiplier;
 
 				// ── ManipLevel — per-use mastery reduces cost ──
 				double levelCostMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
@@ -331,7 +332,7 @@ public class BloodManipulation  {
 				if (strongest != null && strongest.equals(tend)) {
 					// Dynamic Use returns e.g. 1.2 at level 2 — invert to
 					// get a discount: cost / 1.2 ≈ 17% discount.
-					effectiveCost /= com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getDynamicUseMultiplier(player);
+					effectiveCost /= SkillPointHelper.getDynamicUseMultiplier(player);
 				}
 
 				// MnA Combo System: Arcane Resonance reduces blood cost

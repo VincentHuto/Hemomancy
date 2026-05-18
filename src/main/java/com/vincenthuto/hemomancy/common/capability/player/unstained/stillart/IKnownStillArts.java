@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained.stillart;
 
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 
 import java.util.List;
 

@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.network.morphling;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;

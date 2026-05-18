@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoDefinition;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinition;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;

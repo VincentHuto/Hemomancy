@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.summon;
 
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.summon.KnownSummonEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumDoctrineTag;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import net.minecraft.ChatFormatting;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

@@ -16,8 +16,8 @@ import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodBasinBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodPylonBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.BloodTrialAltarBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock;
-import com.vincenthuto.hemomancy.common.block.shared.DiscoveryInscriptionBlock;
-import com.vincenthuto.hemomancy.common.block.shared.DictationTableBlock;
+import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBlock;
+import com.vincenthuto.hemomancy.common.block.inscription.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
@@ -323,10 +323,6 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
 			() -> new CrimsonFlameBlock());
 
-	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
-			MnemonicReliquaryBlock::new);
-	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
-			DictationTableBlock::new);
 
 	// Plants
 
@@ -562,6 +558,10 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
 			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
+			MnemonicReliquaryBlock::new);
+	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
+			DictationTableBlock::new);
 	public static final DeferredHolder<Block, Block> puppeteers_spindle = MODELEDBLOCKS
 			.register("puppeteers_spindle", () -> new PuppeteersSpindleBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.WOOD).noOcclusion()));

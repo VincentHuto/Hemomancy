@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IRenderScar;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IRenderScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
 
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;

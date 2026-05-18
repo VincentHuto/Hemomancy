@@ -7,7 +7,7 @@ import com.mna.api.events.SpellCastEvent;
 import com.mna.api.spells.base.ISpellDefinition;
 import com.mna.capabilities.playerdata.progression.PlayerProgressionProvider;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
 import net.minecraft.world.effect.MobEffectInstance;

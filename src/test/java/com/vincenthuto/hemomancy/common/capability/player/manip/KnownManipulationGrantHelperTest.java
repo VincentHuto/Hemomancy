@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 

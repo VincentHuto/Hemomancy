@@ -32,33 +32,26 @@ public class MnemonicWhaleModel extends EntityModel<MnemonicWhaleEntity> {
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition root = mesh.getRoot();
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-						.texOffs(0, 0).addBox(-10.0F, -6.0F, -28.0F, MnemonicWhaleTuning.MODEL_HEAD_WIDTH_UNITS, 12.0F, 18.0F)
-						.texOffs(0, 32).addBox(-8.0F, -5.0F, -10.0F, MnemonicWhaleTuning.MODEL_MID_BODY_WIDTH_UNITS, 10.0F, 28.0F),
-				PartPose.offset(0.0F, 18.0F, 0.0F));
+		PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 17).addBox(-10.0F, -6.0F, -28.0F, 20.0F, 12.0F, 18.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 0).addBox(-8.0F, -5.0F, -10.0F, 16.0F, 10.0F, 28.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 18.0F, -8.0F));
 
-		PartDefinition rearBody = body.addOrReplaceChild("rear_body", CubeListBuilder.create()
-						.texOffs(0, 70).addBox(-7.0F, -4.5F, 0.0F, MnemonicWhaleTuning.MODEL_REAR_BODY_WIDTH_UNITS, 9.0F, 18.0F),
-				PartPose.offset(0.0F, 0.0F, 18.0F));
-		rearBody.addOrReplaceChild("tail", CubeListBuilder.create()
-						.texOffs(52, 70).addBox(-4.0F, -2.5F, 0.0F, 8.0F, 5.0F, 18.0F)
-						.texOffs(52, 94).addBox(-11.0F, -1.0F, 15.0F, 22.0F, 2.0F, 7.0F),
-				PartPose.offset(0.0F, 0.0F, 18.0F));
-		rearBody.addOrReplaceChild("dorsal", CubeListBuilder.create()
-						.texOffs(72, 0).addBox(-1.0F, -6.0F, -2.0F, 2.0F, 6.0F, 7.0F),
-				PartPose.offset(0.0F, -4.5F, 4.0F));
-		body.addOrReplaceChild("left_fin", CubeListBuilder.create()
-						.texOffs(0, 100).addBox(0.0F, 0.0F, -5.0F, 12.0F, 1.0F, 10.0F),
-				PartPose.offset(8.0F, 2.0F, -8.0F));
-		body.addOrReplaceChild("right_fin", CubeListBuilder.create()
-						.texOffs(0, 100).mirror().addBox(-12.0F, 0.0F, -5.0F, 12.0F, 1.0F, 10.0F).mirror(false),
-				PartPose.offset(-8.0F, 2.0F, -8.0F));
+		PartDefinition rear_body = body.addOrReplaceChild("rear_body", CubeListBuilder.create().texOffs(0, 70).addBox(-7.0F, -4.5F, -0.2F, 14.0F, 9.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 18.0F));
 
-		return LayerDefinition.create(mesh, 128, 128);
+		PartDefinition tail = rear_body.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(0, 48).addBox(-4.0F, -2.5F, 0.0F, 8.0F, 5.0F, 18.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 48).addBox(-11.0F, -1.0F, 15.0F, 22.0F, 2.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 18.0F));
+
+		PartDefinition dorsal = rear_body.addOrReplaceChild("dorsal", CubeListBuilder.create().texOffs(0, 48).addBox(-1.0F, -6.0F, -2.0F, 2.0F, 6.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.5F, 4.0F));
+
+		PartDefinition left_fin = body.addOrReplaceChild("left_fin", CubeListBuilder.create().texOffs(0, 48).addBox(-12.0F, 0.0F, -5.0F, 12.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, 2.0F, -8.0F));
+
+		PartDefinition right_fin = body.addOrReplaceChild("right_fin", CubeListBuilder.create().texOffs(0, 48).mirror().addBox(0.0F, 0.0F, -5.0F, 12.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, 2.0F, -8.0F));
+
+		return LayerDefinition.create(meshdefinition, 128, 128);
 	}
+
 
 	@Override
 	public void setupAnim(MnemonicWhaleEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,

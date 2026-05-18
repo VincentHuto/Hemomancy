@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.VisceralOrgansEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +29,7 @@ import java.util.List;
  *       non-player inventory (chest, hopper, etc.) the item dissolves
  *       — it cannot persist outside a living host.</li>
  *   <li>Organ modification state is ultimately saved on the player's
- *       {@link com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans}
+ *       {@link IVisceralOrgans}
  *       capability, not on the item.</li>
  * </ul>
  */
@@ -93,7 +95,7 @@ public class OrganEchoItem extends Item {
 	 * Returns {@code false} to signal that this item should not normally
 	 * be moved into bundle-like containers.
 	 * The actual dissolve-on-chest enforcement happens in
-	 * {@link com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansEvents}.
+	 * {@link VisceralOrgansEvents}.
 	 */
 	@Override
 	public boolean canFitInsideContainerItems() {

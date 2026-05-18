@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 
 public enum EnumSaintType {
 

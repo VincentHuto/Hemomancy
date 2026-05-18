@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberKnowledgeHelper;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

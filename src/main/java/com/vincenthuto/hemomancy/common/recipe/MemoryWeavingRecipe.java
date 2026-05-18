@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.routing.BloodRoutingHelper;
-import com.vincenthuto.hemomancy.common.routing.BloodRoutingSavedData;
-import com.vincenthuto.hemomancy.common.routing.DirectBloodLinkData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DirectBloodLinkData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.unstained;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

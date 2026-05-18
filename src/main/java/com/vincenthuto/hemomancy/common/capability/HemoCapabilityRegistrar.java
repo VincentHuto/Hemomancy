@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.volume.ItemStackBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.ItemStackBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.routing;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.SutureLinkClientData;
-import com.vincenthuto.hemomancy.common.routing.BloodRoutingMode;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

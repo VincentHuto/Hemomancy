@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.client.screen.radial.TextRadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.UpdateSelectedStillArtPacket;
-import com.vincenthuto.hemomancy.common.unstained.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

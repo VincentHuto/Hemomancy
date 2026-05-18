@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtractPacket;

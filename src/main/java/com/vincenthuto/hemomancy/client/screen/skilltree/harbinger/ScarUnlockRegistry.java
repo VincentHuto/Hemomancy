@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.UnlockPredicate;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;

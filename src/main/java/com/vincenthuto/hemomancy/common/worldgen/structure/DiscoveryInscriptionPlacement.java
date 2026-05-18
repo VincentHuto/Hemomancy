@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
-import com.vincenthuto.hemomancy.common.block.shared.DiscoveryInscriptionBlock;
+import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBlock;
 import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

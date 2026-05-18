@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

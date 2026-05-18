@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoBookFilter;
 import com.vincenthuto.hutoslib.client.book.BookReadTracker;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;

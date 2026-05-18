@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.knowledge.discovery.MemoBookFilter;
-import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoBookFilter;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
@@ -683,21 +683,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> immature_fungal_scar = BASEITEMS.register("immature_fungal_scar",
             () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1)));
 
-    public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
-                    .withModifier(Attributes.MAX_HEALTH, "scar_heart_hp", 2.0,
-                            AttributeModifier.Operation.ADD_VALUE)
-                    .withMaxBloodModifier(-100.0));
-
     // Spores
-//	public static final DeferredHolder<Item, Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
-//	public static final DeferredHolder<Item, Item> fervent_spores = BASEITEMS.register("fervent_spores",
-//	public static final DeferredHolder<Item, Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
-//	public static final DeferredHolder<Item, Item> umbral_spores = BASEITEMS.register("umbral_spores",
-//	public static final DeferredHolder<Item, Item> frigid_spores = BASEITEMS.register("frigid_spores",
-//	public static final DeferredHolder<Item, Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
-//	public static final DeferredHolder<Item, Item> ferric_spores = BASEITEMS.register("ferric_spores",
-
     public static final DeferredHolder<Item, Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
     public static final DeferredHolder<Item, Item> fervent_spores = BASEITEMS.register("fervent_spores",
@@ -719,6 +705,11 @@ public class ItemInit {
     // Each scar has focused upsides and real downsides; magnitude escalates with tier.
 
     // ── ANIMUS — Vitality / Healing ──
+    public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
+            () -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
+                    .withModifier(Attributes.MAX_HEALTH, "scar_heart_hp", 2.0,
+                            AttributeModifier.Operation.ADD_VALUE)
+                    .withMaxBloodModifier(-100.0));
     public static final DeferredHolder<Item, Item> scar_pattern_heart = BASEITEMS.register("scar_pattern_heart",
             () -> new ItemScarPattern(new Item.Properties(), scar_heart, "scar_heart"));
     public static final DeferredHolder<Item, Item> scar_marrow = BASEITEMS.register("scar_marrow",

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
-import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;

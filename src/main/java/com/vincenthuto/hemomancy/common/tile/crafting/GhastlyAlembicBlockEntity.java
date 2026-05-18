@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.crafting;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBudBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
