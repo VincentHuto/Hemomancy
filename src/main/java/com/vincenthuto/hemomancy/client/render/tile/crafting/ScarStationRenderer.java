@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
-//GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.ScarStationModel;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -12,13 +8,9 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.FaceInfo;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -26,12 +18,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_scar_station.png");
-
-	private final ScarStationModel model;
 
 	public ScarStationRenderer(BlockEntityRendererProvider.Context context) {
-		this.model = new ScarStationModel(context.bakeLayer(ScarStationModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -44,8 +32,6 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
 		// ── Render the chisel station entity model ──
-		renderStationModel(matrixStackIn, bufferIn, te, combinedLightIn, combinedOverlayIn);
-
 		// ── Render items on the station ──
 		Minecraft.getInstance().getTextureManager().bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
@@ -216,40 +202,6 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 					matrixStackIn, bufferIn, te.getLevel(), 0);
 		}
 		matrixStackIn.popPose();
-	}
-
-	/**
-	 * Renders the chisel station entity model. The model is authored Y-down
-	 * (Blockbench convention) so we flip 180° on X. We rotate around Y to
-	 * match the block's FACING direction.
-	 */
-	private void renderStationModel(PoseStack poseStack, MultiBufferSource bufferIn,
-									ScarStationBlockEntity te, int combinedLightIn, int combinedOverlayIn) {
-		poseStack.pushPose();
-
-		// Centre on the block
-		poseStack.translate(0.5D, 1.5D, 0.5D);
-
-		// Flip model upside-down (Blockbench Y-down → world Y-up)
-		poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
-
-		// Rotate the model based on the block's facing direction
-		Direction facing = te.getBlockState().getValue(FACING);
-		float yRot = switch (facing) {
-			case NORTH -> 0f;
-			case EAST -> 90f;
-			case SOUTH -> 180f;
-			case WEST -> 270f;
-			default -> 0f;
-		};
-
-
-		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
-
-		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
-
-		poseStack.popPose();
 	}
 
 }

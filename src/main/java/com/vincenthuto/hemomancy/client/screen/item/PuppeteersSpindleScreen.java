@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
@@ -29,16 +28,27 @@ import java.util.List;
 import java.util.Random;
 
 public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersSpindleMenu> {
-	private static final int GUI_WIDTH = 214;
-	private static final int GUI_HEIGHT = 194;
-	private static final int CRAFT_AREA_HEIGHT = 106;
-	private static final int VEIN_COUNT = 18;
+	private static final int GUI_WIDTH = 276;
+	private static final int GUI_HEIGHT = 232;
+	private static final int CRAFT_AREA_HEIGHT = 136;
+	private static final int VEIN_COUNT = 10;
+	private static final int INPUT_X = 10;
+	private static final int PATTERN_X = 110;
+	private static final int WORK_X = 224;
+	private static final int PANEL_Y = 28;
+	private static final int INPUT_W = 92;
+	private static final int PATTERN_W = 104;
+	private static final int WORK_W = 42;
+	private static final int PANEL_H = 102;
+	private static final int INVENTORY_PANEL_W = 172;
 
 	private static final int SLOT_BG = 0xFF1A0808;
 	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
 	private static final int SLOT_BORDER_LIGHT = 0xFF4A151B;
 	private static final int BORDER_OUTER = 0xFF3A080D;
 	private static final int BORDER_INNER = 0xFF220509;
+	private static final int PANEL_BG = 0xDD130507;
+	private static final int PANEL_EDGE = 0xFF43131A;
 	private static final int TEXT_MUTED = 0xFFB98F8C;
 	private static final int TEXT_RED = 0xFFFFB6AA;
 	private static final int TEXT_LOCKED = 0xFF65565A;
@@ -52,7 +62,8 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		super(menu, inv, title);
 		this.imageWidth = GUI_WIDTH;
 		this.imageHeight = GUI_HEIGHT;
-		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 6;
+		this.inventoryLabelX = 57;
+		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
 	}
 
 	@Override
@@ -98,12 +109,12 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 	}
 
 	private void addActionButtons() {
-		int x = leftPos + 145;
-		int y = topPos + 68;
-		addRenderableWidget(new SpindleButton(x, y, 54, 16,
+		int x = leftPos + WORK_X + 5;
+		int y = topPos + 52;
+		addRenderableWidget(new SpindleButton(x, y, WORK_W - 10, 16,
 				Component.translatable("screen.hemomancy.puppeteers_spindle.bind"),
 				btn -> send(PacketPuppeteersSpindleAction.Action.BIND, selectedSummonName())));
-		addRenderableWidget(new SpindleButton(x, y + 20, 54, 16,
+		addRenderableWidget(new SpindleButton(x, y + 22, WORK_W - 10, 16,
 				Component.translatable("screen.hemomancy.puppeteers_spindle.call"),
 				btn -> send(PacketPuppeteersSpindleAction.Action.CALL_OR_RECALL, selectedSummonName())));
 	}
@@ -143,11 +154,14 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		int gy = this.topPos;
 
 		renderVeinBackground(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
+		drawPanel(graphics, gx + INPUT_X, gy + PANEL_Y, INPUT_W, PANEL_H);
+		drawPanel(graphics, gx + PATTERN_X, gy + PANEL_Y, PATTERN_W, PANEL_H);
+		drawPanel(graphics, gx + WORK_X, gy + PANEL_Y, WORK_W, PANEL_H);
 		drawBorder(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
-		renderInventoryBackground(graphics, gx, gy + CRAFT_AREA_HEIGHT, imageWidth, imageHeight - CRAFT_AREA_HEIGHT);
-
-		graphics.fill(gx, gy + CRAFT_AREA_HEIGHT, gx + imageWidth, gy + CRAFT_AREA_HEIGHT + 1, BORDER_OUTER);
-		graphics.fill(gx, gy + CRAFT_AREA_HEIGHT + 1, gx + imageWidth, gy + CRAFT_AREA_HEIGHT + 2, BORDER_INNER);
+		int invPanelX = gx + inventoryLabelX - 5;
+		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
+		renderInventoryBackground(graphics, invPanelX, invPanelY,
+				INVENTORY_PANEL_W, imageHeight - (CRAFT_AREA_HEIGHT + 2) - 2);
 
 		for (Slot slot : menu.slots) {
 			drawSlotBackground(graphics, gx + slot.x, gy + slot.y, slot.index);
@@ -160,34 +174,32 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
 		graphics.drawString(font, title, titleLabelX, 8, 0xFFFFD7D0, false);
-		graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.crossbar"),
-				30, 26, TEXT_MUTED, false);
-		graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.thread_slot"),
-				119, 26, TEXT_MUTED, false);
-		graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.patterns"),
-				12, 64, TEXT_MUTED, false);
-		graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.work"),
-				145, 58, TEXT_MUTED, false);
+		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.inputs"),
+				INPUT_X + 7, PANEL_Y + 8, INPUT_W - 14, TEXT_MUTED);
+		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.crossbar"),
+				INPUT_X + 35, 50, INPUT_W - 40, TEXT_MUTED);
+		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.thread_slot"),
+				INPUT_X + 35, 74, INPUT_W - 40, TEXT_MUTED);
+		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.patterns"),
+				PATTERN_X + 7, PANEL_Y + 8, PATTERN_W - 14, TEXT_MUTED);
+		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.work"),
+				WORK_X + 7, PANEL_Y + 8, WORK_W - 14, TEXT_MUTED);
 		graphics.drawString(font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
 				0xFF452126, false);
-
-		if (!(menu.getCrossbarStack().getItem() instanceof MarionetteCrossbarItem)) {
-			graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.insert_crossbar"),
-					64, 47, TEXT_LOCKED, false);
-		}
 	}
 
 	private void renderMeters(GuiGraphics graphics, int gx, int gy) {
-		drawMeter(graphics, gx + 10, gy + 86, 58, 7,
-				menu.getScaledCrossbarThreadWidth(56), 0xFFB51B25);
-		drawMeter(graphics, gx + 78, gy + 86, 58, 7,
-				menu.getScaledThreadBufferWidth(56), 0xFFC0444C);
-		graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.crossbar_thread",
-						menu.getCrossbarThread(), PuppeteerSummonRules.THREAD_CAPACITY),
-				gx + 10, gy + 96, TEXT_MUTED, false);
-		graphics.drawString(font, Component.translatable("screen.hemomancy.puppeteers_spindle.buffer",
-						menu.getThreadBuffer(), PuppeteersSpindleBlockEntity.THREAD_BUFFER_CAPACITY),
-				gx + 78, gy + 96, TEXT_MUTED, false);
+		int x = gx + INPUT_X + 8;
+		int w = INPUT_W - 16;
+		drawTrimmedString(graphics, "Bar " + menu.getCrossbarThread() + "/" + PuppeteerSummonRules.THREAD_CAPACITY,
+				x, gy + 96, w, TEXT_MUTED);
+		drawMeter(graphics, x, gy + 107, w, 6,
+				menu.getScaledCrossbarThreadWidth(w - 2), 0xFFB51B25);
+		drawTrimmedString(graphics, "Thread " + menu.getThreadBuffer() + "/"
+						+ PuppeteersSpindleBlockEntity.THREAD_BUFFER_CAPACITY,
+				x, gy + 114, w, TEXT_MUTED);
+		drawMeter(graphics, x, gy + 125, w, 5,
+				menu.getScaledThreadBufferWidth(w - 2), 0xFFC0444C);
 	}
 
 	private void drawMeter(GuiGraphics graphics, int x, int y, int w, int h, int fill, int color) {
@@ -199,9 +211,9 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 	private void renderSummonRows(GuiGraphics graphics, int gx, int gy, int mouseX, int mouseY) {
 		List<PuppeteerSummonDefinition> definitions = PuppeteerSummonDefinitions.all();
-		int x = gx + 10;
-		int y = gy + 70;
-		int w = 124;
+		int x = gx + PATTERN_X + 6;
+		int y = gy + 48;
+		int w = PATTERN_W - 12;
 		for (int i = 0; i < definitions.size(); i++) {
 			PuppeteerSummonDefinition definition = definitions.get(i);
 			boolean known = knownSummons.contains(definition.name());
@@ -220,8 +232,10 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 			boolean degreeOk = playerDegree() >= definition.requiredDegree();
 			boolean recipeUnlocked = hasTrialRecipe(definition);
 			int color = known ? TEXT_RED : (degreeOk ? 0xFF9C6D76 : TEXT_LOCKED);
-			graphics.drawString(font, name, x + 5, rowY + 4, color, false);
 			String status = statusLabel(definition, known, degreeOk, recipeUnlocked);
+			int statusWidth = font.width(status);
+			String label = trimToWidth(name.getString(), w - statusWidth - 14);
+			graphics.drawString(font, label, x + 5, rowY + 4, color, false);
 			graphics.drawString(font, status, x + w - font.width(status) - 5, rowY + 4,
 					known ? 0xFFB4A0A2 : 0xFF766166, false);
 		}
@@ -256,9 +270,9 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 	}
 
 	private int summonRowAt(double mouseX, double mouseY) {
-		int x = leftPos + 10;
-		int y = topPos + 70;
-		int w = 124;
+		int x = leftPos + PATTERN_X + 6;
+		int y = topPos + 48;
+		int w = PATTERN_W - 12;
 		List<PuppeteerSummonDefinition> definitions = PuppeteerSummonDefinitions.all();
 		for (int i = 0; i < definitions.size(); i++) {
 			int rowY = y + i * 18;
@@ -316,15 +330,49 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		}
 	}
 
+	private void drawPanel(GuiGraphics graphics, int x, int y, int w, int h) {
+		graphics.fill(x, y, x + w, y + h, PANEL_BG);
+		graphics.fill(x, y, x + w, y + 1, PANEL_EDGE);
+		graphics.fill(x, y + h - 1, x + w, y + h, 0xFF170407);
+		graphics.fill(x, y, x + 1, y + h, 0xFF0D0303);
+		graphics.fill(x + w - 1, y, x + w, y + h, PANEL_EDGE);
+	}
+
+	private String trimToWidth(String text, int maxWidth) {
+		if (font.width(text) <= maxWidth) {
+			return text;
+		}
+		String ellipsis = "...";
+		int width = Math.max(0, maxWidth - font.width(ellipsis));
+		return font.plainSubstrByWidth(text, width) + ellipsis;
+	}
+
+	private void drawTrimmedString(GuiGraphics graphics, Component text, int x, int y, int maxWidth, int color) {
+		drawTrimmedString(graphics, text.getString(), x, y, maxWidth, color);
+	}
+
+	private void drawTrimmedString(GuiGraphics graphics, String text, int x, int y, int maxWidth, int color) {
+		graphics.drawString(font, trimToWidth(text, maxWidth), x, y, color, false);
+	}
+
 	private void renderInventoryBackground(GuiGraphics graphics, int x, int y, int w, int h) {
 		for (int row = 0; row < h; row++) {
-			float t = (float) row / h;
-			int red = (int) (54 + 70 * t);
-			int green = (int) (10 + 22 * t);
-			int blue = (int) (12 + 24 * t);
+			float t = (float) row / Math.max(h, 1);
+			int red = (int) (26 + 44 * t);
+			int green = (int) (4 + 12 * t);
+			int blue = (int) (6 + 14 * t);
 			graphics.fill(x, y + row, x + w, y + row + 1,
-					(0xFF << 24) | (red << 16) | (green << 8) | blue);
+					(0xEE << 24) | (red << 16) | (green << 8) | blue);
 		}
+		drawInventoryBorder(graphics, x, y, w, h);
+	}
+
+	private void drawInventoryBorder(GuiGraphics graphics, int x, int y, int w, int h) {
+		graphics.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		graphics.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		graphics.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		graphics.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+		graphics.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
 	}
 
 	private void drawBorder(GuiGraphics graphics, int x, int y, int w, int h) {
@@ -352,10 +400,10 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		}
 
 		Random speckles = new Random(24680L);
-		for (int i = 0; i < 62; i++) {
+		for (int i = 0; i < 40; i++) {
 			int sx = gx + speckles.nextInt(gw);
 			int sy = gy + speckles.nextInt(gh);
-			int alpha = 14 + speckles.nextInt(22);
+			int alpha = 10 + speckles.nextInt(16);
 			graphics.fill(sx, sy, sx + 1, sy + 1, (alpha << 24) | 0x002A0508);
 		}
 		RenderSystem.disableBlend();
@@ -379,8 +427,8 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 				continue;
 			}
 			float fade = step < 8 ? step / 8.0f : (step > length - 8 ? (length - step) / 8.0f : 1.0f);
-			int alpha = (int) Mth.clamp(fade * (100 + 70 * p[8]), 12, 170);
-			int red = (int) (55 + 58 * p[8]);
+			int alpha = (int) Mth.clamp(fade * (42 + 48 * p[8]), 8, 90);
+			int red = (int) (45 + 46 * p[8]);
 			graphics.fill(x, y, x + thickness, y + thickness, (alpha << 24) | (red << 16) | 0x000708);
 		}
 	}
@@ -392,13 +440,15 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 		@Override
 		protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+			Minecraft minecraft = Minecraft.getInstance();
 			int bg = isHoveredOrFocused() ? 0xFFE0444E : 0xFF54121A;
 			int edge = isHoveredOrFocused() ? 0xFFFFA0A4 : 0xFF8C2530;
 			graphics.fill(getX(), getY(), getX() + width, getY() + height, 0xFF110407);
 			graphics.fill(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1, bg);
 			graphics.fill(getX(), getY(), getX() + width, getY() + 1, edge);
 			graphics.fill(getX(), getY() + height - 1, getX() + width, getY() + height, 0xFF21060A);
-			graphics.drawCenteredString(Minecraft.getInstance().font, getMessage(),
+			String label = minecraft.font.plainSubstrByWidth(getMessage().getString(), Math.max(0, width - 6));
+			graphics.drawCenteredString(minecraft.font, label,
 					getX() + width / 2, getY() + (height - 8) / 2, 0xFFFFE2DC);
 		}
 

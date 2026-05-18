@@ -45,7 +45,7 @@ public class PuppeteersSpindleMenu extends AbstractContainerMenu {
 		checkContainerSize(spindle, SLOT_COUNT);
 		checkContainerDataCount(data, DATA_COUNT);
 
-		this.addSlot(new Slot(spindle, CROSSBAR_SLOT, 44, 38) {
+		this.addSlot(new Slot(spindle, CROSSBAR_SLOT, 22, 46) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return stack.getItem() instanceof MarionetteCrossbarItem;
@@ -57,7 +57,7 @@ public class PuppeteersSpindleMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new Slot(spindle, THREAD_SLOT, 134, 38) {
+		this.addSlot(new Slot(spindle, THREAD_SLOT, 22, 70) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return stack.is(ItemInit.puppeteering_thread.get());
@@ -67,12 +67,12 @@ public class PuppeteersSpindleMenu extends AbstractContainerMenu {
 		for (int row = 0; row < 3; ++row) {
 			for (int col = 0; col < 9; ++col) {
 				this.addSlot(new Slot(playerInventory, col + row * 9 + 9,
-						8 + col * 18, 112 + row * 18));
+						57 + col * 18, 154 + row * 18));
 			}
 		}
 
 		for (int col = 0; col < 9; ++col) {
-			this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 170));
+			this.addSlot(new Slot(playerInventory, col, 57 + col * 18, 212));
 		}
 
 		this.addDataSlots(data);

@@ -1,20 +1,208 @@
 {
-  "parent": "minecraft:block/block",
-  "textures": {
-    "particle": "minecraft:block/copper_block"
-  },
-  "elements": [
-    {
-      "from": [2, 0, 2],
-      "to": [14, 3, 14],
-      "faces": {
-        "down": { "texture": "#particle" },
-        "up": { "texture": "#particle" },
-        "north": { "texture": "#particle" },
-        "south": { "texture": "#particle" },
-        "west": { "texture": "#particle" },
-        "east": { "texture": "#particle" }
-      }
-    }
-  ]
+	"format_version": "1.21.11",
+	"credit": "Mechanical conversion from MycelialLanternModel Java addBox definitions scaled to vanilla block-model element bounds",
+	"parent": "minecraft:block/block",
+	"render_type": "translucent",
+	"textures": {
+		"particle": "hemomancy:block/model_mycelial_lantern",
+		"model": "hemomancy:block/model_mycelial_lantern"
+	},
+	"elements": [
+		{
+			"name": "base_0",
+			"from": [1.21212, 0, 1.21212],
+			"to": [14.78788, 2.90909, 14.78788],
+			"faces": {
+				"north": {"uv": [1.75, 1.75, 3.5, 2.125], "texture": "#model"},
+				"east": {"uv": [3.5, 1.75, 5.25, 2.125], "texture": "#model"},
+				"south": {"uv": [5.25, 1.75, 7, 2.125], "texture": "#model"},
+				"west": {"uv": [0, 1.75, 1.75, 2.125], "texture": "#model"},
+				"up": {"uv": [3.5, 0, 5.25, 1.75], "texture": "#model"},
+				"down": {"uv": [1.75, 0, 3.5, 1.75], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_1",
+			"from": [3.15152, 2.90909, 3.15152],
+			"to": [12.84848, 5.81818, 12.84848],
+			"faces": {
+				"north": {"uv": [1.25, 3.375, 2.5, 3.75], "texture": "#model"},
+				"east": {"uv": [2.5, 3.375, 3.75, 3.75], "texture": "#model"},
+				"south": {"uv": [3.75, 3.375, 5, 3.75], "texture": "#model"},
+				"west": {"uv": [0, 3.375, 1.25, 3.75], "texture": "#model"},
+				"up": {"uv": [2.5, 2.125, 3.75, 3.375], "texture": "#model"},
+				"down": {"uv": [1.25, 2.125, 2.5, 3.375], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_2",
+			"from": [5.09091, 5.81818, 5.09091],
+			"to": [10.90909, 7.75758, 10.90909],
+			"faces": {
+				"north": {"uv": [0.75, 4.5, 1.5, 4.75], "texture": "#model"},
+				"east": {"uv": [1.5, 4.5, 2.25, 4.75], "texture": "#model"},
+				"south": {"uv": [2.25, 4.5, 3, 4.75], "texture": "#model"},
+				"west": {"uv": [0, 4.5, 0.75, 4.75], "texture": "#model"},
+				"up": {"uv": [1.5, 3.75, 2.25, 4.5], "texture": "#model"},
+				"down": {"uv": [0.75, 3.75, 1.5, 4.5], "texture": "#model"}
+			}
+		},
+		{
+			"name": "glass_chamber",
+			"from": [3.15152, 7.75758, 3.15152],
+			"to": [12.84848, 21.33333, 12.84848],
+			"faces": {
+				"north": {"uv": [8, 7, 9.25, 8.75], "texture": "#model"},
+				"east": {"uv": [9.25, 7, 10.5, 8.75], "texture": "#model"},
+				"south": {"uv": [10.5, 7, 11.75, 8.75], "texture": "#model"},
+				"west": {"uv": [6.75, 7, 8, 8.75], "texture": "#model"},
+				"up": {"uv": [9.25, 5.75, 10.5, 7], "texture": "#model"},
+				"down": {"uv": [8, 5.75, 9.25, 7], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_0",
+			"from": [2.18182, 21.33333, 2.18182],
+			"to": [13.81818, 24.24242, 13.81818],
+			"faces": {
+				"north": {"uv": [1.5, 6.375, 3, 6.75], "texture": "#model"},
+				"east": {"uv": [3, 6.375, 4.5, 6.75], "texture": "#model"},
+				"south": {"uv": [4.5, 6.375, 6, 6.75], "texture": "#model"},
+				"west": {"uv": [0, 6.375, 1.5, 6.75], "texture": "#model"},
+				"up": {"uv": [3, 4.875, 4.5, 6.375], "texture": "#model"},
+				"down": {"uv": [1.5, 4.875, 3, 6.375], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_1",
+			"from": [5.09091, 24.24242, 5.09091],
+			"to": [10.90909, 28.12121, 10.90909],
+			"faces": {
+				"north": {"uv": [6.75, 4.5, 7.5, 5], "texture": "#model"},
+				"east": {"uv": [7.5, 4.5, 8.25, 5], "texture": "#model"},
+				"south": {"uv": [8.25, 4.5, 9, 5], "texture": "#model"},
+				"west": {"uv": [6, 4.5, 6.75, 5], "texture": "#model"},
+				"up": {"uv": [7.5, 3.75, 8.25, 4.5], "texture": "#model"},
+				"down": {"uv": [6.75, 3.75, 7.5, 4.5], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_2",
+			"from": [6.06061, 28.12121, 6.06061],
+			"to": [9.93939, 32, 9.93939],
+			"faces": {
+				"north": {"uv": [0.5, 7.375, 1, 7.875], "texture": "#model"},
+				"east": {"uv": [1, 7.375, 1.5, 7.875], "texture": "#model"},
+				"south": {"uv": [1.5, 7.375, 2, 7.875], "texture": "#model"},
+				"west": {"uv": [0, 7.375, 0.5, 7.875], "texture": "#model"},
+				"up": {"uv": [1, 6.875, 1.5, 7.375], "texture": "#model"},
+				"down": {"uv": [0.5, 6.875, 1, 7.375], "texture": "#model"}
+			}
+		},
+		{
+			"name": "support_northeast",
+			"from": [11.87879, 5.81818, 11.87879],
+			"to": [13.81818, 21.33333, 13.81818],
+			"faces": {
+				"north": {"uv": [10.25, 0.25, 10.5, 2.25], "texture": "#model"},
+				"east": {"uv": [10.5, 0.25, 10.75, 2.25], "texture": "#model"},
+				"south": {"uv": [10.75, 0.25, 11, 2.25], "texture": "#model"},
+				"west": {"uv": [10, 0.25, 10.25, 2.25], "texture": "#model"},
+				"up": {"uv": [10.5, 0, 10.75, 0.25], "texture": "#model"},
+				"down": {"uv": [10.25, 0, 10.5, 0.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "support_northwest",
+			"from": [2.18182, 5.81818, 11.87879],
+			"to": [4.12121, 21.33333, 13.81818],
+			"faces": {
+				"north": {"uv": [11.25, 0.25, 11.5, 2.25], "texture": "#model"},
+				"east": {"uv": [11.5, 0.25, 11.75, 2.25], "texture": "#model"},
+				"south": {"uv": [11.75, 0.25, 12, 2.25], "texture": "#model"},
+				"west": {"uv": [11, 0.25, 11.25, 2.25], "texture": "#model"},
+				"up": {"uv": [11.5, 0, 11.75, 0.25], "texture": "#model"},
+				"down": {"uv": [11.25, 0, 11.5, 0.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "support_southeast",
+			"from": [11.87879, 5.81818, 2.18182],
+			"to": [13.81818, 21.33333, 4.12121],
+			"faces": {
+				"north": {"uv": [12.25, 0.25, 12.5, 2.25], "texture": "#model"},
+				"east": {"uv": [12.5, 0.25, 12.75, 2.25], "texture": "#model"},
+				"south": {"uv": [12.75, 0.25, 13, 2.25], "texture": "#model"},
+				"west": {"uv": [12, 0.25, 12.25, 2.25], "texture": "#model"},
+				"up": {"uv": [12.5, 0, 12.75, 0.25], "texture": "#model"},
+				"down": {"uv": [12.25, 0, 12.5, 0.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "support_southwest",
+			"from": [2.18182, 5.81818, 2.18182],
+			"to": [4.12121, 21.33333, 4.12121],
+			"faces": {
+				"north": {"uv": [13.25, 0.25, 13.5, 2.25], "texture": "#model"},
+				"east": {"uv": [13.5, 0.25, 13.75, 2.25], "texture": "#model"},
+				"south": {"uv": [13.75, 0.25, 14, 2.25], "texture": "#model"},
+				"west": {"uv": [13, 0.25, 13.25, 2.25], "texture": "#model"},
+				"up": {"uv": [13.5, 0, 13.75, 0.25], "texture": "#model"},
+				"down": {"uv": [13.25, 0, 13.5, 0.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "lantern_core_0",
+			"from": [5.09091, 9.69697, 5.09091],
+			"to": [10.90909, 15.51515, 10.90909],
+			"faces": {
+				"north": {"uv": [9.75, 4.5, 10.5, 5.25], "texture": "#model"},
+				"east": {"uv": [10.5, 4.5, 11.25, 5.25], "texture": "#model"},
+				"south": {"uv": [11.25, 4.5, 12, 5.25], "texture": "#model"},
+				"west": {"uv": [9, 4.5, 9.75, 5.25], "texture": "#model"},
+				"up": {"uv": [10.5, 3.75, 11.25, 4.5], "texture": "#model"},
+				"down": {"uv": [9.75, 3.75, 10.5, 4.5], "texture": "#model"}
+			}
+		},
+		{
+			"name": "lantern_core_1",
+			"from": [6.06061, 15.51515, 6.06061],
+			"to": [9.93939, 17.45455, 9.93939],
+			"faces": {
+				"north": {"uv": [12.5, 4.25, 13, 4.5], "texture": "#model"},
+				"east": {"uv": [13, 4.25, 13.5, 4.5], "texture": "#model"},
+				"south": {"uv": [13.5, 4.25, 14, 4.5], "texture": "#model"},
+				"west": {"uv": [12, 4.25, 12.5, 4.5], "texture": "#model"},
+				"up": {"uv": [13, 3.75, 13.5, 4.25], "texture": "#model"},
+				"down": {"uv": [12.5, 3.75, 13, 4.25], "texture": "#model"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 2, 0],
+			"scale": [0.28, 0.28, 0.28]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, -135, 0],
+			"translation": [0, -2.5, 0],
+			"scale": [0.45, 0.45, 0.45]
+		},
+		"fixed": {
+			"rotation": [0, -180, 0],
+			"translation": [0, -4, 0],
+			"scale": [0.35, 0.35, 0.35]
+		}
+	}
 }

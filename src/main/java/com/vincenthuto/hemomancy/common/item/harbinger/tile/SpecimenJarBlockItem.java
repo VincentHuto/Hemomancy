@@ -1,10 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tile;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.tile.functional.SpecimenJarItemRenderer;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -14,11 +11,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class SpecimenJarBlockItem extends BlockItem implements HemoClientItemExtensionsProvider {
+public class SpecimenJarBlockItem extends BlockItem {
 
 	public SpecimenJarBlockItem(Block block, Properties properties) {
 		super(block, properties);
@@ -68,17 +64,5 @@ public class SpecimenJarBlockItem extends BlockItem implements HemoClientItemExt
 		} else {
 			tooltip.add(Component.translatable("tooltip.hemomancy.specimen_jar.empty"));
 		}
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new SpecimenJarItemRenderer(null, null);
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return renderer;
-			}
-		};
 	}
 }

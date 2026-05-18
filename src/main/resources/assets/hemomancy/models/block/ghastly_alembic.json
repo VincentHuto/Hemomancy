@@ -1,6 +1,351 @@
 {
-  "parent": "block/block",
-  "textures": {
-    "particle": "hemomancy:entity/model_ghastly_alembic"
-  }
+	"format_version": "1.21.11",
+	"credit": "Mechanical conversion from GhastlyAlembicModel Java addBox definitions scaled to vanilla block-model element bounds",
+	"parent": "minecraft:block/block",
+	"render_type": "translucent",
+	"textures": {
+		"particle": "hemomancy:block/model_ghastly_alembic",
+		"model": "hemomancy:block/model_ghastly_alembic"
+	},
+	"elements": [
+		{
+			"name": "base_0",
+			"from": [0, 0, 0],
+			"to": [16, 2, 16],
+			"faces": {
+				"north": {"uv": [2, 2, 4, 2.25], "texture": "#model"},
+				"east": {"uv": [4, 2, 6, 2.25], "texture": "#model"},
+				"south": {"uv": [6, 2, 8, 2.25], "texture": "#model"},
+				"west": {"uv": [0, 2, 2, 2.25], "texture": "#model"},
+				"up": {"uv": [4, 0, 6, 2], "texture": "#model"},
+				"down": {"uv": [2, 0, 4, 2], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_1",
+			"from": [2, 2, 2],
+			"to": [14, 4, 14],
+			"faces": {
+				"north": {"uv": [6.625, 3.875, 8.125, 4.125], "texture": "#model"},
+				"east": {"uv": [8.125, 3.875, 9.625, 4.125], "texture": "#model"},
+				"south": {"uv": [9.625, 3.875, 11.125, 4.125], "texture": "#model"},
+				"west": {"uv": [5.125, 3.875, 6.625, 4.125], "texture": "#model"},
+				"up": {"uv": [8.125, 2.375, 9.625, 3.875], "texture": "#model"},
+				"down": {"uv": [6.625, 2.375, 8.125, 3.875], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_2",
+			"from": [7, 2, 14],
+			"to": [9, 4, 16],
+			"faces": {
+				"north": {"uv": [6.75, 8.625, 7, 8.875], "texture": "#model"},
+				"east": {"uv": [7, 8.625, 7.25, 8.875], "texture": "#model"},
+				"south": {"uv": [7.25, 8.625, 7.5, 8.875], "texture": "#model"},
+				"west": {"uv": [6.5, 8.625, 6.75, 8.875], "texture": "#model"},
+				"up": {"uv": [7, 8.375, 7.25, 8.625], "texture": "#model"},
+				"down": {"uv": [6.75, 8.375, 7, 8.625], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_3",
+			"from": [7, 2, 0],
+			"to": [9, 4, 2],
+			"faces": {
+				"north": {"uv": [6.75, 9.25, 7, 9.5], "texture": "#model"},
+				"east": {"uv": [7, 9.25, 7.25, 9.5], "texture": "#model"},
+				"south": {"uv": [7.25, 9.25, 7.5, 9.5], "texture": "#model"},
+				"west": {"uv": [6.5, 9.25, 6.75, 9.5], "texture": "#model"},
+				"up": {"uv": [7, 9, 7.25, 9.25], "texture": "#model"},
+				"down": {"uv": [6.75, 9, 7, 9.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_4",
+			"from": [14, 2, 7],
+			"to": [16, 4, 9],
+			"faces": {
+				"north": {"uv": [7.875, 8.625, 8.125, 8.875], "texture": "#model"},
+				"east": {"uv": [8.125, 8.625, 8.375, 8.875], "texture": "#model"},
+				"south": {"uv": [8.375, 8.625, 8.625, 8.875], "texture": "#model"},
+				"west": {"uv": [7.625, 8.625, 7.875, 8.875], "texture": "#model"},
+				"up": {"uv": [8.125, 8.375, 8.375, 8.625], "texture": "#model"},
+				"down": {"uv": [7.875, 8.375, 8.125, 8.625], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_5",
+			"from": [0, 2, 7],
+			"to": [2, 4, 9],
+			"faces": {
+				"north": {"uv": [9, 8.625, 9.25, 8.875], "texture": "#model"},
+				"east": {"uv": [9.25, 8.625, 9.5, 8.875], "texture": "#model"},
+				"south": {"uv": [9.5, 8.625, 9.75, 8.875], "texture": "#model"},
+				"west": {"uv": [8.75, 8.625, 9, 8.875], "texture": "#model"},
+				"up": {"uv": [9.25, 8.375, 9.5, 8.625], "texture": "#model"},
+				"down": {"uv": [9, 8.375, 9.25, 8.625], "texture": "#model"}
+			}
+		},
+		{
+			"name": "flask_0",
+			"from": [3, 4, 3],
+			"to": [13, 20, 13],
+			"faces": {
+				"north": {"uv": [1.25, 3.625, 2.5, 5.625], "texture": "#model"},
+				"east": {"uv": [2.5, 3.625, 3.75, 5.625], "texture": "#model"},
+				"south": {"uv": [3.75, 3.625, 5, 5.625], "texture": "#model"},
+				"west": {"uv": [0, 3.625, 1.25, 5.625], "texture": "#model"},
+				"up": {"uv": [1.25, 3.625, 2.5, 5.625], "texture": "#model"},
+				"down": {"uv": [1.25, 2.375, 2.5, 3.625], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_0",
+			"from": [2, 8, 2],
+			"to": [14, 11, 3],
+			"faces": {
+				"north": {"uv": [4.375, 7.875, 5.875, 8.25], "texture": "#model"},
+				"east": {"uv": [5.875, 7.875, 6, 8.25], "texture": "#model"},
+				"south": {"uv": [6, 7.875, 7.5, 8.25], "texture": "#model"},
+				"west": {"uv": [4.25, 7.875, 4.375, 8.25], "texture": "#model"},
+				"up": {"uv": [5.875, 7.75, 7.375, 7.875], "texture": "#model"},
+				"down": {"uv": [4.375, 7.75, 5.875, 7.875], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_1",
+			"from": [2, 8, 13],
+			"to": [14, 11, 14],
+			"faces": {
+				"north": {"uv": [7.75, 7.875, 9.25, 8.25], "texture": "#model"},
+				"east": {"uv": [9.25, 7.875, 9.375, 8.25], "texture": "#model"},
+				"south": {"uv": [9.375, 7.875, 10.875, 8.25], "texture": "#model"},
+				"west": {"uv": [7.625, 7.875, 7.75, 8.25], "texture": "#model"},
+				"up": {"uv": [9.25, 7.75, 10.75, 7.875], "texture": "#model"},
+				"down": {"uv": [7.75, 7.75, 9.25, 7.875], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_2",
+			"from": [2, 15, 2],
+			"to": [14, 18, 3],
+			"faces": {
+				"north": {"uv": [8.25, 0.75, 9.75, 1.125], "texture": "#model"},
+				"east": {"uv": [9.75, 0.75, 9.875, 1.125], "texture": "#model"},
+				"south": {"uv": [9.875, 0.75, 11.375, 1.125], "texture": "#model"},
+				"west": {"uv": [8.125, 0.75, 8.25, 1.125], "texture": "#model"},
+				"up": {"uv": [9.75, 0.625, 11.25, 0.75], "texture": "#model"},
+				"down": {"uv": [8.25, 0.625, 9.75, 0.75], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_3",
+			"from": [2, 15, 3],
+			"to": [3, 18, 13],
+			"faces": {
+				"north": {"uv": [8.375, 7.25, 8.5, 7.625], "texture": "#model"},
+				"east": {"uv": [8.5, 7.25, 9.75, 7.625], "texture": "#model"},
+				"south": {"uv": [9.75, 7.25, 9.875, 7.625], "texture": "#model"},
+				"west": {"uv": [7.125, 7.25, 8.375, 7.625], "texture": "#model"},
+				"up": {"uv": [8.5, 6, 8.625, 7.25], "texture": "#model"},
+				"down": {"uv": [8.375, 6, 8.5, 7.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_4",
+			"from": [13, 15, 3],
+			"to": [14, 18, 13],
+			"faces": {
+				"north": {"uv": [5.5, 7.25, 5.625, 7.625], "texture": "#model"},
+				"east": {"uv": [5.625, 7.25, 6.875, 7.625], "texture": "#model"},
+				"south": {"uv": [6.875, 7.25, 7, 7.625], "texture": "#model"},
+				"west": {"uv": [4.25, 7.25, 5.5, 7.625], "texture": "#model"},
+				"up": {"uv": [5.625, 6, 5.75, 7.25], "texture": "#model"},
+				"down": {"uv": [5.5, 6, 5.625, 7.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_5",
+			"from": [2, 15, 13],
+			"to": [14, 18, 14],
+			"faces": {
+				"north": {"uv": [8.25, 0.125, 9.75, 0.5], "texture": "#model"},
+				"east": {"uv": [9.75, 0.125, 9.875, 0.5], "texture": "#model"},
+				"south": {"uv": [9.875, 0.125, 11.375, 0.5], "texture": "#model"},
+				"west": {"uv": [8.125, 0.125, 8.25, 0.5], "texture": "#model"},
+				"up": {"uv": [9.75, 0, 11.25, 0.125], "texture": "#model"},
+				"down": {"uv": [8.25, 0, 9.75, 0.125], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_6",
+			"from": [12, 8, 3],
+			"to": [14, 11, 13],
+			"faces": {
+				"north": {"uv": [6.375, 5.5, 6.625, 5.875], "texture": "#model"},
+				"east": {"uv": [6.625, 5.5, 7.875, 5.875], "texture": "#model"},
+				"south": {"uv": [7.875, 5.5, 8.125, 5.875], "texture": "#model"},
+				"west": {"uv": [5.125, 5.5, 6.375, 5.875], "texture": "#model"},
+				"up": {"uv": [6.625, 4.25, 6.875, 5.5], "texture": "#model"},
+				"down": {"uv": [6.375, 4.25, 6.625, 5.5], "texture": "#model"}
+			}
+		},
+		{
+			"name": "thorn_collar_7",
+			"from": [2, 8, 3],
+			"to": [4, 11, 13],
+			"faces": {
+				"north": {"uv": [1.25, 7, 1.5, 7.375], "texture": "#model"},
+				"east": {"uv": [1.5, 7, 2.75, 7.375], "texture": "#model"},
+				"south": {"uv": [2.75, 7, 3, 7.375], "texture": "#model"},
+				"west": {"uv": [0, 7, 1.25, 7.375], "texture": "#model"},
+				"up": {"uv": [1.5, 5.75, 1.75, 7], "texture": "#model"},
+				"down": {"uv": [1.25, 5.75, 1.5, 7], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_0",
+			"from": [6, 20, 6],
+			"to": [10, 23, 10],
+			"faces": {
+				"north": {"uv": [8.625, 1.75, 9.125, 2.125], "texture": "#model"},
+				"east": {"uv": [9.125, 1.75, 9.625, 2.125], "texture": "#model"},
+				"south": {"uv": [9.625, 1.75, 10.125, 2.125], "texture": "#model"},
+				"west": {"uv": [8.125, 1.75, 8.625, 2.125], "texture": "#model"},
+				"up": {"uv": [9.125, 1.25, 9.625, 1.75], "texture": "#model"},
+				"down": {"uv": [8.625, 1.25, 9.125, 1.75], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_1",
+			"from": [5, 23, 5],
+			"to": [11, 27, 11],
+			"faces": {
+				"north": {"uv": [0.75, 8.25, 1.5, 8.75], "texture": "#model"},
+				"east": {"uv": [1.5, 8.25, 2.25, 8.75], "texture": "#model"},
+				"south": {"uv": [2.25, 8.25, 3, 8.75], "texture": "#model"},
+				"west": {"uv": [0, 8.25, 0.75, 8.75], "texture": "#model"},
+				"up": {"uv": [1.5, 7.5, 2.25, 8.25], "texture": "#model"},
+				"down": {"uv": [0.75, 7.5, 1.5, 8.25], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_2",
+			"from": [9, 27, 7],
+			"to": [11, 30, 9],
+			"faces": {
+				"north": {"uv": [5.625, 8.625, 5.875, 9], "texture": "#model"},
+				"east": {"uv": [5.875, 8.625, 6.125, 9], "texture": "#model"},
+				"south": {"uv": [6.125, 8.625, 6.375, 9], "texture": "#model"},
+				"west": {"uv": [5.375, 8.625, 5.625, 9], "texture": "#model"},
+				"up": {"uv": [5.875, 8.375, 6.125, 8.625], "texture": "#model"},
+				"down": {"uv": [5.625, 8.375, 5.875, 8.625], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_3",
+			"from": [5, 27, 7],
+			"to": [7, 30, 9],
+			"faces": {
+				"north": {"uv": [4.5, 8.625, 4.75, 9], "texture": "#model"},
+				"east": {"uv": [4.75, 8.625, 5, 9], "texture": "#model"},
+				"south": {"uv": [5, 8.625, 5.25, 9], "texture": "#model"},
+				"west": {"uv": [4.25, 8.625, 4.5, 9], "texture": "#model"},
+				"up": {"uv": [4.75, 8.375, 5, 8.625], "texture": "#model"},
+				"down": {"uv": [4.5, 8.375, 4.75, 8.625], "texture": "#model"}
+			}
+		},
+		{
+			"name": "cap_4",
+			"from": [7, 27, 7],
+			"to": [9, 31, 9],
+			"faces": {
+				"north": {"uv": [8.5, 5.125, 8.75, 5.625], "texture": "#model"},
+				"east": {"uv": [8.75, 5.125, 9, 5.625], "texture": "#model"},
+				"south": {"uv": [9, 5.125, 9.25, 5.625], "texture": "#model"},
+				"west": {"uv": [8.25, 5.125, 8.5, 5.625], "texture": "#model"},
+				"up": {"uv": [8.75, 4.875, 9, 5.125], "texture": "#model"},
+				"down": {"uv": [8.5, 4.875, 8.75, 5.125], "texture": "#model"}
+			}
+		},
+		{
+			"name": "pipe_rod_0",
+			"from": [-2, 2, 7],
+			"to": [0, 28, 9],
+			"faces": {
+				"north": {"uv": [3.375, 6, 3.625, 9.25], "texture": "#model"},
+				"east": {"uv": [3.625, 6, 3.875, 9.25], "texture": "#model"},
+				"south": {"uv": [3.875, 6, 4.125, 9.25], "texture": "#model"},
+				"west": {"uv": [3.125, 6, 3.375, 9.25], "texture": "#model"},
+				"up": {"uv": [3.625, 5.75, 3.875, 6], "texture": "#model"},
+				"down": {"uv": [3.375, 5.75, 3.625, 6], "texture": "#model"}
+			}
+		},
+		{
+			"name": "pipe_rod_1",
+			"from": [0, 16, 7],
+			"to": [2, 18, 9],
+			"faces": {
+				"north": {"uv": [0.25, 9.125, 0.5, 9.375], "texture": "#model"},
+				"east": {"uv": [0.5, 9.125, 0.75, 9.375], "texture": "#model"},
+				"south": {"uv": [0.75, 9.125, 1, 9.375], "texture": "#model"},
+				"west": {"uv": [0, 9.125, 0.25, 9.375], "texture": "#model"},
+				"up": {"uv": [0.5, 8.875, 0.75, 9.125], "texture": "#model"},
+				"down": {"uv": [0.25, 8.875, 0.5, 9.125], "texture": "#model"}
+			}
+		},
+		{
+			"name": "pipe_rod_2",
+			"from": [0, 9, 7],
+			"to": [2, 11, 9],
+			"faces": {
+				"north": {"uv": [1.375, 9.125, 1.625, 9.375], "texture": "#model"},
+				"east": {"uv": [1.625, 9.125, 1.875, 9.375], "texture": "#model"},
+				"south": {"uv": [1.875, 9.125, 2.125, 9.375], "texture": "#model"},
+				"west": {"uv": [1.125, 9.125, 1.375, 9.375], "texture": "#model"},
+				"up": {"uv": [1.625, 8.875, 1.875, 9.125], "texture": "#model"},
+				"down": {"uv": [1.375, 8.875, 1.625, 9.125], "texture": "#model"}
+			}
+		},
+		{
+			"name": "pipe_rod_3",
+			"from": [0, 28, 7],
+			"to": [5, 30, 9],
+			"faces": {
+				"north": {"uv": [8.5, 4.5, 9.125, 4.75], "texture": "#model"},
+				"east": {"uv": [9.125, 4.5, 9.375, 4.75], "texture": "#model"},
+				"south": {"uv": [9.375, 4.5, 10, 4.75], "texture": "#model"},
+				"west": {"uv": [8.25, 4.5, 8.5, 4.75], "texture": "#model"},
+				"up": {"uv": [9.125, 4.25, 9.75, 4.5], "texture": "#model"},
+				"down": {"uv": [8.5, 4.25, 9.125, 4.5], "texture": "#model"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 1, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, 45, 0],
+			"translation": [0, -1.75, 0],
+			"scale": [0.37, 0.37, 0.37]
+		},
+		"fixed": {
+			"rotation": [0, -180, 0],
+			"translation": [0, -4, 0],
+			"scale": [0.25, 0.25, 0.25]
+		}
+	}
 }

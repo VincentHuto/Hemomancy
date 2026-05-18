@@ -70,17 +70,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedCleansedBloodCrystalModel.LAYER_LOCATION, SuspendedCleansedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(MnemonicReliquaryModel.LAYER_LOCATION, MnemonicReliquaryModel::createBodyLayer);
-		event.registerLayerDefinition(ScarStationModel.LAYER_LOCATION, ScarStationModel::createBodyLayer);
-		event.registerLayerDefinition(SomaticLoomModel.LAYER_LOCATION, SomaticLoomModel::createBodyLayer);
-		event.registerLayerDefinition(GhastlyAlembicModel.LAYER_LOCATION, GhastlyAlembicModel::createBodyLayer);
-		event.registerLayerDefinition(PallidRetortModel.LAYER_LOCATION, PallidRetortModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
 		event.registerLayerDefinition(PuppeteersSpindleModel.LAYER_LOCATION, PuppeteersSpindleModel::createBodyLayer);
-		event.registerLayerDefinition(MycelialLanternModel.LAYER_LOCATION, MycelialLanternModel::createBodyLayer);
 		event.registerLayerDefinition(DictationTableModel.LAYER_LOCATION, DictationTableModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingCradleModel.LAYER_LOCATION, MorphlingCradleModel::createBodyLayer);
-		event.registerLayerDefinition(SpecimenJarModel.LAYER_LOCATION, SpecimenJarModel::createBodyLayer);
-		event.registerLayerDefinition(CleansingAltarModel.LAYER_LOCATION, CleansingAltarModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerSaintSarcophagusModel.LAYER_LOCATION, HarbingerSaintSarcophagusModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineMonolithModel.LAYER_LOCATION, SanguineMonolithModel::createBodyLayer);
 		event.registerLayerDefinition(CovenantThroneModel.LAYER_LOCATION, CovenantThroneModel::createBodyLayer);

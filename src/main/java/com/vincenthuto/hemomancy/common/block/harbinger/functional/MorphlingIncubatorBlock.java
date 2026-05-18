@@ -53,7 +53,7 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMult
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+		return RenderShape.MODEL;
 	}
 
 	@Override

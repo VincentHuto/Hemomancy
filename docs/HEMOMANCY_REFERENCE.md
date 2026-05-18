@@ -1122,21 +1122,21 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hemolysis.png) **Hemolysis** | Neutral | Pink | Blood destruction effect |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/fungal_elytra.png) **Noctifly Agaric** (Fungal Elytra) | Beneficial | — | Grants elytra flight ![](../src/main/resources/assets/hemomancy/textures/models/armor/fungal_elytra.png) |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sanguine_fertility.png) **Sanguine Fertility** | Beneficial | 0xCC3344 | Fertility/growth effect |
-| **Arachnid Anastomosis** | Beneficial | 0x8B0000 | Spider-vein healing |
-| **Mycorrhizal Mending** | Beneficial | 0x7B4F2A | Fungal regeneration |
-| **Sanguine Siphon** | Beneficial | 0x8B0000 | Blood drain on hit |
-| **Chitinous Bulwark** | Beneficial | 0x556B2F | +4 armor toughness |
-| **Serpentine Guile** | Beneficial | 0x2E8B57 | +15% move speed, +10% attack speed |
-| **Verminous Aura** | Beneficial | 0x4A3728 | Pest-based area effect |
-| **Echoic Perception** | Beneficial | — | Bat morphling effect — nearby entities glow (radius scales with amplifier) |
-| **Luminous Dissipation** | Beneficial | — | Moth morphling effect — knockback resistance |
-| **Hemorrhagic Venom** | Beneficial | — | Tick morphling effect — AoE damage aura to nearby hostiles |
-| **Spined Barricade** | Beneficial | — | Urchin morphling effect — passive thorns + armor bonus |
-| **Venomous Resilience** | Beneficial | — | Centipede morphling effect — poison immunity + speed |
-| **Burrower's Instinct** | Beneficial | — | Mole morphling effect — mining speed + underground regen/night vision |
-| **Arcane Resonance** | Beneficial | 0x8800AA | MnA combo marker — next blood manipulation costs less blood (granted by blood-affinity MnA spells) |
-| **Sanguine Clarity** | Beneficial | 0xAA0022 | MnA combo marker — next MnA spell costs less mana (granted by using blood manipulations) |
-| **Morphic Strain** | Harmful | Fungal green | Primal morphling drawback. Modest max-health and movement-speed reduction after successful Primal powers. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/arachnid_anastomosis.png) **Arachnid Anastomosis** | Beneficial | 0x8B0000 | Spider-vein healing |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/mycorrhizal_mending.png) **Mycorrhizal Mending** | Beneficial | 0x7B4F2A | Fungal regeneration |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sanguine_siphon.png) **Sanguine Siphon** | Beneficial | 0x8B0000 | Blood drain on hit |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/chitinous_bulwark.png) **Chitinous Bulwark** | Beneficial | 0x556B2F | +4 armor toughness |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/serpentine_guile.png) **Serpentine Guile** | Beneficial | 0x2E8B57 | +15% move speed, +10% attack speed |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/verminous_aura.png) **Verminous Aura** | Beneficial | 0x4A3728 | Pest-based area effect |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/echoic_perception.png) **Echoic Perception** | Beneficial | — | Bat morphling effect — nearby entities glow (radius scales with amplifier) |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/luminous_dissipation.png) **Luminous Dissipation** | Beneficial | — | Moth morphling effect — knockback resistance |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hemorrhagic_venom.png) **Hemorrhagic Venom** | Beneficial | — | Tick morphling effect — AoE damage aura to nearby hostiles |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/spined_barricade.png) **Spined Barricade** | Beneficial | — | Urchin morphling effect — passive thorns + armor bonus |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_centipede.png) **Venomous Resilience** | Beneficial | — | Centipede morphling effect — poison immunity + speed |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/burrowers_instinct.png) **Burrower's Instinct** | Beneficial | — | Mole morphling effect — mining speed + underground regen/night vision |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/arcane_resonance.png) **Arcane Resonance** | Beneficial | 0x8800AA | MnA combo marker — next blood manipulation costs less blood (granted by blood-affinity MnA spells) |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sanguine_clarity.png) **Sanguine Clarity** | Beneficial | 0xAA0022 | MnA combo marker — next MnA spell costs less mana (granted by using blood manipulations) |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphic_strain.png) **Morphic Strain** | Harmful | Fungal green | Primal morphling drawback. Modest max-health and movement-speed reduction after successful Primal powers. |
 
 ---
 

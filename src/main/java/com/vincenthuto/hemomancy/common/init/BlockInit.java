@@ -28,8 +28,6 @@ import com.vincenthuto.hemomancy.common.block.unstained.plant.GhostPipeBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.LetheanPoppyBlock;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.*;
 import com.vincenthuto.hemomancy.common.item.shared.tile.DictationTableBlockItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tile.AltarOfCleansingBlockItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tile.PallidRetortBlockItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -705,41 +703,17 @@ public class BlockInit {
 		if (b == BlockInit.vial_centrifuge.get()) {
 			return Pair.of(block.getSecond(), new VialCentrifugeBlockItem(b, new Item.Properties()));
 		}
-		if (b == BlockInit.ghastly_alembic.get()) {
-			return Pair.of(block.getSecond(), new GhastlyAlembicBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.pallid_retort.get()) {
-			return Pair.of(block.getSecond(), new PallidRetortBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.scar_station.get()) {
-			return Pair.of(block.getSecond(), new ScarStationBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.morphling_incubator.get()) {
-			return Pair.of(block.getSecond(), new MorphlingIncubatorBlockItem(b, new Item.Properties()));
-		}
 		if (b == BlockInit.mycelial_crucible.get()) {
  			return Pair.of(block.getSecond(), new MycelialCrucibleBlockItem(b, new Item.Properties()));
  		}
-		if (b == BlockInit.mycelial_lantern.get()) {
-			return Pair.of(block.getSecond(), new MycelialLanternBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.morphling_cradle.get()) {
-			return Pair.of(block.getSecond(), new MorphlingCradleBlockItem(b, new Item.Properties()));
-		}
 		if (b == BlockInit.specimen_jar.get()) {
 			return Pair.of(block.getSecond(), new SpecimenJarBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.altar_of_cleansing.get()) {
-			return Pair.of(block.getSecond(), new AltarOfCleansingBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.saint_sarcophagus.get()) {
 			return Pair.of(block.getSecond(), new SaintSarcophagusBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.sanguine_monolith.get()) {
 			return Pair.of(block.getSecond(), new SanguineMonolithBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.somatic_loom.get()) {
-			return Pair.of(block.getSecond(), new SomaticLoomBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.puppeteers_spindle.get()) {
 			return Pair.of(block.getSecond(), new PuppeteersSpindleBlockItem(b, new Item.Properties()));

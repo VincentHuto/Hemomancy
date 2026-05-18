@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.MorphlingIncubatorModel;
+import com.vincenthuto.hemomancy.client.model.tile.functional.MorphlingIncubatorModel;
 import com.vincenthuto.hemomancy.common.tile.crafting.MycelialCrucibleBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 

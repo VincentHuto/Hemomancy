@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.SomaticLoomModel;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
@@ -13,17 +11,11 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import org.joml.Matrix4f;
 
 import java.util.Map;
@@ -40,15 +32,10 @@ import java.util.Random;
  */
 public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlockEntity> {
 
-	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_somatic_loom.png");
-
-	/** Fractal random — reseeded each tick for stable-per-tick crackle. */
+	/** Fractal random â€” reseeded each tick for stable-per-tick crackle. */
 	private static final Random FRAC_RAND = new Random();
 
-	private final SomaticLoomModel model;
-
-	// ── Star geometry (block-local coordinates) ──
+	// â”€â”€ Star geometry (block-local coordinates) â”€â”€
 	private static final float CX = 0.5f;
 	private static final float CZ = 0.5f;
 	private static final float STAR_Y = 1.5f;
@@ -57,7 +44,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	/** How far each unit of affinity extends a spoke beyond BASE_RADIUS. */
 	private static final float AFFINITY_RADIUS_SCALE = 0.5f;
 
-	// ── Fractal spoke widths & alphas ──
+	// â”€â”€ Fractal spoke widths & alphas â”€â”€
 	private static final float SPOKE_CORE_WIDTH = 0.004f;
 	private static final float SPOKE_GLOW_WIDTH = 0.012f;
 	private static final float SPOKE_CORE_ALPHA = 0.85f;
@@ -65,16 +52,16 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	/** Fractal recursion terminates when displacement drops below this. */
 	private static final double FRACTAL_DETAIL = 0.02;
 
-	// ── Ring segment count ──
+	// â”€â”€ Ring segment count â”€â”€
 	private static final int RING_SEGMENTS = 64;
 	/** Segment count for the thinner enzyme indicator rings. */
 	private static final int ENZYME_RING_SEGMENTS = 48;
 
-	// ── Ring widths (used by enzyme, blood, crafting rings) ──
+	// â”€â”€ Ring widths (used by enzyme, blood, crafting rings) â”€â”€
 	private static final float RING_CORE_WIDTH = 0.06f;
 	private static final float RING_GLOW_WIDTH = 0.15f;
 
-	// ── Undulation for rings ──
+	// â”€â”€ Undulation for rings â”€â”€
 	private static final double UNDULATE_FREQ = 5.0;
 	private static final float UNDULATE_AMP = 0.04f;
 	private static final double UNDULATE_SPEED = 0.06;
@@ -83,7 +70,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private static final double UNDULATE_SPEED2 = 0.1;
 
 	public SomaticLoomRenderer(BlockEntityRendererProvider.Context ctx) {
-		this.model = new SomaticLoomModel(ctx.bakeLayer(SomaticLoomModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -91,9 +77,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		return true;
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Main render entry point
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	@Override
 	public void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
@@ -101,9 +87,6 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 		boolean showEffects = !te.contents.get(0).isEmpty();
-
-		// === Render the somatic loom entity model ===
-		renderLoomModel(stack, buffer, te, combinedLight, combinedOverlay);
 
 		// === Items (always rendered, depth writes first) ===
 		stack.pushPose();
@@ -144,16 +127,16 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Item rendering (unchanged)
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		float gameTime = te.getLevel().getGameTime() + partialTicks;
 		Minecraft mc = Minecraft.getInstance();
 
-		// Slot 0 — first item, floating above the center of the block
+		// Slot 0 â€” first item, floating above the center of the block
 		ItemStack stack0 = te.contents.get(0);
 		if (!stack0.isEmpty()) {
 			matrixStackIn.pushPose();
@@ -165,7 +148,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			matrixStackIn.popPose();
 		}
 
-		// Slot 1 — second item, floating above the first
+		// Slot 1 â€” second item, floating above the first
 		ItemStack stack1 = te.contents.get(1);
 		if (!stack1.isEmpty()) {
 			matrixStackIn.pushPose();
@@ -177,7 +160,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			matrixStackIn.popPose();
 		}
 
-		// Recipe result preview — floating above both items
+		// Recipe result preview â€” floating above both items
 		MemoryWeavingRecipe currRecipe = MemoryWeavingRecipeSerializer
 				.getRecipe(te.getRecipePath());
 		if (currRecipe != null) {
@@ -193,9 +176,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Fractal Tendency Star
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private void drawFractalStar(VertexConsumer vc, Matrix4f mat,
 			SomaticLoomBlockEntity te, float currentTime) {
@@ -239,7 +222,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float displace = (float) Math.sqrt(
 					(bx1 - bx2) * (bx1 - bx2) + (bz1 - bz2) * (bz1 - bz2)) * 0.5f;
 
-			// Primary fractal spokes (tip ↔ base corners)
+			// Primary fractal spokes (tip â†” base corners)
 			fracLine(vc, mat, tx, yTip, tz, bx1, yBase1, bz1,
 					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
 					displace, FRACTAL_DETAIL);
@@ -261,9 +244,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Enzyme Indicator Rings
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Draws concentric dark rings at the fractal star's Y-level. One ring per
@@ -292,9 +275,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Blood Volume Ring
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private void drawBloodVolumeRing(VertexConsumer vc, Matrix4f mat,
 			double fillRatio, float currentTime) {
@@ -332,9 +315,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Crafting Progress Ring
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private void drawCraftingProgressRing(VertexConsumer vc, Matrix4f mat,
 			double progressRatio, boolean pulsing, float currentTime) {
@@ -371,9 +354,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Fractal Line (recursive midpoint displacement)
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Recursively subdivides a line with random midpoint displacement to
@@ -401,9 +384,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Low-level drawing helpers
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Draws a single flat line segment as three quads (inner glow + core + outer glow)
@@ -426,7 +409,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		float cHalf = coreWidth * 0.5f;
 		float gOuter = cHalf + glowWidth;
 
-		// Inner glow (transparent edge → opaque at core boundary)
+		// Inner glow (transparent edge â†’ opaque at core boundary)
 		emitQuad(vc, mat,
 				x1 - px * gOuter, y1, z1 - pz * gOuter, r, g, b, 0f,
 				x1 - px * cHalf, y1, z1 - pz * cHalf, r, g, b, glowAlpha,
@@ -440,7 +423,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 				x2 + px * cHalf, y2, z2 + pz * cHalf, r, g, b, coreAlpha,
 				x2 - px * cHalf, y2, z2 - pz * cHalf, r, g, b, coreAlpha);
 
-		// Outer glow (opaque at core boundary → transparent edge)
+		// Outer glow (opaque at core boundary â†’ transparent edge)
 		emitQuad(vc, mat,
 				x1 + px * cHalf, y1, z1 + pz * cHalf, r, g, b, glowAlpha,
 				x1 + px * gOuter, y1, z1 + pz * gOuter, r, g, b, 0f,
@@ -528,9 +511,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 				cx + cos2 * oCore2, y2, cz + sin2 * oCore2, r, g, b, glowAlpha);
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Undulation
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/** Layered sine-wave radial offset for ring segments. */
 	private static float undulation(double angleRad, float time, float dir) {
@@ -548,9 +531,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		return (float) (w1 + w2 + throb);
 	}
 
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Quad helper (POSITION_COLOR format)
-	// ═══════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private static void emitQuad(VertexConsumer vc, Matrix4f mat,
 			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
@@ -563,41 +546,4 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		vc.addVertex(mat, x4, y4, z4).setColor(r4, g4, b4, a4);
 	}
 
-	// ═══════════════════════════════════════════════════════════════
-	//  Loom Model Rendering
-	// ═══════════════════════════════════════════════════════════════
-
-	/**
-	 * Renders the somatic loom entity model. The model is authored Y-down
-	 * (Blockbench convention) so we flip 180° on X. We rotate around Y to
-	 * match the block's FACING direction.
-	 */
-	private void renderLoomModel(PoseStack poseStack, MultiBufferSource bufferIn,
-								 SomaticLoomBlockEntity te, int combinedLightIn, int combinedOverlayIn) {
-		poseStack.pushPose();
-
-		// Centre on the block
-		poseStack.translate(0.5D, 1.5D, 0.5D);
-
-		// Flip model upside-down (Blockbench Y-down → world Y-up)
-		poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
-
-		// Rotate the model based on the block's facing direction
-		Direction facing = te.getBlockState().getValue(FACING);
-		float yRot = switch (facing) {
-			case NORTH -> 180f;
-			case EAST -> 270f;
-			case SOUTH -> 0f;
-			case WEST -> 90f;
-			default -> 0f;
-		};
-
-		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
-
-		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
-
-		poseStack.popPose();
-	}
 }
-

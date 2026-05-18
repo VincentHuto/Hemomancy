@@ -57,7 +57,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+		return RenderShape.MODEL;
 	}
 
 	@Override

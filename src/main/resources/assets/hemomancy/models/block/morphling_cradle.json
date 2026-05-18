@@ -1,6 +1,131 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "hemomancy:block/hematic_iron_block"
-  }
+	"format_version": "1.21.11",
+	"credit": "Mechanical conversion from MorphlingCradleModel Java addBox definitions scaled to vanilla block-model element bounds",
+	"parent": "minecraft:block/block",
+	"ambientocclusion": false,
+	"render_type": "translucent",
+	"textures": {
+		"particle": "hemomancy:block/model_morphling_cradle",
+		"model": "hemomancy:block/model_morphling_cradle"
+	},
+	"elements": [
+		{
+			"name": "base_0",
+			"from": [3, 1, 3],
+			"to": [13, 3, 13],
+			"faces": {
+				"north": {"uv": [2.5, 5, 5, 6], "texture": "#model"},
+				"east": {"uv": [5, 5, 7.5, 6], "texture": "#model"},
+				"south": {"uv": [7.5, 5, 10, 6], "texture": "#model"},
+				"west": {"uv": [0, 5, 2.5, 6], "texture": "#model"},
+				"up": {"uv": [2.5, 0, 5, 5], "texture": "#model"},
+				"down": {"uv": [5, 0, 7.5, 5], "texture": "#model"}
+			}
+		},
+		{
+			"name": "base_1",
+			"from": [4, 3, 4],
+			"to": [12, 8, 12],
+			"faces": {
+				"north": {"uv": [2, 10, 4, 12.5], "texture": "#model"},
+				"east": {"uv": [4, 10, 6, 12.5], "texture": "#model"},
+				"south": {"uv": [6, 10, 8, 12.5], "texture": "#model"},
+				"west": {"uv": [0, 10, 2, 12.5], "texture": "#model"},
+				"up": {"uv": [2, 6, 4, 10], "texture": "#model"},
+				"down": {"uv": [4, 6, 6, 10], "texture": "#model"}
+			}
+		},
+		{
+			"name": "arms_0",
+			"from": [2, 3, 7],
+			"to": [4, 9, 9],
+			"faces": {
+				"north": {"uv": [8.5, 1, 9, 4], "texture": "#model"},
+				"east": {"uv": [9, 1, 9.5, 4], "texture": "#model"},
+				"south": {"uv": [9.5, 1, 10, 4], "texture": "#model"},
+				"west": {"uv": [8, 1, 8.5, 4], "texture": "#model"},
+				"up": {"uv": [8.5, 0, 9, 1], "texture": "#model"},
+				"down": {"uv": [9, 0, 9.5, 1], "texture": "#model"}
+			}
+		},
+		{
+			"name": "arms_1",
+			"from": [12, 3, 7],
+			"to": [14, 9, 9],
+			"faces": {
+				"north": {"uv": [10.5, 1, 11, 4], "texture": "#model"},
+				"east": {"uv": [11, 1, 11.5, 4], "texture": "#model"},
+				"south": {"uv": [11.5, 1, 12, 4], "texture": "#model"},
+				"west": {"uv": [10, 1, 10.5, 4], "texture": "#model"},
+				"up": {"uv": [10.5, 0, 11, 1], "texture": "#model"},
+				"down": {"uv": [11, 0, 11.5, 1], "texture": "#model"}
+			}
+		},
+		{
+			"name": "arms_2",
+			"from": [7, 3, 2],
+			"to": [9, 9, 4],
+			"faces": {
+				"north": {"uv": [12.5, 1, 13, 4], "texture": "#model"},
+				"east": {"uv": [13, 1, 13.5, 4], "texture": "#model"},
+				"south": {"uv": [13.5, 1, 14, 4], "texture": "#model"},
+				"west": {"uv": [12, 1, 12.5, 4], "texture": "#model"},
+				"up": {"uv": [12.5, 0, 13, 1], "texture": "#model"},
+				"down": {"uv": [13, 0, 13.5, 1], "texture": "#model"}
+			}
+		},
+		{
+			"name": "retainer_0",
+			"from": [6, 8, 11.5],
+			"to": [10, 9, 12.5],
+			"faces": {
+				"north": {"uv": [8.25, 5.5, 9.25, 6], "texture": "#model"},
+				"east": {"uv": [9.25, 5.5, 9.5, 6], "texture": "#model"},
+				"south": {"uv": [9.5, 5.5, 10.5, 6], "texture": "#model"},
+				"west": {"uv": [8, 5.5, 8.25, 6], "texture": "#model"},
+				"up": {"uv": [8.25, 5, 9.25, 5.5], "texture": "#model"},
+				"down": {"uv": [9.25, 5, 10.25, 5.5], "texture": "#model"}
+			}
+		},
+		{
+			"name": "retainer_1",
+			"from": [7, 6, 11],
+			"to": [9, 8, 13],
+			"faces": {
+				"north": {"uv": [8.5, 7, 9, 8], "texture": "#model"},
+				"east": {"uv": [9, 7, 9.5, 8], "texture": "#model"},
+				"south": {"uv": [9.5, 7, 10, 8], "texture": "#model"},
+				"west": {"uv": [8, 7, 8.5, 8], "texture": "#model"},
+				"up": {"uv": [8.5, 6, 9, 7], "texture": "#model"},
+				"down": {"uv": [9, 6, 9.5, 7], "texture": "#model"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2, 0],
+			"scale": [0.45, 0.45, 0.45]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 1.5, 0],
+			"scale": [0.45, 0.45, 0.45]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.45, 0.45, 0.45]
+		},
+		"gui": {
+			"rotation": [30, 45, 0],
+			"translation": [0, 2, 0],
+			"scale": [0.8, 0.8, 0.8]
+		},
+		"fixed": {
+			"rotation": [0, -180, 0],
+			"translation": [0, 2, 0],
+			"scale": [0.65, 0.65, 0.65]
+		}
+	}
 }

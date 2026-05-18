@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.crafting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.MorphlingIncubatorModel;
+import com.vincenthuto.hemomancy.client.model.tile.functional.MorphlingIncubatorModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
@@ -58,7 +58,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		if (bufferIn instanceof MultiBufferSource.BufferSource source) {
 			source.endBatch(RenderTypeInit.FLASK_FLUID);
 		}
-		renderIncubatorModel(ms, bufferIn, te, combinedLightIn, partialTicks);
+		renderCreature(ms, bufferIn, te, combinedLightIn, partialTicks);
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 
@@ -345,7 +345,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 	 * Renders the morphling incubator entity model. Flips Y-down → Y-up
 	 * (Blockbench convention) and rotates to match the block's FACING direction.
 	 */
-	private void renderIncubatorModel(PoseStack poseStack, MultiBufferSource bufferIn,
+	private void renderCreature(PoseStack poseStack, MultiBufferSource bufferIn,
 			MorphlingIncubatorBlockEntity te, int combinedLightIn, float partialTicks) {
 		poseStack.pushPose();
 
@@ -366,7 +366,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		model.setupAnim(ageInTicks);
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
+		model.renderCreature(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}

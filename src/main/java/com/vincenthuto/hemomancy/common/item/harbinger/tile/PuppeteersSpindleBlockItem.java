@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tile;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.tile.crafting.PuppeteersSpindleItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.functional.PuppeteersSpindleItemRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;

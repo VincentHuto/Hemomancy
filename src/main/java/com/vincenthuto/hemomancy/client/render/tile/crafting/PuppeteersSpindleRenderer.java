@@ -34,7 +34,7 @@ public class PuppeteersSpindleRenderer implements BlockEntityRenderer<Puppeteers
 	public void render(PuppeteersSpindleBlockEntity spindle, float partialTicks, PoseStack poseStack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 		poseStack.pushPose();
-		poseStack.translate(0.5D, 1.5D, 0.5D);
+		poseStack.translate(0.5D, -0D, 0.5D);
 		poseStack.mulPose(Vector3.XP.rotationDegrees(180.0F).toMoj());
 
 		Direction facing = spindle.getBlockState().getValue(PuppeteersSpindleBlock.FACING);
