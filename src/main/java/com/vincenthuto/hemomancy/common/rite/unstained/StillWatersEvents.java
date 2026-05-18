@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
  * Players inside a Still Waters zone take 30% less magic damage, partially
  * countering Sanguine Dominion's bleed and other blood-magic threats.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class StillWatersEvents {
 
 	/** How often (in ticks) the cleanup pass removes expired entries. */

@@ -34,7 +34,7 @@ import java.util.List;
  * Progress is tracked via {@link net.minecraft.world.entity.Entity#getPersistentData()}
  * so it survives level saves and entity reload.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class MorphicNectarEvents {
 
 	private static final String TICKS_KEY = "hemomancy:morphic_nectar_ticks";

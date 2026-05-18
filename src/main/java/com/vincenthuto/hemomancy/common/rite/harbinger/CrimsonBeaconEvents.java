@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
  * takes fatal damage, their body is teleported to the beacon position before
  * the death is finalized. The beacon is consumed (one-time use).
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class CrimsonBeaconEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)

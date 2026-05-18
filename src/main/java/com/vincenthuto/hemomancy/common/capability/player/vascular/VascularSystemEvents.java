@@ -20,7 +20,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Map;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class VascularSystemEvents {	/**
 	 * When the player takes damage, degrade a vascular section based on damage type.
 	 * <ul>

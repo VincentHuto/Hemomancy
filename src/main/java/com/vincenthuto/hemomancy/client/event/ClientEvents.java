@@ -143,7 +143,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID)
 public class ClientEvents {
 
     public static final KeyMapping bloodFormation = new KeyMapping("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
@@ -457,7 +457,7 @@ public class ClientEvents {
         MorphlingPlayerPartVisibility.restore(event.getRenderer());
     }
 
-    @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
+    @EventBusSubscriber(modid = Hemomancy.MOD_ID)
     public static class ClientModBusEvents {
 
         public static BakedModel bloodAbsorptionModel, bloodProjectionModel;

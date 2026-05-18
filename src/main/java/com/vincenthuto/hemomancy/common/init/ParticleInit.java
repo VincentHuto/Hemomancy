@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public class ParticleInit {
 
 	
@@ -22,13 +22,13 @@ public class ParticleInit {
 			.create(Registries.PARTICLE_TYPE, Hemomancy.MOD_ID);
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<SerpentParticleData>> serpent = PARTICLE_TYPES.register("serpent",
-			() -> new SerpentParticleType());
+            SerpentParticleType::new);
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
-			.register("hit_glow", () -> new HitGlowParticleType());
+			.register("hit_glow", HitGlowParticleType::new);
 	
 	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodAvatarHitParticleData>> blood_avatar_hit = PARTICLE_TYPES
-			.register("blood_avatar_hit", () -> new BloodAvatarHitParticleType());
+			.register("blood_avatar_hit", BloodAvatarHitParticleType::new);
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
 			() -> new BloodCellParticleType());
@@ -36,7 +36,7 @@ public class ParticleInit {
 			() -> new BloodClawParticleType());
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
-			.register("absorbed_blood_cell", () -> new AbsorbedBloodCellParticleType());
+			.register("absorbed_blood_cell", AbsorbedBloodCellParticleType::new);
 
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event) {

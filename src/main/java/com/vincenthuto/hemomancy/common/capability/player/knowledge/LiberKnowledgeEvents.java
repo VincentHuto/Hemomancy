@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.Set;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class LiberKnowledgeEvents {
 	private LiberKnowledgeEvents() {
 	}

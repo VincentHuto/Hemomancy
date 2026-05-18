@@ -23,7 +23,7 @@ import java.util.List;
  *   <li>Enhanced blood regeneration (+5 blood/tick)</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class CrimsonLodgeEvents {
 
 	/** Interval in ticks between effect application (40 ticks = 2 seconds). */

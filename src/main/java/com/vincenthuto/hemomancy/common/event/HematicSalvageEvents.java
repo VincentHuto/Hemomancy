@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class HematicSalvageEvents {
 	private static final ResourceLocation WOUNDED_IRON_ADVANCEMENT = Hemomancy.rloc("hemomancy/wounded_iron");
 	private static final Map<UUID, Long> LAST_DROP_TICK = new HashMap<>();

@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import java.util.List;
 import java.util.UUID;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class PuppeteerSummonTrialEvents {
 	private PuppeteerSummonTrialEvents() {
 	}

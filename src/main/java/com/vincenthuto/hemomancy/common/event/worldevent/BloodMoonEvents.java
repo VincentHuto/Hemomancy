@@ -43,7 +43,7 @@ import java.util.List;
  * <p>State is persisted via {@link BloodMoonSavedData}; clients are notified
  * via {@link PacketSyncBloodMoon}.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodMoonEvents {
 
 	/** Ticks per in-game day. */

@@ -25,7 +25,7 @@ import net.neoforged.neoforge.client.event.RenderHandEvent;
  * Does NOT cancel the event â€” vanilla renders the arm normally, then we render
  * the morphling on top using the same transforms so it tracks the arm's bob/swing.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public class EquippedMorphlingHandRenderer {
 
 	@SubscribeEvent(priority = EventPriority.LOW)

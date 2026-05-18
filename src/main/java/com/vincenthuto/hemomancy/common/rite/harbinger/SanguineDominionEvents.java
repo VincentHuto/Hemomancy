@@ -20,7 +20,7 @@ import java.util.List;
  * Sanguine Dominion. Non-allied entities within the domain take slow bleed
  * damage every 2 seconds.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SanguineDominionEvents {
 
 	/** Damage dealt to non-allied entities every BLEED_INTERVAL ticks. */

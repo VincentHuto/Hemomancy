@@ -52,7 +52,7 @@ import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
  * Phase 2 (50%â†’0%): faster attacks, shorter Hematic Collapse cadence, and
  * bloodvolume spent is amplified by 1.25Ã— via {@link #onPlayerBloodSpend}.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class HollowVesselEntity extends Monster {
 
 	private static final EntityDataAccessor<Boolean> DATA_COLLAPSE_CHARGING =

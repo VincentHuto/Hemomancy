@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import java.util.Collection;
 import java.util.Collections;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class KnownManipulationEvents {	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();

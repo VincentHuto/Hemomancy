@@ -27,7 +27,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *       grants +0.5 purity.</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SilthmereGlaiveEvents {
 
 	/** How often (in ticks) the Glowing suppression pass runs. */

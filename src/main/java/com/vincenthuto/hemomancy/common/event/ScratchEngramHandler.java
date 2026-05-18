@@ -52,7 +52,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  *   <li>The player must use their main hand (prevents offhand ghost-clicks).</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ScratchEngramHandler {
 
     /** Damage dealt to the player per engram etched — one heart. */

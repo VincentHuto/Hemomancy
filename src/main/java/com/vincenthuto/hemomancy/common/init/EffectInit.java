@@ -16,7 +16,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EffectInit {
     public static final DeferredRegister<Potion> POTION_TYPES = DeferredRegister.create(Registries.POTION,
             Hemomancy.MOD_ID);

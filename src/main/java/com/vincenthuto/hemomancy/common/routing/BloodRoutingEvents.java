@@ -18,7 +18,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.Map;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class BloodRoutingEvents {
 
     private BloodRoutingEvents() {

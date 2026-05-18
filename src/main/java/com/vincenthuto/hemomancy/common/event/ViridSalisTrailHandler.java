@@ -44,7 +44,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
  *   <li>{@link VenousStriderEntity} &mdash; venous (blood-vessel) strider</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ViridSalisTrailHandler {
 
     /** Minimum Harbinger degree (inclusive) at which players are affected. */

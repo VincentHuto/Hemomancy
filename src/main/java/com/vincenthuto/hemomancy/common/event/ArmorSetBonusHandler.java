@@ -37,7 +37,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *   <li><b>Marrow Crown:</b> Artifact helmet â€” +10% melee damage when blood &gt; 50%</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ArmorSetBonusHandler {
 
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");

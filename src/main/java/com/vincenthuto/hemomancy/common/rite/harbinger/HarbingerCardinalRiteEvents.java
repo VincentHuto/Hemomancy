@@ -83,7 +83,7 @@ import java.util.UUID;
  * Handles tick processing, particle spawning, boundary enforcement,
  * unwilling sacrifice processing, and player death during active rites.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class HarbingerCardinalRiteEvents {
 
 	private static final float CASTER_BOUNDARY_DAMAGE_PER_TICK = 1.0f;

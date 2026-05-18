@@ -54,7 +54,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *   <li>Healing a tamed animal â†’ +0.2</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class PurityGainEvents {
 
     // â”€â”€ Kill rewards â”€â”€

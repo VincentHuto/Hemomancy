@@ -33,7 +33,7 @@ import java.util.Map;
  * Handles item purification in white humor pools. Nearby Unstained absorber
  * blocks accelerate the process and slowly tarnish as they take on taint.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class WhiteHumorPurificationEvents {
 
 	private static final String TICKS_KEY = "hemomancy:white_humor_purification_ticks";

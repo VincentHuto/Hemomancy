@@ -45,7 +45,7 @@ import java.util.List;
  * Manipulation cost reduction is handled directly in
  * {@link com.vincenthuto.hemomancy.common.manipulation.BloodManipulation#performAction}.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class QliphothBloomEvents {
 
 	/** Interval in ticks between effect application (40 ticks = 2 seconds). */

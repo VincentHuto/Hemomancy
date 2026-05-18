@@ -39,7 +39,7 @@ import java.util.Map;
  *   <li>Hematic Iron Block â†’ Pale Silver Block</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ConsecrationHandler {
 
 	/** Purity threshold to use consecration (CLEANSING = 50). */

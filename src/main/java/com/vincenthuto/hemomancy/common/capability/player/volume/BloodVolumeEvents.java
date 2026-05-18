@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimen
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent.Post event) {

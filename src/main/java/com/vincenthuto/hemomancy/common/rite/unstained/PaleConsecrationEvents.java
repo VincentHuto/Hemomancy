@@ -23,7 +23,7 @@ import java.util.List;
  * receive Slowness I for 3 seconds.  Players are never affected.
  * Entries are cleaned up when their expiry tick passes.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class PaleConsecrationEvents {
 
 	/** How often (in ticks) the effect is applied to mobs in the zone. */

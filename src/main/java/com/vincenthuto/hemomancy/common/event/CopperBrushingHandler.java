@@ -40,7 +40,7 @@ import java.util.Map;
  * preserved from the old state where the target block supports them.
  * Waxed copper is not affected.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class CopperBrushingHandler {
 
     /** Maps each scrape-eligible block to the block it degrades into. */

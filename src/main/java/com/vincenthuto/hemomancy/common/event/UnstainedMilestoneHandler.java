@@ -40,7 +40,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * <h3>Silver Ward Damage Reduction</h3>
  * Reduces incoming damage from hemomancy-tagged sources when Silver Ward is active.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class UnstainedMilestoneHandler {
 
 	/** How often to refresh the passive effects (every 5 seconds). */

@@ -24,7 +24,7 @@ import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 
 import java.util.Set;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class MachineAccessEvents {
 	private static Set<Block> gatedBlocks;
 

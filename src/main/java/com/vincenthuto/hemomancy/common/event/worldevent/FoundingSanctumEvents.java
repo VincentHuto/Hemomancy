@@ -19,7 +19,7 @@ import java.util.UUID;
  * Applies passive buffs to Harbingers standing inside any active Founding Sanctum.
  * Sanctum locations are persisted in {@link FoundingSanctumSavedData}.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class FoundingSanctumEvents {
 
 	private static final int EFFECT_INTERVAL_TICKS = 40;

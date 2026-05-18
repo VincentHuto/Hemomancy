@@ -34,7 +34,7 @@ import java.util.Set;
  * <p>Rite-based and dialogue-based unlocks are not event-driven and are
  * triggered programmatically from {@link LiberKnowledgeHelper} directly.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class LiberDiscoveryEvents {
 	private LiberDiscoveryEvents() {
 	}

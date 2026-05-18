@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
  * 4-block radius are suppressed â€” the resonant purity of pale silver keeps
  * the blood at bay.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class PaleSilverPickaxeEvents {
 
 	/** Radius (in blocks) around the pickaxe holder within which spawns are denied. */

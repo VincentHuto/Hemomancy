@@ -33,7 +33,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * executes gameplay-relevant side-effects such as starting a quest line or
  * changing NPC disposition.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class DialogueEventHandler {
 
 	@SubscribeEvent

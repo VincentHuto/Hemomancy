@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EquippedMorphlingEvents {
 
 	private static final Map<String, Long> TEMPORARY_WEBS = new ConcurrentHashMap<>();

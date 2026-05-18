@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
  * mob that spawns within the zone's chunk radius, effectively increasing local
  * mob density for the duration of the rite.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SanguineFervorEvents {
 
 	/** How often (in ticks) the cleanup pass runs to remove expired entries. */

@@ -16,7 +16,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SkillPointGainEvents {
 	private static final String HEMO_ADV_PREFIX = "hemomancy:hemomancy/";
 	private static final java.util.Map<String, String> ADV_TO_MILESTONE = java.util.Map.of(

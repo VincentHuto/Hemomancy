@@ -19,7 +19,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * perceptible intrusive thoughts that plant seeds of doubt. As the player's
  * degree increases, the interval shortens and the content grows more explicit.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class FungalWhisperEvents {
 
 	/**

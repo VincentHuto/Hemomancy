@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  *   <li><b>ENLIGHTENED</b> (clarity 100): every ~10 min â€” final truths, she is ancient and cold</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class OurLadyWhisperEvents {
 
 	// Intervals in ticks between whisper opportunities

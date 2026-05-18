@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
  *       gain +0.2 purity.</li>
  * </ol>
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class LetheCovenantEvents {
 
 	/** How often the cleanup and purity-tick run (in ticks). 1200 = 1 minute. */
