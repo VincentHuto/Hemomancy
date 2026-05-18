@@ -28,11 +28,15 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 	protected void addTags(Provider p_256380_) {
 		tag(EntityInit.FUNGAL_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 		tag(EntityInit.FERRIC_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
-		tag(EntityInit.NEUROTIC_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.NEUROTIC_TAG)
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.scarlet_serpent.getId()));
 		tag(EntityInit.UMBRAL_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 		tag(EntityInit.INCANDESCENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 		tag(EntityInit.FRIGID_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
-		tag(EntityInit.FERVENT_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
+		tag(EntityInit.FERVENT_TAG)
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.scarlet_serpent.getId()));
 		tag(EntityInit.RUINOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 		tag(EntityInit.VIVACIOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fungling.getId()));
 

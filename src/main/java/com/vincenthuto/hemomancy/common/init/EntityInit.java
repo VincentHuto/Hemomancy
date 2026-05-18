@@ -400,6 +400,13 @@ public class EntityInit {
             () -> EntityType.Builder.of(CrimsonDoeEntity::new, MobCategory.CREATURE)
                     .sized(0.9F, 1.4F).build(Hemomancy.rloc("crimson_doe").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<ScarletSerpentEntity>> scarlet_serpent = ENTITY_TYPES.register(
+            "scarlet_serpent",
+            () -> EntityType.Builder.of(ScarletSerpentEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 0.35F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("scarlet_serpent").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<HemojellyEntity>> hemojelly = ENTITY_TYPES.register(
             "hemojelly",
             () -> EntityType.Builder.of(HemojellyEntity::new, MobCategory.CREATURE)
@@ -570,6 +577,9 @@ public class EntityInit {
         event.register(EntityInit.crimson_doe.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.scarlet_serpent.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScarletSerpentEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.hemojelly.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -661,6 +671,7 @@ public class EntityInit {
         event.put(EntityInit.synapse_hound.get(), SynapseHoundEntity.setAttributes().build());
         event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
+        event.put(EntityInit.scarlet_serpent.get(), ScarletSerpentEntity.setAttributes().build());
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
         event.put(EntityInit.tooth_pecks.get(), ToothPecksEntity.setAttributes().build());
