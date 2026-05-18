@@ -21,6 +21,7 @@ import java.util.List;
  * Layer 1 (tintIndex 1) quads are scaled down toward the center so the
  * background is visible underneath.
  */
+@SuppressWarnings("deprecation")
 public class ScarPatternBakedModel implements BakedModel {
 
 	private final BakedModel original;
@@ -109,7 +110,9 @@ public class ScarPatternBakedModel implements BakedModel {
 	@Nonnull
 	@Override
 	public TextureAtlasSprite getParticleIcon() {
-		return original.getParticleIcon();
+		@SuppressWarnings("deprecation")
+		TextureAtlasSprite result = original.getParticleIcon();
+		return result;
 	}
 
 	@Nonnull
@@ -121,11 +124,12 @@ public class ScarPatternBakedModel implements BakedModel {
 	@Nonnull
 	@Override
 	public ItemTransforms getTransforms() {
-		return original.getTransforms();
+        return original.getTransforms();
 	}
 
+	@Nonnull
 	@Override
-	public BakedModel applyTransform(ItemDisplayContext displayContext, PoseStack poseStack, boolean applyLeftHandTransform) {
+	public BakedModel applyTransform(@Nonnull ItemDisplayContext displayContext, @Nonnull PoseStack poseStack, boolean applyLeftHandTransform) {
 		original.applyTransform(displayContext, poseStack, applyLeftHandTransform);
 		return this;
 	}
