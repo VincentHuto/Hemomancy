@@ -2,9 +2,11 @@ package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -34,6 +37,8 @@ public class ScarletSerpentEntity extends PathfinderMob {
 	private static final EntityDataAccessor<Boolean> HOOD_FLARED = SynchedEntityData.defineId(
 			ScarletSerpentEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Integer> STRIKE_TICKS = SynchedEntityData.defineId(
+			ScarletSerpentEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(
 			ScarletSerpentEntity.class, EntityDataSerializers.INT);
 
 	public ScarletSerpentEntity(EntityType<? extends ScarletSerpentEntity> type, Level level) {
@@ -61,6 +66,7 @@ public class ScarletSerpentEntity extends PathfinderMob {
 		super.defineSynchedData(builder);
 		builder.define(HOOD_FLARED, false);
 		builder.define(STRIKE_TICKS, 0);
+		builder.define(VARIANT, ScarletSerpentVariant.DEFAULT.id());
 	}
 
 	@Override
@@ -86,6 +92,34 @@ public class ScarletSerpentEntity extends PathfinderMob {
 			return 0.0F;
 		}
 		return Math.min(1.0F, (ticks - partialTick) / (float) ScarletSerpentRules.STRIKE_ANIMATION_TICKS);
+	}
+
+	public ScarletSerpentVariant getVariant() {
+		return ScarletSerpentVariant.byId(this.entityData.get(VARIANT));
+	}
+
+	public void setVariant(ScarletSerpentVariant variant) {
+		this.entityData.set(VARIANT, variant.id());
+	}
+
+	@Override
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+			MobSpawnType reason, SpawnGroupData spawnData) {
+		SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
+		this.setVariant(variantForCurrentBiome());
+		return data;
+	}
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
+		compound.putInt("ScarletSerpentVariant", this.getVariant().id());
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+		this.entityData.set(VARIANT, compound.getInt("ScarletSerpentVariant"));
 	}
 
 	@Override
@@ -152,6 +186,14 @@ public class ScarletSerpentEntity extends PathfinderMob {
 				.stream()
 				.min(Comparator.comparingDouble(this::distanceToSqr))
 				.orElse(null);
+	}
+
+	private ScarletSerpentVariant variantForCurrentBiome() {
+		String biomePath = this.level().getBiome(this.blockPosition())
+				.unwrapKey()
+				.map(key -> key.location().getPath())
+				.orElse("");
+		return ScarletSerpentVariant.fromBiomePath(biomePath);
 	}
 
 	@Override

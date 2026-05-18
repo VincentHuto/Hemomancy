@@ -11,6 +11,9 @@ final class ScarletSerpentRulesTest {
 		exposesMidTierStrikeDurations();
 		propagatesSlitherDownBody();
 		lootTableUsesCompleteNumberProviders();
+		selectsTextureVariantFromSpawnBiome();
+		spawnlistIncludesSwampsForBrownVariant();
+		textureVariantsExist();
 	}
 
 	private static void flaresBeforeItStrikes() {
@@ -79,6 +82,35 @@ final class ScarletSerpentRulesTest {
 		assertContains("visible base drop", lootTable, "\"min\": 1.0");
 		assertFalse(lootTable.contains("minecraft:looting_enchant"),
 				"scarlet serpent loot table should not use the removed 1.20 looting function id");
+	}
+
+	private static void selectsTextureVariantFromSpawnBiome() {
+		assertEquals("desert variant", ScarletSerpentVariant.DESERT_RED.id(),
+				ScarletSerpentVariant.fromBiomePath("desert").id());
+		assertEquals("badlands variant", ScarletSerpentVariant.DESERT_RED.id(),
+				ScarletSerpentVariant.fromBiomePath("wooded_badlands").id());
+		assertEquals("swamp variant", ScarletSerpentVariant.SWAMP_BROWN.id(),
+				ScarletSerpentVariant.fromBiomePath("swamp").id());
+		assertEquals("mangrove swamp variant", ScarletSerpentVariant.SWAMP_BROWN.id(),
+				ScarletSerpentVariant.fromBiomePath("mangrove_swamp").id());
+		assertEquals("jungle variant", ScarletSerpentVariant.DEFAULT.id(),
+				ScarletSerpentVariant.fromBiomePath("bamboo_jungle").id());
+	}
+
+	private static void spawnlistIncludesSwampsForBrownVariant() throws IOException {
+		String spawnlist = Files.readString(Path.of(
+				"src/main/resources/data/hemomancy/tags/worldgen/biome/scarlet_serpent_spawnlist.json"));
+		assertContains("swamp spawn biome", spawnlist, "\"minecraft:swamp\"");
+		assertContains("mangrove swamp spawn biome", spawnlist, "\"minecraft:mangrove_swamp\"");
+	}
+
+	private static void textureVariantsExist() {
+		assertTrue(Files.exists(Path.of(
+				"src/main/resources/assets/hemomancy/textures/entity/scarlet_serpent/model_scarlet_serpent_desert.png")),
+				"desert scarlet serpent texture should exist");
+		assertTrue(Files.exists(Path.of(
+				"src/main/resources/assets/hemomancy/textures/entity/scarlet_serpent/model_scarlet_serpent_swamp.png")),
+				"swamp scarlet serpent texture should exist");
 	}
 
 	private static void assertEquals(String label, int expected, int actual) {
