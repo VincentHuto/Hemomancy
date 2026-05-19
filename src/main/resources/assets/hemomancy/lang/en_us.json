@@ -548,6 +548,7 @@
   "item.hemomancy.verdigris_censer": "Verdigris Censer",
   "item.hemomancy.sporitic_thurible": "Sporitic Thurible",
   "item.hemomancy.sporitic_thurible.tooltip.lit": "Burning %s spores.",
+  "item.hemomancy.sporitic_thurible.tooltip.burn_time": "Burn time: %s",
   "item.hemomancy.sporitic_thurible.tooltip.unlit": "Unlit. Hold an aligned spore in your main hand to kindle it.",
   "item.hemomancy.sporitic_thurible.tooltip.use": "Offhand use: burns spores into a blood-fed Harbinger resonance.",
   "item.hemomancy.sporitic_thurible.message.offhand": "The thurible must hang from your offhand.",

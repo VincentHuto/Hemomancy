@@ -11,6 +11,10 @@ public final class SporiticThuribleRulesTest {
 		matchingTendencyReceivesResonanceDiscounts();
 		nonMatchingTendencyDoesNotReceiveResonanceDiscounts();
 		swingIntensityScalesDrainAndRadius();
+		burnFractionIsClamped();
+		burnTimeUsesEndTickWithoutPerTickStateMutation();
+		sporeParticleColorsUseByteRgbValues();
+		burningSporeDisplayStackUsesCatalystItemId();
 	}
 
 	private static void sporeIdsMapToTendencies() {
@@ -53,6 +57,47 @@ public final class SporiticThuribleRulesTest {
 		assertDouble("full swing blood drain", 16.0, SporiticThuribleRules.bloodDrainPerSecond(1.0));
 		assertDouble("idle aura radius", 2.5, SporiticThuribleRules.auraRadius(0.0));
 		assertDouble("full swing aura radius", 5.0, SporiticThuribleRules.auraRadius(1.0));
+	}
+
+	private static void burnFractionIsClamped() {
+		assertDouble("full burn fraction", 1.0,
+				SporiticThuribleRules.burnFraction(SporiticThuribleRules.DEFAULT_BURN_TICKS,
+						SporiticThuribleRules.DEFAULT_BURN_TICKS));
+		assertDouble("half burn fraction", 0.5,
+				SporiticThuribleRules.burnFraction(SporiticThuribleRules.DEFAULT_BURN_TICKS / 2,
+						SporiticThuribleRules.DEFAULT_BURN_TICKS));
+		assertDouble("empty burn fraction", 0.0, SporiticThuribleRules.burnFraction(0,
+				SporiticThuribleRules.DEFAULT_BURN_TICKS));
+		assertDouble("missing max burn fraction", 0.0, SporiticThuribleRules.burnFraction(100, 0));
+	}
+
+	private static void burnTimeUsesEndTickWithoutPerTickStateMutation() {
+		long litAt = 1_000L;
+		long endTick = litAt + SporiticThuribleRules.DEFAULT_BURN_TICKS;
+		assertEquals("full remaining burn", SporiticThuribleRules.DEFAULT_BURN_TICKS,
+				SporiticThuribleRules.remainingBurnTicks(litAt, endTick));
+		assertEquals("half remaining burn", SporiticThuribleRules.DEFAULT_BURN_TICKS / 2,
+				SporiticThuribleRules.remainingBurnTicks(litAt + SporiticThuribleRules.DEFAULT_BURN_TICKS / 2, endTick));
+		assertEquals("expired remaining burn", 0,
+				SporiticThuribleRules.remainingBurnTicks(endTick + 20, endTick));
+	}
+
+	private static void sporeParticleColorsUseByteRgbValues() {
+		SporiticThuribleSpore vivacious = SporiticThuribleSpore.VIVACIOUS;
+		assertDouble("vivacious red byte", 184.0, vivacious.red());
+		assertDouble("vivacious green byte", 58.0, vivacious.green());
+		assertDouble("vivacious blue byte", 75.0, vivacious.blue());
+	}
+
+	private static void burningSporeDisplayStackUsesCatalystItemId() {
+		try {
+			Object displayStack = SporiticThuribleSpore.RUINOUS.getClass().getMethod("displayStack")
+					.invoke(SporiticThuribleSpore.RUINOUS);
+			boolean isEmpty = (boolean) displayStack.getClass().getMethod("isEmpty").invoke(displayStack);
+			assertTrue("display stack exists for catalyst", !isEmpty);
+		} catch (ReflectiveOperationException exception) {
+			throw new AssertionError("burning spore display stack is available", exception);
+		}
 	}
 
 	private static void assertTrue(String label, boolean value) {

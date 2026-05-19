@@ -5,13 +5,18 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.SporiticThuribleModel;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleSpore;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -23,16 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class SporiticThuribleRenderHelper {
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/sporitic_thurible.png");
 	private static final Map<Key, PhysicsState> STATES = new ConcurrentHashMap<>();
-	private static final double STATIC_CHAIN_LENGTH = 0.56;
-	private static final double FIRST_PERSON_CHAIN_LENGTH = 0.68;
-	private static final double THIRD_PERSON_CHAIN_LENGTH = 0.64;
 
-	private SporiticThuribleRenderHelper() {
+    private SporiticThuribleRenderHelper() {
 	}
 
 	public static void renderStatic(SporiticThuribleModel<?> model, ItemStack stack, PoseStack poseStack,
 			MultiBufferSource buffer, int packedLight, int packedOverlay) {
-		renderWithBob(model, stack, poseStack, buffer, packedLight, packedOverlay,
+        double STATIC_CHAIN_LENGTH = 0.56;
+        renderWithBob(model, stack, poseStack, buffer, packedLight, packedOverlay,
 				new Vec3(0.0, STATIC_CHAIN_LENGTH, 0.0), 0.0f);
 	}
 
@@ -40,7 +43,9 @@ public final class SporiticThuribleRenderHelper {
 			PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, boolean firstPerson) {
 		Key key = new Key(holder.getUUID(), firstPerson ? 1 : 0, arm == HumanoidArm.LEFT ? 0 : 1);
 		PhysicsState state = STATES.computeIfAbsent(key, ignored -> new PhysicsState(holder));
-		double chainLength = firstPerson ? FIRST_PERSON_CHAIN_LENGTH : THIRD_PERSON_CHAIN_LENGTH;
+        double THIRD_PERSON_CHAIN_LENGTH = 0.54;
+        double FIRST_PERSON_CHAIN_LENGTH = 0.68;
+        double chainLength = firstPerson ? FIRST_PERSON_CHAIN_LENGTH : THIRD_PERSON_CHAIN_LENGTH;
 		Vec3 bob = state.update(holder, firstPerson, chainLength);
 		float tilt = (float) Mth.clamp(bob.x * 44.0 + bob.z * 26.0, -26.0, 26.0);
 		renderWithBob(model, stack, poseStack, buffer, packedLight, packedOverlay, bob, tilt);
@@ -58,6 +63,44 @@ public final class SporiticThuribleRenderHelper {
 		poseStack.mulPose(Axis.XP.rotationDegrees((float) Mth.clamp(-bob.z * 34.0, -18.0, 18.0)));
 		poseStack.scale(0.82f, 0.82f, 0.82f);
 		model.renderBody(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+		renderBurningSpore(stack, poseStack, buffer, packedOverlay);
+		poseStack.popPose();
+	}
+
+	private static void renderBurningSpore(ItemStack thuribleStack, PoseStack poseStack, MultiBufferSource buffer,
+			int packedOverlay) {
+		if (!SporiticThuribleItem.isLit(thuribleStack)) {
+			return;
+		}
+		SporiticThuribleSpore spore = SporiticThuribleItem.getStoredSpore(thuribleStack).orElse(null);
+		if (spore == null) {
+			return;
+		}
+
+		ItemStack sporeStack = spore.displayStack();
+		if (sporeStack.isEmpty()) {
+			return;
+		}
+
+		Minecraft minecraft = Minecraft.getInstance();
+		float age = minecraft.level != null ? minecraft.level.getGameTime() + minecraft.getTimer().getGameTimeDeltaPartialTick(false) : 0.0f;
+		float pulse = 0.24f + Mth.sin(age * 0.18f) * 0.014f;
+		poseStack.pushPose();
+		poseStack.translate(0.0f, 0.1f, -0f);
+		poseStack.mulPose(Axis.YP.rotationDegrees(age * 3.0f));
+		poseStack.mulPose(Axis.XP.rotationDegrees(16.0f));
+		renderBurningSporePlane(minecraft, sporeStack, poseStack, buffer, packedOverlay, pulse, spore.ordinal());
+		poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
+		renderBurningSporePlane(minecraft, sporeStack, poseStack, buffer, packedOverlay, pulse, spore.ordinal() + 31);
+		poseStack.popPose();
+	}
+
+	private static void renderBurningSporePlane(Minecraft minecraft, ItemStack sporeStack, PoseStack poseStack,
+			MultiBufferSource buffer, int packedOverlay, float scale, int seed) {
+		poseStack.pushPose();
+		poseStack.scale(scale, scale, scale);
+		minecraft.getItemRenderer().renderStatic(sporeStack, ItemDisplayContext.FIXED, LightTexture.FULL_BRIGHT,
+				packedOverlay, poseStack, buffer, minecraft.level, seed);
 		poseStack.popPose();
 	}
 

@@ -4,6 +4,7 @@ import net.minecraft.util.Mth;
 
 public final class SporiticThuribleRules {
 	public static final int REQUIRED_DEGREE = 4;
+	public static final int DEFAULT_BURN_TICKS = 20 * 60 * 5;
 	public static final int UPKEEP_INTERVAL_TICKS = 20;
 	public static final int AMBIENT_PARTICLE_INTERVAL_TICKS = 4;
 	public static final int AURA_INTERVAL_TICKS = 40;
@@ -26,5 +27,16 @@ public final class SporiticThuribleRules {
 	public static double auraRadius(double swingIntensity) {
 		double clamped = Mth.clamp(swingIntensity, 0.0, 1.0);
 		return BASE_AURA_RADIUS + SWING_AURA_RADIUS * clamped;
+	}
+
+	public static double burnFraction(int burnTicks, int maxBurnTicks) {
+		if (maxBurnTicks <= 0) {
+			return 0.0;
+		}
+		return Mth.clamp(burnTicks / (double) maxBurnTicks, 0.0, 1.0);
+	}
+
+	public static int remainingBurnTicks(long currentGameTime, long burnEndGameTime) {
+		return (int) Math.max(0L, burnEndGameTime - currentGameTime);
 	}
 }

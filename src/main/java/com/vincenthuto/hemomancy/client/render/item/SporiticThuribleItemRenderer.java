@@ -37,7 +37,7 @@ public class SporiticThuribleItemRenderer extends BlockEntityWithoutLevelRendere
 				|| displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
 			LocalPlayer player = Minecraft.getInstance().player;
 			boolean leftHand = displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-			float side = leftHand ? -0.5f : 0.5f;
+			float side = leftHand ? -0.5f : 8.5f;
 			poseStack.translate(side * 0.08, 1, 0.16);
 			poseStack.mulPose(Axis.XP.rotationDegrees(180.0f));
 			poseStack.mulPose(Axis.YP.rotationDegrees(side * -10.0f));

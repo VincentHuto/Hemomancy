@@ -2,7 +2,7 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-05-07 documentation cleanup pass. Implementation-status notes now use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-05-19 Sporitic Thurible alignment note. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
 > **Current Lore-State Snapshot (2026-05-06 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
@@ -224,7 +224,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ADEPT 4 — *of the Sanguine Brotherhood*
 **Lore:** The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the earliest form of the Bloodline system. An Adept has moved beyond solo practice into understanding blood as communal inheritance. Simultaneously, the first **Fungal Whispers** begin — subliminal and barely perceptible. Just seeds of doubt.
 
-**Gameplay:** **Scars** and the **Cerebral Scarring Station**. Scar crafting requires minimum Degree 4 (wired in code). Players gain access to the Cerebral Scarring Station (surgical encoding of venous/neural pathways) and the Chisel Station (rune encoding). Scars equip in the Scar Binder and grant passive bonuses, skill amplification, or manipulation modifiers. Visceral Organ extraction via the Visceral Mirror ritual also becomes Adept-tier content.
+**Gameplay:** **Scars** and the **Cerebral Scarring Station**. Scar crafting requires minimum Degree 4 (wired in code). Players gain access to the Cerebral Scarring Station (surgical encoding of venous/neural pathways) and the Chisel Station (rune encoding). Scars equip in the Scar Binder and grant passive bonuses, skill amplification, or manipulation modifiers. Visceral Organ extraction via the Visceral Mirror ritual also becomes Adept-tier content. The Sporitic Thurible now sits in this same Adept band: a held thurible that burns aligned spores with blood upkeep, externalizing the Brotherhood's battlefield covenant as infectious support incense rather than simple weaponry.
 
 #### ILLUMINATUS 5 — *of the Crimson Lodge*
 **Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.

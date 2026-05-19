@@ -90,20 +90,24 @@ public enum SporiticThuribleSpore {
 	}
 
 	public float red() {
-		return ((color >> 16) & 0xFF) / 255.0f;
+		return (color >> 16) & 0xFF;
 	}
 
 	public float green() {
-		return ((color >> 8) & 0xFF) / 255.0f;
+		return (color >> 8) & 0xFF;
 	}
 
 	public float blue() {
-		return (color & 0xFF) / 255.0f;
+		return color & 0xFF;
 	}
 
 	public boolean matches(ItemStack stack) {
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
 		return itemId().equals(itemId);
+	}
+
+	public ItemStack displayStack() {
+		return new ItemStack(BuiltInRegistries.ITEM.get(itemId()));
 	}
 
 	public abstract void applySecondary(LivingEntity target);

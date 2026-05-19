@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -48,9 +47,13 @@ public class SporiticThuribleEvents {
 			LAST_YAW.remove(player.getUUID());
 			return;
 		}
+		long gameTime = player.level().getGameTime();
+		if (!SporiticThuribleItem.tickBurn(offhand, gameTime)) {
+			LAST_YAW.remove(player.getUUID());
+			return;
+		}
 
 		double intensity = getSwingIntensity(player);
-		long gameTime = player.level().getGameTime();
 		if (gameTime % SporiticThuribleRules.UPKEEP_INTERVAL_TICKS == 0
 				&& !drainUpkeep(serverPlayer, offhand, intensity)) {
 			LAST_YAW.remove(player.getUUID());
@@ -93,16 +96,15 @@ public class SporiticThuribleEvents {
 		ServerLevel level = owner.serverLevel();
 		double clampedIntensity = Mth.clamp(intensity, 0.0, 1.0);
 		double spread = 0.45 + 0.8 * clampedIntensity;
-		int tintedCount = 4 + (int) (8 * clampedIntensity);
-		int airCount = 2 + (int) (5 * clampedIntensity);
+		int closeCount = 6 + (int) (10 * clampedIntensity);
+		int driftCount = 3 + (int) (7 * clampedIntensity);
 		double x = owner.getX();
 		double y = owner.getY() + 0.95;
 		double z = owner.getZ();
+		SporiticSporeParticleData particle = new SporiticSporeParticleData(spore.red(), spore.green(), spore.blue());
 
-		level.sendParticles(new SporiticSporeParticleData(spore.red(), spore.green(), spore.blue()),
-				x, y, z, tintedCount, spread, 0.35, spread, 0.015);
-		level.sendParticles(ParticleTypes.SPORE_BLOSSOM_AIR, x, y + 0.2, z, airCount,
-				spread * 0.85, 0.25, spread * 0.85, 0.004);
+		level.sendParticles(particle, x, y, z, closeCount, spread, 0.35, spread, 0.015);
+		level.sendParticles(particle, x, y + 0.25, z, driftCount, spread * 0.95, 0.45, spread * 0.95, 0.004);
 	}
 
 	private static void applyAura(ServerPlayer owner, SporiticThuribleSpore spore, double intensity) {

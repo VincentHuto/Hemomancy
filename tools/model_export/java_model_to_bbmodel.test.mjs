@@ -125,6 +125,105 @@ public class TempDropModel {
   }
 }
 
+async function testPartPoseRotationConverts() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "TempRotationModel.java");
+  const outputFile = path.join(outputDir, "TempRotationModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+
+public class TempRotationModel {
+  public static LayerDefinition createBodyLayer() {
+    MeshDefinition mesh = new MeshDefinition();
+    PartDefinition root = mesh.getRoot();
+    root.addOrReplaceChild("tilted_ring", CubeListBuilder.create()
+      .texOffs(0, 0).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F),
+      PartPose.rotation(0.0F, 0.0F, 0.7854F));
+    return LayerDefinition.create(mesh, 16, 16);
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/item/sporitic_thurible.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const group = bbmodel.outliner.find((node) => node.name === "tilted_ring");
+
+    assert.ok(group, "rotated part should be exported as an outliner group");
+    assert.deepEqual(group.rotation, [0, 0, -45.000105]);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
+async function testCubeDeformationDoesNotBakeIntoPositionAndSize() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "TempDeformationModel.java");
+  const outputFile = path.join(outputDir, "TempDeformationModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+
+public class TempDeformationModel {
+  public static LayerDefinition createBodyLayer() {
+    MeshDefinition mesh = new MeshDefinition();
+    PartDefinition root = mesh.getRoot();
+    root.addOrReplaceChild("bowl", CubeListBuilder.create()
+      .texOffs(0, 0).addBox(-3.5F, 3.4F, -3.5F, 7.0F, 1.0F, 7.0F, new CubeDeformation(-0.25F)),
+      PartPose.ZERO);
+    return LayerDefinition.create(mesh, 16, 16);
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/item/sporitic_thurible.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const cube = bbmodel.elements.find((element) => element.name.startsWith("bowl_"));
+
+    assert.ok(cube, "deformed cube should be exported");
+    assert.deepEqual(cube.from, [-3.5, 19.6, -3.5]);
+    assert.deepEqual(cube.to, [3.5, 20.6, 3.5]);
+    assert.equal(cube.inflate, -0.25);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
 async function testChalybeateSnailForLoopPartsConvert() {
   const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
   const outputFile = path.join(outputDir, "ChalybeateSnailModel.bbmodel");
@@ -173,6 +272,8 @@ function collectGroupNames(nodes, names) {
 const tests = [
   ["converts MnemonicWhaleModel dimensions that reference tuning constants", testMnemonicWhaleTuningConstantsConvert],
   ["drop wrapper writes the bbmodel beside the dropped Java file", testDropWrapperOutputsBesideDroppedFile],
+  ["converts PartPose.rotation without an offset", testPartPoseRotationConverts],
+  ["keeps CubeDeformation in inflate instead of baking it into position and size", testCubeDeformationDoesNotBakeIntoPositionAndSize],
   ["converts ChalybeateSnailModel parts declared inside a simple for loop", testChalybeateSnailForLoopPartsConvert],
 ];
 

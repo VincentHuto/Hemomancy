@@ -344,6 +344,15 @@ function parsePose(poseExpression, parseNumeric = parseNumber) {
     return { offset: values, rotation: [0, 0, 0] };
   }
 
+  const rotation = pose.match(/PartPose\.rotation\s*\(([\s\S]*)\)/);
+  if (rotation) {
+    const values = splitTopLevel(rotation[1], ",").map(parseNumeric);
+    if (values.length !== 3) {
+      throw new Error(`PartPose.rotation expected 3 arguments, got ${values.length}`);
+    }
+    return { offset: [0, 0, 0], rotation: values };
+  }
+
   throw new Error(`Unsupported PartPose expression: ${pose}`);
 }
 
@@ -426,14 +435,14 @@ function toElement(model, part, cube, uuid, color) {
   const [pivotX, pivotY, pivotZ] = part.worldOffset;
   const inflate = cube.inflate ?? 0;
   const from = [
-    pivotX + cube.x - inflate,
-    24 - (pivotY + cube.y + cube.height) - inflate,
-    pivotZ + cube.z - inflate,
+    pivotX + cube.x,
+    24 - (pivotY + cube.y + cube.height),
+    pivotZ + cube.z,
   ];
   const to = [
-    pivotX + cube.x + cube.width + inflate,
-    24 - (pivotY + cube.y) + inflate,
-    pivotZ + cube.z + cube.depth + inflate,
+    pivotX + cube.x + cube.width,
+    24 - (pivotY + cube.y),
+    pivotZ + cube.z + cube.depth,
   ];
 
   const element = {
