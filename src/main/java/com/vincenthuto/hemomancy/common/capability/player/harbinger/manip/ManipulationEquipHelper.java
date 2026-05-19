@@ -6,7 +6,7 @@ public final class ManipulationEquipHelper {
 	private ManipulationEquipHelper() {
 	}
 
-	static boolean equipNameIfPossible(List<String> equippedNames, String manipName, int maxSlots) {
+	public static boolean equipNameIfPossible(List<String> equippedNames, String manipName, int maxSlots) {
 		if (equippedNames == null || manipName == null || manipName.isEmpty()
 				|| equippedNames.contains(manipName)
 				|| equippedNames.size() >= maxSlots) {

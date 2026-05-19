@@ -106,6 +106,39 @@ final class StructurePlacementChecks {
 				HarbingerVoyagerWreckPlacementRules.MIN_WATER_DEPTH, maxFloor - minFloor);
 	}
 
+	static boolean isSuitableActiveVoyagerVesselChunk(Structure.GenerationContext context) {
+		ChunkPos chunkPos = context.chunkPos();
+		int minX = chunkPos.getMinBlockX();
+		int minZ = chunkPos.getMinBlockZ();
+		int[][] samples = {
+				{ 8, 8 },
+				{ 2, 2 },
+				{ 13, 2 },
+				{ 2, 13 },
+				{ 13, 13 }
+		};
+
+		int minSurface = Integer.MAX_VALUE;
+		int maxSurface = Integer.MIN_VALUE;
+		int seaLevel = context.chunkGenerator().getSeaLevel();
+		for (int[] sample : samples) {
+			int x = minX + sample[0];
+			int z = minZ + sample[1];
+			int surface = getSurfaceHeight(context, x, z);
+			int floor = getOceanFloorHeight(context, x, z);
+			minSurface = Math.min(minSurface, surface);
+			maxSurface = Math.max(maxSurface, surface);
+			boolean waterColumn = surface <= seaLevel + 2 && surface > floor;
+			int waterDepth = surface - floor;
+			if (!ActiveHarbingerVoyagerVesselPlacementRules.canPlaceVessel(waterColumn, true, waterDepth, 0)) {
+				return false;
+			}
+		}
+
+		return ActiveHarbingerVoyagerVesselPlacementRules.canPlaceVessel(true, true,
+				ActiveHarbingerVoyagerVesselPlacementRules.MIN_WATER_DEPTH, maxSurface - minSurface);
+	}
+
 	private static boolean isSuitableLandColumn(Structure.GenerationContext context, int x, int z, int maxAllowedWaterDepth) {
 		int surface = getSurfaceHeight(context, x, z);
 		if (surface >= MAX_LAND_STRUCTURE_HEIGHT) {

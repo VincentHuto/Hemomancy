@@ -21,11 +21,11 @@ public final class ActiveHarbingerVoyagerNpcSpawner {
 	public static void spawnForActiveVessel(WorldGenLevel level, BoundingBox fullBox, BlockPos center,
 			RandomSource random) {
 		if (ActiveHarbingerVoyagerNpcRules.shouldSpawnVoyager()) {
-			spawnNear(level, fullBox, random, EntityInit.harbinger_voyager.get(), center, 4);
+			spawnNear(level, fullBox, random, EntityInit.harbinger_voyager.get(), center, 3);
 		}
 		if (ActiveHarbingerVoyagerNpcRules
 				.shouldSpawnVotaryWayfarer(random.nextInt(ActiveHarbingerVoyagerNpcRules.VOTARY_WAYFARER_CHANCE))) {
-			spawnNear(level, fullBox, random, EntityInit.harbinger_votary_wayfarer.get(), center.offset(2, 0, -2), 3);
+			spawnNear(level, fullBox, random, EntityInit.harbinger_votary_wayfarer.get(), center.offset(1, 0, 1), 3);
 		}
 	}
 
@@ -47,15 +47,13 @@ public final class ActiveHarbingerVoyagerNpcSpawner {
 			for (int dx = -radius; dx <= radius; dx++) {
 				for (int dz = -radius; dz <= radius; dz++) {
 					BlockPos pos = origin.offset(dx, dy, dz);
-					if (!fullBox.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-						continue;
-					}
 					BlockState state = level.getBlockState(pos);
-					if (!state.isAir()) {
-						continue;
-					}
 					BlockPos below = pos.below();
-					if (level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+					boolean inBounds = fullBox.isInside(pos.getX(), pos.getY(), pos.getZ());
+					boolean drySpace = level.getFluidState(pos).isEmpty();
+					boolean sturdyFloor = level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
+					if (ActiveHarbingerVoyagerDeckRules.canSpawnOnDeck(inBounds, state.isAir(), drySpace,
+							sturdyFloor)) {
 						return pos;
 					}
 				}

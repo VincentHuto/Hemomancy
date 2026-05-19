@@ -85,7 +85,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				}
 
 				if (!handled) {
-				for (BloodStructureRecipe targetPattern : BloodStructureRecipe.getAllRecipes(player.level())) {
+				for (BloodStructureRecipe targetPattern : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
+						BloodStructureRecipe.getAllRecipes(player.level()),
+						recipe -> recipe.getPattern().getPatternArray())) {
 					if (player.getMainHandItem().getItem() != targetPattern.getHeldItem().getItem()) continue;
 
 					BlockPattern blockPat = targetPattern.getPattern().getBlockPattern();
@@ -189,7 +191,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					BlockPos hitPos = blockResult.getBlockPos();
 					ServerLevel sLevel = (ServerLevel) player.level();
 
-					for (BloodStructureRecipe recipe : BloodStructureRecipe.getAllRecipes(player.level())) {
+					for (BloodStructureRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
+							BloodStructureRecipe.getAllRecipes(player.level()),
+							targetPattern -> targetPattern.getPattern().getPatternArray())) {
 						BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 							// Check progression first, so locked recipes explain the missing degree/stage.
@@ -226,7 +230,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						}
 					}
 					if (!handled) {
-						for (PuppeteerTrialRecipe recipe : PuppeteerTrialRecipe.getAllTrialRecipes(player.level())) {
+						for (PuppeteerTrialRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
+								PuppeteerTrialRecipe.getAllTrialRecipes(player.level()),
+								targetPattern -> targetPattern.getPattern().getPatternArray())) {
 							BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
 							if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 								player.displayClientMessage(
@@ -250,7 +256,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	}
 
 	private static boolean tryActivatePuppeteerTrial(Player player, ServerLevel level, BlockPos hitPos) {
-		for (PuppeteerTrialRecipe recipe : PuppeteerTrialRecipe.getAllTrialRecipes(player.level())) {
+		for (PuppeteerTrialRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
+				PuppeteerTrialRecipe.getAllTrialRecipes(player.level()),
+				targetPattern -> targetPattern.getPattern().getPatternArray())) {
 			if (player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 				continue;
 			}
@@ -354,10 +362,16 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 		BlockHitResult blockResult = (BlockHitResult) rayTrace;
 		BlockPos hitPos = blockResult.getBlockPos();
+		var hitState = sLevel.getBlockState(hitPos);
 
-		for (CardinalRiteRecipe recipe : CardinalRiteRecipe.getAllRecipes(player.level())) {
+		for (CardinalRiteRecipe recipe : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
+				CardinalRiteRecipe.getAllRecipes(player.level()),
+				rite -> rite.getPattern().getPatternArray())) {
+			if (!BloodCraftingPatternBlockRules.patternMayContainBlock(recipe.getPattern(), hitState)) {
+				continue;
+			}
 			BlockPattern bp = recipe.getPattern().getBlockPattern();
-			BlockPattern.BlockPatternMatch match = findPatternNearBlock(bp, sLevel, hitPos);
+			BlockPattern.BlockPatternMatch match = findPatternAtHit(bp, sLevel, hitPos);
 			if (match != null) {
 				// Explicit recipe degree / stage progression check.
 				if (!recipe.isUnstained()) {
@@ -533,7 +547,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		return false;
 	}
 
-	private static BlockPattern.BlockPatternMatch findPatternNearBlock(
+	private static BlockPattern.BlockPatternMatch findPatternAtHit(
 			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
 		int maxDim = Math.max(Math.max(
 				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
@@ -545,7 +559,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				for (Direction thumb : Direction.values()) {
 					if (thumb == finger || thumb == finger.getOpposite()) continue;
 					BlockPattern.BlockPatternMatch match = blockPattern.matches(level, candidate, finger, thumb);
-					if (match != null) return match;
+					if (match != null && matchContainsPos(match, blockPattern, hitPos)) return match;
 				}
 			}
 		}

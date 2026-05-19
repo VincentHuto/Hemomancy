@@ -1,0 +1,15 @@
+{
+  "name": "hemomancy:harbinger_voyager_vessel/start_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "hemomancy:harbinger_voyager_vessel/survey_cog",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

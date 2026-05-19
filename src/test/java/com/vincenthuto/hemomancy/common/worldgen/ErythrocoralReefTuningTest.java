@@ -12,6 +12,7 @@ final class ErythrocoralReefTuningTest {
 		keepsAquaticSpawnDepthsVisibleInDeepReefs();
 		keepsDataPackSpawnTablesInSync();
 		keepsWhalesTaggedForUnderwaterBreathing();
+		keepsHydrothermalVentsAvailableInReefs();
 	}
 
 	private static void makesReefPatchesLargerButRarer() throws IOException {
@@ -64,6 +65,13 @@ final class ErythrocoralReefTuningTest {
 				"src/main/resources/data/minecraft/tags/entity_type/can_breathe_under_water.json"));
 		assertTrue(breathingTag.contains("\"hemomancy:mnemonic_whale\""),
 				"mnemonic whales should be tagged as underwater breathers");
+	}
+
+	private static void keepsHydrothermalVentsAvailableInReefs() throws IOException {
+		String ventBiomeTag = Files.readString(Path.of(
+				"src/main/resources/data/hemomancy/tags/worldgen/biome/deep_ocean_vent_spawnlist.json"));
+		assertTrue(ventBiomeTag.contains("\"hemomancy:erythrocoral_reef\""),
+				"erythrocoral reefs should be in the hydrothermal vent spawnlist tag");
 	}
 
 	private static void assertSpawnerWeight(String biome, String entityId, int weight) {

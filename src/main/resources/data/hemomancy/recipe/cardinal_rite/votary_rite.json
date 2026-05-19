@@ -1,32 +1,40 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 250,
-  "riteType": "minor",
+  "riteType": "lesser",
   "required_degree": 1,
   "riteName": "Rite of the Votary",
   "riteDescription": "The second rite of the Hematic Order, binding the practitioner deeper into the Covenant.",
   "rankup": true,
   "pattern": [
     [
-      "PEP"
+      "OEOEO"
     ],
     [
-      "EBE"
+      "E H E"
     ],
     [
-      "PEP"
+      "OHBHO"
+    ],
+    [
+      "E H E"
+    ],
+    [
+      "OEOEO"
     ]
   ],
   "key": {
+    "O": {
+      "block": "minecraft:obsidian"
+    },
     "E": {
       "block": "hemomancy:engram_block"
     },
-    "B": {
+    "H": {
       "block": "hemomancy:hematic_iron_block"
     },
-    "P": {
-      "tag": "hemomancy:progression/ritual_stone",
-      "fallback": "minecraft:polished_basalt"
+    "B": {
+      "block": "hemomancy:hematic_iron_block"
     }
   },
   "result": {
