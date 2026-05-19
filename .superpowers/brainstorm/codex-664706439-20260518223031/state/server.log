@@ -1,0 +1,5 @@
+{"type":"server-started","port":61966,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:61966","screen_dir":"C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\.superpowers\\brainstorm\\codex-664706439-20260518223031\\content","state_dir":"C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\.superpowers\\brainstorm\\codex-664706439-20260518223031\\state"}
+{"type":"screen-added","file":"C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\.superpowers\\brainstorm\\codex-664706439-20260518223031\\content\\thurible-chain-approach.html"}
+{"source":"user-event","type":"click","text":"A. Procedural Client Physics\n      Recommended: client simulates a spring pendulum from the player hand, draws chain links along the curve, and renders the thurible body at the bob.","choice":"procedural-client-physics","id":null,"timestamp":1779161553782}
+{"type":"screen-added","file":"C:\\Users\\Vince\\Desktop\\My MC Mods\\NeoForge\\1.21.1\\Hemomancy\\.superpowers\\brainstorm\\codex-664706439-20260518223031\\content\\waiting-after-chain-choice.html"}
+{"type":"server-stopped","reason":"idle timeout"}

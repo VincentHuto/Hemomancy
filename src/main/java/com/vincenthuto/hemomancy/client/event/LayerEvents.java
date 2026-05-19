@@ -63,6 +63,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);
 		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
+		event.registerLayerDefinition(SporiticThuribleModel.LAYER_LOCATION, SporiticThuribleModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedWarhammerModel.LAYER_LOCATION, UnstainedWarhammerModel::createBodyLayer);
 		event.registerLayerDefinition(SilthmereGlaiveModel.LAYER_LOCATION, SilthmereGlaiveModel::createBodyLayer);
 		event.registerLayerDefinition(AbsolutionDaggerModel.LAYER_LOCATION, AbsolutionDaggerModel::createBodyLayer);
@@ -251,6 +252,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
 			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
+			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
 		}
 	}
 

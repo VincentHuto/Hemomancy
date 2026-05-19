@@ -185,6 +185,9 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> sanguine_clarity = EFFECTS.register("sanguine_clarity",
             () -> new SanguineClarityEffect(MobEffectCategory.BENEFICIAL, 0x4020A0));
 
+    public static final DeferredHolder<MobEffect, MobEffect> sporitic_resonance = EFFECTS.register("sporitic_resonance",
+            () -> new SporiticResonanceEffect(MobEffectCategory.BENEFICIAL, 0x8F3A54));
+
     // Neurotic Tendency Effect
     public static final DeferredHolder<MobEffect, MobEffect> neural_overload = EFFECTS.register("neural_overload",
             () -> new NeuralOverloadEffect(MobEffectCategory.HARMFUL, 0x7DF9FF)

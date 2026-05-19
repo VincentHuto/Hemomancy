@@ -635,6 +635,8 @@ public class ItemInit {
             () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> verdigris_censer = SPECIALITEMS.register("verdigris_censer",
             () -> new VerdigrisCenserItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> sporitic_thurible = SPECIALITEMS.register("sporitic_thurible",
+            () -> new SporiticThuribleItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     // Scars
     public static final DeferredHolder<Item, Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
             () -> new ItemSelfReflectionMirror(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));

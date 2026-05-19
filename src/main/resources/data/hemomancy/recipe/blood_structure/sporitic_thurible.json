@@ -1,0 +1,39 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 1000,
+  "required_degree": 4,
+  "heldItem": "hemomancy:spore_sac",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+    [
+      " C ",
+      "IBI",
+      "ICI"
+    ],
+    [
+      "MMM",
+      "MHM",
+      "MMM"
+    ]
+  ],
+  "key": {
+    "B": {
+      "block": "minecraft:iron_bars"
+    },
+    "C": {
+      "block": "minecraft:chain"
+    },
+    "H": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "I": {
+      "block": "minecraft:copper_block"
+    },
+    "M": {
+      "block": "minecraft:brown_mushroom_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sporitic_thurible"
+  }
+}

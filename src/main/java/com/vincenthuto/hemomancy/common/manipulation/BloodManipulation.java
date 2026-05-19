@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
@@ -231,6 +232,8 @@ public class BloodManipulation  {
 			effectiveCooldown = (long) (effectiveCooldown * levelCooldownMultiplier);
 			effectiveCooldown = (long) (effectiveCooldown
 					* CheapBloodInfusionHelper.getManipulationCooldownMultiplier(player));
+			effectiveCooldown = (long) (effectiveCooldown
+					* SporiticThuribleResonanceState.getCooldownMultiplier(player, tend));
 
 			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
 		}
@@ -367,6 +370,7 @@ public class BloodManipulation  {
 					effectiveCost *= (1.0 + pomesConsumed * 0.12);
 				}
 				effectiveCost *= CheapBloodInfusionHelper.getManipulationCostMultiplier(player);
+				effectiveCost *= SporiticThuribleResonanceState.getCostMultiplier(player, tend);
 
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
