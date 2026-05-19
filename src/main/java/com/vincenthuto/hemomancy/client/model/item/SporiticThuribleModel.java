@@ -32,21 +32,24 @@ public class SporiticThuribleModel<T extends LivingEntity> extends EntityModel<T
 
 		PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition bowl = body.addOrReplaceChild("bowl", CubeListBuilder.create().texOffs(0, 18).addBox(-3.0F, 4.0F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(-0.35F))
-				.texOffs(0, 11).addBox(-3.5F, 3.4F, -3.5F, 7.0F, 2.0F, 7.0F, new CubeDeformation(-0.25F))
-				.texOffs(24, 24).addBox(-2.0F, 6.2F, -2.0F, 4.0F, 3.0F, 4.0F, new CubeDeformation(-0.35F))
-				.texOffs(28, 18).addBox(-1.4F, 8.0F, -1.4F, 2.8F, 2.0F, 2.8F, new CubeDeformation(-0.45F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition bowl = body.addOrReplaceChild("bowl", CubeListBuilder.create().texOffs(34, 37).addBox(-3.0F, 4.0F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(-0.35F))
+				.texOffs(2, 38).addBox(-2.9F, 3.4F, -2.9F, 6.0F, 2.0F, 6.0F, new CubeDeformation(0.0F))
+				.texOffs(9, 53).addBox(-2.0F, 6.2F, -2.0F, 4.0F, 3.0F, 4.0F, new CubeDeformation(-0.35F))
+				.texOffs(51, 51).addBox(-1.4F, 8.0F, -1.4F, 2.8F, 2.0F, 2.8F, new CubeDeformation(-0.45F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition lid = body.addOrReplaceChild("lid", CubeListBuilder.create().texOffs(0, 0).addBox(-3.2F, 2.0F, -3.2F, 6.4F, 2.0F, 6.4F, new CubeDeformation(-0.25F))
-				.texOffs(0, 7).addBox(-2.6F, -1.2F, -2.6F, 5.2F, 2.5F, 5.2F, new CubeDeformation(-0.55F))
-				.texOffs(25, 0).addBox(-1.5F, -1.8F, -1.5F, 3.0F, 1.6F, 3.0F, new CubeDeformation(-0.45F))
-				.texOffs(26, 6).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition lid = body.addOrReplaceChild("lid", CubeListBuilder.create().texOffs(37, 24).addBox(-2.45F, 3.0F, -2.45F, 5.0F, 2.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 7).addBox(-2.4F, -0.2F, -2.4F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(37, 11).addBox(-2.0F, -1.2F, -2.0F, 4.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(31, 18).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition vents = body.addOrReplaceChild("vents", CubeListBuilder.create().texOffs(37, 0).addBox(2.5F, 0.2F, -0.35F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
-				.texOffs(37, 0).addBox(-3.2F, 0.2F, -0.35F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
-				.texOffs(37, 0).addBox(-0.35F, 0.2F, -3.2F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
-				.texOffs(37, 0).addBox(-0.35F, 0.2F, 2.5F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
+		PartDefinition vents = body.addOrReplaceChild("vents", CubeListBuilder.create().texOffs(56, 6).addBox(-3.05F, 0.75F, -3.05F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(2.55F, 0.75F, -3.05F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(-3.05F, 0.75F, 2.55F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(-3.05F, 0.75F, -0.25F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(-0.3F, 0.75F, 2.55F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(2.55F, 0.75F, 2.55F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(2.55F, 0.75F, -0.25F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F))
+				.texOffs(56, 6).addBox(-0.3F, 0.75F, -3.05F, 0.7F, 4.0F, 0.7F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
 		partdefinition.addOrReplaceChild("chain_link",
 				CubeListBuilder.create()

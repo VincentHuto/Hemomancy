@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.model.item.SporiticThuribleModel;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleSpore;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.Map;
 import java.util.UUID;
@@ -36,7 +38,7 @@ public final class SporiticThuribleRenderHelper {
 			MultiBufferSource buffer, int packedLight, int packedOverlay) {
         double STATIC_CHAIN_LENGTH = 0.56;
         renderWithBob(model, stack, poseStack, buffer, packedLight, packedOverlay,
-				new Vec3(0.0, STATIC_CHAIN_LENGTH, 0.0), 0.0f);
+				new Vec3(0.0, STATIC_CHAIN_LENGTH, 0.0), 0.0f, null, false);
 	}
 
 	public static void renderHeld(SporiticThuribleModel<?> model, LivingEntity holder, HumanoidArm arm, ItemStack stack,
@@ -48,11 +50,12 @@ public final class SporiticThuribleRenderHelper {
         double chainLength = firstPerson ? FIRST_PERSON_CHAIN_LENGTH : THIRD_PERSON_CHAIN_LENGTH;
 		Vec3 bob = state.update(holder, firstPerson, chainLength);
 		float tilt = (float) Mth.clamp(bob.x * 44.0 + bob.z * 26.0, -26.0, 26.0);
-		renderWithBob(model, stack, poseStack, buffer, packedLight, packedOverlay, bob, tilt);
+		renderWithBob(model, stack, poseStack, buffer, packedLight, packedOverlay, bob, tilt, state, firstPerson);
 	}
 
 	private static void renderWithBob(SporiticThuribleModel<?> model, ItemStack stack, PoseStack poseStack,
-			MultiBufferSource buffer, int packedLight, int packedOverlay, Vec3 bob, float tiltDegrees) {
+			MultiBufferSource buffer, int packedLight, int packedOverlay, Vec3 bob, float tiltDegrees,
+			PhysicsState physicsState, boolean firstPerson) {
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 		int color = getPackedColor(stack);
 		renderChain(model, poseStack, vertexConsumer, packedLight, packedOverlay, color, bob);
@@ -63,12 +66,12 @@ public final class SporiticThuribleRenderHelper {
 		poseStack.mulPose(Axis.XP.rotationDegrees((float) Mth.clamp(-bob.z * 34.0, -18.0, 18.0)));
 		poseStack.scale(0.82f, 0.82f, 0.82f);
 		model.renderBody(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-		renderBurningSpore(stack, poseStack, buffer, packedOverlay);
+		renderBurningSpore(stack, poseStack, buffer, packedOverlay, physicsState, firstPerson);
 		poseStack.popPose();
 	}
 
 	private static void renderBurningSpore(ItemStack thuribleStack, PoseStack poseStack, MultiBufferSource buffer,
-			int packedOverlay) {
+			int packedOverlay, PhysicsState physicsState, boolean firstPerson) {
 		if (!SporiticThuribleItem.isLit(thuribleStack)) {
 			return;
 		}
@@ -87,12 +90,36 @@ public final class SporiticThuribleRenderHelper {
 		float pulse = 0.24f + Mth.sin(age * 0.18f) * 0.014f;
 		poseStack.pushPose();
 		poseStack.translate(0.0f, 0.1f, -0f);
+		emitBurningSporeParticle(minecraft, poseStack, physicsState, age, firstPerson);
 		poseStack.mulPose(Axis.YP.rotationDegrees(age * 3.0f));
 		poseStack.mulPose(Axis.XP.rotationDegrees(16.0f));
 		renderBurningSporePlane(minecraft, sporeStack, poseStack, buffer, packedOverlay, pulse, spore.ordinal());
 		poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
 		renderBurningSporePlane(minecraft, sporeStack, poseStack, buffer, packedOverlay, pulse, spore.ordinal() + 31);
 		poseStack.popPose();
+	}
+
+	private static void emitBurningSporeParticle(Minecraft minecraft, PoseStack poseStack, PhysicsState physicsState,
+			float age, boolean firstPerson) {
+		if (physicsState == null || minecraft.level == null || minecraft.cameraEntity == null) {
+			return;
+		}
+		long gameTime = minecraft.level.getGameTime();
+		if (!physicsState.shouldEmitFlame(gameTime)) {
+			return;
+		}
+
+		float localX = firstPerson ? -0.45f : 0.0f;
+		float localZ = firstPerson ? 0.15f : 0.0f;
+		Vector3f renderPosition = poseStack.last().pose().transformPosition(localX, -0.14f, localZ, new Vector3f());
+		Vec3 cameraPosition = minecraft.gameRenderer.getMainCamera().getPosition();
+		double wobbleX = Mth.sin(age * 0.73f) * 0.006;
+		double wobbleZ = Mth.cos(age * 0.61f) * 0.006;
+		minecraft.level.addParticle(ParticleTypes.FLAME,
+				cameraPosition.x + renderPosition.x() + wobbleX,
+				cameraPosition.y + renderPosition.y(),
+				cameraPosition.z + renderPosition.z() + wobbleZ,
+				0.0D, 0.004D, 0.0D);
 	}
 
 	private static void renderBurningSporePlane(Minecraft minecraft, ItemStack sporeStack, PoseStack poseStack,
@@ -164,6 +191,7 @@ public final class SporiticThuribleRenderHelper {
 		private double lastZ;
 		private float lastYaw;
 		private int lastTick;
+		private long lastFlameParticleTick = Long.MIN_VALUE;
 
 		private PhysicsState(LivingEntity holder) {
 			this.lastX = holder.getX();
@@ -210,6 +238,14 @@ public final class SporiticThuribleRenderHelper {
 		private Vec3 currentBob(double chainLength) {
 			double slack = Math.max(0.0, chainLength * chainLength - x * x - z * z);
 			return new Vec3(x, Math.sqrt(slack), z);
+		}
+
+		private boolean shouldEmitFlame(long gameTime) {
+			if (lastFlameParticleTick == gameTime) {
+				return false;
+			}
+			lastFlameParticleTick = gameTime;
+			return true;
 		}
 	}
 }
