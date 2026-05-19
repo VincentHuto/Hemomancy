@@ -14,6 +14,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
 
 import java.util.Map;
 import java.util.UUID;
@@ -62,21 +63,46 @@ public final class SporiticThuribleRenderHelper {
 
 	private static void renderChain(SporiticThuribleModel<?> model, PoseStack poseStack, VertexConsumer vertexConsumer,
 			int packedLight, int packedOverlay, int color, Vec3 bob) {
-		int links = 8;
-		double yaw = Math.toDegrees(Math.atan2(bob.x, bob.z));
-		double horizontal = Math.sqrt(bob.x * bob.x + bob.z * bob.z);
-		double pitch = Math.toDegrees(Math.atan2(horizontal, Math.max(0.001, bob.y)));
+		int links = 9;
 		for (int i = 1; i <= links; i++) {
 			double t = i / (double) (links + 1);
+			double sampleDistance = 0.055;
+			Vec3 point = chainPoint(bob, t);
+			Vec3 before = chainPoint(bob, Math.max(0.0, t - sampleDistance));
+			Vec3 after = chainPoint(bob, Math.min(1.0, t + sampleDistance));
+			Vec3 tangent = after.subtract(before);
+			if (tangent.lengthSqr() < 1.0E-6) {
+				tangent = new Vec3(0.0, 1.0, 0.0);
+			} else {
+				tangent = tangent.normalize();
+			}
+
 			poseStack.pushPose();
-			poseStack.translate(bob.x * t, bob.y * t, bob.z * t);
-			poseStack.mulPose(Axis.YP.rotationDegrees((float) yaw));
-			poseStack.mulPose(Axis.XP.rotationDegrees((float) pitch));
-			poseStack.mulPose(Axis.ZP.rotationDegrees(i % 2 == 0 ? 90.0f : 0.0f));
-			poseStack.scale(0.55f, 0.55f, 0.55f);
+			poseStack.translate(point.x, point.y, point.z);
+			poseStack.mulPose(new Quaternionf().rotateTo(0.0f, 1.0f, 0.0f,
+					(float) tangent.x, (float) tangent.y, (float) tangent.z));
+			poseStack.mulPose(Axis.YP.rotationDegrees(i % 2 == 0 ? 90.0f : 0.0f));
+			poseStack.mulPose(Axis.ZP.rotationDegrees((float) (Math.sin(t * Math.PI * 2.0) * 5.0)));
+			poseStack.scale(0.48f, 0.48f, 0.48f);
 			model.renderChainLink(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 			poseStack.popPose();
 		}
+	}
+
+	private static Vec3 chainPoint(Vec3 bob, double t) {
+		double horizontal = Math.sqrt(bob.x * bob.x + bob.z * bob.z);
+		Vec3 line = bob.scale(t);
+		if (horizontal < 1.0E-4) {
+			return line;
+		}
+
+		double curve = Math.sin(Math.PI * t);
+		double sway = Mth.clamp(horizontal * 0.35, 0.0, 0.14) * curve;
+		double sag = Mth.clamp(0.025 + horizontal * 0.12, 0.025, 0.095) * curve;
+		Vec3 backward = new Vec3(-bob.x / horizontal, 0.0, -bob.z / horizontal).scale(sway);
+		Vec3 cross = new Vec3(-bob.z / horizontal, 0.0, bob.x / horizontal)
+				.scale(Math.sin(t * Math.PI * 2.0) * sway * 0.22);
+		return line.add(backward).add(cross).add(0.0, sag, 0.0);
 	}
 
 	private static int getPackedColor(ItemStack stack) {
