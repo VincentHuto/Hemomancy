@@ -1,19 +1,39 @@
 {
-  "variants": {
-    "facing=east": {
-      "model": "hemomancy:block/altar_of_cleansing",
-      "y": 270
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/altar_of_cleansing",
+        "y": 270
+      },
+      "when": {
+        "facing": "east"
+      }
     },
-    "facing=north": {
-      "model": "hemomancy:block/altar_of_cleansing",
-      "y": 180
+    {
+      "apply": {
+        "model": "hemomancy:block/altar_of_cleansing",
+        "y": 180
+      },
+      "when": {
+        "facing": "north"
+      }
     },
-    "facing=south": {
-      "model": "hemomancy:block/altar_of_cleansing"
+    {
+      "apply": {
+        "model": "hemomancy:block/altar_of_cleansing"
+      },
+      "when": {
+        "facing": "south"
+      }
     },
-    "facing=west": {
-      "model": "hemomancy:block/altar_of_cleansing",
-      "y": 90
+    {
+      "apply": {
+        "model": "hemomancy:block/altar_of_cleansing",
+        "y": 90
+      },
+      "when": {
+        "facing": "west"
+      }
     }
-  }
+  ]
 }

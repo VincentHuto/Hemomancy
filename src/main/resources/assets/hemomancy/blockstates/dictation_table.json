@@ -1,19 +1,39 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "hemomancy:block/dictation_table",
-      "y": 180
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/dictation_table",
+        "y": 180
+      },
+      "when": {
+        "facing": "north"
+      }
     },
-    "facing=east": {
-      "model": "hemomancy:block/dictation_table",
-      "y": 270
+    {
+      "apply": {
+        "model": "hemomancy:block/dictation_table",
+        "y": 270
+      },
+      "when": {
+        "facing": "east"
+      }
     },
-    "facing=south": {
-      "model": "hemomancy:block/dictation_table"
+    {
+      "apply": {
+        "model": "hemomancy:block/dictation_table"
+      },
+      "when": {
+        "facing": "south"
+      }
     },
-    "facing=west": {
-      "model": "hemomancy:block/dictation_table",
-      "y": 90
+    {
+      "apply": {
+        "model": "hemomancy:block/dictation_table",
+        "y": 90
+      },
+      "when": {
+        "facing": "west"
+      }
     }
-  }
+  ]
 }

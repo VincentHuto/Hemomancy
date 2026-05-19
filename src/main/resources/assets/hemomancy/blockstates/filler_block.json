@@ -1,8 +1,9 @@
 {
-	"variants": {
-		"": {
-			"model": "hemomancy:block/filler_block"
-		}
-	}
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/filler_block"
+      }
+    }
+  ]
 }
-

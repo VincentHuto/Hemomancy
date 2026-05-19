@@ -1,19 +1,39 @@
 {
-	"variants": {
-		"facing=north": {
-			"model": "hemomancy:block/visceral_mirror"
-		},
-		"facing=south": {
-			"model": "hemomancy:block/visceral_mirror",
-			"y": 180
-		},
-		"facing=west": {
-			"model": "hemomancy:block/visceral_mirror",
-			"y": 270
-		},
-		"facing=east": {
-			"model": "hemomancy:block/visceral_mirror",
-			"y": 90
-		}
-	}
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/visceral_mirror"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/visceral_mirror",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/visceral_mirror",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/visceral_mirror",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

@@ -20,14 +20,20 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class BlockHumaneIdol extends Block implements EntityBlock {
+public class BlockHumaneIdol extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Block.box(3.5, 0, 3.5, 12.5, 15, 12.5);
 
 	public BlockHumaneIdol(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 
 	}
 
@@ -39,7 +45,7 @@ public class BlockHumaneIdol extends Block implements EntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -49,7 +55,7 @@ public class BlockHumaneIdol extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -88,4 +94,16 @@ public class BlockHumaneIdol extends Block implements EntityBlock {
 			Player player, InteractionHand handIn, BlockHitResult result) {
 		return ItemInteractionResult.SUCCESS;
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

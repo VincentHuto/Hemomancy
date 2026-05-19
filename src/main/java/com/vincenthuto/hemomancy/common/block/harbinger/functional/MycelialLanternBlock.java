@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.MycelialLanternBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
@@ -17,13 +18,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -32,15 +37,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("deprecation")
-public class MycelialLanternBlock extends Block implements EntityBlock, IMultiBlock {
+public class MycelialLanternBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final BlockPos[] FILLER_OFFSETS = { new BlockPos(0, 1, 0) };
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 
     public MycelialLanternBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.SOUTH)
+                .setValue(WATERLOGGED, false));
     }
 
     @Override
@@ -79,9 +87,23 @@ public class MycelialLanternBlock extends Block implements EntityBlock, IMultiBl
         BlockPos pos = context.getClickedPos();
         Level level = (Level) context.getLevel();
         if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-            return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+            return defaultBlockState()
+                    .setValue(FACING, context.getHorizontalDirection().getOpposite())
+                    .setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
         }
         return null;
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return WaterloggedBlockSupport.fluidState(state);
+    }
+
+    @Override
+    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level,
+            BlockPos currentPos, BlockPos facingPos) {
+        WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
+        return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
     }
 
     @Override
@@ -138,7 +160,7 @@ public class MycelialLanternBlock extends Block implements EntityBlock, IMultiBl
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, WATERLOGGED);
     }
 
     @Override

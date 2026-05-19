@@ -42,15 +42,21 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class UnstainedPodiumBlock extends Block implements EntityBlock {
+public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
 
 	public UnstainedPodiumBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 
 	}
 
@@ -61,7 +67,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -71,7 +77,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 	}
 
 	@Override
@@ -98,7 +104,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player, ItemStack stack) {
 
 		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
 		if (!player.isShiftKeyDown()) {
@@ -111,7 +117,8 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 			if (stack.getItem() == ItemInit.scrying_dish.get()) {
 				worldIn.destroyBlock(pos, false);
 				stack.shrink(1);
-				worldIn.setBlockAndUpdate(pos, BlockInit.scrying_podium.get().defaultBlockState());
+				worldIn.setBlockAndUpdate(pos, BlockInit.scrying_podium.get().defaultBlockState()
+						.setValue(ScryingPodiumBlock.WATERLOGGED, state.getValue(WATERLOGGED)));
 				if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
 					MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.scrying_podium.get());
 				}
@@ -130,13 +137,13 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleInteraction(worldIn, pos, player, ItemStack.EMPTY);
+		return handleInteraction(state, worldIn, pos, player, ItemStack.EMPTY);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		handleInteraction(worldIn, pos, player, stack);
+		handleInteraction(state, worldIn, pos, player, stack);
 		return ItemInteractionResult.SUCCESS;
 	}
 
@@ -331,5 +338,16 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 					false);
 		}
 	}
-}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
 
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
+}

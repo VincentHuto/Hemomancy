@@ -29,8 +29,13 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMultiBlock {
+public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMultiBlock, SimpleWaterloggedBlock {
 	public static final MapCodec<FungalImplantationPylonBlock> CODEC = simpleCodec(FungalImplantationPylonBlock::new);
 
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -39,10 +44,11 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 	};
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public FungalImplantationPylonBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -75,7 +81,7 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
 		if (pos.getY() + 2 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null; // Prevents placement if there's not enough room
 	}
@@ -176,4 +182,16 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 		handleUse(worldIn, pos, player);
 		return ItemInteractionResult.SUCCESS;
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

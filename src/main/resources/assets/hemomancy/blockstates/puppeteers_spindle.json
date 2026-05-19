@@ -1,19 +1,39 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "hemomancy:block/puppeteers_spindle"
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/puppeteers_spindle"
+      },
+      "when": {
+        "facing": "north"
+      }
     },
-    "facing=south": {
-      "model": "hemomancy:block/puppeteers_spindle",
-      "y": 180
+    {
+      "apply": {
+        "model": "hemomancy:block/puppeteers_spindle",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
     },
-    "facing=west": {
-      "model": "hemomancy:block/puppeteers_spindle",
-      "y": 270
+    {
+      "apply": {
+        "model": "hemomancy:block/puppeteers_spindle",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
     },
-    "facing=east": {
-      "model": "hemomancy:block/puppeteers_spindle",
-      "y": 90
+    {
+      "apply": {
+        "model": "hemomancy:block/puppeteers_spindle",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
     }
-  }
+  ]
 }

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,6 +30,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -46,8 +52,9 @@ import java.util.stream.Stream;
  *   <li><b>2</b> — Sanguine flames (reagents accepted, awaiting echo)</li>
  * </ul>
  */
-public class BrazierBlock extends Block implements EntityBlock {
+public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	/**
 	 * Ritual phase: 0 = unlit, 1 = normal fire, 2 = sanguine flames (awaiting echo).
@@ -64,7 +71,8 @@ public class BrazierBlock extends Block implements EntityBlock {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.SOUTH)
-				.setValue(RITUAL_PHASE, 0));
+				.setValue(RITUAL_PHASE, 0)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -99,7 +107,7 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, RITUAL_PHASE);
+		builder.add(FACING, RITUAL_PHASE, WATERLOGGED);
 	}
 
 	@Override
@@ -115,7 +123,23 @@ public class BrazierBlock extends Block implements EntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
-				.setValue(RITUAL_PHASE, 0);
+				.setValue(RITUAL_PHASE, 0)
+				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+		if (!state.getValue(WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+			level.setBlock(pos, state.setValue(WATERLOGGED, true).setValue(RITUAL_PHASE, 0), Block.UPDATE_ALL);
+			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -154,6 +178,13 @@ public class BrazierBlock extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(RITUAL_PHASE, 0);
 	}
 
+	@Override
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level,
+			BlockPos currentPos, BlockPos facingPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+	}
+
 	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
 			ItemStack stack) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
@@ -162,6 +193,11 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 		// === Phase 0: Unlit — light the brazier ===
 		if (phase == 0) {
+			if (state.getValue(WATERLOGGED)) {
+				return stack.isEmpty() || stack.getItem() == Items.FLINT_AND_STEEL || stack.getItem() == Items.FIRE_CHARGE
+						? InteractionResult.SUCCESS
+						: InteractionResult.PASS;
+			}
 			if (stack.getItem() == Items.FLINT_AND_STEEL || stack.getItem() == Items.FIRE_CHARGE) {
 				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 1), 3);
 				return InteractionResult.SUCCESS;

@@ -4,8 +4,11 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Utility class for placing and removing filler blocks in multi-block structures.
@@ -31,7 +34,9 @@ public class MultiBlockHelper {
     public static void placeFillers(Level level, BlockPos mainPos, IMultiBlock multiBlock) {
         for (BlockPos offset : multiBlock.getFillerOffsets()) {
             BlockPos fillerPos = mainPos.offset(offset);
-            level.setBlockAndUpdate(fillerPos, BlockInit.filler_block.get().defaultBlockState());
+            boolean waterlogged = level.getFluidState(fillerPos).is(FluidTags.WATER);
+            level.setBlockAndUpdate(fillerPos, BlockInit.filler_block.get().defaultBlockState()
+                    .setValue(FillerBlock.WATERLOGGED, waterlogged));
             BlockEntity be = level.getBlockEntity(fillerPos);
             if (be instanceof FillerBlockEntity filler) {
                 filler.setMainBlockPos(mainPos);
@@ -45,8 +50,13 @@ public class MultiBlockHelper {
     public static void removeFillers(Level level, BlockPos mainPos, IMultiBlock multiBlock) {
         for (BlockPos offset : multiBlock.getFillerOffsets()) {
             BlockPos fillerPos = mainPos.offset(offset);
-            if (level.getBlockState(fillerPos).is(BlockInit.filler_block.get())) {
-                level.removeBlock(fillerPos, false);
+            BlockState fillerState = level.getBlockState(fillerPos);
+            if (fillerState.is(BlockInit.filler_block.get())) {
+                if (fillerState.getValue(FillerBlock.WATERLOGGED)) {
+                    level.setBlockAndUpdate(fillerPos, Blocks.WATER.defaultBlockState());
+                } else {
+                    level.removeBlock(fillerPos, false);
+                }
             }
         }
     }

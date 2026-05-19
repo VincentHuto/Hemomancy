@@ -26,21 +26,26 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-public class BlockSerpentineIdol extends Block implements EntityBlock {
+public class BlockSerpentineIdol extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Block.box(3.5, 0, 3.5, 12.5, 9, 12.5);
 
 	public BlockSerpentineIdol(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(ACTIVE, false));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(ACTIVE, false).setValue(WATERLOGGED, false));
 
 	}
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, ACTIVE);
+		builder.add(FACING, ACTIVE, WATERLOGGED);
 	}
 
 	@Override
@@ -51,7 +56,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
-				.setValue(ACTIVE, false);
+				.setValue(ACTIVE, false).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 	}
 
 	@Nullable
@@ -115,4 +120,16 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 		handleInteraction(state, worldIn, pos);
 		return ItemInteractionResult.SUCCESS;
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -32,7 +34,10 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -51,9 +56,10 @@ import javax.annotation.Nullable;
  * instead, the player crafts and places one of these monoliths to found their
  * own outpost and receive cryptic counsel from it.
  */
-public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiBlock {
+public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
 	private static final int SHATTER_INTERACTION_THRESHOLD = 2;
 	private static final double SHATTER_PACKET_RADIUS = 64.0;
@@ -68,7 +74,8 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	public SanguineMonolithBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -83,7 +90,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -111,9 +118,22 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
 		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+					.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null;
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
 	}
 
 	@Override
@@ -192,11 +212,11 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 				if (interactions >= SHATTER_INTERACTION_THRESHOLD) {
 					explodeIntoBlackShards(worldIn, pos);
 					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
-					worldIn.removeBlock(pos, false);
+					worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
 
 					// Fire the post-shatter Fungal Whisper so the Entity comments on what was inside
 					if (FungalWhisperDialogueTrees.shouldOfferMemoWhisper(serverPlayer, MemoDefinitions.FUNGAL_WHISPER_TRUTH)) {
-						PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
+					PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
 					}
 					return;
 				}

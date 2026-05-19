@@ -41,11 +41,16 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 
-public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock, IMultiBlock {
+public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 	public static final MapCodec<GhastlyAlembicBlock> CODEC = simpleCodec(GhastlyAlembicBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	/** Filler offset: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -55,7 +60,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	public GhastlyAlembicBlock(BlockBehaviour.Properties props) {
 		super(props);
 		this.registerDefaultState(
-				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
+				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false).setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -118,7 +123,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, LIT);
+		builder.add(FACING, LIT, WATERLOGGED);
 	}
 
 	@Override
@@ -140,7 +145,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
 		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null; // Prevents placement if there's not enough room
 	}
@@ -173,7 +178,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		super.neighborChanged(state, level, pos, block, fromPos, isMoving);
 		// Re-check heat when a neighbor changes (e.g. fire placed/removed below)
 		if (!level.isClientSide) {
-			boolean heated = GhastlyAlembicBlockEntity.isHeatSource(level, pos);
+			boolean heated = !state.getValue(WATERLOGGED) && GhastlyAlembicBlockEntity.isHeatSource(level, pos);
 			if (state.getValue(LIT) != heated) {
 				level.setBlock(pos, state.setValue(LIT, heated), 3);
 			}
@@ -239,5 +244,26 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		this.openContainer(level, pos, player);
 		return ItemInteractionResult.SUCCESS;
 	}
-}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
 
+	@Override
+	public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+		if (!state.getValue(WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+			level.setBlock(pos, state.setValue(WATERLOGGED, true).setValue(LIT, false), Block.UPDATE_ALL);
+			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
+}

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.unstained.functional;
 
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import net.minecraft.core.BlockPos;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BellAttachType;
@@ -33,14 +35,16 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PaleSilverBellsBlock extends Block {
+public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBlock {
 
 	public static final BooleanProperty RUNG = BooleanProperty.create("rung");
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<BellAttachType> ATTACHMENT = BlockStateProperties.BELL_ATTACHMENT;
 	private static final VoxelShape NORTH_SOUTH_FLOOR_SHAPE = Block.box(0.0, 0.0, 4.0, 16.0, 16.0, 12.0);
@@ -69,12 +73,13 @@ public class PaleSilverBellsBlock extends Block {
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, net.minecraft.core.Direction.NORTH)
 				.setValue(ATTACHMENT, BellAttachType.FLOOR)
-				.setValue(RUNG, Boolean.FALSE));
+				.setValue(RUNG, Boolean.FALSE)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, ATTACHMENT, RUNG);
+		builder.add(FACING, ATTACHMENT, RUNG, WATERLOGGED);
 	}
 
 	@Override
@@ -82,12 +87,14 @@ public class PaleSilverBellsBlock extends Block {
 		Direction clickedFace = context.getClickedFace();
 		BlockPos pos = context.getClickedPos();
 		Level level = context.getLevel();
+		boolean waterlogged = WaterloggedBlockSupport.waterloggedForPlacement(context);
 
 		if (clickedFace.getAxis() == Direction.Axis.Y) {
 			BlockState state = this.defaultBlockState()
 					.setValue(ATTACHMENT, clickedFace == Direction.DOWN ? BellAttachType.CEILING : BellAttachType.FLOOR)
 					.setValue(FACING, context.getHorizontalDirection())
-					.setValue(RUNG, Boolean.FALSE);
+					.setValue(RUNG, Boolean.FALSE)
+					.setValue(WATERLOGGED, waterlogged);
 			return state.canSurvive(level, pos) ? state : null;
 		}
 
@@ -101,7 +108,8 @@ public class PaleSilverBellsBlock extends Block {
 		BlockState state = this.defaultBlockState()
 				.setValue(FACING, clickedFace.getOpposite())
 				.setValue(ATTACHMENT, hasOpposingWalls ? BellAttachType.DOUBLE_WALL : BellAttachType.SINGLE_WALL)
-				.setValue(RUNG, Boolean.FALSE);
+				.setValue(RUNG, Boolean.FALSE)
+				.setValue(WATERLOGGED, waterlogged);
 		if (state.canSurvive(level, pos)) {
 			return state;
 		}
@@ -124,11 +132,12 @@ public class PaleSilverBellsBlock extends Block {
 	@Override
 	protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
 			LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
 		BellAttachType attachment = state.getValue(ATTACHMENT);
 		Direction connectedDirection = getConnectedDirection(state).getOpposite();
 		if (facing == connectedDirection && !state.canSurvive(level, currentPos)
 				&& attachment != BellAttachType.DOUBLE_WALL) {
-			return Blocks.AIR.defaultBlockState();
+			return WaterloggedBlockSupport.survivorOrWater(state);
 		}
 
 		if (facing.getAxis() == state.getValue(FACING).getAxis()) {
@@ -145,6 +154,11 @@ public class PaleSilverBellsBlock extends Block {
 		}
 
 		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
 	}
 
 	@Override

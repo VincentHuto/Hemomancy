@@ -35,14 +35,20 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class MortalDisplayBlock extends Block implements EntityBlock {
+public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
 	public MortalDisplayBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 
 	}
 
@@ -53,7 +59,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -63,7 +69,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 	}
 
 	@Override
@@ -90,11 +96,11 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player) {
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
-		worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+		worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
 		if (!volume.isActive()) {
 			volume.setActive(true);
 			player.displayClientMessage(
@@ -149,14 +155,26 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleInteraction(worldIn, pos, player);
+		return handleInteraction(state, worldIn, pos, player);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		handleInteraction(worldIn, pos, player);
+		handleInteraction(state, worldIn, pos, player);
 		return ItemInteractionResult.SUCCESS;
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
 	}
 
 }

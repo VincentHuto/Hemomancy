@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -13,13 +14,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -27,8 +32,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock {
+public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -47,7 +53,8 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 
 	public SomaticLoomBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -77,7 +84,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -92,9 +99,22 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 		Level level = (Level) context.getLevel();
 		// Need 1 block above the base (Y+1) for the filler
 		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+					.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null; // Prevents placement if there's not enough room
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
 	}
 
 	@Nullable

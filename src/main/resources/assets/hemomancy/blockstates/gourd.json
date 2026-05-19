@@ -1,7 +1,9 @@
 {
-  "variants": {
-    "": {
-      "model": "hemomancy:block/gourd"
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/gourd"
+      }
     }
-  }
+  ]
 }

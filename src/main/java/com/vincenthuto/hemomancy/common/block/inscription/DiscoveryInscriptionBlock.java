@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.inscription;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
@@ -18,19 +19,25 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -39,7 +46,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
-public class DiscoveryInscriptionBlock extends Block implements EntityBlock {
+public class DiscoveryInscriptionBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape FLOOR_SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0);
 	private static final VoxelShape WALL_NORTH_SHAPE = Block.box(1.0, 1.0, 14.0, 15.0, 15.0, 16.0);
@@ -55,22 +63,29 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock {
 	public DiscoveryInscriptionBlock(BlockBehaviour.Properties properties, boolean wallMounted) {
 		super(properties.sound(SoundType.STONE).noOcclusion());
 		this.wallMounted = wallMounted;
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any()
+				.setValue(FACING, Direction.SOUTH)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		boolean waterlogged = WaterloggedBlockSupport.waterloggedForPlacement(context);
 		if (!wallMounted) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState()
+					.setValue(FACING, context.getHorizontalDirection().getOpposite())
+					.setValue(WATERLOGGED, waterlogged);
 		}
 		for (Direction direction : context.getNearestLookingDirections()) {
 			if (direction.getAxis().isHorizontal()) {
-				BlockState state = this.defaultBlockState().setValue(FACING, direction.getOpposite());
+				BlockState state = this.defaultBlockState()
+						.setValue(FACING, direction.getOpposite())
+						.setValue(WATERLOGGED, waterlogged);
 				if (state.canSurvive(context.getLevel(), context.getClickedPos())) {
 					return state;
 				}
@@ -102,6 +117,21 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock {
 		Direction facing = state.getValue(FACING);
 		BlockPos supportPos = pos.relative(facing.getOpposite());
 		return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, facing);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
+			LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
+		if (!state.canSurvive(level, currentPos)) {
+			return WaterloggedBlockSupport.survivorOrWater(state);
+		}
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
 	}
 
 	@Override

@@ -32,10 +32,16 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 
-public class FungalPodiumBlock extends BaseEntityBlock {
+public class FungalPodiumBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 	public static final MapCodec<FungalPodiumBlock> CODEC = simpleCodec(FungalPodiumBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Stream.of(Block.box(3, 0, 3, 13, 2, 13), Block.box(3, 12, 3, 13, 14, 13),
 			Block.box(6, 13, 6, 10, 15, 10), Block.box(6, 13, 6, 10, 15, 10), Block.box(5, 15, 5, 11, 16, 11),
 			Block.box(3, 9, 3, 13, 12, 13), Block.box(2, 11, 2, 14, 13, 14), Block.box(4, 1, 4, 12, 3, 12),
@@ -60,7 +66,8 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 
 	public FungalPodiumBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -75,7 +82,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -90,7 +97,8 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 	}
 
 	@Override
@@ -161,4 +169,16 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 	public static void performReturnTravel(ServerPlayer player) {
 		FungalGardenTravelHelper.performReturnTravel(player);
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

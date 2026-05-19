@@ -30,11 +30,17 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 @SuppressWarnings("deprecation")
-public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiBlock {
+public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 16, 15);
 
     /** 1×2 footprint: one filler block directly above. */
@@ -42,7 +48,7 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
 
     public MycelialCrucibleBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
     }
 
     @Override
@@ -68,7 +74,7 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, WATERLOGGED);
     }
 
     @Override
@@ -81,7 +87,7 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
         BlockPos pos   = context.getClickedPos();
         Level    level = (Level) context.getLevel();
         if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-            return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+            return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
         }
         return null;
     }
@@ -169,4 +175,16 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
             super.onRemove(state, level, pos, newState, moving);
         }
     }
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

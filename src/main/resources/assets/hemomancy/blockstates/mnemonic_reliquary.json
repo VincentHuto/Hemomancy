@@ -1,8 +1,36 @@
 {
-  "variants": {
-    "facing=north": { "model": "hemomancy:block/mnemonic_reliquary" },
-    "facing=south": { "model": "hemomancy:block/mnemonic_reliquary" },
-    "facing=west":  { "model": "hemomancy:block/mnemonic_reliquary" },
-    "facing=east":  { "model": "hemomancy:block/mnemonic_reliquary" }
-  }
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/mnemonic_reliquary"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mnemonic_reliquary"
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mnemonic_reliquary"
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mnemonic_reliquary"
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

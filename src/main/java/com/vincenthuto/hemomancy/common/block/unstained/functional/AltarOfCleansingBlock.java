@@ -35,6 +35,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /**
  * Altar of Cleansing — a sacred altar found in Unstained temples, blessed by
@@ -42,9 +47,10 @@ import javax.annotation.Nullable;
  * using Tears of Silthmere, they receive a large one-time purity boost and
  * advancement progress. The altar can only be used once per player.
  */
-public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiBlock {
+public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE = Shapes.block();
 
 	/** Filler offset: 1×2×1 — one filler block directly above the base. */
@@ -57,7 +63,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	public AltarOfCleansingBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -72,7 +78,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -100,7 +106,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
 		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null;
 	}
@@ -331,4 +337,16 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 					20, 0.5, 0.5, 0.5, 0.1);
 		}
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

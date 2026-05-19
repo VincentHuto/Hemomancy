@@ -1,19 +1,39 @@
 {
-	"variants": {
-		"facing=north": {
-			"model": "hemomancy:block/mortal_display"
-		},
-		"facing=south": {
-			"model": "hemomancy:block/mortal_display",
-			"y": 180
-		},
-		"facing=west": {
-			"model": "hemomancy:block/mortal_display",
-			"y": 270
-		},
-		"facing=east": {
-			"model": "hemomancy:block/mortal_display",
-			"y": 90
-		}
-	}
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/mortal_display"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mortal_display",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mortal_display",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mortal_display",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

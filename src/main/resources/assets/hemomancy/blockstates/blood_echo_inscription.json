@@ -1,8 +1,20 @@
 {
-  "variants": {
-    "facing=north": { "model": "hemomancy:block/blood_echo_inscription", "y": 180 },
-    "facing=east": { "model": "hemomancy:block/blood_echo_inscription", "y": 270 },
-    "facing=south": { "model": "hemomancy:block/blood_echo_inscription" },
-    "facing=west": { "model": "hemomancy:block/blood_echo_inscription", "y": 90 }
-  }
+  "multipart": [
+    {
+      "when": { "facing": "north" },
+      "apply": { "model": "hemomancy:block/blood_echo_inscription", "y": 180 }
+    },
+    {
+      "when": { "facing": "east" },
+      "apply": { "model": "hemomancy:block/blood_echo_inscription", "y": 270 }
+    },
+    {
+      "when": { "facing": "south" },
+      "apply": { "model": "hemomancy:block/blood_echo_inscription" }
+    },
+    {
+      "when": { "facing": "west" },
+      "apply": { "model": "hemomancy:block/blood_echo_inscription", "y": 90 }
+    }
+  ]
 }

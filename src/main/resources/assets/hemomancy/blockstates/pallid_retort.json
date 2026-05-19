@@ -1,34 +1,82 @@
 {
-  "variants" : {
-    "facing=east,lit=false" : {
-      "model" : "hemomancy:block/pallid_retort",
-      "y" : 90
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "lit": "false"
+      }
     },
-    "facing=east,lit=true" : {
-      "model" : "hemomancy:block/pallid_retort_on",
-      "y" : 90
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort_on",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "lit": "true"
+      }
     },
-    "facing=north,lit=false" : {
-      "model" : "hemomancy:block/pallid_retort"
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort"
+      },
+      "when": {
+        "facing": "north",
+        "lit": "false"
+      }
     },
-    "facing=north,lit=true" : {
-      "model" : "hemomancy:block/pallid_retort_on"
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort_on"
+      },
+      "when": {
+        "facing": "north",
+        "lit": "true"
+      }
     },
-    "facing=south,lit=false" : {
-      "model" : "hemomancy:block/pallid_retort",
-      "y" : 180
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "lit": "false"
+      }
     },
-    "facing=south,lit=true" : {
-      "model" : "hemomancy:block/pallid_retort_on",
-      "y" : 180
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort_on",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "lit": "true"
+      }
     },
-    "facing=west,lit=false" : {
-      "model" : "hemomancy:block/pallid_retort",
-      "y" : 270
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "lit": "false"
+      }
     },
-    "facing=west,lit=true" : {
-      "model" : "hemomancy:block/pallid_retort_on",
-      "y" : 270
+    {
+      "apply": {
+        "model": "hemomancy:block/pallid_retort_on",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "lit": "true"
+      }
     }
-  }
+  ]
 }

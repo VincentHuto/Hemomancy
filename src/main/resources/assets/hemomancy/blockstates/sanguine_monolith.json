@@ -1,8 +1,39 @@
 {
-  "variants": {
-    "facing=north": { "model": "hemomancy:block/sanguine_monolith", "y": 180 },
-    "facing=south": { "model": "hemomancy:block/sanguine_monolith" },
-    "facing=west": { "model": "hemomancy:block/sanguine_monolith", "y": 270 },
-    "facing=east": { "model": "hemomancy:block/sanguine_monolith", "y": 90 }
-  }
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/sanguine_monolith",
+        "y": 180
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/sanguine_monolith"
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/sanguine_monolith",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/sanguine_monolith",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

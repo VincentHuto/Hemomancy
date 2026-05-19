@@ -1,31 +1,28 @@
-
 {
-	"variants": {
-		"facing=down": {
-			"model": "hemomancy:block/blood_crystal",
-			"x": 180
-		},
-		"facing=east": {
-			"model": "hemomancy:block/blood_crystal",
-			"x": 90,
-			"y": 90
-		},
-		"facing=north": {
-			"model": "hemomancy:block/blood_crystal",
-			"x": 90
-		},
-		"facing=south": {
-			"model": "hemomancy:block/blood_crystal",
-			"x": 90,
-			"y": 180
-		},
-		"facing=up": {
-			"model": "hemomancy:block/blood_crystal"
-		},
-		"facing=west": {
-			"model": "hemomancy:block/blood_crystal",
-			"x": 90,
-			"y": 270
-		}
-	}
+  "multipart": [
+    {
+      "when": { "facing": "down" },
+      "apply": { "model": "hemomancy:block/blood_crystal", "x": 180 }
+    },
+    {
+      "when": { "facing": "east" },
+      "apply": { "model": "hemomancy:block/blood_crystal", "x": 90, "y": 90 }
+    },
+    {
+      "when": { "facing": "north" },
+      "apply": { "model": "hemomancy:block/blood_crystal", "x": 90 }
+    },
+    {
+      "when": { "facing": "south" },
+      "apply": { "model": "hemomancy:block/blood_crystal", "x": 90, "y": 180 }
+    },
+    {
+      "when": { "facing": "up" },
+      "apply": { "model": "hemomancy:block/blood_crystal" }
+    },
+    {
+      "when": { "facing": "west" },
+      "apply": { "model": "hemomancy:block/blood_crystal", "x": 90, "y": 270 }
+    }
+  ]
 }

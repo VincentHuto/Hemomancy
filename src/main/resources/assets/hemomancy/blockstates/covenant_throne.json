@@ -1,8 +1,39 @@
 {
-  "variants": {
-    "facing=north": { "model": "hemomancy:block/covenant_throne", "y": 180 },
-    "facing=south": { "model": "hemomancy:block/covenant_throne" },
-    "facing=west":  { "model": "hemomancy:block/covenant_throne", "y": 270 },
-    "facing=east":  { "model": "hemomancy:block/covenant_throne", "y": 90 }
-  }
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/covenant_throne",
+        "y": 180
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/covenant_throne"
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/covenant_throne",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/covenant_throne",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

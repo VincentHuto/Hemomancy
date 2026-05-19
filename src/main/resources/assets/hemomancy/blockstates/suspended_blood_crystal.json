@@ -1,7 +1,9 @@
 {
-  "variants": {
-    "": {
-      "model": "hemomancy:block/suspended_blood_crystal"
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/suspended_blood_crystal"
+      }
     }
-  }
+  ]
 }

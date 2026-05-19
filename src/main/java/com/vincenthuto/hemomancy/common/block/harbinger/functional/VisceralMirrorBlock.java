@@ -34,6 +34,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /**
  * The Visceral Mirror — a ritualistic block that allows the player to gaze into
@@ -45,9 +50,10 @@ import javax.annotation.Nullable;
  * the player can browse all organs, view their status, and initiate or cancel
  * extraction rituals with a visual progress bar.</p>
  */
-public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlock {
+public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	/** Filler offsets: 1×3×1 — two filler blocks directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -69,7 +75,7 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 
 	public VisceralMirrorBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -79,7 +85,7 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -92,7 +98,7 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
 		if (pos.getY() + 2 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null;
 	}
@@ -212,4 +218,16 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 		}
 		return false;
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

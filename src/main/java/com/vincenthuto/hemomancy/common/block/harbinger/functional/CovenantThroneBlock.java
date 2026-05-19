@@ -35,6 +35,11 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 
 /**
  * The Covenant Throne — a Grand-tier Blood Structure available only to the
@@ -56,11 +61,12 @@ import javax.annotation.Nullable;
  * <p>The throne is a 1×2×1 multi-block (the filler occupies the position above
  * the base, mirroring the Sanguine Monolith pattern).</p>
  */
-public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock {
+public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock, SimpleWaterloggedBlock {
 
     public static final MapCodec<CovenantThroneBlock> CODEC = simpleCodec(CovenantThroneBlock::new);
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     /** Filler block placed one above the base. */
     private static final BlockPos[] FILLER_OFFSETS = { new BlockPos(0, 1, 0) };
@@ -76,7 +82,8 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
 
     public CovenantThroneBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
+				.setValue(WATERLOGGED, false));
     }
 
     public CovenantThroneBlock() {
@@ -104,7 +111,7 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, WATERLOGGED);
     }
 
     @Nullable
@@ -113,7 +120,8 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
         if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-            return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+            return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
         }
         return null;
     }
@@ -274,4 +282,16 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock 
         Bloodline bloodline = bloodOpt.get().getBloodLine();
         return bloodline.isValid() && player.getUUID().equals(bloodline.getLeaderUUID());
     }
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

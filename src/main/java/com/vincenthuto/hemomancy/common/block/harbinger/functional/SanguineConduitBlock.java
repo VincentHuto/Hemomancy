@@ -2,24 +2,33 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.ItemSanguineConduit;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineConduitBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.item.context.BlockPlaceContext;
 
 import javax.annotation.Nullable;
 
@@ -35,18 +44,42 @@ import javax.annotation.Nullable;
  * {@link ItemSanguineConduit#useOn} to
  * require Initiatory Degree ≥ 5; the block itself imposes no runtime gate.
  */
-public class SanguineConduitBlock extends BaseEntityBlock {
+public class SanguineConduitBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final MapCodec<SanguineConduitBlock> CODEC = simpleCodec(SanguineConduitBlock::new);
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape ORB_SHAPE = Block.box(5.0D, 5.0D, 5.0D, 11.0D, 12.0D, 11.0D);
 
     public SanguineConduitBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(WATERLOGGED);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return WaterloggedBlockSupport.fluidState(state);
+    }
+
+    @Override
+    protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
+                                     LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+        WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
+        return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
     }
 
     // ── BlockEntity (needed for the ring BER) ─────────────────────────────────

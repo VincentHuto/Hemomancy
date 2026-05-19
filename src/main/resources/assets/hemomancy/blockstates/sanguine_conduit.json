@@ -1,7 +1,9 @@
 {
-  "variants": {
-    "": {
-      "model": "hemomancy:block/sanguine_conduit"
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/sanguine_conduit"
+      }
     }
-  }
+  ]
 }

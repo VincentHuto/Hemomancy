@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.MorphlingCradleBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -24,15 +25,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class MorphlingCradleBlock extends BaseEntityBlock {
+public class MorphlingCradleBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 	public static final MapCodec<MorphlingCradleBlock> CODEC = simpleCodec(MorphlingCradleBlock::new);
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
 
@@ -40,7 +44,8 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 		super(props);
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.NORTH)
-				.setValue(FACE, AttachFace.FLOOR));
+				.setValue(FACE, AttachFace.FLOOR)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -70,7 +75,7 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, FACE);
+		builder.add(FACING, FACE, WATERLOGGED);
 	}
 
 	@Override
@@ -85,8 +90,16 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 			attachFace = clickedFace == Direction.DOWN ? AttachFace.CEILING : AttachFace.FLOOR;
 			horizontal = context.getHorizontalDirection().getOpposite();
 		}
-		BlockState state = this.defaultBlockState().setValue(FACING, horizontal).setValue(FACE, attachFace);
+		BlockState state = this.defaultBlockState()
+				.setValue(FACING, horizontal)
+				.setValue(FACE, attachFace)
+				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		return state.canSurvive(context.getLevel(), context.getClickedPos()) ? state : null;
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
 	}
 
 	@Override
@@ -109,8 +122,9 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 	@Override
 	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
 			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
 		return state.canSurvive(level, pos) ? super.updateShape(state, direction, neighborState, level, pos, neighborPos)
-				: Blocks.AIR.defaultBlockState();
+				: WaterloggedBlockSupport.survivorOrWater(state);
 	}
 
 	private static BlockPos getSupportPos(BlockPos pos, BlockState state) {

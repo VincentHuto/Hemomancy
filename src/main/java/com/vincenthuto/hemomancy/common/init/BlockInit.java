@@ -19,6 +19,8 @@ import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBlock;
 import com.vincenthuto.hemomancy.common.block.inscription.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HemoWallBlock;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedDoorBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
@@ -210,7 +212,7 @@ public class BlockInit {
 			() -> new StairBlock(Blocks.STONE.defaultBlockState(),
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> venous_stone_wall = BASEBLOCKS.register("venous_stone_wall",
-			() -> new WallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+			() -> new HemoWallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
 	public static final DeferredHolder<Block, Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -236,7 +238,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> polished_venous_stone_brick_wall = BASEBLOCKS.register(
 			"polished_venous_stone_brick_wall",
-			() -> new WallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+			() -> new HemoWallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> cracked_polished_venous_stone_bricks = BASEBLOCKS.register(
 			"cracked_polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -311,7 +313,7 @@ public class BlockInit {
 			() -> new IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
 
 	public static final DeferredHolder<Block, Block> hematic_iron_door = BASEBLOCKS.register("hematic_iron_door",
-			() -> new DoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));
+			() -> new WaterloggedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));
 
 	public static final DeferredHolder<Block, Block> hematic_iron_trapdoor = BASEBLOCKS.register("hematic_iron_trapdoor",
 			() -> new TrapDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR)));

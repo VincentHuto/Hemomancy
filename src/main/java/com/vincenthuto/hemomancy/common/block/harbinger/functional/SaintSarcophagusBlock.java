@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
@@ -37,13 +39,17 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -62,9 +68,10 @@ import javax.annotation.Nullable;
  * - RESPONSIVE: reacts to player interaction
  * - AWAKENED: player has offended it, combat triggered
  */
-public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiBlock {
+public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
 public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 14, 16);
 /** Blood cost per offering (drained from player's blood volume). */
 private static final double BLOOD_COST_PER_OFFERING = 100.0;
@@ -113,7 +120,8 @@ private static BlockPos[] getRotatedOffsets(Direction facing) {
 
 public SaintSarcophagusBlock(Properties properties) {
 super(properties);
-this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
+		.setValue(WATERLOGGED, false));
 }
 
 @Override
@@ -127,7 +135,9 @@ public void placeFillers(Level level, BlockPos mainPos, BlockState mainState) {
 	Direction facing = mainState.getValue(FACING);
 	for (BlockPos offset : getRotatedOffsets(facing)) {
 		BlockPos fillerPos = mainPos.offset(offset);
-		level.setBlockAndUpdate(fillerPos, com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get().defaultBlockState());
+		level.setBlockAndUpdate(fillerPos, com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get()
+				.defaultBlockState()
+				.setValue(FillerBlock.WATERLOGGED, level.getFluidState(fillerPos).is(net.minecraft.tags.FluidTags.WATER)));
 		BlockEntity be = level.getBlockEntity(fillerPos);
 		if (be instanceof com.vincenthuto.hemomancy.common.tile.FillerBlockEntity filler) {
 			filler.setMainBlockPos(mainPos);
@@ -141,8 +151,13 @@ public void removeFillers(Level level, BlockPos mainPos) {
 	for (Direction dir : Direction.Plane.HORIZONTAL) {
 		for (BlockPos offset : getRotatedOffsets(dir)) {
 			BlockPos fillerPos = mainPos.offset(offset);
-			if (level.getBlockState(fillerPos).is(com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get())) {
-				level.removeBlock(fillerPos, false);
+			BlockState fillerState = level.getBlockState(fillerPos);
+			if (fillerState.is(com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get())) {
+				if (fillerState.getValue(FillerBlock.WATERLOGGED)) {
+					level.setBlockAndUpdate(fillerPos, Blocks.WATER.defaultBlockState());
+				} else {
+					level.removeBlock(fillerPos, false);
+				}
 			}
 		}
 	}
@@ -196,7 +211,7 @@ public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos po
 
 @Override
 protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-builder.add(FACING);
+builder.add(FACING, WATERLOGGED);
 }
 
 @Override
@@ -210,9 +225,22 @@ BlockPos pos = context.getClickedPos();
 Level level = (Level) context.getLevel();
 Direction facing = context.getHorizontalDirection().getOpposite();
 if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos, facing)) {
-	return this.defaultBlockState().setValue(FACING, facing);
+	return this.defaultBlockState().setValue(FACING, facing)
+			.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 }
 return null;
+}
+
+@Override
+public FluidState getFluidState(BlockState state) {
+return WaterloggedBlockSupport.fluidState(state);
+}
+
+@Override
+public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+		BlockPos pos, BlockPos neighborPos) {
+WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
 }
 
 @Override
@@ -656,6 +684,7 @@ private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType sai
 
 private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player player,
 		SaintSarcophagusBlockEntity sarcophagus) {
+	BlockState state = worldIn.getBlockState(pos);
 	player.displayClientMessage(
 		Component.literal("The corpus seethes with hostility. Saint " + sarcophagus.getSaintType().getDisplayName()
 			+ " will not receive you.")
@@ -665,6 +694,6 @@ private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player pl
 		HarbingerSaintEncounterHooks.spawnSaintBoss(serverLevel, pos, player, sarcophagus.getSaintType());
 	}
 	worldIn.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.2f);
-	worldIn.removeBlock(pos, false);
+	worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
 }
 }

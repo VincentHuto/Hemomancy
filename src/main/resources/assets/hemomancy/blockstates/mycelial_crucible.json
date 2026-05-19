@@ -1,19 +1,39 @@
 {
-	"variants": {
-		"facing=north": {
-			"model": "hemomancy:block/mycelial_crucible"
-		},
-		"facing=south": {
-			"model": "hemomancy:block/mycelial_crucible",
-			"y": 180
-		},
-		"facing=west": {
-			"model": "hemomancy:block/mycelial_crucible",
-			"y": 270
-		},
-		"facing=east": {
-			"model": "hemomancy:block/mycelial_crucible",
-			"y": 90
-		}
-	}
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

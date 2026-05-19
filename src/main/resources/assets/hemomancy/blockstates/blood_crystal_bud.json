@@ -1,8 +1,20 @@
 {
-  "variants": {
-    "age=0": { "model": "hemomancy:block/blood_crystal_bud_stage0" },
-    "age=1": { "model": "hemomancy:block/blood_crystal_bud_stage1" },
-    "age=2": { "model": "hemomancy:block/blood_crystal_bud_stage2" },
-    "age=3": { "model": "hemomancy:block/blood_crystal_bud_stage3" }
-  }
+  "multipart": [
+    {
+      "when": { "age": "0" },
+      "apply": { "model": "hemomancy:block/blood_crystal_bud_stage0" }
+    },
+    {
+      "when": { "age": "1" },
+      "apply": { "model": "hemomancy:block/blood_crystal_bud_stage1" }
+    },
+    {
+      "when": { "age": "2" },
+      "apply": { "model": "hemomancy:block/blood_crystal_bud_stage2" }
+    },
+    {
+      "when": { "age": "3" },
+      "apply": { "model": "hemomancy:block/blood_crystal_bud_stage3" }
+    }
+  ]
 }

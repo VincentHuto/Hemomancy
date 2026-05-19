@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -10,10 +11,13 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -28,9 +32,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  *
  * <p>The block is purely upward-facing and requires a solid block directly below.
  */
-public class BloodCrystalBudBlock extends Block {
+public class BloodCrystalBudBlock extends Block implements SimpleWaterloggedBlock {
 
 	public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	/** Number of growth stages (0 is freshest, MAX_AGE is mature). */
 	public static final int MAX_AGE = 3;
@@ -43,12 +48,17 @@ public class BloodCrystalBudBlock extends Block {
 
 	public BloodCrystalBudBlock(Properties props) {
 		super(props);
-		this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
+		this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(WATERLOGGED, false));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(AGE);
+		builder.add(AGE, WATERLOGGED);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
 	}
 
 	@Override
@@ -71,15 +81,18 @@ public class BloodCrystalBudBlock extends Block {
 	@Override
 	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
 			LevelAccessor level, BlockPos pos, BlockPos facingPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
 		if (facing == Direction.DOWN && !canSurvive(state, level, pos)) {
-			return Blocks.AIR.defaultBlockState();
+			return WaterloggedBlockSupport.survivorOrWater(state);
 		}
 		return super.updateShape(state, facing, facingState, level, pos, facingPos);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-		return this.defaultBlockState().setValue(AGE, 0);
+		return this.defaultBlockState()
+				.setValue(AGE, 0)
+				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(ctx));
 	}
 
 	/** Returns true if this bud has reached its maximum growth stage. */

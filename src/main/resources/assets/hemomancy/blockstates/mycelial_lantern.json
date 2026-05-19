@@ -1,19 +1,20 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "hemomancy:block/mycelial_lantern"
+  "multipart": [
+    {
+      "when": { "facing": "north" },
+      "apply": { "model": "hemomancy:block/mycelial_lantern" }
     },
-    "facing=south": {
-      "model": "hemomancy:block/mycelial_lantern",
-      "y": 180
+    {
+      "when": { "facing": "south" },
+      "apply": { "model": "hemomancy:block/mycelial_lantern", "y": 180 }
     },
-    "facing=west": {
-      "model": "hemomancy:block/mycelial_lantern",
-      "y": 270
+    {
+      "when": { "facing": "west" },
+      "apply": { "model": "hemomancy:block/mycelial_lantern", "y": 270 }
     },
-    "facing=east": {
-      "model": "hemomancy:block/mycelial_lantern",
-      "y": 90
+    {
+      "when": { "facing": "east" },
+      "apply": { "model": "hemomancy:block/mycelial_lantern", "y": 90 }
     }
-  }
+  ]
 }

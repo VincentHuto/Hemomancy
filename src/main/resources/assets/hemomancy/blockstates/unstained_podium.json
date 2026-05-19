@@ -1,19 +1,39 @@
 {
-	"variants": {
-		"facing=north": {
-			"model": "hemomancy:block/unstained_podium"
-		},
-		"facing=south": {
-			"model": "hemomancy:block/unstained_podium",
-			"y": 180
-		},
-		"facing=west": {
-			"model": "hemomancy:block/unstained_podium",
-			"y": 270
-		},
-		"facing=east": {
-			"model": "hemomancy:block/unstained_podium",
-			"y": 90
-		}
-	}
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/unstained_podium"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/unstained_podium",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/unstained_podium",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/unstained_podium",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
 }

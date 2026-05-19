@@ -31,16 +31,22 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class ScryingPodiumBlock extends BaseEntityBlock {
+public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 	public static final MapCodec<ScryingPodiumBlock> CODEC = simpleCodec(ScryingPodiumBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
 
 	public ScryingPodiumBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
 
 	}
 
@@ -56,7 +62,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
+		builder.add(FACING, WATERLOGGED);
 	}
 
 	@Override
@@ -72,7 +78,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 	}
 
 	@Override
@@ -115,7 +121,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
 	}
 
-	private InteractionResult handleUse(Level worldIn, BlockPos pos, Player player) {
+	private InteractionResult handleUse(BlockState state, Level worldIn, BlockPos pos, Player player) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
 				PacketHandler.sendToServer(new PacketOpenScarsInv());
@@ -126,7 +132,8 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 						new ItemStack(ItemInit.scrying_dish.get(), 1));
 				worldIn.destroyBlock(pos, false);
 				worldIn.addFreshEntity(spawn);
-				worldIn.setBlockAndUpdate(pos, BlockInit.unstained_podium.get().defaultBlockState());
+				worldIn.setBlockAndUpdate(pos, BlockInit.unstained_podium.get().defaultBlockState()
+						.setValue(UnstainedPodiumBlock.WATERLOGGED, state.getValue(WATERLOGGED)));
 				if (player instanceof ServerPlayer serverPlayer) {
 					MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.unstained_podium.get());
 				}
@@ -142,13 +149,25 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleUse(worldIn, pos, player);
+		return handleUse(state, worldIn, pos, player);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		handleUse(worldIn, pos, player);
+		handleUse(state, worldIn, pos, player);
 		return ItemInteractionResult.SUCCESS;
 	}
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
+			BlockPos pos, BlockPos neighborPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
+		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
 }

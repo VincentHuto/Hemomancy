@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -13,10 +14,11 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BloodCrystalBlock extends Block {
+public class BloodCrystalBlock extends Block implements SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = DirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_U = Block.box(3, 0, 3, 13, 12, 13);
@@ -28,6 +30,9 @@ public class BloodCrystalBlock extends Block {
 
 	public BloodCrystalBlock(Properties p_49795_) {
 		super(p_49795_);
+		this.registerDefaultState(this.stateDefinition.any()
+				.setValue(FACING, Direction.UP)
+				.setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -42,7 +47,12 @@ public class BloodCrystalBlock extends Block {
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
 		super.createBlockStateDefinition(pBuilder);
-		pBuilder.add(FACING);
+		pBuilder.add(FACING, WATERLOGGED);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return WaterloggedBlockSupport.fluidState(state);
 	}
 
 	@Override
@@ -71,9 +81,20 @@ public class BloodCrystalBlock extends Block {
 		BlockState blockstate = pContext.getLevel()
 				.getBlockState(pContext.getClickedPos().offset(new Vec3i(direction.getOpposite().getStepX(),
 						direction.getOpposite().getStepY(), direction.getOpposite().getStepZ())));
-		return blockstate.is(this) && blockstate.getValue(FACING) == direction
+		BlockState state = blockstate.is(this) && blockstate.getValue(FACING) == direction
 				? this.defaultBlockState().setValue(FACING, direction.getOpposite())
 				: this.defaultBlockState().setValue(FACING, direction);
+		return state.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(pContext));
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level,
+			BlockPos currentPos, BlockPos facingPos) {
+		WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
+		if (!state.canSurvive(level, currentPos)) {
+			return WaterloggedBlockSupport.survivorOrWater(state);
+		}
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
 	}
 
 	@Override
