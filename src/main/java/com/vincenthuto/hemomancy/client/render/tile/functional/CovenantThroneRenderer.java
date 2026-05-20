@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 /**
@@ -54,22 +55,33 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	// ── Effect-pass surface constants ────────────────────────────────────────────
 
 	/** Z coordinate of the backrest's visible front face in effect-pass local space. */
-	private static final float BK_FRONT_Z   = -0.1875f;
-	private static final float BK_X_HALF    =  0.375f;  // backrest half-width
-	private static final float BK_Y_BOTTOM  =  0.375f;  // backrest base Y
-	private static final float BK_Y_TOP     =  1.75f;   // backrest top Y
+	private static final float BK_FRONT_Z   = -0.350f;
+	private static final float BK_REAR_Z    = -0.505f;
+	private static final float BK_X_HALF    = 0.82f;
+	private static final float BK_Y_BOTTOM  = 0.45f;
+	private static final float BK_Y_TOP     = 2.95f;
 	private static final float BK_HEIGHT    =  BK_Y_TOP - BK_Y_BOTTOM; // 1.375
 
-	private static final float SEAT_X_HALF  =  0.3125f;
-	private static final float SEAT_Y       =  0.375f;  // seat top Y
-	private static final float SEAT_Z_HALF  =  0.3125f;
+	private static final float SEAT_X_HALF  =  0.52f;
+	private static final float SEAT_Y       =  0.50f;
+	private static final float SEAT_Z_HALF  =  0.55f;
 
-	private static final float ARM_X_INNER  =  0.3125f; // |X| of armrest inner face
-	private static final float ARM_Y_BOTTOM =  0.375f;
+	private static final float ARM_X_INNER  =  0.626f;
+	private static final float ARM_X_MIN    =  0.65f;
+	private static final float ARM_X_MAX    =  1.10f;
+	private static final float ARM_Z_MIN    = -0.42f;
+	private static final float ARM_Z_MAX    =  0.29f;
+	private static final float ARM_Y_BOTTOM =  0.45f;
 	private static final float ARM_Y_TOP    =  1.125f;
+	private static final float PYLON_X_INNER = 1.18f;
+	private static final float PYLON_X_OUTER = 1.44f;
+	private static final float PYLON_Y_BOTTOM = 0.08f;
+	private static final float PYLON_Y_TOP = 1.98f;
+	private static final float PYLON_Z_MIN = -0.34f;
+	private static final float PYLON_Z_MAX = 0.44f;
 
 	// ── Vein tendril parameters ───────────────────────────────────────────────
-	private static final int TENDRIL_COUNT = 9;
+	private static final int TENDRIL_COUNT = 16;
 
 	// Pre-seeded tendril parameters (same seed → same shape every load)
 	private final float[][] tendrilParams;
@@ -127,7 +139,10 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		ms.translate(0.5D, 0.0D, 0.5D);
 		ms.mulPose(Vector3.YP.rotationDegrees(-yRot).toMoj());
 
-		renderEffects(ms, bufferIn, time);
+		float wakeIntensity = getWakeIntensity(te, partialTicks, time);
+		float trance = te.getTranceVisualProgress(partialTicks);
+		boolean renderRearMotif = shouldRenderRearMotif(mc, te, facing);
+		renderEffects(ms, bufferIn, time, wakeIntensity, trance, renderRearMotif);
 
 		ms.popPose();
 	}
@@ -139,11 +154,33 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	 * space.  Order: glow washes first (semi-transparent backgrounds), then
 	 * tendrils (additive lines), then the blood eye (on top).
 	 */
-	private void renderEffects(PoseStack ms, MultiBufferSource buf, float time) {
+	private void renderEffects(PoseStack ms, MultiBufferSource buf, float time, float wakeIntensity, float trance, boolean renderRearMotif) {
 		renderGlowWashes(buf, ms.last().pose(), time);
 		renderTendrils(buf, ms, time);
+		renderSeatTendrils(buf, ms.last().pose(), time, wakeIntensity);
+		renderPylonTendrils(buf, ms.last().pose(), time, wakeIntensity);
+		renderSidePanelFaceTendrils(buf, ms.last().pose(), time, wakeIntensity);
+		renderArmTopTendrils(buf, ms.last().pose(), time, wakeIntensity);
+		if (renderRearMotif) {
+			renderCircleOfWillisMotif(buf, ms.last().pose(), time, wakeIntensity);
+		}
 		renderBloodEye(buf, ms.last().pose(), time);
 		renderDrips(buf, ms.last().pose(), time);
+		renderTranceAura(buf, ms.last().pose(), time, trance * wakeIntensity);
+	}
+
+	private static boolean shouldRenderRearMotif(Minecraft mc, CovenantThroneBlockEntity te, Direction facing) {
+		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
+		Vec3 center = Vec3.atCenterOf(te.getBlockPos());
+		Vec3 toCamera = camera.subtract(center);
+		Vec3 rearNormal = Vec3.atLowerCornerOf(facing.getOpposite().getNormal());
+		return toCamera.dot(rearNormal) > 0.05D;
+	}
+
+	private static float getWakeIntensity(CovenantThroneBlockEntity te, float partialTicks, float time) {
+		float wake = te.getWakeIntensity(partialTicks);
+		float idlePulse = 0.18f + 0.07f * (0.5f + 0.5f * Mth.sin(time * 0.035f));
+		return Mth.clamp(idlePulse + wake * 0.82f, 0.18f, 1.0f);
 	}
 
 	// ── Glow washes ──────────────────────────────────────────────────────────
@@ -159,7 +196,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		// ── Backrest front-face glow (fades toward the top) ──
 		float bPulse = 0.5f + 0.5f * Mth.sin(time * 0.048f);
 		float bAlpha = 0.09f + 0.06f * bPulse;
-		float bZ = BK_FRONT_Z - 0.002f;
+		float bZ = BK_FRONT_Z;
 		// Bottom strip (full opacity)
 		vc.addVertex(mat, -BK_X_HALF, BK_Y_BOTTOM,        bZ).setColor(0.80f, 0.04f, 0.04f, bAlpha);
 		vc.addVertex(mat, -BK_X_HALF, BK_Y_BOTTOM + 0.45f, bZ).setColor(0.55f, 0.02f, 0.02f, bAlpha * 0.5f);
@@ -241,7 +278,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 				int b = (int) Mth.clamp( 5 +  8 * pulse, 0, 255);
 
 				float sz = 0.013f;
-				float pz = BK_FRONT_Z - 0.003f;
+				float pz = BK_FRONT_Z;
 				vc.addVertex(mat, px - sz, py - sz, pz).setColor(r, g, b, alpha);
 				vc.addVertex(mat, px - sz, py + sz, pz).setColor(r, g, b, alpha);
 				vc.addVertex(mat, px + sz, py + sz, pz).setColor(r, g, b, alpha);
@@ -304,19 +341,283 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	 * backrest.  All colours are vivid blood-red so the eye reads against the
 	 * near-black throne geometry.</p>
 	 */
+	private static void renderSeatTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
+		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+		float y = SEAT_Y + 0.006f;
+		for (int i = 0; i < 7; i++) {
+			float phase = i * 1.37f;
+			float x0 = -SEAT_X_HALF + 0.08f + i * (SEAT_X_HALF * 2.0f - 0.16f) / 6.0f;
+			float z0 = -SEAT_Z_HALF + 0.06f;
+			for (int step = 0; step < 24; step++) {
+				float t = step / 23.0f;
+				float x = x0 + 0.055f * Mth.sin(t * 8.0f + time * 0.045f + phase);
+				float z = z0 + t * (SEAT_Z_HALF * 1.78f);
+				float pulse = 0.45f + 0.55f * Mth.sin(time * 0.07f + phase + t * 4.0f);
+				int alpha = (int) Mth.clamp((35f + 125f * wakeIntensity) * pulse, 15f, 190f);
+				float sz = 0.011f + 0.006f * wakeIntensity;
+				vc.addVertex(mat, x - sz, y, z - sz).setColor(160, 5, 5, alpha);
+				vc.addVertex(mat, x - sz, y, z + sz).setColor(95, 2, 2, alpha / 2);
+				vc.addVertex(mat, x + sz, y, z + sz).setColor(95, 2, 2, alpha / 2);
+				vc.addVertex(mat, x + sz, y, z - sz).setColor(160, 5, 5, alpha);
+			}
+		}
+	}
+
+	private static void renderPylonTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
+		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+		for (int side = -1; side <= 1; side += 2) {
+			float x = side * (PYLON_X_INNER + 0.055f);
+			for (int i = 0; i < 5; i++) {
+				float phase = side * 0.8f + i * 1.11f;
+				float zBase = -0.32f + i * 0.16f;
+				for (int step = 0; step < 30; step++) {
+					float t = step / 29.0f;
+					float y = PYLON_Y_BOTTOM + t * (PYLON_Y_TOP - PYLON_Y_BOTTOM);
+					float z = zBase + 0.045f * Mth.sin(t * 10.0f + time * 0.038f + phase);
+					if (!isOnPylonSide(x, y, z, side)) {
+						continue;
+					}
+					float pulse = 0.45f + 0.55f * Mth.sin(time * 0.06f + phase + step * 0.12f);
+					int alpha = (int) Mth.clamp((25f + 110f * wakeIntensity) * pulse, 10f, 165f);
+					float sz = 0.010f + 0.004f * wakeIntensity;
+					vc.addVertex(mat, x, y - sz, z - sz).setColor(145, 4, 4, alpha);
+					vc.addVertex(mat, x, y + sz, z - sz).setColor(185, 8, 6, alpha);
+					vc.addVertex(mat, x, y + sz, z + sz).setColor(105, 2, 2, alpha / 2);
+					vc.addVertex(mat, x, y - sz, z + sz).setColor(105, 2, 2, alpha / 2);
+				}
+			}
+		}
+	}
+
+	private static boolean isOnPylonSide(float x, float y, float z, int side) {
+		float signedX = Math.abs(x);
+		return x * side > 0.0f
+				&& signedX >= PYLON_X_INNER
+				&& signedX <= PYLON_X_OUTER
+				&& y >= PYLON_Y_BOTTOM
+				&& y <= PYLON_Y_TOP
+				&& z >= PYLON_Z_MIN
+				&& z <= PYLON_Z_MAX;
+	}
+
+	private static void renderSidePanelFaceTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
+		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+		float z = BK_FRONT_Z + 0.001f;
+		for (int side = -1; side <= 1; side += 2) {
+			for (int i = 0; i < 5; i++) {
+				float phase = i * 1.29f + side * 0.6f;
+				float xBase = side * (PYLON_X_INNER + 0.035f + i * 0.045f);
+				for (int step = 0; step < 28; step++) {
+					float t = step / 27.0f;
+					float y = 0.35f + t * 1.58f;
+					float x = clampToPylonX(xBase + 0.030f * Mth.sin(t * 9.0f + time * 0.043f + phase), side);
+					float pulse = 0.40f + 0.60f * Mth.sin(time * 0.066f + phase + step * 0.1f);
+					int alpha = (int) Mth.clamp((28f + 115f * wakeIntensity) * pulse, 10f, 170f);
+					float sz = 0.010f + 0.004f * wakeIntensity;
+					vc.addVertex(mat, x - sz, y - sz, z).setColor(155, 4, 4, alpha);
+					vc.addVertex(mat, x - sz, y + sz, z).setColor(190, 8, 6, alpha);
+					vc.addVertex(mat, x + sz, y + sz, z).setColor(105, 2, 2, alpha / 2);
+					vc.addVertex(mat, x + sz, y - sz, z).setColor(105, 2, 2, alpha / 2);
+				}
+			}
+		}
+	}
+
+	private static float clampToPylonX(float x, int side) {
+		float signedX = Mth.clamp(Math.abs(x), PYLON_X_INNER, PYLON_X_OUTER);
+		return side < 0 ? -signedX : signedX;
+	}
+
+	private static void renderArmTopTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
+		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+		float y = ARM_Y_TOP + 0.006f;
+		for (int side = -1; side <= 1; side += 2) {
+			float xCenter = side * 0.88f;
+			for (int i = 0; i < 4; i++) {
+				float phase = i * 1.8f + side * 0.4f;
+				float zStart = -0.42f + i * 0.24f;
+				for (int step = 0; step < 22; step++) {
+					float t = step / 21.0f;
+					float x = xCenter + side * 0.055f * Mth.sin(t * 7.5f + time * 0.052f + phase);
+					float z = zStart + t * 0.34f;
+					if (!isOnArmTop(x, z, side)) {
+						continue;
+					}
+					float pulse = 0.35f + 0.65f * Mth.sin(time * 0.074f + phase + t * 5.0f);
+					int alpha = (int) Mth.clamp((30f + 120f * wakeIntensity) * pulse, 12f, 175f);
+					float sz = 0.010f + 0.005f * wakeIntensity;
+					vc.addVertex(mat, x - sz, y, z - sz).setColor(170, 5, 5, alpha);
+					vc.addVertex(mat, x - sz, y, z + sz).setColor(110, 2, 2, alpha / 2);
+					vc.addVertex(mat, x + sz, y, z + sz).setColor(110, 2, 2, alpha / 2);
+					vc.addVertex(mat, x + sz, y, z - sz).setColor(170, 5, 5, alpha);
+				}
+			}
+		}
+	}
+
+	private static boolean isOnArmTop(float x, float z, int side) {
+		float signedX = Math.abs(x);
+		return x * side > 0.0f
+				&& signedX >= ARM_X_MIN
+				&& signedX <= ARM_X_MAX
+				&& z >= ARM_Z_MIN
+				&& z <= ARM_Z_MAX;
+	}
+
+	private static void renderCircleOfWillisMotif(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
+		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+
+		float pulse = 0.62f + 0.38f * Mth.sin(time * 0.062f);
+		int glowAlpha = (int) Mth.clamp(26f + 45f * wakeIntensity + 18f * pulse, 24f, 95f);
+		int coreAlpha = (int) Mth.clamp(56f + 78f * wakeIntensity + 24f * pulse, 58f, 170f);
+		float z = BK_REAR_Z;
+		float cx = 0.0f;
+		float cy = 1.76f;
+		float rx = 0.50f;
+		float ry = 0.61f;
+
+		renderWillisOrganicLoop(vc, mat, cx, cy, rx, ry, z, glowAlpha, coreAlpha);
+		renderWillisCurve(vc, mat, -0.13f, 2.36f, -0.15f, 2.48f, -0.22f, 2.55f, -0.24f, 2.76f,
+				z, 0.024f, 0.017f, 0.009f, 0.006f, 18, glowAlpha, coreAlpha);
+		renderWillisCurve(vc, mat, 0.13f, 2.36f, 0.15f, 2.48f, 0.22f, 2.55f, 0.24f, 2.76f,
+				z, 0.024f, 0.017f, 0.009f, 0.006f, 18, glowAlpha, coreAlpha);
+		renderWillisCurve(vc, mat, -0.22f, 2.33f, -0.12f, 2.43f, 0.12f, 2.43f, 0.22f, 2.33f,
+				z, 0.016f, 0.012f, 0.005f, 0.004f, 18, glowAlpha / 2, coreAlpha);
+
+		renderWillisCurve(vc, mat, 0.0f, 1.18f, -0.02f, 1.00f, 0.02f, 0.78f, 0.0f, 0.58f,
+				z, 0.026f, 0.024f, 0.010f, 0.009f, 26, glowAlpha, coreAlpha);
+		renderWillisCurve(vc, mat, 0.0f, 0.62f, -0.02f, 0.50f, 0.02f, 0.38f, 0.0f, 0.22f,
+				z, 0.020f, 0.015f, 0.007f, 0.005f, 18, glowAlpha, coreAlpha);
+		for (int side = -1; side <= 1; side += 2) {
+			renderWillisCurve(vc, mat, side * 0.03f, 0.72f, side * 0.15f, 0.88f,
+					side * 0.40f, 0.78f, side * 0.48f, 0.44f,
+					z, 0.021f, 0.016f, 0.007f, 0.005f, 26, glowAlpha, coreAlpha);
+			renderWillisCurve(vc, mat, side * 0.48f, 0.44f, side * 0.52f, 0.32f,
+					side * 0.50f, 0.18f, side * 0.46f, 0.08f,
+					z, 0.016f, 0.012f, 0.005f, 0.003f, 14, glowAlpha, coreAlpha);
+			renderWillisCurve(vc, mat, side * 0.26f, 0.68f, side * 0.18f, 0.54f,
+					side * 0.14f, 0.42f, side * 0.07f, 0.34f,
+					z, 0.015f, 0.005f, 0.004f, 0.0016f, 12, glowAlpha / 2, coreAlpha);
+			renderWillisCurve(vc, mat, side * 0.26f, 0.48f, side * 0.17f, 0.40f,
+					side * 0.13f, 0.32f, side * 0.06f, 0.26f,
+					z, 0.012f, 0.004f, 0.003f, 0.0014f, 10, glowAlpha / 2, coreAlpha);
+		}
+
+		for (int i = 0; i < 5; i++) {
+			float yRib = 1.08f - i * 0.12f;
+			float width = 0.18f + i * 0.055f;
+			renderWillisCurve(vc, mat, 0.0f, yRib, -width * 0.35f, yRib + 0.09f,
+					-width * 0.80f, yRib + 0.11f, -width, yRib + 0.03f,
+					z, 0.014f, 0.007f, 0.004f, 0.002f, 14, glowAlpha / 2, coreAlpha);
+			renderWillisCurve(vc, mat, 0.0f, yRib, width * 0.35f, yRib + 0.09f,
+					width * 0.80f, yRib + 0.11f, width, yRib + 0.03f,
+					z, 0.014f, 0.007f, 0.004f, 0.002f, 14, glowAlpha / 2, coreAlpha);
+		}
+
+		renderWillisCurve(vc, mat, 0.0f, 1.38f, -0.01f, 1.58f, 0.01f, 1.84f, 0.0f, 2.08f,
+				z + 0.001f, 0.010f, 0.003f, 0.0025f, 0.001f, 18, glowAlpha / 3, coreAlpha / 2);
+		for (int side = -1; side <= 1; side += 2) {
+			renderWillisCurve(vc, mat, side * 0.42f, 1.93f, side * 0.50f, 1.98f,
+					side * 0.60f, 1.98f, side * 0.70f, 1.92f,
+					z, 0.020f, 0.012f, 0.006f, 0.003f, 18, glowAlpha, coreAlpha);
+			renderWillisCurve(vc, mat, side * 0.44f, 1.55f, side * 0.54f, 1.50f,
+					side * 0.62f, 1.51f, side * 0.71f, 1.58f,
+					z, 0.019f, 0.011f, 0.006f, 0.003f, 18, glowAlpha, coreAlpha);
+			renderWillisTwigCluster(vc, mat, side, z, glowAlpha, coreAlpha);
+		}
+	}
+
+	private static void renderWillisOrganicLoop(VertexConsumer vc, Matrix4f mat,
+			float cx, float cy, float rx, float ry, float z, int glowAlpha, int coreAlpha) {
+		renderWillisCurve(vc, mat, cx - 0.11f, cy + ry * 0.92f, cx - rx * 0.56f, cy + ry * 0.88f,
+				cx - rx * 1.10f, cy + ry * 0.40f, cx - rx * 0.86f, cy - ry * 0.74f,
+				z, 0.025f, 0.023f, 0.008f, 0.007f, 44, glowAlpha, coreAlpha);
+		renderWillisCurve(vc, mat, cx + 0.11f, cy + ry * 0.92f, cx + rx * 0.56f, cy + ry * 0.88f,
+				cx + rx * 1.10f, cy + ry * 0.40f, cx + rx * 0.86f, cy - ry * 0.74f,
+				z, 0.025f, 0.023f, 0.008f, 0.007f, 44, glowAlpha, coreAlpha);
+		renderWillisCurve(vc, mat, cx - 0.15f, cy + ry * 0.92f, cx - 0.06f, cy + ry * 1.02f,
+				cx + 0.06f, cy + ry * 1.02f, cx + 0.15f, cy + ry * 0.92f,
+				z, 0.018f, 0.016f, 0.005f, 0.004f, 20, glowAlpha / 2, coreAlpha);
+	}
+
+	private static void renderWillisTwigCluster(VertexConsumer vc, Matrix4f mat,
+			int side, float z, int glowAlpha, int coreAlpha) {
+		renderWillisCurve(vc, mat, side * 0.58f, 2.06f, side * 0.68f, 2.17f, side * 0.76f, 2.20f, side * 0.88f, 2.31f,
+				z, 0.015f, 0.004f, 0.004f, 0.0015f, 12, glowAlpha / 2, coreAlpha);
+		renderWillisCurve(vc, mat, side * 0.62f, 1.97f, side * 0.72f, 2.04f, side * 0.78f, 2.02f, side * 0.89f, 2.06f,
+				z, 0.012f, 0.003f, 0.003f, 0.0012f, 10, glowAlpha / 2, coreAlpha);
+		renderWillisCurve(vc, mat, side * 0.58f, 1.46f, side * 0.68f, 1.34f, side * 0.77f, 1.30f, side * 0.88f, 1.19f,
+				z, 0.015f, 0.004f, 0.004f, 0.0015f, 12, glowAlpha / 2, coreAlpha);
+		renderWillisCurve(vc, mat, side * 0.63f, 1.56f, side * 0.73f, 1.49f, side * 0.79f, 1.51f, side * 0.90f, 1.47f,
+				z, 0.012f, 0.003f, 0.003f, 0.0012f, 10, glowAlpha / 2, coreAlpha);
+		renderWillisCurve(vc, mat, side * 0.30f, 2.27f, side * 0.41f, 2.39f, side * 0.48f, 2.40f, side * 0.57f, 2.50f,
+				z, 0.012f, 0.003f, 0.003f, 0.0012f, 10, glowAlpha / 2, coreAlpha);
+		renderWillisCurve(vc, mat, side * 0.34f, 1.20f, side * 0.45f, 1.08f, side * 0.51f, 1.06f, side * 0.61f, 0.96f,
+				z, 0.012f, 0.003f, 0.003f, 0.0012f, 10, glowAlpha / 2, coreAlpha);
+	}
+
+	private static void renderWillisCurve(VertexConsumer vc, Matrix4f mat,
+			float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3,
+			float z, float glowWidth0, float glowWidth1, float coreWidth0, float coreWidth1,
+			int steps, int glowAlpha, int coreAlpha) {
+		for (int i = 0; i < steps; i++) {
+			float t0 = i / (float) steps;
+			float t1 = (i + 1) / (float) steps;
+			float px0 = cubic(x0, x1, x2, x3, t0);
+			float py0 = cubic(y0, y1, y2, y3, t0);
+			float px1 = cubic(x0, x1, x2, x3, t1);
+			float py1 = cubic(y0, y1, y2, y3, t1);
+			float mid = (t0 + t1) * 0.5f;
+			float endFade = Mth.clamp(Math.min(mid, 1.0f - mid) * 8.0f, 0.20f, 1.0f);
+			float glowWidth = Mth.lerp(mid, glowWidth0, glowWidth1);
+			float coreWidth = Mth.lerp(mid, coreWidth0, coreWidth1);
+			renderWillisSegment(vc, mat, px0, py0, px1, py1, z, glowWidth, coreWidth,
+					(int) (glowAlpha * endFade), (int) (coreAlpha * endFade));
+		}
+	}
+
+	private static float cubic(float p0, float p1, float p2, float p3, float t) {
+		float inv = 1.0f - t;
+		return inv * inv * inv * p0 + 3.0f * inv * inv * t * p1 + 3.0f * inv * t * t * p2 + t * t * t * p3;
+	}
+
+	private static void renderWillisSegment(VertexConsumer vc, Matrix4f mat,
+			float x0, float y0, float x1, float y1, float z, float glowWidth, float coreWidth,
+			int glowAlpha, int coreAlpha) {
+		renderVesselSegment(vc, mat, x0, y0, x1, y1, z, glowWidth, 160, 8, 6, glowAlpha);
+		renderVesselSegment(vc, mat, x0, y0, x1, y1, z + 0.001f, coreWidth, 235, 24, 14, coreAlpha);
+	}
+
+	private static void renderVesselSegment(VertexConsumer vc, Matrix4f mat,
+			float x0, float y0, float x1, float y1, float z, float width,
+			int r, int g, int b, int alpha) {
+		float dx = x1 - x0;
+		float dy = y1 - y0;
+		float len = Mth.sqrt(dx * dx + dy * dy);
+		if (len < 1.0e-5f || alpha <= 0) {
+			return;
+		}
+		float nx = -dy / len * width;
+		float ny = dx / len * width;
+		vc.addVertex(mat, x0 + nx, y0 + ny, z).setColor(r, g, b, alpha);
+		vc.addVertex(mat, x0 - nx, y0 - ny, z).setColor(r, g, b, alpha);
+		vc.addVertex(mat, x1 - nx, y1 - ny, z).setColor(r, g, b, alpha);
+		vc.addVertex(mat, x1 + nx, y1 + ny, z).setColor(r, g, b, alpha);
+	}
+
 	private static void renderBloodEye(MultiBufferSource buf, Matrix4f mat, float time) {
 		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 
 		// Eye centre: upper third of backrest, dead centre horizontally
 		float cx = 0f;
-		float cy = BK_Y_BOTTOM + BK_HEIGHT * 0.72f; // ~1.37 blocks up
-		float cz = BK_FRONT_Z - 0.004f;
+		float cy = 1.78f;
+		float cz = BK_FRONT_Z + 0.008f;
 
 		float pulse = 0.70f + 0.30f * Mth.sin(time * 0.052f);
 		float beat  = 0.55f + 0.45f * Mth.sin(time * 0.11f + 0.8f);
 
 		// sc=0.30 → iris ~0.24 wide; was 0.065 (microscopic).
-		float sc = 0.30f;
+		float sc = 0.21f;
 
 		// ── Outer diffuse glow ring ──
 		int SEGS = 20;
@@ -408,7 +709,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		float[] dripX = { -0.18f, 0.0f, 0.18f };
 		float[] dripPhase = { 0f, 1.9f, 3.5f };
 		for (int d = 0; d < 3; d++) {
-			renderOneDrip(vc, mat, time, dripX[d], BK_Y_BOTTOM, BK_FRONT_Z - 0.003f, dripPhase[d], true);
+			renderOneDrip(vc, mat, time, dripX[d], BK_Y_BOTTOM, BK_FRONT_Z, dripPhase[d], true);
 		}
 		// Armrest drips
 		float[] armDripX = { -ARM_X_INNER + 0.04f, ARM_X_INNER - 0.04f };
@@ -451,6 +752,36 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	}
 
 	// ── Misc ─────────────────────────────────────────────────────────────────
+
+	private static void renderTranceAura(MultiBufferSource buf, Matrix4f mat, float time, float trance) {
+		if (trance <= 0.01f) {
+			return;
+		}
+		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
+		int segments = 40;
+		float pulse = 0.5f + 0.5f * Mth.sin(time * 0.12f);
+		float inner = 0.62f + pulse * 0.04f;
+		float outer = 1.42f + pulse * 0.10f;
+		float y = 0.035f;
+		int alphaInner = (int) Mth.clamp(120f * trance, 0f, 150f);
+		int alphaOuter = (int) Mth.clamp(12f * trance, 0f, 35f);
+		for (int i = 0; i < segments; i++) {
+			double a0 = Math.PI * 2.0D * i / segments;
+			double a1 = Math.PI * 2.0D * (i + 1) / segments;
+			float x0i = (float) Math.cos(a0) * inner;
+			float z0i = (float) Math.sin(a0) * inner;
+			float x0o = (float) Math.cos(a0) * outer;
+			float z0o = (float) Math.sin(a0) * outer;
+			float x1i = (float) Math.cos(a1) * inner;
+			float z1i = (float) Math.sin(a1) * inner;
+			float x1o = (float) Math.cos(a1) * outer;
+			float z1o = (float) Math.sin(a1) * outer;
+			vc.addVertex(mat, x0i, y, z0i).setColor(210, 15, 10, alphaInner);
+			vc.addVertex(mat, x0o, y, z0o).setColor(100, 4, 4, alphaOuter);
+			vc.addVertex(mat, x1o, y, z1o).setColor(100, 4, 4, alphaOuter);
+			vc.addVertex(mat, x1i, y, z1i).setColor(210, 15, 10, alphaInner);
+		}
+	}
 
 	@Override
 	public boolean shouldRenderOffScreen(CovenantThroneBlockEntity te) {

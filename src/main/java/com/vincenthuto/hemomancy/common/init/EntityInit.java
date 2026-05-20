@@ -36,6 +36,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntit
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.*;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
+import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -68,6 +69,13 @@ public class EntityInit {
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
 
+    public static final DeferredHolder<EntityType<?>, EntityType<CovenantThroneSeatEntity>> covenant_throne_seat =
+            ENTITY_TYPES.register("covenant_throne_seat",
+                    () -> EntityType.Builder.<CovenantThroneSeatEntity>of(CovenantThroneSeatEntity::new, MobCategory.MISC)
+                            .sized(0.01F, 0.01F)
+                            .clientTrackingRange(8)
+                            .updateInterval(20)
+                            .build(Hemomancy.rloc("covenant_throne_seat").toString()));
 
     // Mobs
     public static final DeferredHolder<EntityType<?>, EntityType<UnstainedZealotEntity>> unstained_zealot = ENTITY_TYPES.register(

@@ -25,6 +25,8 @@ public class CovenantThroneItemRenderer extends BlockEntityWithoutLevelRenderer 
 
 	public static final ResourceLocation TEXTURE =
 			CovenantThroneRenderer.TEXTURE;
+	private static final float GUI_MODEL_SCALE = 0.185f;
+	private static final float WORLD_MODEL_SCALE = 0.14f;
 
 	private CovenantThroneModel model;
 
@@ -59,26 +61,23 @@ public class CovenantThroneItemRenderer extends BlockEntityWithoutLevelRenderer 
 		boolean isGui = displayContext == ItemDisplayContext.GUI;
 		if (isGui) {
 			Lighting.setupForEntityInInventory();
-			poseStack.mulPose(new Quaternion(Vector3.YP, 90, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.ZP, 30, true).toMoj());
-			poseStack.translate(-0.5, -0.15, 0);
 		}
 
 		poseStack.pushPose();
 
 		if (isGui) {
-			poseStack.translate(0.5, 0.7, 0.5);
-			poseStack.scale(0.25f, 0.25f, 0.25f);
+			poseStack.translate(0.5, 0.35, 0.5);
+			poseStack.scale(GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.YP, 28, true).toMoj());
 		} else if (displayContext == ItemDisplayContext.FIXED) {
-			poseStack.translate(0.5, 0.5, 0.5);
-			poseStack.scale(0.2f, 0.2f, 0.2f);
+			poseStack.translate(0.5, 0.65, 0.5);
+			poseStack.scale(WORLD_MODEL_SCALE, WORLD_MODEL_SCALE, WORLD_MODEL_SCALE);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		} else {
-			poseStack.translate(0.5, 0.6, 0.5);
-			poseStack.scale(0.2f, 0.2f, 0.2f);
+			poseStack.translate(0.5, 0.72, 0.5);
+			poseStack.scale(WORLD_MODEL_SCALE, WORLD_MODEL_SCALE, WORLD_MODEL_SCALE);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		}

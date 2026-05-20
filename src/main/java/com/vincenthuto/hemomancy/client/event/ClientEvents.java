@@ -31,6 +31,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRe
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
@@ -553,6 +554,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.scarlet_serpent.get(), ScarletSerpentRenderer::new);
             event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);
             event.registerEntityRenderer(EntityInit.venous_strider.get(), VenousStriderRenderer::new);
+            event.registerEntityRenderer(EntityInit.covenant_throne_seat.get(), CovenantThroneSeatRenderer::new);
 
         }
 
