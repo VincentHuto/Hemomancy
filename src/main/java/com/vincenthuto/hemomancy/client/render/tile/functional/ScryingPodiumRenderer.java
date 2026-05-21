@@ -23,6 +23,9 @@ import org.joml.Matrix4f;
 
 public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	private static final int FULL_BRIGHT = 15728880;
+	private static final float POOL_WAVE_HEIGHT = 0.04f;
+	private static final float POOL_WAVE_INTENSITY = 30f;
 
 	public ScryingPodiumRenderer(BlockEntityRendererProvider.Context p_173636_) {
 	}
@@ -46,13 +49,8 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 
 		Matrix4f mat = matrixStackIn.last().pose();
 
-		VertexConsumer vertex;
 		float time = (te.getLevel().getGameTime() + partialTicks) / 10;
-		RadiantPortalRendertype.WATER_SHADER.safeGetUniform("time").set(time);
-		RadiantPortalRendertype.WATER_SHADER.safeGetUniform("modelview").set(mat);
-		RadiantPortalRendertype.WATER_SHADER.safeGetUniform("sinModifier").set(0.04f);
-		RadiantPortalRendertype.WATER_SHADER.safeGetUniform("intensity").set(30f);
-		vertex = bufferIn.getBuffer(RadiantPortalRendertype.textWithWaterShader(GLASSTEXTURE));
+		VertexConsumer vertex = bufferIn.getBuffer(RadiantPortalRendertype.textWithWaterShader(GLASSTEXTURE));
 
 		float r;
 		float gr;
@@ -69,25 +67,17 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 				float rast = (float) Math.sqrt(i * i + g * g);
 
 				if (rast <= 1.05f) {
-					vertex.addVertex(i, g, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg)
-							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
-					vertex.addVertex(i, g + mod, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg + mod * 0.5f)
-							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
-					vertex.addVertex(i + mod, g + mod, 0).setColor(r, gr, b, 1f)
-							.setUv(uvValue + mod * 0.5f, uvValueg + mod * 0.5f).setOverlay(OverlayTexture.NO_OVERLAY)
-							.setLight(15728880);
-					vertex.addVertex(i + mod, g, 0).setColor(r, gr, b, 1f).setUv(uvValue + mod * 0.5f, uvValueg)
-							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+					addWavyVertex(vertex, mat, i, g, time, uvValue, uvValueg, r, gr, b);
+					addWavyVertex(vertex, mat, i, g + mod, time, uvValue, uvValueg + mod * 0.5f, r, gr, b);
+					addWavyVertex(vertex, mat, i + mod, g + mod, time,
+							uvValue + mod * 0.5f, uvValueg + mod * 0.5f, r, gr, b);
+					addWavyVertex(vertex, mat, i + mod, g, time, uvValue + mod * 0.5f, uvValueg, r, gr, b);
 
-					vertex.addVertex(i + mod, g, 0).setColor(r, gr, b, 1f).setUv(uvValue + mod * 0.5f, uvValueg)
-							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
-					vertex.addVertex(i + mod, g + mod, 0).setColor(r, gr, b, 1f)
-							.setUv(uvValue + mod * 0.5f, uvValueg + mod * 0.5f).setOverlay(OverlayTexture.NO_OVERLAY)
-							.setLight(15728880);
-					vertex.addVertex(i, g + mod, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg + mod * 0.5f)
-							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
-					vertex.addVertex(i, g, 0).setColor(r, gr, b, 1f).setUv(uvValue, uvValueg)
-							.setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880);
+					addWavyVertex(vertex, mat, i + mod, g, time, uvValue + mod * 0.5f, uvValueg, r, gr, b);
+					addWavyVertex(vertex, mat, i + mod, g + mod, time,
+							uvValue + mod * 0.5f, uvValueg + mod * 0.5f, r, gr, b);
+					addWavyVertex(vertex, mat, i, g + mod, time, uvValue, uvValueg + mod * 0.5f, r, gr, b);
+					addWavyVertex(vertex, mat, i, g, time, uvValue, uvValueg, r, gr, b);
 				}
 			}
 
@@ -110,5 +100,13 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 		MultiBufferSource.BufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
 		bs.getBuffer(RenderType.lines());
 		entityrenderdispatcher.render(player, 0.0D, 0.0D, 0.0D, 0.0F, partialTicks, matrixStackIn, bs, 15728880);
+	}
+
+	private static void addWavyVertex(VertexConsumer vertex, Matrix4f mat, float x, float y, float time, float u, float v,
+			float r, float g, float b) {
+		float distance = (float) Math.sqrt(x * x + y * y);
+		float wave = (float) Math.sin(distance * POOL_WAVE_INTENSITY + time) * POOL_WAVE_HEIGHT;
+		vertex.addVertex(mat, x, y, wave).setColor(r, g, b, 1f).setUv(u, v)
+				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(FULL_BRIGHT);
 	}
 }
