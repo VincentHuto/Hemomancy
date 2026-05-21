@@ -25,6 +25,10 @@ public class ShaderInit {
 	public static ShaderHolder SCAR_GLOW = new ShaderHolder(Hemomancy.rloc("screen/scar_glow"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "Speed", "Intensity", "BorderWidth");
 
+	public static ShaderHolder MONOLITH_FRAGMENT = new ShaderHolder(Hemomancy.rloc("item/monolith_fragment"),
+			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "HemoTime", "ShardSeed", "Burden", "Attuned",
+			"FractalScale", "Snap", "GuiClamp");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -39,6 +43,7 @@ public class ShaderInit {
 				});
         registerShader(event, DISTORTED_TEXTURE.createInstance(provider));
         registerShader(event, SCAR_GLOW.createInstance(provider));
+        registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

@@ -211,6 +211,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 				int interactions = monolith.incrementArchonInteractions();
 				if (interactions >= SHATTER_INTERACTION_THRESHOLD) {
 					explodeIntoBlackShards(worldIn, pos);
+					popResource(worldIn, pos.above(), new ItemStack(ItemInit.monolith_fragment.get(), MonolithFragmentDropRules.rollFragmentCount(worldIn.random)));
 					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
 					worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
 

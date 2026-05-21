@@ -258,6 +258,8 @@ The Sanguine Monolith — known within the Lodge as *The Crimson Lodestone* — 
 
 At low degrees the fragment is barely aware; its surface is cold. By Degree 5–6 it begins to stir — the stone grows faintly warm. At Degree 7, the Archon's blood is mature enough that the fragment fully awakens and the vessel cracks. The seed inside is not merely a byproduct: it *is* the fragment, or the most coherent part of it, made physical.
 
+The shattering also leaves behind **Monolith Fragments**: stackable black-red facets that behave less like ordinary stone and more like frozen witness. They carry the weight of the Monolith's last coherent shape, making them fitting late-game catalysts for Archons who reject full fungal surrender. They are useful, familiar, and burdened rather than purely empowering; Apotheos-aligned bodies should find them oppressive.
+
 The Monolith uses degree-gated dialogue that gradually discloses its nature. Players who ask *"What are you?"* receive answers that escalate from official Lodge description (Degree 4) to admitted self-awareness (Degree 5) to disclosure of the contained thing (Degree 6) to direct recognition of kinship (Degree 7). Archon dialogue is intimate in a way that should feel wrong before it feels significant.
 
 ### 6.6 The Hematic Order's Historical Record
