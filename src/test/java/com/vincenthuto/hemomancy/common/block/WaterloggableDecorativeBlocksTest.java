@@ -25,8 +25,6 @@ public final class WaterloggableDecorativeBlocksTest {
 					"com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenJarBlock.java"),
 			new TargetBlock("blood_crystal",
 					"com/vincenthuto/hemomancy/common/block/harbinger/BloodCrystalBlock.java"),
-			new TargetBlock("blood_crystal_bud",
-					"com/vincenthuto/hemomancy/common/block/harbinger/BloodCrystalBudBlock.java"),
 			new TargetBlock("pale_silver_bells",
 					"com/vincenthuto/hemomancy/common/block/unstained/functional/PaleSilverBellsBlock.java"),
 			new TargetBlock("iron_brazier",

@@ -275,7 +275,7 @@ public class HemoServerConfig {
 
 		ALEMBIC_LEAK_INTERVAL_TICKS = builder
 				.comment("How many ticks between each alembic leak tick. 20 ticks = 1 second. "
-						+ "Each tick, blood is drained and the crystal bud below is advanced if enough ticks have accumulated.")
+						+ "Each tick, blood is drained and the blood crystal below is advanced if enough ticks have accumulated.")
 				.defineInRange("alembicLeakIntervalTicks", 200, 20, 6000);
 
 		ALEMBIC_LEAK_RATE_PER_TICK = builder

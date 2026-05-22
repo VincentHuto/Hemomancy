@@ -13,6 +13,13 @@
               "name": "hemomancy:blood_crystal",
               "conditions": [
                 {
+                  "condition": "minecraft:block_state_property",
+                  "block": "hemomancy:blood_crystal",
+                  "properties": {
+                    "age": "3"
+                  }
+                },
+                {
                   "condition": "minecraft:match_tool",
                   "predicate": {
                     "enchantments": [
@@ -41,6 +48,38 @@
                 },
                 {
                   "function": "minecraft:explosion_decay"
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "hemomancy:blood_crystal",
+                  "properties": {
+                    "age": "3"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "hemomancy:blood_crystal_shard",
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 1,
+                  "add": false
+                },
+                {
+                  "function": "minecraft:explosion_decay"
+                }
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "hemomancy:blood_crystal",
+                  "properties": {
+                    "age": "2"
+                  }
                 }
               ]
             }

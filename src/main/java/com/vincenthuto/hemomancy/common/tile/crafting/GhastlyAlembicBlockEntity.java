@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
 import com.google.common.collect.Lists;
-import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBudBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.BloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -246,7 +246,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		// Fill blood from bloody flasks (independent of cooking)
 		tryFillBloodFromFlask(te);
 
-		// Alembic leak — drip blood onto nearby substrate blocks, grow blood crystal buds
+		// Alembic leak — drip blood onto nearby substrate blocks, grow blood crystals
 		tryLeakBloodOntoBlock(level, pos, te, vol);
 
 		if (dirty) {
@@ -646,18 +646,17 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	/**
 	 * Scans the 3x3 floor area one block below the alembic for a venous stone
 	 * (any variant) or a {@link net.minecraft.world.level.block.Blocks#BONE_BLOCK}.
-	 * When found, blood seeps onto that block and grows a
-	 * {@link BloodCrystalBudBlock} in the
-	 * open space immediately above it.
+	 * When found, blood seeps onto that block and grows a {@link BloodCrystalBlock}
+	 * in the open space immediately above it.
 	 * <p>
 	 * The wider scan avoids the fire / magma block that is typically placed directly
 	 * under the alembic for heating. Each leak interval first tries to place a fresh
-	 * bud under any valid open trigger tile; only when no placement is possible does
-	 * it search again for existing buds to grow. If neither succeeds, no blood is
+	 * crystal under any valid open trigger tile; only when no placement is possible does
+	 * it search again for existing crystals to grow. If neither succeeds, no blood is
 	 * spent and the next interval begins a fresh search.
 	 * <p>
 	 * Layout per trigger tile:
-	 * {@code [bud at alembic Y] / [venous_stone or bone_block at alembic Y-1]}
+	 * {@code [blood_crystal at alembic Y] / [venous_stone or bone_block at alembic Y-1]}
 	 */
 	private static void tryLeakBloodOntoBlock(Level level, BlockPos pos,
 			GhastlyAlembicBlockEntity te, IBloodVolume vol) {
@@ -670,7 +669,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (vol.getBloodVolume() < leakRate) return;
 
 		// Scan the 3x3 ring at Y-1 (the floor row directly below the alembic).
-		// The centre is skipped because the bud position above it is occupied by the alembic.
+		// The centre is skipped because the crystal position above it is occupied by the alembic.
 		int[][] offsets = new int[][]{
 				{-1, -1}, {0, -1}, {1, -1},
 				{-1, 0},           {1, 0},
@@ -689,29 +688,32 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			}
 		}
 
-		BlockState freshBudState = BlockInit.blood_crystal_bud.get().defaultBlockState();
+		BlockState freshCrystalState = BlockInit.blood_crystal.get().defaultBlockState()
+				.setValue(BloodCrystalBlock.FACING, Direction.UP)
+				.setValue(BloodCrystalBlock.AGE, 0);
 
-		// Pass 1: place a fresh bud on top of the first valid open trigger tile.
+		// Pass 1: place a fresh crystal on top of the first valid open trigger tile.
 		for (BlockPos basePos : triggerPositions) {
-			BlockPos budPos = basePos.above();
-			BlockState existingState = level.getBlockState(budPos);
+			BlockPos crystalPos = basePos.above();
+			BlockState existingState = level.getBlockState(crystalPos);
 			if (!existingState.canBeReplaced()) continue;
-			if (!freshBudState.canSurvive(level, budPos)) continue;
+			if (!freshCrystalState.canSurvive(level, crystalPos)) continue;
 
-			level.setBlock(budPos, freshBudState, Block.UPDATE_ALL);
+			level.setBlock(crystalPos, freshCrystalState, Block.UPDATE_ALL);
 			vol.drain(leakRate);
 			te.sendUpdates();
 			return;
 		}
 
-		// Pass 2: only when no fresh placement is possible, grow an existing bud.
-		BloodCrystalBudBlock bud = BlockInit.blood_crystal_bud.get();
+		// Pass 2: only when no fresh placement is possible, grow an existing crystal.
 		for (BlockPos basePos : triggerPositions) {
-			BlockPos budPos = basePos.above();
-			BlockState existingState = level.getBlockState(budPos);
-			if (!existingState.is(BlockInit.blood_crystal_bud.get())) continue;
+			BlockPos crystalPos = basePos.above();
+			BlockState existingState = level.getBlockState(crystalPos);
+			if (!existingState.is(BlockInit.blood_crystal.get())) continue;
+			if (existingState.getValue(BloodCrystalBlock.FACING) != Direction.UP) continue;
 
-			if (bud.tryGrow(level, budPos, existingState, level.getRandom())) {
+			if (BlockInit.blood_crystal.get() instanceof BloodCrystalBlock crystal
+					&& crystal.tryGrow(level, crystalPos, existingState, level.getRandom())) {
 				vol.drain(leakRate);
 				te.sendUpdates();
 				return;

@@ -588,16 +588,6 @@ public class BlockInit {
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
-	/** Growing blood crystal bud — spawned by the Ghastly Alembic leak. */
-	public static final DeferredHolder<Block, BloodCrystalBudBlock> blood_crystal_bud = BASEBLOCKS.register(
-			"blood_crystal_bud",
-			() -> new BloodCrystalBudBlock(BlockBehaviour.Properties.of()
-					.noOcclusion()
-					.requiresCorrectToolForDrops()
-					.strength(0.5F, 1.0F)
-					.sound(SoundType.AMETHYST)
-					.noCollission()));
-
 	public static final DeferredHolder<Block, Block> suspended_vivianite = MODELEDBLOCKS.register("suspended_vivianite",
 			() -> new SuspendedVivianiteBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
