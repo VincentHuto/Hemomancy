@@ -186,6 +186,9 @@ public class ClientEvents {
         ActiveBloodCraftClientData.tick();
         BloodBallClientData.tick();
         SanguineMonolithShatterRenderer.tick();
+        if (SanguineOmenOverlay.instance != null) {
+            SanguineOmenOverlay.instance.tick();
+        }
         if (FungalWhisperVignetteOverlay.instance != null) {
             FungalWhisperVignetteOverlay.instance.tick();
         }
@@ -582,6 +585,7 @@ public class ClientEvents {
             StillArtCooldownOverlay.instance = new StillArtCooldownOverlay();
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
+            SanguineOmenOverlay.instance = new SanguineOmenOverlay();
             // Tiles
             BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
                     DiscoveryInscriptionBlockRenderer::new);
@@ -899,6 +903,12 @@ public class ClientEvents {
                 if (FungalWhisperVignetteOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     FungalWhisperVignetteOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
+            event.registerAboveAll(Hemomancy.rloc("sanguine_omen"), (graphics, deltaTracker) -> {
+                if (SanguineOmenOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    SanguineOmenOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
         }

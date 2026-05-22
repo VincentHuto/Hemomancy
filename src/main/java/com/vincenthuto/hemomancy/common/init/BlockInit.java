@@ -534,6 +534,11 @@ public class BlockInit {
 			() -> new SanguineMonolithBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 5).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> sanguine_omen = BASEBLOCKS.register("sanguine_omen",
+			() -> new SanguineOmenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+					.requiresCorrectToolForDrops().strength(2.0F, 6.0F).sound(SoundType.STONE).lightLevel(s -> 3)
+					.noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> fungal_implantation_pylon = MODELEDBLOCKS
 			.register("fungal_implantation_pylon", () -> new FungalImplantationPylonBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));

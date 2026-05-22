@@ -31,6 +31,10 @@ public class SanguineMonolithShatterRenderer {
 	private static final int POME_PULSE_LIFETIME = 24;
 	private static final float POME_PULSE_CORE_MAX_RADIUS = 0.85f;
 	private static final float POME_PULSE_SHELL_MAX_RADIUS = 2.65f;
+	private static final int OMEN_BURST_COUNT = 36;
+	private static final int OMEN_PULSE_LIFETIME = 38;
+	private static final float OMEN_PULSE_CORE_MAX_RADIUS = 1.35f;
+	private static final float OMEN_PULSE_SHELL_MAX_RADIUS = 5.25f;
 	private static final int PULSE_RINGS = 10;
 	private static final int PULSE_SEGMENTS = 18;
 
@@ -47,6 +51,27 @@ public class SanguineMonolithShatterRenderer {
 			int lifetime = MIN_LIFETIME + random.nextInt(MAX_LIFETIME - MIN_LIFETIME + 1);
 			Vec3 spinAxis = randomDirection(random);
 			float spinSpeed = (random.nextFloat() - 0.5f) * 0.55f;
+			Vec3 v1 = randomDirection(random).scale(size);
+			Vec3 v2 = randomDirection(random).scale(size);
+			Vec3 v3 = randomDirection(random).scale(size);
+			ACTIVE_SHARDS.add(new Shard(center, vel, v1, v2, v3, spinAxis, spinSpeed, lifetime));
+		}
+	}
+
+	public static void spawnOmenBurst(Vec3 center) {
+		RandomSource random = Minecraft.getInstance().level != null
+				? Minecraft.getInstance().level.random
+				: RandomSource.create();
+		ACTIVE_PULSES.add(new Pulse(center, OMEN_PULSE_CORE_MAX_RADIUS, OMEN_PULSE_SHELL_MAX_RADIUS,
+				OMEN_PULSE_LIFETIME));
+		for (int i = 0; i < OMEN_BURST_COUNT; i++) {
+			Vec3 dir = randomDirection(random);
+			double speed = (BASE_SPEED + random.nextDouble() * SPEED_VARIANCE) * 0.82D;
+			Vec3 vel = dir.scale(speed);
+			float size = (MIN_SIZE + random.nextFloat() * (MAX_SIZE - MIN_SIZE)) * 1.25F;
+			int lifetime = MIN_LIFETIME + random.nextInt(MAX_LIFETIME - MIN_LIFETIME + 1) + 8;
+			Vec3 spinAxis = randomDirection(random);
+			float spinSpeed = (random.nextFloat() - 0.5f) * 0.45f;
 			Vec3 v1 = randomDirection(random).scale(size);
 			Vec3 v2 = randomDirection(random).scale(size);
 			Vec3 v3 = randomDirection(random).scale(size);
