@@ -1,0 +1,17 @@
+{
+    "providers": [
+        {
+            "type": "reference",
+            "id": "minecraft:include/space"
+        },
+        {
+            "type": "bitmap",
+            "file": "hemomancy:font/abocipher.png",
+            "ascent": 7,
+            "chars": [
+                "abcdefghijklmnopqrstuvwxyz",
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            ]
+        }
+    ]
+}

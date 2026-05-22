@@ -128,10 +128,10 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 
 	private static float rotationForFacing(Direction facing) {
 		return switch (facing) {
-		case NORTH -> 0.0F;
+		case NORTH -> 180.0F;
 		case EAST -> 90.0F;
 		case WEST -> 270.0F;
-		default -> 180.0F;
+		default -> 0.0F;
 		};
 	}
 

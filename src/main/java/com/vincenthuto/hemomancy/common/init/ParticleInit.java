@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.particle.factory.*;
 import com.vincenthuto.hemomancy.client.particle.type.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -41,8 +42,12 @@ public class ParticleInit {
 	public static final DeferredHolder<ParticleType<?>, ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
 			.register("absorbed_blood_cell", AbsorbedBloodCellParticleType::new);
 
+	public static final DeferredHolder<ParticleType<?>, SimpleParticleType> abocipher = PARTICLE_TYPES.register("abocipher",
+			() -> new SimpleParticleType(false));
+
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
+		Minecraft.getInstance().particleEngine.register(abocipher.get(), AbocipherParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(hit_glow.get(), HitGlowParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(sporitic_spore.get(), SporiticSporeParticleFactory::new);

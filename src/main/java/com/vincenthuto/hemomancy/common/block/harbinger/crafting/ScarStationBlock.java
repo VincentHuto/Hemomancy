@@ -36,7 +36,7 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock,
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	/** Filler offsets: 1×3×1 — two filler blocks directly above the base. */
+	/** Filler offsets: 1×2×1 — two filler blocks directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0)
 	};
