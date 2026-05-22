@@ -519,6 +519,10 @@ public class BlockInit {
 			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
+	public static final DeferredHolder<Block, Block> scarlet_vanity = MODELEDBLOCKS.register("scarlet_vanity",
+			() -> new ScarletVanityBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 6.0F).sound(SoundType.WOOD).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
 			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));

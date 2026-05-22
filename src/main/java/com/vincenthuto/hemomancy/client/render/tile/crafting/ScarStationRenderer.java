@@ -7,6 +7,7 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.FaceInfo;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	private static final int DISPLAY_ITEM_MAX_LIGHT = 11;
 
 	public ScarStationRenderer(BlockEntityRendererProvider.Context context) {
 	}
@@ -35,6 +37,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 		// ── Render items on the station ──
 		Minecraft.getInstance().getTextureManager().bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
+		int itemLight = displayItemLight(te, combinedLightIn);
 		matrixStackIn.translate(0, 0.5, 0);
 
 		// Chisel
@@ -65,7 +68,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 				matrixStackIn.mulPose(new Quaternion(Vector3.ZP,90, true).toMoj());
 				matrixStackIn.translate(1.3, 1f, 1.5f + 0.35f);
 			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
+			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
 					matrixStackIn, bufferIn,te.getLevel(),0);
 
 		}
@@ -100,7 +103,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-75, true).toMoj());
 				matrixStackIn.translate(1f, -1.65, 1.5f);
 			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
+			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
 					matrixStackIn, bufferIn, te.getLevel(),0);
 		}
 		matrixStackIn.popPose();
@@ -133,7 +136,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-45, true).toMoj());
 				matrixStackIn.translate(1f, 0.35f, 1.75f);
 			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
+			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
 					matrixStackIn, bufferIn,te.getLevel(), 0);
 		}
 		matrixStackIn.popPose();
@@ -166,7 +169,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-45, true).toMoj());
 				matrixStackIn.translate(1f, 0.35f, 1.80f);
 			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
+			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
 					matrixStackIn, bufferIn, te.getLevel(), 0);
 		}
 		matrixStackIn.popPose();
@@ -198,10 +201,24 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
+			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
 					matrixStackIn, bufferIn, te.getLevel(), 0);
 		}
 		matrixStackIn.popPose();
+	}
+
+	private static int displayItemLight(ScarStationBlockEntity te, int fallbackLight) {
+		if (te.getLevel() == null) {
+			return capPackedLight(fallbackLight, DISPLAY_ITEM_MAX_LIGHT);
+		}
+		int tableLight = LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above());
+		return capPackedLight(tableLight, DISPLAY_ITEM_MAX_LIGHT);
+	}
+
+	private static int capPackedLight(int packedLight, int maxLight) {
+		int blockLight = (packedLight >> 4) & 0xF;
+		int skyLight = (packedLight >> 20) & 0xF;
+		return (Math.min(blockLight, maxLight) << 4) | (Math.min(skyLight, maxLight) << 20);
 	}
 
 }

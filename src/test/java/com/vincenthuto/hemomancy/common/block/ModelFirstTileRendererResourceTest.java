@@ -170,7 +170,7 @@ public final class ModelFirstTileRendererResourceTest {
 		String lanternRenderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/crafting/MycelialLanternRenderer.java"));
 		assertContains("mycelial lantern keeps dynamic displayed stack rendering", lanternRenderer,
-				"renderDisplayItem(te, display, partialTick, poseStack, buffers, light, overlay);");
+				"renderDisplayItem(te, display, partialTick, poseStack, buffers, itemLight, overlay);");
 		assertDoesNotContain("mycelial lantern renderer should not render the static model body", lanternRenderer,
 				"MycelialLanternModel");
 
@@ -185,7 +185,7 @@ public final class ModelFirstTileRendererResourceTest {
 		String scarStationRenderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/crafting/ScarStationRenderer.java"));
 		assertContains("scar station keeps dynamic displayed slot rendering", scarStationRenderer,
-				"renderStatic(stack, ItemDisplayContext.FIXED");
+				"renderStatic(stack, ItemDisplayContext.GROUND");
 		assertDoesNotContain("scar station renderer should not render the static model body", scarStationRenderer,
 				"ScarStationModel");
 

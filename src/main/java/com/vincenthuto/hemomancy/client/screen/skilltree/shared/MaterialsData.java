@@ -95,6 +95,11 @@ public final class MaterialsData {
                 "Functional Blocks", () -> new ItemStack(BlockInit.scrying_podium.get()),
                 true, UnlockPredicate.minDegree(3)));
 
+        list.add(new MaterialEntry("scarlet_vanity", "Scarlet Vanity",
+                "Equips bonded harbinger tools through the scars inventory.",
+                "Functional Blocks", () -> new ItemStack(BlockInit.scarlet_vanity.get()),
+                true, UnlockPredicate.minDegree(3)));
+
         list.add(new MaterialEntry("fungal_podium", "Fungal Podium",
                 "Processes fungal spores for scar imprinting.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.fungal_podium.get()),

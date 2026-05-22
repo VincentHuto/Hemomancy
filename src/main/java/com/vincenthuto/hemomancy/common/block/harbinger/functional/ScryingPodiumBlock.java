@@ -5,8 +5,6 @@ import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.scars.PacketOpenScarsInv;
 import com.vincenthuto.hemomancy.common.tile.functional.ScryingPodiumBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -123,20 +121,17 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 
 	private InteractionResult handleUse(BlockState state, Level worldIn, BlockPos pos, Player player) {
 		if (!player.isShiftKeyDown()) {
-			if (worldIn.isClientSide) {
-				PacketHandler.sendToServer(new PacketOpenScarsInv());
-			}
-		} else {
-			if (!worldIn.isClientSide) {
-				ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
-						new ItemStack(ItemInit.scrying_dish.get(), 1));
-				worldIn.destroyBlock(pos, false);
-				worldIn.addFreshEntity(spawn);
-				worldIn.setBlockAndUpdate(pos, BlockInit.unstained_podium.get().defaultBlockState()
-						.setValue(UnstainedPodiumBlock.WATERLOGGED, state.getValue(WATERLOGGED)));
-				if (player instanceof ServerPlayer serverPlayer) {
-					MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.unstained_podium.get());
-				}
+			return InteractionResult.PASS;
+		}
+		if (!worldIn.isClientSide) {
+			ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
+					new ItemStack(ItemInit.scrying_dish.get(), 1));
+			worldIn.destroyBlock(pos, false);
+			worldIn.addFreshEntity(spawn);
+			worldIn.setBlockAndUpdate(pos, BlockInit.unstained_podium.get().defaultBlockState()
+					.setValue(UnstainedPodiumBlock.WATERLOGGED, state.getValue(WATERLOGGED)));
+			if (player instanceof ServerPlayer serverPlayer) {
+				MachineAccessEvents.awardMachineCrafted(serverPlayer, BlockInit.unstained_podium.get());
 			}
 		}
 //		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {
@@ -155,8 +150,9 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		handleUse(state, worldIn, pos, player);
-		return ItemInteractionResult.SUCCESS;
+		InteractionResult interactionResult = handleUse(state, worldIn, pos, player);
+		return interactionResult == InteractionResult.PASS ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SUCCESS;
 	}
 	@Override
 	public FluidState getFluidState(BlockState state) {

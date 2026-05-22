@@ -65,6 +65,8 @@ public final class WaterloggableDecorativeBlocksTest {
 					"com/vincenthuto/hemomancy/common/block/harbinger/crafting/VialCentrifugeBlock.java"),
 			new TargetBlock("scrying_podium",
 					"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScryingPodiumBlock.java"),
+			new TargetBlock("scarlet_vanity",
+					"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScarletVanityBlock.java"),
 			new TargetBlock("unstained_podium",
 					"com/vincenthuto/hemomancy/common/block/harbinger/functional/UnstainedPodiumBlock.java"),
 			new TargetBlock("semi_sentient_construct",

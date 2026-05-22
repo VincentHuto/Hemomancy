@@ -45,6 +45,10 @@ public class BlockEntityInit {
 			.register("scrying_podium", () -> BlockEntityType.Builder
 					.of(ScryingPodiumBlockEntity::new, BlockInit.scrying_podium.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ScarletVanityBlockEntity>> scarlet_vanity = TILES
+			.register("scarlet_vanity", () -> BlockEntityType.Builder
+					.of(ScarletVanityBlockEntity::new, BlockInit.scarlet_vanity.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FungalPodiumBlockEntity>> fungal_podium = TILES.register(
 			"fungal_podium",
 			() -> BlockEntityType.Builder.of(FungalPodiumBlockEntity::new, BlockInit.fungal_podium.get()).build(null));

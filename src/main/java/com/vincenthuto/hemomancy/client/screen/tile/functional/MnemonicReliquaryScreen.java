@@ -30,10 +30,16 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private static final int BRAIN_RADIUS = 60;
 	private static final int VEIN_COUNT = 28;
 	private static final int ICON_SIZE = 16;
+	private static final int SCREEN_PADDING = 8;
 
 	private float[][] veinParams;
 	private int guiLeft;
 	private int guiTop;
+	private int currentGuiWidth = GUI_WIDTH;
+	private int currentGuiHeight = GUI_HEIGHT;
+	private int currentBrainRadius = BRAIN_RADIUS;
+	private int currentIconSize = ICON_SIZE;
+	private float currentLayoutScale = 1.0F;
 
 	private final Map<String, ItemStack> manipItemCache = new HashMap<>();
 	private final Map<EnumBloodTendency, List<BloodManipulation>> tendencyGroups = new LinkedHashMap<>();
@@ -55,9 +61,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	@Override
 	protected void init() {
+		updateScaledLayout();
 		super.init();
-		this.guiLeft = (this.width - GUI_WIDTH) / 2;
-		this.guiTop = (this.height - GUI_HEIGHT) / 2;
+		updateScaledLayout();
 
 		Random rand = new Random(42L);
 		veinParams = new float[VEIN_COUNT][9];
@@ -76,6 +82,31 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		buildItemCache();
 		refreshCapabilityData();
 		buildLayout();
+	}
+
+	private void updateScaledLayout() {
+		this.currentLayoutScale = fitScale(this.width, this.height);
+		this.currentGuiWidth = Math.max(1, Math.round(GUI_WIDTH * currentLayoutScale));
+		this.currentGuiHeight = Math.max(1, Math.round(GUI_HEIGHT * currentLayoutScale));
+		this.currentBrainRadius = Math.max(24, Math.round(BRAIN_RADIUS * currentLayoutScale));
+		this.currentIconSize = Math.max(10, Math.round(ICON_SIZE * currentLayoutScale));
+		this.imageWidth = currentGuiWidth;
+		this.imageHeight = currentGuiHeight;
+		this.guiLeft = Math.max(SCREEN_PADDING, (this.width - currentGuiWidth) / 2);
+		this.guiTop = Math.max(SCREEN_PADDING, (this.height - currentGuiHeight) / 2);
+		this.leftPos = this.guiLeft;
+		this.topPos = this.guiTop;
+	}
+
+	private static float fitScale(int screenWidth, int screenHeight) {
+		int availableWidth = Math.max(1, screenWidth - SCREEN_PADDING * 2);
+		int availableHeight = Math.max(1, screenHeight - SCREEN_PADDING * 2);
+		float fit = Math.min(availableWidth / (float) GUI_WIDTH, availableHeight / (float) GUI_HEIGHT);
+		return Math.min(1.0F, fit);
+	}
+
+	private int scaled(int value) {
+		return Math.max(1, Math.round(value * currentLayoutScale));
 	}
 
 	private void buildItemCache() {
@@ -133,12 +164,13 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		knownIcons.clear();
 		equippedIcons.clear();
 
-		int cx = guiLeft + GUI_WIDTH / 2;
-		int cy = guiTop + GUI_HEIGHT / 2;
+		int cx = guiLeft + currentGuiWidth / 2;
+		int cy = guiTop + currentGuiHeight / 2;
+		int iconGap = scaled(2);
 
 		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
 		double angleStep = (2.0 * Math.PI) / tendencies.length;
-		int groupRadius = BRAIN_RADIUS + 42;
+		int groupRadius = currentBrainRadius + scaled(42);
 
 		for (int t = 0; t < tendencies.length; t++) {
 			EnumBloodTendency tend = tendencies[t];
@@ -150,16 +182,16 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int count = manips.size();
 			int cols = Math.max(1, Math.min(count, 3));
 			int rows = (count + cols - 1) / cols;
-			int gridW = cols * (ICON_SIZE + 2);
-			int gridH = rows * (ICON_SIZE + 2);
+			int gridW = cols * (currentIconSize + iconGap);
+			int gridH = rows * (currentIconSize + iconGap);
 			int startX = groupCx - gridW / 2;
-			int startY = groupCy - gridH / 2 + 4;
+			int startY = groupCy - gridH / 2 + scaled(4);
 
 			for (int i = 0; i < count; i++) {
 				int col = i % cols;
 				int row = i / cols;
-				int ix = startX + col * (ICON_SIZE + 2);
-				int iy = startY + row * (ICON_SIZE + 2);
+				int ix = startX + col * (currentIconSize + iconGap);
+				int iy = startY + row * (currentIconSize + iconGap);
 				knownIcons.add(new ManipIcon(manips.get(i), ix, iy, tend));
 			}
 		}
@@ -167,11 +199,12 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		if (!equippedManips.isEmpty()) {
 			int equipCount = equippedManips.size();
 			double equipAngleStep = (2.0 * Math.PI) / equipCount;
-			int equipRadius = Math.min(BRAIN_RADIUS - 14, 8 + equipCount * 4);
+			int equipRadius = Math.max(scaled(4),
+					Math.min(currentBrainRadius - scaled(14), scaled(8) + equipCount * scaled(4)));
 			for (int i = 0; i < equipCount; i++) {
 				double angle = -Math.PI / 2 + i * equipAngleStep;
-				int ix = cx - ICON_SIZE / 2 + (int) (equipRadius * Math.cos(angle));
-				int iy = cy - ICON_SIZE / 2 + (int) (equipRadius * Math.sin(angle));
+				int ix = cx - currentIconSize / 2 + (int) (equipRadius * Math.cos(angle));
+				int iy = cy - currentIconSize / 2 + (int) (equipRadius * Math.sin(angle));
 				equippedIcons.add(new ManipIcon(equippedManips.get(i), ix, iy, equippedManips.get(i).getTend()));
 			}
 		}
@@ -200,8 +233,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		int gx = guiLeft;
 		int gy = guiTop;
 
-		renderVeinBackground(graphics, gx, gy, GUI_WIDTH, GUI_HEIGHT);
-		drawBorder(graphics, gx, gy, GUI_WIDTH, GUI_HEIGHT);
+		renderVeinBackground(graphics, gx, gy, currentGuiWidth, currentGuiHeight);
+		drawBorder(graphics, gx, gy, currentGuiWidth, currentGuiHeight);
 		drawBrainArea(graphics, partialTicks);
 		drawTendencyLabels(graphics);
 		drawKnownManips(graphics, mouseX, mouseY);
@@ -211,7 +244,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		if (draggingManip != null) {
 			ItemStack stack = manipItemCache.get(draggingManip.getName());
 			if (stack != null) {
-				graphics.renderItem(stack, mouseX - 8, mouseY - 8);
+				renderScaledItem(graphics, stack, mouseX - currentIconSize / 2, mouseY - currentIconSize / 2);
 			}
 		}
 
@@ -330,8 +363,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private float animTime = 0f;
 
 	private void drawBrainArea(GuiGraphics graphics, float partialTicks) {
-		int cx = guiLeft + GUI_WIDTH / 2;
-		int cy = guiTop + GUI_HEIGHT / 2;
+		int cx = guiLeft + currentGuiWidth / 2;
+		int cy = guiTop + currentGuiHeight / 2;
 
 		animTime += 0.016f; // ~60 FPS approximation
 
@@ -341,8 +374,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		for (int ring = BRAIN_RADIUS; ring > 0; ring -= 2) {
-			float t = (float) ring / BRAIN_RADIUS;
+		for (int ring = currentBrainRadius; ring > 0; ring -= 2) {
+			float t = (float) ring / currentBrainRadius;
 			int alpha = (int) (pulseAlpha * 255 * (1f - t));
 			int red = (int) (180 * (1f - t * 0.5f));
 			int color = (Mth.clamp(alpha, 0, 255) << 24) | (Mth.clamp(red, 0, 255) << 16);
@@ -355,10 +388,10 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		for (int i = 0; i < segments; i++) {
 			double a1 = (2.0 * Math.PI * i) / segments;
 			double a2 = (2.0 * Math.PI * (i + 1)) / segments;
-			int x1 = cx + (int) (BRAIN_RADIUS * Math.cos(a1));
-			int y1 = cy + (int) (BRAIN_RADIUS * Math.sin(a1));
-			int x2 = cx + (int) (BRAIN_RADIUS * Math.cos(a2));
-			int y2 = cy + (int) (BRAIN_RADIUS * Math.sin(a2));
+			int x1 = cx + (int) (currentBrainRadius * Math.cos(a1));
+			int y1 = cy + (int) (currentBrainRadius * Math.sin(a1));
+			int x2 = cx + (int) (currentBrainRadius * Math.cos(a2));
+			int y2 = cy + (int) (currentBrainRadius * Math.sin(a2));
 			graphics.fill(Math.min(x1, x2), Math.min(y1, y2),
 					Math.max(x1, x2) + 1, Math.max(y1, y2) + 1, borderColor);
 		}
@@ -372,12 +405,12 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			if (stack == null) continue;
 
 			boolean equipped = equippedNames.contains(icon.manip.getName());
-			graphics.renderItem(stack, icon.x, icon.y);
+			renderScaledItem(graphics, stack, icon.x, icon.y);
 
 			if (equipped) {
 				RenderSystem.enableBlend();
 				RenderSystem.defaultBlendFunc();
-				graphics.fill(icon.x, icon.y, icon.x + ICON_SIZE, icon.y + ICON_SIZE, 0x4000CC00);
+				graphics.fill(icon.x, icon.y, icon.x + currentIconSize, icon.y + currentIconSize, 0x4000CC00);
 				RenderSystem.disableBlend();
 			}
 		}
@@ -387,23 +420,37 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		for (ManipIcon icon : equippedIcons) {
 			ItemStack stack = manipItemCache.get(icon.manip.getName());
 			if (stack == null) continue;
-			graphics.renderItem(stack, icon.x, icon.y);
+			renderScaledItem(graphics, stack, icon.x, icon.y);
 		}
 	}
 
+	private void renderScaledItem(GuiGraphics graphics, ItemStack stack, int x, int y) {
+		if (currentIconSize == ICON_SIZE) {
+			graphics.renderItem(stack, x, y);
+			return;
+		}
+		float iconScale = currentIconSize / (float) ICON_SIZE;
+		graphics.pose().pushPose();
+		graphics.pose().translate(x, y, 0.0F);
+		graphics.pose().scale(iconScale, iconScale, 1.0F);
+		graphics.renderItem(stack, 0, 0);
+		graphics.pose().popPose();
+	}
+
 	private void drawCounter(GuiGraphics graphics) {
-		int cx = guiLeft + GUI_WIDTH / 2;
-		int y = guiTop + 6;
+		int cx = guiLeft + currentGuiWidth / 2;
+		int y = guiTop + scaled(6);
 		String text = "Memorized: " + equippedManips.size() + " / " + maxSlots;
 		graphics.drawCenteredString(font, text, cx, y, 0xFFDD2222);
 	}
 
 	private void drawTendencyLabels(GuiGraphics graphics) {
-		int cx = guiLeft + GUI_WIDTH / 2;
-		int cy = guiTop + GUI_HEIGHT / 2;
+		int cx = guiLeft + currentGuiWidth / 2;
+		int cy = guiTop + currentGuiHeight / 2;
 		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
 		double angleStep = (2.0 * Math.PI) / tendencies.length;
-		int labelRadius = BRAIN_RADIUS + 42;
+		int labelRadius = currentBrainRadius + scaled(42);
+		int iconGap = scaled(2);
 
 		for (int t = 0; t < tendencies.length; t++) {
 			EnumBloodTendency tend = tendencies[t];
@@ -420,10 +467,15 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int count = manips.size();
 			int cols = Math.max(1, Math.min(count, 3));
 			int rows = (count + cols - 1) / cols;
-			int gridH = rows * (ICON_SIZE + 2);
+			int gridH = rows * (currentIconSize + iconGap);
 
 			String name = HLTextUtils.convertInitToLang(tend.name());
-			graphics.drawCenteredString(font, name, lx, ly - gridH / 2 - 10, color);
+			int textHalf = font.width(name) / 2;
+			int textX = Mth.clamp(lx, guiLeft + textHalf + scaled(4),
+					guiLeft + currentGuiWidth - textHalf - scaled(4));
+			int textY = Mth.clamp(ly - gridH / 2 - scaled(10), guiTop + scaled(4),
+					guiTop + currentGuiHeight - font.lineHeight - scaled(4));
+			graphics.drawCenteredString(font, name, textX, textY, color);
 		}
 	}
 
@@ -451,14 +503,14 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private BloodManipulation getHoveredManip(int mouseX, int mouseY) {
 		for (ManipIcon icon : equippedIcons) {
-			if (mouseX >= icon.x && mouseX < icon.x + ICON_SIZE
-					&& mouseY >= icon.y && mouseY < icon.y + ICON_SIZE) {
+			if (mouseX >= icon.x && mouseX < icon.x + currentIconSize
+					&& mouseY >= icon.y && mouseY < icon.y + currentIconSize) {
 				return icon.manip;
 			}
 		}
 		for (ManipIcon icon : knownIcons) {
-			if (mouseX >= icon.x && mouseX < icon.x + ICON_SIZE
-					&& mouseY >= icon.y && mouseY < icon.y + ICON_SIZE) {
+			if (mouseX >= icon.x && mouseX < icon.x + currentIconSize
+					&& mouseY >= icon.y && mouseY < icon.y + currentIconSize) {
 				return icon.manip;
 			}
 		}
@@ -466,11 +518,11 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private boolean isInsideBrain(int mouseX, int mouseY) {
-		int cx = guiLeft + GUI_WIDTH / 2;
-		int cy = guiTop + GUI_HEIGHT / 2;
+		int cx = guiLeft + currentGuiWidth / 2;
+		int cy = guiTop + currentGuiHeight / 2;
 		int dx = mouseX - cx;
 		int dy = mouseY - cy;
-		return (dx * dx + dy * dy) <= (BRAIN_RADIUS * BRAIN_RADIUS);
+		return (dx * dx + dy * dy) <= (currentBrainRadius * currentBrainRadius);
 	}
 
 	@Override
@@ -481,8 +533,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		int my = (int) mouseY;
 
 		for (ManipIcon icon : equippedIcons) {
-			if (mx >= icon.x && mx < icon.x + ICON_SIZE
-					&& my >= icon.y && my < icon.y + ICON_SIZE) {
+			if (mx >= icon.x && mx < icon.x + currentIconSize
+					&& my >= icon.y && my < icon.y + currentIconSize) {
 				PacketHandler.sendToServer(
 						new EquipManipulationPacket(icon.manip.getName(), false));
 				equippedNames.remove(icon.manip.getName());
@@ -493,8 +545,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		}
 
 		for (ManipIcon icon : knownIcons) {
-			if (mx >= icon.x && mx < icon.x + ICON_SIZE
-					&& my >= icon.y && my < icon.y + ICON_SIZE) {
+			if (mx >= icon.x && mx < icon.x + currentIconSize
+					&& my >= icon.y && my < icon.y + currentIconSize) {
 				if (!equippedNames.contains(icon.manip.getName())) {
 					draggingManip = icon.manip;
 				}

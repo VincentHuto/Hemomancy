@@ -38,8 +38,7 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock,
 
 	/** Filler offsets: 1×3×1 — two filler blocks directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0),
-			new BlockPos(0, 2, 0)
+			new BlockPos(0, 1, 0)
 	};
 
 	/** Full-block collision shape for the base block. */
