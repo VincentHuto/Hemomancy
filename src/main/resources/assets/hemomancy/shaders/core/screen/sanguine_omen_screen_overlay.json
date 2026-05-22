@@ -5,15 +5,13 @@
     "dstrgb": "1-srcalpha"
   },
   "vertex": "hemomancy:screen/screen_generic",
-  "fragment": "hemomancy:screen/sanguine_omen_overlay",
+  "fragment": "hemomancy:screen/sanguine_omen_screen_overlay",
   "attributes": [
     "Position",
     "Color",
     "UV0"
   ],
-  "samplers": [
-    { "name": "Sampler0" }
-  ],
+  "samplers": [],
   "uniforms": [
     { "name": "HemoTime", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "Progress", "type": "float", "count": 1, "values": [ 0.0 ] },

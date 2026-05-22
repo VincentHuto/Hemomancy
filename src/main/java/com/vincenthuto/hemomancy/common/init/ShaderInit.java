@@ -22,7 +22,10 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency",
 			"UVCoordinates");
 
-	public static ShaderHolder SANGUINE_OMEN_OVERLAY = new ShaderHolder(Hemomancy.rloc("screen/sanguine_omen_overlay"),
+	public static ShaderHolder SANGUINE_OMEN_WORLD = new ShaderHolder(Hemomancy.rloc("screen/sanguine_omen_overlay"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "Progress", "Intensity", "Seed");
+
+	public static ShaderHolder SANGUINE_OMEN_SCREEN_OVERLAY = new ShaderHolder(Hemomancy.rloc("screen/sanguine_omen_screen_overlay"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "Progress", "Intensity", "Seed");
 
 	public static ShaderHolder SCAR_GLOW = new ShaderHolder(Hemomancy.rloc("screen/scar_glow"),
@@ -45,7 +48,8 @@ public class ShaderInit {
 					RadiantPortalRendertype.RAY_SHADER = instance;
 				});
         registerShader(event, DISTORTED_TEXTURE.createInstance(provider));
-        registerShader(event, SANGUINE_OMEN_OVERLAY.createInstance(provider));
+        registerShader(event, SANGUINE_OMEN_WORLD.createInstance(provider));
+        registerShader(event, SANGUINE_OMEN_SCREEN_OVERLAY.createInstance(provider));
         registerShader(event, SCAR_GLOW.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
 

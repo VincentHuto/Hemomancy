@@ -23,6 +23,7 @@ public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 			msg.durationTicks = buf.readInt();
 			msg.peakAlpha = buf.readFloat();
 			msg.seed = buf.readInt();
+			msg.screenOverlay = buf.readBoolean();
 		} catch (IllegalArgumentException | IndexOutOfBoundsException e) {
 			return msg;
 		}
@@ -36,6 +37,7 @@ public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 		buf.writeInt(msg.getDurationTicks());
 		buf.writeFloat(msg.getPeakAlpha());
 		buf.writeInt(msg.getSeed());
+		buf.writeBoolean(msg.isScreenOverlay());
 	}
 
 	public static void handle(final SpawnSanguineOmenEffectPacket msg, final IPayloadContext ctxSupplier) {
@@ -43,7 +45,10 @@ public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 		ctxSupplier.enqueueWork(() -> {
 			SanguineMonolithShatterRenderer.spawnOmenBurst(msg.getPos());
 			if (SanguineOmenOverlay.instance != null) {
-				SanguineOmenOverlay.instance.start(msg.getDurationTicks(), msg.getPeakAlpha(), msg.getSeed());
+				SanguineOmenOverlay.Mode mode = msg.isScreenOverlay()
+						? SanguineOmenOverlay.Mode.SCREEN_OVERLAY
+						: SanguineOmenOverlay.Mode.WORLD_GRADE;
+				SanguineOmenOverlay.instance.start(msg.getDurationTicks(), msg.getPeakAlpha(), msg.getSeed(), mode);
 			}
 		});
 	}
@@ -52,16 +57,23 @@ public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 	private int durationTicks;
 	private float peakAlpha;
 	private int seed;
+	private boolean screenOverlay;
 
 	public SpawnSanguineOmenEffectPacket() {
-		this(Vec3.ZERO, 120, 0.88F, 0);
+		this(Vec3.ZERO, 120, 0.88F, 0, false);
 	}
 
 	public SpawnSanguineOmenEffectPacket(Vec3 pos, int durationTicks, float peakAlpha, int seed) {
+		this(pos, durationTicks, peakAlpha, seed, false);
+	}
+
+	public SpawnSanguineOmenEffectPacket(Vec3 pos, int durationTicks, float peakAlpha, int seed,
+			boolean screenOverlay) {
 		this.pos = pos;
 		this.durationTicks = Math.max(1, durationTicks);
 		this.peakAlpha = Math.max(0.0F, Math.min(1.0F, peakAlpha));
 		this.seed = seed;
+		this.screenOverlay = screenOverlay;
 	}
 
 	public Vec3 getPos() {
@@ -78,6 +90,10 @@ public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 
 	public int getSeed() {
 		return seed;
+	}
+
+	public boolean isScreenOverlay() {
+		return screenOverlay;
 	}
 
 	@Override

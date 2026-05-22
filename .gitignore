@@ -51,3 +51,4 @@ repo/
 !/tools/model_export/java_model_to_bbmodel.mjs
 /docs/superpowers/
 /.superpowers/
+/.codex-remote-attachments/

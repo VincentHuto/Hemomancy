@@ -363,6 +363,16 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event) {
+        if (SanguineOmenOverlay.instance != null) {
+            Minecraft minecraft = Minecraft.getInstance();
+            float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+            SanguineOmenOverlay.instance.renderWorldGrade(event.getGuiGraphics(),
+                    event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
+        }
+    }
+
+    @SubscribeEvent
     public static void renderLevelLastEvent(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             renderBloodMoonSky(event);

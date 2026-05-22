@@ -247,8 +247,12 @@ public class PacketHandler {
     }
 
     public static void sendSanguineOmenEffect(Vec3 pos, double radius, ServerLevel level, int durationTicks, float peakAlpha) {
+        sendSanguineOmenEffect(pos, radius, level, durationTicks, peakAlpha, false);
+    }
+
+    public static void sendSanguineOmenEffect(Vec3 pos, double radius, ServerLevel level, int durationTicks, float peakAlpha, boolean screenOverlay) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
-                new SpawnSanguineOmenEffectPacket(pos, durationTicks, peakAlpha, level.random.nextInt()));
+                new SpawnSanguineOmenEffectPacket(pos, durationTicks, peakAlpha, level.random.nextInt(), screenOverlay));
     }
 
     public static void sendPomePulse(Vec3 pos, double radius, ServerLevel level) {

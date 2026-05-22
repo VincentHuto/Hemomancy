@@ -29,18 +29,18 @@ public class SanguineOmenBlock extends Block {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
 			BlockHitResult hit) {
-		triggerEffect(level, pos);
+		triggerEffect(level, pos, player.isShiftKeyDown());
 		return InteractionResult.SUCCESS;
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 			Player player, InteractionHand hand, BlockHitResult hit) {
-		triggerEffect(level, pos);
+		triggerEffect(level, pos, player.isShiftKeyDown());
 		return ItemInteractionResult.SUCCESS;
 	}
 
-	private static void triggerEffect(Level level, BlockPos pos) {
+	private static void triggerEffect(Level level, BlockPos pos, boolean screenOverlay) {
 		if (!(level instanceof ServerLevel serverLevel)) {
 			return;
 		}
@@ -49,6 +49,6 @@ public class SanguineOmenBlock extends Block {
 		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.9F, 0.55F);
 		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 0.7F, 0.35F);
 		PacketHandler.sendSanguineOmenEffect(center, EFFECT_RADIUS, serverLevel, EFFECT_DURATION_TICKS,
-				EFFECT_PEAK_ALPHA);
+				EFFECT_PEAK_ALPHA, screenOverlay);
 	}
 }
