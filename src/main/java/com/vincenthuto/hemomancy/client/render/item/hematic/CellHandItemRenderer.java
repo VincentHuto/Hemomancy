@@ -219,12 +219,13 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 				HitResult trace = player.pick(5, HLClientUtils.getPartialTicks(), true);
 				if (trace.getType() == Type.BLOCK) {
 					Vec3 hitVec = trace.getLocation();
-					Vec3 finalPos = hitVec.subtract(particlePos.x, particlePos.y, particlePos.z).reverse();
+					Vec3 projectionTarget = hitVec.add(0.0, 1.05D, 0.0);
+					Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
 
 					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
-							hitVec.x,
-							hitVec.y + 1.05D,
-							hitVec.z, 
+							projectionTarget.x,
+							projectionTarget.y,
+							projectionTarget.z,
 							(float) finalPos.x + rand.nextFloat() - 0.5D,
 							(float) finalPos.y - rand.nextFloat() - 0F,
 							(float) finalPos.z + rand.nextFloat() - 0.5D);
