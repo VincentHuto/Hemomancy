@@ -98,31 +98,38 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MycelialLanternBlockEntity te) {
-        boolean changed = te.processBloodSlot();
+        boolean syncChanged = te.processBloodSlot();
+        boolean worldChanged = syncChanged;
         EnzymeFruitingRecipe recipe = te.findRecipe();
 
         if (recipe == null) {
             if (te.craftingProgress != 0 || te.craftingTotalTime != 0) {
                 te.craftingProgress = 0;
                 te.craftingTotalTime = 0;
-                changed = true;
+                worldChanged = true;
             }
         } else {
-            te.craftingTotalTime = recipe.getDuration();
+            if (te.craftingTotalTime != recipe.getDuration()) {
+                te.craftingTotalTime = recipe.getDuration();
+                worldChanged = true;
+            }
             if (te.canWork(recipe)) {
                 te.resolveVolume().subtractBloodVolume(recipe.getBloodPerTick());
                 te.craftingProgress++;
-                changed = true;
+                worldChanged = true;
                 if (te.craftingProgress >= recipe.getDuration()) {
                     te.finishRecipe(recipe);
                     te.craftingProgress = 0;
+                    syncChanged = true;
                 }
             }
         }
 
-        if (changed) {
-            te.sendUpdates();
+        if (worldChanged) {
             setChanged(level, pos, state);
+        }
+        if (syncChanged) {
+            te.sendUpdates();
         }
     }
 

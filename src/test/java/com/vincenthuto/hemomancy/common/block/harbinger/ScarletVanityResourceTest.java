@@ -21,6 +21,7 @@ public final class ScarletVanityResourceTest {
 				"com/vincenthuto/hemomancy/common/tile/functional/ScarletVanityBlockEntity.java");
 		String vanityRenderer = readSource(
 				"com/vincenthuto/hemomancy/client/render/tile/functional/ScarletVanityRenderer.java");
+		String vanityReflectionYaw = extractMethod(vanityRenderer, "playerReflectionYawForFacing");
 		String scryingPodium = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScryingPodiumBlock.java");
 		String blockstate = readResource("assets/hemomancy/blockstates/scarlet_vanity.json");
@@ -58,6 +59,30 @@ public final class ScarletVanityResourceTest {
 
 		assertContains("scarlet vanity renderer should draw the blood reflection bowl", vanityRenderer,
 				"renderBloodBowl");
+		assertContains("scarlet vanity renderer should draw the player reflection", vanityRenderer,
+				"renderPlayerReflection(te, partialTicks, poseStack);");
+		assertContains("scarlet vanity player reflection should use the entity renderer", vanityRenderer,
+				"getEntityRenderDispatcher()");
+		assertContains("scarlet vanity player reflection should use its own facing yaw", vanityRenderer,
+				"playerReflectionYawForFacing(facing)");
+		assertContains("scarlet vanity north-facing reflection should face out from the vanity", vanityReflectionYaw,
+				"case NORTH -> 180.0F;");
+		assertContains("scarlet vanity south-facing reflection should face out from the vanity", vanityReflectionYaw,
+				"case SOUTH -> 0.0F;");
+		assertContains("scarlet vanity player reflection should neutralize live player yaw", vanityRenderer,
+				"player.setYRot(0.0F);");
+		assertContains("scarlet vanity player reflection should neutralize live player body yaw", vanityRenderer,
+				"player.yBodyRot = 0.0F;");
+		assertContains("scarlet vanity player reflection should restore live player yaw", vanityRenderer,
+				"player.setYRot(previousYRot);");
+		assertContains("scarlet vanity player reflection should restore live player body yaw", vanityRenderer,
+				"player.yBodyRot = previousBodyRot;");
+		assertDoesNotContain("scarlet vanity player reflection should not reuse tabletop item rotation", vanityRenderer,
+				"rotationForFacing(facing) + 180.0F");
+		assertContains("scarlet vanity player reflection should render without a shadow", vanityRenderer,
+				"entityRenderDispatcher.setRenderShadow(false);");
+		assertContains("scarlet vanity player reflection should use fullbright lighting", vanityRenderer,
+				"entityRenderDispatcher.render(player, 0.0D, 0.0D, 0.0D, 0.0F, partialTicks, poseStack, playerBuffers, FULL_BRIGHT);");
 		assertContains("scarlet vanity renderer should use the same water shader path as the scrying podium",
 				vanityRenderer, "RadiantPortalRendertype.textWithWaterShader");
 		assertContains("scarlet vanity renderer should render equipped gourd", vanityRenderer,
@@ -132,5 +157,29 @@ public final class ScarletVanityResourceTest {
 		if (text.contains(forbidden)) {
 			throw new AssertionError(label + ": found " + forbidden);
 		}
+	}
+
+	private static String extractMethod(String source, String methodName) {
+		int start = source.indexOf(methodName + "(Direction");
+		if (start < 0) {
+			throw new AssertionError("missing method " + methodName);
+		}
+		int openBrace = source.indexOf('{', start);
+		if (openBrace < 0) {
+			throw new AssertionError("missing method body for " + methodName);
+		}
+		int depth = 0;
+		for (int i = openBrace; i < source.length(); i++) {
+			char c = source.charAt(i);
+			if (c == '{') {
+				depth++;
+			} else if (c == '}') {
+				depth--;
+				if (depth == 0) {
+					return source.substring(openBrace, i + 1);
+				}
+			}
+		}
+		throw new AssertionError("unterminated method body for " + methodName);
 	}
 }

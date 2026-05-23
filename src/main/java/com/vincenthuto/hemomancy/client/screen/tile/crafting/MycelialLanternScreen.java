@@ -25,8 +25,8 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     private static final int AMBER = 0xFFDD8822;
 
     private static final int CRAFT_AREA_HEIGHT = 104;
-    private static final int TENDRIL_COUNT = 20;
-    private static final int SPORE_COUNT = 44;
+    private static final int TENDRIL_COUNT = 14;
+    private static final int SPORE_COUNT = 28;
 
     private float[][] tendrilParams;
     private float[][] sporeParams;
@@ -71,7 +71,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         }
 
         Random speckRand = new Random(0x51EADL);
-        speckleParams = new int[72][5];
+        speckleParams = new int[48][5];
         for (int s = 0; s < speckleParams.length; s++) {
             speckleParams[s][0] = speckRand.nextInt(this.imageWidth);
             speckleParams[s][1] = speckRand.nextInt(CRAFT_AREA_HEIGHT);
@@ -98,7 +98,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         int gh = imageHeight;
 
         renderFungalBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
-        drawGradientBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
+        drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
         int invTop = gy + CRAFT_AREA_HEIGHT;
         renderAmberGradientBackground(gfx, gx, invTop, gw, gh - CRAFT_AREA_HEIGHT);
@@ -112,10 +112,9 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
             drawSlotBackground(gfx, sx, sy, i < MycelialLanternMenu.SLOT_COUNT ? slot.index : -1);
         }
 
-        renderCultureGlow(gfx, gx, gy);
         renderProgress(gfx, gx, gy);
         renderBloodBar(gfx, gx, gy);
-        drawGradientBorder(gfx, gx, gy, gw, gh);
+        drawBorder(gfx, gx, gy, gw, gh);
     }
 
     @Override
@@ -149,21 +148,6 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         }
     }
 
-    private void renderCultureGlow(GuiGraphics gfx, int gx, int gy) {
-        int cx = gx + MycelialLanternMenu.CULTURE_SLOT_X + 8;
-        int cy = gy + MycelialLanternMenu.CULTURE_SLOT_Y + 8;
-        float pulse = 0.45f + 0.55f * Mth.sin(animTime * 2.2f);
-        for (int ring = 16; ring >= 9; ring--) {
-            float t = (ring - 9) / 7f;
-            int alpha = (int) (28 * pulse * (1f - t));
-            int color = (alpha << 24) | (0xD0 << 16) | (0x72 << 8) | 0x12;
-            gfx.fill(cx - ring, cy - ring, cx + ring, cy - ring + 1, color);
-            gfx.fill(cx - ring, cy + ring - 1, cx + ring, cy + ring, color);
-            gfx.fill(cx - ring, cy - ring, cx - ring + 1, cy + ring, color);
-            gfx.fill(cx + ring - 1, cy - ring, cx + ring, cy + ring, color);
-        }
-    }
-
     private void renderBloodBar(GuiGraphics gfx, int gx, int gy) {
         int barW = 8;
         int barH = 54;
@@ -194,6 +178,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         animTime += 0.016f;
         float time = animTime;
 
+        gfx.enableScissor(gx, gy, gx + gw, gy + gh);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
@@ -230,6 +215,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         }
 
         RenderSystem.disableBlend();
+        gfx.disableScissor();
     }
 
     private void drawFungalTendril(GuiGraphics gfx, int index, float time, int gx, int gy, int gw, int gh) {
@@ -299,41 +285,14 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         }
     }
 
-    private void drawGradientBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        int redR = (BORDER_RED >> 16) & 0xFF;
-        int redG = (BORDER_RED >> 8) & 0xFF;
-        int redB = BORDER_RED & 0xFF;
-        int yelR = (BORDER_YELLOW >> 16) & 0xFF;
-        int yelG = (BORDER_YELLOW >> 8) & 0xFF;
-        int yelB = BORDER_YELLOW & 0xFF;
-
-        for (int col = 0; col < w; col++) {
-            gfx.fill(x + col, y, x + col + 1, y + 1, BORDER_RED);
-            gfx.fill(x + col, y + 1, x + col + 1, y + 2, darken(BORDER_RED, 0.7f));
-            gfx.fill(x + col, y + h - 1, x + col + 1, y + h, BORDER_YELLOW);
-            gfx.fill(x + col, y + h - 2, x + col + 1, y + h - 1, darken(BORDER_YELLOW, 0.7f));
-        }
-
-        for (int row = 0; row < h; row++) {
-            float t = (float) row / Math.max(h - 1, 1);
-            int r = (int) (redR + (yelR - redR) * t);
-            int g = (int) (redG + (yelG - redG) * t);
-            int b = (int) (redB + (yelB - redB) * t);
-            int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
-            int innerColor = darken(color, 0.7f);
-
-            gfx.fill(x, y + row, x + 1, y + row + 1, color);
-            gfx.fill(x + 1, y + row, x + 2, y + row + 1, innerColor);
-            gfx.fill(x + w - 1, y + row, x + w, y + row + 1, color);
-            gfx.fill(x + w - 2, y + row, x + w - 1, y + row + 1, innerColor);
-        }
-    }
-
-    private static int darken(int color, float factor) {
-        int a = (color >> 24) & 0xFF;
-        int r = (int) (((color >> 16) & 0xFF) * factor);
-        int g = (int) (((color >> 8) & 0xFF) * factor);
-        int b = (int) ((color & 0xFF) * factor);
-        return (a << 24) | (r << 16) | (g << 8) | b;
+    private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+        gfx.fill(x, y, x + w, y + 1, BORDER_RED);
+        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
+        gfx.fill(x, y, x + 1, y + h, BORDER_RED);
+        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
+        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
+        gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
+        gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
     }
 }

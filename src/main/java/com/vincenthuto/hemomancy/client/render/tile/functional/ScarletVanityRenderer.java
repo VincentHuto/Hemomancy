@@ -12,8 +12,10 @@ import com.vincenthuto.hemomancy.common.tile.functional.ScarletVanityBlockEntity
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +44,7 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 	public void render(ScarletVanityBlockEntity te, float partialTicks, PoseStack poseStack,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		renderBloodBowl(te, partialTicks, poseStack, bufferIn);
+		renderPlayerReflection(te, partialTicks, poseStack);
 		int itemLight = displayItemLight(te, combinedLightIn);
 		renderEquippedItems(te, poseStack, bufferIn, itemLight, combinedOverlayIn);
 	}
@@ -81,6 +84,49 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 		}
 
 		poseStack.popPose();
+	}
+
+	private void renderPlayerReflection(ScarletVanityBlockEntity te, float partialTicks, PoseStack poseStack) {
+		Player player = Minecraft.getInstance().player;
+		if (player == null) {
+			return;
+		}
+
+		Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
+		float previousYRot = player.getYRot();
+		float previousYRotO = player.yRotO;
+		float previousBodyRot = player.yBodyRot;
+		float previousBodyRotO = player.yBodyRotO;
+		float previousHeadRot = player.yHeadRot;
+		float previousHeadRotO = player.yHeadRotO;
+		EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+		MultiBufferSource.BufferSource playerBuffers = Minecraft.getInstance().renderBuffers().bufferSource();
+
+		poseStack.pushPose();
+		try {
+			poseStack.translate(0.5D, 0.98D, 0.5D);
+			poseStack.mulPose(Axis.YP.rotationDegrees(playerReflectionYawForFacing(facing)));
+			poseStack.scale(0.1F, 0.1F, 0.1F);
+
+			player.setYRot(0.0F);
+			player.yRotO = 0.0F;
+			player.yBodyRot = 0.0F;
+			player.yBodyRotO = 0.0F;
+			player.yHeadRot = 0.0F;
+			player.yHeadRotO = 0.0F;
+			entityRenderDispatcher.setRenderShadow(false);
+			playerBuffers.getBuffer(RenderType.lines());
+			entityRenderDispatcher.render(player, 0.0D, 0.0D, 0.0D, 0.0F, partialTicks, poseStack, playerBuffers, FULL_BRIGHT);
+		} finally {
+			entityRenderDispatcher.setRenderShadow(true);
+			player.setYRot(previousYRot);
+			player.yRotO = previousYRotO;
+			player.yBodyRot = previousBodyRot;
+			player.yBodyRotO = previousBodyRotO;
+			player.yHeadRot = previousHeadRot;
+			player.yHeadRotO = previousHeadRotO;
+			poseStack.popPose();
+		}
 	}
 
 	private void renderEquippedItems(ScarletVanityBlockEntity te, PoseStack poseStack, MultiBufferSource bufferIn,
@@ -139,6 +185,16 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 		return switch (facing) {
 		case NORTH, SOUTH -> -yaw;
 		default -> yaw;
+		};
+	}
+
+	private static float playerReflectionYawForFacing(Direction facing) {
+		return switch (facing) {
+		case NORTH -> 180.0F;
+		case SOUTH -> 0.0F;
+		case EAST -> 90.0F;
+		case WEST -> 270.0F;
+		default -> 0.0F;
 		};
 	}
 

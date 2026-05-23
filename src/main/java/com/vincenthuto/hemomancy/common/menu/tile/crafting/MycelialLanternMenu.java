@@ -129,12 +129,6 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void broadcastChanges() {
-        te.sendUpdates();
-        super.broadcastChanges();
-    }
-
-    @Override
     public boolean stillValid(Player player) {
         return te.stillValid(player);
     }
