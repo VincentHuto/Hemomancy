@@ -39,9 +39,9 @@ public class MycelialLanternRenderer implements BlockEntityRenderer<MycelialLant
             PoseStack poseStack, MultiBufferSource buffers, int itemLight, int overlay) {
         float age = te.getLevel() != null ? te.getLevel().getGameTime() + partialTick : partialTick;
         poseStack.pushPose();
-        poseStack.translate(0.5D, 0.75D + Math.sin(age * 0.08F) * 0.03D, 0.5D);
+        poseStack.translate(0.5D, 1.05D + Math.sin(age * 0.08F) * 0.03D, 0.5D);
         poseStack.mulPose(Vector3.YP.rotationDegrees(age * 2.0F).toMoj());
-        poseStack.scale(1.2F, 1.2F, 1.2F);
+        poseStack.scale(0.8F, 0.8F, 0.8F);
         itemRenderer.renderStatic(stack, ItemDisplayContext.GROUND, itemLight, overlay, poseStack, buffers, te.getLevel(), 0);
         poseStack.popPose();
     }
