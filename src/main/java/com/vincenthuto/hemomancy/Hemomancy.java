@@ -21,6 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -193,17 +195,24 @@ public class Hemomancy {
             });
             var b = BlockInit.getAllBlockEntriesAsStream();
             b.forEach(block -> {
-                if (block.get() != BlockInit.attached_gourd_stem.get() && block.get() != BlockInit.gourd_stem.get()
-                        && block.get() != BlockInit.active_befouling_ash_trail.get()
-                        && block.get() != BlockInit.active_smouldering_ash_trail.get()
-                        && block.get() != BlockInit.sanguine_conduit.get()
-                        && block.get() != BlockInit.filler_block.get()
-                        && block.get() != BlockInit.engram_block.get()
-                        && block.get() != BlockInit.qliphoth_bloom.get()) {
+                if (shouldShowBlockInCreativeTab(block.get())) {
                     populator.accept(block.get());
                 }
             });
         }
+    }
+
+    private static boolean shouldShowBlockInCreativeTab(Block block) {
+        return block.asItem() != Items.AIR
+                && block != BlockInit.attached_gourd_stem.get()
+                && block != BlockInit.gourd_stem.get()
+                && block != BlockInit.active_befouling_ash_trail.get()
+                && block != BlockInit.active_smouldering_ash_trail.get()
+                && block != BlockInit.sanguine_conduit.get()
+                && block != BlockInit.filler_block.get()
+                && block != BlockInit.engram_block.get()
+                && block != BlockInit.abocipher_emitter.get()
+                && block != BlockInit.qliphoth_bloom.get();
     }
 
     @SubscribeEvent
