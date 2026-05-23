@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRendere
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.ScarletSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VerdigrisMothRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BarbedUrchinRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BloodLanternJellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRenderer;
@@ -565,6 +566,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.synapse_hound.get(), SynapseHoundRenderer::new);
             event.registerEntityRenderer(EntityInit.myelin_borer.get(), MyelinBorerRenderer::new);
             event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
+            event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
             event.registerEntityRenderer(EntityInit.scarlet_serpent.get(), ScarletSerpentRenderer::new);
             event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);
             event.registerEntityRenderer(EntityInit.venous_strider.get(), VenousStriderRenderer::new);

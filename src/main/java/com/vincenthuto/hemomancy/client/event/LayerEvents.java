@@ -43,7 +43,6 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID,  value = Dist.CLIENT)
@@ -171,6 +170,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(SynapseHoundModel.LAYER_LOCATION, SynapseHoundModel::createBodyLayer);
 		event.registerLayerDefinition(MyelinBorerModel.LAYER_LOCATION, MyelinBorerModel::createBodyLayer);
 		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
+		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletSerpentModel.LAYER_LOCATION, ScarletSerpentModel::createBodyLayer);
 		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);
 		event.registerLayerDefinition(VenousStriderModel.LAYER_LOCATION, VenousStriderModel::createBodyLayer);

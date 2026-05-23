@@ -408,6 +408,14 @@ public class EntityInit {
             () -> EntityType.Builder.of(CrimsonDoeEntity::new, MobCategory.CREATURE)
                     .sized(0.9F, 1.4F).build(Hemomancy.rloc("crimson_doe").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<VerdigrisMothEntity>> verdigris_moth = ENTITY_TYPES.register(
+            "verdigris_moth",
+            () -> EntityType.Builder.of(VerdigrisMothEntity::new, MobCategory.AMBIENT)
+                    .sized(0.7F, 0.35F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3)
+                    .build(Hemomancy.rloc("verdigris_moth").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<ScarletSerpentEntity>> scarlet_serpent = ENTITY_TYPES.register(
             "scarlet_serpent",
             () -> EntityType.Builder.of(ScarletSerpentEntity::new, MobCategory.CREATURE)
@@ -585,6 +593,9 @@ public class EntityInit {
         event.register(EntityInit.crimson_doe.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.scarlet_serpent.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScarletSerpentEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -679,6 +690,7 @@ public class EntityInit {
         event.put(EntityInit.synapse_hound.get(), SynapseHoundEntity.setAttributes().build());
         event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
+        event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
         event.put(EntityInit.scarlet_serpent.get(), ScarletSerpentEntity.setAttributes().build());
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
