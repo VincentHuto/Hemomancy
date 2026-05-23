@@ -34,10 +34,16 @@ public final class AbocipherParticleResourceTest {
 				particle, "pickSprite(spriteSet)");
 		assertContains("abocipher particles should have per-particle writhe timing",
 				particle, "writhePhase");
+		assertContains("abocipher particles should have a persistent horizontal swim heading",
+				particle, "swimAngle");
+		assertContains("abocipher particles should have a persistent horizontal swim speed",
+				particle, "swimSpeed");
 		assertContains("abocipher particles should have a subtle organic writhe strength",
 				particle, "writheStrength");
 		assertContains("abocipher particles should bend their movement with a lateral writhe",
 				particle, "wriggleX");
+		assertContains("abocipher particles should scale down inherited upward drift",
+				particle, "UPWARD_DRIFT_SCALE");
 		assertContains("factory should expose reusable particle options",
 				factory, "return ParticleInit.abocipher.get();");
 

@@ -12,11 +12,18 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class AbocipherParticle extends TextureSheetParticle {
 	private static final float FRICTION = 0.96F;
+	private static final float VERTICAL_FRICTION = 0.88F;
+	private static final float SWIM_TURN_ARC = 0.85F;
+	private static final float FADE_START = 0.62F;
 	private final float initialQuadSize;
 	private final float rollSpeed;
+	private final float swimAngle;
+	private final double swimSpeed;
+	private final float turnPhase;
+	private final float turnSpeed;
 	private final float writhePhase;
 	private final float writheSpeed;
-	private final float writheStrength;
+	private final double writheStrength;
 	private final float counterWrithePhase;
 	private final float counterWritheSpeed;
 
@@ -24,10 +31,11 @@ public class AbocipherParticle extends TextureSheetParticle {
 			double zSpeed, SpriteSet spriteSet) {
 		super(level, x, y, z, 0.0D, 0.0D, 0.0D);
 		this.pickSprite(spriteSet);
-		this.xd = xSpeed;
-		this.yd = ySpeed + 0.015D;
-		this.zd = zSpeed;
-		this.lifetime = 28 + this.random.nextInt(18);
+		this.xd = xSpeed * AbocipherParticleMotionRules.INHERITED_HORIZONTAL_DRIFT_SCALE;
+		this.yd = ySpeed * AbocipherParticleMotionRules.UPWARD_DRIFT_SCALE;
+		this.zd = zSpeed * AbocipherParticleMotionRules.INHERITED_HORIZONTAL_DRIFT_SCALE;
+		this.lifetime = AbocipherParticleMotionRules.MIN_LIFETIME_TICKS
+				+ this.random.nextInt(AbocipherParticleMotionRules.LIFETIME_TICK_RANGE);
 		this.quadSize = 0.08F + this.random.nextFloat() * 0.04F;
 		this.initialQuadSize = this.quadSize;
 		this.alpha = 1.0F;
@@ -35,11 +43,16 @@ public class AbocipherParticle extends TextureSheetParticle {
 		this.roll = this.random.nextFloat() * Mth.TWO_PI;
 		this.oRoll = this.roll;
 		this.rollSpeed = (this.random.nextFloat() - 0.5F) * 0.035F;
+		this.swimAngle = this.random.nextFloat() * Mth.TWO_PI;
+		this.swimSpeed = AbocipherParticleMotionRules.MIN_SWIM_SPEED
+				+ this.random.nextDouble() * AbocipherParticleMotionRules.SWIM_SPEED_RANGE;
+		this.turnPhase = this.random.nextFloat() * Mth.TWO_PI;
+		this.turnSpeed = 0.025F + this.random.nextFloat() * 0.025F;
 		this.writhePhase = this.random.nextFloat() * Mth.TWO_PI;
-		this.writheSpeed = 0.15F + this.random.nextFloat() * 0.08F;
-		this.writheStrength = 0.0035F + this.random.nextFloat() * 0.0035F;
+		this.writheSpeed = 0.18F + this.random.nextFloat() * 0.10F;
+		this.writheStrength = 0.014D + this.random.nextDouble() * 0.014D;
 		this.counterWrithePhase = this.random.nextFloat() * Mth.TWO_PI;
-		this.counterWritheSpeed = 0.08F + this.random.nextFloat() * 0.07F;
+		this.counterWritheSpeed = 0.07F + this.random.nextFloat() * 0.05F;
 	}
 
 	@Override
@@ -65,21 +78,25 @@ public class AbocipherParticle extends TextureSheetParticle {
 		}
 
 		float motionAge = this.age;
-		double wriggleX = Mth.sin(this.writhePhase + motionAge * this.writheSpeed) * this.writheStrength;
+		double turn = Mth.sin(this.turnPhase + motionAge * this.turnSpeed) * SWIM_TURN_ARC;
+		double swimHeading = this.swimAngle + turn;
+		double swimX = Math.cos(swimHeading) * this.swimSpeed;
+		double swimZ = Math.sin(swimHeading) * this.swimSpeed;
+		double sideWrithe = Mth.sin(this.writhePhase + motionAge * this.writheSpeed) * this.writheStrength;
+		double wriggleX = Math.cos(swimHeading + Math.PI / 2.0D) * sideWrithe;
 		double wriggleY = Mth.sin(this.counterWrithePhase + motionAge * this.counterWritheSpeed)
-				* this.writheStrength * 0.35D;
-		double wriggleZ = Mth.cos(this.counterWrithePhase + motionAge * this.writheSpeed * 0.85F)
-				* this.writheStrength;
+				* AbocipherParticleMotionRules.VERTICAL_BOB_STRENGTH;
+		double wriggleZ = Math.sin(swimHeading + Math.PI / 2.0D) * sideWrithe;
 
-		this.move(this.xd + wriggleX, this.yd + wriggleY, this.zd + wriggleZ);
+		this.move(this.xd + swimX + wriggleX, this.yd + wriggleY, this.zd + swimZ + wriggleZ);
 		this.xd *= FRICTION;
-		this.yd *= FRICTION;
+		this.yd *= VERTICAL_FRICTION;
 		this.zd *= FRICTION;
-		this.yd += 0.001D;
 		this.roll += this.rollSpeed + Mth.sin(this.writhePhase + motionAge * 0.11F) * 0.004F;
 
 		float life = (float) this.age / (float) this.lifetime;
-		this.quadSize = this.initialQuadSize * (1.0F - life * 0.35F);
-		this.alpha = 1.0F - life;
+		float fade = Mth.clamp((life - FADE_START) / (1.0F - FADE_START), 0.0F, 1.0F);
+		this.quadSize = this.initialQuadSize * (1.0F - fade * 0.35F);
+		this.alpha = 1.0F - fade;
 	}
 }
