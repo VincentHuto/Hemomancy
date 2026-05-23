@@ -32,6 +32,12 @@ public final class AbocipherParticleResourceTest {
 				particleInit, "AbocipherParticleFactory::new");
 		assertContains("particle should randomly choose from the registered sprite set",
 				particle, "pickSprite(spriteSet)");
+		assertContains("abocipher particles should have per-particle writhe timing",
+				particle, "writhePhase");
+		assertContains("abocipher particles should have a subtle organic writhe strength",
+				particle, "writheStrength");
+		assertContains("abocipher particles should bend their movement with a lateral writhe",
+				particle, "wriggleX");
 		assertContains("factory should expose reusable particle options",
 				factory, "return ParticleInit.abocipher.get();");
 

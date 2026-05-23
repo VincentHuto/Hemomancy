@@ -115,7 +115,7 @@ public class HarbingerOutpostStructure extends Structure {
 			return;
 		}
 
-		int maxY = (fullBox.minY() + fullBox.maxY()) / 2;
+		int npcMaxY = (fullBox.minY() + fullBox.maxY()) / 2;
 		BlockPos inscriptionOrigin = new BlockPos(centerX, floorY + 1, centerZ);
 		DiscoveryInscriptionPlacement.placeOnInteriorWall(level, fullBox, inscriptionOrigin.offset(-3, 1, 3),
 				BlockInit.blood_echo_inscription.get(), Hemomancy.rloc("harbinger_outpost/crude_memory_echo"));
@@ -123,19 +123,19 @@ public class HarbingerOutpostStructure extends Structure {
 				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("harbinger_outpost/crimson_beacon_fragment"));
 
 		AbocipherEmitterPlacement.placeHarbingerOutpostEmitters(level, fullBox, random,
-				centerX, centerZ, floorY, maxY);
+				centerX, centerZ, fullBox.minY(), fullBox.maxY());
 
 		spawnOnFloor(level, random, EntityInit.harbinger_vicar.get(),
-				centerX, centerZ, floorY, maxY, VICAR_SPAWN_SPREAD);
+				centerX, centerZ, floorY, npcMaxY, VICAR_SPAWN_SPREAD);
 
 		int halfWidth = (fullBox.maxX() - fullBox.minX()) / 4;
 		int halfDepth = (fullBox.maxZ() - fullBox.minZ()) / 4;
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
-				centerX - halfWidth, centerZ - halfDepth, floorY, maxY, ALCHEMIST_SPAWN_SPREAD);
+				centerX - halfWidth, centerZ - halfDepth, floorY, npcMaxY, ALCHEMIST_SPAWN_SPREAD);
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
-				centerX + halfWidth, centerZ + halfDepth, floorY, maxY, ALCHEMIST_SPAWN_SPREAD);
+				centerX + halfWidth, centerZ + halfDepth, floorY, npcMaxY, ALCHEMIST_SPAWN_SPREAD);
 		spawnOnFloor(level, random, EntityInit.harbinger_mnemonist.get(),
-				centerX - halfWidth, centerZ + halfDepth, floorY, maxY, MNEMONIST_SPAWN_SPREAD);
+				centerX - halfWidth, centerZ + halfDepth, floorY, npcMaxY, MNEMONIST_SPAWN_SPREAD);
 	}
 
 	private <T extends Entity> void spawnOnFloor(WorldGenLevel level, RandomSource random,

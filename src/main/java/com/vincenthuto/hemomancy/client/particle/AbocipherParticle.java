@@ -14,6 +14,11 @@ public class AbocipherParticle extends TextureSheetParticle {
 	private static final float FRICTION = 0.96F;
 	private final float initialQuadSize;
 	private final float rollSpeed;
+	private final float writhePhase;
+	private final float writheSpeed;
+	private final float writheStrength;
+	private final float counterWrithePhase;
+	private final float counterWritheSpeed;
 
 	public AbocipherParticle(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed,
 			double zSpeed, SpriteSet spriteSet) {
@@ -30,6 +35,11 @@ public class AbocipherParticle extends TextureSheetParticle {
 		this.roll = this.random.nextFloat() * Mth.TWO_PI;
 		this.oRoll = this.roll;
 		this.rollSpeed = (this.random.nextFloat() - 0.5F) * 0.035F;
+		this.writhePhase = this.random.nextFloat() * Mth.TWO_PI;
+		this.writheSpeed = 0.15F + this.random.nextFloat() * 0.08F;
+		this.writheStrength = 0.0035F + this.random.nextFloat() * 0.0035F;
+		this.counterWrithePhase = this.random.nextFloat() * Mth.TWO_PI;
+		this.counterWritheSpeed = 0.08F + this.random.nextFloat() * 0.07F;
 	}
 
 	@Override
@@ -54,12 +64,19 @@ public class AbocipherParticle extends TextureSheetParticle {
 			return;
 		}
 
-		this.move(this.xd, this.yd, this.zd);
+		float motionAge = this.age;
+		double wriggleX = Mth.sin(this.writhePhase + motionAge * this.writheSpeed) * this.writheStrength;
+		double wriggleY = Mth.sin(this.counterWrithePhase + motionAge * this.counterWritheSpeed)
+				* this.writheStrength * 0.35D;
+		double wriggleZ = Mth.cos(this.counterWrithePhase + motionAge * this.writheSpeed * 0.85F)
+				* this.writheStrength;
+
+		this.move(this.xd + wriggleX, this.yd + wriggleY, this.zd + wriggleZ);
 		this.xd *= FRICTION;
 		this.yd *= FRICTION;
 		this.zd *= FRICTION;
 		this.yd += 0.001D;
-		this.roll += this.rollSpeed;
+		this.roll += this.rollSpeed + Mth.sin(this.writhePhase + motionAge * 0.11F) * 0.004F;
 
 		float life = (float) this.age / (float) this.lifetime;
 		this.quadSize = this.initialQuadSize * (1.0F - life * 0.35F);
