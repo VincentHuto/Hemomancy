@@ -51,6 +51,7 @@ import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
 import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
+import com.vincenthuto.hemomancy.client.screen.item.ScryingDiagnosticsScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.TendencyViewScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularViewScreen;
@@ -771,6 +772,7 @@ public class ClientEvents {
             event.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
             event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
             event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
+            event.register(ContainerInit.scrying_diagnostics.get(), ScryingDiagnosticsScreen::new);
             event.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
             event.register(ContainerInit.mycelial_crucible.get(), MycelialCrucibleScreen::new);
             event.register(ContainerInit.mycelial_lantern.get(), MycelialLanternScreen::new);

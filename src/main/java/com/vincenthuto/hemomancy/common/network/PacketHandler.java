@@ -125,6 +125,7 @@ public class PacketHandler {
         net.playBidirectional(EquipManipulationPacket.TYPE, EquipManipulationPacket.STREAM_CODEC, EquipManipulationPacket::handle);
         net.playBidirectional(PacketOpenTendencyView.TYPE, PacketOpenTendencyView.STREAM_CODEC, PacketOpenTendencyView::handle);
         net.playBidirectional(PacketOpenVascularView.TYPE, PacketOpenVascularView.STREAM_CODEC, PacketOpenVascularView::handle);
+        net.playBidirectional(PacketOpenScryingDiagnostics.TYPE, PacketOpenScryingDiagnostics.STREAM_CODEC, PacketOpenScryingDiagnostics::handle);
 
         // Still Arts
         net.playToClient(KnownStillArtsServerPacket.TYPE, KnownStillArtsServerPacket.STREAM_CODEC, KnownStillArtsServerPacket::handle);

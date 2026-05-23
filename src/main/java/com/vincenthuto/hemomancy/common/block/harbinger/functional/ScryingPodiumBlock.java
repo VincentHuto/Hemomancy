@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenScryingDiagnostics;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -121,7 +123,10 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 
 	private InteractionResult handleUse(BlockState state, Level worldIn, BlockPos pos, Player player) {
 		if (!player.isShiftKeyDown()) {
-			return InteractionResult.PASS;
+			if (worldIn.isClientSide) {
+				PacketHandler.sendToServer(new PacketOpenScryingDiagnostics(pos));
+			}
+			return InteractionResult.SUCCESS;
 		}
 		if (!worldIn.isClientSide) {
 			ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),

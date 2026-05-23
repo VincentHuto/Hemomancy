@@ -42,7 +42,7 @@ public final class ScarletVanityResourceTest {
 				"BlockEntityRenderers.register(BlockEntityInit.scarlet_vanity.get(), ScarletVanityRenderer::new);");
 
 		assertContains("scarlet vanity opens the existing equipment menu packet", vanityBlock,
-				"PacketHandler.sendToServer(new PacketOpenScarsInv());");
+				"PacketHandler.sendToServer(new PacketOpenScarsInv(pos));");
 		assertContains("scarlet vanity should render its baked JSON model", vanityBlock,
 				"return RenderShape.MODEL;");
 		assertContains("scarlet vanity should keep facing and waterlogged state", vanityBlock,
@@ -55,7 +55,7 @@ public final class ScarletVanityResourceTest {
 		assertDoesNotContain("scrying podium should no longer open the equipment menu", scryingPodium,
 				"PacketOpenScarsInv");
 		assertDoesNotContain("scrying podium should no longer send the equipment menu packet", scryingPodium,
-				"PacketHandler.sendToServer");
+				"new PacketOpenScarsInv");
 
 		assertContains("scarlet vanity renderer should draw the blood reflection bowl", vanityRenderer,
 				"renderBloodBowl");

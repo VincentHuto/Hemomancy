@@ -51,6 +51,9 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<TendencyViewMenu>> tendency_view =
 			CONTAINERS.register("tendency_view", () -> IMenuTypeExtension.create(TendencyViewMenu::new));
 
+	public static final DeferredHolder<MenuType<?>, MenuType<ScryingDiagnosticsMenu>> scrying_diagnostics =
+			CONTAINERS.register("scrying_diagnostics", () -> IMenuTypeExtension.create(ScryingDiagnosticsMenu::new));
+
 	public static final DeferredHolder<MenuType<?>, MenuType<MorphlingIncubatorMenu>> morphling_incubator = CONTAINERS
 			.register("morphling_incubator", () -> IMenuTypeExtension.create(MorphlingIncubatorMenu::new));
 
