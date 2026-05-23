@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disc
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -11,15 +12,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class MemoHelper {
@@ -55,98 +57,68 @@ public final class MemoHelper {
 	}
 
 	public static CaptureResult captureMemo(ServerPlayer player, ResourceLocation memoId) {
-		ItemStack notes = findFieldNotes(player);
-		if (notes.isEmpty()) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_field_notes")
-					.withStyle(ChatFormatting.DARK_RED), true);
-			return CaptureResult.NO_FIELD_NOTES;
+		if (memoId == null) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.invalid")
+					.withStyle(ChatFormatting.RED), true);
+			return CaptureResult.INVALID;
 		}
-		MemoDefinition definition = MemoDefinitions.get(memoId).orElse(null);
-		MemoDefinition.MemoPath memoPath = definition != null ? definition.path() : MemoDefinition.MemoPath.SHARED;
-		MemoDefinition.MemoPath notePath = getInkPath(notes);
-		if (notePath == null) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_ink_path")
+		migrateLegacyFieldNotes(player);
+		LiberKnowledge knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+		if (knowledge.knowsMemo(memoId)) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.already_written")
 					.withStyle(ChatFormatting.GRAY), true);
-			return CaptureResult.NO_INK_PATH;
+			return CaptureResult.ALREADY_KNOWN;
 		}
-		if (!pathsCompatible(notePath, memoPath)) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.memo.wrong_ink_path")
-					.withStyle(ChatFormatting.GRAY), true);
-			return CaptureResult.WRONG_INK_PATH;
-		}
-		if (hasMemo(notes, memoId)) {
+		if (knowledge.getPendingMemos().contains(memoId)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.already_noted")
 					.withStyle(ChatFormatting.GRAY), true);
 			return CaptureResult.ALREADY_NOTED;
 		}
-		if (getRemainingMemos(notes) <= 0) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.memo.field_notes_full")
-					.withStyle(ChatFormatting.DARK_RED), true);
-			return CaptureResult.FIELD_NOTES_FULL;
-		}
 
-		CompoundTag tag = getCustomData(notes);
-		ListTag memos = tag.getList(TAG_MEMOS, TAG_STRING);
-		memos.add(StringTag.valueOf(memoId.toString()));
-		tag.put(TAG_MEMOS, memos);
-		tag.putInt(TAG_REMAINING, Math.max(0, getRemainingMemos(notes) - 1));
-		setCustomData(notes, tag);
-
+		knowledge.recordPendingMemo(memoId);
+		LiberKnowledgeEvents.sync(player);
 		player.displayClientMessage(Component.translatable("message.hemomancy.memo.noted")
-				.withStyle(ChatFormatting.DARK_RED), true);
+				.withStyle(colorForMemo(memoId)), true);
 		return CaptureResult.CAPTURED;
 	}
 
 	public static DictationResult dictateToLiber(ServerPlayer player, ItemStack notes, ItemStack liber) {
-		if (!isFieldNotes(notes)) {
-			return DictationResult.NO_FIELD_NOTES;
-		}
+		migrateLegacyFieldNotes(player);
+		return dictatePendingToLiber(player, liber);
+	}
+
+	public static DictationResult dictatePendingToLiber(ServerPlayer player, ItemStack liber) {
 		if (!isLiber(liber)) {
 			return DictationResult.NO_LIBER;
 		}
-		MemoDefinition.MemoPath notePath = getInkPath(notes);
-		if (notePath == null) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_ink_path")
-					.withStyle(ChatFormatting.GRAY), true);
-			return DictationResult.NO_INK_PATH;
-		}
-		if (!canDictateInto(liber, notePath)) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.memo.wrong_liber")
-					.withStyle(ChatFormatting.GRAY), true);
-			return DictationResult.WRONG_LIBER;
-		}
 
-		ListTag memos = getMemoList(notes);
-		if (memos.isEmpty()) {
+		LiberKnowledge knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+		migrateLegacyLiberStack(liber, knowledge);
+		migrateLegacyFieldNotes(player);
+
+		if (knowledge.getPendingMemos().isEmpty()) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_memos")
 					.withStyle(ChatFormatting.GRAY), true);
 			return DictationResult.NO_MEMOS;
 		}
 
-		IBookKnowledge knowledge = HemoCapabilityAccess.requireLiberKnowledge(player);
-		migrateLegacyLiberStack(liber, knowledge);
-
+		MemoDefinition.MemoPath liberPath = pathForLiber(liber);
+		List<ResourceLocation> dictatedMemos = getDictatableMemosForPath(knowledge.getPendingMemos(), liberPath);
+		if (dictatedMemos.isEmpty()) {
+			player.displayClientMessage(Component.translatable("message.hemomancy.memo.wrong_liber")
+					.withStyle(ChatFormatting.GRAY), true);
+			return DictationResult.WRONG_LIBER;
+		}
 		int newMemoCount = 0;
-		for (int i = 0; i < memos.size(); i++) {
-			String memoId = memos.getString(i);
-			ResourceLocation memoLocation = ResourceLocation.tryParse(memoId);
-			if (memoLocation == null) {
-				continue;
-			}
-			MemoDefinition.MemoPath memoPath = MemoDefinitions.get(memoLocation)
-					.map(MemoDefinition::path)
-					.orElse(MemoDefinition.MemoPath.SHARED);
-			if (!pathsCompatible(notePath, memoPath)) {
-				player.displayClientMessage(Component.translatable("message.hemomancy.memo.mixed_notes")
-						.withStyle(ChatFormatting.GRAY), true);
-				return DictationResult.MIXED_NOTES;
-			}
-			if (!knowledge.knowsMemo(memoLocation)) {
+		for (ResourceLocation memoId : dictatedMemos) {
+			if (!knowledge.knowsMemo(memoId)) {
 				newMemoCount++;
 			}
 		}
 
 		if (newMemoCount == 0) {
+			knowledge.removePendingMemos(dictatedMemos);
+			LiberKnowledgeEvents.sync(player);
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_new_memos")
 					.withStyle(ChatFormatting.GRAY), true);
 			return DictationResult.NO_NEW_MEMOS;
@@ -161,7 +133,8 @@ public final class MemoHelper {
 			}
 
 			player.giveExperienceLevels(-cost);
-			unlockDictatedMemos(knowledge, memos);
+			unlockDictatedMemos(knowledge, dictatedMemos);
+			knowledge.removePendingMemos(dictatedMemos);
 			LiberKnowledgeEvents.sync(player);
 
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.dictated_unstained", newMemoCount, cost)
@@ -178,7 +151,8 @@ public final class MemoHelper {
 		}
 
 		volume.drain(cost);
-		unlockDictatedMemos(knowledge, memos);
+		unlockDictatedMemos(knowledge, dictatedMemos);
+		knowledge.removePendingMemos(dictatedMemos);
 		LiberKnowledgeEvents.sync(player);
 
 		player.displayClientMessage(Component.translatable("message.hemomancy.memo.dictated", newMemoCount, cost)
@@ -186,12 +160,24 @@ public final class MemoHelper {
 		return DictationResult.DICTATED;
 	}
 
-	private static void unlockDictatedMemos(IBookKnowledge knowledge, ListTag memos) {
-		for (int i = 0; i < memos.size(); i++) {
-			String memoId = memos.getString(i);
-			ResourceLocation memoLocation = ResourceLocation.tryParse(memoId);
-			ResourceLocation liberEntry = liberEntryForMemo(memoId);
-			if (memoLocation != null && liberEntry != null) {
+	public static List<ResourceLocation> getDictatableMemosForPath(Collection<ResourceLocation> pendingMemos,
+			MemoDefinition.MemoPath liberPath) {
+		List<ResourceLocation> dictatable = new ArrayList<>();
+		if (liberPath == null) {
+			return dictatable;
+		}
+		for (ResourceLocation memoId : pendingMemos) {
+			if (pathsCompatible(liberPath, pathForMemo(memoId))) {
+				dictatable.add(memoId);
+			}
+		}
+		return dictatable;
+	}
+
+	private static void unlockDictatedMemos(IBookKnowledge knowledge, Collection<ResourceLocation> memos) {
+		for (ResourceLocation memoLocation : memos) {
+			ResourceLocation liberEntry = liberEntryForMemo(memoLocation);
+			if (liberEntry != null) {
 				knowledge.unlockMemo(memoLocation, liberEntry);
 			}
 		}
@@ -217,6 +203,20 @@ public final class MemoHelper {
 			migrateLegacyLiberStack(liber, knowledge);
 			LiberKnowledgeEvents.sync(player);
 		});
+	}
+
+	public static boolean migrateLegacyFieldNotes(ServerPlayer player) {
+		LiberKnowledge knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+		boolean changed = false;
+		changed |= migrateLegacyFieldNotesStack(player.getMainHandItem(), knowledge);
+		changed |= migrateLegacyFieldNotesStack(player.getOffhandItem(), knowledge);
+		for (ItemStack stack : player.getInventory().items) {
+			changed |= migrateLegacyFieldNotesStack(stack, knowledge);
+		}
+		if (changed) {
+			LiberKnowledgeEvents.sync(player);
+		}
+		return changed;
 	}
 
 	public static Set<String> getLegacyUnlockedLiberEntries(ItemStack stack) {
@@ -305,48 +305,41 @@ public final class MemoHelper {
 		return false;
 	}
 
-	private static ItemStack findFieldNotes(ServerPlayer player) {
-		if (isFieldNotes(player.getMainHandItem())) {
-			return player.getMainHandItem();
-		}
-		if (isFieldNotes(player.getOffhandItem())) {
-			return player.getOffhandItem();
-		}
-
-		Inventory inventory = player.getInventory();
-		for (ItemStack stack : inventory.items) {
-			if (isFieldNotes(stack)) {
-				return stack;
-			}
-		}
-		return ItemStack.EMPTY;
-	}
-
-	private static boolean hasMemo(ItemStack stack, ResourceLocation memoId) {
-		return containsString(getMemoList(stack), memoId.toString());
-	}
-
 	private static ListTag getMemoList(ItemStack stack) {
 		return getCustomData(stack).getList(TAG_MEMOS, TAG_STRING);
 	}
 
-	private static boolean containsString(ListTag list, String value) {
-		for (int i = 0; i < list.size(); i++) {
-			if (value.equals(list.getString(i))) {
-				return true;
-			}
-		}
-		return false;
+	private static ResourceLocation liberEntryForMemo(ResourceLocation memoId) {
+		return MemoDefinitions.get(memoId)
+				.map(MemoDefinition::liberEntry)
+				.orElse(memoId);
 	}
 
-	private static ResourceLocation liberEntryForMemo(String memoId) {
-		ResourceLocation id = ResourceLocation.tryParse(memoId);
-		if (id == null) {
-			return null;
+	private static MemoDefinition.MemoPath pathForLiber(ItemStack liber) {
+		if (liber.is(ItemInit.liber_sanguinum.get())) {
+			return MemoDefinition.MemoPath.HARBINGER;
 		}
-		return MemoDefinitions.get(id)
-				.map(MemoDefinition::liberEntry)
-				.orElse(id);
+		if (liber.is(ItemInit.liber_immaculatus.get())) {
+			return MemoDefinition.MemoPath.UNSTAINED;
+		}
+		return null;
+	}
+
+	private static MemoDefinition.MemoPath pathForMemo(ResourceLocation memoId) {
+		return MemoDefinitions.get(memoId)
+				.map(MemoDefinition::path)
+				.orElse(MemoDefinition.MemoPath.SHARED);
+	}
+
+	private static ChatFormatting colorForMemo(ResourceLocation memoId) {
+		MemoDefinition.MemoPath path = pathForMemo(memoId);
+		if (path == MemoDefinition.MemoPath.UNSTAINED) {
+			return ChatFormatting.AQUA;
+		}
+		if (path == MemoDefinition.MemoPath.SHARED) {
+			return ChatFormatting.GRAY;
+		}
+		return ChatFormatting.DARK_RED;
 	}
 
 	private static MemoDefinition.MemoPath pathForInk(ItemStack ink) {
@@ -363,6 +356,30 @@ public final class MemoHelper {
 		return notesPath == MemoDefinition.MemoPath.SHARED
 				|| memoPath == MemoDefinition.MemoPath.SHARED
 				|| notesPath == memoPath;
+	}
+
+	private static boolean migrateLegacyFieldNotesStack(ItemStack stack, LiberKnowledge knowledge) {
+		if (!isFieldNotes(stack)) {
+			return false;
+		}
+		CompoundTag tag = getCustomData(stack);
+		boolean hadLegacyData = tag.contains(TAG_MEMOS) || tag.contains(TAG_REMAINING) || tag.contains(TAG_INK_PATH);
+		ListTag memoList = tag.getList(TAG_MEMOS, TAG_STRING);
+		boolean changed = false;
+		for (int i = 0; i < memoList.size(); i++) {
+			ResourceLocation memoId = ResourceLocation.tryParse(memoList.getString(i));
+			if (memoId != null) {
+				changed |= knowledge.recordPendingMemo(memoId);
+			}
+		}
+		if (hadLegacyData) {
+			tag.remove(TAG_MEMOS);
+			tag.remove(TAG_REMAINING);
+			tag.remove(TAG_INK_PATH);
+			setCustomData(stack, tag);
+			changed = true;
+		}
+		return changed;
 	}
 
 	private static void migrateLegacyLiberStack(ItemStack liber, IBookKnowledge knowledge) {
@@ -412,6 +429,8 @@ public final class MemoHelper {
 	public enum CaptureResult {
 		CAPTURED,
 		ALREADY_NOTED,
+		ALREADY_KNOWN,
+		INVALID,
 		NO_FIELD_NOTES,
 		FIELD_NOTES_FULL,
 		NO_INK_PATH,

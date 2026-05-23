@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * A pre-written field-note item found in the world (e.g. dropped by a dying
  * NPC). On right-click it attempts to transfer one or more fixed memos into
- * the player's held Field Notes. The item is consumed once at least one memo
+ * the player's pending field notes. The item is consumed once at least one memo
  * is successfully recorded (or was already known).
  *
  * <p>Use {@link #create(Item, ResourceLocation...)} to build a configured stack.</p>
@@ -88,7 +88,9 @@ public class PreWrittenMemoItem extends Item {
         boolean consumed = false;
         for (ResourceLocation memoId : ids) {
             MemoHelper.CaptureResult result = MemoHelper.captureMemo(serverPlayer, memoId);
-            if (result == MemoHelper.CaptureResult.CAPTURED || result == MemoHelper.CaptureResult.ALREADY_NOTED) {
+            if (result == MemoHelper.CaptureResult.CAPTURED
+                    || result == MemoHelper.CaptureResult.ALREADY_NOTED
+                    || result == MemoHelper.CaptureResult.ALREADY_KNOWN) {
                 consumed = true;
                 break;
             }

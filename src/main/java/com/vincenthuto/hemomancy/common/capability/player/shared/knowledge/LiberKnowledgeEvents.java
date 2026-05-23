@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import net.minecraft.resources.ResourceLocation;
@@ -21,29 +22,34 @@ public final class LiberKnowledgeEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			sync(player);
+			migrateLegacyNotesAndSync(player);
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			sync(player);
+			migrateLegacyNotesAndSync(player);
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			sync(player);
+			migrateLegacyNotesAndSync(player);
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerJoin(EntityJoinLevelEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			sync(player);
+			migrateLegacyNotesAndSync(player);
 		}
+	}
+
+	private static void migrateLegacyNotesAndSync(ServerPlayer player) {
+		MemoHelper.migrateLegacyFieldNotes(player);
+		sync(player);
 	}
 
 	public static void sync(ServerPlayer player) {

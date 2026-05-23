@@ -28,6 +28,7 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 
 	private final Map<ResourceLocation, Set<IDiscoverySource>> entrySources;
 	private final Set<ResourceLocation> memos;
+	private final Set<ResourceLocation> pendingMemos;
 	private final Set<ResourceLocation> markUnreadEntries;
 
 	public PacketSyncLiberKnowledge(IBookKnowledge knowledge) {
@@ -49,13 +50,17 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 		});
 		this.entrySources = copy;
 		this.memos = new LinkedHashSet<>(knowledge.getKnownMemos());
+		this.pendingMemos = knowledge instanceof LiberKnowledge liber
+				? new LinkedHashSet<>(liber.getPendingMemos())
+				: new LinkedHashSet<>();
 		this.markUnreadEntries = new LinkedHashSet<>(markUnreadEntries);
 	}
 
 	private PacketSyncLiberKnowledge(Map<ResourceLocation, Set<IDiscoverySource>> entrySources, Set<ResourceLocation> memos,
-			Set<ResourceLocation> markUnreadEntries) {
+			Set<ResourceLocation> pendingMemos, Set<ResourceLocation> markUnreadEntries) {
 		this.entrySources = entrySources;
 		this.memos = memos;
+		this.pendingMemos = pendingMemos;
 		this.markUnreadEntries = markUnreadEntries;
 	}
 
@@ -70,6 +75,7 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			}
 		}
 		writeIds(buf, msg.memos);
+		writeIds(buf, msg.pendingMemos);
 		writeIds(buf, msg.markUnreadEntries);
 	}
 
@@ -92,8 +98,9 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			entrySources.put(key, sources);
 		}
 		Set<ResourceLocation> memos = readIds(buf);
+		Set<ResourceLocation> pendingMemos = readIds(buf);
 		Set<ResourceLocation> markUnreadEntries = readIds(buf);
-		return new PacketSyncLiberKnowledge(entrySources, memos, markUnreadEntries);
+		return new PacketSyncLiberKnowledge(entrySources, memos, pendingMemos, markUnreadEntries);
 	}
 
 	/**
@@ -133,6 +140,9 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 				});
 				for (ResourceLocation memo : msg.memos) {
 					synced.recordMemo(memo);
+				}
+				for (ResourceLocation memo : msg.pendingMemos) {
+					synced.recordPendingMemo(memo);
 				}
 				knowledge.setFrom(synced);
 				// If the player currently has a Liber/guide screen open, rebuild

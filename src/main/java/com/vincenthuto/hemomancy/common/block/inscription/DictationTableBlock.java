@@ -53,6 +53,15 @@ public class DictationTableBlock extends Block implements EntityBlock, SimpleWat
         }
     }
 
+    private static void dictateStoredLiber(Level level, BlockPos pos, BlockState state, Player player,
+                                           DictationTableBlockEntity table) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            MemoHelper.dictatePendingToLiber(serverPlayer, table.getLiber());
+            table.setChanged();
+            level.sendBlockUpdated(pos, state, state, 3);
+        }
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, WATERLOGGED);
@@ -103,7 +112,11 @@ public class DictationTableBlock extends Block implements EntityBlock, SimpleWat
                                                BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof DictationTableBlockEntity table && !table.getLiber().isEmpty()) {
             if (!level.isClientSide) {
-                removeStoredLiber(level, pos, player, table);
+                if (player.isShiftKeyDown()) {
+                    removeStoredLiber(level, pos, player, table);
+                } else {
+                    dictateStoredLiber(level, pos, state, player, table);
+                }
             }
             return InteractionResult.SUCCESS;
         }
@@ -127,18 +140,13 @@ public class DictationTableBlock extends Block implements EntityBlock, SimpleWat
                 return ItemInteractionResult.SUCCESS;
             }
 
-            if (MemoHelper.isFieldNotes(stack) && player instanceof ServerPlayer serverPlayer) {
-                if (!level.isClientSide) {
-                    MemoHelper.dictateToLiber(serverPlayer, stack, storedLiber);
-                    table.setChanged();
-                    level.sendBlockUpdated(pos, state, state, 3);
-                }
-                return ItemInteractionResult.SUCCESS;
-            }
-
             if (!storedLiber.isEmpty()) {
                 if (!level.isClientSide) {
-                    removeStoredLiber(level, pos, player, table);
+                    if (player.isShiftKeyDown()) {
+                        removeStoredLiber(level, pos, player, table);
+                    } else {
+                        dictateStoredLiber(level, pos, state, player, table);
+                    }
                 }
                 return ItemInteractionResult.SUCCESS;
             }

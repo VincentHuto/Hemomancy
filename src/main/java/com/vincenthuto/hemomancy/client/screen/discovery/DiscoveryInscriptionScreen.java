@@ -114,4 +114,10 @@ public class DiscoveryInscriptionScreen extends Screen {
 		}
 		return wrapped;
 	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
+
 }

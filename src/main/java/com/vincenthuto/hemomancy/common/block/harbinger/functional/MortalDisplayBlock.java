@@ -103,10 +103,6 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 		worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
 		if (!volume.isActive()) {
 			volume.setActive(true);
-			player.displayClientMessage(
-					Component.translatable("hemomancy.mortal_display.activated")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-					false);
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer, Hemomancy.rloc("hemomancy/the_first_awakening"));
 			}
