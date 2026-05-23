@@ -125,6 +125,9 @@ public class BloodTempleStructure extends Structure {
 		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(4, 0, 0),
 				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("blood_temple/votary_fragment"));
 
+		AbocipherEmitterPlacement.placeBloodTempleEmitters(level, fullBox, random,
+				new BlockPos(centerX, centerY + 3, centerZ));
+
 		BlockPos spawnPos = new BlockPos(centerX, centerY + 1, centerZ);
 
 		// Search for a suitable air block near the centre

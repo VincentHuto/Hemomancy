@@ -172,6 +172,15 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> filler_block = SPECIALBLOCKS.register("filler_block",
 			() -> new FillerBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()));
 
+	public static final DeferredHolder<Block, Block> abocipher_emitter = SPECIALBLOCKS.register("abocipher_emitter",
+			() -> new AbocipherEmitterBlock(BlockBehaviour.Properties.of()
+					.replaceable()
+					.noCollission()
+					.noOcclusion()
+					.noLootTable()
+					.pushReaction(PushReaction.DESTROY)
+					.sound(SoundType.EMPTY)));
+
 	public static final DeferredHolder<Block, Block> qliphoth_bloom = SPECIALBLOCKS.register("qliphoth_bloom",
 			() -> new QliphothBloomBlock(
 					BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
@@ -745,6 +754,7 @@ public class BlockInit {
 				|| block == BlockInit.active_smouldering_ash_trail.get()
 				|| block == BlockInit.engram_block.get()
 				|| block == BlockInit.filler_block.get()
+				|| block == BlockInit.abocipher_emitter.get()
 				|| block == BlockInit.qliphoth_bloom.get()
 				|| block == BlockInit.sanguine_conduit.get();
 	}

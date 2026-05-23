@@ -130,6 +130,10 @@ public class BlockEntityInit {
 			.register("filler_block", () -> BlockEntityType.Builder
 					.of(FillerBlockEntity::new, BlockInit.filler_block.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbocipherEmitterBlockEntity>> abocipher_emitter = TILES
+			.register("abocipher_emitter", () -> BlockEntityType.Builder
+					.of(AbocipherEmitterBlockEntity::new, BlockInit.abocipher_emitter.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QliphothBloomBlockEntity>> qliphoth_bloom = TILES
 			.register("qliphoth_bloom", () -> BlockEntityType.Builder
 					.of(QliphothBloomBlockEntity::new, BlockInit.qliphoth_bloom.get()).build(null));

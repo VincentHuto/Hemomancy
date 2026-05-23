@@ -122,6 +122,9 @@ public class HarbingerOutpostStructure extends Structure {
 		DiscoveryInscriptionPlacement.placeOnInteriorFloor(level, fullBox, inscriptionOrigin.offset(3, 0, -3),
 				BlockInit.rite_fragment_inscription.get(), Hemomancy.rloc("harbinger_outpost/crimson_beacon_fragment"));
 
+		AbocipherEmitterPlacement.placeHarbingerOutpostEmitters(level, fullBox, random,
+				centerX, centerZ, floorY, maxY);
+
 		spawnOnFloor(level, random, EntityInit.harbinger_vicar.get(),
 				centerX, centerZ, floorY, maxY, VICAR_SPAWN_SPREAD);
 
