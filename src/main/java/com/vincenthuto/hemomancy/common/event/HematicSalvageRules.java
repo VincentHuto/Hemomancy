@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.event;
 
 public final class HematicSalvageRules {
+	public static final double DEFAULT_MINIMUM_DAMAGE = 2.0;
+
 	private HematicSalvageRules() {
 	}
 

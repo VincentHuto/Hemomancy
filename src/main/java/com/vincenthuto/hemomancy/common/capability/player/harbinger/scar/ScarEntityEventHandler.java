@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.Anastocordyce
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SanguifloraeCadensItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SaprovittaVestigiumItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ThanomycesResurgensItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
@@ -118,9 +119,11 @@ public class ScarEntityEventHandler {
 	private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
 		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 			for (int i = 0; i < scars.getSlots(); ++i) {
-				if (!scars.getStackInSlot(i).isEmpty()) {
+				ItemStack stack = scars.getStackInSlot(i);
+				if (!stack.isEmpty() && VasculariumCharmRules.shouldDropEquippedScarSlot(
+						stack.is(ItemInit.charm_of_vascularium.get()))) {
 					ItemEntity ei = new ItemEntity(player.level(), player.getX(), player.getY() + player.getEyeHeight(),
-							player.getZ(), scars.getStackInSlot(i).copy());
+							player.getZ(), stack.copy());
 					ei.setPickUpDelay(40);
 					drops.add(ei);
 					scars.setStackInSlot(i, ItemStack.EMPTY);

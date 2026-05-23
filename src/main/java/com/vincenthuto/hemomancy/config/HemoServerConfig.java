@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.config;
 
+import com.vincenthuto.hemomancy.common.event.HematicSalvageRules;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
@@ -144,7 +145,7 @@ public class HemoServerConfig {
 
 		HEMATIC_SALVAGE_MIN_DAMAGE = builder
 				.comment("Minimum post-mitigation damage required to roll for Hematic Iron Scrap. 2 damage = 1 heart.")
-				.defineInRange("minimumDamage", 4.0, 0.0, 100.0);
+				.defineInRange("minimumDamage", HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE, 0.0, 100.0);
 
 		HEMATIC_SALVAGE_COOLDOWN_TICKS = builder
 				.comment("Ticks between successful Hematic Iron Scrap drops per player.")

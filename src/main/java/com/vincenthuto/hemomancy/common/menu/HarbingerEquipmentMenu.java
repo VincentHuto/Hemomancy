@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.VasculariumCharmSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -36,21 +37,29 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
     private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
     private final Player player;
+    private final boolean openedFromScarletVanity;
 
     public IScarsItemHandler scars;
 
     public HarbingerEquipmentMenu(final int windowId, final Inventory playerInventory) {
         this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
-                playerInventory.player);
+                playerInventory.player, false);
     }
 
     public HarbingerEquipmentMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
-        this(windowId, playerInventory);
+        this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
+                playerInventory.player, readOpenedFromScarletVanity(data));
     }
 
     public HarbingerEquipmentMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
+        this(windowId, world, pos, playerInventory, playerEntity, false);
+    }
+
+    public HarbingerEquipmentMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity,
+            boolean openedFromScarletVanity) {
         super(ContainerInit.gourd_charm_inventory.get(), windowId);
         this.player = playerInventory.player;
+        this.openedFromScarletVanity = openedFromScarletVanity;
 
         this.scars = HemoCapabilityAccess.requireScars(this.player);
 
@@ -72,7 +81,8 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
 //		this.addSlot(new ScarSlot(player, scars, 2, 77 + 2 * 18, 8));
 //		this.addSlot(new ScarSlot(player, scars, 3, 77 + 3 * 18, 8));
         this.addSlot(new SelectiveScarTypeSlot(player, ItemMorphlingJar.class, scars, JAR_SLOT_INDEX, 77, 8));    // UI slot 9
-        this.addSlot(new SelectiveScarTypeSlot(player, VasculariumCharmItem.class, scars, CHARM_SLOT_INDEX, 77, 26)); // UI slot 10
+        this.addSlot(new VasculariumCharmSlot(player, scars, CHARM_SLOT_INDEX, 77, 26,
+                this.openedFromScarletVanity)); // UI slot 10
         this.addSlot(new SelectiveScarTypeSlot(player, BloodGourdItem.class, scars, GOURD_SLOT_INDEX, 77, 44));    // UI slot 11
 
         for (int l = 0; l < 3; ++l) {
@@ -125,6 +135,9 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
         final int offhandSlot = 48;
 
         if (index == jarSlotUI || index == charmSlotUI || index == gourdSlotUI) {
+            if (!slot.mayPickup(playerIn)) {
+                return ItemStack.EMPTY;
+            }
             // ── Moving FROM a scar slot → player inventory (explicit, avoids offhand) ──
             // Handle scar slotItemHandler slots explicitly to prevent items landing in offhand.
             boolean placed = false;
@@ -260,6 +273,10 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player p_38974_) {
         return this.player.inventoryMenu.stillValid(p_38974_);
+    }
+
+    private static boolean readOpenedFromScarletVanity(FriendlyByteBuf data) {
+        return data != null && data.readableBytes() > 0 && data.readBoolean();
     }
 
 }

@@ -11,19 +11,27 @@ public final class HematicSalvageRulesTest {
 				HematicSalvageRules.calculateChance(2, 0.12, 0.04, 0.25));
 		assertDouble("chance is capped", 0.25,
 				HematicSalvageRules.calculateChance(4, 0.12, 0.04, 0.25));
+		assertDouble("default threshold is one heart", 2.0,
+				HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE);
 
 		assertTrue("minimum damage qualifies",
-				HematicSalvageRules.isEligible(4.0f, 4.0, 2, 2, 100L, -1L, 1, 1200));
+				HematicSalvageRules.isEligible(2.0f, HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE,
+						2, 2, 100L, -1L, 1, 1200));
 		assertFalse("low damage does not qualify",
-				HematicSalvageRules.isEligible(3.5f, 4.0, 2, 2, 100L, -1L, 1, 1200));
+				HematicSalvageRules.isEligible(1.5f, HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE,
+						2, 2, 100L, -1L, 1, 1200));
 		assertFalse("high degree does not qualify",
-				HematicSalvageRules.isEligible(4.0f, 4.0, 3, 2, 100L, -1L, 1, 1200));
+				HematicSalvageRules.isEligible(2.0f, HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE,
+						3, 2, 100L, -1L, 1, 1200));
 		assertFalse("cooldown blocks repeat drops",
-				HematicSalvageRules.isEligible(4.0f, 4.0, 2, 2, 1000L, 0L, 1, 1200));
+				HematicSalvageRules.isEligible(2.0f, HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE,
+						2, 2, 1000L, 0L, 1, 1200));
 		assertTrue("cooldown allows later drops",
-				HematicSalvageRules.isEligible(4.0f, 4.0, 2, 2, 1300L, 0L, 1, 1200));
+				HematicSalvageRules.isEligible(2.0f, HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE,
+						2, 2, 1300L, 0L, 1, 1200));
 		assertFalse("damaged armor is required",
-				HematicSalvageRules.isEligible(4.0f, 4.0, 2, 2, 1300L, 0L, 0, 1200));
+				HematicSalvageRules.isEligible(2.0f, HematicSalvageRules.DEFAULT_MINIMUM_DAMAGE,
+						2, 2, 1300L, 0L, 0, 1200));
 	}
 
 	private static void assertDouble(String label, double expected, double actual) {

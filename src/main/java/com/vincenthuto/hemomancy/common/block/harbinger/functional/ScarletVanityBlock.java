@@ -87,12 +87,12 @@ public class ScarletVanityBlock extends BaseEntityBlock implements SimpleWaterlo
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	private InteractionResult handleUse(Level worldIn, Player player) {
+	private InteractionResult handleUse(Level worldIn, BlockPos pos, Player player) {
 		if (player.isShiftKeyDown()) {
 			return InteractionResult.PASS;
 		}
 		if (worldIn.isClientSide) {
-			PacketHandler.sendToServer(new PacketOpenScarsInv());
+			PacketHandler.sendToServer(new PacketOpenScarsInv(pos));
 		}
 		return InteractionResult.SUCCESS;
 	}
@@ -100,13 +100,13 @@ public class ScarletVanityBlock extends BaseEntityBlock implements SimpleWaterlo
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleUse(worldIn, player);
+		return handleUse(worldIn, pos, player);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		InteractionResult interactionResult = handleUse(worldIn, player);
+		InteractionResult interactionResult = handleUse(worldIn, pos, player);
 		return interactionResult == InteractionResult.PASS ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
 				: ItemInteractionResult.SUCCESS;
 	}
