@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -148,7 +149,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		drawSection(graphics, "Known Memories", x, y);
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresentOrElse(known -> {
 			int knownCount = known.getKnownManips().size();
-			int equippedCount = known.getEquippedManipNames().size();
+			int equippedCount = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
 			drawValue(graphics, "Carried", knownCount + " memories", x, y + 13, TEXT);
 			drawValue(graphics, "Equipped", equippedCount + " slotted", x, y + 25, TEXT);
 			drawValue(graphics, "Current", selectedManipName(known), x, y + 37, MUTED);

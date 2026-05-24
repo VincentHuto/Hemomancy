@@ -24,6 +24,8 @@ public class GenericRadialMenu {
 	public final IRadialMenuHost host;
 	private final List<RadialMenuItem> items = Lists.newArrayList();
 	private final List<RadialMenuItem> visibleItems = Lists.newArrayList();
+	private final List<RadialMenuItem> innerItems = Lists.newArrayList();
+	private final List<RadialMenuItem> visibleInnerItems = Lists.newArrayList();
 	private final Minecraft minecraft;
 	public int backgroundColor = 0x3F000000;
 	public int backgroundColorHover = 0x3FFFFFFF;
@@ -35,6 +37,9 @@ public class GenericRadialMenu {
 	private State state = State.INITIALIZING;
 	public double startAnimation;
 	public float animProgress;
+	public float centerRadius;
+	public float innerRadiusOut;
+	public float innerItemRadius;
 	public float radiusIn;
 	public float radiusOut;
 	public float itemRadius;
@@ -65,6 +70,10 @@ public class GenericRadialMenu {
 
 	@Nullable
 	public RadialMenuItem getHoveredItem() {
+		for (RadialMenuItem item : visibleInnerItems) {
+			if (item.isHovered())
+				return item;
+		}
 		for (RadialMenuItem item : visibleItems) {
 			if (item.isHovered())
 				return item;
@@ -73,6 +82,9 @@ public class GenericRadialMenu {
 	}
 
 	public void setHovered(int which) {
+		for (RadialMenuItem item : visibleInnerItems) {
+			item.setHovered(false);
+		}
 		for (int i = 0; i < visibleItems.size(); i++) {
 			visibleItems.get(i).setHovered(i == which);
 		}
@@ -80,6 +92,10 @@ public class GenericRadialMenu {
 
 	public int getVisibleItemCount() {
 		return visibleItems.size();
+	}
+
+	public int getTotalVisibleItemCount() {
+		return visibleItems.size() + visibleInnerItems.size();
 	}
 
 	public void clickItem() {
@@ -116,6 +132,12 @@ public class GenericRadialMenu {
 				visibleItems.add(radialMenuItem);
 			}
 		}
+		visibleInnerItems.clear();
+		for (RadialMenuItem radialMenuItem : innerItems) {
+			if (radialMenuItem.isVisible()) {
+				visibleInnerItems.add(radialMenuItem);
+			}
+		}
 	}
 
 	public void add(RadialMenuItem item) {
@@ -134,9 +156,27 @@ public class GenericRadialMenu {
 		}
 	}
 
+	public void addInner(RadialMenuItem item) {
+		innerItems.add(item);
+		if (item.isVisible()) {
+			visibleInnerItems.add(item);
+		}
+	}
+
+	public void addAllInner(Collection<? extends RadialMenuItem> cachedMenuItems) {
+		innerItems.addAll(cachedMenuItems);
+		for (RadialMenuItem cachedMenuItem : cachedMenuItems) {
+			if (cachedMenuItem.isVisible()) {
+				visibleInnerItems.add(cachedMenuItem);
+			}
+		}
+	}
+
 	public void clear() {
 		items.clear();
 		visibleItems.clear();
+		innerItems.clear();
+		visibleInnerItems.clear();
 	}
 
 	public void close() {
@@ -172,8 +212,11 @@ public class GenericRadialMenu {
 		Font font = host.getFontRenderer();
 
 		boolean animated = state == State.OPENING || state == State.CLOSING;
-		radiusIn = animated ? Math.max(0.1f, 30 * animProgress) : 30;
-		radiusOut = radiusIn * 2;
+		centerRadius = animated ? Math.max(0.1f, 18 * animProgress) : 18;
+		innerRadiusOut = animated ? Math.max(centerRadius + 0.1f, 42 * animProgress) : 42;
+		radiusIn = animated ? Math.max(innerRadiusOut + 0.1f, 50 * animProgress) : 50;
+		radiusOut = animated ? Math.max(radiusIn + 0.1f, 86 * animProgress) : 86;
+		innerItemRadius = (centerRadius + innerRadiusOut) * 0.5f;
 		itemRadius = (radiusIn + radiusOut) * 0.5f;
 		animTop = animated ? (1 - animProgress) * owner.height / 2.0f : 0;
 
@@ -195,8 +238,14 @@ public class GenericRadialMenu {
 			poseStack.popPose();
 
 			MutableComponent currentCentralText = centralText;
-			for (int i = 0; i < visibleItems.size(); i++) {
-				RadialMenuItem item = visibleItems.get(i);
+			for (RadialMenuItem item : visibleInnerItems) {
+				if (item.isHovered()) {
+					if (item.getCentralText() != null)
+						currentCentralText = item.getCentralText();
+					break;
+				}
+			}
+			for (RadialMenuItem item : visibleItems) {
 				if (item.isHovered()) {
 					if (item.getCentralText() != null)
 						currentCentralText = item.getCentralText();
@@ -227,7 +276,7 @@ public class GenericRadialMenu {
 		case OPENING:
 			openAnimation = (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation)
 					/ OPEN_ANIMATION_LENGTH);
-			if (openAnimation >= 1.0 || getVisibleItemCount() == 0) {
+			if (openAnimation >= 1.0 || getTotalVisibleItemCount() == 0) {
 				openAnimation = 1;
 				state = State.NORMAL;
 			}
@@ -235,7 +284,7 @@ public class GenericRadialMenu {
 		case CLOSING:
 			openAnimation = 1
 					- (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation) / OPEN_ANIMATION_LENGTH);
-			if (openAnimation <= 0 || getVisibleItemCount() == 0) {
+			if (openAnimation <= 0 || getTotalVisibleItemCount() == 0) {
 				openAnimation = 0;
 				state = State.CLOSED;
 			}
@@ -247,8 +296,14 @@ public class GenericRadialMenu {
 	private void drawTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
 		Screen owner = host.getScreen();
 		Font fontRenderer = host.getFontRenderer();
-		for (int i = 0; i < visibleItems.size(); i++) {
-			RadialMenuItem item = visibleItems.get(i);
+		for (RadialMenuItem item : visibleInnerItems) {
+			if (item.isHovered()) {
+				DrawingContext context = new DrawingContext(graphics, owner.width, owner.height, mouseX, mouseY, 0,
+						fontRenderer);
+				item.drawTooltips(context);
+			}
+		}
+		for (RadialMenuItem item : visibleItems) {
 			if (item.isHovered()) {
 				DrawingContext context = new DrawingContext(graphics, owner.width, owner.height, mouseX, mouseY, 0,
 						fontRenderer);
@@ -258,7 +313,15 @@ public class GenericRadialMenu {
 	}
 
 	private void drawItems(GuiGraphics graphics, int x, int y, float z, int width, int height, Font font) {
-		iterateVisible((item, s, e) -> {
+		iterateBand(visibleInnerItems, (item, s, e) -> {
+			float middle = (s + e) * 0.5f;
+			float posX = x + innerItemRadius * (float) Math.cos(middle);
+			float posY = y + innerItemRadius * (float) Math.sin(middle);
+
+			DrawingContext context = new DrawingContext(graphics, width, height, posX, posY, z, font);
+			item.draw(context);
+		});
+		iterateBand(visibleItems, (item, s, e) -> {
 			float middle = (s + e) * 0.5f;
 			float posX = x + itemRadius * (float) Math.cos(middle);
 			float posY = y + itemRadius * (float) Math.sin(middle);
@@ -269,18 +332,22 @@ public class GenericRadialMenu {
 	}
 
 	private void iterateVisible(TriConsumer<RadialMenuItem, Float, Float> consumer) {
-		int numItems = visibleItems.size();
+		iterateBand(visibleItems, consumer);
+	}
+
+	private void iterateBand(List<RadialMenuItem> visible, TriConsumer<RadialMenuItem, Float, Float> consumer) {
+		int numItems = visible.size();
 		for (int i = 0; i < numItems; i++) {
 			float s = (float) getAngleFor(i - 0.5, numItems);
 			float e = (float) getAngleFor(i + 0.5, numItems);
 
-			RadialMenuItem item = visibleItems.get(i);
+			RadialMenuItem item = visible.get(i);
 			consumer.accept(item, s, e);
 		}
 	}
 
 	private void drawBackground(PoseStack matrixStack, float x, float y, float z, float radiusIn, float radiusOut) {
-		if (visibleItems.size() > 0) {
+		if (getTotalVisibleItemCount() > 0) {
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -288,7 +355,11 @@ public class GenericRadialMenu {
 
 			Tesselator tessellator = Tesselator.getInstance();
 			BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			iterateVisible((item, s, e) -> {
+			iterateBand(visibleInnerItems, (item, s, e) -> {
+				int color = item.isHovered() ? backgroundColorHover : backgroundColor;
+				drawPieArc(buffer, x, y, z, centerRadius, innerRadiusOut, s, e, color);
+			});
+			iterateBand(visibleItems, (item, s, e) -> {
 				int color = item.isHovered() ? backgroundColorHover : backgroundColor;
 				drawPieArc(buffer, x, y, z, radiusIn, radiusOut, s, e, color);
 			});
@@ -379,35 +450,22 @@ public class GenericRadialMenu {
 		if (!isReady())
 			return;
 
-		int numItems = getVisibleItemCount();
-
 		Screen owner = host.getScreen();
 		int x = owner.width / 2;
 		int y = owner.height / 2;
 		double a = Math.atan2(mouseY - y, mouseX - x);
 		double d = Math.sqrt(Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2));
-		if (numItems > 0) {
-			double s0 = getAngleFor(0 - 0.5, numItems);
-			double s1 = getAngleFor(numItems - 0.5, numItems);
-			while (a < s0) {
-				a += TWO_PI;
-			}
-			while (a >= s1) {
-				a -= TWO_PI;
-			}
-		}
 
-		int hovered = -1;
-		for (int i = 0; i < numItems; i++) {
-			float s = (float) getAngleFor(i - 0.5, numItems);
-			float e = (float) getAngleFor(i + 0.5, numItems);
-
-			if (a >= s && a < e && d >= radiusIn && (d < radiusOut)) {
-				hovered = i;
-				break;
-			}
+		RadialMenuItem hoveredItem = findHoveredInBand(visibleInnerItems, a, d, centerRadius, innerRadiusOut);
+		if (hoveredItem == null) {
+			hoveredItem = findHoveredInBand(visibleItems, a, d, radiusIn, radiusOut);
 		}
-		setHovered(hovered);
+		for (RadialMenuItem item : visibleInnerItems) {
+			item.setHovered(item == hoveredItem);
+		}
+		for (RadialMenuItem item : visibleItems) {
+			item.setHovered(item == hoveredItem);
+		}
 
 		Window mainWindow = minecraft.getWindow();
 
@@ -431,6 +489,32 @@ public class GenericRadialMenu {
 			GLFW.glfwSetCursorPos(mainWindow.getWindow(), (int) (windowWidth / 2 + fixedX),
 					(int) (windowHeight / 2 + fixedY));
 		}
+	}
+
+	@Nullable
+	private RadialMenuItem findHoveredInBand(List<RadialMenuItem> visible, double angle, double distance,
+			float innerRadius, float outerRadius) {
+		int numItems = visible.size();
+		if (numItems == 0) {
+			return null;
+		}
+		double normalizedAngle = angle;
+		double s0 = getAngleFor(0 - 0.5, numItems);
+		double s1 = getAngleFor(numItems - 0.5, numItems);
+		while (normalizedAngle < s0) {
+			normalizedAngle += TWO_PI;
+		}
+		while (normalizedAngle >= s1) {
+			normalizedAngle -= TWO_PI;
+		}
+		for (int i = 0; i < numItems; i++) {
+			float s = (float) getAngleFor(i - 0.5, numItems);
+			float e = (float) getAngleFor(i + 0.5, numItems);
+			if (normalizedAngle >= s && normalizedAngle < e && distance >= innerRadius && distance < outerRadius) {
+				return visible.get(i);
+			}
+		}
+		return null;
 	}
 
 	private double getAngleFor(double i, int numItems) {

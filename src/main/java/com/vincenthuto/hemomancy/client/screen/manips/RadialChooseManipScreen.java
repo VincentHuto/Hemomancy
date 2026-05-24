@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
@@ -51,7 +52,8 @@ public class RadialChooseManipScreen extends Screen {
 
 	private Minecraft mc;
 	private boolean needsRecheckStacks = true;
-	private final List<BlitRadialMenuItem> cachedMenuItems = Lists.newArrayList();
+	private final List<RadialMenuItem> cachedMenuItems = Lists.newArrayList();
+	private final List<RadialMenuItem> cachedMechanicalItems = Lists.newArrayList();
 
 	private final GenericRadialMenu menu;
 
@@ -107,6 +109,7 @@ public class RadialChooseManipScreen extends Screen {
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		if (this.needsRecheckStacks) {
 			this.cachedMenuItems.clear();
+			this.cachedMechanicalItems.clear();
 			if (mc.player == null) {
 				this.menu.setCentralText(Component.empty());
 				return;
@@ -119,32 +122,23 @@ public class RadialChooseManipScreen extends Screen {
 			List<BloodManipulation> allManips = manips.getManipList();
 			List<String> equippedNames = manips.getEquippedManipNames();
 
+			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION);
+			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION);
+
 			for (int i = 0; i < allManips.size(); i++) {
 				BloodManipulation c = allManips.get(i);
-				if (!equippedNames.contains(c.getName())) {
+				if (!equippedNames.contains(c.getName()) || ManipulationEquipHelper.isFixedMechanicalManip(c.getName())) {
 					continue;
 				}
-				final int slot = i; // index into the full known manip list for the packet
-				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
-						Hemomancy.rloc("textures/item/memories/memory_" + c.getName() + "_overlay.png"),
-						Hemomancy.rloc("textures/item/memories/memory_blank.png"),
-						0, 0, 16, 16, 16, 16,
-						Component.literal(c.getProperName())) {
-					@Override
-					public boolean onClick() {
-						PacketHandler.sendToServer(new UpdateCurrentManipPacket(slot));
-						RadialChooseManipScreen.this.menu.close();
-						return true;
-					}
-				};
-				item.setVisible(true);
-				this.cachedMenuItems.add(item);
+				this.cachedMenuItems.add(createManipulationItem(c, i));
 			}
 			this.menu.clear();
+			this.menu.addAllInner(this.cachedMechanicalItems);
 			this.menu.addAll(this.cachedMenuItems);
 			this.needsRecheckStacks = false;
 		}
-		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
+		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)
+				&& this.cachedMechanicalItems.stream().noneMatch(RadialMenuItem::isVisible)) {
 			this.menu.setCentralText(Component.literal("No Memorized Manipulations"));
 		} else if (gourdEquipped != null) {
 
@@ -182,5 +176,32 @@ public class RadialChooseManipScreen extends Screen {
 		if (!ClientEvents.isKeyDown(ClientEvents.openVascCharmMenu)) {
 			this.processClick(false);
 		}
+	}
+
+	private void addMechanicalManipulation(List<BloodManipulation> allManips, String manipName) {
+		for (int i = 0; i < allManips.size(); i++) {
+			BloodManipulation manipulation = allManips.get(i);
+			if (manipulation != null && manipName.equals(manipulation.getName())) {
+				this.cachedMechanicalItems.add(createManipulationItem(manipulation, i));
+				return;
+			}
+		}
+	}
+
+	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot) {
+		BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
+				Hemomancy.rloc("textures/item/memories/memory_" + manipulation.getName() + "_overlay.png"),
+				Hemomancy.rloc("textures/item/memories/memory_blank.png"),
+				0, 0, 16, 16, 16, 16,
+				Component.literal(manipulation.getProperName())) {
+			@Override
+			public boolean onClick() {
+				PacketHandler.sendToServer(new UpdateCurrentManipPacket(slot));
+				RadialChooseManipScreen.this.menu.close();
+				return true;
+			}
+		};
+		item.setVisible(true);
+		return item;
 	}
 }

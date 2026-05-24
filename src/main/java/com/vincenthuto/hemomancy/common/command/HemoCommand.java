@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumI
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.HemoMilestone;
@@ -846,10 +847,11 @@ public class HemoCommand {
 				.orElseThrow(IllegalStateException::new);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		java.util.List<String> equipped = known.getEquippedManipNames();
+		int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(equipped);
 		MutableComponent msg = Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" Slots: ").withStyle(ChatFormatting.GRAY))
-				.append(Component.literal(equipped.size() + "/" + maxSlots).withStyle(ChatFormatting.DARK_RED));
+				.append(Component.literal(normalSlots + "/" + maxSlots).withStyle(ChatFormatting.DARK_RED));
 		source.sendSuccess(() -> msg, false);
 		for (int i = 0; i < equipped.size(); i++) {
 			final int idx = i;
@@ -864,14 +866,16 @@ public class HemoCommand {
 				.orElseThrow(IllegalStateException::new);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (known.equipManip(manipName, maxSlots)) {
+			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
 			source.sendSuccess(() -> Component.literal("Equipped ")
 					.append(Component.literal(manipName).withStyle(ChatFormatting.GREEN))
-					.append(Component.literal(" (" + known.getEquippedManipNames().size() + "/" + maxSlots + ")")
+					.append(Component.literal(" (" + normalSlots + "/" + maxSlots + ")")
 							.withStyle(ChatFormatting.GRAY)),
 					true);
 		} else {
+			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
 			source.sendFailure(Component.literal("Cannot equip: no free slot or already equipped (" +
-					known.getEquippedManipNames().size() + "/" + maxSlots + ")"));
+					normalSlots + "/" + maxSlots + ")"));
 		}
 		return 1;
 	}

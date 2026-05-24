@@ -1,18 +1,77 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public final class ManipulationEquipHelper {
+	public static final String BLOOD_ABSORPTION = "blood_absorption";
+	public static final String BLOOD_PROJECTION = "blood_projection";
+
 	private ManipulationEquipHelper() {
 	}
 
 	public static boolean equipNameIfPossible(List<String> equippedNames, String manipName, int maxSlots) {
-		if (equippedNames == null || manipName == null || manipName.isEmpty()
-				|| equippedNames.contains(manipName)
-				|| equippedNames.size() >= maxSlots) {
+		if (equippedNames == null || manipName == null || manipName.isEmpty()) {
 			return false;
+		}
+		boolean changed = normalizeEquippedNames(equippedNames);
+		if (isFixedMechanicalManip(manipName)) {
+			return changed;
+		}
+		if (equippedNames.contains(manipName)) {
+			return changed;
+		}
+		if (countNormalEquippedNames(equippedNames) >= maxSlots) {
+			return changed;
 		}
 		equippedNames.add(manipName);
 		return true;
+	}
+
+	public static boolean unequipNameIfAllowed(List<String> equippedNames, String manipName) {
+		if (equippedNames == null || manipName == null || manipName.isEmpty()) {
+			return false;
+		}
+		normalizeEquippedNames(equippedNames);
+		if (isFixedMechanicalManip(manipName)) {
+			return false;
+		}
+		return equippedNames.remove(manipName);
+	}
+
+	public static boolean normalizeEquippedNames(List<String> equippedNames) {
+		if (equippedNames == null) {
+			return false;
+		}
+		List<String> original = new ArrayList<>(equippedNames);
+		LinkedHashSet<String> normalNames = new LinkedHashSet<>();
+		for (String name : equippedNames) {
+			if (name != null && !name.isEmpty() && !isFixedMechanicalManip(name)) {
+				normalNames.add(name);
+			}
+		}
+		equippedNames.clear();
+		equippedNames.add(BLOOD_ABSORPTION);
+		equippedNames.add(BLOOD_PROJECTION);
+		equippedNames.addAll(normalNames);
+		return !original.equals(equippedNames);
+	}
+
+	public static int countNormalEquippedNames(List<String> equippedNames) {
+		if (equippedNames == null) {
+			return 0;
+		}
+		int count = 0;
+		for (String name : equippedNames) {
+			if (name != null && !name.isEmpty() && !isFixedMechanicalManip(name)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public static boolean isFixedMechanicalManip(String manipName) {
+		return BLOOD_ABSORPTION.equals(manipName) || BLOOD_PROJECTION.equals(manipName);
 	}
 }

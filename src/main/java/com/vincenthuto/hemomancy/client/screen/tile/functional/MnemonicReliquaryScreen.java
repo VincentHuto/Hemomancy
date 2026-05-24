@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -139,6 +140,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			equippedNames.addAll(equipped);
 
 			for (BloodManipulation manip : known.getKnownManips().keySet()) {
+				if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())) {
+					continue;
+				}
 				EnumBloodTendency tend = manip.getTend();
 				if (tend != null && tendencyGroups.containsKey(tend)) {
 					tendencyGroups.get(tend).add(manip);
@@ -146,6 +150,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			}
 
 			for (String name : equipped) {
+				if (ManipulationEquipHelper.isFixedMechanicalManip(name)) {
+					continue;
+				}
 				for (BloodManipulation manip : known.getKnownManips().keySet()) {
 					if (manip.getName().equals(name)) {
 						equippedManips.add(manip);

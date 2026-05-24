@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.manips;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.ChatFormatting;
@@ -58,7 +59,8 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 				} else {
 					player.displayClientMessage(
 							Component.literal("Cannot equip — no free slots! (" +
-									known.getEquippedManipNames().size() + "/" + maxSlots + ")")
+									ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames())
+											+ "/" + maxSlots + ")")
 									.withStyle(ChatFormatting.RED), true);
 				}
 			} else {

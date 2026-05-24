@@ -175,32 +175,31 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public List<String> getEquippedManipNames() {
+		ManipulationEquipHelper.normalizeEquippedNames(equippedManipNames);
 		return equippedManipNames;
 	}
 
 	@Override
 	public void setEquippedManipNames(List<String> names) {
 		this.equippedManipNames = names != null ? names : new ArrayList<>();
+		ManipulationEquipHelper.normalizeEquippedNames(this.equippedManipNames);
 	}
 
 	@Override
 	public boolean isManipEquipped(BloodManipulation manip) {
 		if (manip == null || manip == BloodManipulation.BLANK) return false;
+		ManipulationEquipHelper.normalizeEquippedNames(equippedManipNames);
 		return equippedManipNames.contains(manip.getName());
 	}
 
 	@Override
 	public boolean equipManip(String manipName, int maxSlots) {
-		if (manipName == null || manipName.isEmpty()) return false;
-		if (equippedManipNames.contains(manipName)) return false;
-		if (equippedManipNames.size() >= maxSlots) return false;
-		equippedManipNames.add(manipName);
-		return true;
+		return ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, manipName, maxSlots);
 	}
 
 	@Override
 	public boolean unequipManip(String manipName) {
-		return equippedManipNames.remove(manipName);
+		return ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, manipName);
 	}
 
 	@Override
