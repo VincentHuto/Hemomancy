@@ -72,7 +72,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.NONE;
+		return UseAnim.BOW;
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (volume.isActive()) {
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
 				playerIn.startUsingItem(handIn);
-				new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+				return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 			}
 		} else {
 			playerIn.displayClientMessage(

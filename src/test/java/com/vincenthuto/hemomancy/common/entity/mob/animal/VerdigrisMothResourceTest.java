@@ -13,6 +13,7 @@ public final class VerdigrisMothResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String entityInit = readSource("com/vincenthuto/hemomancy/common/init/EntityInit.java");
+		String entity = readSource("com/vincenthuto/hemomancy/common/entity/mob/animal/VerdigrisMothEntity.java");
 		String itemInit = readSource("com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String layerEvents = readSource("com/vincenthuto/hemomancy/client/event/LayerEvents.java");
@@ -25,6 +26,8 @@ public final class VerdigrisMothResourceTest {
 		assertContains("entity registry id", entityInit, "\"verdigris_moth\"");
 		assertContains("spawn placement", entityInit, "VerdigrisMothEntity::canSpawnHere");
 		assertContains("attribute registration", entityInit, "VerdigrisMothEntity.setAttributes().build()");
+		assertContains("night-adjusted spawn brightness", entity, "level.getMaxLocalRawBrightness(pos)");
+		assertDoesNotContain("raw sky brightness blocks open night spawns", entity, "level.getRawBrightness(pos, 0)");
 		assertContains("spawn egg", itemInit, "spawn_egg_verdigris_moth");
 		assertContains("renderer registration", clientEvents, "VerdigrisMothRenderer::new");
 		assertContains("model layer registration", layerEvents, "VerdigrisMothModel.LAYER_LOCATION");

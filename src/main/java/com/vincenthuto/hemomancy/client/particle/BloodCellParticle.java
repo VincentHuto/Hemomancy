@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.client.particle;
 
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -17,6 +20,7 @@ public class BloodCellParticle extends TextureSheetParticle {
 	public float colorB = 0;
 	public float initScale = 0;
 	public float initAlpha = 0;
+	private Vec3 firstPersonAnchor;
 
 	public BloodCellParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz,
 			float r, float g, float b, float a, float scale, int lifetime, SpriteSet sprite) {
@@ -44,6 +48,15 @@ public class BloodCellParticle extends TextureSheetParticle {
 		this.pickSprite(sprite);
 	}
 
+	public void setFirstPersonAnchor(Vec3 firstPersonAnchor) {
+		this.firstPersonAnchor = firstPersonAnchor;
+		this.lifetime = Math.min(this.lifetime, 8);
+		this.xd = 0.0D;
+		this.yd = 0.0D;
+		this.zd = 0.0D;
+		this.setPosFromCameraAnchor();
+	}
+
 	@Override
 	public int getLightColor(float pTicks) {
 		return 255;
@@ -66,15 +79,35 @@ public class BloodCellParticle extends TextureSheetParticle {
 
 	@Override
 	public void tick() {
-		super.tick();
+		if (this.firstPersonAnchor != null) {
+			this.xo = this.x;
+			this.yo = this.y;
+			this.zo = this.z;
+			if (this.age++ >= this.lifetime) {
+				this.remove();
+				return;
+			}
+			this.setPosFromCameraAnchor();
+		} else {
+			super.tick();
 
-		if (new Random().nextInt(6) == 0) {
-			this.age++;
+			if (new Random().nextInt(6) == 0) {
+				this.age++;
+			}
 		}
 		float lifeCoeff = (float) this.age / (float) this.lifetime;
 		this.quadSize = initScale - initScale * lifeCoeff;
 		this.alpha = initAlpha * (1.0f - lifeCoeff);
 		this.oRoll = roll;
 		// particleAngle += 1.0f;
+	}
+
+	private void setPosFromCameraAnchor() {
+		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Vec3 right = new Vec3(camera.getLeftVector()).scale(-this.firstPersonAnchor.x);
+		Vec3 up = new Vec3(camera.getUpVector()).scale(this.firstPersonAnchor.y);
+		Vec3 forward = new Vec3(camera.getLookVector()).scale(this.firstPersonAnchor.z);
+		Vec3 position = camera.getPosition().add(right).add(up).add(forward);
+		this.setPos(position.x, position.y, position.z);
 	}
 }

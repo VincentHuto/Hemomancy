@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
+import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
@@ -12,10 +14,12 @@ import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -27,6 +31,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
@@ -55,41 +60,75 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
 			AbstractClientPlayer playerIn, HumanoidArm side) {
+		renderArm(matrixStackIn, bufferIn, combinedLightIn, playerIn, side, ItemStack.EMPTY);
+	}
+
+	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
+			AbstractClientPlayer playerIn, HumanoidArm side, ItemStack stack) {
 		if (side == HumanoidArm.RIGHT) {
 			Minecraft mc = Minecraft.getInstance();
 			mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 			renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).rightArm,
-					(playerrenderer.getModel()).rightSleeve);
+					(playerrenderer.getModel()).rightSleeve, side, stack);
 		} else {
 			Minecraft mc = Minecraft.getInstance();
 			mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
 			this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).leftArm,
-					(playerrenderer.getModel()).leftSleeve);
+					(playerrenderer.getModel()).leftSleeve, side, stack);
 		}
 
 	}
 
-	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side) {
+	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side,
+			ItemStack stack) {
 		Minecraft mc = Minecraft.getInstance();
 		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
 		matrixStackIn.pushPose();
+		applyCastingArmTransform(matrixStackIn, side);
 		if (side == HumanoidArm.RIGHT) {
 			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(12.0f).toMoj());
 			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0f).toMoj());
 			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0f).toMoj());
 			matrixStackIn.translate(1.0, -0.4, 0.8);
-			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
+			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side, stack);
 
 		} else {
 			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-12.0f).toMoj());
 			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0f).toMoj());
 			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0f).toMoj());
 			matrixStackIn.translate(0.0, -0.3, 0.6);
-			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
+			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side, stack);
 		}
+		spawnFirstPersonParticlesForStack(stack, side);
 		matrixStackIn.popPose();
+	}
+
+	private void applyCastingArmTransform(PoseStack matrixStackIn, HumanoidArm side) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null || !player.isUsingItem() || !(player.getUseItem().getItem() instanceof ICellHand)) {
+			return;
+		}
+
+		HumanoidArm activeArm = player.getUsedItemHand() == InteractionHand.MAIN_HAND
+				? player.getMainArm()
+				: player.getMainArm().getOpposite();
+		if (activeArm != side) {
+			return;
+		}
+
+		ItemStack useStack = player.getUseItem();
+		float useTicks = useStack.getUseDuration(player) - player.getUseItemRemainingTicks()
+				+ HLClientUtils.getPartialTicks();
+		float sideSign = side == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+		float wave = Mth.sin(useTicks * 0.35F);
+		float pulse = Mth.sin(useTicks * 0.18F);
+
+		matrixStackIn.translate(sideSign * 0.03F * wave, 0.03F * pulse, -0.04F * pulse);
+		matrixStackIn.mulPose(Vector3.YP.rotationDegrees(sideSign * (6.0F + 4.0F * wave)).toMoj());
+		matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(sideSign * 6.0F * pulse).toMoj());
+		matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-8.0F - 5.0F * wave).toMoj());
 	}
 
 	// ModelBloodArm model = new ModelBloodArm(1.0f);
@@ -103,14 +142,12 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 				if (!(stack.getItem() instanceof ICellHand)) {
 					return;
 				}
-				this.renderArm(matrixStack, buffer, combinedLight, HumanoidArm.RIGHT);
-				this.spawnFirstPersonParticlesForStack(stack, HumanoidArm.RIGHT);
+				this.renderArm(matrixStack, buffer, combinedLight, HumanoidArm.RIGHT, stack);
 			} else if (ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) {
 				if (!(stack.getItem() instanceof ICellHand)) {
 					return;
 				}
-				this.renderArm(matrixStack, buffer, combinedLight, HumanoidArm.LEFT);
-				this.spawnFirstPersonParticlesForStack(stack, HumanoidArm.LEFT);
+				this.renderArm(matrixStack, buffer, combinedLight, HumanoidArm.LEFT, stack);
 			} else {
 				this.renderDefaultItem(stack, ItemDisplayContext, matrixStack, buffer, combinedLight, combinedOverlay);
 			}
@@ -155,7 +192,8 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	private void renderItem(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
-			AbstractClientPlayer playerIn, ModelPart rendererArmIn, ModelPart rendererArmwearIn) {
+			AbstractClientPlayer playerIn, ModelPart rendererArmIn, ModelPart rendererArmwearIn, HumanoidArm side,
+			ItemStack stack) {
 		Minecraft mc = Minecraft.getInstance();
 
 		mc.getTextureManager().bindForSetup(mc.player.getSkin().texture());
@@ -175,27 +213,31 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 				OverlayTexture.NO_OVERLAY);
 	}
 
-	@SuppressWarnings("unused")
 	private void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
 		if (Minecraft.getInstance().isPaused() || !(stack.getItem() instanceof ICellHand)) {
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
-		boolean playerIsRightHanded = player.getMainArm() == HumanoidArm.RIGHT;
-		boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
+		if (player == null || !player.isUsingItem()) {
+			return;
+		}
+
 		InteractionHand activeHand = player.getUsedItemHand();
+		HumanoidArm activeArm = activeHand == InteractionHand.MAIN_HAND
+				? player.getMainArm()
+				: player.getMainArm().getOpposite();
+		if (activeArm != hand) {
+			return;
+		}
+
 		Level world = player.level();
 		int globalPartCount = 20;
 
-		if (itemIsInUse) {
+		if (player.getUseItemRemainingTicks() > 0) {
 			Random rand = new Random();
-			Vec3 particlePos = player.position().add(0.0, player.getEyeHeight() - 0.2f, 0.0);
-			Vec3 look = player.getLookAngle().normalize().scale(0.5);
-			Vec3 perp = look.cross(new Vec3(0.0, 1.0, 0.0)).normalize()
-					.scale(hand == HumanoidArm.LEFT ? (double) -0.4f : (double) 0.4f);
-			particlePos = particlePos.add(look).add(perp);
-			Vec3 origin = new Vec3(particlePos.x, particlePos.y + 0.1, particlePos.z);
+			Vec3 anchor = calculateFirstPersonHandAnchor(hand);
+			Vec3 origin = firstPersonAnchorToWorld(anchor);
 
 			if (player.getItemInHand(activeHand).getItem() instanceof BloodAbsorptionItem) {
 				List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
@@ -204,13 +246,17 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 						if (target instanceof LivingEntity) {
 							LivingEntity livingTarget = (LivingEntity) target;
 							Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-							Vec3 finalPos = particlePos.subtract(targetVec.x, targetVec.y, targetVec.z).reverse();
 							Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(target);
 							ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-							world.addParticle(AbsrobedBloodCellParticleFactory.createData(targetColor), particlePos.x,
-									particlePos.y + 1.05D, particlePos.z, (float) finalPos.x + rand.nextFloat() - 0.5D,
+							Vec3 source = new Vec3(targetVec.x, targetVec.y, targetVec.z);
+							Vec3 finalPos = source.subtract(origin);
+							Particle created = mc.particleEngine.createParticle(AbsrobedBloodCellParticleFactory.createData(targetColor),
+									origin.x, origin.y, origin.z, (float) finalPos.x + rand.nextFloat() - 0.5D,
 									(float) finalPos.y - rand.nextFloat() - 0F,
 									(float) finalPos.z + rand.nextFloat() - 0.5D);
+							if (created instanceof AbsorbedBloodCellParticle particle) {
+								particle.setFirstPersonTargetAnchor(anchor);
+							}
 						}
 					}
 				}
@@ -222,7 +268,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 					Vec3 projectionTarget = hitVec.add(0.0, 1.05D, 0.0);
 					Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
 
-					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+					mc.particleEngine.createParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
 							projectionTarget.x,
 							projectionTarget.y,
 							projectionTarget.z,
@@ -239,12 +285,39 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15,
 					false);
 			for (int i = 0; i < globalPartCount; i++) {
-				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
-						origin.x() + inversedSphere[i].x, origin.y() + inversedSphere[i].y,
-						origin.z() + inversedSphere[i].z, 0, 0.00, 0);
+				Vec3 localOffset = anchor.add(inversedSphere[i]);
+				Vec3 particleOrigin = firstPersonAnchorToWorld(localOffset);
+				Particle created = mc.particleEngine.createParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
+						particleOrigin.x(), particleOrigin.y(), particleOrigin.z(), 0, 0.00, 0);
+				if (created instanceof BloodCellParticle particle) {
+					particle.setFirstPersonAnchor(localOffset);
+				}
 
 			}
 
 		}
+	}
+
+	private Vec3 calculateFirstPersonHandAnchor(HumanoidArm hand) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		float useTicks = 0.0F;
+		if (player != null && player.isUsingItem()) {
+			ItemStack useStack = player.getUseItem();
+			useTicks = useStack.getUseDuration(player) - player.getUseItemRemainingTicks()
+					+ HLClientUtils.getPartialTicks();
+		}
+
+		float sideSign = hand == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+		float wave = Mth.sin(useTicks * 0.35F);
+		float pulse = Mth.sin(useTicks * 0.18F);
+		return new Vec3(sideSign * (0.32D + 0.035D * wave), -0.14D + 0.035D * pulse, 0.66D - 0.03D * pulse);
+	}
+
+	private static Vec3 firstPersonAnchorToWorld(Vec3 localOffset) {
+		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Vec3 right = new Vec3(camera.getLeftVector()).scale(-localOffset.x);
+		Vec3 up = new Vec3(camera.getUpVector()).scale(localOffset.y);
+		Vec3 forward = new Vec3(camera.getLookVector()).scale(localOffset.z);
+		return camera.getPosition().add(right).add(up).add(forward);
 	}
 }

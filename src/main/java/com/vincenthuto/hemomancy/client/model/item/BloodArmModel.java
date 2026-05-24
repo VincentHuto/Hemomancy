@@ -10,7 +10,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
@@ -24,10 +23,9 @@ public class BloodArmModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createHeadLayer() {
-		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
-		PartDefinition partdefinition = meshdefinition.getRoot();
+		MeshDefinition meshdefinition = HumanoidModel.createMesh(new CubeDeformation(0.28F), 0);
 
-		return LayerDefinition.create(meshdefinition, 256, 256);
+		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
 	public BloodArmModel(ModelPart root) {
@@ -37,12 +35,8 @@ public class BloodArmModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
-		head.render(poseStack, buffer, packedLight, packedOverlay);
-		body.render(poseStack, buffer, packedLight, packedOverlay);
-		leftArm.render(poseStack, buffer, packedLight, packedOverlay);
-		rightLeg.render(poseStack, buffer, packedLight, packedOverlay);
-		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
-		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
+		leftArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		rightArm.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 
 	}
 

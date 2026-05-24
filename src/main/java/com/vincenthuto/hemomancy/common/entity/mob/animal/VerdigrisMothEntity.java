@@ -74,7 +74,7 @@ public class VerdigrisMothEntity extends PathfinderMob {
 		boolean openAir = level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
 				&& level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty();
 		return VerdigrisMothRules.canNaturalSpawn(VerdigrisMothRules.isNight(level.getLevelData().getDayTime()),
-				solidBelow, openAir, level.getRawBrightness(pos, 0));
+				solidBelow, openAir, level.getMaxLocalRawBrightness(pos));
 	}
 
 	@Override

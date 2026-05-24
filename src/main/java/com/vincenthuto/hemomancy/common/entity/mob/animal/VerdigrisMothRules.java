@@ -21,8 +21,8 @@ public final class VerdigrisMothRules {
 	}
 
 	public static boolean canNaturalSpawn(boolean night, boolean solidBlockBelow,
-			boolean openAirAtSpawn, int rawBrightness) {
-		return night && solidBlockBelow && openAirAtSpawn && rawBrightness <= MAX_NATURAL_SPAWN_BRIGHTNESS;
+			boolean openAirAtSpawn, int localBrightness) {
+		return night && solidBlockBelow && openAirAtSpawn && localBrightness <= MAX_NATURAL_SPAWN_BRIGHTNESS;
 	}
 
 	public static boolean canShedNaturally(boolean clientSide, boolean alive, boolean onGround,
