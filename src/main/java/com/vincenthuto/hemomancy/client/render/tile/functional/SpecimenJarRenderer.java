@@ -54,7 +54,7 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		float maxDim = Math.max(entity.getBbWidth(), entity.getBbHeight());
 		float scale = maxDim <= 0 ? 0.45F : Math.min(0.55F / maxDim, 0.75F);
 		poseStack.pushPose();
-		poseStack.translate(0.5D, 0.62D, 0.5D);
+		poseStack.translate(0.5D, 0.12D, 0.5D);
 		poseStack.scale(scale, scale, scale);
 		poseStack.mulPose(Vector3.YP.rotationDegrees(180.0F).toMoj());
 		Minecraft.getInstance().getEntityRenderDispatcher().render(entity, 0.0D, 0.0D, 0.0D,

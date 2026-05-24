@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
@@ -85,6 +87,21 @@ public class BloodMemoryItem extends Item {
 									.withStyle(ChatFormatting.DARK_RED), true);
 						} else if (!known.doesListContainName(knownList, manipulation)) {
 							knownList.put(manipulation, ManipLevel.BLANK);
+							int maxSlots = ManipSlotHelper.getMaxSlots(playerIn);
+							boolean fixedMechanical = ManipulationEquipHelper.isFixedMechanicalManip(manipulation.getName());
+							boolean hasOpenNormalSlot = ManipulationEquipHelper.countNormalEquippedNames(
+									known.getEquippedManipNames()) < maxSlots;
+							boolean equipped = fixedMechanical || (hasOpenNormalSlot
+									&& known.equipManip(manipulation.getName(), maxSlots));
+							if (equipped) {
+								playerIn.displayClientMessage(Component.literal("Memorized and equipped: "
+												+ manipulation.getProperName())
+										.withStyle(ChatFormatting.DARK_RED), true);
+							} else {
+								playerIn.displayClientMessage(Component.literal(
+												"Memory learned. Use a Mnemonic Reliquary to change equipped memories.")
+										.withStyle(ChatFormatting.DARK_RED), true);
+							}
 							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(known));
 							stack.shrink(1);
 						} else {
