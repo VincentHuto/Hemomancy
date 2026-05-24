@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood-Script Sight",
+  "subtitle": "Reading what the blood remembers",
+  "text": "Abocipher is not a secret alphabet so much as a wound in language. The letters were taught to the Order by Vicars who believed certain truths should be seen before they were understood. After the eye-rite, the script no longer hides from you. It still withholds judgment. A readable sign is not the same as a safe one.",
+  "icon": "hemomancy:blood_stained_stone"
+}

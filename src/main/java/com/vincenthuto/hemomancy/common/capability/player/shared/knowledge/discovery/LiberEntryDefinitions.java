@@ -27,6 +27,7 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation HERMITS = entry("the_hematic_order/pages/the_hermit_tradition");
 	public static final ResourceLocation ORDER_BELIEFS = entry("the_hematic_order/pages/what_they_believe");
 	public static final ResourceLocation HISTORICAL_RECORD = entry("the_hematic_order/pages/historical_record");
+	public static final ResourceLocation ABOCIPHER_LITERACY = entry("the_hematic_order/pages/abocipher_literacy");
 	public static final ResourceLocation BLOOD_MEMORIES = entry("the_infection/pages/blood_memories");
 	public static final ResourceLocation HYPHAE = entry("the_infection/pages/hyphae");
 	public static final ResourceLocation ENTITY = entry("the_infection/pages/the_entity");
@@ -61,6 +62,7 @@ public final class LiberEntryDefinitions {
 		register(HERMITS, HemomancyDiscoverySource.DIALOGUE, HemomancyDiscoverySource.RITE);
 		register(ORDER_BELIEFS, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE);
 		register(HISTORICAL_RECORD, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT);
+		register(ABOCIPHER_LITERACY, HemomancyDiscoverySource.DIALOGUE);
 		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE,
 				HemomancyDiscoverySource.BLOOD_ECHO, HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(HYPHAE, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.DIALOGUE,

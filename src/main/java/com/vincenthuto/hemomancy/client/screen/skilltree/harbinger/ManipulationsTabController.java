@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
+import com.vincenthuto.hemomancy.client.screen.util.AbocipherText;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -314,6 +315,7 @@ public class ManipulationsTabController implements IProgressTab {
             BloodManipulation manip = entry.resolve();
             boolean known = knownManipNames.contains(entry.getManipName());
             boolean rankLocked = isManipRankLocked(manip);
+            boolean veilUnknown = shouldVeilUnknown(known, rankLocked);
             EnumNodeShape shape = entry.getNodeShape();
 
             int tendR = 128, tendG = 128, tendB = 128;
@@ -388,7 +390,8 @@ public class ManipulationsTabController implements IProgressTab {
                     List<String> lines = ScreenDrawUtils.wrapText(ctx.font(), label, maxLabelW);
                     int ly = ny + hn + 3;
                     for (String line : lines) {
-                        gfx.drawCenteredString(ctx.font(), line, nx, ly, labelCol);
+                        Component labelText = veilUnknown ? AbocipherText.veil(line) : Component.literal(line);
+                        gfx.drawCenteredString(ctx.font(), labelText, nx, ly, labelCol);
                         ly += ctx.font().lineHeight;
                     }
                 }
@@ -411,6 +414,7 @@ public class ManipulationsTabController implements IProgressTab {
             BloodManipulation manip = entry.resolve();
             boolean known = knownManipNames.contains(entry.getManipName());
             boolean rankLocked = isManipRankLocked(manip);
+            boolean veilUnknown = shouldVeilUnknown(known, rankLocked);
 
             List<Component> tip = new ArrayList<>();
             if (rankLocked) {
@@ -426,7 +430,8 @@ public class ManipulationsTabController implements IProgressTab {
                         ? HLTextUtils.toProperCase(manip.getName().replace("_", " "))
                         : HLTextUtils.toProperCase(entry.getManipName().replace("_", " "));
                 int nameCol = known ? 0xFFAA44 : 0x888888;
-                tip.add(Component.literal(pretty).withStyle(s -> s.withColor(nameCol).withBold(true)));
+                Component nameText = Component.literal(pretty).withStyle(s -> s.withColor(nameCol).withBold(true));
+                tip.add(veilUnknown ? AbocipherText.veil(nameText) : nameText);
                 tip.add(Component.literal(known ? "Known" : "Unknown")
                         .withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
 
@@ -455,7 +460,9 @@ public class ManipulationsTabController implements IProgressTab {
                         if (i > 0) sb.append(", ");
                         sb.append(HLTextUtils.toProperCase(entry.getParentNames().get(i).replace("_", " ")));
                     }
-                    tip.add(Component.literal(sb.toString()).withStyle(s -> s.withColor(0x666666).withItalic(true)));
+                    Component relationText = Component.literal(sb.toString())
+                            .withStyle(s -> s.withColor(0x666666).withItalic(true));
+                    tip.add(veilUnknown ? AbocipherText.veil(relationText) : relationText);
                 }
             }
             gfx.renderTooltip(ctx.font(), tip, Optional.empty(), mouseX, mouseY);
@@ -469,6 +476,7 @@ public class ManipulationsTabController implements IProgressTab {
 
         boolean known = knownManipNames.contains(entry.getManipName());
         boolean rankLocked = isManipRankLocked(manip);
+        boolean veilUnknown = shouldVeilUnknown(known, rankLocked);
 
         ParticleColor pc = manip.getTend().getColor();
         int tendR = (int)pc.getRed();
@@ -516,8 +524,10 @@ public class ManipulationsTabController implements IProgressTab {
         int nameCol = rankLocked ? 0xFF555555 : tendCol;
         for (int li = 0; li < nameLines.size(); li++) {
             int nx = li == 0 ? tx + 20 : tx + 4;
+            Component nameText = Component.literal(nameLines.get(li))
+                    .withStyle(s -> s.withColor(nameCol).withBold(true));
             gfx.drawString(ctx.font(),
-                    Component.literal(nameLines.get(li)).withStyle(s -> s.withColor(nameCol).withBold(true)),
+                    veilUnknown ? AbocipherText.veil(nameText) : nameText,
                     nx, ty + 4 + li * 10, 0, false);
         }
         ty += nameRowH;
@@ -591,6 +601,10 @@ public class ManipulationsTabController implements IProgressTab {
             if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h)) return e.getKey();
         }
         return null;
+    }
+
+    private boolean shouldVeilUnknown(boolean known, boolean rankLocked) {
+        return !known && !rankLocked && !AbocipherText.canRead(Minecraft.getInstance().player);
     }
 
     @Override

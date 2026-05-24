@@ -5,6 +5,9 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -13,6 +16,7 @@ import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
 import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
@@ -35,6 +39,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class DialogueEventHandler {
+	private static final int BLOOD_SHOTTING_OVERLAY_TICKS = 1200;
+	private static final float BLOOD_SHOTTING_OVERLAY_ALPHA = 0.30F;
 
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
@@ -123,6 +129,9 @@ public class DialogueEventHandler {
 			case "expel_harbinger" -> {
 				handleExpelHarbinger(player, event.getEntityId());
 			}
+			case HarbingerVicarDialogueTrees.EVENT_BLOOD_SHOTTING -> {
+				handleVicarBloodShotting(player);
+			}
 			case "qliphoth_communion_done" -> {
 				// Player completed the full Qliphoth Communion — nine pomes consumed.
 				// This is a narrative milestone; the apotheos_rite path is now spiritually prepared.
@@ -176,6 +185,20 @@ public class DialogueEventHandler {
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
+	}
+
+	private static void handleVicarBloodShotting(ServerPlayer player) {
+		boolean changed = LiberKnowledgeHelper.unlockEntry(player, LiberEntryDefinitions.ABOCIPHER_LITERACY,
+				HemomancyDiscoverySource.DIALOGUE);
+		PacketHandler.sendToPlayer(player, new SpawnSanguineOmenEffectPacket(player.position(),
+				BLOOD_SHOTTING_OVERLAY_TICKS, BLOOD_SHOTTING_OVERLAY_ALPHA,
+				player.serverLevel().random.nextInt(), true));
+		player.displayClientMessage(
+				Component.translatable(changed
+								? "hemomancy.dialogue.event.vicar_blood_shotting"
+								: "hemomancy.dialogue.event.vicar_blood_shotting_known")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
 	}
 
 	private static void handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {

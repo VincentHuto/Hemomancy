@@ -193,9 +193,10 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 
 	private static void readDefinition(ServerPlayer player, DiscoveryInscriptionDefinition definition) {
 		int pathLevel = levelFor(player, definition.path());
+		boolean requiresAbocipherLiteracy = requiresAbocipherLiteracy(definition);
 		if (!definition.isReadable(pathLevel)) {
 			PacketDistributor.sendToPlayer(player, new OpenInscriptionPacket(
-					obscuredTitle(definition), definition.obscuredText(), false, null));
+					obscuredTitle(definition), definition.obscuredText(), false, null, requiresAbocipherLiteracy));
 			return;
 		}
 
@@ -204,7 +205,7 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 				: HemomancyDiscoverySource.RITE_FRAGMENT;
 		LiberKnowledgeHelper.unlockEntries(player, definition.liberEntries(), source);
 		PacketHandler.sendToPlayer(player, new OpenInscriptionPacket(
-				definition.title(), revealedText(definition), true, definition.riteId()));
+				definition.title(), revealedText(definition), true, definition.riteId(), requiresAbocipherLiteracy));
 	}
 
 	private static int levelFor(Player player, DiscoveryInscriptionDefinition.Path path) {
@@ -221,5 +222,10 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 		return definition.kind() == DiscoveryInscriptionDefinition.Kind.BLOOD_ECHO
 				? "Obscured Blood Echo"
 				: "Obscured Rite Fragment";
+	}
+
+	private static boolean requiresAbocipherLiteracy(DiscoveryInscriptionDefinition definition) {
+		return definition.kind() == DiscoveryInscriptionDefinition.Kind.BLOOD_ECHO
+				&& definition.path() == DiscoveryInscriptionDefinition.Path.HARBINGER;
 	}
 }

@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
@@ -94,6 +96,10 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 .orElse(false);
     }
 
+    private static boolean hasAbocipherLiteracy(Player player) {
+        return LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.ABOCIPHER_LITERACY);
+    }
+
     /**
      * Returns true if the player has an active Qliphoth Pome empowerment
      * (the 3-minute manipulation-cost-reduction window from eating a pome).
@@ -152,7 +158,8 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 // Archon players with active pome empowerment receive the unsettled reaction
                 tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
             } else {
-                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
+                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player),
+                        hasAbocipherLiteracy(player));
             }
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

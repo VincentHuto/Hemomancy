@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.discovery;
 
 import com.vincenthuto.hemomancy.client.screen.item.RiteHintScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.client.screen.util.AbocipherText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -30,21 +31,24 @@ public class DiscoveryInscriptionScreen extends Screen {
 	private final boolean revealed;
 	@Nullable
 	private final ResourceLocation riteId;
+	private final boolean requiresAbocipherLiteracy;
 	private int left;
 	private int top;
 	private int scroll;
 
 	private DiscoveryInscriptionScreen(String title, List<String> lines, boolean revealed,
-			@Nullable ResourceLocation riteId) {
+			@Nullable ResourceLocation riteId, boolean requiresAbocipherLiteracy) {
 		super(Component.literal(title));
 		this.lines = List.copyOf(lines);
 		this.revealed = revealed;
 		this.riteId = riteId;
+		this.requiresAbocipherLiteracy = requiresAbocipherLiteracy;
 	}
 
 	public static void open(String title, List<String> lines, boolean revealed,
-			@Nullable ResourceLocation riteId) {
-		Minecraft.getInstance().setScreen(new DiscoveryInscriptionScreen(title, lines, revealed, riteId));
+			@Nullable ResourceLocation riteId, boolean requiresAbocipherLiteracy) {
+		Minecraft.getInstance().setScreen(new DiscoveryInscriptionScreen(title, lines, revealed, riteId,
+				requiresAbocipherLiteracy));
 	}
 
 	@Override
@@ -71,10 +75,13 @@ public class DiscoveryInscriptionScreen extends Screen {
 		int border = revealed ? BORDER_REVEALED : BORDER_OBSCURED;
 		int titleColor = revealed ? TITLE_REVEALED : TITLE_OBSCURED;
 		int textColor = revealed ? TEXT_REVEALED : TEXT_OBSCURED;
+		Component titleText = shouldVeilText()
+				? AbocipherText.veil(this.title)
+				: this.title;
 
 		gfx.fill(left, top, left + WIDTH, top + HEIGHT, bg);
 		ScreenDrawUtils.drawBorder(gfx, left, top, WIDTH, HEIGHT, border, 0xFF211817);
-		gfx.drawCenteredString(font, this.title, left + WIDTH / 2, top + 13, titleColor);
+		gfx.drawCenteredString(font, titleText, left + WIDTH / 2, top + 13, titleColor);
 		gfx.fill(left + 18, top + 29, left + WIDTH - 18, top + 30, border);
 
 		int contentLeft = left + 20;
@@ -105,14 +112,20 @@ public class DiscoveryInscriptionScreen extends Screen {
 
 	private List<FormattedCharSequence> wrappedLines(int width) {
 		List<FormattedCharSequence> wrapped = new ArrayList<>();
+		boolean veilText = shouldVeilText();
 		for (String line : lines) {
 			if (line == null || line.isBlank()) {
 				wrapped.add(FormattedCharSequence.EMPTY);
 				continue;
 			}
-			wrapped.addAll(font.split(Component.literal(line), width));
+			Component component = veilText ? AbocipherText.veil(line) : Component.literal(line);
+			wrapped.addAll(font.split(component, width));
 		}
 		return wrapped;
+	}
+
+	private boolean shouldVeilText() {
+		return (!revealed || requiresAbocipherLiteracy) && !AbocipherText.canRead(Minecraft.getInstance().player);
 	}
 
 	@Override

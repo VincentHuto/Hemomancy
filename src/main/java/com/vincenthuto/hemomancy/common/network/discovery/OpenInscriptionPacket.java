@@ -18,10 +18,16 @@ public record OpenInscriptionPacket(
 		String title,
 		List<String> lines,
 		boolean revealed,
-		@Nullable ResourceLocation riteId) implements CustomPacketPayload {
+		@Nullable ResourceLocation riteId,
+		boolean requiresAbocipherLiteracy) implements CustomPacketPayload {
 	public static final Type<OpenInscriptionPacket> TYPE = new Type<>(Hemomancy.rloc("open_inscription_packet"));
 	public static final StreamCodec<FriendlyByteBuf, OpenInscriptionPacket> STREAM_CODEC =
 			StreamCodec.of(OpenInscriptionPacket::encode, OpenInscriptionPacket::decode);
+
+	public OpenInscriptionPacket(String title, List<String> lines, boolean revealed,
+			@Nullable ResourceLocation riteId) {
+		this(title, lines, revealed, riteId, false);
+	}
 
 	public OpenInscriptionPacket {
 		lines = List.copyOf(lines);
@@ -38,6 +44,7 @@ public record OpenInscriptionPacket(
 		if (msg.riteId != null) {
 			buf.writeResourceLocation(msg.riteId);
 		}
+		buf.writeBoolean(msg.requiresAbocipherLiteracy);
 	}
 
 	public static OpenInscriptionPacket decode(FriendlyByteBuf buf) {
@@ -49,12 +56,14 @@ public record OpenInscriptionPacket(
 		}
 		boolean revealed = buf.readBoolean();
 		ResourceLocation riteId = buf.readBoolean() ? buf.readResourceLocation() : null;
-		return new OpenInscriptionPacket(title, lines, revealed, riteId);
+		boolean requiresAbocipherLiteracy = buf.readBoolean();
+		return new OpenInscriptionPacket(title, lines, revealed, riteId, requiresAbocipherLiteracy);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public static void handle(final OpenInscriptionPacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> DiscoveryInscriptionScreen.open(msg.title, msg.lines, msg.revealed, msg.riteId));
+		ctx.enqueueWork(() -> DiscoveryInscriptionScreen.open(msg.title, msg.lines, msg.revealed, msg.riteId,
+				msg.requiresAbocipherLiteracy));
 	}
 
 	@Override

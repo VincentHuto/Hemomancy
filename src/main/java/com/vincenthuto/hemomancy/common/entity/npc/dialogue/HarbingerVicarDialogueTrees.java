@@ -20,6 +20,7 @@ public final class HarbingerVicarDialogueTrees {
 
 	private static final ResourceLocation VICAR_ICON = Hemomancy.rloc("textures/entity/harbinger_vicar/harbinger_vicar.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_vicar";
+	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 
 	private HarbingerVicarDialogueTrees() {}
 
@@ -28,21 +29,26 @@ public final class HarbingerVicarDialogueTrees {
 	 *
 	 * @param degree       The player's current initiatory degree number (0–7).
 	 * @param entityId     The entity id of the vicar being spoken to.
-	 * @param hasBloodline Whether the player has an established bloodline. Recruit
-	 *                     and expel options are only shown when this is true.
+	 * @param hasBloodline          Whether the player has an established bloodline.
+	 *                              Recruit and expel options are only shown when this is true.
+	 * @param hasAbocipherLiteracy Whether the player can already read blood-script.
 	 */
-	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline) {
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
 			case 2 -> votary(entityId);
 			case 3 -> initiate(entityId);
-			case 4 -> adept(entityId);
-			case 5 -> illuminatus(entityId, hasBloodline);
-			case 6 -> sanctified(entityId, hasBloodline);
-			case 7 -> archon(entityId, hasBloodline);
-			default -> apotheos(entityId, hasBloodline); // degree 8+
+			case 4 -> adept(entityId, hasAbocipherLiteracy);
+			case 5 -> illuminatus(entityId, hasBloodline, hasAbocipherLiteracy);
+			case 6 -> sanctified(entityId, hasBloodline, hasAbocipherLiteracy);
+			case 7 -> archon(entityId, hasBloodline, hasAbocipherLiteracy);
+			default -> apotheos(entityId, hasBloodline, hasAbocipherLiteracy); // degree 8+
 		};
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline) {
+		return forDegree(degree, entityId, hasBloodline, false);
 	}
 
 	/**
@@ -77,6 +83,30 @@ public final class HarbingerVicarDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.build();
+	}
+
+	private static void addBloodScriptRitualOption(List<DialogueOption> options, boolean hasAbocipherLiteracy) {
+		if (!hasAbocipherLiteracy) {
+			options.add(new DialogueOption("hemomancy.dialogue.vicar.option.open_blood_script",
+					"blood_script_ritual", null));
+		}
+	}
+
+	private static DialogueTree.Builder addBloodScriptRitualNodes(DialogueTree.Builder builder) {
+		return builder
+				.addNode(new DialogueNode("blood_script_ritual", List.of(
+						"hemomancy.vicar.blood_script.line1",
+						"hemomancy.vicar.blood_script.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.accept_blood_script",
+								"blood_script_done", EVENT_BLOOD_SHOTTING),
+						new DialogueOption("hemomancy.dialogue.vicar.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("blood_script_done", List.of(
+						"hemomancy.vicar.blood_script.done"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)));
 	}
 
 	/** Degree 0 — uninitiated. The vicar acknowledges the newcomer with measured curiosity. */
@@ -208,17 +238,18 @@ public final class HarbingerVicarDialogueTrees {
 	}
 
 	/** Degree 4 — Adept. The vicar speaks of the Sanguine Brotherhood and blood bonds. */
-	public static DialogueTree adept(int entityId) {
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+	public static DialogueTree adept(int entityId, boolean hasAbocipherLiteracy) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_brotherhood", "brotherhood_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
+		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
+		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.adept.line1",
 						"hemomancy.vicar.adept.line2"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_brotherhood", "brotherhood_lore", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				), greetingOptions))
 				.addNode(new DialogueNode("brotherhood_lore", List.of(
 						"hemomancy.vicar.adept.brotherhood_lore"
 				), List.of(
@@ -233,7 +264,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				))))
 				.build();
 	}
 
@@ -243,7 +274,7 @@ public final class HarbingerVicarDialogueTrees {
 	 * (handing the player a parchment fragment), explains the Founding Sanctum and
 	 * Quintessence, and offers the degree-advancement hint toward Sanctified.
 	 */
-	public static DialogueTree illuminatus(int entityId, boolean hasBloodline) {
+	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null));
@@ -253,8 +284,9 @@ public final class HarbingerVicarDialogueTrees {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
 		}
+		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.illuminatus.line1"
 				), greetingOptions))
@@ -298,7 +330,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				))))
 				.build();
 	}
 
@@ -307,7 +339,7 @@ public final class HarbingerVicarDialogueTrees {
 	 * The Monolith guides the player from here; the Vicar offers the final degree hint
 	 * toward Archon as the last piece of active counsel they can give.
 	 */
-	public static DialogueTree sanctified(int entityId, boolean hasBloodline) {
+	public static DialogueTree sanctified(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_hematic_order", "hematic_order_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
@@ -315,8 +347,9 @@ public final class HarbingerVicarDialogueTrees {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
 		}
+		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.sanctified.line1"
 				), greetingOptions))
@@ -343,7 +376,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				))))
 				.build();
 	}
 
@@ -351,7 +384,7 @@ public final class HarbingerVicarDialogueTrees {
 	 * Degree 7 — Archon. The vicar bows and offers a humble admission: the Monolith
 	 * carried the player beyond what the Vicar's doctrine could reach.
 	 */
-	public static DialogueTree archon(int entityId, boolean hasBloodline) {
+	public static DialogueTree archon(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_the_final_truth", "final_truth", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
@@ -359,8 +392,9 @@ public final class HarbingerVicarDialogueTrees {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
 		}
+		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.archon.line1",
 						"hemomancy.vicar.archon.line2"
@@ -389,7 +423,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				))))
 				.build();
 	}
 
@@ -470,7 +504,7 @@ public final class HarbingerVicarDialogueTrees {
 	 * to what the player has become and can only reflect on what the Covenant was always
 	 * pointing toward — without understanding it fully themselves.
 	 */
-	public static DialogueTree apotheos(int entityId, boolean hasBloodline) {
+	public static DialogueTree apotheos(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_do_you_make_of_this", "reflection", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
@@ -478,8 +512,9 @@ public final class HarbingerVicarDialogueTrees {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
 		}
+		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.apotheos.line1",
 						"hemomancy.vicar.apotheos.line2"
@@ -508,7 +543,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.item_hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				))))
 				.build();
 	}
 }
