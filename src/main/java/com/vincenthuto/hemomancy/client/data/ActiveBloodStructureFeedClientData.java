@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.common.event.BloodStructureFeedRules;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -88,6 +89,13 @@ public final class ActiveBloodStructureFeedClientData {
 				return 0.0f;
 			}
 			return 1.0f - Math.max(0.0f, remainingTicks) / (float) initialVisibleTicks;
+		}
+
+		public float getFadeAlpha(float partialTick) {
+			if (isCompletionLinger()) {
+				return 1.0f;
+			}
+			return BloodStructureFeedRules.resumeFadeAlpha(remainingTicks, initialVisibleTicks, partialTick);
 		}
 
 		private boolean isCompletionLinger() {

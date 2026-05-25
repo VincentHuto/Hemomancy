@@ -32,4 +32,12 @@ public final class BloodStructureFeedRules {
 	public static boolean isCompletionLocked(long gameTime, long lockedUntilGameTime) {
 		return gameTime <= lockedUntilGameTime;
 	}
+
+	public static float resumeFadeAlpha(int remainingTicks, int totalTicks, float partialTick) {
+		if (totalTicks <= 0 || remainingTicks <= 0) {
+			return 0.0f;
+		}
+		float smoothRemaining = remainingTicks - Math.max(0.0f, Math.min(1.0f, partialTick));
+		return Math.max(0.0f, Math.min(1.0f, smoothRemaining / totalTicks));
+	}
 }

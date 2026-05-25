@@ -36,7 +36,7 @@ public final class BloodStructureFeedManager {
 	private static final int CRAFT_ANIMATION_TICKS = 30;
 	private static final int COMPLETION_LOCK_TICKS = CRAFT_ANIMATION_TICKS + 5;
 	private static final int COMPLETION_VISIBLE_TICKS = CRAFT_ANIMATION_TICKS + 22;
-	private static final int FEED_SYNC_VISIBLE_TICKS = 12;
+	private static final int FEED_SYNC_VISIBLE_TICKS = BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS;
 	private static final double FEED_SYNC_RANGE = 64.0;
 	private static final int HINT_INTERVAL_TICKS = 20;
 

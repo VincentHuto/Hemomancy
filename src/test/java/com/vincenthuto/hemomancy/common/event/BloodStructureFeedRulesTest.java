@@ -12,6 +12,7 @@ public final class BloodStructureFeedRulesTest {
 		doesNotFeedCompleteRecipe();
 		expiresAfterTimeout();
 		completionLockCoversCollapseWindow();
+		fadeAlphaTracksRemainingResumeWindow();
 	}
 
 	private static void feedsAtVisibleStructureRate() {
@@ -51,6 +52,18 @@ public final class BloodStructureFeedRulesTest {
 				BloodStructureFeedRules.isCompletionLocked(130L, 130L));
 		assertFalse("completion lock should release after its expiry tick",
 				BloodStructureFeedRules.isCompletionLocked(131L, 130L));
+	}
+
+	private static void fadeAlphaTracksRemainingResumeWindow() {
+		int resumeTicks = BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS;
+		assertEquals("freshly fed structures should render at full opacity", 1.0f,
+				BloodStructureFeedRules.resumeFadeAlpha(resumeTicks, resumeTicks, 0.0f));
+		assertEquals("half of the resume window should render at half opacity", 0.5f,
+				BloodStructureFeedRules.resumeFadeAlpha(resumeTicks / 2, resumeTicks, 0.0f));
+		assertEquals("partial ticks should smooth the opacity between client ticks", 0.495f,
+				BloodStructureFeedRules.resumeFadeAlpha(resumeTicks / 2, resumeTicks, 0.5f));
+		assertEquals("expired structures should render fully transparent", 0.0f,
+				BloodStructureFeedRules.resumeFadeAlpha(0, resumeTicks, 0.0f));
 	}
 
 	private static void assertEquals(String label, double expected, double actual) {

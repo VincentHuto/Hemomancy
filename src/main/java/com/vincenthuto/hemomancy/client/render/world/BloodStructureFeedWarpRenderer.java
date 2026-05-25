@@ -33,14 +33,18 @@ public final class BloodStructureFeedWarpRenderer {
 		float time = mc.level.getGameTime() + partialTick;
 
 		for (ActiveBloodStructureFeedClientData.FeedEntry feed : ActiveBloodStructureFeedClientData.getActiveFeeds()) {
-			renderConnectedShell(feed, poseStack, buffer, camera, time);
+			renderConnectedShell(feed, poseStack, buffer, camera, time, partialTick);
 		}
 	}
 
 	private static void renderConnectedShell(ActiveBloodStructureFeedClientData.FeedEntry feed,
-			PoseStack poseStack, MultiBufferSource.BufferSource buffer, Vec3 camera, float time) {
+			PoseStack poseStack, MultiBufferSource.BufferSource buffer, Vec3 camera, float time, float partialTick) {
 		List<BlockPos> feedPositions = feed.getPositions();
 		if (feedPositions.isEmpty()) {
+			return;
+		}
+		int alpha = Math.round(feed.getFadeAlpha(partialTick) * 255.0f);
+		if (alpha <= 0) {
 			return;
 		}
 
@@ -55,19 +59,19 @@ public final class BloodStructureFeedWarpRenderer {
 		PoseStack.Pose pose = poseStack.last();
 
 		for (Direction direction : Direction.values()) {
-			emitExposedFaces(consumer, pose, direction, positions, camera);
+			emitExposedFaces(consumer, pose, direction, positions, camera, alpha);
 		}
 
 		buffer.endBatch(renderType);
 	}
 
 	private static void emitExposedFaces(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
-			Set<BlockPos> positions, Vec3 camera) {
+			Set<BlockPos> positions, Vec3 camera, int alpha) {
 		for (BlockPos pos : positions) {
 			if (isInternalFace(pos, direction, positions)) {
 				continue;
 			}
-			emitUnitFace(consumer, pose, direction, pos, camera);
+			emitUnitFace(consumer, pose, direction, pos, camera, alpha);
 		}
 	}
 
@@ -76,9 +80,9 @@ public final class BloodStructureFeedWarpRenderer {
 	}
 
 	private static void emitUnitFace(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
-			BlockPos pos, Vec3 camera) {
+			BlockPos pos, Vec3 camera, int alpha) {
 		emitFace(consumer, pose, direction, facePlane(pos, direction), faceU(pos, direction),
-				faceV(pos, direction), 1, 1, camera);
+				faceV(pos, direction), 1, 1, camera, alpha);
 	}
 
 	private static int facePlane(BlockPos pos, Direction direction) {
@@ -107,7 +111,7 @@ public final class BloodStructureFeedWarpRenderer {
 	}
 
 	private static void emitFace(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
-			int plane, int u0, int v0, int width, int height, Vec3 camera) {
+			int plane, int u0, int v0, int width, int height, Vec3 camera, int alpha) {
 		int u1 = u0 + width;
 		int v1 = v0 + height;
 		float texU0 = u0 * UV_SCALE;
@@ -120,37 +124,37 @@ public final class BloodStructureFeedWarpRenderer {
 					x(u1, camera), y(plane, camera), z(v1, camera), texU1, texV1,
 					x(u1, camera), y(plane, camera), z(v0, camera), texU1, texV0,
 					x(u0, camera), y(plane, camera), z(v0, camera), texU0, texV0,
-					direction);
+					direction, alpha);
 			case UP -> emitQuad(consumer, pose,
 					x(u0, camera), y(plane, camera), z(v0, camera), texU0, texV0,
 					x(u1, camera), y(plane, camera), z(v0, camera), texU1, texV0,
 					x(u1, camera), y(plane, camera), z(v1, camera), texU1, texV1,
 					x(u0, camera), y(plane, camera), z(v1, camera), texU0, texV1,
-					direction);
+					direction, alpha);
 			case NORTH -> emitQuad(consumer, pose,
 					x(u1, camera), y(v0, camera), z(plane, camera), texU1, texV0,
 					x(u0, camera), y(v0, camera), z(plane, camera), texU0, texV0,
 					x(u0, camera), y(v1, camera), z(plane, camera), texU0, texV1,
 					x(u1, camera), y(v1, camera), z(plane, camera), texU1, texV1,
-					direction);
+					direction, alpha);
 			case SOUTH -> emitQuad(consumer, pose,
 					x(u0, camera), y(v0, camera), z(plane, camera), texU0, texV0,
 					x(u1, camera), y(v0, camera), z(plane, camera), texU1, texV0,
 					x(u1, camera), y(v1, camera), z(plane, camera), texU1, texV1,
 					x(u0, camera), y(v1, camera), z(plane, camera), texU0, texV1,
-					direction);
+					direction, alpha);
 			case WEST -> emitQuad(consumer, pose,
 					x(plane, camera), y(v0, camera), z(u0, camera), texU0, texV0,
 					x(plane, camera), y(v0, camera), z(u1, camera), texU1, texV0,
 					x(plane, camera), y(v1, camera), z(u1, camera), texU1, texV1,
 					x(plane, camera), y(v1, camera), z(u0, camera), texU0, texV1,
-					direction);
+					direction, alpha);
 			case EAST -> emitQuad(consumer, pose,
 					x(plane, camera), y(v0, camera), z(u1, camera), texU1, texV0,
 					x(plane, camera), y(v0, camera), z(u0, camera), texU0, texV0,
 					x(plane, camera), y(v1, camera), z(u0, camera), texU0, texV1,
 					x(plane, camera), y(v1, camera), z(u1, camera), texU1, texV1,
-					direction);
+					direction, alpha);
 		}
 	}
 
@@ -159,20 +163,20 @@ public final class BloodStructureFeedWarpRenderer {
 			float x2, float y2, float z2, float u2, float v2,
 			float x3, float y3, float z3, float u3, float v3,
 			float x4, float y4, float z4, float u4, float v4,
-			Direction direction) {
+			Direction direction, int alpha) {
 		float nx = direction.getStepX();
 		float ny = direction.getStepY();
 		float nz = direction.getStepZ();
-		emitVertex(consumer, pose, x1, y1, z1, u1, v1, nx, ny, nz);
-		emitVertex(consumer, pose, x2, y2, z2, u2, v2, nx, ny, nz);
-		emitVertex(consumer, pose, x3, y3, z3, u3, v3, nx, ny, nz);
-		emitVertex(consumer, pose, x4, y4, z4, u4, v4, nx, ny, nz);
+		emitVertex(consumer, pose, x1, y1, z1, u1, v1, nx, ny, nz, alpha);
+		emitVertex(consumer, pose, x2, y2, z2, u2, v2, nx, ny, nz, alpha);
+		emitVertex(consumer, pose, x3, y3, z3, u3, v3, nx, ny, nz, alpha);
+		emitVertex(consumer, pose, x4, y4, z4, u4, v4, nx, ny, nz, alpha);
 	}
 
 	private static void emitVertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z,
-			float u, float v, float nx, float ny, float nz) {
+			float u, float v, float nx, float ny, float nz, int alpha) {
 		consumer.addVertex(pose.pose(), x, y, z)
-				.setColor(255, 255, 255, 255)
+				.setColor(255, 255, 255, alpha)
 				.setUv(u, v)
 				.setLight(LightTexture.FULL_BRIGHT)
 				.setNormal(pose, nx, ny, nz);
