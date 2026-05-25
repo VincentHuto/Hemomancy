@@ -74,7 +74,7 @@ public final class HemoRenderTypes {
 	}
 
 	public static RenderType bloodStructureWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
-			float centerX, float centerY, float centerZ) {
+			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"blood_structure_warp_uniforms",
 				() -> {
@@ -84,6 +84,9 @@ public final class HemoRenderTypes {
 					setUniform(shader, "BlockSeed", blockSeed);
 					setUniform(shader, "WiggleAmp", wiggleAmp);
 					setUniform(shader, "WarpCenter", centerX, centerY, centerZ);
+					setUniform(shader, "FinalizeProgress", finalizeProgress);
+					setUniform(shader, "MeltGroundY", meltGroundY);
+					setUniform(shader, "MeltHeight", meltHeight);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.BLOOD_STRUCTURE_WARP.getInstance().get();

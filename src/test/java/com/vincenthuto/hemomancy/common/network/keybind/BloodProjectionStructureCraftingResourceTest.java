@@ -22,6 +22,10 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"com/vincenthuto/hemomancy/common/network/capa/PacketBloodStructureFeed.java"));
 		String feedManager = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java"));
+		String craftingHelper = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/network/keybind/BloodStructureCraftingHelper.java"));
+		String visiblePositionRules = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/network/keybind/BloodStructureVisiblePositionRules.java"));
 		String clientData = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/ActiveBloodStructureFeedClientData.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
@@ -63,6 +67,8 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"tryStartCardinalRite");
 		assertContains("feed manager uses current projection feed rate", feedManager,
 				"BloodStructureFeedRules.STRUCTURE_FEED_RATE");
+		assertContains("feed manager sends only visible pattern cells to the warp renderer", feedManager,
+				"BloodStructureCraftingHelper.getVisibleMatchPositions");
 		assertContains("feed manager locks completed structures during collapse", feedManager,
 				"COMPLETING_FEEDS");
 		assertContains("feed manager checks completion lock before draining", feedManager,
@@ -73,16 +79,32 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"PendingBloodCraftManager.PendingCraft");
 		assertContains("feed manager keeps warp visible during collapse", feedManager,
 				"COMPLETION_VISIBLE_TICKS");
+		assertContains("feed manager gives completion melt time after collapse", feedManager,
+				"COMPLETION_VISIBLE_TICKS = CRAFT_ANIMATION_TICKS + 22");
 		assertContains("completion feed sync should linger instead of clearing immediately", feedManager,
 				"sendFeedSync(level, positions, 1.0f, false, COMPLETION_VISIBLE_TICKS)");
 		assertContains("feed manager consumes offhand catalyst in survival", feedManager,
 				"offhandCatalyst.shrink(1)");
+		assertContains("crafting helper exposes visible matched structure positions", craftingHelper,
+				"getVisibleMatchPositions");
+		assertContains("crafting helper filters wildcard air cells from feed visuals", craftingHelper,
+				"BloodStructureVisiblePositionRules.isVisiblePatternCell");
+		assertContains("visible position rules treat space cells as empty", visiblePositionRules,
+				"return row.charAt(x) != ' '");
+		assertContains("visible position rules bounds-check sparse pattern rows", visiblePositionRules,
+				"x >= row.length()");
 		assertContains("feed sync packet registered", packetHandler,
 				"PacketBloodStructureFeed.TYPE");
 		assertContains("feed packet targets client cache", feedPacket,
 				"ActiveBloodStructureFeedClientData");
 		assertContains("client feed cache tracks positions", clientData,
 				"List<BlockPos>");
+		assertContains("client feed cache remembers visible lifetime", clientData,
+				"initialVisibleTicks");
+		assertContains("client feed cache exposes completion fade progress", clientData,
+				"getFinalizeProgress");
+		assertContains("client feed cache only melts completion linger effects", clientData,
+				"isCompletionLinger");
 		assertContains("world renderer renders connected exposed shell", renderer,
 				"renderConnectedShell");
 		assertContains("world renderer skips hidden shared faces", renderer,
@@ -95,6 +117,12 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"HemoRenderTypes.bloodStructureWarp");
 		assertContains("world renderer passes a coherent structure center", renderer,
 				"bounds.centerX(camera)");
+		assertContains("world renderer passes completion melt progress", renderer,
+				"feed.getFinalizeProgress()");
+		assertContains("world renderer passes the melt ground plane", renderer,
+				"bounds.bottomY(camera)");
+		assertContains("world renderer passes the structure melt height", renderer,
+				"(float) bounds.height()");
 		assertNotContains("world renderer should not draw duplicate block models", renderer,
 				"renderSingleBlock");
 		assertNotContains("world renderer should not merge faces into slash-prone giant quads", renderer,
@@ -147,6 +175,12 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"setUniform(shader, \"Progress\"");
 		assertContains("dynamic render type sets coherent warp center", renderTypes,
 				"setUniform(shader, \"WarpCenter\"");
+		assertContains("dynamic render type sets finalizing melt", renderTypes,
+				"setUniform(shader, \"FinalizeProgress\"");
+		assertContains("dynamic render type sets melt ground", renderTypes,
+				"setUniform(shader, \"MeltGroundY\"");
+		assertContains("dynamic render type sets melt height", renderTypes,
+				"setUniform(shader, \"MeltHeight\"");
 		assertContains("dynamic render type uses warp shader", renderTypes,
 				"ShaderInit.BLOOD_STRUCTURE_WARP.getShard()");
 		assertContains("dynamic render type uses view offset layering to avoid z-fighting", renderTypes,
@@ -159,12 +193,40 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"\"name\": \"Progress\"");
 		assertContains("shader json exposes warp center uniform", shaderJson,
 				"\"name\": \"WarpCenter\"");
+		assertContains("shader json exposes finalizing melt uniform", shaderJson,
+				"\"name\": \"FinalizeProgress\"");
+		assertContains("shader json exposes melt ground uniform", shaderJson,
+				"\"name\": \"MeltGroundY\"");
+		assertContains("shader json exposes melt height uniform", shaderJson,
+				"\"name\": \"MeltHeight\"");
 		assertContains("vertex shader wiggles geometry", vertexShader,
 				"wiggleOffset");
 		assertContains("vertex shader lifts geometry outward to avoid clipping", vertexShader,
 				"surfaceLift");
 		assertContains("vertex shader keeps shared cube edges coherent", vertexShader,
 				"coherentWarpDirection");
+		assertContains("vertex shader melts completed overlay downward", vertexShader,
+				"liquidMelt");
+		assertContains("vertex shader uses the melt ground plane", vertexShader,
+				"MeltGroundY");
+		assertContains("vertex shader uses structure height for bottom-out melt", vertexShader,
+				"MeltHeight");
+		assertContains("vertex shader delays upper geometry collapse", vertexShader,
+				"heightDelay");
+		assertContains("vertex shader melts lower geometry first", vertexShader,
+				"bottomOutMelt");
+		assertContains("vertex shader grows the ground puddle first", vertexShader,
+				"bottomPuddleSpread");
+		assertContains("vertex shader spreads finalizing shell into a puddle", vertexShader,
+				"puddleSpread");
+		assertContains("vertex shader flattens finalizing shell to puddle thickness", vertexShader,
+				"puddleThickness");
+		assertContains("vertex shader expands puddle outward from structure center", vertexShader,
+				"p.xz += outward * spread");
+		assertContains("vertex shader blends bottom-out geometry into the puddle plane", vertexShader,
+				"mix(p.y, targetY, bottomOutMelt)");
+		assertNotContains("vertex shader should not collapse every height uniformly", vertexShader,
+				"mix(p.y, targetY, liquidMelt)");
 		assertNotContains("vertex shader should not split shared vertices by face normal", vertexShader,
 				"normalize(Normal");
 		assertContains("fragment shader glows red", fragmentShader,
@@ -173,6 +235,10 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"mottleNoise");
 		assertContains("fragment shader applies soft blood mottle", fragmentShader,
 				"bloodMottle");
+		assertContains("fragment shader fades finalizing overlay", fragmentShader,
+				"finalizeFade");
+		assertContains("fragment shader waits to fade until puddle is formed", fragmentShader,
+				"smoothstep(0.84, 1.0, FinalizeProgress)");
 		assertNotContains("fragment shader should not draw diagonal vein streaks", fragmentShader,
 				"veinNoise");
 		assertNotContains("fragment shader should not key glow off diagonal uv sums", fragmentShader,

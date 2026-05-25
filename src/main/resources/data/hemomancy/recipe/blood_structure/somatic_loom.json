@@ -3,7 +3,7 @@
   "bloodCost": 150,
   "required_degree": 3,
   "heldItem": "hemomancy:sanguine_formation",
-  "hitBlock": "hemomancy:infested_venous_stone",
+  "hitBlock": "minecraft:bookshelf",
   "pattern": [
     ["P P", "PTP"],
     ["   ", "TIT"],

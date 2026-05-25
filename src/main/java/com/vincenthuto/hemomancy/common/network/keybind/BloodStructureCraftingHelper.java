@@ -117,6 +117,22 @@ public final class BloodStructureCraftingHelper {
 		return List.copyOf(positions);
 	}
 
+	public static List<BlockPos> getVisibleMatchPositions(
+			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, String[][] patternArray) {
+		List<BlockPos> positions = new ArrayList<>();
+		for (int i = 0; i < blockPattern.getWidth(); ++i) {
+			for (int j = 0; j < blockPattern.getHeight(); ++j) {
+				for (int k = 0; k < blockPattern.getDepth(); ++k) {
+					if (BloodStructureVisiblePositionRules.isVisiblePatternCell(patternArray, i, j, k)) {
+						positions.add(match.getBlock(i, j, k).getPos());
+					}
+				}
+			}
+		}
+		positions.sort(Comparator.comparingLong(BlockPos::asLong));
+		return List.copyOf(positions);
+	}
+
 	public static AABB getMatchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
 		int width = blockPattern.getWidth();
 		int height = blockPattern.getHeight();

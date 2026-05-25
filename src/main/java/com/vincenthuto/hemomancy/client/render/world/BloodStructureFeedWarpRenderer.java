@@ -49,7 +49,8 @@ public final class BloodStructureFeedWarpRenderer {
 		float progress = feed.getProgress();
 		float wiggleAmp = 0.018f + progress * 0.042f;
 		RenderType renderType = HemoRenderTypes.bloodStructureWarp(time, progress, bounds.seed(), wiggleAmp,
-				bounds.centerX(camera), bounds.centerY(camera), bounds.centerZ(camera));
+				bounds.centerX(camera), bounds.centerY(camera), bounds.centerZ(camera),
+				feed.getFinalizeProgress(), bounds.bottomY(camera), (float) bounds.height());
 		VertexConsumer consumer = buffer.getBuffer(renderType);
 		PoseStack.Pose pose = poseStack.last();
 

@@ -62,14 +62,17 @@ public final class ActiveBloodStructureFeedClientData {
 	}
 
 	public static final class FeedEntry {
+		private static final int COMPLETION_LINGER_VISIBLE_TICKS = 20;
 		private final List<BlockPos> positions;
 		private final float progress;
+		private final int initialVisibleTicks;
 		private int remainingTicks;
 
 		private FeedEntry(List<BlockPos> positions, float progress, int visibleTicks) {
 			this.positions = positions;
 			this.progress = progress;
-			this.remainingTicks = Math.max(1, visibleTicks);
+			this.initialVisibleTicks = Math.max(1, visibleTicks);
+			this.remainingTicks = this.initialVisibleTicks;
 		}
 
 		public List<BlockPos> getPositions() {
@@ -78,6 +81,17 @@ public final class ActiveBloodStructureFeedClientData {
 
 		public float getProgress() {
 			return progress;
+		}
+
+		public float getFinalizeProgress() {
+			if (!isCompletionLinger()) {
+				return 0.0f;
+			}
+			return 1.0f - Math.max(0.0f, remainingTicks) / (float) initialVisibleTicks;
+		}
+
+		private boolean isCompletionLinger() {
+			return progress >= 1.0f && initialVisibleTicks > COMPLETION_LINGER_VISIBLE_TICKS;
 		}
 
 		private boolean tick() {

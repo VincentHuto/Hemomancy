@@ -35,7 +35,7 @@ public final class BloodStructureFeedManager {
 	private static final double FEED_RATE = BloodStructureFeedRules.STRUCTURE_FEED_RATE;
 	private static final int CRAFT_ANIMATION_TICKS = 30;
 	private static final int COMPLETION_LOCK_TICKS = CRAFT_ANIMATION_TICKS + 5;
-	private static final int COMPLETION_VISIBLE_TICKS = CRAFT_ANIMATION_TICKS + 5;
+	private static final int COMPLETION_VISIBLE_TICKS = CRAFT_ANIMATION_TICKS + 22;
 	private static final int FEED_SYNC_VISIBLE_TICKS = 12;
 	private static final double FEED_SYNC_RANGE = 64.0;
 	private static final int HINT_INTERVAL_TICKS = 20;
@@ -57,7 +57,8 @@ public final class BloodStructureFeedManager {
 
 		BloodStructureRecipe recipe = match.recipe();
 		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
-		List<BlockPos> positions = BloodStructureCraftingHelper.getMatchPositions(match.match(), blockPattern);
+		List<BlockPos> positions = BloodStructureCraftingHelper.getVisibleMatchPositions(match.match(), blockPattern,
+				recipe.getPattern().getPatternArray());
 		FeedKey key = new FeedKey(level.dimension(), recipe.getId(), positions.stream().map(BlockPos::asLong).toList());
 		long gameTime = level.getGameTime();
 		Long lockedUntilGameTime = COMPLETING_FEEDS.get(key);

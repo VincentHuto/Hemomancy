@@ -71,6 +71,10 @@ final class BloodStructureFeedBounds {
 		return minY;
 	}
 
+	float bottomY(Vec3 camera) {
+		return (float) (bottomY() - camera.y);
+	}
+
 	double height() {
 		return maxY - minY + 1.0D;
 	}

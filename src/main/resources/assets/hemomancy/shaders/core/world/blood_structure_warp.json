@@ -26,6 +26,9 @@
     { "name": "Progress", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "BlockSeed", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "WiggleAmp", "type": "float", "count": 1, "values": [ 0.0 ] },
-    { "name": "WarpCenter", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] }
+    { "name": "WarpCenter", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] },
+    { "name": "FinalizeProgress", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "MeltGroundY", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "MeltHeight", "type": "float", "count": 1, "values": [ 1.0 ] }
   ]
 }
