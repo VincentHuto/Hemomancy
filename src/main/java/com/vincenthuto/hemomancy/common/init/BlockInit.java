@@ -167,6 +167,16 @@ public class BlockInit {
 			"active_befouling_ash_trail",
 			() -> new ActiveBefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
 
+	public static final DeferredHolder<Block, Block> placed_blood_stained_stone = SPECIALBLOCKS.register(
+			"placed_blood_stained_stone",
+			() -> new BloodStainedStoneMarkerBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.noCollission()
+					.instabreak()
+					.noOcclusion()
+					.sound(SoundType.STONE)
+					.pushReaction(PushReaction.DESTROY)));
+
 	public static final DeferredHolder<Block, Block> engram_block = SPECIALBLOCKS.register("engram_block", EngramBlock::new);
 
 	public static final DeferredHolder<Block, Block> filler_block = SPECIALBLOCKS.register("filler_block",
@@ -752,6 +762,7 @@ public class BlockInit {
 				|| block == BlockInit.gourd_stem.get()
 				|| block == BlockInit.active_befouling_ash_trail.get()
 				|| block == BlockInit.active_smouldering_ash_trail.get()
+				|| block == BlockInit.placed_blood_stained_stone.get()
 				|| block == BlockInit.engram_block.get()
 				|| block == BlockInit.filler_block.get()
 				|| block == BlockInit.abocipher_emitter.get()

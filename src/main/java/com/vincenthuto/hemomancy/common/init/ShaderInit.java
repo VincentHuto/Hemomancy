@@ -35,6 +35,9 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "HemoTime", "ShardSeed", "Burden", "Attuned",
 			"FractalScale", "Snap", "GuiClamp");
 
+	public static ShaderHolder BLOOD_STRUCTURE_WARP = new ShaderHolder(Hemomancy.rloc("world/blood_structure_warp"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -52,6 +55,7 @@ public class ShaderInit {
         registerShader(event, SANGUINE_OMEN_SCREEN_OVERLAY.createInstance(provider));
         registerShader(event, SCAR_GLOW.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
+        registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

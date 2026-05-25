@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "hemomancy:item/blood_stained_stone",
+    "particle": "hemomancy:item/blood_stained_stone"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 2, 14],
+      "shade": false,
+      "faces": {
+        "down": { "uv": [0, 0, 16, 16], "texture": "#stone", "cullface": "down" },
+        "up": { "uv": [0, 0, 16, 16], "texture": "#stone" },
+        "north": { "uv": [2, 14, 14, 16], "texture": "#stone" },
+        "south": { "uv": [2, 14, 14, 16], "texture": "#stone" },
+        "west": { "uv": [2, 14, 14, 16], "texture": "#stone" },
+        "east": { "uv": [2, 14, 14, 16], "texture": "#stone" }
+      }
+    }
+  ]
+}

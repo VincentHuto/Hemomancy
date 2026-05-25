@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
+import com.vincenthuto.hemomancy.common.event.BloodStructureFeedRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -14,8 +16,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
@@ -81,15 +84,22 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 		HitResult trace = player.pick(5.5,0, true);
 		if (trace.getType() == Type.BLOCK) {
-			BlockEntity be = worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x ,
-					(int) trace.getLocation().y, (int) trace.getLocation().z )));
+			BlockPos targetPos = ((BlockHitResult) trace).getBlockPos();
+			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer
+					&& worldIn instanceof ServerLevel serverLevel
+					&& BloodStructureFeedManager.feedStructure(serverPlayer, serverLevel, targetPos,
+							player.getOffhandItem())) {
+				return;
+			}
+
+			BlockEntity be = worldIn.getBlockEntity(targetPos);
 			if (be != null) {
 				if (HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
 
 					IBloodVolume tileVolume = HemoCapabilityAccess.getBloodVolume(be)
 							.orElseThrow(IllegalStateException::new);
 					if(!tileVolume.isFull()) {
-						tileVolume.fillFromSource(playerVolume, 100f);
+						tileVolume.fillFromSource(playerVolume, BloodStructureFeedRules.BLOOD_TILE_TRANSFER_RATE);
 						if (be instanceof IBloodTile bt) {
 							bt.sendUpdates();
 						}
@@ -116,10 +126,13 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				.orElseThrow(NullPointerException::new);
 		if (volume.isActive()) {
-			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
+			if (volume.getBloodVolume() > 0) {
 				playerIn.startUsingItem(handIn);
 				return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 			}
+			playerIn.displayClientMessage(
+					Component.literal("No blood answers the projection.").withStyle(ChatFormatting.DARK_RED),
+					true);
 		} else {
 			playerIn.displayClientMessage(
 					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),

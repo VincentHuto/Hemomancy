@@ -312,9 +312,13 @@ public class BloodStructureHintScreen extends Screen {
 		gfx.drawString(font, Component.literal("How to Perform:").withStyle(s -> s.withColor(TITLE_COLOR)),
 				panelX, y, 0);
 		y += lineH;
-		String instructions = "Build the structure shown on the left. "
-				+ "Hold the required item, look at the activate block in the pattern, "
-				+ "then press the Blood Craft keybind (default: V).";
+		String instructions = structure.isUnstained()
+				? "Build the structure shown on the left. "
+						+ "Hold the required item, look at the activate block in the pattern, "
+						+ "then press the Blood Craft keybind (default: V)."
+				: "Build the structure shown on the left. "
+						+ "Equip Blood Projection, hold the required catalyst in your offhand, "
+						+ "then project into the activate block until the formation is filled.";
 		for (String line : ScreenDrawUtils.wrapText(font, instructions, panelW)) {
 			gfx.drawString(font, Component.literal(line)
 					.withStyle(s -> s.withColor(DESC_COLOR)), panelX, y, 0);
@@ -412,9 +416,13 @@ public class BloodStructureHintScreen extends Screen {
 
 		// Instructions
 		y += 4 + lineH;
-		String instructions = "Build the structure shown on the left. "
-				+ "Hold the required item, look at the activate block in the pattern, "
-				+ "then press the Blood Craft keybind (default: V).";
+		String instructions = structure.isUnstained()
+				? "Build the structure shown on the left. "
+						+ "Hold the required item, look at the activate block in the pattern, "
+						+ "then press the Blood Craft keybind (default: V)."
+				: "Build the structure shown on the left. "
+						+ "Equip Blood Projection, hold the required catalyst in your offhand, "
+						+ "then project into the activate block until the formation is filled.";
 		y += ScreenDrawUtils.wrapText(font, instructions, panelW).size() * lineH + 6;
 
 		// Result

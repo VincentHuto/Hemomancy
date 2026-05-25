@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
+import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
@@ -186,6 +187,8 @@ public class ClientEvents {
         ManipCooldownOverlay.tick();
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
+        ActiveBloodStructureFeedClientData.tick();
+        BloodStructureFeedSpiralParticles.tick();
         BloodBallClientData.tick();
         SanguineMonolithShatterRenderer.tick();
         if (SanguineOmenOverlay.instance != null) {
@@ -385,6 +388,7 @@ public class ClientEvents {
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
+            BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);

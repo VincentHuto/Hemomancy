@@ -88,6 +88,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				for (BloodStructureRecipe targetPattern : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
 						BloodStructureRecipe.getAllRecipes(player.level()),
 						recipe -> recipe.getPattern().getPatternArray())) {
+					if (!targetPattern.isUnstained()) {
+						BlockPattern.BlockPatternMatch projectionMatch = findStructurePatternAtHit(targetPattern, sLevel, hitPos);
+						if (projectionMatch != null) {
+							showProjectionHint(player);
+							handled = true;
+							break;
+						}
+						continue;
+					}
 					if (player.getMainHandItem().getItem() != targetPattern.getHeldItem().getItem()) continue;
 
 					BlockPattern blockPat = targetPattern.getPattern().getBlockPattern();
@@ -195,6 +204,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							BloodStructureRecipe.getAllRecipes(player.level()),
 							targetPattern -> targetPattern.getPattern().getPatternArray())) {
 						BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
+						if (match != null && !recipe.isUnstained()) {
+							showProjectionHint(player);
+							handled = true;
+							break;
+						}
 						if (match != null && player.getMainHandItem().getItem() != recipe.getHeldItem().getItem()) {
 							// Check progression first, so locked recipes explain the missing degree/stage.
 							int playerLevel = RecipeDegreeGates.getPlayerLevel(player, recipe.isUnstained());
@@ -338,6 +352,13 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			return true;
 		}
 		return false;
+	}
+
+	private static void showProjectionHint(Player player) {
+		player.displayClientMessage(
+				Component.literal("To complete this formation, use Blood Projection with its catalyst in your offhand.")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
 	}
 
 	private static void tryStartCardinalRite(Player player) {
