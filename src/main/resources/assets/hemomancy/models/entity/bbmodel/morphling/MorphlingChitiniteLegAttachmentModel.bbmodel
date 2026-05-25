@@ -9,8 +9,8 @@
   "modded_entity_version": "1.17",
   "modded_entity_flip_y": true,
   "visible_box": [
-    0.28,
-    0.6675,
+    0.275,
+    0.6625,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.12,
-        17.92,
-        -2.48
+        2.2,
+        18,
+        -2.4
       ],
       "to": [
-        5.28,
-        23.08,
-        2.48
+        5.2,
+        23,
+        2.4
       ],
       "autouv": 0,
       "color": 1,
@@ -195,14 +195,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.32,
-        12.52,
-        -2.08
+        2.4,
+        12.6,
+        -2
       ],
       "to": [
-        5.08,
-        18.08,
-        2.08
+        5,
+        18,
+        2
       ],
       "autouv": 0,
       "color": 2,
@@ -629,9 +629,67 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "01def33d-7253-b5df-d453-c1ee51fa93a8",
-        "0521cd8c-79ff-9cc0-feb4-f87eb95d7cd5",
-        "b5969c15-75f7-c081-0cc0-f095c6630354"
+        {
+          "name": "thigh_plate",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "01def33d-7253-b5df-d453-c1ee51fa93a8",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "6012dee7-f534-bb3d-c21c-3977642db4ff",
+            "45097d82-d71f-48af-84ca-a4a9d2cd548e"
+          ]
+        },
+        {
+          "name": "shin_plate",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "0521cd8c-79ff-9cc0-feb4-f87eb95d7cd5",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "4ad0bf57-8c01-f175-0b16-5b3eefe61261",
+            "d79b5ce8-f756-276a-7542-c5adc7d60763"
+          ]
+        },
+        {
+          "name": "spurs",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "b5969c15-75f7-c081-0cc0-f095c6630354",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "57d9b766-9b71-e24f-bff6-66facd52bfd5",
+            "35b35ae5-8499-933f-60a1-e3068006f65d",
+            "c36034b6-c89b-53d8-4894-01be91b56021"
+          ]
+        }
       ]
     }
   ],

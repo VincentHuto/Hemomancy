@@ -9,8 +9,8 @@
   "modded_entity_version": "1.17",
   "modded_entity_flip_y": true,
   "visible_box": [
-    0.44125,
-    0.73,
+    0.4375,
+    0.725,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2,
-        20.5,
-        -2.8
+        2.1,
+        20.6,
+        -2.7
       ],
       "to": [
-        5,
-        22.9,
-        2.8
+        4.9,
+        22.8,
+        2.7
       ],
       "autouv": 0,
       "color": 1,
@@ -111,14 +111,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        1.42,
-        18.92,
-        1.32
+        1.5,
+        19,
+        1.4
       ],
       "to": [
-        5.98,
-        21.08,
-        3.68
+        5.9,
+        21,
+        3.6
       ],
       "autouv": 0,
       "color": 1,
@@ -196,14 +196,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        1.92,
-        15.92,
-        -2.58
+        2,
+        16,
+        -2.5
       ],
       "to": [
-        4.68,
-        18.08,
-        2.58
+        4.6,
+        18,
+        2.5
       ],
       "autouv": 0,
       "color": 2,
@@ -281,14 +281,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        1.34,
-        13.94,
-        -3.26
+        1.4,
+        14,
+        -3.2
       ],
       "to": [
-        5.46,
-        16.06,
-        -1.14
+        5.4,
+        16,
+        -1.2
       ],
       "autouv": 0,
       "color": 2,
@@ -366,14 +366,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        4.12,
-        12.32,
-        -3.68
+        4.2,
+        12.4,
+        -3.6
       ],
       "to": [
-        7.48,
-        14.68,
-        -0.92
+        7.4,
+        14.6,
+        -1
       ],
       "autouv": 0,
       "color": 3,
@@ -632,10 +632,85 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "131391ec-7676-f50c-968f-a25f22528802",
-        "5a35d456-9ece-f2be-f08c-d7c9eef50450",
-        "68215506-b3f8-87db-23d4-e3cca670734b",
-        "896a31fb-5152-2cee-bf06-62c0cfefbc24"
+        {
+          "name": "upper_coil",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "131391ec-7676-f50c-968f-a25f22528802",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "09911177-7a82-4f3d-5137-8d2c5ec6f037",
+            "13e654ae-0abb-725d-82c6-e7383263d1ff"
+          ]
+        },
+        {
+          "name": "lower_coil",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "5a35d456-9ece-f2be-f08c-d7c9eef50450",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "e44a5cac-17f7-52fd-9b0f-f58e2a25083a",
+            "0c7af28a-3696-490a-2a78-9fe45ffd1fb4"
+          ]
+        },
+        {
+          "name": "head",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "68215506-b3f8-87db-23d4-e3cca670734b",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "c0f848af-169e-d36a-c02b-a3a89446d156",
+            "d8f15bf0-c031-5aa0-c32b-ac75a754cb63"
+          ]
+        },
+        {
+          "name": "tail",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 4,
+          "uuid": "896a31fb-5152-2cee-bf06-62c0cfefbc24",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "2c8118bd-256b-f64c-45f4-c915618f3601"
+          ]
+        }
       ]
     }
   ],

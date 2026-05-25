@@ -596,6 +596,9 @@ public class EntityInit {
         event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.morphling_polyp.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MorphlingPolypEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.scarlet_serpent.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScarletSerpentEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);

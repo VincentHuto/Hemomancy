@@ -10,7 +10,7 @@
   "modded_entity_flip_y": true,
   "visible_box": [
     0.875,
-    0.66875,
+    0.6625,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -4.7,
-        14.9,
-        2
+        -4.6,
+        15,
+        2.1
       ],
       "to": [
-        4.7,
-        22.9,
-        4
+        4.6,
+        22.8,
+        3.9
       ],
       "autouv": 0,
       "color": 1,
@@ -195,14 +195,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -5.24,
-        19.56,
-        3.66
+        -5.2,
+        19.6,
+        3.7
       ],
       "to": [
-        -2.76,
-        22.04,
-        5.14
+        -2.8,
+        22,
+        5.1
       ],
       "autouv": 0,
       "color": 2,
@@ -280,14 +280,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.76,
-        18.56,
-        3.76
+        2.8,
+        18.6,
+        3.8
       ],
       "to": [
-        5.04,
-        20.84,
-        5.04
+        5,
+        20.8,
+        5
       ],
       "autouv": 0,
       "color": 2,
@@ -966,9 +966,71 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "6ca2a99e-2717-ca69-3118-24ccaa21dee5",
-        "18b286de-9b14-a64a-1535-fa8db4fba04b",
-        "a3e444be-37f5-515c-886a-6f91d6cbfc1e"
+        {
+          "name": "hive_plate",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "6ca2a99e-2717-ca69-3118-24ccaa21dee5",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "dc24476e-5798-476b-a1e3-a92044f60f25",
+            "f162b8b0-920e-43f9-6c9a-4dee82cdc96b"
+          ]
+        },
+        {
+          "name": "brood_nodes",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "18b286de-9b14-a64a-1535-fa8db4fba04b",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "022c504b-5d0d-420a-fc12-c426bce233f5",
+            "bab80c00-f7fc-582a-4640-135ef92a459f",
+            "691bd7e4-f530-1abf-8c97-0b072a101eaf"
+          ]
+        },
+        {
+          "name": "skitter_legs",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "a3e444be-37f5-515c-886a-6f91d6cbfc1e",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "2d249d50-bd63-e688-6bc0-4981dc0bcba2",
+            "65e34518-0428-9005-1adb-69906eb0bab7",
+            "e31f04fc-3526-d1a3-2ab4-12bb2ee3fb14",
+            "179f2fdf-a2af-cb17-8b87-214fdc2a9279",
+            "b2371e34-9483-02f2-9d7f-15ea84549ed5",
+            "256778f1-6e68-6ec4-099c-854a76a87dbd"
+          ]
+        }
       ]
     }
   ],

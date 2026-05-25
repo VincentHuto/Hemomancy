@@ -9,8 +9,8 @@
   "modded_entity_version": "1.17",
   "modded_entity_flip_y": true,
   "visible_box": [
-    0.4775,
-    0.49625,
+    0.46875,
+    0.4875,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        1.96,
-        12.66,
-        -2.64
+        2.1,
+        12.8,
+        -2.5
       ],
       "to": [
-        5.64,
-        19.34,
-        2.64
+        5.5,
+        19.2,
+        2.5
       ],
       "autouv": 0,
       "color": 1,
@@ -195,14 +195,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.95,
-        11.45,
-        -3.15
+        3,
+        11.5,
+        -3.1
       ],
       "to": [
-        7.05,
-        13.95,
-        3.15
+        7,
+        13.9,
+        3.1
       ],
       "autouv": 0,
       "color": 2,
@@ -797,9 +797,69 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "88bbe361-4ce2-0554-7657-0af8d7530915",
-        "a1ef615c-0024-daf3-77ec-a2f1c2844e24",
-        "67d31c91-1467-ba4d-1006-4a51233688d0"
+        {
+          "name": "forearm_plate",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "88bbe361-4ce2-0554-7657-0af8d7530915",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "5b71c5fe-bd4a-d240-3559-6668f7140082",
+            "9627c6ba-a5cc-1a76-7819-a64c34bfd313"
+          ]
+        },
+        {
+          "name": "palm_spade",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "a1ef615c-0024-daf3-77ec-a2f1c2844e24",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "cc5be19f-7325-0322-a6ff-a00950dc5696",
+            "42bb0546-6fa3-e429-a0cd-49cf90e7a250"
+          ]
+        },
+        {
+          "name": "shovel_claws",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "67d31c91-1467-ba4d-1006-4a51233688d0",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "b7d2c732-edec-533a-73b2-63d12753ab70",
+            "e31cfdfc-79de-849c-e4e1-df4a110480dd",
+            "affad7e9-f670-139a-e23f-04e3b5d2179a",
+            "716ddcd5-99f4-d37a-fd89-141064670da3",
+            "a699bdbb-2add-82ec-32c0-62100b9070f1"
+          ]
+        }
       ]
     }
   ],

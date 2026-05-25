@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingChitiniteLe
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingFungalHeadModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingLeechArmAttachmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingMoleArmAttachmentModel;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingMothHeadAttachmentModel;
+import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingCuttlefishHeadAttachmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingPestsBodyAttachmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingSerpentLegAttachmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingSpiderBodyAttachmentModel;
@@ -88,11 +88,11 @@ public class MorphlingMutationRegistry {
                         .attach(pestsBodyAttachment())
                         .build());
 
-        // Moth — luminous pale cream, slow breath pulse, full glow
-        register(ItemInit.morphling_moth.get(),
-                MorphlingVisualMutation.builder(0.91f, 0.86f, 0.78f, 0.32f)
+        // Cuttlefish - pearly sepia chromatophores, slow breath pulse, full glow
+        register(ItemInit.morphling_cuttlefish.get(),
+                MorphlingVisualMutation.builder(0.64f, 0.48f, 0.32f, 0.36f)
                         .pulse(0.05f).emissive()
-                        .attach(mothHeadAttachment())
+                        .attach(cuttlefishHeadAttachment())
                         .build());
 
         // Tick — dark vein crimson, slow throb
@@ -144,8 +144,8 @@ public class MorphlingMutationRegistry {
             Hemomancy.rloc("textures/models/morphling/fungal_head.png");
     private static final ResourceLocation URCHIN_BODY_ATTACHMENT_TEX =
             Hemomancy.rloc("textures/models/morphling/urchin_body_attachment.png");
-    private static final ResourceLocation MOTH_HEAD_ATTACHMENT_TEX =
-            Hemomancy.rloc("textures/models/morphling/moth_head_attachment.png");
+    private static final ResourceLocation CUTTLEFISH_HEAD_ATTACHMENT_TEX =
+            Hemomancy.rloc("textures/models/morphling/cuttlefish_head_attachment.png");
     private static final ResourceLocation CENTIPEDE_BODY_ATTACHMENT_TEX =
             Hemomancy.rloc("textures/models/morphling/centipede_body_attachment.png");
     private static final ResourceLocation PESTS_BODY_ATTACHMENT_TEX =
@@ -226,12 +226,12 @@ public class MorphlingMutationRegistry {
                 .growthScale(2, 4, 0.34f, 1.0f, 1.15f);
     }
 
-    private static MorphlingModelAttachment mothHeadAttachment() {
+    private static MorphlingModelAttachment cuttlefishHeadAttachment() {
         return MorphlingModelAttachment.of(AttachmentPoint.HEAD, 0f, 0f, 0f, 1f,
-                Lazy.of(() -> new MorphlingMothHeadAttachmentModel(
+                Lazy.of(() -> new MorphlingCuttlefishHeadAttachmentModel(
                         Minecraft.getInstance().getEntityModels().bakeLayer(
-                                MorphlingMothHeadAttachmentModel.LAYER_LOCATION))),
-                MOTH_HEAD_ATTACHMENT_TEX)
+                                MorphlingCuttlefishHeadAttachmentModel.LAYER_LOCATION))),
+                CUTTLEFISH_HEAD_ATTACHMENT_TEX)
                 .visibleFrom(2)
                 .growthScale(2, 4, 0.34f, 1.0f, 1.12f);
     }

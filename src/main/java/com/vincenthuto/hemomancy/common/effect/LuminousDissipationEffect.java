@@ -8,9 +8,9 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that subtly deflects incoming projectiles, granting
- * knockback resistance. Applied by the moth morphling while it is attached
- * to the player. The knockback resistance bonus is applied via attribute
- * modifier in EffectInit.
+ * knockback resistance. Applied by the cuttlefish morphling while it is
+ * attached to the player. The knockback resistance bonus is applied via
+ * attribute modifier in EffectInit.
  */
 public class LuminousDissipationEffect extends MobEffect {
 

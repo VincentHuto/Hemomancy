@@ -10,7 +10,7 @@
   "modded_entity_flip_y": true,
   "visible_box": [
     0.85,
-    0.7125,
+    0.7,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -4.4,
-        14.2,
-        1.8
+        -4.2,
+        14.4,
+        2
       ],
       "to": [
-        4.4,
-        23.2,
-        6
+        4.2,
+        23,
+        5.8
       ],
       "autouv": 0,
       "color": 1,
@@ -111,14 +111,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -2.88,
-        16.12,
-        5.12
+        -2.8,
+        16.2,
+        5.2
       ],
       "to": [
-        2.88,
-        21.68,
-        6.68
+        2.8,
+        21.6,
+        6.6
       ],
       "autouv": 0,
       "color": 1,
@@ -196,14 +196,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -2.66,
-        21.94,
-        2.34
+        -2.6,
+        22,
+        2.4
       ],
       "to": [
-        2.66,
-        24.46,
-        4.46
+        2.6,
+        24.4,
+        4.4
       ],
       "autouv": 0,
       "color": 2,
@@ -882,9 +882,70 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "6d99b41e-e7d9-7e5a-776d-c3984cdac1c7",
-        "c7eb8f49-94a4-f307-aa8d-35e449c45a03",
-        "ffcbd01c-cec6-40ed-fa85-e343b095bc9f"
+        {
+          "name": "engorged_sac",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "6d99b41e-e7d9-7e5a-776d-c3984cdac1c7",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "ddfa545e-b9e2-efa7-cebc-85a2df357536",
+            "8b3e63e7-993b-1b3a-2f65-6f4b400add7b"
+          ]
+        },
+        {
+          "name": "head_latch",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "c7eb8f49-94a4-f307-aa8d-35e449c45a03",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "d1385fe7-2215-ab55-f7e3-67024a4b427e",
+            "8c5b2a6d-6cb1-5c2e-72d3-e986bc16cdd3"
+          ]
+        },
+        {
+          "name": "claspers",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "ffcbd01c-cec6-40ed-fa85-e343b095bc9f",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "64aeb6d2-2862-4c65-6925-31cfcb896ae0",
+            "82f521c2-9045-d82e-08d6-c5d7013d7b78",
+            "2fdf090e-9bf2-ee31-5283-13723069d030",
+            "800c0e26-8241-a128-4d64-79ceb2b4625d",
+            "b13e4f3b-8a22-40b7-9ad5-bbf76ff58b23",
+            "8c554bfe-4f14-acdf-f6dd-3823b7620f67"
+          ]
+        }
       ]
     }
   ],

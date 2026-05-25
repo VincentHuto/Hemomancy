@@ -112,6 +112,7 @@ public class LayerEvents {
 
 		event.registerLayerDefinition(BloodThrallModel.LAYER_LOCATION, BloodThrallModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.BODY_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.ARMS_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
@@ -123,7 +124,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(MorphlingChitiniteLegAttachmentModel.LAYER_LOCATION, MorphlingChitiniteLegAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingSerpentLegAttachmentModel.LAYER_LOCATION, MorphlingSerpentLegAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingUrchinBodyAttachmentModel.LAYER_LOCATION, MorphlingUrchinBodyAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingMothHeadAttachmentModel.LAYER_LOCATION, MorphlingMothHeadAttachmentModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingCuttlefishHeadAttachmentModel.LAYER_LOCATION, MorphlingCuttlefishHeadAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingCentipedeBodyAttachmentModel.LAYER_LOCATION, MorphlingCentipedeBodyAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPestsBodyAttachmentModel.LAYER_LOCATION, MorphlingPestsBodyAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingTickBodyAttachmentModel.LAYER_LOCATION, MorphlingTickBodyAttachmentModel::createBodyLayer);

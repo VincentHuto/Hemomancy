@@ -10,7 +10,7 @@
   "modded_entity_flip_y": true,
   "visible_box": [
     0.85,
-    0.745,
+    0.7375,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -4.72,
-        14.08,
-        1.98
+        -4.6,
+        14.2,
+        2.1
       ],
       "to": [
-        4.72,
-        23.12,
-        4.02
+        4.6,
+        23,
+        3.9
       ],
       "autouv": 0,
       "color": 1,
@@ -964,9 +964,71 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "8ed8f64f-8c0d-6e0a-73d3-e13ad39ec052",
-        "faa30de2-3dc4-0bbe-45a0-bb90e23a4073",
-        "35888155-1d81-e634-19c7-80cdb7886e94"
+        {
+          "name": "back_plate",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "8ed8f64f-8c0d-6e0a-73d3-e13ad39ec052",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "46d5da5d-421a-98f9-7abd-163d68b44eed",
+            "b9b2c6ab-c6c7-de78-f356-321b9485c2e6"
+          ]
+        },
+        {
+          "name": "spine_fan",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "faa30de2-3dc4-0bbe-45a0-bb90e23a4073",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "cf6be68b-32a4-7126-2fbb-ff67c33681fb",
+            "11bc48e8-aab0-42fa-6d74-f5e3264d53ed",
+            "bce09deb-a429-ab71-d4d2-cff74f75844c",
+            "a0cc114c-e970-d9d7-4523-3d9ea546e613",
+            "53d1b460-4263-5321-bf35-6dbb760cd7e4"
+          ]
+        },
+        {
+          "name": "side_barbs",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "35888155-1d81-e634-19c7-80cdb7886e94",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "24cc85a1-2284-c2ef-f1d8-cbf63505ad9b",
+            "eddffba3-da41-c106-7ee3-0a93cce0a310",
+            "baf0ab57-7d78-fdda-99f5-1f82ddd63cad",
+            "a4f0b0a6-3816-848b-c933-b045f3e8be4b"
+          ]
+        }
       ]
     }
   ],

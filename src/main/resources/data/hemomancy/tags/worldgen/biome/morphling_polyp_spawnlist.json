@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_overworld",
+    "minecraft:plains",
+    "minecraft:desert",
+    "minecraft:ocean",
+    "minecraft:lush_caves"
+  ]
+}

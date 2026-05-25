@@ -1142,7 +1142,7 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/serpentine_guile.png) **Serpentine Guile** | Beneficial | 0x2E8B57 | +15% move speed, +10% attack speed |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/verminous_aura.png) **Verminous Aura** | Beneficial | 0x4A3728 | Pest-based area effect |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/echoic_perception.png) **Echoic Perception** | Beneficial | — | Bat morphling effect — nearby entities glow (radius scales with amplifier) |
-| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/luminous_dissipation.png) **Luminous Dissipation** | Beneficial | — | Moth morphling effect — knockback resistance |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/luminous_dissipation.png) **Luminous Dissipation** | Beneficial | — | Cuttlefish morphling effect — knockback resistance |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hemorrhagic_venom.png) **Hemorrhagic Venom** | Beneficial | — | Tick morphling effect — AoE damage aura to nearby hostiles |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/spined_barricade.png) **Spined Barricade** | Beneficial | — | Urchin morphling effect — passive thorns + armor bonus |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_centipede.png) **Venomous Resilience** | Beneficial | — | Centipede morphling effect — poison immunity + speed |
@@ -1317,7 +1317,7 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Flammeus / Tenebris | Verminous Aura (AoE pest damage aura to nearby hostiles) | Swarm Retaliation (tracking pest projectiles hunt your attacker) → Infest (kills spawn pests targeting nearby foes) → Plague Burst (AoE Wither + damage at low health) |
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_spider.png) Spider | `SpiderMorphlingItem` | Tenebris / Lux | Arachnid Anastomosis (vascular/spider-vein healing) | Wall Climbing (cling to walls, arrest downward velocity) → Silk Tether (spawn temporary cobweb to break falls) → Web Cocoon (root & Poison attacker when struck) |
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_bat.png) Bat | `BatMorphlingItem` | Tenebris / Ductilis | Echoic Perception (nearby entities glow, radius scales with maturity) | Sonar Shriek (Darkness & Slow attacker on hit) → Membrane Glide (slow falling & reduced fall damage) → Nightwing Frenzy (Strength II + Speed I in darkness) |
-| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_moth.png) Moth | `MothMorphlingItem` | Lux / Ductilis | Luminous Dissipation (knockback resistance) | Dustwing Trail (blind hostiles while sprinting) → Phototaxis Pulse (flash blinds attacker + nearby hostiles on hit) → Cocoon Rebirth (prevent death by spending blood, 10 min cooldown) |
+| ![](../src/main/resources/assets/hemomancy/textures/item/morphling_cuttlefish.png) Cuttlefish | `CuttlefishMorphlingItem` | Lux / Ductilis | Luminous Dissipation (knockback resistance) | Sepia Wake (blind hostiles while sprinting) → Chromatophore Flash (flash blinds attacker + nearby hostiles on hit) → Ink Mantle Reprieve (prevent death by spending blood, 10 min cooldown) |
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_tick.png) Tick | `TickMorphlingItem` | Mortem / Tenebris | Hemorrhagic Venom (AoE damage aura to nearby hostiles) | Engorge (Resistance on kill from feeding) → Blood Fever (Speed near wounded hostiles) → Pandemic Burst (AoE Wither + Weakness on heavy hit) |
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_urchin.png) Urchin | `UrchinMorphlingItem` | Ferric / Congeatio | Spined Barricade (passive thorns + armor bonus) | Spine Lash (thorns + slow melee attackers) → Tidal Anchor (periodic knockback pulse vs. nearby hostiles) → Calcareous Shell (Resistance II after heavy hit, 20 s cooldown) |
 | ![](../src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio / Ferric | Venomous Resilience (poison immunity + speed boost) | Burrowing Strike (Weakness on hit to simulate armor bypass) → Segmented Defense (Regeneration to offset heavy hits) → Myriapod Swarm (Invisibility + Speed III escape at low HP) |
@@ -1326,6 +1326,7 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 ### 16.2 Cultivation
 
 - Start with a **Morphling Polyp** ![Morphling Polyp](../src/main/resources/assets/hemomancy/textures/item/morphling_polyp.png) (base form)
+- Players can obtain their first Morphling Polyp from rare layered wild polyps: black slime-like morphling larva that spawn across the Overworld with up to three biome-shaped appendage layers hinting at the morphling lines they can become.
 - Incubate in a **Morphling Incubator** block with enzymes to grow into specific morphling types
 - Store morphlings in a **Morphling Jar** ![Morphling Jar](../src/main/resources/assets/hemomancy/textures/item/morphling_jar.png) (6 slots, Uncommon rarity). The jar now opens one unified container screen: the six real inventory slots sit in two side columns around the animated bouncing morphling display, and clicking a swimming morphling equips or unequips it without leaving the inventory view.
 - The **Living Staff** cycles through equipped morphlings and changes its topper model accordingly
@@ -1363,7 +1364,7 @@ Successful Primal powers apply **Morphic Strain** as the main fungal drawback al
 | Pests | Swarm commander / area denial | **Vermin Crown** builds a swarm counter from kills, then releases stored swarms as autonomous hunters. Cradle mode patrols and harasses hostiles. |
 | Spider | Terrain control / vertical lair | **Web of Red Thread** tethers to blocks, pulls or roots entities, and can lace temporary climbable web-lines for allies. |
 | Bat | Recon / night raid planning | **Echothesis** sends an active pulse that reveals living blood signatures through terrain, pings important block entities, and grants a short darkness combat window. |
-| Moth | Rare reset / luminous rescue | **Chrysalis of Last Light** is an active or lethal-trigger cocoon that cleanses debuffs, prevents death, and disorients nearby hostiles. It has a very long cooldown and heavy blood/strain cost. |
+| Cuttlefish | Rare reset / luminous rescue | **Last-Light Mantle** is an active or lethal-trigger mantle that cleanses debuffs, prevents death, and disorients nearby hostiles. It has a very long cooldown and heavy blood/strain cost. |
 | Tick | Attrition epidemic | **Hemorrhagic Season** infects wounded hostiles with a spreading bleed/wither marker; infected deaths refresh and spread the outbreak. |
 | Urchin | Ritual anchor / bastion | **Reefheart Bastion** roots the player, grants resistance and knockback immunity, and reflects damage in pulses. Cradle mode becomes a defensive ward. |
 | Centipede | Danger traversal / de-aggro | **Hundredfold Molt** sheds a decoy husk, grants brief invulnerability/invisibility/speed, and clears poison, wither, and slowness. |
@@ -1414,7 +1415,7 @@ Current registered mutation attachments:
 | Chitinite | `LEGS` | `MorphlingChitiniteLegAttachmentModel` / `textures/models/morphling/chitinite_leg_attachment.png` | Paired ferric chitin plating |
 | Serpent | `LEGS` | `MorphlingSerpentLegAttachmentModel` / `textures/models/morphling/serpent_leg_attachment.png` | Paired solid leg coils and serpent heads |
 | Urchin | `BODY` | `MorphlingUrchinBodyAttachmentModel` / `textures/models/morphling/urchin_body_attachment.png` | Calcareous back plate with pulsing reef spines |
-| Moth | `HEAD` | `MorphlingMothHeadAttachmentModel` / `textures/models/morphling/moth_head_attachment.png` | Dust mask, antennae, and pale scale fins around the head |
+| Cuttlefish | `HEAD` | `MorphlingCuttlefishHeadAttachmentModel` / `textures/models/morphling/cuttlefish_head_attachment.png` | Soft mantle, side fins, and short tendrils around the head |
 | Centipede | `BODY` | `MorphlingCentipedeBodyAttachmentModel` / `textures/models/morphling/centipede_body_attachment.png` | Segmented torso carapace with side legs and feelers |
 | Pests | `BODY` | `MorphlingPestsBodyAttachmentModel` / `textures/models/morphling/pests_body_attachment.png` | Vermin brood-hive plate with pulsing brood nodes and skitter legs |
 | Tick | `BODY` | `MorphlingTickBodyAttachmentModel` / `textures/models/morphling/tick_body_attachment.png` | Engorged blood sac with claspers and feeding latch |
@@ -2418,7 +2419,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Chthonian** | ![](../src/main/resources/assets/hemomancy/textures/entity/chthonian/model_chthonian.png) | Monster | Iron-mandible termite creature — actively chews through wood blocks and wooden tools in the area. Spawns in Chthonian Termite Mounds (Savanna biome). Part of the "arthropods as natural hemomancers" theme (they produce hematic iron shells biologically). |
 | **Chthonian Queen** | ![](../src/main/resources/assets/hemomancy/textures/entity/chthonian_queen/model_chthonian_queen.png) | Monster | Boss variant of Chthonian; exactly 1 spawns per Termite Mound. Associated with gold (royal). The only gold-connected creature in the mod. |
 | **Lump of Thought** | ![](../src/main/resources/assets/hemomancy/textures/entity/lump_of_thought/model_lump_of_thought.png) | Monster | Sentient thought blob |
-| **Morphling Polyp** (mob) | ![](../src/main/resources/assets/hemomancy/textures/entity/morphling_polyp/model_morphling_polyp.png) | Monster | Wild morphling mob |
+| **Morphling Polyp** (mob) | ![](../src/main/resources/assets/hemomancy/textures/entity/morphling_polyp/model_morphling_polyp.png) | Monster | Rare black slime-like wild morphling larva. Natural spawns receive up to three biome-shaped layers (fungal, aquatic, cave, desert, forest, or open-land hints) and provide the player's first Morphling Polyp item. |
 | **Dessicant** | | Monster | Desiccating creature (ON_GROUND spawn) |
 | **Cruor Fiend** | | Monster | Blood-fueled fiend (ON_GROUND spawn) |
 | **Void Drinker** | | Monster | Void-aligned blood drainer (ON_GROUND spawn) |
@@ -2503,7 +2504,7 @@ Notable implemented drop families:
 |-----------------|------------|
 | Chitinite / Fervent Chitinite / Chthonian / Chthonian Queen | Chitinous Husk, with Chthonian Queen also rolling Ferric Enzyme |
 | Leech / Blood aquatic or arthropod mobs | Blood/hemolymph materials such as Swollen Leech or Cleansing Hemolymph |
-| Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob |
+| Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob; Morphling Polyps drop the base Morphling Polyp item and can roll a small layer-hint item from their active appendages |
 | Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread from the puppeteer; puppeteer-summoned dolls are support minions and do not create extra loot |
 | Chalybeate Snail | Killing gives only a rare small Hematic Iron Scrap fallback; reliable Chalybeate Sclerites come from knapper harvesting while retracted |
 | Blood Lantern Jelly | Empty/no meaningful combat drops; its value is ambient reef life and specimen preservation |
@@ -3034,7 +3035,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
 - **Debug Showcase Item** — Creative-mode testing tool (`DebugShowcaseItem`) that generates an organized showcase of all mod content in 4 sections: items in chests, blocks on platforms, mobs in fenced pens, and multiblock structures placed as patterns.
 - **Cardinal Rite Boundary Renderer** — Client-side visual renderer (`CardinalRiteBoundaryRenderer`) for cardinal rite boundaries during active rites.
-- **Morphling Item Textures** — All morphling types now have individual item textures and item models (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin).
+- **Morphling Item Textures** — All morphling types now have individual item textures and item models (bat, centipede, chitinite, cuttlefish, fungal, leeches, mole, pests, serpent, spider, tick, urchin).
 - **Morphling Attachment Models/Textures** — All 12 morphlings have Java attachment models, matching Blockbench `.bbmodel` examples, and per-attachment PNG atlases under `textures/models/morphling/`. The Java-to-Blockbench exporter under `tools/model_export/java_model_to_bbmodel.mjs` supports the `morphling` batch and direct Java model conversion.
 - **MnA Compatibility Expansion** — Extensive brainstorming and dormant compat source are documented in `MNA_COMPATIBILITY_BRAINSTORM.md` and `compat/mna/**`. Current NeoForge 1.21.1 branch excludes MnA compat from compilation because no compatible MnA build is available; `Hemomancy.java` registration is commented. Treat spell components, Blood Tithe, Spell ↔ Manipulation combo, and `HemoMnAConfig` as preserved design/port targets rather than active runtime features until compat is re-enabled.
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.

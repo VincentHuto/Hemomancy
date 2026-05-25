@@ -618,9 +618,9 @@ public final class MaterialsData {
                 "Morphlings", () -> new ItemStack(ItemInit.morphling_spider.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("morphling_moth", "Morphling: Moth",
-                "A morphling shaped into a pale moth. Scatters blinding scales.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_moth.get()),
+        list.add(new MaterialEntry("morphling_cuttlefish", "Morphling: Cuttlefish",
+                "A morphling shaped into a cuttlefish. Flashes chromatophores and leaves blinding sepia.",
+                "Morphlings", () -> new ItemStack(ItemInit.morphling_cuttlefish.get()),
                 true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("morphling_tick", "Morphling: Tick",

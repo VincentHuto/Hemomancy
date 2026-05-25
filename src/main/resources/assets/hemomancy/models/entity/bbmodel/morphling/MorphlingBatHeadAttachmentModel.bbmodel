@@ -9,8 +9,8 @@
   "modded_entity_version": "1.17",
   "modded_entity_flip_y": true,
   "visible_box": [
-    0.58125,
-    0.4775,
+    0.575,
+    0.475,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -4.58,
-        30.92,
-        -5.48
+        -4.5,
+        31,
+        -5.4
       ],
       "to": [
-        4.58,
-        33.08,
-        -3.32
+        4.5,
+        33,
+        -3.4
       ],
       "autouv": 0,
       "color": 1,
@@ -195,14 +195,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -4.65,
-        31.15,
-        -4.45
+        -4.6,
+        31.2,
+        -4.4
       ],
       "to": [
-        -2.55,
-        36.45,
-        -3.35
+        -2.6,
+        36.4,
+        -3.4
       ],
       "autouv": 0,
       "color": 2,
@@ -364,14 +364,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.55,
-        31.15,
-        -4.45
+        2.6,
+        31.2,
+        -4.4
       ],
       "to": [
-        4.65,
-        36.45,
-        -3.35
+        4.6,
+        36.4,
+        -3.4
       ],
       "autouv": 0,
       "color": 3,
@@ -533,14 +533,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -2.54,
-        30.36,
-        3.56
+        -2.5,
+        30.4,
+        3.6
       ],
       "to": [
-        2.54,
-        32.84,
-        5.24
+        2.5,
+        32.8,
+        5.2
       ],
       "autouv": 0,
       "color": 4,
@@ -631,10 +631,95 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "119e12a4-eafc-ccb2-d232-7f005bab8799",
-        "ea09b442-6634-b71f-d69d-463aac2ae73b",
-        "64af5fdb-9586-107a-04a7-28d9fe35677a",
-        "db91f169-d732-160e-d689-55afa9de153d"
+        {
+          "name": "brow_crest",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "119e12a4-eafc-ccb2-d232-7f005bab8799",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "b3804aa8-10cb-2a75-56ce-2011c0b21cfb",
+            "3ff9ac9a-8261-b2a3-6517-b27b6798fe4c"
+          ]
+        },
+        {
+          "name": "left_ear",
+          "origin": [
+            -3.6,
+            31.2,
+            -3.9
+          ],
+          "color": 2,
+          "uuid": "ea09b442-6634-b71f-d69d-463aac2ae73b",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "ac1f1b19-be7d-fcc1-8ee9-daa43784617e",
+            "1756ca1b-373a-131e-d57d-dadd448d35c0"
+          ],
+          "rotation": [
+            6.875494,
+            0,
+            16.042818
+          ]
+        },
+        {
+          "name": "right_ear",
+          "origin": [
+            3.6,
+            31.2,
+            -3.9
+          ],
+          "color": 3,
+          "uuid": "64af5fdb-9586-107a-04a7-28d9fe35677a",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "b5b1f6a3-5b2f-3dcc-2855-0a2e406c3555",
+            "c00978a3-1246-6b4d-c464-9ff95dc07736"
+          ],
+          "rotation": [
+            6.875494,
+            0,
+            -16.042818
+          ]
+        },
+        {
+          "name": "back_hook",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 4,
+          "uuid": "db91f169-d732-160e-d689-55afa9de153d",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "a7abee9d-524c-de2d-3d54-da3f37fb7806"
+          ]
+        }
       ]
     }
   ],

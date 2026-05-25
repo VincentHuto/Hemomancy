@@ -100,9 +100,9 @@ const MODEL_SETS = {
         texture: "textures/models/morphling/urchin_body_attachment.png",
       },
       {
-        name: "MorphlingMothHeadAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingMothHeadAttachmentModel.java",
-        texture: "textures/models/morphling/moth_head_attachment.png",
+        name: "MorphlingCuttlefishHeadAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingCuttlefishHeadAttachmentModel.java",
+        texture: "textures/models/morphling/cuttlefish_head_attachment.png",
       },
       {
         name: "MorphlingCentipedeBodyAttachmentModel",

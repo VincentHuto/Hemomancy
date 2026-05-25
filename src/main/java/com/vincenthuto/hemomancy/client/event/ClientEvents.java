@@ -745,7 +745,7 @@ public class ClientEvents {
                             return 5.0F;
                         } else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
                             return 6.0F;
-                        } else if (selectedStack.getItem() == ItemInit.morphling_moth.get()) {
+                        } else if (selectedStack.getItem() == ItemInit.morphling_cuttlefish.get()) {
                             return 7.0F;
                         } else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
                             return 8.0F;

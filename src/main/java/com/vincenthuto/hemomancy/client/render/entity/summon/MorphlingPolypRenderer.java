@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingPolypModel;
+import com.vincenthuto.hemomancy.client.render.layer.mob.MorphlingPolypAppendageLayer;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypEntity;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
@@ -14,7 +15,7 @@ public class MorphlingPolypRenderer extends MobRenderer<MorphlingPolypEntity, Mo
 
 	public MorphlingPolypRenderer(Context renderManagerIn) {
 		super(renderManagerIn, new MorphlingPolypModel<MorphlingPolypEntity>(renderManagerIn.bakeLayer(MorphlingPolypModel.LAYER_LOCATION)), 0.5F);
-
+		this.addLayer(new MorphlingPolypAppendageLayer(this, renderManagerIn.getModelSet()));
 	}
 
 	@Override

@@ -9,8 +9,8 @@
   "modded_entity_version": "1.17",
   "modded_entity_flip_y": true,
   "visible_box": [
-    1.19375,
-    1.181875,
+    1.175,
+    1.15,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -3.65,
-        23.85,
-        -3.4
+        -3.5,
+        24,
+        -3.25
       ],
       "to": [
-        3.65,
-        34.15,
-        3.4
+        3.5,
+        34,
+        3.25
       ],
       "autouv": 0,
       "color": 1,
@@ -111,14 +111,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -3.06,
-        25.44,
-        -5.26
+        -3,
+        25.5,
+        -5.2
       ],
       "to": [
-        3.06,
-        33.56,
-        -3.14
+        3,
+        33.5,
+        -3.2
       ],
       "autouv": 0,
       "color": 2,
@@ -280,14 +280,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -7.45,
-        35.75,
-        -6.95
+        -7,
+        36.2,
+        -6.5
       ],
       "to": [
-        7.45,
-        39.85,
-        4.95
+        7,
+        39.4,
+        4.5
       ],
       "autouv": 0,
       "color": 3,
@@ -365,14 +365,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -5.85,
-        35.15,
-        -10.95
+        -5.6,
+        35.4,
+        -10.7
       ],
       "to": [
-        5.85,
-        38.65,
-        -5.25
+        5.6,
+        38.4,
+        -5.5
       ],
       "autouv": 0,
       "color": 3,
@@ -450,14 +450,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -9.55,
-        34.65,
-        -5.75
+        -9.4,
+        34.8,
+        -5.6
       ],
       "to": [
-        -4.65,
-        37.85,
-        3.35
+        -4.8,
+        37.7,
+        3.2
       ],
       "autouv": 0,
       "color": 3,
@@ -535,14 +535,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        4.65,
-        34.65,
-        -5.75
+        4.8,
+        34.8,
+        -5.6
       ],
       "to": [
-        9.55,
-        37.85,
-        3.35
+        9.4,
+        37.7,
+        3.2
       ],
       "autouv": 0,
       "color": 3,
@@ -620,14 +620,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -5.32,
-        34.48,
-        3.68
+        -5.2,
+        34.6,
+        3.8
       ],
       "to": [
-        5.32,
-        37.52,
-        8.52
+        5.2,
+        37.4,
+        8.4
       ],
       "autouv": 0,
       "color": 3,
@@ -1209,14 +1209,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -4.38,
-        22.92,
-        -5.68
+        -4.3,
+        23,
+        -5.6
       ],
       "to": [
-        -3.22,
-        31.08,
-        -4.52
+        -3.3,
+        31,
+        -4.6
       ],
       "autouv": 0,
       "color": 5,
@@ -1378,14 +1378,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        3.12,
-        22.82,
-        -5.58
+        3.2,
+        22.9,
+        -5.5
       ],
       "to": [
-        4.28,
-        31.18,
-        -4.42
+        4.2,
+        31.1,
+        -4.5
       ],
       "autouv": 0,
       "color": 6,
@@ -1547,14 +1547,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -0.68,
-        22.22,
-        -6.28
+        -0.6,
+        22.3,
+        -6.2
       ],
       "to": [
-        0.68,
-        31.58,
-        -4.92
+        0.6,
+        31.5,
+        -5
       ],
       "autouv": 0,
       "color": 7,
@@ -1632,14 +1632,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        1.14,
-        20.94,
-        -6.56
+        1.2,
+        21,
+        -6.5
       ],
       "to": [
-        2.26,
-        28.06,
-        -5.44
+        2.2,
+        28,
+        -5.5
       ],
       "autouv": 0,
       "color": 0,
@@ -1717,14 +1717,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        -2.48,
-        23.32,
-        2.82
+        -2.4,
+        23.4,
+        2.9
       ],
       "to": [
-        -1.12,
-        30.88,
-        4.18
+        -1.2,
+        30.8,
+        4.1
       ],
       "autouv": 0,
       "color": 1,
@@ -1815,15 +1815,189 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "eb0b814d-ce06-721a-34f3-90f97b4c677c",
-        "f1320e00-be91-cdb3-eed2-4e8ede413bfd",
-        "c1881254-2cd8-8cac-de41-00bb745b9e67",
-        "bb5e1b20-d9fd-ff2f-8849-9714ea414447",
-        "2098a2fa-0526-6bcf-860b-fd883f41ed0d",
-        "5a9f9923-b210-2d20-a76e-3dd545d22f9a",
-        "9ca6ef34-804a-8988-71ac-40519ac8dd56",
-        "126592e5-a13d-9d9b-288a-f19f6c8f5987",
-        "ea0d1ff3-eb95-e0fe-c0d6-86fd7284701d"
+        {
+          "name": "stem",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "eb0b814d-ce06-721a-34f3-90f97b4c677c",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "8a4194de-7acb-18c8-6136-2d6739cab6dd"
+          ]
+        },
+        {
+          "name": "face_plate",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "f1320e00-be91-cdb3-eed2-4e8ede413bfd",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "7e64607d-24f6-ecbf-8d1b-782ef1317fb4",
+            "8f8d9976-28fc-7e3a-4f19-cae70b25b9a9"
+          ]
+        },
+        {
+          "name": "cap",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "c1881254-2cd8-8cac-de41-00bb745b9e67",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "a5f6c9f8-6a15-be7c-c4d7-5dfbcd4c746c",
+            "b362f450-9689-1832-5482-e5ceaeb327e9",
+            "69fa6395-4685-111d-c0e7-ac3a5e552717",
+            "ba6731cb-84d7-9c14-03af-7280064ee702",
+            "72b010e4-eb31-1283-57e3-cb914ebfb014"
+          ]
+        },
+        {
+          "name": "gills",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 4,
+          "uuid": "bb5e1b20-d9fd-ff2f-8849-9714ea414447",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "0249159d-a9db-9ac3-3ead-46a5926e99e5",
+            "0e125661-fdd3-a5f6-3a87-6599565d145a",
+            "e46c049f-11b2-f0f8-087b-a311a35196e6",
+            "7d2cc794-2043-bc5c-fc69-a6019d7ee03c",
+            "f49ab73b-045c-ce2a-a4ff-a37da69a5c03",
+            "c3d7e8bf-22e8-9436-f845-bf160ba4a77b"
+          ]
+        },
+        {
+          "name": "left_tendril",
+          "origin": [
+            -3.8,
+            31,
+            -5.1
+          ],
+          "color": 5,
+          "uuid": "2098a2fa-0526-6bcf-860b-fd883f41ed0d",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "a9a79f88-e432-463e-9c27-a809be2be8e4",
+            "6e299f8e-5e3d-f419-297a-a88b04b82685"
+          ]
+        },
+        {
+          "name": "right_tendril",
+          "origin": [
+            3.7,
+            31.1,
+            -5
+          ],
+          "color": 6,
+          "uuid": "5a9f9923-b210-2d20-a76e-3dd545d22f9a",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "0ad27803-148c-2440-4738-0e1c5eb896a2",
+            "ec93cab0-4580-4a3a-03f7-81d8a710c141"
+          ]
+        },
+        {
+          "name": "center_tendril",
+          "origin": [
+            0,
+            31.5,
+            -5.6
+          ],
+          "color": 7,
+          "uuid": "9ca6ef34-804a-8988-71ac-40519ac8dd56",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "118fd8c1-de9b-e714-b824-d2fd9bd6526a"
+          ]
+        },
+        {
+          "name": "jaw_tendril",
+          "origin": [
+            1.7,
+            28,
+            -6
+          ],
+          "color": 0,
+          "uuid": "126592e5-a13d-9d9b-288a-f19f6c8f5987",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "9bfcd1e8-3c54-049d-0dab-b26624aee325"
+          ]
+        },
+        {
+          "name": "rear_tendril",
+          "origin": [
+            -1.8,
+            30.8,
+            3.5
+          ],
+          "color": 1,
+          "uuid": "ea0d1ff3-eb95-e0fe-c0d6-86fd7284701d",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "95500dc4-efae-d48e-8b37-136ebcf478ef"
+          ]
+        }
       ]
     }
   ],

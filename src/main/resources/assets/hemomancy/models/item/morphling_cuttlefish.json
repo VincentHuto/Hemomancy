@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/morphling_moth"
+    "layer0": "hemomancy:item/morphling_cuttlefish"
   }
 }

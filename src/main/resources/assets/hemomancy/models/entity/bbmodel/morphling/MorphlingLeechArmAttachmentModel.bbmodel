@@ -9,8 +9,8 @@
   "modded_entity_version": "1.17",
   "modded_entity_flip_y": true,
   "visible_box": [
-    0.4275,
-    0.62,
+    0.41875,
+    0.6,
     0
   ],
   "variable_placeholders": "",
@@ -26,14 +26,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.42,
-        17.22,
-        -2.38
+        2.6,
+        17.4,
+        -2.2
       ],
       "to": [
-        5.98,
-        22.18,
-        2.38
+        5.8,
+        22,
+        2.2
       ],
       "autouv": 0,
       "color": 1,
@@ -195,14 +195,14 @@
       "rescale": false,
       "locked": false,
       "from": [
-        2.16,
-        12.26,
-        -1.94
+        2.3,
+        12.4,
+        -1.8
       ],
       "to": [
-        5.24,
-        17.34,
-        1.94
+        5.1,
+        17.2,
+        1.8
       ],
       "autouv": 0,
       "color": 2,
@@ -629,9 +629,67 @@
       "visibility": true,
       "autouv": 0,
       "children": [
-        "3407d1c1-1c33-31f8-04ac-87d4d1fe40b3",
-        "653f959a-b365-d368-dc57-bec4edc062fe",
-        "b0d1345f-ebde-4797-6ea1-171399c2a19b"
+        {
+          "name": "upper_leech",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 1,
+          "uuid": "3407d1c1-1c33-31f8-04ac-87d4d1fe40b3",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "bef9e0c4-b7cc-fae6-e91a-e16852d30376",
+            "a96193b8-6b7e-29cc-866f-8bad37779e08"
+          ]
+        },
+        {
+          "name": "lower_leech",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 2,
+          "uuid": "653f959a-b365-d368-dc57-bec4edc062fe",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "6222c5a5-b6b6-9c4e-ceaa-29de8125e580",
+            "094bb785-c538-7fd4-b24d-af70e640c11c"
+          ]
+        },
+        {
+          "name": "tendrils",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 3,
+          "uuid": "b0d1345f-ebde-4797-6ea1-171399c2a19b",
+          "export": true,
+          "mirror_uv": false,
+          "isOpen": true,
+          "locked": false,
+          "visibility": true,
+          "autouv": 0,
+          "children": [
+            "516c85cc-2d34-c6bf-7dec-c75ecb3a2bed",
+            "80cd86aa-e74a-ced3-044b-7c6cde2a387e",
+            "83a31d21-ef60-bdac-b486-a0e632b9e822"
+          ]
+        }
       ]
     }
   ],

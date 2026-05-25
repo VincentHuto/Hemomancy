@@ -492,8 +492,8 @@ public class ItemInit {
             () -> new PestsMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_spider = BASEITEMS.register("morphling_spider",
             () -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_moth = BASEITEMS.register("morphling_moth",
-            () -> new MothMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_cuttlefish = BASEITEMS.register("morphling_cuttlefish",
+            () -> new CuttlefishMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_tick = BASEITEMS.register("morphling_tick",
             () -> new TickMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_centipede = BASEITEMS.register("morphling_centipede",
