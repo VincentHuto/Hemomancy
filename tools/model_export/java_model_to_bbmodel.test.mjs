@@ -252,6 +252,195 @@ async function testChalybeateSnailForLoopPartsConvert() {
   }
 }
 
+async function testLegacyObfuscatedModelRendererArmorConverts() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "LegacyArmorModel.java");
+  const outputFile = path.join(outputDir, "LegacyArmorModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
+
+public class LegacyArmorModel extends ModelBiped {
+  ModelRenderer Helmet;
+  ModelRenderer[] Mask;
+
+  public LegacyArmorModel(float f) {
+    super(f, 0, 128, 64);
+    this.field_78090_t = 128;
+    this.field_78089_u = 64;
+    this.Mask = new ModelRenderer[2];
+    for (int a = 0; a < 2; ++a) {
+      this.Mask[a] = new ModelRenderer((ModelBase)this, 52 + a * 24, 2);
+      this.Mask[a].func_78789_a(-4.5f, -5.0f, -4.6f, 9, 5, 1);
+      this.Mask[a].func_78793_a(0.0f, 0.0f, 0.0f);
+      this.Mask[a].func_78787_b(128, 64);
+      this.setRotation(this.Mask[a], 0.0f, 0.0f, 0.0f);
+    }
+    this.Helmet = new ModelRenderer((ModelBase)this, 41, 8);
+    this.Helmet.func_78789_a(-4.5f, -9.0f, -4.5f, 9, 9, 9);
+    this.Helmet.func_78793_a(0.0f, 0.0f, -2.5f);
+    this.Helmet.field_78809_i = true;
+    this.setRotation(this.Helmet, 0.2268928f, 0.0f, 0.0f);
+    this.field_78116_c.field_78804_l.clear();
+    this.field_78116_c.func_78792_a(this.Helmet);
+    this.field_78116_c.func_78792_a(this.Mask[0]);
+    this.field_78115_e.func_78792_a(this.Mask[1]);
+  }
+
+  private void setRotation(ModelRenderer model, float x, float y, float z) {
+    model.field_78795_f = x;
+    model.field_78796_g = y;
+    model.field_78808_h = z;
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/item/sporitic_thurible.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+    const helmet = bbmodel.outliner
+      .find((node) => node.name === "head")
+      .children.find((node) => node.name === "Helmet");
+    const helmetCube = bbmodel.elements.find((element) => element.name.startsWith("Helmet_"));
+
+    assert.equal(bbmodel.name, "LegacyArmorModel");
+    assert.deepEqual(bbmodel.resolution, { width: 128, height: 64 });
+    assert.ok(groupNames.includes("head"), "biped head root should be exported");
+    assert.ok(groupNames.includes("body"), "biped body root should be exported");
+    assert.ok(groupNames.includes("Mask_0"), "array model renderer in loop should expand first element");
+    assert.ok(groupNames.includes("Mask_1"), "array model renderer in loop should expand second element");
+    assert.deepEqual(helmet.rotation, [-13, 0, 0]);
+    assert.equal(helmetCube.mirror_uv, true);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
+async function testLegacyNamedModelRendererMethodsConvert() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "LegacyNamedModel.java");
+  const outputFile = path.join(outputDir, "LegacyNamedModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
+
+public class LegacyNamedModel extends ModelBiped {
+  ModelRenderer HeadBand;
+
+  public LegacyNamedModel(float f) {
+    super(f, 0, 64, 32);
+    this.textureWidth = 64;
+    this.textureHeight = 32;
+    this.HeadBand = new ModelRenderer(this, 4, 6);
+    this.HeadBand.mirror = true;
+    this.HeadBand.addBox(-1.0F, -2.0F, -3.0F, 2, 3, 4, 0.5F);
+    this.HeadBand.setRotationPoint(1.0F, 2.0F, 3.0F);
+    this.HeadBand.rotateAngleX = 0.7853982F;
+    this.bipedHead.addChild(this.HeadBand);
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/item/sporitic_thurible.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+    const cube = bbmodel.elements.find((element) => element.name.startsWith("HeadBand_"));
+
+    assert.deepEqual(bbmodel.resolution, { width: 64, height: 32 });
+    assert.ok(groupNames.includes("HeadBand"), "named legacy ModelRenderer part should be exported");
+    assert.deepEqual(cube.from, [0, 21, 0]);
+    assert.deepEqual(cube.to, [2, 24, 4]);
+    assert.equal(cube.inflate, 0.5);
+    assert.equal(cube.mirror_uv, true);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
+async function testLegacyRuntimeRotationAssignmentsAreIgnored() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "LegacyAnimatedModel.java");
+  const outputFile = path.join(outputDir, "LegacyAnimatedModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+
+public class LegacyAnimatedModel extends ModelBiped {
+  ModelRenderer Cloth;
+
+  public LegacyAnimatedModel(float f) {
+    super(f, 0, 64, 32);
+    this.Cloth = new ModelRenderer(this, 0, 0);
+    this.Cloth.addBox(-1.0F, -1.0F, -1.0F, 2, 2, 2);
+    this.Cloth.rotateAngleX = 0.25F;
+    this.bipedBody.addChild(this.Cloth);
+  }
+
+  public void render(Entity entity, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float scale) {
+    float c = limbSwingAmount * 0.5F;
+    this.Cloth.rotateAngleX = c - 0.1047198F;
+    this.bipedHead.rotateAngleY = yaw * ((float)Math.PI / 180);
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/item/sporitic_thurible.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const body = bbmodel.outliner.find((node) => node.name === "body");
+    const cloth = body.children.find((node) => node.name === "Cloth");
+
+    assert.deepEqual(cloth.rotation, [-14.323945, 0, 0]);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
 function collectGroupNames(nodes, names) {
   for (const node of nodes) {
     if (!node || typeof node !== "object") {
@@ -275,6 +464,9 @@ const tests = [
   ["converts PartPose.rotation without an offset", testPartPoseRotationConverts],
   ["keeps CubeDeformation in inflate instead of baking it into position and size", testCubeDeformationDoesNotBakeIntoPositionAndSize],
   ["converts ChalybeateSnailModel parts declared inside a simple for loop", testChalybeateSnailForLoopPartsConvert],
+  ["converts obfuscated legacy ModelRenderer armor parts", testLegacyObfuscatedModelRendererArmorConverts],
+  ["converts named legacy ModelRenderer methods", testLegacyNamedModelRendererMethodsConvert],
+  ["ignores legacy runtime rotation assignments that are not static model data", testLegacyRuntimeRotationAssignmentsAreIgnored],
 ];
 
 for (const [name, test] of tests) {

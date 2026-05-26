@@ -128,6 +128,30 @@ const MODEL_SETS = {
   },
 };
 
+const LEGACY_BIPED_PARTS = new Map([
+  ["field_78116_c", { varName: "__legacy_biped_head", name: "head", offset: [0, 0, 0] }],
+  ["bipedHead", { varName: "__legacy_biped_head", name: "head", offset: [0, 0, 0] }],
+  ["head", { varName: "__legacy_biped_head", name: "head", offset: [0, 0, 0] }],
+  ["field_178720_f", { varName: "__legacy_biped_headwear", name: "headwear", offset: [0, 0, 0] }],
+  ["bipedHeadwear", { varName: "__legacy_biped_headwear", name: "headwear", offset: [0, 0, 0] }],
+  ["hat", { varName: "__legacy_biped_headwear", name: "headwear", offset: [0, 0, 0] }],
+  ["field_78115_e", { varName: "__legacy_biped_body", name: "body", offset: [0, 0, 0] }],
+  ["bipedBody", { varName: "__legacy_biped_body", name: "body", offset: [0, 0, 0] }],
+  ["body", { varName: "__legacy_biped_body", name: "body", offset: [0, 0, 0] }],
+  ["field_178723_h", { varName: "__legacy_biped_right_arm", name: "right_arm", offset: [-5, 2, 0] }],
+  ["bipedRightArm", { varName: "__legacy_biped_right_arm", name: "right_arm", offset: [-5, 2, 0] }],
+  ["rightArm", { varName: "__legacy_biped_right_arm", name: "right_arm", offset: [-5, 2, 0] }],
+  ["field_178724_i", { varName: "__legacy_biped_left_arm", name: "left_arm", offset: [5, 2, 0] }],
+  ["bipedLeftArm", { varName: "__legacy_biped_left_arm", name: "left_arm", offset: [5, 2, 0] }],
+  ["leftArm", { varName: "__legacy_biped_left_arm", name: "left_arm", offset: [5, 2, 0] }],
+  ["field_178721_j", { varName: "__legacy_biped_right_leg", name: "right_leg", offset: [-1.9, 12, 0] }],
+  ["bipedRightLeg", { varName: "__legacy_biped_right_leg", name: "right_leg", offset: [-1.9, 12, 0] }],
+  ["rightLeg", { varName: "__legacy_biped_right_leg", name: "right_leg", offset: [-1.9, 12, 0] }],
+  ["field_178722_k", { varName: "__legacy_biped_left_leg", name: "left_leg", offset: [1.9, 12, 0] }],
+  ["bipedLeftLeg", { varName: "__legacy_biped_left_leg", name: "left_leg", offset: [1.9, 12, 0] }],
+  ["leftLeg", { varName: "__legacy_biped_left_leg", name: "left_leg", offset: [1.9, 12, 0] }],
+]);
+
 const cli = parseCliArgs(process.argv.slice(2));
 
 if (cli.options.help) {
@@ -235,7 +259,7 @@ function parseJavaModel(source, model) {
   const loopContexts = collectSimpleForLoopContexts(source, numericConstants);
   const resolutionMatch = source.match(/LayerDefinition\.create\s*\(\s*[^,]+,\s*(\d+)\s*,\s*(\d+)\s*\)/);
   if (!resolutionMatch) {
-    throw new Error(`Could not find LayerDefinition.create resolution in ${model.source}`);
+    return parseLegacyModelRendererModel(source, model, numericConstants);
   }
 
   const parts = [];
@@ -354,6 +378,265 @@ function parsePose(poseExpression, parseNumeric = parseNumber) {
   }
 
   throw new Error(`Unsupported PartPose expression: ${pose}`);
+}
+
+function parseLegacyModelRendererModel(source, model, numericConstants) {
+  const parsingSource = stripJavaComments(source);
+  const loopContexts = collectSimpleForLoopContexts(parsingSource, numericConstants);
+  const parts = [];
+  const partsByVar = new Map();
+
+  const ensurePart = (varName, name = varName, rootOffset = null) => {
+    let part = partsByVar.get(varName);
+    if (!part) {
+      part = {
+        name,
+        varName,
+        parentVar: null,
+        cubes: [],
+        pose: {
+          offset: rootOffset ?? [0, 0, 0],
+          rotation: [0, 0, 0],
+        },
+        currentUv: [0, 0],
+        mirrored: false,
+      };
+      partsByVar.set(varName, part);
+      parts.push(part);
+    }
+    return part;
+  };
+
+  const ensureRefPart = (refExpression, locals = new Map()) => {
+    const ref = parseLegacyRendererRef(refExpression, numericConstants, locals);
+    const bipedPart = LEGACY_BIPED_PARTS.get(ref);
+    if (bipedPart) {
+      return ensurePart(bipedPart.varName, bipedPart.name, bipedPart.offset);
+    }
+    return ensurePart(ref);
+  };
+
+  collectLegacyModelRendererCreations(parsingSource, numericConstants, loopContexts, ensurePart);
+  applyLegacySetRotationCalls(parsingSource, numericConstants, loopContexts, ensureRefPart);
+  applyLegacyFieldAssignments(parsingSource, numericConstants, loopContexts, ensureRefPart);
+  applyLegacyMethodCalls(parsingSource, numericConstants, loopContexts, ensureRefPart);
+
+  for (const part of parts) {
+    if (part.mirrored) {
+      for (const cube of part.cubes) {
+        cube.mirrored = true;
+      }
+    }
+    delete part.currentUv;
+    delete part.mirrored;
+  }
+
+  const exportedParts = parts.filter((part) => part.cubes.length > 0 || parts.some((candidate) => candidate.parentVar === part.varName));
+  if (exportedParts.length === 0) {
+    throw new Error(`No ModelRenderer parts found in ${model.source}`);
+  }
+
+  return {
+    resolution: inferLegacyTextureResolution(parsingSource),
+    parts: withWorldOffsets(exportedParts),
+  };
+}
+
+function collectLegacyModelRendererCreations(source, constants, loopContexts, ensurePart) {
+  let searchAt = 0;
+  while (true) {
+    const newAt = source.indexOf("new ModelRenderer", searchAt);
+    if (newAt === -1) {
+      break;
+    }
+
+    const statementStart = Math.max(source.lastIndexOf(";", newAt), source.lastIndexOf("{", newAt)) + 1;
+    const prefix = source.slice(statementStart, newAt);
+    const assignment = prefix.match(/((?:this\.)?[A-Za-z_$][\w$]*(?:\s*\[[^\]]+\])?)\s*=\s*$/);
+    const openParen = source.indexOf("(", newAt);
+    const closeParen = findMatching(source, openParen, "(", ")");
+    if (!assignment) {
+      searchAt = closeParen + 1;
+      continue;
+    }
+
+    const targetExpression = assignment[1];
+    const args = splitTopLevel(source.slice(openParen + 1, closeParen), ",");
+    const loopContext = innermostLoopContextFor(loopContexts, newAt);
+    const iterationLocals = loopContext?.iterations ?? [new Map()];
+    for (const locals of iterationLocals) {
+      const varName = parseLegacyRendererRef(targetExpression, constants, locals);
+      const part = ensurePart(varName);
+      part.currentUv = legacyConstructorUv(args, constants, locals);
+    }
+    searchAt = closeParen + 1;
+  }
+}
+
+function applyLegacySetRotationCalls(source, constants, loopContexts, ensureRefPart) {
+  const callPattern = /\bthis\s*\.\s*setRotation\s*\(/g;
+  let match;
+  while ((match = callPattern.exec(source)) !== null) {
+    const openParen = source.indexOf("(", match.index);
+    const closeParen = findMatching(source, openParen, "(", ")");
+    const args = splitTopLevel(source.slice(openParen + 1, closeParen), ",");
+    if (args.length !== 4) {
+      callPattern.lastIndex = closeParen + 1;
+      continue;
+    }
+
+    const loopContext = innermostLoopContextFor(loopContexts, match.index);
+    const iterationLocals = loopContext?.iterations ?? [new Map()];
+    for (const locals of iterationLocals) {
+      const part = ensureRefPart(args[0], locals);
+      const parseNumeric = (value) => parseNumber(value, constants, locals);
+      part.pose.rotation = args.slice(1, 4).map(parseNumeric);
+    }
+    callPattern.lastIndex = closeParen + 1;
+  }
+}
+
+function applyLegacyFieldAssignments(source, constants, loopContexts, ensureRefPart) {
+  const assignmentPattern =
+    /(this\.[A-Za-z_$][\w$]*(?:\s*\[[^\]]+\])?)\s*\.\s*(field_78809_i|mirror|field_78795_f|rotateAngleX|field_78796_g|rotateAngleY|field_78808_h|rotateAngleZ)\s*=\s*([^;]+);/g;
+  let match;
+
+  while ((match = assignmentPattern.exec(source)) !== null) {
+    const targetExpression = match[1];
+    const field = match[2];
+    const value = match[3].trim();
+    const loopContext = innermostLoopContextFor(loopContexts, match.index);
+    const iterationLocals = loopContext?.iterations ?? [new Map()];
+    for (const locals of iterationLocals) {
+      const part = ensureRefPart(targetExpression, locals);
+      if (field === "field_78809_i" || field === "mirror") {
+        part.mirrored = value !== "false";
+        continue;
+      }
+
+      let numericValue;
+      try {
+        numericValue = parseNumber(value, constants, locals);
+      } catch {
+        continue;
+      }
+      const rotationIndex = field === "field_78795_f" || field === "rotateAngleX"
+        ? 0
+        : field === "field_78796_g" || field === "rotateAngleY"
+          ? 1
+          : 2;
+      part.pose.rotation[rotationIndex] = numericValue;
+    }
+  }
+}
+
+function applyLegacyMethodCalls(source, constants, loopContexts, ensureRefPart) {
+  const methodPattern =
+    /((?:this\.)?[A-Za-z_$][\w$]*(?:\s*\[[^\]]+\])?)\s*\.\s*(func_78789_a|func_78790_a|addBox|func_78793_a|setRotationPoint|func_78787_b|setTextureSize|func_78784_a|setTextureOffset|func_78792_a|addChild)\s*\(/g;
+  let match;
+
+  while ((match = methodPattern.exec(source)) !== null) {
+    const targetExpression = match[1];
+    const method = match[2];
+    const openParen = source.indexOf("(", match.index);
+    const closeParen = findMatching(source, openParen, "(", ")");
+    const args = splitTopLevel(source.slice(openParen + 1, closeParen), ",");
+    const loopContext = innermostLoopContextFor(loopContexts, match.index);
+    const iterationLocals = loopContext?.iterations ?? [new Map()];
+
+    for (const locals of iterationLocals) {
+      const part = ensureRefPart(targetExpression, locals);
+      const parseNumeric = (value) => parseNumber(value, constants, locals);
+
+      if (method === "func_78789_a" || method === "func_78790_a" || method === "addBox") {
+        const cube = parseLegacyAddBox(args, parseNumeric, part.currentUv, part.mirrored);
+        part.cubes.push(cube);
+      } else if (method === "func_78793_a" || method === "setRotationPoint") {
+        if (args.length !== 3) {
+          throw new Error(`${method} expected 3 arguments, got ${args.length}`);
+        }
+        part.pose.offset = args.map(parseNumeric);
+      } else if (method === "func_78784_a" || method === "setTextureOffset") {
+        const values = args.map(parseNumeric);
+        part.currentUv = [values[0], values[1]];
+      } else if (method === "func_78792_a" || method === "addChild") {
+        if (args.length !== 1) {
+          throw new Error(`${method} expected 1 argument, got ${args.length}`);
+        }
+        const child = ensureRefPart(args[0], locals);
+        child.parentVar = part.varName;
+      }
+    }
+
+    methodPattern.lastIndex = closeParen + 1;
+  }
+}
+
+function parseLegacyAddBox(args, parseNumeric, uv, mirrored) {
+  const values = [...args];
+  if (values.length > 0 && /^"/.test(values[0].trim())) {
+    values.shift();
+  }
+  if (values.length < 6) {
+    throw new Error(`Expected legacy addBox to have at least 6 numeric arguments, got ${values.length}`);
+  }
+
+  const [x, y, z, width, height, depth] = values.slice(0, 6).map(parseNumeric);
+  const inflate = values.length > 6 ? parseNumeric(values[6]) : 0;
+  return { x, y, z, width, height, depth, inflate, uv: [...uv], mirrored };
+}
+
+function legacyConstructorUv(args, constants, locals) {
+  if (args.length < 3) {
+    return [0, 0];
+  }
+  const parseNumeric = (value) => parseNumber(value, constants, locals);
+  return args.slice(-2).map(parseNumeric);
+}
+
+function parseLegacyRendererRef(value, constants, locals = new Map()) {
+  const normalized = value.trim()
+    .replace(/^\((?:ModelRenderer|ModelBase)\)\s*/, "")
+    .replace(/^this\./, "");
+  const match = normalized.match(/^([A-Za-z_$][\w$]*)(?:\s*\[\s*([\s\S]+)\s*\])?$/);
+  if (!match) {
+    throw new Error(`Expected ModelRenderer reference, got ${value}`);
+  }
+
+  if (!match[2]) {
+    return match[1];
+  }
+  return `${match[1]}_${parseNumber(match[2], constants, locals)}`;
+}
+
+function inferLegacyTextureResolution(source) {
+  const width = firstLegacyResolutionValue(source, [
+    /\b(?:this\.)?(?:field_78090_t|textureWidth)\s*=\s*([^;]+);/g,
+    /\bsuper\s*\((?:[^,]+,\s*){2}([^,]+)\s*,\s*[^)]+\)/g,
+  ]);
+  const height = firstLegacyResolutionValue(source, [
+    /\b(?:this\.)?(?:field_78089_u|textureHeight)\s*=\s*([^;]+);/g,
+    /\bsuper\s*\((?:[^,]+,\s*){3}([^)]+)\)/g,
+  ]);
+
+  return {
+    width: width ?? 64,
+    height: height ?? 32,
+  };
+}
+
+function firstLegacyResolutionValue(source, patterns) {
+  for (const pattern of patterns) {
+    const match = pattern.exec(source);
+    if (!match) {
+      continue;
+    }
+    const value = parseNumberLiteral(match[1]);
+    if (value !== null) {
+      return value;
+    }
+  }
+  return null;
 }
 
 function toBlockbenchModel(model, parsed, outputPath) {
