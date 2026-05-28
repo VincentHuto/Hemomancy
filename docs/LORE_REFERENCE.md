@@ -2,13 +2,13 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-05-19 Sporitic Thurible alignment note. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-05-28 Harbinger equipment, Hematic Armature, Silent Archon vestments, and Annetta item-render status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
-> **Current Lore-State Snapshot (2026-05-06 audit):**
+> **Current Lore-State Snapshot (2026-05-28 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
-> - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and final animation polish, fuller Phase 1 biological combat identity, and Sanguis Lancea rendering remain WIP.
+> - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
@@ -246,6 +246,16 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 
 **Gameplay:** **Fungal Dimension** access via the Fungal Spine item. On first exit attempt from the dimension, the Fungal Podium fires the core witness dialogue and the two-option choice fork (stamped as `archon_choice_made`). Post-return, the Apotheos retains full Qliphoth Pome empowerment (reduced manipulation costs), maximum blood capacity, and unique cosmetic effects reflecting the fungal transformation.
 
+### 6.4b Vestments and the Hematic Armature
+
+Harbinger armor is not simply blacksmithing. The Hematic Armature is a ritual scaffold: the practitioner enters the frame wearing the armor to be remade, offers blood into the overhead heart, and lets prepared reagents teach the metal what the next vow means. The rite should feel intimate and a little invasive. The armor remembers the body because it is transformed on the body.
+
+The ladder is a degree ladder with sidegrade forks. Hematic Iron is the first chosen shell: iron taught to carry blood. Barbed armor and Chitinite armor are the Initiate's two animal-tier answers to danger, one retaliatory and one sheltering. Blood Lust is the Crimson Lodge's combat vestment, but it is controlled hunger rather than mindless berserker rage. Its masks are small vows and martial tells, not separate doctrines.
+
+Silent Archon Vestments are different. They are cloth and armor mixed after the Archon refuses Apotheos, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
+
+One-off pieces should remain covenant-breaking tradeoffs in tone as well as mechanics. The Crown of Sacred Marrow, Hemolymphopoda Headpiece, Chalybeate Sclerite Sabatons, and Covenant Mantle each express a narrow vow or ecology. Wearing one means choosing that vow over the comfort of a full-set identity.
+
 ### 6.5 The Founding Sanctum
 
 At Degree 5, a Harbinger can perform a founding rite that consecrates an area around their chosen base. A **5×5 chunk area** becomes a Harbinger Sanctum — a zone where all Harbingers present receive enhanced powers: stronger regeneration, lower cooldowns, more potent attacks. This is meant to encourage collective settlement and base-building with others. A special crafting material called a **Quintessence** is granted by the Illuminatus rite and is required to perform the founding ritual.
@@ -462,7 +472,7 @@ This one small fact — an insect bite that should not have been possible — **
 
 Her sanity broke under the weight of this question. And in that fracture, the latent blood power she had been suppressing for her entire life — through years of purity work, through complete devotion — came flooding out all at once, released by the psychological collapse of her defenses.
 
-**What she has become:** A being caught between both paths — still carrying the silver of the Unstained (her eyes are that teal patina-blue, the color of verdigris copper) but also bursting with awakened hemomantic power. She wields a spear that appears to be made of hyper-solidified blood — her blood, long-latent, finally crystallized. In her second phase, she extracts this from herself as her primary weapon.
+**What she has become:** A being caught between both paths — still carrying the silver of the Unstained (her eyes are that teal patina-blue, the color of verdigris copper) but also bursting with awakened hemomantic power. She wields a spear that appears to be made of hyper-solidified blood — her blood, long-latent, finally crystallized. In her second phase, she extracts this from herself as her primary weapon. Annetta's Sanguis Lancea should read as a personal relapse given shape, not an ordinary Hematic Order weapon.
 
 **Her thematic domain:** Teeth, nails, hair — the biological materials that are *not* blood-connected (calcium, keratin) but are undeniably biological. These fall into neither the Harbinger (blood, iron, bone) nor the fully Unstained (copper, silver) domain. They are hers.
 
@@ -477,7 +487,7 @@ Her sanity broke under the weight of this question. And in that fracture, the la
 
 After either route concludes she either lies broken (Harbinger) or stands resolved and at peace (Unstained).
 
-**Remaining WIP:** GeckoLib animation polish; the fuller teeth/nails/hair biological domain for Phase 1; Sanguis Lancea projectile rendering.
+**Remaining WIP:** GeckoLib animation polish; the fuller teeth/nails/hair biological domain for Phase 1; Annetta-specific thrown projectile rendering. Her Sanguis Lancea held/item render is implemented, while the thrown projectile still shares the standard blood-lance path.
 
 ---
 
@@ -538,7 +548,10 @@ Each faction's relationship with materials reflects their worldview.
 | Material | Faction | Significance |
 |----------|---------|--------------|
 | **Hematic Iron** | Harbingers | Blood-fused iron — the organic and the mineral made one. The body's mineral content, weaponized. |
+| **Calcified Blood Spine** | Harbingers | Barbed Urchin material used for the retaliatory armor fork: bone-like, thorn-like, and still animal enough to imply that defense can wound back. |
+| **Crimson Lacquer** | Crimson Lodge | A ritual finish rather than a simple paint: blood-crystal polish, ferric powder, and salve sealing Barbed or Chitinite ancestry into the disciplined hunger of Blood Lust. |
 | **Chalybeate Sclerite** | Harbingers | Iron-sulfide armor scale from deep vent snails; a Ferric ocean expression of the same living-mineral philosophy behind hematic iron. It is best taken by careful knapping from a withdrawn living animal, not by slaughter. |
+| **Monolith Imbued Cloth** | Silent Archons | Cloth threaded with Monolith Fragment burden and puppeteering thread. It belongs to Archons who reject Apotheos: not purity, not victory, but the decision to keep wearing the truth without dissolving into it. |
 | **Erythrocoral Fragment** | Harbingers | Warm-ocean fungal-coral tissue: a Vivacious expression of hemomancy as ecology rather than conquest. It supports spore craft through careful shearing, not reef-clearing extraction. |
 | **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |
 | **Living materials** (bone, chitin, organic tools) | Harbingers | Blood magic makes materials *alive* — tools that feed and grow. |
