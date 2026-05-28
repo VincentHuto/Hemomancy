@@ -1,0 +1,13 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 7,
+  "armor_slot": "legs",
+  "base": { "item": "hemomancy:blood_lust_legs" },
+  "reagent": { "item": "hemomancy:monolith_imbued_cloth" },
+  "blood_cost": 2000,
+  "result": { "id": "hemomancy:silent_archon_leggings" },
+  "persistent_data_gate": {
+    "key": "hemomancy:archon_choice_made",
+    "value": "silent"
+  }
+}

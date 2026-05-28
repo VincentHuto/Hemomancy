@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    "LCL",
+    " P "
+  ],
+  "key": {
+    "F": { "item": "minecraft:feather" },
+    "L": { "item": "minecraft:leather" },
+    "C": { "item": "hemomancy:crimson_lacquer" },
+    "P": { "item": "minecraft:paper" }
+  },
+  "result": {
+    "id": "hemomancy:tengu_mask"
+  }
+}

@@ -36,6 +36,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntit
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.*;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
+import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
@@ -76,6 +77,14 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .updateInterval(20)
                             .build(Hemomancy.rloc("covenant_throne_seat").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ArmatureRestraintEntity>> hematic_armature_restraint =
+            ENTITY_TYPES.register("hematic_armature_restraint",
+                    () -> EntityType.Builder.<ArmatureRestraintEntity>of(ArmatureRestraintEntity::new, MobCategory.MISC)
+                            .sized(0.01F, 0.01F)
+                            .clientTrackingRange(8)
+                            .updateInterval(20)
+                            .build(Hemomancy.rloc("hematic_armature_restraint").toString()));
 
     // Mobs
     public static final DeferredHolder<EntityType<?>, EntityType<UnstainedZealotEntity>> unstained_zealot = ENTITY_TYPES.register(

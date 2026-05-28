@@ -4,10 +4,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.PuppeteersSpindleModel;
-import com.vincenthuto.hutoslib.math.Quaternion;
-import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -22,6 +21,10 @@ import net.minecraft.world.item.ItemStack;
 public class PuppeteersSpindleItemRenderer extends BlockEntityWithoutLevelRenderer {
 	public static final ResourceLocation TEXTURE =
 			Hemomancy.rloc("textures/block/polished_venous_stone_bricks.png");
+	private static final float GUI_MODEL_PITCH_DEGREES = 198.0F;
+	private static final float GUI_MODEL_YAW_DEGREES = -42.0F;
+	private static final float GUI_MODEL_ROLL_DEGREES = -8.0F;
+	private static final double GUI_MODEL_TRANSLATE_Y = 0.26D;
 
 	private PuppeteersSpindleModel model;
 
@@ -44,27 +47,25 @@ public class PuppeteersSpindleItemRenderer extends BlockEntityWithoutLevelRender
 		boolean isGui = displayContext == ItemDisplayContext.GUI;
 		if (isGui) {
 			Lighting.setupForEntityInInventory();
-			poseStack.mulPose(new Quaternion(Vector3.YP, 90, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.ZP, 30, true).toMoj());
-			poseStack.translate(-0.5, -0.2, 0);
 		}
 
 		poseStack.pushPose();
 		if (isGui) {
-			poseStack.translate(0.5, 0.52, 0.5);
+			poseStack.translate(0.5D, GUI_MODEL_TRANSLATE_Y, 0.5D);
 			poseStack.scale(0.45F, 0.45F, 0.45F);
-			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+			poseStack.mulPose(Axis.XP.rotationDegrees(GUI_MODEL_PITCH_DEGREES));
+			poseStack.mulPose(Axis.YP.rotationDegrees(GUI_MODEL_YAW_DEGREES));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(GUI_MODEL_ROLL_DEGREES));
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			poseStack.translate(0.5, 0.55, 0.5);
 			poseStack.scale(0.35F, 0.35F, 0.35F);
-			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
+			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 		} else {
 			poseStack.translate(0.5, 0.48, 0.5);
 			poseStack.scale(0.35F, 0.35F, 0.35F);
-			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
+			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 		}
 
 		this.model.setupAnim(0.0F);

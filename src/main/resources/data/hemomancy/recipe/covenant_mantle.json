@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TCT",
+    "LBL",
+    "L L"
+  ],
+  "key": {
+    "T": { "item": "hemomancy:puppeteering_thread" },
+    "C": { "item": "hemomancy:crimson_lacquer" },
+    "L": { "item": "minecraft:leather" },
+    "B": { "item": "hemomancy:bloody_jug" }
+  },
+  "result": {
+    "id": "hemomancy:covenant_mantle"
+  }
+}

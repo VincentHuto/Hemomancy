@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 5,
+  "armor_slot": "legs",
+  "base": { "item": "hemomancy:chitinite_leggings" },
+  "reagent": { "item": "hemomancy:crimson_lacquer" },
+  "blood_cost": 1200,
+  "result": { "id": "hemomancy:blood_lust_legs" },
+  "result_data": { "hemomancy:lineage": "chitinite" }
+}

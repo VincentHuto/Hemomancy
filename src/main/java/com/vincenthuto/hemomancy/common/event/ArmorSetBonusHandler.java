@@ -5,11 +5,16 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -42,6 +47,7 @@ public class ArmorSetBonusHandler {
 
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
 	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
+	private static final String SILENT_ARCHON_COOLDOWN_TAG = "hemomancy:silent_archon_refusal_until";
 
 	private static final double HEMATIC_IRON_BLOOD_REGEN = 2.0;
 	private static final int HEMATIC_IRON_REGEN_INTERVAL = 20; // Every 20 ticks = 1 second
@@ -54,6 +60,8 @@ public class ArmorSetBonusHandler {
 	private static final double MARROW_CROWN_DAMAGE_BONUS = 0.10;
 	private static final double MARROW_CROWN_BLOOD_THRESHOLD = 0.50;
 	private static final int UNSTAINED_CHECK_INTERVAL = 10; // Check every 10 ticks
+	private static final float CHALYBEATE_DAMAGE_REDUCTION = 0.15F;
+	private static final double COVENANT_MANTLE_BLOOD_COST = 10.0D;
 
 	/**
 	 * Count how many armor pieces of a given material the player is wearing.
@@ -126,6 +134,17 @@ public class ArmorSetBonusHandler {
 				player.removeEffect(EffectInit.hemolysis);
 			}
 		}
+
+		if (player.tickCount % 20 == 0
+				&& player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.chalybeate_sclerite_sabatons.get())
+				&& player.fallDistance > 3.0F) {
+			player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 40, 0, false, true, true));
+		}
+
+		if (player.tickCount % 40 == 0
+				&& player.getItemBySlot(EquipmentSlot.CHEST).is(ItemInit.covenant_mantle.get())) {
+			pulseCovenantMantle(player);
+		}
 	}
 
 	// â”€â”€â”€â”€â”€ Blood Lust: Lifesteal â”€â”€â”€â”€â”€
@@ -141,6 +160,7 @@ public class ArmorSetBonusHandler {
 			if (healAmount > 0) {
 				player.heal(healAmount);
 			}
+			applyBloodLustMaskBonus(player, event.getEntity());
 		}
 	}
 
@@ -150,6 +170,23 @@ public class ArmorSetBonusHandler {
 	public static void onPlayerHurt(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide()) return;
+
+		if (trySilentArchonDeathRefusal(player, event)) {
+			return;
+		}
+
+		if (player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.chalybeate_sclerite_sabatons.get())
+				&& (event.getSource().is(DamageTypeTags.IS_PROJECTILE)
+				|| event.getSource().is(DamageTypes.FALL))) {
+			event.setNewDamage(event.getNewDamage() * (1.0F - CHALYBEATE_DAMAGE_REDUCTION));
+		}
+
+		// Chitinite set bonus: projectile damage reduction
+		if (hasFullSet(player, EnumModArmorTiers.CHITINITE)) {
+			if (!event.getSource().isDirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
+				event.setNewDamage(event.getNewDamage() * (1.0f - CHITINITE_PROJECTILE_REDUCTION));
+			}
+		}
 
 		LivingEntity attacker = null;
 		if (event.getSource().getEntity() instanceof LivingEntity living) {
@@ -167,12 +204,96 @@ public class ArmorSetBonusHandler {
 					BARBED_BLOOD_LOSS_DURATION,
 					BARBED_BLOOD_LOSS_AMPLIFIER));
 		}
+	}
 
-		// Chitinite set bonus: projectile damage reduction
-		if (hasFullSet(player, EnumModArmorTiers.CHITINITE)) {
-			if (!event.getSource().isDirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
-				event.setNewDamage(event.getNewDamage() * (1.0f - CHITINITE_PROJECTILE_REDUCTION));
+	private static boolean trySilentArchonDeathRefusal(Player player, LivingDamageEvent.Pre event) {
+		if (event.getNewDamage() < player.getHealth()) {
+			return false;
+		}
+
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive()) {
+			return false;
+		}
+
+		long now = player.level().getGameTime();
+		long cooldownUntil = player.getPersistentData().getLong(SILENT_ARCHON_COOLDOWN_TAG);
+		String archonChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+		boolean canRefuse = SilentArchonArmorRules.canRefuseDeath(
+				hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON),
+				HemoCapabilityAccess.getPlayerDegreeNumber(player),
+				archonChoice,
+				volume.getBloodVolume(),
+				SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST,
+				now,
+				cooldownUntil);
+		if (!canRefuse) {
+			return false;
+		}
+
+		volume.drain(SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST);
+		if (player instanceof ServerPlayer serverPlayer) {
+			syncVolume(serverPlayer, volume);
+		}
+		player.getPersistentData().putLong(SILENT_ARCHON_COOLDOWN_TAG,
+				SilentArchonArmorRules.nextCooldownUntil(now));
+		event.setNewDamage(SilentArchonArmorRules.damageLeavingBarelyAlive(player.getHealth()));
+		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 4, false, true, true));
+		player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 1, false, true, true));
+		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 240, 1, false, true, true));
+		player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 240, 1, false, true, true));
+		player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 120, 0, false, true, true));
+		return true;
+	}
+
+	private static void applyBloodLustMaskBonus(Player player, LivingEntity target) {
+		BloodLustArmorItem.MaskType maskType = getBloodLustMaskType(player);
+		if (maskType == null) {
+			return;
+		}
+		switch (maskType) {
+			case TENGU -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, true, true));
+			case HORNED -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
+			case LODESTONE -> HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+				if (volume.isActive() && !volume.isFull()) {
+					volume.fill(4.0D);
+					if (player instanceof ServerPlayer serverPlayer) {
+						syncVolume(serverPlayer, volume);
+					}
+				}
+			});
+			case VELORUM -> player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 80, 0, false, true, true));
+			default -> {
 			}
+		}
+	}
+
+	private static BloodLustArmorItem.MaskType getBloodLustMaskType(Player player) {
+		ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
+		if (helmet.getItem() instanceof BloodLustArmorItem bloodLustArmor) {
+			return bloodLustArmor.getMaskType();
+		}
+		return null;
+	}
+
+	private static void pulseCovenantMantle(Player player) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive()
+				|| volume.getBloodVolume() < COVENANT_MANTLE_BLOOD_COST) {
+			return;
+		}
+
+		boolean granted = false;
+		for (Player nearby : player.level().getEntitiesOfClass(Player.class,
+				player.getBoundingBox().inflate(8.0D),
+				nearby -> nearby != player && HemoCapabilityAccess.getBloodVolume(nearby)
+						.map(IBloodVolume::isActive).orElse(false))) {
+			nearby.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true, true));
+			granted = true;
+		}
+		if (granted && volume.drain(COVENANT_MANTLE_BLOOD_COST)
+				&& player instanceof ServerPlayer serverPlayer) {
+			syncVolume(serverPlayer, volume);
 		}
 	}
 

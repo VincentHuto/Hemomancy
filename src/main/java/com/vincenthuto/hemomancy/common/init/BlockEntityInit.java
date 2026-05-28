@@ -71,6 +71,10 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity::new,
 							BlockInit.covenant_throne.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HematicArmatureBlockEntity>> hematic_armature = TILES
+			.register("hematic_armature", () -> BlockEntityType.Builder
+					.of(HematicArmatureBlockEntity::new, BlockInit.hematic_armature.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.functional.SanguineVigilBlockEntity>> sanguine_vigil = TILES
 			.register("sanguine_vigil", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.functional.SanguineVigilBlockEntity::new,

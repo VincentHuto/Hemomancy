@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 5,
+  "armor_slot": "head",
+  "base": { "item": "hemomancy:blood_lust_helm" },
+  "reagent": { "item": "hemomancy:tengu_mask" },
+  "blood_cost": 350,
+  "result": { "id": "hemomancy:blood_lust_helm_tengu" }
+}

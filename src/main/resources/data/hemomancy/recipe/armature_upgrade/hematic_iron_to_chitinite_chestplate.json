@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 3,
+  "armor_slot": "chest",
+  "base": { "item": "hemomancy:hematic_iron_chestplate" },
+  "reagent": { "item": "hemomancy:chitinous_husk" },
+  "blood_cost": 500,
+  "result": { "id": "hemomancy:chitinite_chestplate" }
+}

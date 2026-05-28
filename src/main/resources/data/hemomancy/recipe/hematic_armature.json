@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "SBS",
+    "PPP"
+  ],
+  "key": {
+    "I": { "item": "hemomancy:hematic_iron_scrap" },
+    "S": { "item": "minecraft:chain" },
+    "B": { "item": "hemomancy:blood_crystal" },
+    "P": { "item": "hemomancy:polished_venous_stone_bricks" }
+  },
+  "result": {
+    "id": "hemomancy:hematic_armature"
+  }
+}

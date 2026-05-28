@@ -33,6 +33,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRe
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.*;
@@ -72,6 +73,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScree
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
@@ -99,6 +101,7 @@ import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -175,6 +178,8 @@ public class ClientEvents {
             "key.hemomancy.category");
 
     private static boolean menuKey = false;
+    private static CameraType cameraBeforeArmature = null;
+    private static final float ARMATURE_CAMERA_DISTANCE = 7.0F;
 
     @SubscribeEvent
     public static void onClientTickPre(ClientTickEvent.Pre event) {
@@ -197,7 +202,34 @@ public class ClientEvents {
         if (FungalWhisperVignetteOverlay.instance != null) {
             FungalWhisperVignetteOverlay.instance.tick();
         }
+        handleArmatureCameraFallback();
         handleCommonClientTickInput();
+    }
+
+    private static void handleArmatureCameraFallback() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            cameraBeforeArmature = null;
+            return;
+        }
+        boolean mountedOnArmature = mc.player.getVehicle() instanceof ArmatureRestraintEntity;
+        if (mountedOnArmature) {
+            if (cameraBeforeArmature == null) {
+                cameraBeforeArmature = mc.options.getCameraType();
+            }
+            mc.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+        } else if (cameraBeforeArmature != null) {
+            mc.options.setCameraType(cameraBeforeArmature);
+            cameraBeforeArmature = null;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onDetachedCameraDistance(CalculateDetachedCameraDistanceEvent event) {
+        if (event.getCamera().getEntity() instanceof Player player
+                && player.getVehicle() instanceof ArmatureRestraintEntity) {
+            event.setDistance(Math.max(event.getDistance(), ARMATURE_CAMERA_DISTANCE));
+        }
     }
 
     private static void handleCommonClientTickInput() {
@@ -575,6 +607,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);
             event.registerEntityRenderer(EntityInit.venous_strider.get(), VenousStriderRenderer::new);
             event.registerEntityRenderer(EntityInit.covenant_throne_seat.get(), CovenantThroneSeatRenderer::new);
+            event.registerEntityRenderer(EntityInit.hematic_armature_restraint.get(), ArmatureRestraintRenderer::new);
 
         }
 
@@ -649,6 +682,8 @@ public class ClientEvents {
                     SanguineConduitBlockRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.covenant_throne.get(),
                     CovenantThroneRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.hematic_armature.get(),
+                    HematicArmatureRenderer::new);
         }
 
         @SuppressWarnings("deprecation")

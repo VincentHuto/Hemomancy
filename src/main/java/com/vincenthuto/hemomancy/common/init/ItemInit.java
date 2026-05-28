@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.HematicIronArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.armor.SilentArchonArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.BloodlinePoolMonitorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
@@ -22,12 +23,9 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
 import com.vincenthuto.hemomancy.common.item.shared.*;
 import com.vincenthuto.hemomancy.common.item.shared.armor.*;
 import com.vincenthuto.hemomancy.common.item.unstained.*;
+import com.vincenthuto.hemomancy.common.item.unstained.tool.*;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.UnstainedArmorItem;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.UnstainedShieldItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.PaleSilverPickaxeItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.ChatFormatting;
@@ -146,6 +144,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> chalybeate_sclerite = BASEITEMS.register("chalybeate_sclerite",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> calcified_blood_spine = BASEITEMS.register("calcified_blood_spine",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",
@@ -164,6 +164,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> chitinous_husk = BASEITEMS.register("chitinous_husk",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> crimson_lacquer = BASEITEMS.register("crimson_lacquer",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
             () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish",
@@ -225,6 +227,8 @@ public class ItemInit {
             () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> monolith_fragment = BASEITEMS.register("monolith_fragment",
             () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
             () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
                     .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
@@ -455,7 +459,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> sanguis_lancea = SPECIALITEMS.register("sanguis_lancea",
             () -> new SanguisLanceaItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> annettas_sanguis_lancea = SPECIALITEMS.register("annettas_sanguis_lancea",
-            () -> new SanguisLanceaItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+            () -> new AnnettasSanguisLanceaItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final DeferredHolder<Item, Item> living_syringe = SPECIALITEMS.register("living_syringe",
             () -> new LivingSyringeItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_staff = SPECIALITEMS.register("living_staff",
@@ -561,6 +565,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> horned_mask = BASEITEMS.register("horned_mask",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> lodestone_faceplate = BASEITEMS.register("lodestone_faceplate",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> velorum_mask = BASEITEMS.register("velorum_mask",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> blood_lust_helm = BASEITEMS.register("blood_lust_helm",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     BloodLustArmorItem.MaskType.NONE));
@@ -570,6 +578,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     BloodLustArmorItem.MaskType.HORNED));
+    public static final DeferredHolder<Item, Item> blood_lust_helm_lodestone = BASEITEMS.register("blood_lust_helm_lodestone",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
+                    BloodLustArmorItem.MaskType.LODESTONE));
+    public static final DeferredHolder<Item, Item> blood_lust_helm_velorum = BASEITEMS.register("blood_lust_helm_velorum",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
+                    BloodLustArmorItem.MaskType.VELORUM));
     public static final DeferredHolder<Item, Item> blood_lust_chest = BASEITEMS.register("blood_lust_chest",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
                     BloodLustArmorItem.MaskType.NONE));
@@ -579,6 +593,20 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
                     BloodLustArmorItem.MaskType.NONE));
+    // Silent Archon
+    public static final DeferredHolder<Item, Item> silent_archon_helm = BASEITEMS.register("silent_archon_helm",
+            () -> new SilentArchonArmorItem(EnumModArmorTiers.SILENT_ARCHON.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> silent_archon_chestplate = BASEITEMS.register("silent_archon_chestplate",
+            () -> new SilentArchonArmorItem(EnumModArmorTiers.SILENT_ARCHON.holder(), ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> silent_archon_leggings = BASEITEMS.register("silent_archon_leggings",
+            () -> new SilentArchonArmorItem(EnumModArmorTiers.SILENT_ARCHON.holder(), ArmorItem.Type.LEGGINGS));
+    public static final DeferredHolder<Item, Item> silent_archon_boots = BASEITEMS.register("silent_archon_boots",
+            () -> new SilentArchonArmorItem(EnumModArmorTiers.SILENT_ARCHON.holder(), ArmorItem.Type.BOOTS));
+    // Harbinger one-offs
+    public static final DeferredHolder<Item, Item> chalybeate_sclerite_sabatons = BASEITEMS.register("chalybeate_sclerite_sabatons",
+            () -> new ChalybeateScleriteSabatonsItem(EnumModArmorTiers.CHALYBEATE_SCLERITE.holder(), ArmorItem.Type.BOOTS));
+    public static final DeferredHolder<Item, Item> covenant_mantle = BASEITEMS.register("covenant_mantle",
+            () -> new CovenantMantleArmorItem(EnumModArmorTiers.COVENANT_MANTLE.holder(), ArmorItem.Type.CHESTPLATE));
     // Barbed/Barbed
     public static final DeferredHolder<Item, Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
             () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));

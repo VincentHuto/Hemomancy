@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 6,
+  "armor_slot": "head",
+  "base": { "item": "hemomancy:blood_lust_helm" },
+  "reagent": { "item": "hemomancy:lodestone_faceplate" },
+  "blood_cost": 500,
+  "result": { "id": "hemomancy:blood_lust_helm_lodestone" }
+}

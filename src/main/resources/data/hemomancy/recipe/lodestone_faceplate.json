@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "ICI",
+    " I "
+  ],
+  "key": {
+    "M": { "item": "hemomancy:monolith_fragment" },
+    "I": { "item": "hemomancy:hematic_iron_scrap" },
+    "C": { "item": "hemomancy:crimson_lacquer" }
+  },
+  "result": {
+    "id": "hemomancy:lodestone_faceplate"
+  }
+}

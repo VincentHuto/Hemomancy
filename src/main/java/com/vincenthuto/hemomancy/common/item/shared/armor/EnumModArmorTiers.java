@@ -27,7 +27,13 @@ public enum EnumModArmorTiers {
 	UNSTAINED("unstained", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
 			() -> Ingredient.of(ItemInit.chitinous_husk.get())),
 	BLOODLUST("blood_lust", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
-			() -> Ingredient.of(ItemInit.hematic_iron_scrap.get()));
+			() -> Ingredient.of(ItemInit.hematic_iron_scrap.get())),
+	SILENT_ARCHON("silent_archon", 18, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F,
+			() -> Ingredient.of(ItemInit.monolith_imbued_cloth.get())),
+	CHALYBEATE_SCLERITE("chalybeate_sclerite", 12, SoundEvents.ARMOR_EQUIP_GENERIC, 4.0F, 0.1F,
+			() -> Ingredient.of(ItemInit.chalybeate_sclerite.get())),
+	COVENANT_MANTLE("covenant_mantle", 18, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F,
+			() -> Ingredient.of(ItemInit.crimson_lacquer.get()));
 
 	private final Holder<ArmorMaterial> holder;
 

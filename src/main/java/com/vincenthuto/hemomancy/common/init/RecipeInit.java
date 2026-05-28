@@ -51,6 +51,9 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeType<?>, RecipeType<EnzymeFruitingRecipe>> enzyme_fruiting_type = RECIPE_TYPES
 			.register("enzyme_fruiting", () -> RecipeType.simple(Hemomancy.rloc("enzyme_fruiting")));
 
+	public static final DeferredHolder<RecipeType<?>, RecipeType<ArmatureUpgradeRecipe>> armature_upgrade_type = RECIPE_TYPES
+			.register("armature_upgrade", () -> RecipeType.simple(Hemomancy.rloc("armature_upgrade")));
+
 	// Serialize
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
 			DistillationRecipeSerializer::new);
@@ -93,5 +96,8 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> enzyme_fruiting_serializer = SERIALIZERS
 			.register("enzyme_fruiting", EnzymeFruitingRecipeSerializer::new);
+
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ArmatureUpgradeRecipe>> armature_upgrade_serializer =
+			SERIALIZERS.register("armature_upgrade", ArmatureUpgradeRecipeSerializer::new);
 
 }

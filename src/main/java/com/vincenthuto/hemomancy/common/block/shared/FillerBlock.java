@@ -83,6 +83,12 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     }
 
     @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos,
+            CollisionContext context) {
+        return isHematicArmatureCenterFiller(level, pos) ? Shapes.empty() : Shapes.block();
+    }
+
+    @Override
     public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
@@ -184,5 +190,17 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
         }
         return null;
     }
-}
 
+    private static boolean isHematicArmatureCenterFiller(BlockGetter level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof FillerBlockEntity filler)) {
+            return false;
+        }
+        BlockPos mainPos = filler.getMainBlockPos();
+        if (mainPos == null || !level.getBlockState(mainPos).is(BlockInit.hematic_armature.get())) {
+            return false;
+        }
+        BlockPos relative = pos.subtract(mainPos);
+        return relative.equals(new BlockPos(0, 1, 0)) || relative.equals(new BlockPos(0, 2, 0));
+    }
+}

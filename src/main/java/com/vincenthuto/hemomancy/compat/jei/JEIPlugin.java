@@ -27,6 +27,8 @@ public class JEIPlugin implements IModPlugin {
 			.create(Hemomancy.MOD_ID, "pallid_distillation_recipe", DistillationRecipe.class);
 	public static final RecipeType<MemoryWeavingRecipe> memory_weaving_type = RecipeType.create(Hemomancy.MOD_ID,
 			"memory_weaving", MemoryWeavingRecipe.class);
+	public static final RecipeType<ArmatureUpgradeRecipe> armature_upgrade_type = RecipeType.create(Hemomancy.MOD_ID,
+			"armature_upgrade", ArmatureUpgradeRecipe.class);
 	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
 			.create(Hemomancy.MOD_ID, "blood_structure", BloodStructureRecipe.class);
 	public static final RecipeType<ScarRecipe> scar_station_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
@@ -53,6 +55,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper(), false));
 		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper(), true));
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new HematicArmatureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -68,6 +71,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), ghastly_distillation_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.pallid_retort.get()), pallid_distillation_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_armature.get()), armature_upgrade_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.morphling_incubator.get()), incubator_recipe_type);
@@ -88,6 +92,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(pallid_distillation_recipe_type,
 				DistillationRecipe.getAllRecipes(world).stream().filter(DistillationRecipe::isPallid).toList());
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
+		registry.addRecipes(armature_upgrade_type, ArmatureUpgradeRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));

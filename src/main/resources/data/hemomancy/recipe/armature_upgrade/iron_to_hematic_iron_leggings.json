@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 2,
+  "armor_slot": "legs",
+  "base": { "item": "minecraft:iron_leggings" },
+  "reagent": { "item": "hemomancy:hematic_iron_scrap" },
+  "blood_cost": 250,
+  "result": { "id": "hemomancy:hematic_iron_leggings" }
+}

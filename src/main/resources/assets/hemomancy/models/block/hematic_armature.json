@@ -1,0 +1,6 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "particle": "hemomancy:block/model_hematic_armature"
+  }
+}

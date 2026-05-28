@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 2,
+  "armor_slot": "head",
+  "base": { "item": "minecraft:iron_helmet" },
+  "reagent": { "item": "hemomancy:hematic_iron_scrap" },
+  "blood_cost": 250,
+  "result": { "id": "hemomancy:hematic_iron_helm" }
+}

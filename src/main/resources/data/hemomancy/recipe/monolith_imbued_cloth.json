@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:monolith_fragment" },
+    { "item": "hemomancy:puppeteering_thread" },
+    { "item": "minecraft:white_wool" }
+  ],
+  "result": {
+    "id": "hemomancy:monolith_imbued_cloth"
+  }
+}

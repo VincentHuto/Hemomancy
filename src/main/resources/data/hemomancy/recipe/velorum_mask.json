@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:lodestone_faceplate" },
+    { "item": "hemomancy:hallowed_residuum_velorum" },
+    { "item": "hemomancy:pale_silver_ingot" }
+  ],
+  "result": {
+    "id": "hemomancy:velorum_mask"
+  }
+}

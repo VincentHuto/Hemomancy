@@ -62,6 +62,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);
 		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
+		event.registerLayerDefinition(AnnettasSanguisLanceaModel.LAYER_LOCATION, AnnettasSanguisLanceaModel::createBodyLayer);
 		event.registerLayerDefinition(SporiticThuribleModel.LAYER_LOCATION, SporiticThuribleModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedWarhammerModel.LAYER_LOCATION, UnstainedWarhammerModel::createBodyLayer);
 		event.registerLayerDefinition(SilthmereGlaiveModel.LAYER_LOCATION, SilthmereGlaiveModel::createBodyLayer);
@@ -70,6 +71,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedCleansedBloodCrystalModel.LAYER_LOCATION, SuspendedCleansedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(MnemonicReliquaryModel.LAYER_LOCATION, MnemonicReliquaryModel::createBodyLayer);
+		event.registerLayerDefinition(HematicArmatureModel.LAYER_LOCATION, HematicArmatureModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
 		event.registerLayerDefinition(PuppeteersSpindleModel.LAYER_LOCATION, PuppeteersSpindleModel::createBodyLayer);
 		event.registerLayerDefinition(DictationTableModel.LAYER_LOCATION, DictationTableModel::createBodyLayer);
@@ -195,6 +197,19 @@ public class LayerEvents {
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_BOOTS_LAYER,
 				() -> BloodLustArmorModel.createBodyLayer(EquipmentSlot.FEET));
 		event.registerLayerDefinition(BloodAvatarModel.layer, BloodAvatarModel::createLayer);
+
+		event.registerLayerDefinition(SilentArchonArmorModel.SILENT_ARCHON_HELMET_LAYER,
+				SilentArchonArmorModel::createBodyLayer);
+		event.registerLayerDefinition(SilentArchonArmorModel.SILENT_ARCHON_CHEST_LAYER,
+				SilentArchonArmorModel::createBodyLayer);
+		event.registerLayerDefinition(SilentArchonArmorModel.SILENT_ARCHON_LEGS_LAYER,
+				SilentArchonArmorModel::createBodyLayer);
+		event.registerLayerDefinition(SilentArchonArmorModel.SILENT_ARCHON_BOOTS_LAYER,
+				SilentArchonArmorModel::createBodyLayer);
+		event.registerLayerDefinition(ChalybeateFortressArmorModel.CHALYBEATE_FORTRESS_BOOTS_LAYER,
+				ChalybeateFortressArmorModel::createBodyLayer);
+		event.registerLayerDefinition(CovenantLeaderArmorModel.COVENANT_LEADER_CHEST_LAYER,
+				CovenantLeaderArmorModel::createBodyLayer);
 
 		event.registerLayerDefinition(ChitiniteArmorModel.CHITINITE_HELMET_LAYER,
 				() -> ChitiniteArmorModel.createHeadLayer(EquipmentSlot.HEAD));

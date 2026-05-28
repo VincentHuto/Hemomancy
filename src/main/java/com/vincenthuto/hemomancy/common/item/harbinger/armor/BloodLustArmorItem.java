@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -13,17 +15,21 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
 public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+	public static final String TAG_LINEAGE = "hemomancy:lineage";
 
 	public enum MaskType {
 		NONE,
 		TENGU,
-		HORNED
+		HORNED,
+		LODESTONE,
+		VELORUM
 	}
 
 	MaskType maskType;
@@ -35,6 +41,12 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 
 	public MaskType getMaskType() {
 		return maskType;
+	}
+
+	public static String getLineage(ItemStack stack) {
+		CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+		CompoundTag tag = customData.copyTag();
+		return tag.getString(TAG_LINEAGE);
 	}
 
 	@Override
@@ -53,6 +65,10 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_horned.get()) {
 					return BloodLustArmorModel.horned.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()) {
+					return BloodLustArmorModel.tengu.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_lodestone.get()) {
+					return BloodLustArmorModel.helmet.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_velorum.get()) {
 					return BloodLustArmorModel.tengu.get();
 				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()) {
 					return BloodLustArmorModel.chest.get();

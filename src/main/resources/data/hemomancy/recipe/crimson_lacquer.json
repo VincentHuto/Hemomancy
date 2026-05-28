@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:hematic_iron_powder" },
+    { "item": "hemomancy:blood_crystal_shard" },
+    { "item": "hemomancy:sanguine_salve" }
+  ],
+  "result": {
+    "id": "hemomancy:crimson_lacquer",
+    "count": 2
+  }
+}

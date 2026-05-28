@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 5,
+  "armor_slot": "chest",
+  "base": { "item": "hemomancy:chitinite_chestplate" },
+  "reagent": { "item": "hemomancy:crimson_lacquer" },
+  "blood_cost": 1200,
+  "result": { "id": "hemomancy:blood_lust_chest" },
+  "result_data": { "hemomancy:lineage": "chitinite" }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "H H",
+    "LCL",
+    " P "
+  ],
+  "key": {
+    "H": { "item": "hemomancy:curved_horn" },
+    "L": { "item": "minecraft:leather" },
+    "C": { "item": "hemomancy:crimson_lacquer" },
+    "P": { "item": "minecraft:paper" }
+  },
+  "result": {
+    "id": "hemomancy:horned_mask"
+  }
+}

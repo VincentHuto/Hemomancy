@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "S S",
+    "I I"
+  ],
+  "key": {
+    "S": { "item": "hemomancy:chalybeate_sclerite" },
+    "I": { "item": "hemomancy:hematic_iron_scrap" }
+  },
+  "result": {
+    "id": "hemomancy:chalybeate_sclerite_sabatons"
+  }
+}

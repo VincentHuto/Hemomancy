@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,waterlogged=false": { "model": "hemomancy:block/hematic_armature", "y": 180 },
+    "facing=north,waterlogged=true": { "model": "hemomancy:block/hematic_armature", "y": 180 },
+    "facing=south,waterlogged=false": { "model": "hemomancy:block/hematic_armature" },
+    "facing=south,waterlogged=true": { "model": "hemomancy:block/hematic_armature" },
+    "facing=west,waterlogged=false": { "model": "hemomancy:block/hematic_armature", "y": 90 },
+    "facing=west,waterlogged=true": { "model": "hemomancy:block/hematic_armature", "y": 90 },
+    "facing=east,waterlogged=false": { "model": "hemomancy:block/hematic_armature", "y": 270 },
+    "facing=east,waterlogged=true": { "model": "hemomancy:block/hematic_armature", "y": 270 }
+  }
+}

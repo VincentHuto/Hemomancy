@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.*;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.PuppeteersSpindleBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
@@ -576,6 +577,12 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> hematic_armature = MODELEDBLOCKS.register("hematic_armature",
+			() -> new HematicArmatureBlock(
+					BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+							.requiresCorrectToolForDrops()
+							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> sanguine_vigil = MODELEDBLOCKS.register("sanguine_vigil",
 			() -> new SanguineVigilBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -722,6 +729,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.vial_centrifuge.get()) {
 			return Pair.of(block.getSecond(), new VialCentrifugeBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.hematic_armature.get()) {
+			return Pair.of(block.getSecond(), new HematicArmatureBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.mycelial_crucible.get()) {
  			return Pair.of(block.getSecond(), new MycelialCrucibleBlockItem(b, new Item.Properties()));

@@ -4,10 +4,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.VisceralMirrorModel;
-import com.vincenthuto.hutoslib.math.Quaternion;
-import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -23,6 +22,10 @@ import net.minecraft.world.item.ItemStack;
 public class VisceralMirrorItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_visceral_mirror.png");
+	private static final float GUI_MODEL_PITCH_DEGREES = 198.0F;
+	private static final float GUI_MODEL_YAW_DEGREES = -45.0F;
+	private static final float GUI_MODEL_ROLL_DEGREES = 1.0F;
+	private static final float GUI_MODEL_SCALE = 0.45F;
 
 	private VisceralMirrorModel model;
 
@@ -56,25 +59,25 @@ public class VisceralMirrorItemRenderer extends BlockEntityWithoutLevelRenderer 
 		if (isGui) {
 			// ── GUI / inventory slot ──
 			// Centre the model in the 16×16 slot, scale to fit
-			poseStack.translate(0.5, 0.75, 0.5);
-			poseStack.scale(0.45f, 0.45f, 0.45f);
+			poseStack.translate(0.5, 0.72, 0.5);
+			poseStack.scale(-GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE);
 			// Flip Y-down → Y-up (Blockbench convention)
-			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+			poseStack.mulPose(Axis.XP.rotationDegrees(GUI_MODEL_PITCH_DEGREES));
 			// Isometric-ish viewing angle
-			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.XP, 0, true).toMoj());
+			poseStack.mulPose(Axis.YP.rotationDegrees(GUI_MODEL_YAW_DEGREES));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(GUI_MODEL_ROLL_DEGREES));
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			// ── Item frame ──
 			poseStack.translate(0.5, 0.15, 0.5);
 			poseStack.scale(0.4f, 0.4f, 0.4f);
-			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
+			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 		} else {
 			// ── Hand / ground / third-person ──
 			poseStack.translate(0.5, 0.6, 0.5);
 			poseStack.scale(0.35f, 0.35f, 0.35f);
-			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
+			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 		}
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
