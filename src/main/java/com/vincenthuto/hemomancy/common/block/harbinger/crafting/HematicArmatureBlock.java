@@ -78,7 +78,7 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 			new BlockPos(2, 3, 0)
 	};
 	private static final BlockPos[] RESERVOIR_HEART_FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 4, 0), new BlockPos(0, 5, 0)
+			new BlockPos(0, 4, 0)
 	};
 	private static final BlockPos[] FILLER_OFFSETS = combineFillerOffsets();
 	private static final double RESTRAINT_Y_OFFSET = 0.05D;

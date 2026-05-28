@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:bone"
+    },
+    {
+      "item": "hemomancy:vivacious_enzyme"
+    },
+    {
+      "item": "hemomancy:ruinous_enzyme"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:saint_relic_hemorath"
+  }
+}

@@ -267,6 +267,15 @@ public class ItemInit {
             () -> new HallowedResiduumItem(EnumSaintType.PUTRICIEL, 20));
     public static final DeferredHolder<Item, Item> hallowed_residuum_velorum = BASEITEMS.register("hallowed_residuum_velorum",
             () -> new HallowedResiduumItem(EnumSaintType.VELORUM, 20));
+    // Temporary boss testing catalysts
+    public static final DeferredHolder<Item, Item> saint_relic_hemorath = BASEITEMS.register("saint_relic_hemorath",
+            () -> new SaintRelicItem(EnumSaintType.HEMORATH));
+    public static final DeferredHolder<Item, Item> saint_relic_seraphae = BASEITEMS.register("saint_relic_seraphae",
+            () -> new SaintRelicItem(EnumSaintType.SERAPHAE));
+    public static final DeferredHolder<Item, Item> saint_relic_putriciel = BASEITEMS.register("saint_relic_putriciel",
+            () -> new SaintRelicItem(EnumSaintType.PUTRICIEL));
+    public static final DeferredHolder<Item, Item> saint_relic_velorum = BASEITEMS.register("saint_relic_velorum",
+            () -> new SaintRelicItem(EnumSaintType.VELORUM));
     // Consecrated Syringe â€" extraction tool for Saint Sarcophagus
     public static final DeferredHolder<Item, Item> consecrated_syringe = SPECIALITEMS.register("consecrated_syringe",
             () -> new ConsecratedSyringeItem(new Item.Properties().stacksTo(1)));

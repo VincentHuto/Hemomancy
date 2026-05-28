@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.HarbingerSaintEncounte
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.SaintRelicItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.EnumCorpusState;
@@ -402,6 +403,18 @@ if (!(be instanceof SaintSarcophagusBlockEntity sarcophagus)) {
 return InteractionResult.PASS;
 }
 
+if (heldStack.getItem() instanceof SaintRelicItem relic) {
+	sarcophagus.setSaintType(relic.getSaintType());
+	sarcophagus.setCorpusState(EnumCorpusState.AWAKENED);
+	if (!player.getAbilities().instabuild) {
+		heldStack.shrink(1);
+	}
+	triggerSaintEncounter(worldIn, pos, player, sarcophagus,
+		Component.translatable("message.hemomancy.saint_sarcophagus.relic_summon",
+			relic.getSaintType().getDisplayName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+	return InteractionResult.CONSUME;
+}
+
 // Foul Paste is deliberate desecration: it forces the saint awake regardless of alignment.
 if (heldStack.is(ItemInit.foul_paste.get())) {
 	sarcophagus.setCorpusState(EnumCorpusState.AWAKENED);
@@ -684,12 +697,16 @@ private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType sai
 
 private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player player,
 		SaintSarcophagusBlockEntity sarcophagus) {
-	BlockState state = worldIn.getBlockState(pos);
-	player.displayClientMessage(
+	triggerSaintEncounter(worldIn, pos, player, sarcophagus,
 		Component.literal("The corpus seethes with hostility. Saint " + sarcophagus.getSaintType().getDisplayName()
 			+ " will not receive you.")
-			.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-		false);
+			.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+}
+
+private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player player,
+		SaintSarcophagusBlockEntity sarcophagus, Component message) {
+	BlockState state = worldIn.getBlockState(pos);
+	player.displayClientMessage(message, false);
 	if (worldIn instanceof ServerLevel serverLevel) {
 		HarbingerSaintEncounterHooks.spawnSaintBoss(serverLevel, pos, player, sarcophagus.getSaintType());
 	}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:chain"
+    },
+    {
+      "item": "hemomancy:incandescent_enzyme"
+    },
+    {
+      "item": "hemomancy:neurotic_enzyme"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:saint_relic_seraphae"
+  }
+}

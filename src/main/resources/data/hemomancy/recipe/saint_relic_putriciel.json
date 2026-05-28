@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "item": "hemomancy:ruinous_enzyme"
+    },
+    {
+      "item": "hemomancy:fervent_enzyme"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:saint_relic_putriciel"
+  }
+}

@@ -3,6 +3,10 @@
   "values": [
     "minecraft:nether_star",
     "minecraft:totem_of_undying",
-    "minecraft:wither_skeleton_skull"
+    "minecraft:wither_skeleton_skull",
+    "hemomancy:saint_relic_hemorath",
+    "hemomancy:saint_relic_seraphae",
+    "hemomancy:saint_relic_putriciel",
+    "hemomancy:saint_relic_velorum"
   ]
 }

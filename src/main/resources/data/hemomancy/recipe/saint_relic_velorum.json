@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:ice"
+    },
+    {
+      "item": "hemomancy:frigid_enzyme"
+    },
+    {
+      "item": "hemomancy:umbral_enzyme"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:saint_relic_velorum"
+  }
+}
