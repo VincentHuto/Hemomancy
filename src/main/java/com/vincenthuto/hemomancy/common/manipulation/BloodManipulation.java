@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPuritySt
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
@@ -376,7 +376,7 @@ public class BloodManipulation  {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);
 						volume.addBloodSpend(effectiveCost);
-						HollowVesselEntity
+						HemorathEntity
 								.onPlayerBloodSpend(player, effectiveCost);
 						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 						getAction(player, world, heldItemMainhand, position);

@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class SeraphaeFragmentRenderer extends MobRenderer<SeraphaeFragmentEntity, SeraphaeFragmentModel<SeraphaeFragmentEntity>> {
 
-	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/seraphae_fragment/seraphae_fragment.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/boss/seraphae/seraphae_fragment.png");
 
 	public SeraphaeFragmentRenderer(Context context) {
 		super(context, new SeraphaeFragmentModel<>(context.bakeLayer(SeraphaeFragmentModel.LAYER_LOCATION)), 0.3F);

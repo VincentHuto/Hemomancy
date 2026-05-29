@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
@@ -46,14 +46,13 @@ import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE,
             Hemomancy.MOD_ID);
@@ -161,13 +160,13 @@ public class EntityInit {
                     .build(Hemomancy.rloc("hematic_construct").toString()));
 
     // Boss: Hollow Vessel (Saint Hemorath)
-    public static final DeferredHolder<EntityType<?>, EntityType<HollowVesselEntity>> hollow_vessel = ENTITY_TYPES.register(
-            "hollow_vessel",
-            () -> EntityType.Builder.of(HollowVesselEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<HemorathEntity>> hemorath = ENTITY_TYPES.register(
+            "hemorath",
+            () -> EntityType.Builder.of(HemorathEntity::new, MobCategory.MONSTER)
                     .sized(0.8F, 2.2F)
                     .clientTrackingRange(10)
                     .fireImmune()
-                    .build(Hemomancy.rloc("hollow_vessel").toString()));
+                    .build(Hemomancy.rloc("hemorath").toString()));
 
     // Boss: Seraphae (The Bound Radiance)
     public static final DeferredHolder<EntityType<?>, EntityType<SeraphaeEntity>> seraphae = ENTITY_TYPES.register(
@@ -686,7 +685,7 @@ public class EntityInit {
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
         event.put(EntityInit.harbinger_voyager.get(), HarbingerVoyagerEntity.setAttributes().build());
         event.put(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerEntity.setAttributes().build());
-        event.put(EntityInit.hollow_vessel.get(), HollowVesselEntity.setAttributes().build());
+        event.put(EntityInit.hemorath.get(), HemorathEntity.setAttributes().build());
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
         event.put(EntityInit.annetta_knowles.get(), AnnettaKnowlesEntity.setAttributes().build());

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -33,12 +33,12 @@ public class HematicCollapseGoal extends Goal {
 	private static final float DAMAGE_FLOOR = 2.0F;
 	private static final double DAMAGE_MULTIPLIER = 0.5D;
 
-	private final HollowVesselEntity boss;
+	private final HemorathEntity boss;
 	private int telegraphTicks;
 	private int cooldownTicks;
 	private boolean firing;
 
-	public HematicCollapseGoal(HollowVesselEntity boss) {
+	public HematicCollapseGoal(HemorathEntity boss) {
 		this.boss = boss;
 		this.setFlags(EnumSet.of(Flag.LOOK));
 	}
@@ -64,7 +64,7 @@ public class HematicCollapseGoal extends Goal {
 		telegraphTicks = boss.isInPhase2() ? TELEGRAPH_TICKS / 2 : TELEGRAPH_TICKS;
 		firing = true;
 		boss.setCollapseCharging(true);
-		boss.setVisualState(HollowVesselEntity.VISUAL_COLLAPSE_WINDUP, telegraphTicks);
+		boss.setVisualState(HemorathEntity.VISUAL_COLLAPSE_WINDUP, telegraphTicks);
 		if (boss.level() instanceof ServerLevel server) {
 			server.playSound(null, boss.getX(), boss.getY(), boss.getZ(),
 					SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 2.0F, 0.6F);
@@ -81,8 +81,8 @@ public class HematicCollapseGoal extends Goal {
 	public void stop() {
 		firing = false;
 		boss.setCollapseCharging(false);
-		if (boss.getVisualState() == HollowVesselEntity.VISUAL_COLLAPSE_WINDUP) {
-			boss.setVisualState(HollowVesselEntity.VISUAL_NONE, 0);
+		if (boss.getVisualState() == HemorathEntity.VISUAL_COLLAPSE_WINDUP) {
+			boss.setVisualState(HemorathEntity.VISUAL_NONE, 0);
 		}
 		cooldownTicks = boss.isInPhase2() ? PHASE_2_COOLDOWN_TICKS : PHASE_1_COOLDOWN_TICKS;
 	}
@@ -129,7 +129,7 @@ public class HematicCollapseGoal extends Goal {
 
 		server.playSound(null, target.getX(), target.getY(), target.getZ(),
 				SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 2.0F, 0.5F);
-		boss.setVisualState(HollowVesselEntity.VISUAL_COLLAPSE_IMPACT, 14);
+		boss.setVisualState(HemorathEntity.VISUAL_COLLAPSE_IMPACT, 14);
 		server.sendParticles(ParticleTypes.SCULK_SOUL,
 				target.getX(), target.getY() + 1.0, target.getZ(),
 				40, 0.6, 1.0, 0.6, 0.1);

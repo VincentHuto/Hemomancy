@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.goal;
 
-import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -26,12 +26,12 @@ public class EmptyPulseGoal extends Goal {
 	private static final int COOLDOWN_TICKS = 160;
 	private static final int WINDUP_TICKS = 25;
 
-	private final HollowVesselEntity boss;
+	private final HemorathEntity boss;
 	private int cooldownTicks;
 	private int windupTicks;
 	private boolean active;
 
-	public EmptyPulseGoal(HollowVesselEntity boss) {
+	public EmptyPulseGoal(HemorathEntity boss) {
 		this.boss = boss;
 		this.setFlags(EnumSet.of(Flag.LOOK));
 	}
@@ -55,7 +55,7 @@ public class EmptyPulseGoal extends Goal {
 	public void start() {
 		windupTicks = WINDUP_TICKS;
 		active = true;
-		boss.setVisualState(HollowVesselEntity.VISUAL_EMPTY_PULSE, WINDUP_TICKS);
+		boss.setVisualState(HemorathEntity.VISUAL_EMPTY_PULSE, WINDUP_TICKS);
 		if (boss.level() instanceof ServerLevel server) {
 			server.playSound(null, boss.getX(), boss.getY(), boss.getZ(),
 					SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.HOSTILE, 1.5F, 0.8F);
@@ -65,8 +65,8 @@ public class EmptyPulseGoal extends Goal {
 	@Override
 	public void stop() {
 		active = false;
-		if (boss.getVisualState() == HollowVesselEntity.VISUAL_EMPTY_PULSE) {
-			boss.setVisualState(HollowVesselEntity.VISUAL_NONE, 0);
+		if (boss.getVisualState() == HemorathEntity.VISUAL_EMPTY_PULSE) {
+			boss.setVisualState(HemorathEntity.VISUAL_NONE, 0);
 		}
 		cooldownTicks = COOLDOWN_TICKS;
 	}
@@ -94,7 +94,7 @@ public class EmptyPulseGoal extends Goal {
 		Vec3 origin = boss.position();
 		server.playSound(null, boss.getX(), boss.getY(), boss.getZ(),
 				SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 2.0F, 1.0F);
-		boss.setVisualState(HollowVesselEntity.VISUAL_EMPTY_PULSE_IMPACT, 12);
+		boss.setVisualState(HemorathEntity.VISUAL_EMPTY_PULSE_IMPACT, 12);
 		server.sendParticles(ParticleTypes.SONIC_BOOM,
 				origin.x, origin.y + 1.0, origin.z,
 				1, 0.0, 0.0, 0.0, 0.0);

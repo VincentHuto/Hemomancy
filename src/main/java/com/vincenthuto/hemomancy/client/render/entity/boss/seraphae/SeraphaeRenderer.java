@@ -19,7 +19,7 @@ import net.minecraft.util.Mth;
  */
 public class SeraphaeRenderer extends MobRenderer<SeraphaeEntity, SeraphaeModel<SeraphaeEntity>> {
 
-	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/seraphae/seraphae.png");
+	protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/boss/seraphae/seraphae.png");
 
 	public SeraphaeRenderer(Context context) {
 		super(context, new SeraphaeModel<>(context.bakeLayer(SeraphaeModel.LAYER_LOCATION)), 0.9F);

@@ -53,18 +53,18 @@ import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
  * bloodvolume spent is amplified by 1.25Ã— via {@link #onPlayerBloodSpend}.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
-public class HollowVesselEntity extends Monster {
+public class HemorathEntity extends Monster {
 
 	private static final EntityDataAccessor<Boolean> DATA_COLLAPSE_CHARGING =
-			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.BOOLEAN);
+			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Integer> DATA_PHASE =
-			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
+			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Float> DATA_ABSORBED_BLOOD =
-			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.FLOAT);
+			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
-			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
+			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
-			SynchedEntityData.defineId(HollowVesselEntity.class, EntityDataSerializers.INT);
+			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 
 	public static final int VISUAL_NONE = 0;
 	public static final int VISUAL_COLLAPSE_WINDUP = 1;
@@ -92,7 +92,7 @@ public class HollowVesselEntity extends Monster {
 			BossEvent.BossBarColor.RED,
 			BossEvent.BossBarOverlay.NOTCHED_10);
 
-	public HollowVesselEntity(EntityType<? extends HollowVesselEntity> type, Level level) {
+	public HemorathEntity(EntityType<? extends HemorathEntity> type, Level level) {
 		super(type, level);
 		this.setPersistenceRequired();
 		this.xpReward = 80;
@@ -356,8 +356,8 @@ public class HollowVesselEntity extends Monster {
 	 */
 	public static void onPlayerBloodSpend(Player player, double amount) {
 		if (player.level().isClientSide) return;
-		for (HollowVesselEntity vessel : player.level().getEntitiesOfClass(
-				HollowVesselEntity.class, player.getBoundingBox().inflate(PHASE_2_DETECTION_RADIUS))) {
+		for (HemorathEntity vessel : player.level().getEntitiesOfClass(
+				HemorathEntity.class, player.getBoundingBox().inflate(PHASE_2_DETECTION_RADIUS))) {
 			if (vessel.isAlive() && vessel.getTarget() == player) {
 				vessel.addAbsorbedBlood(player, amount);
 				if (vessel.isInPhase2()) {

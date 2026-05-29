@@ -6,9 +6,10 @@ import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumModel;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class VelorumRenderer extends HumanoidMobRenderer<VelorumEntity, VelorumModel<VelorumEntity>> {
+public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<VelorumEntity>> {
     private static final ResourceLocation TEXTURE =
             Hemomancy.rloc("textures/entity/boss/velorum/velorum.png");
 

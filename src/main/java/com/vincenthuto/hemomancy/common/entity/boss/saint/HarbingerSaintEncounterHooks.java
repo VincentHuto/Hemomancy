@@ -42,7 +42,7 @@ public final class HarbingerSaintEncounterHooks {
 
 	private static Mob createBoss(ServerLevel level, EnumSaintType saintType) {
 		return switch (saintType) {
-			case HEMORATH -> EntityInit.hollow_vessel.get().create(level);
+			case HEMORATH -> EntityInit.hemorath.get().create(level);
 			case SERAPHAE -> EntityInit.seraphae.get().create(level);
 			case PUTRICIEL -> EntityInit.putriciel.get().create(level);
 			case VELORUM -> EntityInit.velorum.get().create(level);

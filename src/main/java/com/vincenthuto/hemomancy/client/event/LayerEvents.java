@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.*;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
-import com.vincenthuto.hemomancy.client.model.entity.boss.HollowVesselModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.Hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.AnnettaKnowlesModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.LatentAnnettaInfectionModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.StainedPriestessModel;
@@ -156,7 +156,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(HarbingerVoyagerModel.LAYER_LOCATION, HarbingerVoyagerModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerVotaryWayfarerModel.LAYER_LOCATION,
 				HarbingerVotaryWayfarerModel::createBodyLayer);
-		event.registerLayerDefinition(HollowVesselModel.LAYER_LOCATION, HollowVesselModel::createBodyLayer);
+		event.registerLayerDefinition(HemorathModel.LAYER_LOCATION, HemorathModel::createBodyLayer);
 		event.registerLayerDefinition(AnnettaKnowlesModel.LAYER_LOCATION, AnnettaKnowlesModel::createBodyLayer);
 		event.registerLayerDefinition(StainedPriestessModel.LAYER_LOCATION, StainedPriestessModel::createBodyLayer);
 		event.registerLayerDefinition(LatentAnnettaInfectionModel.LAYER_LOCATION, LatentAnnettaInfectionModel::createBodyLayer);
