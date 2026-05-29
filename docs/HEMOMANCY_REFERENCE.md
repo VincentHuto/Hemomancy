@@ -1,6 +1,6 @@
 # Hemomancy - Developer Reference
 
-> **Last audited:** 2026-05-28
+> **Last audited:** 2026-05-29
 > **Mod ID / package:** `hemomancy` / `com.vincenthuto.hemomancy`
 > **Target:** Minecraft `1.21.1`, NeoForge `21.1.219`, Java `21`
 > **Version:** `6.0.1-neoforge.1.21.1.0`
@@ -11,7 +11,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Status legend:** `Implemented` means present in the current NeoForge 1.21.1 runtime path. `Partial` means a playable or compiled spine exists with explicit remaining work. `Dormant` means source/design is preserved but excluded or unregistered. `Planned` means design/lore intent without active runtime behavior.
 
-**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -582,6 +582,34 @@ When degree rites actually advance the player to Degrees 5, 6, and 7, `FungalWhi
 | `pome_empowerment_expiry` | Long | Game-time tick when pome manipulation discount expires (0 = none) |
 | `pome_total_consumed` | Int | Total pome counter for HUD display, capped at 9 |
 | `hemomancy:archon_choice_made` | String | `"silent"` or `"apotheos"` — set when Archon resolves the Fungal Dimension choice fork |
+
+---
+
+### 5.10 Endgame Bosses: Vesper and The Mycophant
+
+The two new endgame bosses represent the fork after Archon revelation:
+
+| Route | Boss | Entity IDs | Current status |
+|---|---|---|---|
+| Silent / Refusal Archon | **Vesper** | `hemomancy:vesper_crowned_refusal` -> `hemomancy:vesper_evening_star` | `Partial`: registered, attributed, rendered, sounded, combat-wired, and reward-wired. Summoning ritual still needs the next pass. |
+| Apotheos / fungal ascension | **The Mycophant** | `hemomancy:mycophant` | `Partial`: registered, attributed, rendered, sounded, combat-wired, and reward-wired. Summoning ritual still needs the next pass. |
+
+**Vesper, The Crowned Refusal -> Vesper, The Evening Star**
+- Represents the Archon who reaches the threshold and refuses to dissolve into the fungal reproductive cycle.
+- Phase 1 (`VesperTheCrownedRefusalEntity`) is mapped from the old `XanthousKing` reference. It has no final loot and transitions on defeat into phase 2.
+- Phase 2 (`VesperTheEveningStarEntity`) is mapped from the old `TrueXanthousKing` reference. It is the final kill and has a guaranteed entity loot-table drop for Vesper's Living Staff.
+- Current fight behavior includes boss bars, hostile targeting, low-health cadence/regen scaling, homing blood-orb missiles, grip/spike hazards, Morphling Polyp add pressure, shield-disabling melee hits, delayed phase transition/death spectacle, copied Vesper reference sounds, and looping client boss music.
+- Current render path: `VesperTheCrownedRefusalRenderer`, `VesperTheEveningStarRenderer`, model layers in `LayerEvents`, red/black textures in `textures/entity/boss/endgame/`, and `VesperEveningStarLinesLayer` for the phase-2 emissive line texture that appears only at half health or lower.
+- Implemented reward: `vespers_living_staff`, a special `LivingStaffItem` subclass. It keeps the existing Living Staff morphling/menu behavior, upgrades the crouch-shot into a three-orb fan, and is guaranteed by `data/hemomancy/loot_table/entities/vesper_evening_star.json`.
+
+**The Mycophant**
+- Represents the fungal endpoint for an ascended/Apotheos Harbinger: not a devil or punishment figure, but a fully mycelialized capstone being.
+- Mapped from the old `Uzouthrhix` reference. The legacy `UzouthrhixAnimations` class and animation-state behavior were intentionally not ported.
+- Current fight behavior includes boss bar, hostile targeting, low-health cadence/regen scaling, crimson flame placement around the target, blindness/confusion/slowness pulses, repel/claw pressure, Fungling summons, fire immunity, delayed death spectacle, copied Mycophant/Uzouthrhix-style sounds, `hurtother` lash sound, and looping client boss music.
+- Current render path: `MycophantRenderer`, `MycophantModel`, model layer registration in `LayerEvents`, mushroom red/orange/yellow base and awoken textures in `textures/entity/boss/endgame/`, and `MycophantAwokenMaskLayer` for the half-health emissive mask overlay.
+- Implemented reward: `mycophant_tendril`, a `VasculariumCharmItem` subclass that fits the Charm of Vascularium slot. It is guaranteed by `data/hemomancy/loot_table/entities/mycophant.json`; while equipped it renders as the equipped charm stack and adds a full-body red/orange/yellow fungalization layer with the fungal Morphling head replacement.
+
+**Implementation anchors:** `EntityInit` registers all three entity types and attributes; `ClientEvents.renderEntities` registers renderers; `EndgameBossActions` contains the shared combat helpers; `EndgameBossCombatRules` contains the tested cadence/threshold rules; `EndgameBossMusicHandler` handles client-side looping music.
 
 ---
 
@@ -1782,6 +1810,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | Item | Purpose |
 |------|---------|
 | ![](../src/main/resources/assets/hemomancy/textures/item/charm_of_vascularium.png) Charm of Vascularium | Enables blood manipulations; retained through player death and removable only from a validated Scarlet Vanity equipment menu; its player render layer displays the item stack when equipped |
+| **Mycophant Tendril** | Mycophant boss drop and Charm of Vascularium slot variant. Extends `VasculariumCharmItem`, opens the usual manipulation radial because it is still charm-compatible, and triggers `MycophantTendrilFungalizationLayer` for the full-body fungalized appearance. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) Liber Sanguinum | Guide book |
 | **Field Notes** | Stack-local memo notebook. Captures fleeting dialogue/memo events into `DataComponents.CUSTOM_DATA` (`Memos`, `RemainingMemos`, `InkPath`). Fresh notes have no prepared pages until filled with field ink. Hematic Field Ink binds the notes to Harbinger memos and Liber Sanguinum dictation; Pale Field Ink binds them to Unstained memos and Liber Immaculatus dictation. Each refill prepares 15 memo captures. Field Notes do not become their own Liber chapter; dictation unlocks normal book pages in the player's `LiberKnowledge` attachment. |
 | **Hematic Field Ink** | Harbinger Field Notes refill item crafted from Dicentra Sap, Hematic Iron Powder, a water bottle, and an ink sac. |
@@ -1867,6 +1896,7 @@ All are single-stack, use the `LIVING` tool tier:
 | Living Spear | `LivingSpearItem` | Blood-feeding polearm |
 | Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding claw weapon |
 | Living Staff | `LivingStaffItem` | Channels morphlings and blood magic |
+| Vesper's Living Staff | `VespersLivingStaffItem` | Vesper Evening Star drop. Special Living Staff variant that keeps the staff's morphling/menu behavior and fires a three-orb fan when crouch-released. |
 | Living Syringe | `LivingSyringeItem` | Extracts blood vials from mobs into a loaded Vial Rack (Shift to eject rack) |
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
 | Sanguis Lancea | `SanguisLanceaItem` | Throwable blood lance (25 base dmg) |
@@ -2495,6 +2525,9 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Harbinger Mnemonist** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_mnemonist/harbinger_mnemonist.png) | Creature | NPC blood-memory mentor found at Harbinger Outposts; full degree-gated dialogue (`HarbingerMnemonistDialogueTrees`). Teaches crude memories, active manipulation slots, the Mnemonic Reliquary, and Somatic Loom progression. Gives eligible Degree 1+ Harbingers one starter crude memory item; purifying/Clarity players may inquire but cannot claim. |
 | **Harbinger Voyager** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_voyager/harbinger_voyager.png) | Creature | Active-vessel captain-scholar NPC; dialogue-only research leader for reef, vent, and wreck survey expeditions. Always placed by active-vessel spawn helper on Survey Cog structures. |
 | **Harbinger Votary Wayfarer** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_votary_wayfarer/harbinger_votary_wayfarer.png) | Creature | Active-vessel junior Votary NPC with a 1-in-5 companion spawn rule. Dialogue-only observer learning from the Voyager; no trades, quests, rewards, or ordinary spawning. |
+| **Vesper, The Crowned Refusal** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_crowned_refusal.png) | Boss | Endgame Silent / refusal Archon boss phase 1, entity ID `hemomancy:vesper_crowned_refusal`. Uses the former Xanthous King reference as a red/black Vesper form. Stats: 520 HP, 0.16 speed, 1.0 knockback resistance. Boss bar: RED. Abilities include hostile targeting, low-health cadence scaling, blood-orb missiles, grip/spike hazards, Morphling Polyp add pressure, and shield-disabling melee hits. On defeat it transitions into `hemomancy:vesper_evening_star` and drops no final loot. Current access is direct summon until the endgame summoning ritual is wired. |
+| **Vesper, The Evening Star** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_evening_star.png) | Boss | Endgame Silent / refusal Archon boss phase 2, entity ID `hemomancy:vesper_evening_star`. Uses the former True Xanthous King reference as Vesper's final red/black form. Stats: 640 HP, 0.22 speed, 1.0 knockback resistance. Boss bar: RED. Keeps the Vesper missile/grip/spike/add-pressure kit with stronger final-phase pressure, delayed death spectacle, copied Vesper boss music, and `VesperEveningStarLinesLayer` emissive line rendering that only appears at half health or lower. Guaranteed entity loot-table drop: `vespers_living_staff`, a special Living Staff variant with a three-orb crouch shot. |
+| **The Mycophant** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/mycophant.png) | Boss | Endgame Apotheos / fungal ascension boss, entity ID `hemomancy:mycophant`. Uses the former Uzouthrhix reference recolored into the red/orange/yellow mushroom palette. Stats: 720 HP, 0.18 speed, 1.15 knockback resistance. Boss bar: YELLOW. Abilities include hostile targeting, low-health cadence scaling, crimson flame placement, blindness/confusion/slowness pulses, repel/claw pressure, Fungling summons, fire immunity, copied Mycophant music, `hurtother` lash audio, and `MycophantAwokenMaskLayer` half-health emissive rendering. Guaranteed entity loot-table drop: `mycophant_tendril`, a Charm of Vascularium slot item that fully fungalizes the player render while equipped. |
 | **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see §29), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Dedicated Java models/textures are present for the encounter entities, and Annetta's Sanguis Lancea has a custom held/item renderer; GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters, Annetta is bitten, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: ① Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) ② Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) ③ Hair-and-Nails Slash at ≤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 — see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4 (if Phase 2 not triggered).<br><br>**Unstained route** (interact while holding a Draught of Still Mercy and `clarityUnlocked == true`): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Unstained-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot ×3. |
 | **Stained Priestess (`StainedPriestessEntity`)** | | Boss | Phase 2 of the Harbinger-route Annetta encounter. Stats: 420 HP, 12 ATK, 0.32 SPD, 0.9 KB resist, 10 armor. Boss bar: WHITE, NOTCHED_10. Phase abilities: ① Blood Lances (every 70t, fires `SanguisLanceaEntity` projectile in look direction + 2 angled variants) ② Lunge attack (every 100t, moves rapidly toward target and strikes) ③ Blood Pressure Bloom (every 85t, 7-block AoE, 6 magic damage + Slowness to all nearby). Melee hits drain 300 blood from blood-active players (`BLOOD_DRAIN = 300`). Drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4. |
 | **Latent Annetta Infection (`LatentAnnettaInfectionEntity`)** | | Boss | Final challenge of the Unstained-route Annetta encounter: the latent infection given physical form. Stats: 360 HP, 10 ATK, 0.27 SPD, 0.85 KB resist, 8 armor. Boss bar: WHITE, NOTCHED_10. Abilities: ① Infection Bloom (every 70t, MYCELIUM particle burst, Sculk Shrieker sound, 6-block AoE, 5 magic damage + Confusion + Slowness) ② Pressure Spike (every 110t, SOUL_FIRE_FLAME particles, 9-block AoE, 4 indirect magic damage + Weakness). Melee hits apply Poison I. On death: if a linked `AnnettaKnowlesEntity` is in CURED_SUPPORT within 32 blocks, calls `markResolvedAfterCure()`. Drops: `annettas_absolution_dagger` + pale_silver_ingot ×3. |
@@ -2520,6 +2553,7 @@ Registered in `EntityInit.commonSetup`:
 - Abyssal Siphon → `ON_GROUND` (monster rules)
 - Synapse Hound → `ON_GROUND` (monster rules)
 - Myelin Borer → `ON_GROUND` (monster rules)
+- Vesper phase 1, Vesper phase 2, and The Mycophant intentionally have no natural spawn placement. Current access is direct `/summon` until their endgame summoning rituals are implemented.
 - Crimson Doe → `ON_GROUND`
 - Hemojelly → `ON_GROUND`
 - Venous Strider → `ON_GROUND`
@@ -2530,12 +2564,13 @@ Registered in `EntityInit.commonSetup`:
 
 ### 26.6 Entity Loot Tables
 
-> **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **42 entity loot tables**.
+> **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **46 entity loot tables**. Standard material-bearing mobs now guarantee at least one base drop of their associated material on valid kills, and all looting bonuses use the 1.21 `minecraft:enchanted_count_increase` function rather than the removed `minecraft:looting_enchant` id.
 
 Notable implemented drop families:
 
 | Entity / Family | Drop Theme |
 |-----------------|------------|
+| Cruor Fiend / Frozen Clot / Dessicant | Guaranteed base drops for Molten Scab, Frozen Clot, and Desiccated Membrane respectively |
 | Chitinite / Fervent Chitinite / Chthonian / Chthonian Queen | Chitinous Husk, with Chthonian Queen also rolling Ferric Enzyme |
 | Leech / Blood aquatic or arthropod mobs | Blood/hemolymph materials such as Swollen Leech or Cleansing Hemolymph |
 | Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob; Morphling Polyps drop the base Morphling Polyp item and can roll a small layer-hint item from their active appendages |
@@ -2916,8 +2951,11 @@ Registered in `SoundInit`:
 | Crimson Doe Ambient | `entity.crimson_doe.ambient` | Ambient sound for the Crimson Doe creature |
 | Chthonian Queen Death | `entity.chthonian_queen.death` | Death sound for the Chthonian Queen |
 | Synapse Hound Hurt | `entity.synapse_hound.hurt` | Damage sound for the Synapse Hound monster |
+| Vesper Boss Music | `entity.vesper.music` | Looping boss music for both Vesper phases |
+| Mycophant Boss Music | `entity.mycophant.music` | Looping boss music for The Mycophant |
+| Mycophant Lash Hit | `entity.mycophant.hurtother` | Extra copied lash/impact sound used by Mycophant attacks |
 
-> **Status: Implemented.** `SoundInit` currently registers **83 custom sound events** spanning item, creature, aquatic, arthropod, monster, and boss categories. Vanilla sounds are still used in many interactions where dedicated custom audio has not yet been authored.
+> **Status: Implemented.** `SoundInit` currently registers **104 custom sound events** spanning item, creature, aquatic, arthropod, monster, and boss categories. Vanilla sounds are still used in many interactions where dedicated custom audio has not yet been authored.
 
 ---
 
@@ -3042,12 +3080,12 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
-| Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Annetta final animation/combat polish |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, endgame Vesper/Mycophant entity-render-sound wiring, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
+| Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Vesper/Mycophant summoning rituals, Annetta final animation/combat polish |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, active Harbinger voyager trade/rumor/dialogue expansion, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
 
-- **Entity Loot Tables** - `Implemented`: 40 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed - loot tables work via the JSON files.
+- **Entity Loot Tables** - `Implemented`: 44 entity loot table JSON files exist in `data/hemomancy/loot_table/entities/` (1.21 singular path) and are loaded automatically by vanilla/NeoForge datapack convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed - loot tables work via the JSON files.
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Skill Effect Wiring** — **Implemented:** All 21 skills in `SkillPointHelper` have helper methods and are fully wired into event handlers. Iron Will wired in `BloodVolumeEvents.onPlayerDamaged`; Scar Affinity/Resonance/Mastery wired in `ScarEntityEventHandler` and `ItemScar`; puppeteer summon cap/health/damage/range are wired through the Marionette Crossbar and bound summon behavior.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists; specific loot targets are not yet assigned.
@@ -3090,6 +3128,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Founding Sanctum** — **Partial:** Buff application, Sanguine Quintessence, catalyst requirement, sanctum persistence, and Blood Moon sealing are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §5.7.
 - **Blood Moon Mechanics** — **Implemented:** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, Somatic Loom discount, sanctum sealing, organ synergy, ritual trigger, and client sync/rendering. See §28.1.1.
 - **Fungal Dimension** — **Partial:** Fungal Spine access, safe travel placement, dimension mob spawning, and the Archon first-exit choice fork are implemented. Terrain feature population and broader dimension content remain WIP. See §5.6.
+- **Endgame Vesper / Mycophant Bosses** — **Partial:** `VesperTheCrownedRefusalEntity`, `VesperTheEveningStarEntity`, and `MycophantEntity` are registered with attributes, models, textures, renderers, render layers, boss bars, sound events, client boss music, legacy-inspired combat behaviors, and guaranteed final entity loot-table drops. Vesper phase 1 transitions into the Evening Star phase and has no final loot. Vesper phase 2 drops `vespers_living_staff`; The Mycophant drops `mycophant_tendril`, which fits the Charm of Vascularium slot and triggers full-body fungalization rendering. Remaining work is the summoning ritual layer. See §5.10 and §26.3.
 - **Annetta Knowles / Stained Priestess** — **Partial:** The two-route encounter is wired through `AnnettaKnowlesEntity`, `StainedPriestessEntity`, `LatentAnnettaInfectionEntity`, and `BrokenChurchStructure`. Dedicated encounter entity models/textures and Annetta's Sanguis Lancea held/item renderer are present. Remaining work is GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering. See §26.3 and LORE_REFERENCE §11.
 - **Chthonian Termite Mound** — **Implemented:** Savanna structure, guaranteed queen spawn, loot chest, wood-chewing behavior, wooden tool degradation, tuned spawn rate, and spawn placements are present. See §29.
 - **Deep Ocean V1: Chalybeate Snail and Vent Fields** - **Implemented:** `deep_ocean_vent` is a code-generated hydrothermal vent feature registered through feature bootstrap/data JSON and added to deep ocean biomes via `neoforge:add_features`. It builds basalt/smooth basalt/deepslate/blackstone/magma vent fields with restrained Hemomancy organic accents, then spawns persistent `chalybeate_snail` clusters. The snail has defensive retraction, Ferric/specimen-jar tags, a spawn egg, renderer/model/texture, subtitles/sounds, and a nonlethal HutosLib `ItemKnapper` harvest path for `chalybeate_sclerite` with a saved 6000-tick cooldown.

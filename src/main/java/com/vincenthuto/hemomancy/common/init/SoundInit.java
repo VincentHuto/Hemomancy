@@ -270,4 +270,32 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABYSSAL_SIPHON_DEATH = registerSoundEvent(
 			"entity.abyssal_siphon.death");
 
+	// ===== Endgame Bosses =====
+
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_AMBIENT = registerSoundEvent(
+			"entity.vesper.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_HURT = registerSoundEvent(
+			"entity.vesper.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_DEATH = registerSoundEvent(
+			"entity.vesper.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_HIT = registerSoundEvent(
+			"entity.vesper.hit");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_MUSIC = registerSoundEvent(
+			"entity.vesper.music");
+
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_AMBIENT = registerSoundEvent(
+			"entity.mycophant.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_HURT = registerSoundEvent(
+			"entity.mycophant.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_HURT_OTHER = registerSoundEvent(
+			"entity.mycophant.hurtother");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_DEATH = registerSoundEvent(
+			"entity.mycophant.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_SUMMON = registerSoundEvent(
+			"entity.mycophant.summon");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_TELEPORT = registerSoundEvent(
+			"entity.mycophant.teleport");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_MUSIC = registerSoundEvent(
+			"entity.mycophant.music");
+
 }

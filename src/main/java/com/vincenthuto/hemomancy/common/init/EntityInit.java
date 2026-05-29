@@ -4,6 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
@@ -231,6 +234,30 @@ public class EntityInit {
                     .sized(0.7F, 2.0F)
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("velorum").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VesperTheCrownedRefusalEntity>> vesper_crowned_refusal = ENTITY_TYPES.register(
+            "vesper_crowned_refusal",
+            () -> EntityType.Builder.of(VesperTheCrownedRefusalEntity::new, MobCategory.MONSTER)
+                    .sized(4.0F, 6.0F)
+                    .clientTrackingRange(12)
+                    .fireImmune()
+                    .build(Hemomancy.rloc("vesper_crowned_refusal").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VesperTheEveningStarEntity>> vesper_evening_star = ENTITY_TYPES.register(
+            "vesper_evening_star",
+            () -> EntityType.Builder.of(VesperTheEveningStarEntity::new, MobCategory.MONSTER)
+                    .sized(1.2F, 2.3F)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build(Hemomancy.rloc("vesper_evening_star").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MycophantEntity>> mycophant = ENTITY_TYPES.register(
+            "mycophant",
+            () -> EntityType.Builder.of(MycophantEntity::new, MobCategory.MONSTER)
+                    .sized(4.0F, 6.0F)
+                    .clientTrackingRange(12)
+                    .fireImmune()
+                    .build(Hemomancy.rloc("mycophant").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -693,6 +720,9 @@ public class EntityInit {
         event.put(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionEntity.setAttributes().build());
         event.put(EntityInit.putriciel.get(), PutricielEntity.setAttributes().build());
         event.put(EntityInit.velorum.get(), VelorumEntity.setAttributes().build());
+        event.put(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalEntity.setAttributes().build());
+        event.put(EntityInit.vesper_evening_star.get(), VesperTheEveningStarEntity.setAttributes().build());
+        event.put(EntityInit.mycophant.get(), MycophantEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
         event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
         event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());

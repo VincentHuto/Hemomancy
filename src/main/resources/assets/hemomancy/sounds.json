@@ -886,5 +886,95 @@
       "hemomancy:item/qliphoth_pome/communion"
     ],
     "subtitle": "subtitle.hemomancy.item.qliphoth_pome.communion"
+  },
+  "entity.vesper.ambient": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/vesper/ambient"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.vesper.ambient"
+  },
+  "entity.vesper.hurt": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/vesper/hurt"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.vesper.hurt"
+  },
+  "entity.vesper.death": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/vesper/death"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.vesper.death"
+  },
+  "entity.vesper.hit": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/vesper/hit"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.vesper.hit"
+  },
+  "entity.vesper.music": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/vesper/music",
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitle.hemomancy.entity.vesper.music"
+  },
+  "entity.mycophant.ambient": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/mycophant/ambient"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.ambient"
+  },
+  "entity.mycophant.hurt": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/mycophant/hurt"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.hurt"
+  },
+  "entity.mycophant.hurtother": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/mycophant/hurtother"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.hurtother"
+  },
+  "entity.mycophant.death": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/mycophant/death"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.death"
+  },
+  "entity.mycophant.summon": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/mycophant/summon"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.summon"
+  },
+  "entity.mycophant.teleport": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/mycophant/teleport"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.teleport"
+  },
+  "entity.mycophant.music": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/mycophant/music",
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitle.hemomancy.entity.mycophant.music"
   }
 }

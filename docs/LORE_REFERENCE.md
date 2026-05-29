@@ -2,14 +2,15 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-05-28 Harbinger equipment, Hematic Armature, Silent Archon vestments, and Annetta item-render status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-05-29 Endgame Vesper/Mycophant boss lore and current implementation status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
-> **Current Lore-State Snapshot (2026-05-28 audit):**
+> **Current Lore-State Snapshot (2026-05-29 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
+> - **Vesper and The Mycophant now have documented endgame roles:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant is the fruiting-body endpoint for Apotheos-aligned Harbingers. Their entities, rendering, sound hooks, boss music, core combat behavior, and guaranteed final reward loot tables are wired; summoning rituals remain WIP.
 > - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
-> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
+> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, Vesper/Mycophant summoning rituals, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
@@ -246,7 +247,21 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 
 **Gameplay:** **Fungal Dimension** access via the Fungal Spine item. On first exit attempt from the dimension, the Fungal Podium fires the core witness dialogue and the two-option choice fork (stamped as `archon_choice_made`). Post-return, the Apotheos retains full Qliphoth Pome empowerment (reduced manipulation costs), maximum blood capacity, and unique cosmetic effects reflecting the fungal transformation.
 
-### 6.4b Vestments and the Hematic Armature
+### 6.4b Endgame Bosses: Refusal and Fruiting
+
+These bosses are not good-ending and bad-ending mascots. They are two consequences of reaching the same awful truth and choosing what kind of body must carry it afterward.
+
+**Vesper, The Crowned Refusal -> Vesper, The Evening Star** is the final boss for Archons who reach the eighth threshold and refuse fungal surrender. He should remain red and black, not yellow. The old yellow association is only a source-model inheritance, not his final palette or doctrine. His first phase is **The Crowned Refusal**: the Archon who keeps the crown because he will not kneel to the hive. His second phase is **The Evening Star**: the same refusal burned down into a colder, more beautiful, more dangerous sign. He is not "redeemed" by refusing Apotheos. He is the cost of human-scaled silence made militant.
+
+Vesper's lore should avoid extra true names and public titles for now. The clean canonical phrasing is **Vesper, The Crowned Refusal** for phase 1 and **Vesper, The Evening Star** for phase 2. His guaranteed final reward is **Vesper's Living Staff**, a special version of the existing Living Staff: a living implement for Archons who keep commanding blood after choosing not to dissolve into the fungal reproductive cycle.
+
+**The Mycophant** is the final boss for Apotheos-aligned Harbingers: a Cthulhu-like fungal capstone whose palette should follow the mod's mushroom language, especially red, orange, and yellow. He is not Satan, not a punishment, and not a simple monster spawned by corruption. He is the end of the Hematic Order's hidden biology made explicit: a priest-body, fruiting-body, and mouthpiece of the mycelial cycle. Fighting him should feel like confronting the successful completion of the path, not merely cleaning up a mistake.
+
+The Mycophant's guaranteed final reward is a Tendril equipped in the Charm of Vascularium rune slot. Lore-wise, it is not just a trophy; it is consent to let the player's visible body answer the same mycelial claim the boss embodies. While equipped, it fully fungalizes the player appearance, closer to a whole-body expression of the fungal Morphling's mushroom-head silhouette than a small cosmetic overlay.
+
+Together, these two bosses preserve the Harbinger path's moral tension. Refusal keeps the self but turns silence into violence. Fruiting accepts the truth but risks losing the scale of a person. Neither should be framed as clean victory.
+
+### 6.4c Vestments and the Hematic Armature
 
 Harbinger armor is not simply blacksmithing. The Hematic Armature is a ritual scaffold: the practitioner enters the frame wearing the armor to be remade, offers blood into the overhead heart, and lets prepared reagents teach the metal what the next vow means. The rite should feel intimate and a little invasive. The armor remembers the body because it is transformed on the body.
 
@@ -552,6 +567,8 @@ Each faction's relationship with materials reflects their worldview.
 | **Crimson Lacquer** | Crimson Lodge | A ritual finish rather than a simple paint: blood-crystal polish, ferric powder, and salve sealing Barbed or Chitinite ancestry into the disciplined hunger of Blood Lust. |
 | **Chalybeate Sclerite** | Harbingers | Iron-sulfide armor scale from deep vent snails; a Ferric ocean expression of the same living-mineral philosophy behind hematic iron. It is best taken by careful knapping from a withdrawn living animal, not by slaughter. |
 | **Monolith Imbued Cloth** | Silent Archons | Cloth threaded with Monolith Fragment burden and puppeteering thread. It belongs to Archons who reject Apotheos: not purity, not victory, but the decision to keep wearing the truth without dissolving into it. |
+| **Vesper's Living Staff** | Silent Archons | Guaranteed loot-table drop from Vesper's Evening Star phase. It should read as blood-command after refusal: still alive, still hungry, but disciplined by silence rather than fungal surrender. |
+| **Mycophant Tendril** | Apotheos Harbingers | Guaranteed loot-table drop from The Mycophant and Charm of Vascularium rune-slot reward. It symbolizes chosen mycelial embodiment and visibly fungalizes the whole player while equipped. |
 | **Erythrocoral Fragment** | Harbingers | Warm-ocean fungal-coral tissue: a Vivacious expression of hemomancy as ecology rather than conquest. It supports spore craft through careful shearing, not reef-clearing extraction. |
 | **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |
 | **Living materials** (bone, chitin, organic tools) | Harbingers | Blood magic makes materials *alive* — tools that feed and grow. |

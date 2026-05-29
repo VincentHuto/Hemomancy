@@ -7,6 +7,9 @@ import com.vincenthuto.hemomancy.client.model.entity.boss.Hemorath.HemorathModel
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.AnnettaKnowlesModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.LatentAnnettaInfectionModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.StainedPriestessModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheCrownedRefusalModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.ContainmentAnchorModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeFragmentModel;
@@ -162,6 +165,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(LatentAnnettaInfectionModel.LAYER_LOCATION, LatentAnnettaInfectionModel::createBodyLayer);
 		event.registerLayerDefinition(PutricielModel.LAYER_LOCATION, PutricielModel::createBodyLayer);
 		event.registerLayerDefinition(VelorumModel.LAYER_LOCATION, VelorumModel::createBodyLayer);
+		event.registerLayerDefinition(VesperTheCrownedRefusalModel.LAYER_LOCATION, VesperTheCrownedRefusalModel::createBodyLayer);
+		event.registerLayerDefinition(VesperTheEveningStarModel.LAYER_LOCATION, VesperTheEveningStarModel::createBodyLayer);
+		event.registerLayerDefinition(MycophantModel.LAYER_LOCATION, MycophantModel::createBodyLayer);
 		event.registerLayerDefinition(SeraphaeModel.LAYER_LOCATION, SeraphaeModel::createBodyLayer);
 		event.registerLayerDefinition(SeraphaeFragmentModel.LAYER_LOCATION, SeraphaeFragmentModel::createBodyLayer);
 		event.registerLayerDefinition(ContainmentAnchorModel.LAYER_LOCATION, ContainmentAnchorModel::createBodyLayer);
@@ -264,6 +270,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new RenderScarsLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 			livingRenderer.addLayer(new FungalElytraLayer(livingRenderer));
+			livingRenderer.addLayer(new MycophantTendrilFungalizationLayer(livingRenderer));
 			livingRenderer.addLayer(new MorphlingMutationLayer<>(livingRenderer));
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));

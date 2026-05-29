@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.armor.HematicIronArmorIte
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.SilentArchonArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.BloodlinePoolMonitorItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.MycophantTendrilItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.*;
@@ -77,6 +78,8 @@ public class ItemInit {
     // Charm
     public static final DeferredHolder<Item, Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
             () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTendency.ANIMUS, 0));
+    public static final DeferredHolder<Item, Item> mycophant_tendril = BASEITEMS.register("mycophant_tendril",
+            () -> new MycophantTendrilItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     // Debug / Testing
     public static final DeferredHolder<Item, Item> structure_spawner = SPECIALITEMS.register("structure_spawner",
             () -> new StructureSpawnerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
@@ -473,6 +476,8 @@ public class ItemInit {
             () -> new LivingSyringeItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_staff = SPECIALITEMS.register("living_staff",
             () -> new LivingStaffItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> vespers_living_staff = SPECIALITEMS.register("vespers_living_staff",
+            () -> new VespersLivingStaffItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredHolder<Item, Item> living_blade = SPECIALITEMS.register("living_blade",
             () -> new LivingBladeItem(25f, 3, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_axe = SPECIALITEMS.register("living_axe",

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -32,16 +31,16 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 		}
 		if (ent instanceof Player player) {
 			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
-				if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
+				ItemStack charmStack = inv.getStackInSlot(5);
+				if (charmStack.getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();
 					matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());
 					matrixStack.scale(0.25f, 0.25f, 0.25f);
 					matrixStack.translate(0, -.45, 0.55);
 					matrixStack.mulPose(Vector3.XN.rotationDegrees(7f).toMoj());
 					this.getParentModel().body.translateAndRotate(matrixStack);
-					Minecraft.getInstance().getItemRenderer().renderStatic(
-							new ItemStack(ItemInit.charm_of_vascularium.get()), ItemDisplayContext.FIXED, lightness,
-							OverlayTexture.NO_OVERLAY, matrixStack, buffer, ent.level(), lightness);
+					Minecraft.getInstance().getItemRenderer().renderStatic(charmStack, ItemDisplayContext.FIXED,
+							lightness, OverlayTexture.NO_OVERLAY, matrixStack, buffer, ent.level(), lightness);
 					matrixStack.popPose();
 				}
 

@@ -7,7 +7,9 @@ import com.vincenthuto.hemomancy.common.entity.boss.goal.EmptyPulseGoal;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.HematicCollapseGoal;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,6 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
@@ -416,4 +419,29 @@ public class HemorathEntity extends Monster {
 			event.setAmount(event.getAmount() * HEMOPHAGY_HEAL_MULTIPLIER);
 		}
 	}
+//	private static class HemorathMusic extends AbstractTickableSoundInstance {
+//		private final HemorathEntity hemorath;
+//
+//		public HemorathMusic(HemorathEntity hemorath) {
+//			super(SoundInit.ENTITY_HEMORATH_MUSIC.get(), SoundSource.RECORDS, RandomSource.create());
+//
+//			this.hemorath = hemorath;
+//			this.x = hemorath.getSource().getX();
+//			this.y = hemorath.getSource().getY();
+//			this.z = hemorath.getSource().getZ();
+//			this.looping = true;
+//		}
+//
+//		@Override
+//		public float getVolume() {
+//			return super.getVolume();
+//		}
+//
+//		@Override
+//		public void tick() {
+//			if (!hemorath.isAlive()) {
+//				this.stop();
+//			}
+//		}
+//	}
 }

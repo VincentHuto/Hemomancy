@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.client.morphling;
 
 import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment.AttachmentPoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -29,7 +31,8 @@ public final class MorphlingPlayerPartVisibility {
     public static void apply(Player player, PlayerRenderer renderer) {
         restore(renderer);
 
-        if (!HemoClientConfig.RENDER_MORPHLING_MUTATION_LAYER.get()) {
+        boolean hasMycophantTendril = hasMycophantTendril(player);
+        if (!HemoClientConfig.RENDER_MORPHLING_MUTATION_LAYER.get() && !hasMycophantTendril) {
             return;
         }
 
@@ -104,6 +107,10 @@ public final class MorphlingPlayerPartVisibility {
     }
 
     private static Set<AttachmentPoint> hiddenPartsFor(Player player) {
+        if (hasMycophantTendril(player)) {
+            return Set.of(AttachmentPoint.HEAD);
+        }
+
         return HemoCapabilityAccess.getEquippedMorphling(player)
                 .map(cap -> cap.getEquippedMorphling())
                 .map(stack -> {
@@ -115,6 +122,12 @@ public final class MorphlingPlayerPartVisibility {
                     return mutation.modelAttachment.hiddenPlayerParts(maturity);
                 })
                 .orElse(Set.of());
+    }
+
+    private static boolean hasMycophantTendril(Player player) {
+        return HemoCapabilityAccess.getScars(player)
+                .map(inv -> inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get()))
+                .orElse(false);
     }
 
     private static void setVisible(PlayerModel<?> model, AttachmentPoint part, boolean visible) {

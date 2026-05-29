@@ -16,6 +16,9 @@ import com.vincenthuto.hemomancy.client.render.entity.boss.hemorath.HemorathRend
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaKnowlesRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.LatentAnnettaInfectionRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.StainedPriestessRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheCrownedRefusalRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheEveningStarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.putriciel.PutricielRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.ContainmentAnchorRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeFragmentRenderer;
@@ -64,6 +67,7 @@ import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
+import com.vincenthuto.hemomancy.client.sound.EndgameBossMusicHandler;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
@@ -202,6 +206,7 @@ public class ClientEvents {
         if (FungalWhisperVignetteOverlay.instance != null) {
             FungalWhisperVignetteOverlay.instance.tick();
         }
+        EndgameBossMusicHandler.tick();
         handleArmatureCameraFallback();
         handleCommonClientTickInput();
     }
@@ -588,6 +593,9 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionRenderer::new);
             event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
             event.registerEntityRenderer(EntityInit.velorum.get(), VelorumRenderer::new);
+            event.registerEntityRenderer(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalRenderer::new);
+            event.registerEntityRenderer(EntityInit.vesper_evening_star.get(), VesperTheEveningStarRenderer::new);
+            event.registerEntityRenderer(EntityInit.mycophant.get(), MycophantRenderer::new);
             event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
             event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
             event.registerEntityRenderer(EntityInit.containment_anchor.get(), ContainmentAnchorRenderer::new);
