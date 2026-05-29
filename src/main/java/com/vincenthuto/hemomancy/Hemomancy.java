@@ -105,7 +105,6 @@ public class Hemomancy {
         HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         HemoCapabilityRegistrar.register(modEventBus);
 
-        // GeckoLib 4 on NeoForge initializes via mod loading; explicit bootstrap call removed.
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener((FMLCommonSetupEvent event) -> LiberDiscoveryEvents.commonSetup(event));

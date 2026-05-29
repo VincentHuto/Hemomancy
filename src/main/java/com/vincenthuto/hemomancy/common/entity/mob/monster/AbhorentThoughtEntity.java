@@ -24,6 +24,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.dimension.DimensionType;
 
 import javax.annotation.Nullable;
+import com.vincenthuto.hemomancy.common.entity.animation.AnimationCycleManager;
 
 public class AbhorentThoughtEntity extends Monster {
 
@@ -35,6 +36,9 @@ public class AbhorentThoughtEntity extends Monster {
 	public int puffCooldown = 0;
 	public final AnimationState idleAnimationState = new AnimationState();
 	public final AnimationState walkAnimationState = new AnimationState();
+
+	// Animation cycle completion manager
+	private final AnimationCycleManager animationManager = new AnimationCycleManager();
 
 	public AbhorentThoughtEntity(EntityType<? extends AbhorentThoughtEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -138,9 +142,21 @@ public class AbhorentThoughtEntity extends Monster {
 		super.tick();
 		if (this.level().isClientSide()) {
 			if (this.isMovingOnLand()) {
-				this.walkAnimationState.startIfStopped(this.tickCount);
+				// Cancel any pending finish-walk countdown — we're moving again
+				animationManager.resetAnimationFinish("walk");
+				animationManager.startAnimation(walkAnimationState, "walk", 20, this.tickCount);
+				this.idleAnimationState.stop();
+			} else if (animationManager.isAnimationFinishing("walk")) {
+				// Waiting for the current walk cycle to complete before switching to idle
+				animationManager.updateAnimationFinish("walk");
+				if (!animationManager.isAnimationFinishing("walk")) {
+					this.walkAnimationState.stop();
+					this.idleAnimationState.startIfStopped(this.tickCount);
+				}
+			} else if (this.walkAnimationState.isStarted()) {
+				// Entity just stopped moving — initiate finish sequence
+				animationManager.initiateAnimationFinish("walk", 20, this.tickCount);
 			} else {
-				this.walkAnimationState.stop();
 				this.idleAnimationState.startIfStopped(this.tickCount);
 			}
 		}

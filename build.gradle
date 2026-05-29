@@ -164,7 +164,7 @@ dependencies {
 
     // ── GeckoLib – NeoForge 1.21.1 build ─────────────────────────────────────────
     //implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-    implementation files("libs/geckolib-neoforge-${minecraft_version}-${geckolib_version}.jar")
+  //  implementation files("libs/geckolib-neoforge-${minecraft_version}-${geckolib_version}.jar")
 
     implementation files("libs/create-1.21.1-6.0.10.jar")
 
