@@ -235,6 +235,8 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
             () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
                     .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
+    public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
+            () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     // Anti blood
     public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
             () -> new Item(new Item.Properties()));
@@ -476,8 +478,6 @@ public class ItemInit {
             () -> new LivingSyringeItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_staff = SPECIALITEMS.register("living_staff",
             () -> new LivingStaffItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> vespers_living_staff = SPECIALITEMS.register("vespers_living_staff",
-            () -> new VespersLivingStaffItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredHolder<Item, Item> living_blade = SPECIALITEMS.register("living_blade",
             () -> new LivingBladeItem(25f, 3, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_axe = SPECIALITEMS.register("living_axe",

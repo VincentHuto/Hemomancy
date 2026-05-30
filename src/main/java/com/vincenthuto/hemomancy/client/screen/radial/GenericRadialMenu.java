@@ -356,11 +356,11 @@ public class GenericRadialMenu {
 			Tesselator tessellator = Tesselator.getInstance();
 			BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			iterateBand(visibleInnerItems, (item, s, e) -> {
-				int color = item.isHovered() ? backgroundColorHover : backgroundColor;
+				int color = item.getBackgroundColor(item.isHovered() ? backgroundColorHover : backgroundColor);
 				drawPieArc(buffer, x, y, z, centerRadius, innerRadiusOut, s, e, color);
 			});
 			iterateBand(visibleItems, (item, s, e) -> {
-				int color = item.isHovered() ? backgroundColorHover : backgroundColor;
+				int color = item.getBackgroundColor(item.isHovered() ? backgroundColorHover : backgroundColor);
 				drawPieArc(buffer, x, y, z, radiusIn, radiusOut, s, e, color);
 			});
 			BufferUploader.drawWithShader(buffer.buildOrThrow());

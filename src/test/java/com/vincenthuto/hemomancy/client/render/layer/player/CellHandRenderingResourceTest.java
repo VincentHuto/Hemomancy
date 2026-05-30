@@ -14,6 +14,7 @@ public final class CellHandRenderingResourceTest {
 		String layer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandLayer.java");
 		String model = read("src/main/java/com/vincenthuto/hemomancy/client/model/item/BloodArmModel.java");
 		String itemRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandItemRenderer.java");
+		String particleEffects = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
 		String bloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/BloodCellParticle.java");
 		String absorbedBloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/AbsorbedBloodCellParticle.java");
 		String projectionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
@@ -23,6 +24,10 @@ public final class CellHandRenderingResourceTest {
 				"curMatrix.mul(inverted)");
 		assertContains("third-person particles use a body-yaw hand anchor", layer,
 				"calculateThirdPersonHandOrigin(living, side)");
+		assertContains("third-person particles share the cell-hand particle helper", layer,
+				"CellHandParticleEffects.spawnThirdPersonParticlesFromOrigin");
+		assertContains("third-person blood hand presentation includes living staff utility use", layer,
+				"LivingStaffItem.isLivingStaffUtilityUse");
 		assertContains("third-person right side vector is not mirrored to the left shoulder", layer,
 				"new Vec3(-forward.z, 0.0D, forward.x)");
 		assertDoesNotContain("third-person particles do not spawn from the camera", layer,
@@ -50,21 +55,21 @@ public final class CellHandRenderingResourceTest {
 				"if (activeArm != side)");
 		assertContains("first-person particles are emitted from the active casting hand", itemRenderer,
 				"spawnFirstPersonParticlesForStack(stack, side);");
-		assertContains("first-person particles use camera-local hand offsets", itemRenderer,
+		assertContains("first-person particles use camera-local hand offsets", particleEffects,
 				"calculateFirstPersonHandAnchor(hand)");
-		assertContains("first-person hand aura is raised toward the visible palm", itemRenderer,
+		assertContains("first-person hand aura is raised toward the visible palm", particleEffects,
 				"-0.14D + 0.035D * pulse");
-		assertContains("first-person hand aura is moved out to the visible palm", itemRenderer,
+		assertContains("first-person hand aura is moved out to the visible palm", particleEffects,
 				"sideSign * (0.32D + 0.035D * wave)");
-		assertContains("first-person hand aura sits closer to the rendered hand", itemRenderer,
+		assertContains("first-person hand aura sits closer to the rendered hand", particleEffects,
 				"0.66D - 0.03D * pulse");
-		assertContains("first-person particles are anchored while alive", itemRenderer,
+		assertContains("first-person particles are anchored while alive", particleEffects,
 				"particle.setFirstPersonAnchor(localOffset);");
-		assertContains("absorbed first-person particles are created directly for hand targeting", itemRenderer,
-				"mc.particleEngine.createParticle(AbsrobedBloodCellParticleFactory.createData(targetColor)");
-		assertContains("absorbed first-person particles follow the active hand target", itemRenderer,
+		assertContains("absorbed first-person particles are created directly for hand targeting", particleEffects,
+				"AbsrobedBloodCellParticleFactory.createData(targetColor)");
+		assertContains("absorbed first-person particles follow the active hand target", particleEffects,
 				"particle.setFirstPersonTargetAnchor(anchor);");
-		assertContains("third-person absorbed cells do not sag below the hand target", layer,
+		assertContains("third-person absorbed cells do not sag below the hand target", particleEffects,
 				"particle.setTargetYOffset(0.0D);");
 		assertContains("first-person particle anchors follow camera rotation", bloodCellParticle,
 				"this.setPosFromCameraAnchor();");

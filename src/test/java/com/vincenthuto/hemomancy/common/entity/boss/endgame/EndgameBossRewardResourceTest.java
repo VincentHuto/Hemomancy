@@ -13,8 +13,10 @@ public final class EndgameBossRewardResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
-		String vesperStaff = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/VespersLivingStaffItem.java"));
+		String memoryOfVesper = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItem.java"));
+		String memoryRenderer = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/render/item/MemoryOfVesperItemRenderer.java"));
 		String mycophantTendril = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/bloodline/MycophantTendrilItem.java"));
 		String vesper = read(SOURCE_ROOT.resolve(
@@ -34,31 +36,35 @@ public final class EndgameBossRewardResourceTest {
 		String layerEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String charmLayer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/layer/player/VascCharmLayer.java"));
-		String vesperModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/vespers_living_staff.json"));
+		String memoryModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/memory_of_vesper.json"));
 		String tendrilModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/mycophant_tendril.json"));
 		Path tendrilTexture = RESOURCE_ROOT.resolve("assets/hemomancy/textures/item/mycophant_tendril.png");
 		String vesperLoot = read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/vesper_evening_star.json"));
 		String mycophantLoot = read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/mycophant.json"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 
-		assertContains("item registry includes Vesper staff", itemInit,
-				"vespers_living_staff = SPECIALITEMS.register(\"vespers_living_staff\"");
-		assertContains("Vesper staff uses its own Living Staff subclass", itemInit,
-				"new VespersLivingStaffItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant())");
+		assertContains("item registry includes Memory of Vesper", itemInit,
+				"memory_of_vesper = BASEITEMS.register(\"memory_of_vesper\"");
+		assertContains("Memory of Vesper uses its own renderer item class", itemInit,
+				"new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant())");
 		assertContains("item registry includes Mycophant Tendril", itemInit,
 				"mycophant_tendril = BASEITEMS.register(\"mycophant_tendril\"");
 		assertContains("Mycophant Tendril is charm-slot compatible", mycophantTendril,
 				"extends VasculariumCharmItem");
-		assertContains("Vesper staff changes the directed orb behavior", vesperStaff,
-				"public void summonDirectedOrb(Level worldIn, Player playerIn)");
-		assertNotContains("Evening Star reward is not manually spawned outside its loot table", vesper,
-				"vespers_living_staff");
+		assertContains("Memory of Vesper supplies a custom renderer", memoryOfVesper,
+				"return new MemoryOfVesperItemRenderer(");
+		assertContains("Memory renderer uses the monolith fragment shader path", memoryRenderer,
+				"HemoRenderTypes.monolithFragment");
+		assertContains("Memory renderer draws a pome-like silhouette", memoryRenderer,
+				"drawPomeSilhouette");
+		assertContains("Evening Star reward manually spawns Memory of Vesper exactly once", vesper,
+				"ItemInit.memory_of_vesper.get()");
 		assertNotContains("Crowned Refusal still has no final Vesper staff loot", crownedRefusal,
-				"vespers_living_staff");
+				"memory_of_vesper");
 		assertNotContains("Mycophant reward is not manually spawned outside its loot table", mycophant,
 				"mycophant_tendril");
-		assertGuaranteedEntityDrop("Evening Star loot table guarantees Vesper staff", vesperLoot,
-				"hemomancy:vespers_living_staff");
+		assertGuaranteedEntityDrop("Evening Star loot table documents Memory of Vesper", vesperLoot,
+				"hemomancy:memory_of_vesper");
 		assertGuaranteedEntityDrop("Mycophant loot table guarantees Tendril", mycophantLoot,
 				"hemomancy:mycophant_tendril");
 		assertContains("Tendril layer checks charm slot", tendrilLayer,
@@ -75,8 +81,10 @@ public final class EndgameBossRewardResourceTest {
 				"new MycophantTendrilFungalizationLayer");
 		assertContains("Charm layer renders the equipped charm stack", charmLayer,
 				"renderStatic(charmStack");
-		assertContains("Vesper staff model reuses living staff visuals", vesperModel,
-				"\"parent\": \"hemomancy:item/living_staff\"");
+		assertContains("Memory of Vesper model delegates to custom renderer", memoryModel,
+				"\"parent\": \"builtin/entity\"");
+		assertContains("Memory of Vesper model has a particle fallback", memoryModel,
+				"\"particle\": \"hemomancy:item/qliphoth_pome\"");
 		assertContains("Tendril model uses a generated item sprite", tendrilModel,
 				"\"parent\": \"minecraft:item/generated\"");
 		assertContains("Tendril model points at its own texture", tendrilModel,
@@ -84,8 +92,8 @@ public final class EndgameBossRewardResourceTest {
 		assertNotContains("Tendril model no longer borrows erythrocoral visuals", tendrilModel,
 				"erythrocoral_tendril");
 		assertPngDimensions("Tendril has its own 16x16 sprite texture", tendrilTexture, 16, 16);
-		assertContains("Vesper staff has a lang key", lang,
-				"\"item.hemomancy.vespers_living_staff\": \"Vesper's Living Staff\"");
+		assertContains("Memory of Vesper has a lang key", lang,
+				"\"item.hemomancy.memory_of_vesper\": \"Memory of Vesper\"");
 		assertContains("Mycophant Tendril has a lang key", lang,
 				"\"item.hemomancy.mycophant_tendril\": \"Mycophant Tendril\"");
 	}

@@ -10,6 +10,8 @@ public abstract class RadialMenuItem
     private MutableComponent centralText;
     private boolean visible;
     private boolean hovered;
+    private boolean hasBackgroundColor;
+    private int backgroundColor;
 
     protected RadialMenuItem(GenericRadialMenu owner)
     {
@@ -46,6 +48,17 @@ public abstract class RadialMenuItem
     public void setHovered(boolean hovered)
     {
         this.hovered = hovered;
+    }
+
+    public void setBackgroundColor(int backgroundColor)
+    {
+        this.backgroundColor = backgroundColor;
+        this.hasBackgroundColor = true;
+    }
+
+    public int getBackgroundColor(int fallbackColor)
+    {
+        return hasBackgroundColor ? backgroundColor : fallbackColor;
     }
 
     public abstract void draw(DrawingContext context);

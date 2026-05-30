@@ -35,6 +35,8 @@ import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
+	private static final int SELECTED_MANIP_SLICE_TINT = 0x9F7A0D0D;
+
 	@SubscribeEvent
 	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
 		if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR))
@@ -121,16 +123,18 @@ public class RadialChooseManipScreen extends Screen {
 			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary
 			List<BloodManipulation> allManips = manips.getManipList();
 			List<String> equippedNames = manips.getEquippedManipNames();
+			BloodManipulation selectedManip = allManips.isEmpty() ? null : manips.getSelectedManip();
+			String selectedManipName = selectedManip != null ? selectedManip.getName() : "";
 
-			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION);
-			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION);
+			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
+			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
 
 			for (int i = 0; i < allManips.size(); i++) {
 				BloodManipulation c = allManips.get(i);
 				if (!equippedNames.contains(c.getName()) || ManipulationEquipHelper.isFixedMechanicalManip(c.getName())) {
 					continue;
 				}
-				this.cachedMenuItems.add(createManipulationItem(c, i));
+				this.cachedMenuItems.add(createManipulationItem(c, i, selectedManipName));
 			}
 			this.menu.clear();
 			this.menu.addAllInner(this.cachedMechanicalItems);
@@ -178,17 +182,17 @@ public class RadialChooseManipScreen extends Screen {
 		}
 	}
 
-	private void addMechanicalManipulation(List<BloodManipulation> allManips, String manipName) {
+	private void addMechanicalManipulation(List<BloodManipulation> allManips, String manipName, String selectedManipName) {
 		for (int i = 0; i < allManips.size(); i++) {
 			BloodManipulation manipulation = allManips.get(i);
 			if (manipulation != null && manipName.equals(manipulation.getName())) {
-				this.cachedMechanicalItems.add(createManipulationItem(manipulation, i));
+				this.cachedMechanicalItems.add(createManipulationItem(manipulation, i, selectedManipName));
 				return;
 			}
 		}
 	}
 
-	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot) {
+	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot, String selectedManipName) {
 		BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
 				Hemomancy.rloc("textures/item/memories/memory_" + manipulation.getName() + "_overlay.png"),
 				Hemomancy.rloc("textures/item/memories/memory_blank.png"),
@@ -201,6 +205,9 @@ public class RadialChooseManipScreen extends Screen {
 				return true;
 			}
 		};
+		if (manipulation.getName().equals(selectedManipName)) {
+			item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);
+		}
 		item.setVisible(true);
 		return item;
 	}

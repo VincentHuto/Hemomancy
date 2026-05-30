@@ -67,6 +67,9 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> blood_gourd_fill_serializer = SERIALIZERS
 			.register("blood_gourd_fill", FillBloodGourdRecipe.Serializer::new);
 
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<VesperStaffUpgradeRecipe>> vesper_staff_upgrade_serializer =
+			SERIALIZERS.register("vesper_staff_upgrade", VesperStaffUpgradeRecipe.Serializer::new);
+
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> memory_weaving_serializer = SERIALIZERS
 			.register("memory_weaving", MemoryWeavingRecipeSerializer::new);
 

@@ -5,20 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
-import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
+import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.math.Vector3;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -27,18 +19,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
 
 public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 
@@ -70,16 +54,19 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 		}
 
+		boolean rightHandPresentation = isCellHandPresentation(entitylivingbaseIn, rightHandItem);
+		boolean leftHandPresentation = isCellHandPresentation(entitylivingbaseIn, leftHandItem);
+
 		// Right InteractionHand only
-		if (rightHandItem.getItem() instanceof ICellHand && !(leftHandItem.getItem() instanceof ICellHand)) {
+		if (rightHandPresentation && !leftHandPresentation) {
 			this.renderBloodArm(matrixStackIn, bufferIn, packedLightIn, true, false);
 			this.renderHandParticle(entitylivingbaseIn, rightHandItem, HumanoidArm.RIGHT);
 			// Left InteractionHand only
-		} else if (leftHandItem.getItem() instanceof ICellHand && !(rightHandItem.getItem() instanceof ICellHand)) {
+		} else if (leftHandPresentation && !rightHandPresentation) {
 			this.renderBloodArm(matrixStackIn, bufferIn, packedLightIn, false, true);
 			this.renderHandParticle(entitylivingbaseIn, leftHandItem, HumanoidArm.LEFT);
 			// Both Hands
-		} else if (leftHandItem.getItem() instanceof ICellHand && rightHandItem.getItem() instanceof ICellHand) {
+		} else if (leftHandPresentation && rightHandPresentation) {
 			this.renderBloodArm(matrixStackIn, bufferIn, packedLightIn, true, true);
 			this.renderHandParticle(entitylivingbaseIn, rightHandItem, HumanoidArm.RIGHT);
 			this.renderHandParticle(entitylivingbaseIn, leftHandItem, HumanoidArm.LEFT);
@@ -109,14 +96,18 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 		if (Minecraft.getInstance().isPaused()) {
 			return;
 		}
-		if (!stack.isEmpty() && stack.getItem() instanceof ICellHand && living.isUsingItem()) {
+		if (!stack.isEmpty() && isCellHandPresentation(living, stack) && living.isUsingItem()) {
 			HumanoidArm activeArm = living.getUsedItemHand() == InteractionHand.MAIN_HAND
 					? living.getMainArm()
 					: living.getMainArm().getOpposite();
 			if (activeArm == side) {
-				this.spawnParticleFromOrigin(calculateThirdPersonHandOrigin(living, side), living);
+				this.spawnParticleFromOrigin(calculateThirdPersonHandOrigin(living, side), living, stack);
 			}
 		}
+	}
+
+	private boolean isCellHandPresentation(LivingEntity living, ItemStack stack) {
+		return stack.getItem() instanceof ICellHand || LivingStaffItem.isLivingStaffUtilityUse(living, stack);
 	}
 
 	private Vec3 calculateThirdPersonHandOrigin(LivingEntity living, HumanoidArm side) {
@@ -131,59 +122,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 				.add(right.scale(sideOffset));
 	}
 
-	private void spawnParticleFromOrigin(Vec3 origin, LivingEntity player) {
-		Level world = player.level();
-		int globalPartCount = 20;
-
-		boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
-		InteractionHand activeHand = player.getUsedItemHand();
-		Random rand = new Random();
-		if (itemIsInUse) {
-			if (player.getItemInHand(activeHand).getItem() instanceof BloodAbsorptionItem) {
-				List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
-				if (targets.size() > 0) {
-					for (Entity target : targets) {
-						if (target instanceof LivingEntity) {
-							LivingEntity livingTarget = (LivingEntity) target;
-							Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-							Vec3 finalPos = origin.subtract(targetVec.x, targetVec.y, targetVec.z).reverse();
-							Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(target);
-							ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-							Particle created = Minecraft.getInstance().particleEngine.createParticle(AbsrobedBloodCellParticleFactory.createData(targetColor), origin.x,
-									origin.y, origin.z, (float) finalPos.x + rand.nextFloat() - 0.5D,
-									(float) finalPos.y - rand.nextFloat() - 0F,
-									(float) finalPos.z + rand.nextFloat() - 0.5D);
-							if (created instanceof AbsorbedBloodCellParticle particle) {
-								particle.setTargetYOffset(0.0D);
-							}
-						}
-					}
-				}
-
-			} else {
-				HitResult trace = player.pick(5, HLClientUtils.getPartialTicks(), true);
-				if (trace.getType() == Type.BLOCK) {
-					Vec3 hitVec = trace.getLocation();
-					Vec3 projectionTarget = hitVec.add(0.0D, 1.05D, 0.0D);
-					Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
-					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
-							projectionTarget.x, projectionTarget.y, projectionTarget.z,
-							(float) finalPos.x + rand.nextFloat() - 0.5D,
-							(float) finalPos.y - rand.nextFloat() - 0.5F,
-							(float) finalPos.z + rand.nextFloat() - 0.5D);
-
-				}
-			}
-			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
-					false);
-			// particlePos = particlePos.reverse();
-
-			for (int i = 0; i < globalPartCount; i++) {
-				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
-						origin.x() + inversedSphere[i].x, origin.y() + inversedSphere[i].y,
-						origin.z() + inversedSphere[i].z, 0, 0.00, 0);
-
-			}
-		}
+	private void spawnParticleFromOrigin(Vec3 origin, LivingEntity player, ItemStack activeStack) {
+		CellHandParticleEffects.spawnThirdPersonParticlesFromOrigin(origin, player, activeStack);
 	}
 }

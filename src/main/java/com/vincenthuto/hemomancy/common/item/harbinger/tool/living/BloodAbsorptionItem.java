@@ -30,8 +30,11 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
+import java.util.Optional;
 
 public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand, HemoClientItemExtensionsProvider {
+	private static final double BARE_ABSORPTION_RANGE = 5.0D;
+	private static final double BARE_ABSORPTION_AMOUNT = 3.0D;
 
 	public BloodAbsorptionItem(Properties prop) {
 		super(prop.stacksTo(1));
@@ -104,23 +107,45 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
-		List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
-		if (!targets.isEmpty()) {
-			targets.forEach((t) -> {
-				if (t instanceof LivingEntity) {
-					LivingEntity livingTarget = (LivingEntity) t;
-					float dam = 3f / targets.size();
-					livingTarget.hurt(player.damageSources().generic(), dam);
-					if (!worldIn.isClientSide) {
-						volume.fill(dam);
-						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
-					}
-				}
-			});
-
+		if (worldIn.isClientSide) {
+			return;
 		}
+		findBareAbsorptionTarget(player, BARE_ABSORPTION_RANGE)
+				.ifPresent(target -> absorbFromTarget(worldIn, player, target, BARE_ABSORPTION_AMOUNT));
+	}
+
+	public static Optional<LivingEntity> findBareAbsorptionTarget(LivingEntity user, double range) {
+		List<LivingEntity> candidates = user.level().getEntitiesOfClass(LivingEntity.class,
+				user.getBoundingBox().inflate(range), target -> isValidAbsorptionTarget(user, target));
+		return BloodAbsorptionTargetRules.chooseBareTarget(candidates,
+				target -> isValidAbsorptionTarget(user, target),
+				target -> false,
+				user::distanceToSqr);
+	}
+
+	public static double absorbFromTarget(Level level, LivingEntity user, LivingEntity target, double amount) {
+		if (!isValidAbsorptionTarget(user, target)) {
+			return 0.0D;
+		}
+		if (level.isClientSide) {
+			return 0.0D;
+		}
+		target.hurt(user.damageSources().generic(), (float) amount);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(user)
+				.orElseThrow(NullPointerException::new);
+		volume.fill(amount);
+		if (user instanceof ServerPlayer serverPlayer) {
+			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
+		}
+		return amount;
+	}
+
+	public static boolean isValidAbsorptionTarget(LivingEntity user, Entity entity) {
+		return entity instanceof LivingEntity target
+				&& target != user
+				&& target.isAlive()
+				&& !target.isSpectator()
+				&& !(target instanceof Player);
 	}
 
 	@SuppressWarnings("unused")

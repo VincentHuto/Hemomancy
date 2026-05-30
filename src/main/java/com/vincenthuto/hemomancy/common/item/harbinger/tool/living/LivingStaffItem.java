@@ -1,15 +1,18 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +25,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -39,10 +43,12 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 public class LivingStaffItem extends LivingItemItem {
+	private static final String UTILITY_SESSION_BLOOD_HANDLED_KEY = "HemomancyLivingStaffUtilityBloodHandled";
 
 	private static int getSlotFor(Inventory inv, ItemStack stack) {
 		if (inv.getSelected() == stack)
@@ -67,6 +73,10 @@ public class LivingStaffItem extends LivingItemItem {
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		Level world = context.level();
+		if (LivingStaffFocusRules.isVesperAwakened(stack)) {
+			tooltip.add(Component.translatable("item.hemomancy.living_staff.vesper_awakened.tooltip")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		}
 		if (world != null && world.isClientSide) {
 			net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
 			if (player != null) {
@@ -139,14 +149,41 @@ public class LivingStaffItem extends LivingItemItem {
 					}
 				}
 			}
+			if (pLivingEntity instanceof Player player
+					&& (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
+					|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION))) {
+				spawnStaffUtilityParticles(player, pStack);
+			}
 
+		}
+		if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
+			if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
+				double bloodHandled = LivingStaffFocusRules.getBloodHandled(pStack);
+				boolean vesperAwakened = LivingStaffFocusRules.isVesperAwakened(pStack);
+				int elapsed = getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration;
+				int interval = LivingStaffFocusRules.absorptionPulseIntervalTicks(vesperAwakened, bloodHandled);
+				if (elapsed % interval == 0) {
+					absorbWithStaff(pLevel, player, pStack);
+				}
+			} else if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION)) {
+				projectWithStaff(pLevel, player, pStack);
+			}
 		}
 	}
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		if (entityLiving instanceof Player) {
-			Player player = (Player) entityLiving;
+		if (entityLiving instanceof Player player) {
+			boolean selectedUtility = isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
+					|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION);
+			boolean handledUtilityBlood = !worldIn.isClientSide && hasUtilityBloodHandled(player);
+			if (selectedUtility || handledUtilityBlood) {
+				if (!worldIn.isClientSide) {
+					commitUtilityBloodHandled(player, stack);
+				}
+				player.awardStat(Stats.ITEM_USED.get(this));
+				return;
+			}
 			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 					.orElseThrow(NullPointerException::new);
 			if (playerVolume.getBloodVolume() > 50f) {
@@ -169,11 +206,6 @@ public class LivingStaffItem extends LivingItemItem {
 							}
 						});
 
-					} else {
-						this.summonDirectedOrb(worldIn, player);
-						playerVolume.drain(50f);
-
-						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
 					}
 				} else {
 					player.playSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,
@@ -187,21 +219,28 @@ public class LivingStaffItem extends LivingItemItem {
 			}
 		}
 
-		((Player) entityLiving).awardStat(Stats.ITEM_USED.get(this));
+		if (entityLiving instanceof Player player) {
+			player.awardStat(Stats.ITEM_USED.get(this));
+		}
 
 	}
 
-	public void summonDirectedOrb(Level worldIn, Player playerIn) {
-		DirectedBloodOrbEntity miss = new DirectedBloodOrbEntity(playerIn, false);
-		miss.setPos(playerIn.getX() - 0.5, playerIn.getY() + 0.6, playerIn.getZ() - 0.5);
-		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
-		worldIn.addFreshEntity(miss);
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return LivingStaffFocusRules.isVesperAwakened(stack) || super.isFoil(stack);
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack itemstack = playerIn.getItemInHand(handIn);
+		if (!playerIn.isShiftKeyDown()) {
+			playerIn.startUsingItem(handIn);
+		}
 
 		if (!worldIn.isClientSide) {
+			if (!playerIn.isShiftKeyDown()) {
+				clearUtilityBloodHandled(playerIn);
+			}
 			if (playerIn.isShiftKeyDown()) {
 				playerIn.openMenu(new MenuProvider() {
 
@@ -221,13 +260,115 @@ public class LivingStaffItem extends LivingItemItem {
 				});
 
 			} else {
-				ItemStack itemstack = playerIn.getItemInHand(handIn);
-				playerIn.startUsingItem(handIn);
 				return InteractionResultHolder.consume(itemstack);
 			}
 		}
-		return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
+		return playerIn.isShiftKeyDown()
+				? InteractionResultHolder.success(itemstack)
+				: InteractionResultHolder.consume(itemstack);
 
+	}
+
+	private static void absorbWithStaff(Level level, Player player, ItemStack stack) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
+				.orElseThrow(NullPointerException::new);
+		if (!volume.isActive() || volume.isFull()) {
+			return;
+		}
+		double bloodHandled = LivingStaffFocusRules.getBloodHandled(stack);
+		boolean vesperAwakened = LivingStaffFocusRules.isVesperAwakened(stack);
+		int targetCap = LivingStaffFocusRules.absorptionTargetCap(true, vesperAwakened, bloodHandled);
+		double amountPerTarget = LivingStaffFocusRules.absorptionDamagePerTarget(vesperAwakened, bloodHandled);
+		List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+						player.getBoundingBox().inflate(6.0D),
+						target -> BloodAbsorptionItem.isValidAbsorptionTarget(player, target))
+				.stream()
+				.sorted(Comparator.comparingDouble(player::distanceToSqr))
+				.limit(targetCap)
+				.toList();
+		double handled = 0.0D;
+		for (LivingEntity target : targets) {
+			handled += BloodAbsorptionItem.absorbFromTarget(level, player, target, amountPerTarget);
+		}
+		recordUtilityBloodHandled(player, handled);
+	}
+
+	private static void projectWithStaff(Level level, Player player, ItemStack stack) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
+				.orElseThrow(NullPointerException::new);
+		if (!volume.isActive() || volume.isEmpty()) {
+			return;
+		}
+		double bloodHandled = LivingStaffFocusRules.getBloodHandled(stack);
+		boolean vesperAwakened = LivingStaffFocusRules.isVesperAwakened(stack);
+		double handled = BloodProjectionItem.projectFromEntity(level, player,
+				LivingStaffFocusRules.structureProjectionRate(true, vesperAwakened, bloodHandled),
+				LivingStaffFocusRules.bloodTileProjectionRate(true, vesperAwakened, bloodHandled));
+		recordUtilityBloodHandled(player, handled);
+	}
+
+	private static void recordUtilityBloodHandled(Player player, double handled) {
+		if (handled <= 0.0D) {
+			return;
+		}
+		CompoundTag data = player.getPersistentData();
+		data.putDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY,
+				data.getDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY) + handled);
+	}
+
+	private static boolean hasUtilityBloodHandled(Player player) {
+		return player.getPersistentData().getDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY) > 0.0D;
+	}
+
+	private static void commitUtilityBloodHandled(Player player, ItemStack stack) {
+		CompoundTag data = player.getPersistentData();
+		double handled = data.getDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY);
+		if (handled > 0.0D) {
+			LivingStaffFocusRules.addBloodHandled(stack, handled);
+		}
+		data.remove(UTILITY_SESSION_BLOOD_HANDLED_KEY);
+	}
+
+	private static void clearUtilityBloodHandled(Player player) {
+		player.getPersistentData().remove(UTILITY_SESSION_BLOOD_HANDLED_KEY);
+	}
+
+	public static boolean isLivingStaffUtilityUse(LivingEntity living, ItemStack stack) {
+		return isLivingStaffAbsorptionUse(living, stack) || isLivingStaffProjectionUse(living, stack);
+	}
+
+	public static boolean isLivingStaffAbsorptionUse(LivingEntity living, ItemStack stack) {
+		return isLivingStaffSelectedUtility(living, stack, ManipulationEquipHelper.BLOOD_ABSORPTION);
+	}
+
+	public static boolean isLivingStaffProjectionUse(LivingEntity living, ItemStack stack) {
+		return isLivingStaffSelectedUtility(living, stack, ManipulationEquipHelper.BLOOD_PROJECTION);
+	}
+
+	private static boolean isLivingStaffSelectedUtility(LivingEntity living, ItemStack stack, String manipName) {
+		return stack.getItem() instanceof LivingStaffItem
+				&& living instanceof Player player
+				&& living.isUsingItem()
+				&& isSelectedStaffUtility(player, manipName);
+	}
+
+	public static boolean isSelectedStaffUtility(Player player, String manipName) {
+		return HemoCapabilityAccess.getKnownManipulations(player).map(known -> {
+			if (known.getManipList().isEmpty()) {
+				return false;
+			}
+			BloodManipulation selected = known.getSelectedManip();
+			return selected != null
+					&& LivingStaffUtilitySelectionRules.isSelectedUtility(selected.getName(), manipName);
+		}).orElse(false);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private static void spawnStaffUtilityParticles(Player player, ItemStack stack) {
+		HumanoidArm activeArm = player.getUsedItemHand() == InteractionHand.MAIN_HAND
+				? player.getMainArm()
+				: player.getMainArm().getOpposite();
+		CellHandParticleEffects.spawnFirstPersonParticlesForStack(stack, activeArm);
 	}
 
 }

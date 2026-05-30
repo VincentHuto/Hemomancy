@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,7 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 	private final int h;
 	private final int tex_w;
 	private final int tex_h;
+	private final int iconTint;
 
 	public BlitRadialMenuItem(GenericRadialMenu owner, int slot, ResourceLocation rLoc, int u, int v, int w, int h,
 			int texW, int texH, Component altText) {
@@ -28,6 +30,11 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 	 */
 	public BlitRadialMenuItem(GenericRadialMenu owner, int slot, ResourceLocation rLoc, ResourceLocation baseLoc,
 			int u, int v, int w, int h, int texW, int texH, Component altText) {
+		this(owner, slot, rLoc, baseLoc, u, v, w, h, texW, texH, altText, 0xFFFFFFFF);
+	}
+
+	public BlitRadialMenuItem(GenericRadialMenu owner, int slot, ResourceLocation rLoc, ResourceLocation baseLoc,
+			int u, int v, int w, int h, int texW, int texH, Component altText, int iconTint) {
 		super(owner, altText, Integer.MAX_VALUE);
 		this.slot = slot;
 		this.rLoc = rLoc;
@@ -38,6 +45,7 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 		this.h = h;
 		this.tex_w = texW;
 		this.tex_h = texH;
+		this.iconTint = iconTint;
 	}
 
 	Minecraft mc = Minecraft.getInstance();
@@ -51,7 +59,17 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 		if (baseLoc != null) {
 			graphics.blit(baseLoc, dx, dy, this.u, this.v, this.w, this.h, this.tex_w, this.tex_h);
 		}
+		if (iconTint != 0xFFFFFFFF) {
+			float a = ((iconTint >>> 24) & 0xFF) / 255.0f;
+			float r = ((iconTint >>> 16) & 0xFF) / 255.0f;
+			float g = ((iconTint >>> 8) & 0xFF) / 255.0f;
+			float b = (iconTint & 0xFF) / 255.0f;
+			RenderSystem.setShaderColor(r, g, b, a);
+		}
 		graphics.blit(rLoc, dx, dy, this.u, this.v, this.w, this.h, this.tex_w, this.tex_h);
+		if (iconTint != 0xFFFFFFFF) {
+			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+		}
 		context.graphics.pose().popPose();
 	}
 

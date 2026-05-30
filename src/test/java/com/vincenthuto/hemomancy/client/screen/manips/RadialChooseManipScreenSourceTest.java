@@ -19,6 +19,14 @@ public final class RadialChooseManipScreenSourceTest {
 				"ManipulationEquipHelper");
 		assertContains("radial screen adds mechanical entries to the inner band", screen,
 				"this.menu.addAllInner(this.cachedMechanicalItems);");
+		assertContains("radial screen defines the selected manipulation slice tint", screen,
+				"SELECTED_MANIP_SLICE_TINT");
+		assertContains("radial screen compares item names to the selected manipulation", screen,
+				"manipulation.getName().equals(selectedManipName)");
+		assertContains("selected radial item applies the tint to the whole slice", screen,
+				"item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);");
+		assertContains("generic radial reads per-item background colors", menu,
+				"item.getBackgroundColor");
 		assertContains("absorption is added before projection for the top inner half", screen,
 				"ManipulationEquipHelper.BLOOD_ABSORPTION");
 		assertContains("projection is added to the second inner half", screen,

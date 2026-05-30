@@ -49,7 +49,7 @@ public class VesperTheEveningStarEntity extends Monster {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
         //super.dropCustomDeathLoot(level, damageSource, recentlyHit);
-        ItemEntity itementity = this.spawnAtLocation(ItemInit.vespers_living_staff.get());
+        ItemEntity itementity = this.spawnAtLocation(ItemInit.memory_of_vesper.get());
         if (itementity != null) {
             itementity.setExtendedLifetime();
             itementity.setInvulnerable(true);

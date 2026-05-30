@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBl
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
-import com.vincenthuto.hemomancy.common.event.BloodStructureFeedRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -79,8 +78,16 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
+		projectFromEntity(worldIn, player,
+				LivingStaffFocusRules.structureProjectionRate(false, false, 0.0D),
+				LivingStaffFocusRules.bloodTileProjectionRate(false, false, 0.0D));
+	}
+
+	public static double projectFromEntity(Level worldIn, LivingEntity player, double structureFeedRate,
+			double tileTransferRate) {
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
+		double beforeBlood = playerVolume.getBloodVolume();
 
 		HitResult trace = player.pick(5.5,0, true);
 		if (trace.getType() == Type.BLOCK) {
@@ -88,8 +95,8 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer
 					&& worldIn instanceof ServerLevel serverLevel
 					&& BloodStructureFeedManager.feedStructure(serverPlayer, serverLevel, targetPos,
-							player.getOffhandItem())) {
-				return;
+							player.getOffhandItem(), structureFeedRate)) {
+				return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
 			}
 
 			BlockEntity be = worldIn.getBlockEntity(targetPos);
@@ -99,7 +106,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 					IBloodVolume tileVolume = HemoCapabilityAccess.getBloodVolume(be)
 							.orElseThrow(IllegalStateException::new);
 					if(!tileVolume.isFull()) {
-						tileVolume.fillFromSource(playerVolume, BloodStructureFeedRules.BLOOD_TILE_TRANSFER_RATE);
+						tileVolume.fillFromSource(playerVolume, tileTransferRate);
 						if (be instanceof IBloodTile bt) {
 							bt.sendUpdates();
 						}
@@ -109,10 +116,10 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 			}
 
 		}
-		if (!worldIn.isClientSide) {
-
-			PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
+		if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
 		}
+		return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
 	}
 
 	@SuppressWarnings("unused")

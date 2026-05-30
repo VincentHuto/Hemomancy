@@ -50,7 +50,7 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("unstained_guardian", "hemomancy:sanguine_blob"),
 			new GuaranteedDrop("unstained_zealot", "hemomancy:sanguine_blob"),
 			new GuaranteedDrop("venous_strider", "hemomancy:vivacious_spores"),
-			new GuaranteedDrop("vesper_evening_star", "hemomancy:vespers_living_staff"),
+			new GuaranteedDrop("vesper_evening_star", "hemomancy:memory_of_vesper"),
 			new GuaranteedDrop("void_drinker", "hemomancy:void_ichor") };
 
 	private EntityLootTableCoverageResourceTest() {

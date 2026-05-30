@@ -44,6 +44,11 @@ public final class BloodStructureFeedManager {
 	}
 
 	public static boolean feedStructure(ServerPlayer player, ServerLevel level, BlockPos hitPos, ItemStack offhandCatalyst) {
+		return feedStructure(player, level, hitPos, offhandCatalyst, FEED_RATE);
+	}
+
+	public static boolean feedStructure(ServerPlayer player, ServerLevel level, BlockPos hitPos, ItemStack offhandCatalyst,
+			double feedRate) {
 		var candidate = BloodStructureCraftingHelper.findProjectionCraftMatch(player, level, hitPos, offhandCatalyst);
 		if (candidate.isEmpty()) {
 			return false;
@@ -75,7 +80,7 @@ public final class BloodStructureFeedManager {
 		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		double feedAmount = BloodStructureFeedRules.feedAmount(currentProgress, recipe.getBloodCost(),
-				bloodVolume.getBloodVolume(), FEED_RATE);
+				bloodVolume.getBloodVolume(), Math.max(0.0D, feedRate));
 		if (feedAmount <= 0.0) {
 			sendHint(player, Component.literal("Not enough blood can be projected into the formation.")
 					.withStyle(ChatFormatting.DARK_RED));

@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class CellHandItemRendererParticleOriginTest {
-	private static final Path RENDERER = Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandItemRenderer.java");
+	private static final Path RENDERER = Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/CellHandParticleEffects.java");
 
 	private CellHandItemRendererParticleOriginTest() {
 	}
@@ -14,7 +14,7 @@ public final class CellHandItemRendererParticleOriginTest {
 		String source = Files.readString(RENDERER).replace("\r\n", "\n");
 
 		assertContains("projection particles should target the block hit position through an explicit destination",
-				source, "Vec3 projectionTarget = hitVec.add(0.0, 1.05D, 0.0);");
+				source, "Vec3 projectionTarget = trace.getLocation().add(0.0, 1.05D, 0.0);");
 		assertContains("projection particles should start from the hand particle origin",
 				source, "Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();");
 		assertDoesNotContain("projection particles should not source their trajectory from the eye/camera anchor",
