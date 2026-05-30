@@ -78,6 +78,7 @@ public class ManipulationTreeInit {
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
 		register("venous_travel",        fx,         TREE_TOP_Y + ROW_GAP * 2);
 		register("conjure_blade",        fx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2);
+		register("conjure_staff",        fx + COL_GAP, TREE_TOP_Y + ROW_GAP * 3, "conjure_blade");
 		register("sanguine_mending",     fx + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
 
 		// ═══════════════════════════════════════════

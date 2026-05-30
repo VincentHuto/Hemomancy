@@ -262,6 +262,9 @@ private float animTime = 0f;
             case "skill_scar_affinity"   -> "\u2721";
             case "skill_scar_resonance"  -> "\u2721";
             case "skill_scar_mastery"    -> "\u2721";
+            case "skill_living_conduit"  -> "L";
+            case "skill_vascular_draw"   -> "V";
+            case "skill_crimson_projection" -> "P";
             default                      -> "?";
         };
     }

@@ -79,6 +79,8 @@ public class PacketHandler {
 
         net.playToClient(PacketSyncPomeProgress.TYPE,
                 PacketSyncPomeProgress.STREAM_CODEC, PacketSyncPomeProgress::handle);
+        net.playToClient(LivingStaffProgressServerPacket.TYPE,
+                LivingStaffProgressServerPacket.STREAM_CODEC, LivingStaffProgressServerPacket::handle);
 
         // ── Blood Tendency capability ─────────────────────────────────────────
         net.playToServer(BloodTendencyClientPacket.TYPE,

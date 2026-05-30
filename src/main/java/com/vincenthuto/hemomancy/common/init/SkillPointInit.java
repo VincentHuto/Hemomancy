@@ -16,7 +16,8 @@ public class SkillPointInit {
 			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach,
 			skill_manip_slots,
 			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery,
-			skill_puppet_skein, skill_living_sinew, skill_far_tether;
+			skill_puppet_skein, skill_living_sinew, skill_far_tether,
+			skill_living_conduit, skill_vascular_draw, skill_crimson_projection;
 
 	// ── Milestone tracking ──
 	public static void init() {
@@ -112,6 +113,19 @@ public class SkillPointInit {
 				new SkillPoint(20, "skill_far_tether", 400, 3, EnumSkillStates.LOCKED, skill_puppet_skein)
 						.setSkillPointCost(3).setRequiredDegree(3)
 						.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+
+		skill_living_conduit = registerSkill(BASE,
+				new SkillPoint(21, "skill_living_conduit", 250, 3, EnumSkillStates.LOCKED, skill_manip_slots)
+						.setSkillPointCost(2).setRequiredDegree(1)
+						.setIconItem(() -> new ItemStack(ItemInit.living_staff.get())));
+		skill_vascular_draw = registerSkill(BASE,
+				new SkillPoint(22, "skill_vascular_draw", 350, 3, EnumSkillStates.LOCKED, skill_living_conduit)
+						.setSkillPointCost(2).setRequiredDegree(2)
+						.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
+		skill_crimson_projection = registerSkill(BASE,
+				new SkillPoint(23, "skill_crimson_projection", 400, 3, EnumSkillStates.LOCKED, skill_living_conduit)
+						.setSkillPointCost(3).setRequiredDegree(3)
+						.setIconItem(() -> new ItemStack(ItemInit.blood_projection.get())));
 
 		registerSkillBranch(BASE);
 	}

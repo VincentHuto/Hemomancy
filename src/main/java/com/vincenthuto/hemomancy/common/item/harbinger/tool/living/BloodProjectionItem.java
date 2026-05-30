@@ -79,8 +79,8 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
 		projectFromEntity(worldIn, player,
-				LivingStaffFocusRules.structureProjectionRate(false, false, 0.0D),
-				LivingStaffFocusRules.bloodTileProjectionRate(false, false, 0.0D));
+				LivingStaffFocusRules.structureProjectionRate(false, LivingStaffFocusProfile.NONE),
+				LivingStaffFocusRules.bloodTileProjectionRate(false, LivingStaffFocusProfile.NONE));
 	}
 
 	public static double projectFromEntity(Level worldIn, LivingEntity player, double structureFeedRate,

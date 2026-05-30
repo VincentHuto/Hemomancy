@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -121,6 +122,22 @@ public static IKnownManipulations requireKnownManipulations(Player player) {
 
 public static IKnownManipulations requireKnownManipulations(Entity entity) {
     return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<ILivingStaffProgress> getLivingStaffProgress(Player player) {
+    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.LIVING_STAFF_PROGRESS));
+}
+
+public static Optional<ILivingStaffProgress> getLivingStaffProgress(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.LIVING_STAFF_PROGRESS));
+}
+
+public static ILivingStaffProgress requireLivingStaffProgress(Player player) {
+    return getLivingStaffProgress(player).orElseThrow(IllegalStateException::new);
+}
+
+public static ILivingStaffProgress requireLivingStaffProgress(Entity entity) {
+    return getLivingStaffProgress(entity).orElseThrow(IllegalStateException::new);
 }
 
 public static Optional<IKnownStillArts> getKnownStillArts(Player player) {

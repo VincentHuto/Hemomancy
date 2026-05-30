@@ -32,9 +32,9 @@ public final class LivingStaffUtilitySourceTest {
 		assertContains("staff records handled blood away from the held item during utility use",
 				staff, "recordUtilityBloodHandled(player,");
 		assertContains("staff commits handled blood once when utility use is released",
-				staff, "commitUtilityBloodHandled(player, stack);");
-		assertContains("staff still preserves long-term BloodHandled focus progression",
-				staff, "LivingStaffFocusRules.addBloodHandled(stack, handled);");
+				staff, "commitUtilityBloodHandled(player);");
+		assertContains("staff tracks handled blood on the player without powering focus from item data",
+				staff, "progress.addBloodHandled(handled);");
 	}
 
 	private static String read(String path) throws IOException {

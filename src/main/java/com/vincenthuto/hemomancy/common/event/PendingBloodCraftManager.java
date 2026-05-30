@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -81,6 +82,7 @@ public class PendingBloodCraftManager {
 			ServerPlayer crafter = level.getServer().getPlayerList().getPlayer(crafterId);
 			if (crafter != null) {
 				MachineAccessEvents.awardMachineCrafted(crafter, result);
+				LivingStaffBondHelper.unlockFromBloodStructureCraft(crafter, result);
 			}
 		}
 	}

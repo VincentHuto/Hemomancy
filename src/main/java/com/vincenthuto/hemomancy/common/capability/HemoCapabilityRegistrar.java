@@ -41,6 +41,8 @@ public final class HemoCapabilityRegistrar {
                 (player, ctx) -> player.getData(HemoAttachmentTypes.EQUIPPED_MORPHLING));
         event.registerEntity(HemoCapabilityKeys.KNOWN_MANIPULATIONS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.KNOWN_MANIPULATIONS));
+        event.registerEntity(HemoCapabilityKeys.LIVING_STAFF_PROGRESS, EntityType.PLAYER,
+                (player, ctx) -> player.getData(HemoAttachmentTypes.LIVING_STAFF_PROGRESS));
         event.registerEntity(HemoCapabilityKeys.KNOWN_STILL_ARTS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.KNOWN_STILL_ARTS));
         event.registerEntity(HemoCapabilityKeys.KNOWN_SUMMONS, EntityType.PLAYER,

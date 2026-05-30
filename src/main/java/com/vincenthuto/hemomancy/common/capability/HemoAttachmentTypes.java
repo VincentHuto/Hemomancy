@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
@@ -54,6 +55,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<KnownManipulations>> KNOWN_MANIPULATIONS =
             ATTACHMENT_TYPES.register("known_manipulations",
                     () -> AttachmentType.serializable(KnownManipulations::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LivingStaffProgress>> LIVING_STAFF_PROGRESS =
+            ATTACHMENT_TYPES.register("living_staff_progress",
+                    () -> AttachmentType.serializable(LivingStaffProgress::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<KnownStillArts>> KNOWN_STILL_ARTS =
             ATTACHMENT_TYPES.register("known_still_arts",

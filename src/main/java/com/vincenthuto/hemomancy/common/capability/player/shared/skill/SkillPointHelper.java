@@ -302,4 +302,46 @@ public final class SkillPointHelper {
 		if (sp == null || !progress.isUnlocked(sp)) return 0;
 		return progress.getLevel(sp);
 	}
+
+	public static int getLivingConduitLevel(Player player) {
+		return getLivingConduitLevel(progress(player));
+	}
+
+	public static int getLivingConduitLevel() {
+		return getLivingConduitLevel(progress(null));
+	}
+
+	private static int getLivingConduitLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_living_conduit;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getVascularDrawLevel(Player player) {
+		return getVascularDrawLevel(progress(player));
+	}
+
+	public static int getVascularDrawLevel() {
+		return getVascularDrawLevel(progress(null));
+	}
+
+	private static int getVascularDrawLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_vascular_draw;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getCrimsonProjectionLevel(Player player) {
+		return getCrimsonProjectionLevel(progress(player));
+	}
+
+	public static int getCrimsonProjectionLevel() {
+		return getCrimsonProjectionLevel(progress(null));
+	}
+
+	private static int getCrimsonProjectionLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_crimson_projection;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
 }

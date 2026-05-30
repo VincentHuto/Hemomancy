@@ -244,6 +244,12 @@ public class ManipulationInit {
 					.setCooldownTicks(40)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_staff = MANIPS.register("conjure_staff",
+			() -> new ConjurationManip("conjure_staff", ItemInit.living_staff, 1000, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
+					.setCooldownTicks(40)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_absorption = MANIPS.register("blood_absorption",
 			() -> new ConjurationManip("blood_absorption", ItemInit.blood_absorption, 1000, 0, 0,

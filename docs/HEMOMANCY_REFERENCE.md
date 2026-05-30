@@ -600,7 +600,7 @@ The two new endgame bosses represent the fork after Archon revelation:
 - Phase 2 (`VesperTheEveningStarEntity`) is mapped from the old `TrueXanthousKing` reference. It is the final kill and has a guaranteed entity loot-table drop for Memory of Vesper.
 - Current fight behavior includes boss bars, hostile targeting, low-health cadence/regen scaling, homing blood-orb missiles, grip/spike hazards, Morphling Polyp add pressure, shield-disabling melee hits, delayed phase transition/death spectacle, copied Vesper reference sounds, and looping client boss music.
 - Current render path: `VesperTheCrownedRefusalRenderer`, `VesperTheEveningStarRenderer`, model layers in `LayerEvents`, red/black textures in `textures/entity/boss/endgame/`, and `VesperEveningStarLinesLayer` for the phase-2 emissive line texture that appears only at half health or lower.
-- Implemented reward: `memory_of_vesper`, a rare fire-resistant material rendered as a pome-like memory with the Monolith Fragment shader. Crafting it with an existing `living_staff` preserves that staff's data and adds `VesperMemoryAwakened: true`, making the same staff the Vesper-upgraded focus.
+- Implemented reward: `memory_of_vesper`, a rare fire-resistant material rendered as a pome-like memory with the Monolith Fragment shader. Right-clicking it after forming a Living Staff bond awakens Vesper's memory in the player's staff progress, making every conjured or held Living Staff use the Vesper-upgraded focus.
 
 **The Mycophant**
 - Represents the fungal endpoint for an ascended/Apotheos Harbinger: not a devil or punishment figure, but a fully mycelialized capstone being.
@@ -829,6 +829,7 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 | `hemolymphal_pulse` | 400 | Quick | Humilis | Ductilis | Head | 20t | Blood-sense pulse that applies Glowing to nearby living entities for 15 seconds |
 | `ferric_transmutation` | 1000 | Quick | Summa | Ferric | Body | 20t | **Sanguine Alloy** — saturates the caster's blood with ferrous compounds for 90s: grants Strength II (iron-enriched blood hits harder) + Sanguine Siphon II (accelerated blood regeneration). Memory item display name: "Memory Sanguine Alloy". |
 | `conjure_blade` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Living Blade into empty main hand |
+| `conjure_staff` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Living Staff into empty main hand after the first Living Staff blood-structure craft unlocks the staff bond |
 | `blood_absorption` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Absorption tool into empty main hand |
 | `blood_projection` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Projection launcher into empty main hand |
 | `summon_avatar` | 500 | Quick | Summa | Animus | Body | 100t | Toggles the Blood Avatar form (visual transformation synced to all players) |
@@ -957,12 +958,15 @@ Skills cost **skill points** (earned from using manipulations) and many require 
 | Capacity | 1 | 5 | 1 | — | +500 max blood volume per level | Base |
 | Efficiency | 2 | 5 | 1 | — | -8% manipulation cost per level (multiplicative, ~34% at max) | Base |
 | Manip Slots | 14 | 5 | 2 | 1 | +1 active manipulation slot per level | Base |
+| Living Conduit | 21 | 3 | 2 | 1 | Living Staff absorption target cap and absorption range increase per level | Manip Slots |
 | Last Wind | 3 | 3 | 2 | 2 | +2 blood regen/tick when below 10% blood | Capacity |
 | Sanguine Surge | 7 | 3 | 2 | 2 | +1 passive blood regen/tick per level | Capacity |
 | Dynamic Use | 4 | 3 | 2 | 2 | +10% manipulation power when tendency matches | Efficiency |
 | Hemostasis | 6 | 3 | 2 | 2 | -10% blood lost when taking damage per level | Efficiency |
+| Vascular Draw | 22 | 3 | 2 | 2 | Living Staff absorption amount increases and pulse interval decreases per level | Living Conduit |
 | Feeding Frenzy | 5 | 3 | 3 | 3 | +25% blood gained from kills | Last Wind |
 | Iron Will | 10 | 3 | 3 | 3 | 10% damage reduction per level when blood < 15% | Last Wind |
+| Crimson Projection | 23 | 3 | 3 | 3 | Living Staff structure feed and blood vessel feed rates increase per level | Living Conduit |
 | Blood Flow | 11 | 5 | 2 | 3 | -5% manipulation cooldowns per level | Hemostasis |
 | Coagulation | 12 | 3 | 3 | 4 | +15% chance to block incoming bleed effects | Hemostasis |
 | Crimson Mastery | 8 | 3 | 3 | 4 | +15% manipulation damage/effectiveness per level | Dynamic Use |
@@ -981,10 +985,13 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Capacity | ✅ Yes | `BloodVolumeEvents` — adds flat bonus to max blood volume each tick |
 | Efficiency | ✅ Yes | `BloodManipulation.performAction()` — multiplies manipulation blood cost |
 | Manip Slots | ✅ Yes | `KnownManipulationEvents` — expands active manipulation slot count |
+| Living Conduit | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — increases Living Staff absorption target cap and range |
 | Last Wind | ✅ Yes | `BloodVolumeEvents` — passive blood regen when below 10% threshold |
 | Dynamic Use | ✅ Yes | `BloodManipulation` — divides effective blood cost by multiplier when tendency matches |
 | Feeding Frenzy | ✅ Yes | `BloodVolumeEvents` — multiplies blood gained from kills |
 | Hemostasis | ✅ Yes | `BloodVolumeEvents` — multiplies blood drained when taking damage |
+| Vascular Draw | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — increases Living Staff absorption amount and pulse speed |
+| Crimson Projection | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — increases Living Staff projection/feed rates |
 | Sanguine Surge | ✅ Yes | `BloodVolumeEvents` — adds passive blood regen per tick |
 | Crimson Mastery | ✅ Yes | `PyreticForgeManip` — scales items smelted per cast |
 | Vital Link | ✅ Yes | `KnownManipulationEvents` — chance to heal player on dealing manipulation damage |
@@ -1555,6 +1562,7 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_ward` | Grants Resistance I to nearby player allies for 10 seconds |
 | `hemolymphal_pulse` | Applies Glowing to all nearby living entities |
 | `conjure_blade` | Unsupported; cannot be used by Drudges |
+| `conjure_staff` | Unsupported; cannot be used by Drudges |
 | `blood_absorption` | Unsupported; cannot be used by Drudges |
 | `blood_projection` | Unsupported; cannot be used by Drudges |
 | `summon_thrall` | Unsupported; cannot be used by Drudges |
@@ -1895,8 +1903,8 @@ All are single-stack, use the `LIVING` tool tier:
 | Living Axe | `LivingAxeItem` | Blood-feeding axe |
 | Living Spear | `LivingSpearItem` | Blood-feeding polearm |
 | Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding claw weapon |
-| Living Staff | `LivingStaffItem` | Channels morphlings and blood magic |
-| Memory of Vesper | `MemoryOfVesperItem` | Vesper Evening Star drop. Craft with an existing Living Staff to awaken that same stack with `VesperMemoryAwakened`, preserving staff data instead of replacing it with a separate weapon. |
+| Living Staff | `LivingStaffItem` | Channels morphlings and blood magic. First blood-structure craft unlocks the player Living Staff bond and `conjure_staff`; absorption/projection power now reads from Living Conduit, Vascular Draw, and Crimson Projection skill levels, while handled blood remains a player stat. |
+| Memory of Vesper | `MemoryOfVesperItem` | Vesper Evening Star drop. Right-click after forming a Living Staff bond to permanently awaken Vesper's memory in player staff progress instead of crafting a separate or stack-bound weapon. |
 | Living Syringe | `LivingSyringeItem` | Extracts blood vials from mobs into a loaded Vial Rack (Shift to eject rack) |
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
 | Sanguis Lancea | `SanguisLanceaItem` | Throwable blood lance (25 base dmg) |
@@ -2526,7 +2534,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Harbinger Voyager** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_voyager/harbinger_voyager.png) | Creature | Active-vessel captain-scholar NPC; dialogue-only research leader for reef, vent, and wreck survey expeditions. Always placed by active-vessel spawn helper on Survey Cog structures. |
 | **Harbinger Votary Wayfarer** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_votary_wayfarer/harbinger_votary_wayfarer.png) | Creature | Active-vessel junior Votary NPC with a 1-in-5 companion spawn rule. Dialogue-only observer learning from the Voyager; no trades, quests, rewards, or ordinary spawning. |
 | **Vesper, The Crowned Refusal** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_crowned_refusal.png) | Boss | Endgame Silent / refusal Archon boss phase 1, entity ID `hemomancy:vesper_crowned_refusal`. Uses the former Xanthous King reference as a red/black Vesper form. Stats: 520 HP, 0.16 speed, 1.0 knockback resistance. Boss bar: RED. Abilities include hostile targeting, low-health cadence scaling, blood-orb missiles, grip/spike hazards, Morphling Polyp add pressure, and shield-disabling melee hits. On defeat it transitions into `hemomancy:vesper_evening_star` and drops no final loot. Current access is direct summon until the endgame summoning ritual is wired. |
-| **Vesper, The Evening Star** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_evening_star.png) | Boss | Endgame Silent / refusal Archon boss phase 2, entity ID `hemomancy:vesper_evening_star`. Uses the former True Xanthous King reference as Vesper's final red/black form. Stats: 640 HP, 0.22 speed, 1.0 knockback resistance. Boss bar: RED. Keeps the Vesper missile/grip/spike/add-pressure kit with stronger final-phase pressure, delayed death spectacle, copied Vesper boss music, and `VesperEveningStarLinesLayer` emissive line rendering that only appears at half health or lower. Guaranteed final reward: `memory_of_vesper`, a staff-awakening material for the player's existing Living Staff. |
+| **Vesper, The Evening Star** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/vesper_evening_star.png) | Boss | Endgame Silent / refusal Archon boss phase 2, entity ID `hemomancy:vesper_evening_star`. Uses the former True Xanthous King reference as Vesper's final red/black form. Stats: 640 HP, 0.22 speed, 1.0 knockback resistance. Boss bar: RED. Keeps the Vesper missile/grip/spike/add-pressure kit with stronger final-phase pressure, delayed death spectacle, copied Vesper boss music, and `VesperEveningStarLinesLayer` emissive line rendering that only appears at half health or lower. Guaranteed final reward: `memory_of_vesper`, a right-click awakening material for the player's Living Staff bond. |
 | **The Mycophant** | ![](../src/main/resources/assets/hemomancy/textures/entity/boss/endgame/mycophant.png) | Boss | Endgame Apotheos / fungal ascension boss, entity ID `hemomancy:mycophant`. Uses the former Uzouthrhix reference recolored into the red/orange/yellow mushroom palette. Stats: 720 HP, 0.18 speed, 1.15 knockback resistance. Boss bar: YELLOW. Abilities include hostile targeting, low-health cadence scaling, crimson flame placement, blindness/confusion/slowness pulses, repel/claw pressure, Fungling summons, fire immunity, copied Mycophant music, `hurtother` lash audio, and `MycophantAwokenMaskLayer` half-health emissive rendering. Guaranteed entity loot-table drop: `mycophant_tendril`, a Charm of Vascularium slot item that fully fungalizes the player render while equipped. |
 | **Annetta Knowles (The Stained Priestess)** | | Boss / NPC | Separate Unstained boss arc with a full two-route encounter, implemented in `entity/boss/annetta/`. She spawns in COWERING state inside a `BrokenChurchStructure` (see §29), with a ToothPecks Specimen Jar placed beside her and Devil's Tooth decorations around the scene. Dedicated Java models/textures are present for the encounter entities, and Annetta's Sanguis Lancea has a custom held/item renderer; GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP. `AnnettaKnowlesEntity` has four states: **COWERING** (hiding, dialogue only), **PHASE_ONE** (Harbinger-route boss fight), **CURED_SUPPORT** (Unstained-route ally phase), **RESOLVED** (post-encounter).<br><br>**Harbinger route** (interact while holding a ToothPecks Specimen Jar): the jar shatters, Annetta is bitten, and she transitions to PHASE_ONE. Boss bar: PURPLE, NOTCHED_10. Stats: 350 HP, 7 ATK, 0.26 SPD, 0.8 KB resist, 8 armor. Phase abilities: ① Silver Aura (every 60t, 6-block radius, 3 magic damage + Weakness II to blood-active players) ② Hemolytic Vial throw (every 90t, projectile applies Weakness + Mining Fatigue) ③ Hair-and-Nails Slash at ≤50% HP (every 70t, 5-block AoE, 5 damage + Slowness III). When she would die: if the player holds `annettas_sanguis_lancea`, she mutates into **`StainedPriestessEntity`** (Phase 2 — see below). Harbinger-route drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4 (if Phase 2 not triggered).<br><br>**Unstained route** (interact while holding a Draught of Still Mercy and `clarityUnlocked == true`): Annetta drinks the draught, transitions to CURED_SUPPORT, and **`LatentAnnettaInfectionEntity`** spawns as a separate boss (the latent infection made physical). In CURED_SUPPORT mode Annetta moves toward the infection entity and applies slow/debuffs near it; she also heals nearby Unstained players every 80t. When the `LatentAnnettaInfectionEntity` dies, it calls `annetta.markResolvedAfterCure()`, transitioning Annetta to RESOLVED state. Unstained-route drops (from LatentAnnettaInfection): `annettas_absolution_dagger` + pale_silver_ingot ×3. |
 | **Stained Priestess (`StainedPriestessEntity`)** | | Boss | Phase 2 of the Harbinger-route Annetta encounter. Stats: 420 HP, 12 ATK, 0.32 SPD, 0.9 KB resist, 10 armor. Boss bar: WHITE, NOTCHED_10. Phase abilities: ① Blood Lances (every 70t, fires `SanguisLanceaEntity` projectile in look direction + 2 angled variants) ② Lunge attack (every 100t, moves rapidly toward target and strikes) ③ Blood Pressure Bloom (every 85t, 7-block AoE, 6 magic damage + Slowness to all nearby). Melee hits drain 300 blood from blood-active players (`BLOOD_DRAIN = 300`). Drops: `annettas_sanguis_lancea` + hematic_iron_scrap ×4. |
