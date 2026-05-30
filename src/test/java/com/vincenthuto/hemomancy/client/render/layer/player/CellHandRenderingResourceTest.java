@@ -55,6 +55,8 @@ public final class CellHandRenderingResourceTest {
 				"if (activeArm != side)");
 		assertContains("first-person particles are emitted from the active casting hand", itemRenderer,
 				"spawnFirstPersonParticlesForStack(stack, side);");
+		assertContains("first-person particles only emit while the camera is first person", particleEffects,
+				"!mc.options.getCameraType().isFirstPerson()");
 		assertContains("first-person particles use camera-local hand offsets", particleEffects,
 				"calculateFirstPersonHandAnchor(hand)");
 		assertContains("first-person hand aura is raised toward the visible palm", particleEffects,

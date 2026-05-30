@@ -88,7 +88,7 @@ public final class CellHandParticleEffects {
 
 	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.isPaused()) {
+		if (mc.isPaused() || !mc.options.getCameraType().isFirstPerson()) {
 			return;
 		}
 		LocalPlayer player = mc.player;
