@@ -232,7 +232,10 @@ public class LivingStaffItem extends LivingItemItem implements IDispellable {
 
 	@Override
 	public boolean isFoil(ItemStack stack) {
-		return (FMLEnvironment.dist == Dist.CLIENT && isClientPlayerVesperAwakened()) || super.isFoil(stack);
+		if (FMLEnvironment.dist == Dist.CLIENT) {
+			return isClientPlayerVesperAwakened() || super.isFoil(stack);
+		}
+		return super.isFoil(stack);
 	}
 
 	@Override
@@ -373,6 +376,7 @@ public class LivingStaffItem extends LivingItemItem implements IDispellable {
 		}).orElse(false);
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	private static boolean isClientPlayerVesperAwakened() {
 		net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
 		return player != null && HemoCapabilityAccess.getLivingStaffProgress(player)

@@ -84,11 +84,11 @@ public class FieldNotesItem extends Item {
 		if (MemoHelper.isInk(player.getOffhandItem())) {
 			return player.getOffhandItem();
 		}
-		for (ItemStack stack : player.getInventory().items) {
-			if (stack.is(ItemInit.hematic_field_ink.get()) || stack.is(ItemInit.pale_field_ink.get())) {
-				return stack;
-			}
-		}
+//		for (ItemStack stack : player.getInventory().items) {
+//			if (stack.is(ItemInit.hematic_field_ink.get()) || stack.is(ItemInit.pale_field_ink.get())) {
+//				return stack;
+//			}
+//		}
 		return ItemStack.EMPTY;
 	}
 

@@ -284,9 +284,9 @@ public final class MemoHelper {
 		return pathForInk(stack) != null;
 	}
 
-	public static boolean isFieldNotes(ItemStack stack) {
-		return !stack.isEmpty() && stack.is(ItemInit.field_notes.get());
-	}
+//	public static boolean isFieldNotes(ItemStack stack) {
+//		return !stack.isEmpty() && stack.is(ItemInit.field_notes.get());
+//	}
 
 	public static boolean isLiber(ItemStack stack) {
 		return !stack.isEmpty() && (stack.is(ItemInit.liber_sanguinum.get()) || stack.is(ItemInit.liber_immaculatus.get()));
@@ -343,12 +343,12 @@ public final class MemoHelper {
 	}
 
 	private static MemoDefinition.MemoPath pathForInk(ItemStack ink) {
-		if (ink.is(ItemInit.hematic_field_ink.get())) {
-			return MemoDefinition.MemoPath.HARBINGER;
-		}
-		if (ink.is(ItemInit.pale_field_ink.get())) {
-			return MemoDefinition.MemoPath.UNSTAINED;
-		}
+//		if (ink.is(ItemInit.hematic_field_ink.get())) {
+//			return MemoDefinition.MemoPath.HARBINGER;
+//		}
+//		if (ink.is(ItemInit.pale_field_ink.get())) {
+//			return MemoDefinition.MemoPath.UNSTAINED;
+//		}
 		return null;
 	}
 
@@ -359,26 +359,26 @@ public final class MemoHelper {
 	}
 
 	private static boolean migrateLegacyFieldNotesStack(ItemStack stack, LiberKnowledge knowledge) {
-		if (!isFieldNotes(stack)) {
-			return false;
-		}
-		CompoundTag tag = getCustomData(stack);
-		boolean hadLegacyData = tag.contains(TAG_MEMOS) || tag.contains(TAG_REMAINING) || tag.contains(TAG_INK_PATH);
-		ListTag memoList = tag.getList(TAG_MEMOS, TAG_STRING);
+//		if (!isFieldNotes(stack)) {
+//			return false;
+//		}
+//		CompoundTag tag = getCustomData(stack);
+//		boolean hadLegacyData = tag.contains(TAG_MEMOS) || tag.contains(TAG_REMAINING) || tag.contains(TAG_INK_PATH);
+//		ListTag memoList = tag.getList(TAG_MEMOS, TAG_STRING);
 		boolean changed = false;
-		for (int i = 0; i < memoList.size(); i++) {
-			ResourceLocation memoId = ResourceLocation.tryParse(memoList.getString(i));
-			if (memoId != null) {
-				changed |= knowledge.recordPendingMemo(memoId);
-			}
-		}
-		if (hadLegacyData) {
-			tag.remove(TAG_MEMOS);
-			tag.remove(TAG_REMAINING);
-			tag.remove(TAG_INK_PATH);
-			setCustomData(stack, tag);
-			changed = true;
-		}
+//		for (int i = 0; i < memoList.size(); i++) {
+//			ResourceLocation memoId = ResourceLocation.tryParse(memoList.getString(i));
+//			if (memoId != null) {
+//				changed |= knowledge.recordPendingMemo(memoId);
+//			}
+//		}
+//		if (hadLegacyData) {
+//			tag.remove(TAG_MEMOS);
+//			tag.remove(TAG_REMAINING);
+//			tag.remove(TAG_INK_PATH);
+//			setCustomData(stack, tag);
+//			changed = true;
+//		}
 		return changed;
 	}
 

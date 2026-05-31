@@ -6,8 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
@@ -99,13 +97,8 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
 
     // ── Handler ──────────────────────────────────────────────────────────────
 
-    @OnlyIn(Dist.CLIENT)
     public static void handle(final OpenSSCScreenPacket msg, final IPayloadContext ctx) {
-        ctx.enqueueWork(() -> {
-            if (ctx.player() != null) {
-                SSCScreen.open(msg.pos, msg.sscBlood, msg.sscMaxBlood, msg.drudges);
-            }
-        });
+        ctx.enqueueWork(() -> SSCScreen.open(msg.pos, msg.sscBlood, msg.sscMaxBlood, msg.drudges));
     }
 
     // ── Accessors ────────────────────────────────────────────────────────────

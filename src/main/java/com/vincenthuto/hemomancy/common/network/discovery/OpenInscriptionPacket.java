@@ -6,8 +6,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import javax.annotation.Nullable;
@@ -60,7 +58,6 @@ public record OpenInscriptionPacket(
 		return new OpenInscriptionPacket(title, lines, revealed, riteId, requiresAbocipherLiteracy);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void handle(final OpenInscriptionPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> DiscoveryInscriptionScreen.open(msg.title, msg.lines, msg.revealed, msg.riteId,
 				msg.requiresAbocipherLiteracy));

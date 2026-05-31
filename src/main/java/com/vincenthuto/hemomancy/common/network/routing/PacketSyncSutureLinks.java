@@ -7,8 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
@@ -41,7 +39,6 @@ public record PacketSyncSutureLinks(List<Entry> entries) implements CustomPacket
 		return new PacketSyncSutureLinks(entries);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void handle(final PacketSyncSutureLinks msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> SutureLinkClientData.setEntries(msg.entries.stream()
 				.map(entry -> new SutureLinkClientData.Entry(entry.pos, entry.mode, entry.bloodlineEnabled))

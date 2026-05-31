@@ -352,10 +352,10 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.sanguine_quintessence.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-        list.add(new MaterialEntry("hematic_field_ink", "Hematic Field Ink",
-                "Blood-infused ink used for writing patterns and engrams.",
-                "Materials", () -> new ItemStack(ItemInit.hematic_field_ink.get()),
-                true, UnlockPredicate.minDegree(3)));
+//        list.add(new MaterialEntry("hematic_field_ink", "Hematic Field Ink",
+//                "Blood-infused ink used for writing patterns and engrams.",
+//                "Materials", () -> new ItemStack(ItemInit.hematic_field_ink.get()),
+//                true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("blood_stained_stone", "Blood-Stained Stone",
                 "Common stone saturated with sanguine residue.",
@@ -906,10 +906,10 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.pale_humor_flask.get()),
                 true, UnlockPredicate.minPurity(15f)));
 
-        list.add(new MaterialEntry("pale_field_ink", "Pale Field Ink",
-                "Unstained writing ink used for consecrated patterns and records.",
-                "Materials", () -> new ItemStack(ItemInit.pale_field_ink.get()),
-                true, UnlockPredicate.minPurity(25f)));
+//        list.add(new MaterialEntry("pale_field_ink", "Pale Field Ink",
+//                "Unstained writing ink used for consecrated patterns and records.",
+//                "Materials", () -> new ItemStack(ItemInit.pale_field_ink.get()),
+//                true, UnlockPredicate.minPurity(25f)));
 
         list.add(new MaterialEntry("draught_of_still_waters", "Draught of Still Waters",
                 "A sacred draught blessed by Our Lady. Soothes blood corruption.",

@@ -112,9 +112,9 @@ public class ItemInit {
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
-    public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
-            () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/field_notes.png")));
+//    public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
+//            () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
+//                    Hemomancy.rloc("textures/entity/field_notes.png")));
 
     public static final DeferredHolder<Item, Item> scout_field_notes = SPECIALITEMS.register("scout_field_notes",
             () -> new PreWrittenMemoItem(new Item.Properties()));
@@ -133,10 +133,10 @@ public class ItemInit {
             () -> new HematicSutureNeedleItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> stained_church_map = BASEITEMS.register("stained_church_map",
             () -> new StainedChurchMapItem(new Item.Properties().fireResistant()));
-    public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",
-            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
+//            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",
+//            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> foul_paste = BASEITEMS.register("foul_paste",
             () -> new FoulPasteItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> active_smouldering_ash = SPECIALITEMS.register("active_smouldering_ash",

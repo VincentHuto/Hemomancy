@@ -508,13 +508,13 @@ public class ClientEvents {
         });
     }
 
-    @SubscribeEvent
-    public static void restoreMorphlingHiddenPlayerParts(RenderPlayerEvent.Post event) {
-        MorphlingPlayerPartVisibility.restore(event.getRenderer());
-    }
+     @SubscribeEvent
+     public static void restoreMorphlingHiddenPlayerParts(RenderPlayerEvent.Post event) {
+         MorphlingPlayerPartVisibility.restore(event.getRenderer());
+     }
 
-    @EventBusSubscriber(modid = Hemomancy.MOD_ID)
-    public static class ClientModBusEvents {
+     @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+     public static class ClientModBusEvents {
 
         public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
 
