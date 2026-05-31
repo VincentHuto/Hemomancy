@@ -23,6 +23,18 @@ test('preview exposes movement undo and redo controls with keyboard shortcuts', 
   expect(main).toContain('isMovementRedoShortcut');
 });
 
+test('preview records inspector edits and supports ctrl-drag parent rewiring', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('recordSkillEdit');
+  expect(main).toContain('beginConnectionDrag');
+  expect(main).toContain('finishConnectionDrag');
+  expect(main).toContain('event.ctrlKey');
+  expect(main).toContain('connection-preview');
+  expect(css).toContain('.connection-preview');
+});
+
 test('preview colors trace lines by destination branch', () => {
   const main = read('main.ts');
   const css = read('styles.css');

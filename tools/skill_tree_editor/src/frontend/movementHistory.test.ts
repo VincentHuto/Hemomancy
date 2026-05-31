@@ -2,6 +2,7 @@ import {
   createMovementHistory,
   recordMovement,
   recordMovements,
+  recordSkillEdit,
   redoMovement,
   undoMovement
 } from './movementHistory';
@@ -77,4 +78,52 @@ test('undoes and redoes a batch of auto-layout movements as one history step', (
     { field: 'base_skill', position: { x: 480, y: 480 } },
     { field: 'skill_capacity', position: { x: 439, y: 408 } }
   ]);
+});
+
+test('undoes and redoes inspector field edits', () => {
+  const history = createMovementHistory();
+
+  recordSkillEdit(history, {
+    fieldBefore: 'skill_crimson_projection',
+    fieldAfter: 'skill_crimson_projection',
+    key: 'parentField',
+    before: 'skill_vascular_draw',
+    after: 'skill_living_conduit'
+  });
+
+  expect(undoMovement(history)?.updates).toEqual([{
+    field: 'skill_crimson_projection',
+    edit: { key: 'parentField', value: 'skill_vascular_draw' }
+  }]);
+  expect(history.canUndo).toBe(false);
+  expect(history.canRedo).toBe(true);
+
+  expect(redoMovement(history)?.updates).toEqual([{
+    field: 'skill_crimson_projection',
+    edit: { key: 'parentField', value: 'skill_living_conduit' }
+  }]);
+  expect(history.canUndo).toBe(true);
+  expect(history.canRedo).toBe(false);
+});
+
+test('undoes and redoes field renames using the current field as the lookup key', () => {
+  const history = createMovementHistory();
+
+  recordSkillEdit(history, {
+    fieldBefore: 'skill_old',
+    fieldAfter: 'skill_new',
+    key: 'field',
+    before: 'skill_old',
+    after: 'skill_new'
+  });
+
+  expect(undoMovement(history)?.updates).toEqual([{
+    field: 'skill_new',
+    edit: { key: 'field', value: 'skill_old' }
+  }]);
+
+  expect(redoMovement(history)?.updates).toEqual([{
+    field: 'skill_old',
+    edit: { key: 'field', value: 'skill_new' }
+  }]);
 });

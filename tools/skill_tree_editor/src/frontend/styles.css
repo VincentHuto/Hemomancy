@@ -314,6 +314,10 @@ small {
   cursor: grabbing;
 }
 
+.graph-scroll.connecting-parent {
+  cursor: crosshair;
+}
+
 .graph {
   display: block;
   background: #090102;
@@ -355,6 +359,17 @@ small {
 }
 
 .wire-edge {
+  pointer-events: none;
+}
+
+.connection-preview {
+  fill: none;
+  stroke: #ff5745;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 8 7;
+  opacity: 0.84;
   pointer-events: none;
 }
 

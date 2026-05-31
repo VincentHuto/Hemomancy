@@ -6,14 +6,25 @@ import type {
   SkillWorkspace
 } from '../shared/types';
 import { applyCompassLayout } from './compassLayout';
+import { beginConnectionDrag, type ConnectionDragState, finishConnectionDrag } from './connectionEditing';
 import { beginDragPan, type DragPanState, shouldStartDragPan, updateDragPan } from './dragPan';
 import { computeGraphLayout, type GraphEdge } from './graphLayout';
 import { beginNodeDrag, type NodeDragState, type NodePosition, updateNodeDrag } from './layoutEditing';
-import { createMovementHistory, recordMovement, recordMovements, redoMovement, undoMovement } from './movementHistory';
+import {
+  createMovementHistory,
+  type MovementTarget,
+  recordMovement,
+  recordMovements,
+  recordSkillEdit,
+  redoMovement,
+  type SkillEditValue,
+  undoMovement
+} from './movementHistory';
 import { clampZoom, zoomScrollAnchor } from './viewportZoom';
 import './styles.css';
 
 type ViewTab = 'graph' | 'validation' | 'diff';
+type EditableSkillKey = keyof SkillModel;
 
 const graphMinZoom = 0.55;
 const graphMaxZoom = 2.75;
@@ -460,6 +471,8 @@ function wireGraphNodeDragging(): void {
 
   let dragState: NodeDragState | null = null;
   let dragOrigin: NodePosition | null = null;
+  let connectionState: ConnectionDragState | null = null;
+  let connectionSource: NodePosition | null = null;
   let pointerId: number | null = null;
   let draggedField = '';
 
@@ -471,11 +484,26 @@ function wireGraphNodeDragging(): void {
       const layoutNode = computeGraphLayout(workspace!.branches).nodes.find(candidate => candidate.skill.field === field);
       if (!skill || !layoutNode) return;
 
-      const rect = scroller.getBoundingClientRect();
       selectedField = skill.field;
       selectedBranch = skill.branch;
       draggedField = skill.field;
       pointerId = event.pointerId;
+      if (event.ctrlKey) {
+        connectionState = beginConnectionDrag(skill.field);
+        connectionSource = { x: layoutNode.x, y: layoutNode.y };
+        updateConnectionPreview(svg, connectionSource, graphPointFromPointer(scroller, event));
+        scroller.classList.add('connecting-parent');
+        try {
+          node.setPointerCapture(event.pointerId);
+        } catch {
+          // Browser tests can synthesize pointer events without capture support.
+        }
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+      }
+
+      const rect = scroller.getBoundingClientRect();
       dragOrigin = {
         x: skill.treeX ?? layoutNode.x,
         y: skill.treeY ?? layoutNode.y
@@ -501,6 +529,11 @@ function wireGraphNodeDragging(): void {
   }
 
   const onMove = (event: PointerEvent): void => {
+    if (connectionState && pointerId === event.pointerId && connectionSource) {
+      updateConnectionPreview(svg, connectionSource, graphPointFromPointer(scroller, event));
+      event.preventDefault();
+      return;
+    }
     if (!dragState || pointerId !== event.pointerId) return;
     const skill = allSkills().find(candidate => candidate.field === draggedField);
     if (!skill) return;
@@ -525,6 +558,34 @@ function wireGraphNodeDragging(): void {
 
   const stopDrag = (event: PointerEvent): void => {
     if (pointerId !== event.pointerId) return;
+    if (connectionState) {
+      const rewire = finishConnectionDrag(connectionState, connectionTargetFieldAt(event));
+      const skill = allSkills().find(candidate => candidate.field === draggedField);
+      if (rewire && skill) {
+        const before = skill.parentField;
+        skill.parentField = rewire.parentField;
+        recordSkillEdit(movementHistory, {
+          fieldBefore: skill.field,
+          fieldAfter: skill.field,
+          key: 'parentField',
+          before,
+          after: skill.parentField
+        });
+        selectedField = skill.field;
+        selectedBranch = skill.branch;
+        preview = null;
+        statusText = `Rewired ${skill.name} parent.`;
+      }
+      connectionState = null;
+      connectionSource = null;
+      pointerId = null;
+      draggedField = '';
+      removeConnectionPreview(svg);
+      scroller.classList.remove('connecting-parent');
+      workspace!.diagnostics = validateClientWorkspace();
+      render();
+      return;
+    }
     const skill = allSkills().find(candidate => candidate.field === draggedField);
     if (skill && dragOrigin) {
       recordMovement(movementHistory, {
@@ -558,18 +619,22 @@ function redoLastMovement(): void {
   applyMovementTarget(redoMovement(movementHistory), 'Redid move');
 }
 
-function applyMovementTarget(target: { updates: { field: string; position: NodePosition }[] } | undefined, verb: string): void {
+function applyMovementTarget(target: MovementTarget | undefined, verb: string): void {
   if (!target || !workspace) return;
   let lastSkill: SkillModel | null = null;
   for (const update of target.updates) {
     const skill = allSkills().find(candidate => candidate.field === update.field);
     if (!skill) continue;
-    skill.treeX = update.position.x;
-    skill.treeY = update.position.y;
+    if (update.position) {
+      skill.treeX = update.position.x;
+      skill.treeY = update.position.y;
+    } else if (update.edit) {
+      applySkillEditValue(skill, update.edit.key, update.edit.value);
+    }
     lastSkill = skill;
   }
   if (!lastSkill) {
-    statusText = 'Move history targets no longer exist.';
+    statusText = 'History targets no longer exist.';
     render();
     return;
   }
@@ -639,29 +704,106 @@ function updatePositionInputs(skill: SkillModel): void {
   if (yInput) yInput.value = String(skill.treeY ?? '');
 }
 
+function graphPointFromPointer(scroller: HTMLElement, event: PointerEvent): NodePosition {
+  const rect = scroller.getBoundingClientRect();
+  return {
+    x: (event.clientX - rect.left + scroller.scrollLeft) / graphZoom,
+    y: (event.clientY - rect.top + scroller.scrollTop) / graphZoom
+  };
+}
+
+function connectionTargetFieldAt(event: PointerEvent): string | null {
+  const target = document.elementFromPoint(event.clientX, event.clientY);
+  if (!(target instanceof Element)) return null;
+  return target.closest<SVGGElement>('.skill-node[data-skill]')?.dataset.skill ?? null;
+}
+
+function updateConnectionPreview(svg: SVGSVGElement, from: NodePosition, to: NodePosition): void {
+  let path = svg.querySelector<SVGPathElement>('.connection-preview');
+  if (!path) {
+    path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'connection-preview');
+    svg.querySelector('.edges')?.append(path);
+  }
+  path.setAttribute('d', connectionPreviewPath(from, to));
+}
+
+function removeConnectionPreview(svg: SVGSVGElement): void {
+  svg.querySelector('.connection-preview')?.remove();
+}
+
+function connectionPreviewPath(from: NodePosition, to: NodePosition): string {
+  const distance = Math.hypot(to.x - from.x, to.y - from.y);
+  const handle = Math.max(48, Math.min(150, distance * 0.36));
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const nx = dx / length;
+  const ny = dy / length;
+  return [
+    `M ${Math.round(from.x)} ${Math.round(from.y)}`,
+    `C ${Math.round(from.x + nx * handle)} ${Math.round(from.y + ny * handle)},`,
+    `${Math.round(to.x - nx * handle)} ${Math.round(to.y - ny * handle)},`,
+    `${Math.round(to.x)} ${Math.round(to.y)}`
+  ].join(' ');
+}
+
 function updateSelectedSkill(input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): void {
   const skill = selectedSkill();
   if (!skill) return;
-  const key = input.dataset.edit as keyof SkillModel;
-  const value = input.value;
+  const key = input.dataset.edit as EditableSkillKey;
+  const fieldBefore = skill.field;
+  const before = skillEditValue(skill, key);
+  const next = coerceSkillEditValue(key, input.value);
   preview = null;
-  if (key === 'id' || key === 'bloodCost' || key === 'maxLevels' || key === 'skillPointCost' || key === 'requiredDegree') {
-    (skill[key] as number) = Number(value);
-  } else if (key === 'treeX' || key === 'treeY') {
-    (skill[key] as number | null) = value.trim() ? Number(value) : null;
-  } else if (key === 'parentField') {
-    skill.parentField = value || null;
-  } else if (key === 'iconItem') {
-    skill.iconItem = value.trim() || null;
-  } else if (key === 'branch') {
-    moveSkillToBranch(skill, value);
-  } else if (key === 'field' || key === 'name' || key === 'state' || key === 'description') {
-    (skill[key] as string) = value;
-  }
+  applySkillEditValue(skill, key, next);
+  recordSkillEdit(movementHistory, {
+    fieldBefore,
+    fieldAfter: skill.field,
+    key,
+    before,
+    after: skillEditValue(skill, key)
+  });
   selectedField = skill.field;
   selectedBranch = skill.branch;
   workspace!.diagnostics = validateClientWorkspace();
   render();
+}
+
+function skillEditValue(skill: SkillModel, key: EditableSkillKey): SkillEditValue {
+  return skill[key] as SkillEditValue;
+}
+
+function coerceSkillEditValue(key: EditableSkillKey, value: string): SkillEditValue {
+  if (key === 'id' || key === 'bloodCost' || key === 'maxLevels' || key === 'skillPointCost' || key === 'requiredDegree') {
+    return Number(value);
+  }
+  if (key === 'treeX' || key === 'treeY') {
+    return value.trim() ? Number(value) : null;
+  }
+  if (key === 'parentField') {
+    return value || null;
+  }
+  if (key === 'iconItem') {
+    return value.trim() || null;
+  }
+  return value;
+}
+
+function applySkillEditValue(skill: SkillModel, key: string, value: SkillEditValue): void {
+  if (key === 'id' || key === 'bloodCost' || key === 'maxLevels' || key === 'skillPointCost' || key === 'requiredDegree') {
+    (skill[key] as number) = Number(value);
+  } else if (key === 'treeX' || key === 'treeY') {
+    (skill[key] as number | null) = typeof value === 'number' ? value : null;
+  } else if (key === 'parentField') {
+    skill.parentField = typeof value === 'string' && value ? value : null;
+  } else if (key === 'iconItem') {
+    skill.iconItem = typeof value === 'string' && value.trim() ? value.trim() : null;
+  } else if (key === 'branch') {
+    if (typeof value === 'string') moveSkillToBranch(skill, value);
+  } else if (key === 'field' || key === 'name' || key === 'state' || key === 'description') {
+    skill[key] = String(value ?? '');
+  }
 }
 
 function addSkill(): void {
