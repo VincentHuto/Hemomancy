@@ -47,6 +47,10 @@ repo/
 /tools/dialogue_editor/node_modules/
 /tools/dialogue_editor/dist/
 /tools/*
+!/tools/skill_tree_editor/
+!/tools/skill_tree_editor/**
+/tools/skill_tree_editor/node_modules/
+/tools/skill_tree_editor/dist/
 !/tools/model_export/
 !/tools/model_export/java_model_to_bbmodel.mjs
 /docs/superpowers/

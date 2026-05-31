@@ -10,6 +10,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class SummonsTabController implements IProgressTab {
+	private static final float PREVIEW_AUTO_ROTATION_SPEED = 0.175f;
+	private static final float PREVIEW_DRAG_ROTATION_SPEED = 0.02f;
+
 	private final SummonsTabState state = new SummonsTabState();
 
 	@Override
@@ -27,7 +30,7 @@ public class SummonsTabController implements IProgressTab {
 	public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
 		refreshKnownSummons(Minecraft.getInstance());
 		if (!state.previewDragging) {
-			state.previewRotationAngle += partial * 0.35f;
+			state.previewRotationAngle += partial * PREVIEW_AUTO_ROTATION_SPEED;
 		}
 		SummonsTabView.draw(gfx, ctx, state, mouseX, mouseY, partial);
 	}
@@ -85,7 +88,7 @@ public class SummonsTabController implements IProgressTab {
 	@Override
 	public boolean mouseDragged(ProgressScreenContext ctx, double mx, double my, int btn, double dx, double dy) {
 		if (state.previewDragging && btn == 0) {
-			state.previewRotationAngle += (float) (mx - state.previewDragLastX) * 0.04f;
+			state.previewRotationAngle += (float) (mx - state.previewDragLastX) * PREVIEW_DRAG_ROTATION_SPEED;
 			state.previewDragLastX = mx;
 			return true;
 		}

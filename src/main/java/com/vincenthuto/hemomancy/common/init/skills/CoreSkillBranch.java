@@ -1,0 +1,79 @@
+package com.vincenthuto.hemomancy.common.init.skills;
+
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
+
+public final class CoreSkillBranch {
+	private CoreSkillBranch() {
+	}
+
+	public static void register(List<SkillPoint> branch) {
+		// <skill-editor branch="core">
+			SkillPointInit.base_skill = SkillPointInit.registerSkill(branch,
+					new SkillPoint(0, "base", 0, 1, EnumSkillStates.UNLOCKED, null)
+							.setTreePosition(360, 424)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
+			SkillPointInit.skill_capacity = SkillPointInit.registerSkill(branch,
+					new SkillPoint(1, "skill_capacity", 100, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
+							.setTreePosition(270, 424)
+							.setIconItem(() -> new ItemStack(ItemInit.vitality_chalice.get())));
+			SkillPointInit.skill_efficiency = SkillPointInit.registerSkill(branch,
+					new SkillPoint(2, "skill_efficiency", 100, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
+							.setTreePosition(450, 424)
+							.setIconItem(() -> new ItemStack(ItemInit.recycled_enzyme.get())));
+			SkillPointInit.skill_last_wind = SkillPointInit.registerSkill(branch,
+					new SkillPoint(3, "skill_last_wind", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_capacity)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(270, 280)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_salve.get())));
+			SkillPointInit.skill_dynamic_use = SkillPointInit.registerSkill(branch,
+					new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_efficiency)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(450, 280)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_tendency_gauge.get())));
+			SkillPointInit.skill_feeding_frenzy = SkillPointInit.registerSkill(branch,
+					new SkillPoint(5, "skill_feeding_frenzy", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_last_wind)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(270, 208)
+							.setIconItem(() -> new ItemStack(ItemInit.swollen_leech.get())));
+			SkillPointInit.skill_hemostasis = SkillPointInit.registerSkill(branch,
+					new SkillPoint(6, "skill_hemostasis", 200, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_efficiency)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(540, 280)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_conduit.get())));
+			SkillPointInit.skill_sanguine_surge = SkillPointInit.registerSkill(branch,
+					new SkillPoint(7, "skill_sanguine_surge", 200, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_capacity)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(360, 280)
+							.setIconItem(() -> new ItemStack(ItemInit.blood_crystal_shard.get())));
+			SkillPointInit.skill_crimson_mastery = SkillPointInit.registerSkill(branch,
+					new SkillPoint(8, "skill_crimson_mastery", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_dynamic_use)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(450, 136)
+							.setIconItem(() -> new ItemStack(ItemInit.hematic_memory.get())));
+			SkillPointInit.skill_vital_link = SkillPointInit.registerSkill(branch,
+					new SkillPoint(9, "skill_vital_link", 600, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_feeding_frenzy)
+							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(270, 64)
+							.setIconItem(() -> new ItemStack(ItemInit.bleeding_bulb.get())));
+			SkillPointInit.skill_iron_will = SkillPointInit.registerSkill(branch,
+					new SkillPoint(10, "skill_iron_will", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_last_wind)
+							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(360, 208)
+							.setIconItem(() -> new ItemStack(ItemInit.hematic_iron_scrap.get())));
+			SkillPointInit.skill_blood_flow = SkillPointInit.registerSkill(branch,
+					new SkillPoint(11, "skill_blood_flow", 300, 5, EnumSkillStates.LOCKED, SkillPointInit.skill_hemostasis)
+							.setSkillPointCost(2).setRequiredDegree(3).setTreePosition(540, 208)
+							.setIconItem(() -> new ItemStack(ItemInit.dicentra_sap.get())));
+			SkillPointInit.skill_coagulation = SkillPointInit.registerSkill(branch,
+					new SkillPoint(12, "skill_coagulation", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_hemostasis)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(540, 136)
+							.setIconItem(() -> new ItemStack(ItemInit.foul_paste.get())));
+			SkillPointInit.skill_sanguine_reach = SkillPointInit.registerSkill(branch,
+					new SkillPoint(13, "skill_sanguine_reach", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_crimson_mastery)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(450, 64)
+							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+			SkillPointInit.skill_manip_slots = SkillPointInit.registerSkill(branch,
+					new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
+							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(270, 352)
+							.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
+		// </skill-editor>
+	}
+}

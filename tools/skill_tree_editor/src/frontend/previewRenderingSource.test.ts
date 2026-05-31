@@ -1,0 +1,69 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+const sourceRoot = resolve(process.cwd(), 'src/frontend');
+
+test('preview node artwork fits compact in-game coordinate spacing', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(rectWidth(main, 'node-frame')).toBeLessThanOrEqual(36);
+  expect(rectWidth(main, 'node-glow')).toBeLessThanOrEqual(48);
+  expect(numberAttr(main, 'node-level', 'y')).toBeLessThanOrEqual(36);
+  expect(cssPx(css, '.skill-node .node-level', 'font')).toBeLessThanOrEqual(18);
+  expect(cssPx(css, '.local-edge', 'stroke-width')).toBeLessThanOrEqual(6);
+});
+
+test('preview exposes movement undo and redo controls with keyboard shortcuts', () => {
+  const main = read('main.ts');
+
+  expect(main).toContain('data-action="undo-move"');
+  expect(main).toContain('data-action="redo-move"');
+  expect(main).toContain('isMovementUndoShortcut');
+  expect(main).toContain('isMovementRedoShortcut');
+});
+
+test('preview colors trace lines by destination branch', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('edge-branch-');
+  expect(css).toContain('.edge-branch-core');
+  expect(css).toContain('.edge-branch-scars');
+  expect(css).toContain('.edge-branch-summons');
+  expect(css).toContain('.edge-branch-living-staff');
+});
+
+test('preview colors branch list buttons by branch', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('branch-button-');
+  expect(css).toContain('.branch-button-core');
+  expect(css).toContain('.branch-button-scars');
+  expect(css).toContain('.branch-button-summons');
+  expect(css).toContain('.branch-button-living-staff');
+});
+
+function read(path: string): string {
+  return readFileSync(resolve(sourceRoot, path), 'utf8');
+}
+
+function rectWidth(source: string, className: string): number {
+  const match = new RegExp(`<rect class="${className}"[^>]*width="(\\d+)"`).exec(source);
+  if (!match) throw new Error(`Missing ${className} rect width.`);
+  return Number(match[1]);
+}
+
+function numberAttr(source: string, className: string, attr: string): number {
+  const match = new RegExp(`<text[^>]*${attr}="(\\d+)"[^>]*class="${className}"`).exec(source);
+  if (!match) throw new Error(`Missing ${className} ${attr} attribute.`);
+  return Number(match[1]);
+}
+
+function cssPx(source: string, selector: string, property: string): number {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = new RegExp(`${escaped} \\{[\\s\\S]*?${property}:\\s*(\\d+)px`).exec(source);
+  if (!match) throw new Error(`Missing ${property} for ${selector}.`);
+  return Number(match[1]);
+}

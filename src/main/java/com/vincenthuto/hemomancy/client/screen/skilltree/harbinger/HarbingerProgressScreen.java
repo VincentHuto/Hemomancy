@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -36,6 +35,10 @@ public class HarbingerProgressScreen extends Screen {
     private static final int TAB_PAD = 4;
     private static final int HOME_BTN_SIZE = 16;
     private static final int HOME_BTN_PAD  = 4;
+    private static final int SKILL_POINT_BADGE_X_PAD = 4;
+    private static final int SKILL_POINT_BADGE_Y_PAD = 3;
+    private static final int SKILL_POINT_BADGE_FRAME_INSET = 2;
+    private static final float SCREEN_CHROME_Z = 400.0F;
 
     private int guiLeft, guiTop, guiWidth, guiHeight;
     private boolean isDragging;
@@ -223,7 +226,7 @@ public class HarbingerProgressScreen extends Screen {
 
         activeController().renderOverlay(gfx, ctx, mouseX, mouseY);
 
-        drawTabs(gfx, mouseX, mouseY);
+        drawTabsAboveCanvas(gfx, mouseX, mouseY);
         if (activeController().getPanZoomState() != null) {
             drawHomeButton(gfx, mouseX, mouseY);
         }
@@ -233,15 +236,7 @@ public class HarbingerProgressScreen extends Screen {
         }
 
         if (activeTab == Tab.SKILLS) {
-            String spText = "Skill Points: " + SkillProgressClientCache.current().getSkillPoints();
-            gfx.drawString(font, Component.literal(spText).withStyle(s -> s.withColor(0xFFBB8833).withBold(true)),
-                    guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
-                    guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
-            EnumInitiatoryDegree deg = EnumInitiatoryDegree.byNumber(playerDegree);
-            String rankTitle = playerDegree <= 0 ? "Uninitiated" : (deg != null ? deg.getTitle() : "Degree " + playerDegree);
-            gfx.drawString(font, Component.literal("Rank: " + rankTitle).withStyle(s -> s.withColor(0xFFAA6666)),
-                    guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
-                    guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 2, 0);
+            drawSkillPointsAboveCanvas(gfx);
         }
 
         if (activeController().getPanZoomState() != null) {
@@ -284,6 +279,36 @@ public class HarbingerProgressScreen extends Screen {
 
     private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
         ScreenDrawUtils.drawTabs(gfx, font, buildTabDescs(), guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
+    }
+
+    private void drawTabsAboveCanvas(GuiGraphics gfx, int mouseX, int mouseY) {
+        var pose = gfx.pose();
+        pose.pushPose();
+        pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z);
+        drawTabs(gfx, mouseX, mouseY);
+        pose.popPose();
+    }
+
+    private void drawSkillPointsAboveCanvas(GuiGraphics gfx) {
+        Component spComponent = Component.literal("Skill Points: " + SkillProgressClientCache.current().getSkillPoints())
+                .withStyle(s -> s.withColor(0xFFBB8833).withBold(true));
+        int textW = font.width(spComponent);
+        int badgeRight = guiLeft + guiWidth - SKILL_POINT_BADGE_FRAME_INSET;
+        int badgeBottom = guiTop + guiHeight - SKILL_POINT_BADGE_FRAME_INSET;
+        int textX = badgeRight - SKILL_POINT_BADGE_X_PAD - textW;
+        int textY = badgeBottom - SKILL_POINT_BADGE_Y_PAD - font.lineHeight;
+
+        var pose = gfx.pose();
+        pose.pushPose();
+        pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z);
+        gfx.fill(textX - SKILL_POINT_BADGE_X_PAD, textY - SKILL_POINT_BADGE_Y_PAD,
+                textX + textW + SKILL_POINT_BADGE_X_PAD, textY + font.lineHeight + SKILL_POINT_BADGE_Y_PAD,
+                0xFF120303);
+        ScreenDrawUtils.drawSimpleBorder(gfx, textX - SKILL_POINT_BADGE_X_PAD, textY - SKILL_POINT_BADGE_Y_PAD,
+                textW + SKILL_POINT_BADGE_X_PAD * 2, font.lineHeight + SKILL_POINT_BADGE_Y_PAD * 2,
+                0xFF442222);
+        gfx.drawString(font, spComponent, textX, textY, 0, false);
+        pose.popPose();
     }
 
     private Tab tabUnder(double mx, double my) {

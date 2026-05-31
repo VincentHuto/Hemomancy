@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,6 +32,9 @@ public class MnemonicReliquaryMenu extends AbstractContainerMenu {
 		super(ContainerInit.mnemonic_reliquary.get(), windowId);
 		this.level = world;
 		this.blockPos = pos;
+		if (!world.isClientSide && playerEntity instanceof ServerPlayer serverPlayer) {
+			LivingStaffBondHelper.ensureConjureStaffKnown(serverPlayer);
+		}
 	}
 
 	public MnemonicReliquaryMenu(final int windowId, final Inventory playerInventory) {

@@ -188,7 +188,8 @@ public class Hemomancy {
             var i = ItemInit.getAllItemEntriesAsStream();
             i.forEach(item -> {
                 if (item.get() != ItemInit.active_befouling_ash.get()
-                        && item.get() != ItemInit.active_smouldering_ash.get()) {
+                        && item.get() != ItemInit.active_smouldering_ash.get()
+                        && item.get() != ItemInit.memory_conjure_living_staff.get()) {
                     populator.accept(item.get());
                 }
             });

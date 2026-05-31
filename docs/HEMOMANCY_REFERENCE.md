@@ -952,6 +952,8 @@ Opened from the **Dendritic Distributor** block. Has six tabs:
 
 Skills cost **skill points** (earned from using manipulations) and many require a **minimum initiatory degree**:
 
+Skill definitions are Java-owned. `SkillPointInit` keeps the public static fields and branch registration order, while editable declarations live in `common/init/skills/*SkillBranch.java` between `// <skill-editor branch="...">` markers. The browser tool in `tools/skill_tree_editor` reads those Java branch files directly, ignores the old `data/hemomancy/skilltrees` JSON folder, and previews Java/lang diffs before applying changes.
+
 | Skill | ID | Max Lvl | SP Cost | Req. Degree | Effect | Parent |
 |-------|----|---------|---------|-------------|--------|--------|
 | Base | 0 | 1 | — | — | Root node, unlocked by default | — |

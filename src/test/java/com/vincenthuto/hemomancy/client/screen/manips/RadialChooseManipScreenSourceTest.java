@@ -25,6 +25,12 @@ public final class RadialChooseManipScreenSourceTest {
 				"manipulation.getName().equals(selectedManipName)");
 		assertContains("selected radial item applies the tint to the whole slice", screen,
 				"item.setBackgroundColor(SELECTED_MANIP_SLICE_TINT);");
+		assertContains("radial conjure blade uses the living blade memory overlay", screen,
+				"case \"conjure_blade\" -> \"memory_living_blade_overlay\"");
+		assertContains("radial conjure staff uses the living staff memory overlay", screen,
+				"case \"conjure_staff\" -> \"memory_living_staff_overlay\"");
+		assertContains("radial item construction uses the memory overlay helper", screen,
+				"memoryOverlayTexture(manipulation)");
 		assertContains("generic radial reads per-item background colors", menu,
 				"item.getBackgroundColor");
 		assertContains("absorption is added before projection for the top inner half", screen,

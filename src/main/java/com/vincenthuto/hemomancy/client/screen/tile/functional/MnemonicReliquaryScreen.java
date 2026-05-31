@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.EquipManipulationPacket;
@@ -249,7 +250,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		drawCounter(graphics);
 
 		if (draggingManip != null) {
-			ItemStack stack = manipItemCache.get(draggingManip.getName());
+			ItemStack stack = iconStackFor(draggingManip);
 			if (stack != null) {
 				renderScaledItem(graphics, stack, mouseX - currentIconSize / 2, mouseY - currentIconSize / 2);
 			}
@@ -408,7 +409,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void drawKnownManips(GuiGraphics graphics, int mouseX, int mouseY) {
 		for (ManipIcon icon : knownIcons) {
-			ItemStack stack = manipItemCache.get(icon.manip.getName());
+			ItemStack stack = iconStackFor(icon.manip);
 			if (stack == null) continue;
 
 			boolean equipped = equippedNames.contains(icon.manip.getName());
@@ -425,10 +426,26 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void drawEquippedManips(GuiGraphics graphics, int mouseX, int mouseY) {
 		for (ManipIcon icon : equippedIcons) {
-			ItemStack stack = manipItemCache.get(icon.manip.getName());
+			ItemStack stack = iconStackFor(icon.manip);
 			if (stack == null) continue;
 			renderScaledItem(graphics, stack, icon.x, icon.y);
 		}
+	}
+
+	private ItemStack iconStackFor(BloodManipulation manip) {
+		if (manip == null) {
+			return null;
+		}
+		ItemStack cached = manipItemCache.get(manip.getName());
+		if (cached != null) {
+			return cached;
+		}
+		if (manip instanceof ConjurationManip conjuration) {
+			ItemStack stack = new ItemStack(conjuration.getItem().get());
+			manipItemCache.put(manip.getName(), stack);
+			return stack;
+		}
+		return null;
 	}
 
 	private void renderScaledItem(GuiGraphics graphics, ItemStack stack, int x, int y) {

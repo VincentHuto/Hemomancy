@@ -42,6 +42,26 @@ public final class LivingStaffBondHelper {
 		return changed;
 	}
 
+	public static boolean ensureConjureStaffKnown(ServerPlayer player) {
+		if (player == null || !ManipulationInit.conjure_staff.isBound()) {
+			return false;
+		}
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		if (progress == null || !progress.hasLivingStaffBond()) {
+			return false;
+		}
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (known == null) {
+			return false;
+		}
+		if (!KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
+				ManipulationInit.conjure_staff.get(), ManipSlotHelper.getMaxSlots(player))) {
+			return false;
+		}
+		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		return true;
+	}
+
 	public static void syncProgress(ServerPlayer player) {
 		if (player == null) {
 			return;

@@ -14,6 +14,7 @@ public final class LivingStaffProgressEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
+			LivingStaffBondHelper.ensureConjureStaffKnown(player);
 			LivingStaffBondHelper.syncProgress(player);
 		}
 	}
@@ -21,6 +22,7 @@ public final class LivingStaffProgressEvents {
 	@SubscribeEvent
 	public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
+			LivingStaffBondHelper.ensureConjureStaffKnown(player);
 			LivingStaffBondHelper.syncProgress(player);
 		}
 	}
@@ -28,6 +30,7 @@ public final class LivingStaffProgressEvents {
 	@SubscribeEvent
 	public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
+			LivingStaffBondHelper.ensureConjureStaffKnown(player);
 			LivingStaffBondHelper.syncProgress(player);
 		}
 	}

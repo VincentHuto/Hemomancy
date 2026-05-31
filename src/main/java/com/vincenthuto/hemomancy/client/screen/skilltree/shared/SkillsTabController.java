@@ -22,8 +22,10 @@ public class SkillsTabController implements IProgressTab {
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
     private static final int NODE_GAP_Y = 60;
-    private static final int COL_LINE_LOCKED      = 0x88444444;
-    private static final int COL_LINE_UNLOCKED     = 0xFFAA0000;
+    private static final int TRACE_CORE = 0xFFD00000;
+    private static final int TRACE_SCARS = 0xFF9A9A9F;
+    private static final int TRACE_SUMMONS = 0xFF2370DB;
+    private static final int TRACE_LIVING_STAFF = 0xFFD9AD28;
     private static final int COL_NODE_BG           = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK  = 0xFF333333;
     private static final int COL_NODE_BORDER_UNLOCK= 0xFFCC2222;
@@ -45,6 +47,18 @@ public class SkillsTabController implements IProgressTab {
         nodePositions.clear();
         contentW = 0;
         contentH = 0;
+        buildAutomaticLayout();
+        for (List<SkillPoint> branch : SkillPointInit.SKILL_TREE) {
+            for (SkillPoint sp : branch) {
+                if (sp.hasTreePosition()) {
+                    nodePositions.put(sp, new int[]{sp.getTreeX(), sp.getTreeY()});
+                }
+            }
+        }
+        recalculateContentBounds();
+    }
+
+    private void buildAutomaticLayout() {
         for (List<SkillPoint> branch : SkillPointInit.SKILL_TREE) {
             if (branch.isEmpty()) continue;
             Map<Integer, List<SkillPoint>> byDepth = new HashMap<>();
@@ -66,10 +80,17 @@ public class SkillsTabController implements IProgressTab {
                 for (int i = 0; i < n; i++) {
                     int x = x0 + i * NODE_GAP_X;
                     nodePositions.put(row.get(i), new int[]{x, y});
-                    contentW = Math.max(contentW, x + NODE_SIZE);
-                    contentH = Math.max(contentH, y + NODE_SIZE + 24);
                 }
             }
+        }
+    }
+
+    private void recalculateContentBounds() {
+        contentW = 0;
+        contentH = 0;
+        for (int[] pos : nodePositions.values()) {
+            contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
+            contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
         }
     }
 
@@ -82,6 +103,20 @@ public class SkillsTabController implements IProgressTab {
     private int sx(ProgressScreenContext ctx, int cx) { return panZoom.sx(ctx.guiLeft(), cx); }
     private int sy(ProgressScreenContext ctx, int cy) { return panZoom.sy(ctx.guiTop(), cy); }
     private int halfNode() { return panZoom.halfNode(NODE_SIZE); }
+
+    private static int branchTraceColor(SkillPoint sp) {
+        return switch (sp.getBranch()) {
+            case "living_staff" -> TRACE_LIVING_STAFF;
+            case "scars" -> TRACE_SCARS;
+            case "summons" -> TRACE_SUMMONS;
+            case "base", "core" -> TRACE_CORE;
+            default -> TRACE_CORE;
+        };
+    }
+
+    private static int dimTraceColor(int color) {
+        return (color & 0x00FFFFFF) | 0x88000000;
+    }
 
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
@@ -108,7 +143,7 @@ public class SkillsTabController implements IProgressTab {
             int x1 = sx(ctx, pPos[0]), y1 = sy(ctx, pPos[1]);
             int x2 = sx(ctx, cPos[0]), y2 = sy(ctx, cPos[1]);
             boolean parentUnlocked = SkillProgressClientCache.current().getState(sp.getParent()) == EnumSkillStates.UNLOCKED;
-            int col = parentUnlocked ? COL_LINE_UNLOCKED : COL_LINE_LOCKED;
+            int col = parentUnlocked ? branchTraceColor(sp) : dimTraceColor(branchTraceColor(sp));
             int lw = Math.max(1, (int)(panZoom.zoom * 1.5f));
             int midY = (y1 + y2) / 2;
             gfx.fill(x1 - lw, y1 + hn, x1 + lw, midY, col);

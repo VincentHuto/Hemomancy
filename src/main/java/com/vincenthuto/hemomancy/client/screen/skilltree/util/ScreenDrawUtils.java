@@ -169,7 +169,7 @@ public final class ScreenDrawUtils {
 			boolean hovered = mouseX >= tx && mouseX <= tx + tw
 					&& mouseY >= y && mouseY <= y + tabH;
 
-			int bg = tab.active() ? 0xDD1A0505 : (hovered ? 0xBB180404 : 0x99120303);
+			int bg = tab.active() ? 0xFF1A0505 : (hovered ? 0xFF180404 : 0xFF120303);
 			gfx.fill(tx, y, tx + tw, y + tabH, bg);
 
 			int bc = tab.active() ? tab.accentColor() : 0xFF444444;

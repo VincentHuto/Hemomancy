@@ -13,6 +13,9 @@ public class SkillPoint {
 	double cost;           // Blood cost per level-up
 	int skillPointCost;    // Skill-point currency cost per level-up
 	int requiredDegree;    // Minimum initiatory degree required (0 = none)
+	int treeX, treeY;      // Optional content-space coordinates for the skill tree screen
+	boolean hasTreePosition;
+	String branch = "core";
 	EnumSkillStates state;
 	SkillPoint parent;
 	@Nullable Supplier<ItemStack> iconItem;
@@ -27,6 +30,7 @@ public class SkillPoint {
 		this.cost = cost;
 		this.skillPointCost = 1;
 		this.requiredDegree = 0;
+		this.hasTreePosition = false;
 		this.state = state;
 		this.parent = parent;
 	}
@@ -69,6 +73,20 @@ public class SkillPoint {
 		return this;
 	}
 
+	/** Builder-style setter for the content-space position used by the skill tree screen. */
+	public SkillPoint setTreePosition(int x, int y) {
+		this.treeX = x;
+		this.treeY = y;
+		this.hasTreePosition = true;
+		return this;
+	}
+
+	/** Builder-style setter for the skill tree branch this node belongs to. */
+	public SkillPoint setBranch(String branch) {
+		this.branch = branch;
+		return this;
+	}
+
 	/** Builder-style setter for the icon item rendered inside this node on the skill tree. */
 	public SkillPoint setIconItem(Supplier<ItemStack> icon) {
 		this.iconItem = icon;
@@ -106,6 +124,22 @@ public class SkillPoint {
 	/** Returns the node shape for this skill. Defaults to SQUARE. */
 	public EnumNodeShape getNodeShape() {
 		return nodeShape;
+	}
+
+	public boolean hasTreePosition() {
+		return hasTreePosition;
+	}
+
+	public int getTreeX() {
+		return treeX;
+	}
+
+	public int getTreeY() {
+		return treeY;
+	}
+
+	public String getBranch() {
+		return branch;
 	}
 
 	/** Returns true if the player's degree is too low to interact with this skill. */

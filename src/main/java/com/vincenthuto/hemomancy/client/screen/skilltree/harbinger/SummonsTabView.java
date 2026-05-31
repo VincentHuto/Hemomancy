@@ -18,6 +18,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,8 @@ public final class SummonsTabView {
 	}
 
 	static final int TAB_COLOR = 0xFFBB3355;
+	private static final int DETAIL_VALUE_INDENT = 10;
+	private static final int DETAIL_ROW_GAP = 2;
 
 	public static void draw(GuiGraphics gfx, ProgressScreenContext ctx,
 							SummonsTabState state, int mouseX, int mouseY, float partial) {
@@ -199,17 +203,59 @@ public final class SummonsTabView {
 		}
 
 		int centerX = (left + right) / 2;
-		int centerY = (top + bottom) / 2 + 18;
-		int scale = Mth.clamp((bottom - top) / 2, 24, 58);
-		float mouseX = centerX + Mth.cos(state.previewRotationAngle) * 70.0f;
-		float mouseY = centerY - 20.0f;
-		entity.tickCount++;
+		int centerY = top + Math.round((bottom - top) * 0.56F);
+		int scale = previewEntityScale(entity, bottom - top);
+		float yaw = 180.0F + (float) Math.toDegrees(state.previewRotationAngle);
+		PreviewRotations rotations = capturePreviewRotations(entity);
+		boolean scissorEnabled = false;
 		try {
-			InventoryScreen.renderEntityInInventoryFollowsMouse(gfx, left, top, right, bottom, scale, 0.0625F,
-					mouseX, mouseY, entity);
+			applyPreviewYaw(entity, yaw);
+			gfx.enableScissor(left, top, right, bottom);
+			scissorEnabled = true;
+			float entityScale = entity.getScale();
+			Vector3f translate = new Vector3f(0.0F, entity.getBbHeight() / 2.0F + 0.0625F * entityScale, 0.0F);
+			Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
+			InventoryScreen.renderEntityInInventory(gfx, centerX, centerY, scale / entityScale, translate, pose,
+					new Quaternionf(), entity);
+			gfx.disableScissor();
+			scissorEnabled = false;
 		} catch (Throwable ignored) {
+			if (scissorEnabled) {
+				gfx.disableScissor();
+			}
 			drawPreviewFallback(gfx, ctx, left, top, right, bottom);
+		} finally {
+			restorePreviewRotations(entity, rotations);
 		}
+	}
+
+	private static int previewEntityScale(LivingEntity entity, int availableH) {
+		float entityH = Math.max(entity.getBbHeight(), 1.0F);
+		int fitScale = Mth.floor((availableH - 26) / entityH);
+		return Mth.clamp(fitScale, 24, 52);
+	}
+
+	private record PreviewRotations(float yBodyRot, float yRot, float xRot, float yHeadRotO, float yHeadRot) {
+	}
+
+	private static PreviewRotations capturePreviewRotations(LivingEntity entity) {
+		return new PreviewRotations(entity.yBodyRot, entity.getYRot(), entity.getXRot(), entity.yHeadRotO, entity.yHeadRot);
+	}
+
+	private static void applyPreviewYaw(LivingEntity entity, float yaw) {
+		entity.yBodyRot = yaw;
+		entity.setYRot(yaw);
+		entity.setXRot(0.0F);
+		entity.yHeadRot = yaw;
+		entity.yHeadRotO = yaw;
+	}
+
+	private static void restorePreviewRotations(LivingEntity entity, PreviewRotations rotations) {
+		entity.yBodyRot = rotations.yBodyRot();
+		entity.setYRot(rotations.yRot());
+		entity.setXRot(rotations.xRot());
+		entity.yHeadRotO = rotations.yHeadRotO();
+		entity.yHeadRot = rotations.yHeadRot();
 	}
 
 	private static LivingEntity previewEntity(SummonsTabState state, PuppeteerSummonDefinition definition) {
@@ -269,34 +315,34 @@ public final class SummonsTabView {
 		boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
 		boolean known = state.isKnown(definition);
 		boolean recipeUnlocked = hasTrialRecipe(definition);
-		drawY = drawLine(gfx, ctx, "Status", statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree()).getString(), textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Role", definition.role(), textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Required", "Degree " + definition.requiredDegree(), textX, drawY, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Status", statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree()).getString(), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Role", definition.role(), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Required", "Degree " + definition.requiredDegree(), textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int sinew = SkillPointHelper.getLivingSinewLevel();
 		double health = definition.baseHealth() * PuppeteerSummonRules.healthMultiplier(sinew);
 		double damage = definition.baseDamage() * PuppeteerSummonRules.damageMultiplier(sinew);
-		drawY = drawLine(gfx, ctx, "Base Health", String.format("%.1f", definition.baseHealth()), textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Current Health", String.format("%.1f", health), textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Base Damage", String.format("%.1f", definition.baseDamage()), textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Current Damage", String.format("%.1f", damage), textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Mobility", String.format("%.2f", definition.movementSpeed()), textX, drawY, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Base Health", String.format("%.1f", definition.baseHealth()), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Current Health", String.format("%.1f", health), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Base Damage", String.format("%.1f", definition.baseDamage()), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Current Damage", String.format("%.1f", damage), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Mobility", String.format("%.2f", definition.movementSpeed()), textX, drawY, textW, lineH);
 		drawY += 4;
 
-		drawY = drawLine(gfx, ctx, "Summon Thread", definition.threadSummonCost() + " charge", textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Upkeep", definition.threadUpkeepPerMinute() + " charge/min", textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Trial Catalyst", Component.translatable("item.hemomancy.sanguine_quintessence").getString(),
-				textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Unlock", "Blood Crafting effigy trial", textX, drawY, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Summon Thread", definition.threadSummonCost() + " charge", textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", definition.threadUpkeepPerMinute() + " charge/min", textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Trial Catalyst", Component.translatable("item.hemomancy.sanguine_quintessence").getString(),
+				textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", "Blood Crafting effigy trial", textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int skein = SkillPointHelper.getPuppetSkeinLevel();
 		int tether = SkillPointHelper.getFarTetherLevel();
-		drawY = drawLine(gfx, ctx, "Active Cap", String.valueOf(PuppeteerSummonRules.activeSummonCap(skein)),
-				textX, drawY, lineH);
-		drawY = drawLine(gfx, ctx, "Command Range", String.format("%.0f blocks", PuppeteerSummonRules.commandRange(tether)),
-				textX, drawY, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Active Cap", String.valueOf(PuppeteerSummonRules.activeSummonCap(skein)),
+				textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Command Range", String.format("%.0f blocks", PuppeteerSummonRules.commandRange(tether)),
+				textX, drawY, textW, lineH);
 		drawY += 6;
 
 		Component lore = Component.translatable(definition.loreKey())
@@ -311,13 +357,29 @@ public final class SummonsTabView {
 		}
 	}
 
-	private static int drawLine(GuiGraphics gfx, ProgressScreenContext ctx, String label, String value,
-								int x, int y, int lineH) {
-		gfx.drawString(ctx.font(), Component.literal(label + ": ").withStyle(s -> s.withColor(0xFF888888)),
-				x, y, 0);
-		gfx.drawString(ctx.font(), Component.literal(value).withStyle(s -> s.withColor(0xFFDDC0C7)),
-				x + 78, y, 0);
-		return y + lineH;
+	private static int drawStackedDetailLine(GuiGraphics gfx, ProgressScreenContext ctx, String label, String value,
+											 int x, int y, int totalW, int lineH) {
+		Component labelText = Component.literal(label + ":").withStyle(s -> s.withColor(0xFF888888));
+		Component valueText = Component.literal(value).withStyle(s -> s.withColor(0xFFDDC0C7));
+		int labelH = drawWrappedValue(gfx, ctx, labelText, x, y, totalW, lineH);
+		int valueY = y + labelH;
+		int valueW = Math.max(24, totalW - DETAIL_VALUE_INDENT);
+		int valueH = drawWrappedValue(gfx, ctx, valueText, x + DETAIL_VALUE_INDENT, valueY, valueW, lineH);
+		return valueY + valueH + DETAIL_ROW_GAP;
+	}
+
+	private static int drawWrappedValue(GuiGraphics gfx, ProgressScreenContext ctx, Component text,
+										int x, int y, int width, int lineH) {
+		int startY = y;
+		List<String> lines = ScreenDrawUtils.wrapText(ctx.font(), text.getString(), width);
+		if (lines.isEmpty()) {
+			lines = List.of("");
+		}
+		for (String line : lines) {
+			gfx.drawString(ctx.font(), Component.literal(line).withStyle(text.getStyle()), x, y, 0);
+			y += lineH;
+		}
+		return y - startY;
 	}
 
 	private static int drawWrapped(GuiGraphics gfx, ProgressScreenContext ctx, Component text,

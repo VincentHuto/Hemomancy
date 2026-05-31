@@ -1,0 +1,21 @@
+{
+  "name": "hemomancy-skill-tree-editor",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "server": "tsx src/server/httpServer.ts"
+  },
+  "dependencies": {
+    "tsx": "^4.19.2",
+    "vite": "^5.4.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.9",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}

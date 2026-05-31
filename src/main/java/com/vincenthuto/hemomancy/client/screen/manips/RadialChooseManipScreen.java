@@ -24,6 +24,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -194,7 +195,7 @@ public class RadialChooseManipScreen extends Screen {
 
 	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot, String selectedManipName) {
 		BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
-				Hemomancy.rloc("textures/item/memories/memory_" + manipulation.getName() + "_overlay.png"),
+				memoryOverlayTexture(manipulation),
 				Hemomancy.rloc("textures/item/memories/memory_blank.png"),
 				0, 0, 16, 16, 16, 16,
 				Component.literal(manipulation.getProperName())) {
@@ -210,5 +211,14 @@ public class RadialChooseManipScreen extends Screen {
 		}
 		item.setVisible(true);
 		return item;
+	}
+
+	private ResourceLocation memoryOverlayTexture(BloodManipulation manipulation) {
+		String texture = switch (manipulation.getName()) {
+			case "conjure_blade" -> "memory_living_blade_overlay";
+			case "conjure_staff" -> "memory_living_staff_overlay";
+			default -> "memory_" + manipulation.getName() + "_overlay";
+		};
+		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");
 	}
 }

@@ -32,6 +32,8 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
     private static final int ALPHA_OPAQUE_MASK = 0xFF000000;
+    private static final float INFO_PANEL_Z = 400.0F;
+    private static final int INFO_PANEL_SHADOW = 0xAA000000;
 
     private final PanZoomState panZoom = new PanZoomState();
     private int manipRingCenterX, manipRingCenterY;
@@ -513,8 +515,13 @@ public class ManipulationsTabController implements IProgressTab {
             statsH += lineH * 2;
         }
         int panelH = 6 + nameRowH + 1 + 5 + statsH + recipeSection + 8;
+        int solidBg = 0xFF000000 | (0x1A0505);
 
-        gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD1A0505);
+        var pose = gfx.pose();
+        pose.pushPose();
+        pose.translate(0.0F, 0.0F, INFO_PANEL_Z);
+        gfx.fill(panelX - 2, panelY - 2, panelX + panelW + 2, panelY + panelH + 2, INFO_PANEL_SHADOW);
+        gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, solidBg);
         ScreenDrawUtils.drawSimpleBorder(gfx, panelX, panelY, panelW, panelH, tendCol);
 
         int tx = panelX + 6;
@@ -591,6 +598,7 @@ public class ManipulationsTabController implements IProgressTab {
             ty += 4;
             MiniRecipeRenderer.draw(gfx, ctx.font(), foundRecipe, tx, ty, maxW, tendCol, MiniRecipeRenderer.BLOOD);
         }
+        pose.popPose();
     }
 
     private ManipulationTreeEntry manipNodeUnder(ProgressScreenContext ctx, double mx, double my) {
