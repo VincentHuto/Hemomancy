@@ -26,7 +26,7 @@ public final class CoreSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
 			SkillPointInit.skill_capacity = SkillPointInit.registerSkill(branch,
 					new SkillPoint(1, "skill_capacity", 100, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
-							.setTreePosition(439, 424).setBranch("core").setBranchColor(0xFFD00000)
+							.setTreePosition(423, 424).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.vitality_chalice.get())));
 			SkillPointInit.skill_efficiency = SkillPointInit.registerSkill(branch,
 					new SkillPoint(2, "skill_efficiency", 100, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)

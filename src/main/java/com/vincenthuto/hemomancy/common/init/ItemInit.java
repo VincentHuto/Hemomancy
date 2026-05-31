@@ -673,13 +673,13 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> silthmere_glaive = HANDHELDITEMS.register("silthmere_glaive",
             () -> new SilthmereGlaiveItem(4, -2.8f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> pale_silver_pickaxe = HANDHELDITEMS.register("pale_silver_pickaxe",
-            () -> new PaleSilverPickaxeItem(EnumModToolTiers.UNSTAINED, 1, -2.8f,
-                    new Item.Properties().stacksTo(1)));
+//    public static final DeferredHolder<Item, Item> pale_silver_pickaxe = HANDHELDITEMS.register("pale_silver_pickaxe",
+//            () -> new PaleSilverPickaxeItem(EnumModToolTiers.UNSTAINED, 1, -2.8f,
+//                    new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> pale_silver_bell = SPECIALITEMS.register("pale_silver_bell",
             () -> new PaleSilverBellItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
-            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+//    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
+//            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> verdigris_censer = SPECIALITEMS.register("verdigris_censer",
             () -> new VerdigrisCenserItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> sporitic_thurible = SPECIALITEMS.register("sporitic_thurible",
@@ -709,8 +709,6 @@ public class ItemInit {
             () -> new NoctiluminaDevoransItem(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
     public static final DeferredHolder<Item, Item> noctifly_agaric = BASEITEMS.register("noctifly_agaric",
             () -> new NoctiflyAgaricItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
-
-    // Archon-tier Fungal Scars
     public static final DeferredHolder<Item, Item> antiphonomyces_resonans = BASEITEMS.register("antiphonomyces_resonans",
             () -> new AntiphonomycesResonansItem(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
     public static final DeferredHolder<Item, Item> sanguiflora_cadens = BASEITEMS.register("sanguiflora_cadens",
