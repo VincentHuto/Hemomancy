@@ -116,6 +116,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(EnthralledDollModel.LAYER_LOCATION, EnthralledDollModel::createBodyLayer);
 
 		event.registerLayerDefinition(BloodThrallModel.LAYER_LOCATION, BloodThrallModel::createBodyLayer);
+		event.registerLayerDefinition(VeinwingVultureModel.LAYER_LOCATION, VeinwingVultureModel::createBodyLayer);
+		event.registerLayerDefinition(MarrowSpitterModel.LAYER_LOCATION, MarrowSpitterModel::createBodyLayer);
+		event.registerLayerDefinition(GoreboundHulkModel.LAYER_LOCATION, GoreboundHulkModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);

@@ -1,18 +1,29 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.entity.summon.GoreboundHulkModel;
+import com.vincenthuto.hemomancy.common.entity.summon.GoreboundHulkEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ZombieRenderer;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 
-public class GoreboundHulkRenderer extends ZombieRenderer {
+public class GoreboundHulkRenderer extends MobRenderer<GoreboundHulkEntity, GoreboundHulkModel> {
+	private static final ResourceLocation TEXTURE =
+			Hemomancy.rloc("textures/entity/puppeteer_summon/gorebound_hulk.png");
+
 	public GoreboundHulkRenderer(EntityRendererProvider.Context context) {
-		super(context);
+		super(context, new GoreboundHulkModel(context.bakeLayer(GoreboundHulkModel.LAYER_LOCATION)), 0.65F);
 	}
 
 	@Override
-	public void render(Zombie entity, float entityYaw, float partialTicks,
+	public ResourceLocation getTextureLocation(GoreboundHulkEntity entity) {
+		return TEXTURE;
+	}
+
+	@Override
+	public void render(GoreboundHulkEntity entity, float entityYaw, float partialTicks,
 					   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 		if (PuppeteerSummonRenderHelper.shouldSkipRender(entity)) {
 			return;
