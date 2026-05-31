@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 
 const commands = [
-  ['API', 'npx', ['tsx', 'src/server/httpServer.ts']],
+  ['API', 'npx', ['tsx', 'watch', 'src/server/httpServer.ts']],
   ['UI', 'npx', ['vite', '--host', '127.0.0.1']]
 ];
 

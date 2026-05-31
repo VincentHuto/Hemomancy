@@ -1,5 +1,6 @@
 import {
   createMovementHistory,
+  recordDegreeLabelMovement,
   recordMovement,
   recordMovements,
   recordSkillEdit,
@@ -104,6 +105,51 @@ test('undoes and redoes inspector field edits', () => {
   }]);
   expect(history.canUndo).toBe(true);
   expect(history.canRedo).toBe(false);
+});
+
+test('undoes and redoes parent list edits', () => {
+  const history = createMovementHistory();
+
+  recordSkillEdit(history, {
+    fieldBefore: 'skill_crimson_projection',
+    fieldAfter: 'skill_crimson_projection',
+    key: 'parentFields',
+    before: ['skill_living_conduit'],
+    after: ['skill_living_conduit', 'skill_vascular_draw']
+  });
+
+  expect(undoMovement(history)?.updates).toEqual([{
+    field: 'skill_crimson_projection',
+    edit: { key: 'parentFields', value: ['skill_living_conduit'] }
+  }]);
+
+  expect(redoMovement(history)?.updates).toEqual([{
+    field: 'skill_crimson_projection',
+    edit: { key: 'parentFields', value: ['skill_living_conduit', 'skill_vascular_draw'] }
+  }]);
+});
+
+test('undoes and redoes degree label movements', () => {
+  const history = createMovementHistory();
+
+  recordDegreeLabelMovement(history, {
+    degree: 4,
+    before: { x: 90, y: 160 },
+    after: { x: 188, y: 244 }
+  });
+
+  expect(undoMovement(history)?.updates).toEqual([{
+    degreeLabel: {
+      degree: 4,
+      position: { x: 90, y: 160 }
+    }
+  }]);
+  expect(redoMovement(history)?.updates).toEqual([{
+    degreeLabel: {
+      degree: 4,
+      position: { x: 188, y: 244 }
+    }
+  }]);
 });
 
 test('undoes and redoes field renames using the current field as the lookup key', () => {

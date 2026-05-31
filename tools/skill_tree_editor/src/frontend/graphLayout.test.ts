@@ -25,6 +25,7 @@ test('keeps long root edges out of unrelated sibling skill rows', () => {
     {
       path: 'CoreSkillBranch.java',
       branch: 'core',
+      color: '#d00000',
       className: 'CoreSkillBranch',
       source: '',
       diagnostics: [],
@@ -50,6 +51,7 @@ test('marks edges that cross between branch bands', () => {
     {
       path: 'CoreSkillBranch.java',
       branch: 'core',
+      color: '#d00000',
       className: 'CoreSkillBranch',
       source: '',
       diagnostics: [],
@@ -58,6 +60,7 @@ test('marks edges that cross between branch bands', () => {
     {
       path: 'LivingStaffSkillBranch.java',
       branch: 'living_staff',
+      color: '#d9ad28',
       className: 'LivingStaffSkillBranch',
       source: '',
       diagnostics: [],
@@ -79,6 +82,7 @@ test('records destination branch on each edge for branch-colored traces', () => 
     {
       path: 'CoreSkillBranch.java',
       branch: 'core',
+      color: '#d00000',
       className: 'CoreSkillBranch',
       source: '',
       diagnostics: [],
@@ -87,6 +91,7 @@ test('records destination branch on each edge for branch-colored traces', () => 
     {
       path: 'ScarSkillBranch.java',
       branch: 'scars',
+      color: '#b6b6bd',
       className: 'ScarSkillBranch',
       source: '',
       diagnostics: [],
@@ -97,8 +102,35 @@ test('records destination branch on each edge for branch-colored traces', () => 
   expect(layout.edges[0]).toEqual(expect.objectContaining({
     fromField: 'base_skill',
     toField: 'skill_scar_affinity',
-    toBranch: 'scars'
+    toBranch: 'scars',
+    color: '#b6b6bd'
   }));
+});
+
+test('draws one connector for each parent requirement', () => {
+  const layout = computeGraphLayout([
+    {
+      path: 'CoreSkillBranch.java',
+      branch: 'core',
+      color: '#d00000',
+      className: 'CoreSkillBranch',
+      source: '',
+      diagnostics: [],
+      skills: [
+        skill('base_skill', 'base', 0, null, 'core'),
+        skill('skill_capacity', 'skill_capacity', 1, 'base_skill', 'core'),
+        {
+          ...skill('skill_efficiency', 'skill_efficiency', 2, 'base_skill', 'core'),
+          parentFields: ['base_skill', 'skill_capacity']
+        }
+      ]
+    }
+  ]);
+
+  expect(layout.edges.filter(edge => edge.toField === 'skill_efficiency').map(edge => edge.fromField)).toEqual([
+    'base_skill',
+    'skill_capacity'
+  ]);
 });
 
 test('positions fallback nodes on concentric degree rings with higher core degrees farther north', () => {
@@ -106,6 +138,7 @@ test('positions fallback nodes on concentric degree rings with higher core degre
     {
       path: 'CoreSkillBranch.java',
       branch: 'core',
+      color: '#d00000',
       className: 'CoreSkillBranch',
       source: '',
       diagnostics: [],
@@ -128,11 +161,58 @@ test('positions fallback nodes on concentric degree rings with higher core degre
   expect(node.skill_vital_link.y).toBeLessThan(node.skill_last_wind.y);
 });
 
+test('stacks degree guide labels away from the center tree nodes', () => {
+  const layout = computeGraphLayout([
+    {
+      path: 'CoreSkillBranch.java',
+      branch: 'core',
+      color: '#d00000',
+      className: 'CoreSkillBranch',
+      source: '',
+      diagnostics: [],
+      skills: [
+        skill('base_skill', 'base', 0, null, 'core', 0),
+        skill('skill_last_wind', 'skill_last_wind', 3, 'base_skill', 'core', 2),
+        skill('skill_vital_link', 'skill_vital_link', 9, 'skill_last_wind', 'core', 5)
+      ]
+    }
+  ]);
+
+  const labelYs = layout.degreeGuides.map(guide => guide.labelY);
+
+  expect(new Set(labelYs).size).toBe(layout.degreeGuides.length);
+  expect(layout.degreeGuides.every(guide => guide.labelX < 160)).toBe(true);
+});
+
+test('uses saved degree guide label positions when present', () => {
+  const layout = computeGraphLayout([
+    {
+      path: 'CoreSkillBranch.java',
+      branch: 'core',
+      color: '#d00000',
+      degreeLabels: [{ degree: 3, x: 212, y: 344 }],
+      className: 'CoreSkillBranch',
+      source: '',
+      diagnostics: [],
+      skills: [
+        skill('base_skill', 'base', 0, null, 'core', 0),
+        skill('skill_feeding_frenzy', 'skill_feeding_frenzy', 5, 'base_skill', 'core', 3)
+      ]
+    }
+  ]);
+
+  expect(layout.degreeGuides.find(guide => guide.degree === 3)).toEqual(expect.objectContaining({
+    labelX: 212,
+    labelY: 344
+  }));
+});
+
 test('uses explicit tree positions when skills define in-game coordinates', () => {
   const layout = computeGraphLayout([
     {
       path: 'CoreSkillBranch.java',
       branch: 'core',
+      color: '#d00000',
       className: 'CoreSkillBranch',
       source: '',
       diagnostics: [],
@@ -158,6 +238,7 @@ test('draws skill links as game-style curved connector paths', () => {
     {
       path: 'CoreSkillBranch.java',
       branch: 'core',
+      color: '#d00000',
       className: 'CoreSkillBranch',
       source: '',
       diagnostics: [],
@@ -172,6 +253,54 @@ test('draws skill links as game-style curved connector paths', () => {
   expect(layout.edges[0].path).toContain(' C ');
 });
 
+test('tucks connector endpoints under node frames instead of stopping in open space', () => {
+  const layout = computeGraphLayout([
+    {
+      path: 'CoreSkillBranch.java',
+      branch: 'core',
+      color: '#d00000',
+      className: 'CoreSkillBranch',
+      source: '',
+      diagnostics: [],
+      skills: [
+        { ...skill('base_skill', 'base', 0, null, 'core', 0), treeX: 480, treeY: 360 },
+        { ...skill('skill_capacity', 'skill_capacity', 1, 'base_skill', 'core', 1), treeX: 480, treeY: 480 }
+      ]
+    }
+  ]);
+
+  const points = pathPoints(layout.edges[0].path);
+
+  expect(points.start).toEqual({ x: 480, y: 376 });
+  expect(points.end).toEqual({ x: 480, y: 464 });
+});
+
+test('adds a subtle organic sway to straight connector paths', () => {
+  const layout = computeGraphLayout([
+    {
+      path: 'CoreSkillBranch.java',
+      branch: 'core',
+      color: '#d00000',
+      className: 'CoreSkillBranch',
+      source: '',
+      diagnostics: [],
+      skills: [
+        { ...skill('base_skill', 'base', 0, null, 'core', 0), treeX: 480, treeY: 360 },
+        { ...skill('skill_capacity', 'skill_capacity', 1, 'base_skill', 'core', 1), treeX: 480, treeY: 480 }
+      ]
+    }
+  ]);
+
+  const numbers = layout.edges[0].path.match(/-?\d+/g)?.map(Number) ?? [];
+  const [startX, , c1x, , c2x, , endX] = numbers;
+
+  expect(startX).toBe(480);
+  expect(endX).toBe(480);
+  expect(c1x).not.toBe(480);
+  expect(c2x).not.toBe(480);
+  expect(Math.sign(c1x - 480)).toBe(-Math.sign(c2x - 480));
+});
+
 function branch(name: string, count: number): SkillBranchFile {
   const skills = Array.from({ length: count }, (_, index) => ({
     field: `${name}_${index}`,
@@ -182,6 +311,7 @@ function branch(name: string, count: number): SkillBranchFile {
     maxLevels: 1,
     state: 'LOCKED',
     parentField: index === 0 ? null : `${name}_${index - 1}`,
+    parentFields: index === 0 ? [] : [`${name}_${index - 1}`],
     skillPointCost: 1,
     requiredDegree: 0,
     treeX: null,
@@ -192,6 +322,7 @@ function branch(name: string, count: number): SkillBranchFile {
   return {
     path: `${name}.java`,
     branch: name,
+    color: '#d00000',
     className: `${name}Branch`,
     source: '',
     skills,
@@ -209,6 +340,7 @@ function skill(field: string, name: string, id: number, parentField: string | nu
     maxLevels: 1,
     state: 'LOCKED',
     parentField,
+    parentFields: parentField ? [parentField] : [],
     skillPointCost: 1,
     requiredDegree,
     treeX: null,
@@ -220,4 +352,12 @@ function skill(field: string, name: string, id: number, parentField: string | nu
 
 function isBetween(value: number, a: number, b: number): boolean {
   return value > Math.min(a, b) && value < Math.max(a, b);
+}
+
+function pathPoints(path: string): { start: { x: number; y: number }; end: { x: number; y: number } } {
+  const numbers = path.match(/-?\d+/g)?.map(Number) ?? [];
+  return {
+    start: { x: numbers[0], y: numbers[1] },
+    end: { x: numbers[numbers.length - 2], y: numbers[numbers.length - 1] }
+  };
 }

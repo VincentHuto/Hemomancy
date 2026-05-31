@@ -26,16 +26,11 @@ public class SkillsTabController implements IProgressTab {
     private static final int COMPASS_CENTER_Y = 480;
     private static final int[] DEGREE_RING_RADII = {72, 120, 190, 260, 330, 400};
     private static final int COMPASS_CONTENT_PADDING = 80;
-    private static final int TRACE_CORE = 0xFFD00000;
-    private static final int TRACE_SCARS = 0xFF9A9A9F;
-    private static final int TRACE_SUMMONS = 0xFF2370DB;
-    private static final int TRACE_LIVING_STAFF = 0xFFD9AD28;
-    private static final int TRACE_DEGREE_RING = 0x3A972A26;
+    private static final int DEGREE_LABEL_X = COMPASS_CENTER_X - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 10;
+    private static final int DEGREE_LABEL_TOP_Y = COMPASS_CENTER_Y - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 28;
+    private static final int DEGREE_LABEL_GAP_Y = 34;
     private static final int TRACE_DEGREE_LABEL = 0x88D66458;
     private static final int COL_NODE_BG           = 0xCC1A0505;
-    private static final int COL_NODE_BORDER_LOCK  = 0xFF333333;
-    private static final int COL_NODE_BORDER_UNLOCK= 0xFFCC2222;
-    private static final int COL_NODE_BORDER_AVAIL = 0xFFBB8833;
 
     private final SkillTraceLayerCache traceCache = new SkillTraceLayerCache();
     private final PanZoomState panZoom = new PanZoomState();
@@ -100,14 +95,26 @@ public class SkillsTabController implements IProgressTab {
             contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
             contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
         }
+        for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
+            int[] labelPosition = SkillPointInit.getDegreeLabelPosition(degree);
+            contentW = Math.max(contentW, labelPosition[0] + 128);
+            contentH = Math.max(contentH, labelPosition[1] + 48);
+        }
         contentW = Math.max(contentW, COMPASS_CENTER_X + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
         contentH = Math.max(contentH, COMPASS_CENTER_Y + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
     }
 
     private static int depth(SkillPoint sp) {
-        int d = 0;
-        for (SkillPoint p = sp; p.getParent() != null; p = p.getParent()) d++;
-        return d;
+        return depth(sp, new HashSet<>());
+    }
+
+    private static int depth(SkillPoint sp, Set<SkillPoint> seen) {
+        if (sp == null || !seen.add(sp) || sp.getParents().isEmpty()) return 0;
+        int max = 0;
+        for (SkillPoint parent : sp.getParents()) {
+            max = Math.max(max, 1 + depth(parent, new HashSet<>(seen)));
+        }
+        return max;
     }
 
     private int sx(ProgressScreenContext ctx, int cx) { return panZoom.sx(ctx.guiLeft(), cx); }
@@ -134,12 +141,10 @@ public class SkillsTabController implements IProgressTab {
     }
 
     private void drawDegreeLabels(GuiGraphics gfx, ProgressScreenContext ctx) {
-        int centerX = sx(ctx, COMPASS_CENTER_X);
-        int centerY = sy(ctx, COMPASS_CENTER_Y);
         if (panZoom.zoom < 0.5f) return;
         for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
-            int radius = Math.max(1, (int) Math.round(DEGREE_RING_RADII[degree] * panZoom.zoom));
-            gfx.drawString(ctx.font(), "Degree " + degree, centerX - radius + 8, centerY - 6, TRACE_DEGREE_LABEL, false);
+            int[] labelPosition = SkillPointInit.getDegreeLabelPosition(degree);
+            gfx.drawString(ctx.font(), "Degree " + degree, sx(ctx, labelPosition[0]), sy(ctx, labelPosition[1]), TRACE_DEGREE_LABEL, false);
         }
     }
 
@@ -153,23 +158,24 @@ public class SkillsTabController implements IProgressTab {
             int ny = sy(ctx, pos[1]);
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
             EnumNodeShape shape = sp.getNodeShape();
+            int branchColor = sp.getBranchColor();
             int border;
             if (degreeLocked) {
-                border = COL_NODE_BORDER_LOCK;
+                border = withAlpha(branchColor, 0xCC);
             } else {
                 switch (SkillProgressClientCache.current().getState(sp)) {
                     case UNLOCKED -> {
-                        border = COL_NODE_BORDER_UNLOCK;
+                        border = branchColor;
                         float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
                         int ga = (int)(40 * p);
-                        NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3, (ga << 24) | 0x00AA0000);
+                        NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3, withAlpha(branchColor, ga));
                     }
                     case LOCKED -> {
-                        border = COL_NODE_BORDER_LOCK;
-                        if (sp.getParent() != null && SkillProgressClientCache.current().getState(sp.getParent()) == EnumSkillStates.UNLOCKED)
-                            border = COL_NODE_BORDER_AVAIL;
+                        border = withAlpha(branchColor, 0xAA);
+                        if (!sp.getParents().isEmpty() && areParentsUnlocked(sp))
+                            border = withAlpha(branchColor, 0xEE);
                     }
-                    default -> border = COL_NODE_BORDER_LOCK;
+                    default -> border = withAlpha(branchColor, 0xAA);
                 }
             }
             NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
@@ -231,9 +237,9 @@ public class SkillsTabController implements IProgressTab {
                         .withStyle(s -> s.withColor(0x999999).withItalic(true)));
                 EnumSkillStates state = SkillProgressClientCache.current().getState(sp);
                 if (state == EnumSkillStates.LOCKED) {
-                    if (sp.getParent() != null && SkillProgressClientCache.current().getState(sp.getParent()) != EnumSkillStates.UNLOCKED) {
-                        String pn = HLTextUtils.toProperCase(sp.getParent().getName().replace("skill_", "").replace("_", " "));
-                        tip.add(Component.literal("Requires: " + pn).withStyle(s -> s.withColor(0xAA4444)));
+                    List<String> lockedParents = lockedParentNames(sp);
+                    if (!lockedParents.isEmpty()) {
+                        tip.add(Component.literal("Requires: " + String.join(", ", lockedParents)).withStyle(s -> s.withColor(0xAA4444)));
                     } else {
                         tip.add(Component.literal("Click to unlock! Cost: " + (int)SkillProgressClientCache.current().getLevelUpCost(sp) + " mL + "
                                 + sp.getSkillPointCost() + " SP").withStyle(s -> s.withColor(0xBB8833)));
@@ -250,6 +256,26 @@ public class SkillsTabController implements IProgressTab {
             gfx.renderTooltip(ctx.font(), tip, Optional.empty(), mouseX, mouseY);
             break;
         }
+    }
+
+    private static boolean areParentsUnlocked(SkillPoint sp) {
+        for (SkillPoint parent : sp.getParents()) {
+            if (SkillProgressClientCache.current().getState(parent) != EnumSkillStates.UNLOCKED) return false;
+        }
+        return true;
+    }
+
+    private static List<String> lockedParentNames(SkillPoint sp) {
+        List<String> locked = new ArrayList<>();
+        for (SkillPoint parent : sp.getParents()) {
+            if (SkillProgressClientCache.current().getState(parent) == EnumSkillStates.UNLOCKED) continue;
+            locked.add(HLTextUtils.toProperCase(parent.getName().replace("skill_", "").replace("_", " ")));
+        }
+        return locked;
+    }
+
+    private static int withAlpha(int color, int alpha) {
+        return (color & 0x00FFFFFF) | (Mth.clamp(alpha, 0, 255) << 24);
     }
 
     private SkillPoint nodeUnder(ProgressScreenContext ctx, double mx, double my) {

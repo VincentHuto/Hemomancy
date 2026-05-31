@@ -5,6 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class SkillPoint {
@@ -16,8 +19,11 @@ public class SkillPoint {
 	int treeX, treeY;      // Optional content-space coordinates for the skill tree screen
 	boolean hasTreePosition;
 	String branch = "core";
+	int branchColor = defaultBranchColor("core");
+	boolean hasExplicitBranchColor;
 	EnumSkillStates state;
 	SkillPoint parent;
+	List<SkillPoint> parents = new ArrayList<>();
 	@Nullable Supplier<ItemStack> iconItem;
 	@Nullable ResourceLocation iconTexture;
 	EnumNodeShape nodeShape = EnumNodeShape.SQUARE;
@@ -33,6 +39,9 @@ public class SkillPoint {
 		this.hasTreePosition = false;
 		this.state = state;
 		this.parent = parent;
+		if (parent != null) {
+			this.parents.add(parent);
+		}
 	}
 
 	// ── Getters ──
@@ -84,6 +93,16 @@ public class SkillPoint {
 	/** Builder-style setter for the skill tree branch this node belongs to. */
 	public SkillPoint setBranch(String branch) {
 		this.branch = branch;
+		if (!hasExplicitBranchColor) {
+			this.branchColor = defaultBranchColor(branch);
+		}
+		return this;
+	}
+
+	/** Builder-style setter for the branch trace color used by the skill tree screen. */
+	public SkillPoint setBranchColor(int color) {
+		this.branchColor = 0xFF000000 | (color & 0x00FFFFFF);
+		this.hasExplicitBranchColor = true;
 		return this;
 	}
 
@@ -142,6 +161,10 @@ public class SkillPoint {
 		return branch;
 	}
 
+	public int getBranchColor() {
+		return hasExplicitBranchColor ? branchColor : defaultBranchColor(branch);
+	}
+
 	/** Returns true if the player's degree is too low to interact with this skill. */
 	public boolean isDegreeLocked(int playerDegree) {
 		return requiredDegree > 0 && playerDegree < requiredDegree;
@@ -157,6 +180,10 @@ public class SkillPoint {
 
 	public SkillPoint getParent() {
 		return parent;
+	}
+
+	public List<SkillPoint> getParents() {
+		return Collections.unmodifiableList(parents);
 	}
 
 	public EnumSkillStates getState() {
@@ -179,6 +206,32 @@ public class SkillPoint {
 
 	public void setParent(SkillPoint parent) {
 		this.parent = parent;
+		this.parents.clear();
+		if (parent != null) {
+			this.parents.add(parent);
+		}
+	}
+
+	public SkillPoint addParents(SkillPoint... additionalParents) {
+		if (additionalParents == null) return this;
+		for (SkillPoint additionalParent : additionalParents) {
+			if (additionalParent == null || additionalParent == this || parents.contains(additionalParent)) continue;
+			parents.add(additionalParent);
+			if (parent == null) {
+				parent = additionalParent;
+			}
+		}
+		return this;
+	}
+
+	private static int defaultBranchColor(String branch) {
+		return switch (branch) {
+			case "living_staff" -> 0xFFD9AD28;
+			case "scars" -> 0xFF9A9A9F;
+			case "summons" -> 0xFF2370DB;
+			case "base", "core" -> 0xFFD00000;
+			default -> 0xFFD00000;
+		};
 	}
 
 }

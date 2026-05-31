@@ -17,6 +17,7 @@ export interface SkillModel {
   maxLevels: number;
   state: string;
   parentField: string | null;
+  parentFields: string[];
   skillPointCost: number;
   requiredDegree: number;
   treeX: number | null;
@@ -25,9 +26,17 @@ export interface SkillModel {
   description: string;
 }
 
+export interface DegreeLabelPosition {
+  degree: number;
+  x: number;
+  y: number;
+}
+
 export interface SkillBranchFile {
   path: string;
   branch: string;
+  color: string;
+  degreeLabels?: DegreeLabelPosition[];
   className: string;
   source: string;
   skills: SkillModel[];

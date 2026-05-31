@@ -1,9 +1,9 @@
 import { beginConnectionDrag, finishConnectionDrag } from './connectionEditing';
 
-test('ctrl-dragging from one node to another proposes a parent rewire', () => {
-  const drag = beginConnectionDrag('skill_crimson_projection');
+test('ctrl-dragging from parent to child proposes adding the source as a parent', () => {
+  const drag = beginConnectionDrag('skill_vascular_draw');
 
-  expect(finishConnectionDrag(drag, 'skill_vascular_draw')).toEqual({
+  expect(finishConnectionDrag(drag, 'skill_crimson_projection')).toEqual({
     field: 'skill_crimson_projection',
     parentField: 'skill_vascular_draw'
   });

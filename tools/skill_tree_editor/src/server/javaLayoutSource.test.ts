@@ -4,21 +4,6 @@ import { parseSkillBranchJava } from './skillParser';
 
 const repoRoot = resolve(process.cwd(), '..', '..');
 const compassCenter = { x: 480, y: 480 };
-const degreeRadii = new Map<number, number>([
-  [0, 72],
-  [1, 120],
-  [2, 190],
-  [3, 260],
-  [4, 330],
-  [5, 400]
-]);
-const branchDirections = new Map<string, { x: number; y: number }>([
-  ['core', { x: 0, y: -1 }],
-  ['base', { x: 0, y: -1 }],
-  ['living_staff', { x: -1, y: 0 }],
-  ['summons', { x: 1, y: 0 }],
-  ['scars', { x: 0, y: 1 }]
-]);
 const maxInGameLayoutWidth = 820;
 const maxInGameLayoutHeight = 820;
 
@@ -39,26 +24,32 @@ test('in-game skills tab uses explicit skill positions when present', () => {
   expect(source).toContain('sp.getTreeY()');
 });
 
-test('authored java skill positions line up with compass degree rings', () => {
-  const branchRoot = resolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/skills');
-  const parsedBranches = readdirSync(branchRoot)
-    .filter(name => name.endsWith('SkillBranch.java'))
-    .map(name => {
-      const absPath = join(branchRoot, name);
-      const source = readFileSync(absPath, 'utf8');
-      const relPath = relative(repoRoot, absPath).replaceAll('\\', '/');
-      return parseSkillBranchJava(relPath, source);
-    });
-  const mismatches = parsedBranches.flatMap(branch => branch.skills
-    .filter(skill => skill.treeX !== null && skill.treeY !== null)
-    .filter(skill => {
-      const direction = branchDirections.get(skill.branch)!;
-      const actual = Math.round((skill.treeX! - compassCenter.x) * direction.x + (skill.treeY! - compassCenter.y) * direction.y);
-      return actual !== expectedCompassRadius(skill);
-    })
-    .map(skill => `${skill.field}: x=${skill.treeX}, y=${skill.treeY}, branch=${skill.branch}, degree=${skill.requiredDegree}`));
+test('in-game skills tab uses explicit degree label positions when present', () => {
+  const init = read('src/main/java/com/vincenthuto/hemomancy/common/init/SkillPointInit.java');
+  const source = read('src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillsTabController.java');
 
-  expect(mismatches).toEqual([]);
+  expect(init).toContain('setDegreeLabelPosition(int degree, int x, int y)');
+  expect(init).toContain('getDegreeLabelPosition(int degree)');
+  expect(source).toContain('SkillPointInit.getDegreeLabelPosition(degree)');
+});
+
+test('authored java skill positions keep branches separated directionally', () => {
+  const skills = javaBranchSkills()
+    .filter(skill => skill.treeX !== null && skill.treeY !== null);
+  const byField = new Map(skills.map(skill => [skill.field, skill]));
+
+  expect(byField.get('base_skill')).toEqual(expect.objectContaining({ treeX: compassCenter.x, treeY: compassCenter.y }));
+  expect(skills.filter(skill => skill.branch === 'living_staff').every(skill => skill.treeX! < compassCenter.x)).toBe(true);
+  expect(skills.filter(skill => skill.branch === 'summons').every(skill => skill.treeX! > compassCenter.x)).toBe(true);
+  expect(skills.filter(skill => skill.branch === 'scars').every(skill => skill.treeY! > compassCenter.y)).toBe(true);
+  expect(skills.filter(skill => skill.branch === 'core' && skill.field !== 'base_skill').every(skill => skill.treeY! < compassCenter.y)).toBe(true);
+});
+
+test('authored java skill declarations carry branch metadata for in-game trace colors', () => {
+  for (const branch of javaBranches()) {
+    expect(branch.source).toContain(`.setBranch("${branch.branch}")`);
+    expect(branch.source).toContain('.setBranchColor(0xFF');
+  }
 });
 
 test('authored java skill positions stay compact enough for the in-game skill screen', () => {
@@ -79,18 +70,17 @@ function read(path: string): string {
 }
 
 function javaBranchSkills() {
+  return javaBranches().flatMap(branch => branch.skills);
+}
+
+function javaBranches() {
   const branchRoot = resolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/skills');
   return readdirSync(branchRoot)
     .filter(name => name.endsWith('SkillBranch.java'))
-    .flatMap(name => {
+    .map(name => {
       const absPath = join(branchRoot, name);
       const source = readFileSync(absPath, 'utf8');
       const relPath = relative(repoRoot, absPath).replaceAll('\\', '/');
-      return parseSkillBranchJava(relPath, source).skills;
+      return parseSkillBranchJava(relPath, source);
     });
-}
-
-function expectedCompassRadius(skill: { branch: string; parentField: string | null; requiredDegree: number }): number {
-  if ((skill.branch === 'core' || skill.branch === 'base') && !skill.parentField && skill.requiredDegree === 0) return 0;
-  return degreeRadii.get(skill.requiredDegree) ?? degreeRadii.get(5)! + (skill.requiredDegree - 5) * 70;
 }

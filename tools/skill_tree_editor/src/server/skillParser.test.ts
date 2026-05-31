@@ -21,6 +21,7 @@ test('parses editable skill declarations from marked Java branches', () => {
   const parsed = parseSkillBranchJava('src/main/java/example/CoreSkillBranch.java', branchSource);
 
   expect(parsed.branch).toBe('core');
+  expect(parsed.color).toBe('#d00000');
   expect(parsed.className).toBe('CoreSkillBranch');
   expect(parsed.skills).toEqual([
     {
@@ -32,6 +33,7 @@ test('parses editable skill declarations from marked Java branches', () => {
       maxLevels: 1,
       state: 'UNLOCKED',
       parentField: null,
+      parentFields: [],
       skillPointCost: 1,
       requiredDegree: 0,
       treeX: null,
@@ -48,6 +50,7 @@ test('parses editable skill declarations from marked Java branches', () => {
       maxLevels: 5,
       state: 'LOCKED',
       parentField: 'base_skill',
+      parentFields: ['base_skill'],
       skillPointCost: 2,
       requiredDegree: 1,
       treeX: null,
@@ -56,6 +59,43 @@ test('parses editable skill declarations from marked Java branches', () => {
       description: ''
     }
   ]);
+});
+
+test('parses and renders branch trace colors', () => {
+  const source = branchSource.replace(
+    '.setSkillPointCost(2).setRequiredDegree(1)',
+    '.setSkillPointCost(2).setRequiredDegree(1).setBranch("living_staff").setBranchColor(0xFFD9AD28)'
+  );
+  const parsed = parseSkillBranchJava('src/main/java/example/LivingStaffSkillBranch.java', source);
+
+  expect(parsed.color).toBe('#d9ad28');
+
+  parsed.color = '#ffd166';
+  const rendered = renderSkillBranchJava(source, parsed);
+
+  expect(rendered).toContain('.setBranch("core").setBranchColor(0xFFFFD166)');
+});
+
+test('parses and renders editable degree label positions', () => {
+  const source = branchSource.replace(
+    '// <skill-editor branch="core">',
+    '// <skill-editor branch="core">\n    SkillPointInit.setDegreeLabelPosition(0, 96, 124);\n    SkillPointInit.setDegreeLabelPosition(1, 112, 156);'
+  );
+  const parsed = parseSkillBranchJava('src/main/java/example/CoreSkillBranch.java', source);
+
+  expect(parsed.degreeLabels).toEqual([
+    { degree: 0, x: 96, y: 124 },
+    { degree: 1, x: 112, y: 156 }
+  ]);
+
+  parsed.degreeLabels = [
+    { degree: 0, x: 140, y: 180 },
+    { degree: 1, x: 144, y: 214 }
+  ];
+  const rendered = renderSkillBranchJava(source, parsed);
+
+  expect(rendered).toContain('SkillPointInit.setDegreeLabelPosition(0, 140, 180);');
+  expect(rendered).toContain('SkillPointInit.setDegreeLabelPosition(1, 144, 214);');
 });
 
 test('parses explicit in-game tree positions from marked Java branches', () => {
@@ -71,6 +111,28 @@ test('parses explicit in-game tree positions from marked Java branches', () => {
     treeX: 340,
     treeY: 176
   }));
+});
+
+test('parses and renders additional parent requirements', () => {
+  const source = branchSource.replace(
+    '.setSkillPointCost(2).setRequiredDegree(1)',
+    '.setSkillPointCost(2).setRequiredDegree(1).addParents(SkillPointInit.skill_efficiency)'
+  );
+  const parsed = parseSkillBranchJava('src/main/java/example/CoreSkillBranch.java', source);
+
+  expect(parsed.skills[1]).toEqual(expect.objectContaining({
+    parentField: 'base_skill',
+    parentFields: ['base_skill', 'skill_efficiency']
+  }));
+
+  parsed.skills[1] = {
+    ...parsed.skills[1],
+    parentFields: ['base_skill', 'skill_efficiency', 'skill_last_wind']
+  };
+  const rendered = renderSkillBranchJava(source, parsed);
+
+  expect(rendered).toContain('new SkillPoint(1, "skill_capacity", 100, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)');
+  expect(rendered).toContain('.addParents(SkillPointInit.skill_efficiency, SkillPointInit.skill_last_wind)');
 });
 
 test('renders edited skills back into the marked branch section', () => {

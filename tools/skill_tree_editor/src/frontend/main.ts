@@ -1,10 +1,13 @@
 import type {
   Diagnostic,
+  DegreeLabelPosition,
   PreviewResult,
   SkillBranchFile,
   SkillModel,
   SkillWorkspace
 } from '../shared/types';
+import { normalizeBranchColor } from '../shared/branchColors';
+import { addParentField, parentFieldsOf, removeParentField, setParentFields } from '../shared/skillParents';
 import { applyCompassLayout } from './compassLayout';
 import { beginConnectionDrag, type ConnectionDragState, finishConnectionDrag } from './connectionEditing';
 import { beginDragPan, type DragPanState, shouldStartDragPan, updateDragPan } from './dragPan';
@@ -13,6 +16,7 @@ import { beginNodeDrag, type NodeDragState, type NodePosition, updateNodeDrag } 
 import {
   createMovementHistory,
   type MovementTarget,
+  recordDegreeLabelMovement,
   recordMovement,
   recordMovements,
   recordSkillEdit,
@@ -20,6 +24,7 @@ import {
   type SkillEditValue,
   undoMovement
 } from './movementHistory';
+import { captureGraphViewport, type GraphViewport, restoreGraphViewport } from './viewportPreservation';
 import { clampZoom, zoomScrollAnchor } from './viewportZoom';
 import './styles.css';
 
@@ -41,6 +46,7 @@ let isBusy = false;
 let snapToGrid = true;
 let graphZoom = 1;
 let movementHistory = createMovementHistory();
+let suppressNextGraphNodeClick = false;
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('Missing app root.');
@@ -82,6 +88,7 @@ function render(): void {
     app.innerHTML = `<main class="loading"><div>${escapeHtml(statusText)}</div></main>`;
     return;
   }
+  const viewport = captureCurrentGraphViewport();
 
   app.innerHTML = `
     <main class="shell">
@@ -136,14 +143,29 @@ function render(): void {
   `;
 
   wireEvents();
+  if (viewport) {
+    restoreCurrentGraphViewport(viewport);
+    requestAnimationFrame(() => restoreCurrentGraphViewport(viewport));
+  }
 }
 
 function renderBranchButton(branch: SkillBranchFile): string {
   const selected = branch.branch === selectedBranch ? 'selected' : '';
-  return `<button class="branch-button ${selected} branch-button-${branchClassName(branch.branch)}" data-branch="${escapeAttr(branch.branch)}">
+  return `<button class="branch-button ${selected} branch-button-${branchClassName(branch.branch)}" style="${branchButtonStyle(branch)}" data-branch="${escapeAttr(branch.branch)}">
     <span>${escapeHtml(labelize(branch.branch))}</span>
     <b>${branch.skills.length}</b>
   </button>`;
+}
+
+function branchButtonStyle(branch: SkillBranchFile): string {
+  const color = normalizeBranchColor(branch.color, branch.branch);
+  return [
+    `--branch-accent: ${color}`,
+    `--branch-border: ${rgbaFromHex(color, 0.58)}`,
+    `--branch-bg: ${rgbaFromHex(color, 0.20)}`,
+    `--branch-selected-bg: ${rgbaFromHex(color, 0.34)}`,
+    `--branch-count: ${color}`
+  ].join('; ');
 }
 
 function renderSkillButton(skill: SkillModel): string {
@@ -167,7 +189,7 @@ function renderGraph(): string {
     .join('');
   const degreeGuides = layout.degreeGuides.map(guide =>
     `<circle cx="${guide.cx}" cy="${guide.cy}" r="${guide.radius}" class="degree-guide-line"></circle>
-    <text x="${guide.labelX}" y="${guide.labelY}" class="degree-guide-label">${escapeHtml(guide.label)}</text>`
+    <text x="${guide.labelX}" y="${guide.labelY}" class="degree-guide-label" data-degree-label="${guide.degree}">${escapeHtml(guide.label)}</text>`
   ).join('');
   const nodes = layout.nodes.map(renderSkillNode).join('');
   const zoomLabel = `${Math.round(graphZoom * 100)}%`;
@@ -201,9 +223,10 @@ function renderGraph(): string {
 function renderWireEdge(edge: GraphEdge): string {
   const edgeKind = edge.kind === 'cross-branch' ? 'cross-edge' : 'local-edge';
   const branch = `edge-branch-${branchClassName(edge.toBranch)}`;
+  const fromField = escapeAttr(edge.fromField);
   const toField = escapeAttr(edge.toField);
   const path = escapeAttr(edge.path);
-  return `<path class="edge wire-edge ${edgeKind} ${branch}" data-edge-to="${toField}" d="${path}" />`;
+  return `<path class="edge wire-edge ${edgeKind} ${branch}" style="stroke: ${escapeAttr(edge.color)}" data-edge-from="${fromField}" data-edge-to="${toField}" d="${path}" />`;
 }
 
 function renderSkillNode({ skill, x, y }: { skill: SkillModel; x: number; y: number }): string {
@@ -252,16 +275,25 @@ function renderInspector(): string {
   const skill = selectedSkill();
   if (!branch) return '<div class="empty">No branch selected.</div>';
   if (!skill) return '<div class="empty">No skill selected.</div>';
-  const parentOptions = [
-    `<option value="" ${skill.parentField ? '' : 'selected'}>None</option>`,
-    ...allSkills()
-      .filter(candidate => candidate.field !== skill.field)
-      .sort((a, b) => a.id - b.id)
-      .map(candidate => `<option value="${escapeAttr(candidate.field)}" ${candidate.field === skill.parentField ? 'selected' : ''}>${escapeHtml(candidate.name)}</option>`)
+  const parents = parentFieldsOf(skill);
+  const parentNames = new Map(allSkills().map(candidate => [candidate.field, candidate.name]));
+  const availableParents = allSkills()
+    .filter(candidate => candidate.field !== skill.field && !parents.includes(candidate.field))
+    .sort((a, b) => a.id - b.id);
+  const addParentOptions = [
+    '<option value="">Add parent...</option>',
+    ...availableParents
+      .map(candidate => `<option value="${escapeAttr(candidate.field)}">${escapeHtml(candidate.name)}</option>`)
   ].join('');
+  const parentList = parents.length
+    ? parents.map(parentField => `<button type="button" class="parent-pill" data-action="remove-parent" data-parent-field="${escapeAttr(parentField)}">
+        <span>${escapeHtml(parentNames.get(parentField) ?? parentField)}</span><b>x</b>
+      </button>`).join('')
+    : '<span class="parent-empty">None</span>';
   const branchOptions = workspace!.branches.map(candidate =>
     `<option value="${escapeAttr(candidate.branch)}" ${candidate.branch === skill.branch ? 'selected' : ''}>${escapeHtml(labelize(candidate.branch))}</option>`
   ).join('');
+  const branchColor = normalizeBranchColor(branch.color, branch.branch);
 
   return `<form class="editor-form">
     <div class="form-heading">
@@ -272,6 +304,7 @@ function renderInspector(): string {
       <div class="icon-chip">${escapeHtml(skill.iconItem ?? 'none')}</div>
     </div>
 
+    <label>Branch color<input type="color" data-branch-edit="color" value="${escapeAttr(branchColor)}" /></label>
     <label>Branch<select data-edit="branch">${branchOptions}</select></label>
     <label>Field<input data-edit="field" value="${escapeAttr(skill.field)}" /></label>
     <label>Name<input data-edit="name" value="${escapeAttr(skill.name)}" /></label>
@@ -283,7 +316,11 @@ function renderInspector(): string {
       <label>Skill points<input type="number" data-edit="skillPointCost" value="${skill.skillPointCost}" /></label>
       <label>Degree<input type="number" data-edit="requiredDegree" value="${skill.requiredDegree}" /></label>
     </div>
-    <label>Parent<select data-edit="parentField">${parentOptions}</select></label>
+    <div class="parent-editor">
+      <span class="field-label">Parents</span>
+      <div class="parent-list">${parentList}</div>
+      <label>Add<select data-action="add-parent">${addParentOptions}</select></label>
+    </div>
       <label>Icon item<input data-edit="iconItem" value="${escapeAttr(skill.iconItem ?? '')}" placeholder="living_staff" /></label>
     <div class="grid2">
       <label>Tree X<input type="number" data-edit="treeX" value="${skill.treeX ?? ''}" /></label>
@@ -308,9 +345,6 @@ function wireEvents(): void {
   document.querySelector('[data-action="reload"]')?.addEventListener('click', () => void load());
   document.querySelector('[data-action="preview"]')?.addEventListener('click', () => void makePreview());
   document.querySelector('[data-action="apply"]')?.addEventListener('click', () => void applyCurrentPreview());
-  document.querySelector('[data-action="add-skill"]')?.addEventListener('click', addSkill);
-  document.querySelector('[data-action="duplicate-skill"]')?.addEventListener('click', duplicateSkill);
-  document.querySelector('[data-action="delete-skill"]')?.addEventListener('click', deleteSkill);
   document.querySelector('[data-action="compass-layout"]')?.addEventListener('click', applyCompassAutoLayout);
   document.querySelector('[data-action="undo-move"]')?.addEventListener('click', undoLastMovement);
   document.querySelector('[data-action="redo-move"]')?.addEventListener('click', redoLastMovement);
@@ -330,11 +364,23 @@ function wireEvents(): void {
     });
   }
   for (const button of document.querySelectorAll<HTMLElement>('.skill-button[data-skill], .skill-node[data-skill]')) {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', event => {
+      const isGraphNode = button.classList.contains('skill-node');
+      if (isGraphNode && suppressNextGraphNodeClick) {
+        suppressNextGraphNodeClick = false;
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      const viewport = isGraphNode ? captureCurrentGraphViewport() : null;
       selectedField = button.dataset.skill ?? selectedField;
       const skill = selectedSkill();
       if (skill) selectedBranch = skill.branch;
-      render();
+      if (viewport) {
+        renderPreservingGraphViewport(viewport);
+      } else {
+        render();
+      }
     });
   }
   for (const button of document.querySelectorAll<HTMLButtonElement>('[data-tab]')) {
@@ -343,13 +389,34 @@ function wireEvents(): void {
       render();
     });
   }
+  wireInspectorEvents();
+  wireGraphDragPan();
+  wireGraphZoom();
+  wireGraphNodeDragging();
+}
+
+function wireInspectorEvents(): void {
+  document.querySelector('[data-action="add-skill"]')?.addEventListener('click', addSkill);
+  document.querySelector('[data-action="duplicate-skill"]')?.addEventListener('click', duplicateSkill);
+  document.querySelector('[data-action="delete-skill"]')?.addEventListener('click', deleteSkill);
+  document.querySelector<HTMLSelectElement>('[data-action="add-parent"]')?.addEventListener('change', event => {
+    const parentField = (event.currentTarget as HTMLSelectElement).value;
+    if (parentField) addParentToSelectedSkill(parentField);
+  });
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-action="remove-parent"]')) {
+    button.addEventListener('click', () => {
+      const parentField = button.dataset.parentField;
+      if (parentField) removeParentFromSelectedSkill(parentField);
+    });
+  }
   for (const input of document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-edit]')) {
     input.addEventListener('input', () => updateSelectedSkill(input));
     input.addEventListener('change', () => updateSelectedSkill(input));
   }
-  wireGraphDragPan();
-  wireGraphZoom();
-  wireGraphNodeDragging();
+  for (const input of document.querySelectorAll<HTMLInputElement>('[data-branch-edit="color"]')) {
+    input.addEventListener('input', () => updateCurrentBranchColor(input.value));
+    input.addEventListener('change', () => updateCurrentBranchColor(input.value));
+  }
 }
 
 function wireGraphDragPan(): void {
@@ -464,6 +531,63 @@ function zoomGraphAt(scroller: HTMLElement, viewportX: number, viewportY: number
   });
 }
 
+function renderPreservingGraphViewport(viewport: GraphViewport | null = captureCurrentGraphViewport()): void {
+  render();
+  if (!viewport) return;
+  restoreCurrentGraphViewport(viewport);
+  requestAnimationFrame(() => restoreCurrentGraphViewport(viewport));
+}
+
+function captureCurrentGraphViewport(): GraphViewport | null {
+  const scroller = document.querySelector<HTMLElement>('.graph-scroll');
+  return scroller ? captureGraphViewport(scroller) : null;
+}
+
+function restoreCurrentGraphViewport(viewport: GraphViewport): void {
+  const scroller = document.querySelector<HTMLElement>('.graph-scroll');
+  if (scroller) restoreGraphViewport(scroller, viewport);
+}
+
+function refreshAfterConnectionRewire(): void {
+  refreshGraphEdges();
+  refreshSelectionClasses();
+  refreshInspector();
+  refreshStatusAndHistoryControls();
+}
+
+function refreshGraphEdges(): void {
+  if (!workspace) return;
+  const edgeGroup = document.querySelector<SVGGElement>('.edges');
+  if (!edgeGroup) return;
+  const layout = computeGraphLayout(workspace.branches);
+  edgeGroup.innerHTML = layout.edges.map(renderWireEdge).join('');
+}
+
+function refreshSelectionClasses(): void {
+  for (const node of document.querySelectorAll<HTMLElement>('.skill-node[data-skill], .skill-button[data-skill]')) {
+    node.classList.toggle('selected', node.dataset.skill === selectedField);
+  }
+  for (const branch of document.querySelectorAll<HTMLElement>('.branch-button[data-branch]')) {
+    branch.classList.toggle('selected', branch.dataset.branch === selectedBranch);
+  }
+}
+
+function refreshInspector(): void {
+  const inspector = document.querySelector<HTMLElement>('.inspector');
+  if (!inspector) return;
+  inspector.innerHTML = renderInspector();
+  wireInspectorEvents();
+}
+
+function refreshStatusAndHistoryControls(): void {
+  const status = document.querySelector<HTMLElement>('.status');
+  if (status) status.textContent = statusText;
+  const undo = document.querySelector<HTMLButtonElement>('[data-action="undo-move"]');
+  if (undo) undo.disabled = !movementHistory.canUndo || isBusy;
+  const redo = document.querySelector<HTMLButtonElement>('[data-action="redo-move"]');
+  if (redo) redo.disabled = !movementHistory.canRedo || isBusy;
+}
+
 function wireGraphNodeDragging(): void {
   const scroller = document.querySelector<HTMLElement>('.graph-scroll');
   const svg = document.querySelector<SVGSVGElement>('.graph');
@@ -475,6 +599,41 @@ function wireGraphNodeDragging(): void {
   let connectionSource: NodePosition | null = null;
   let pointerId: number | null = null;
   let draggedField = '';
+  let draggedDegree: number | null = null;
+
+  for (const label of document.querySelectorAll<SVGTextElement>('.degree-guide-label[data-degree-label]')) {
+    label.addEventListener('pointerdown', event => {
+      if (event.button !== 0) return;
+      const degree = Number(label.dataset.degreeLabel);
+      if (!Number.isFinite(degree)) return;
+      const layoutGuide = computeGraphLayout(workspace!.branches).degreeGuides.find(guide => guide.degree === degree);
+      const position = ensureDegreeLabelPosition(degree, {
+        x: layoutGuide?.labelX ?? Number(label.getAttribute('x') ?? 0),
+        y: layoutGuide?.labelY ?? Number(label.getAttribute('y') ?? 0)
+      });
+      const rect = scroller.getBoundingClientRect();
+      draggedDegree = degree;
+      dragOrigin = { x: position.x, y: position.y };
+      dragState = beginNodeDrag({
+        clientX: event.clientX - rect.left,
+        clientY: event.clientY - rect.top,
+        nodeX: dragOrigin.x,
+        nodeY: dragOrigin.y,
+        scrollLeft: scroller.scrollLeft,
+        scrollTop: scroller.scrollTop,
+        zoom: graphZoom
+      });
+      pointerId = event.pointerId;
+      scroller.classList.add('dragging-degree-label');
+      try {
+        label.setPointerCapture(event.pointerId);
+      } catch {
+        // Browser tests can synthesize pointer events without capture support.
+      }
+      event.stopPropagation();
+      event.preventDefault();
+    });
+  }
 
   for (const node of document.querySelectorAll<SVGGElement>('.skill-node[data-skill]')) {
     node.addEventListener('pointerdown', event => {
@@ -535,6 +694,28 @@ function wireGraphNodeDragging(): void {
       return;
     }
     if (!dragState || pointerId !== event.pointerId) return;
+    if (draggedDegree !== null) {
+      const rect = scroller.getBoundingClientRect();
+      const next = updateNodeDrag(dragState, {
+        clientX: event.clientX - rect.left,
+        clientY: event.clientY - rect.top,
+        scrollLeft: scroller.scrollLeft,
+        scrollTop: scroller.scrollTop,
+        snap: snapToGrid ? 16 : 1,
+        zoom: graphZoom
+      });
+      const position = ensureDegreeLabelPosition(draggedDegree, next);
+      position.x = next.x;
+      position.y = next.y;
+      preview = null;
+      const label = svg.querySelector<SVGTextElement>(`.degree-guide-label[data-degree-label="${draggedDegree}"]`);
+      if (label) {
+        label.setAttribute('x', String(next.x));
+        label.setAttribute('y', String(next.y));
+      }
+      event.preventDefault();
+      return;
+    }
     const skill = allSkills().find(candidate => candidate.field === draggedField);
     if (!skill) return;
     const rect = scroller.getBoundingClientRect();
@@ -558,32 +739,61 @@ function wireGraphNodeDragging(): void {
 
   const stopDrag = (event: PointerEvent): void => {
     if (pointerId !== event.pointerId) return;
+    const viewport = captureGraphViewport(scroller);
     if (connectionState) {
       const rewire = finishConnectionDrag(connectionState, connectionTargetFieldAt(event));
-      const skill = allSkills().find(candidate => candidate.field === draggedField);
+      const skill = rewire ? allSkills().find(candidate => candidate.field === rewire.field) : null;
       if (rewire && skill) {
-        const before = skill.parentField;
-        skill.parentField = rewire.parentField;
+        const before = parentFieldsOf(skill);
+        addParentField(skill, rewire.parentField);
         recordSkillEdit(movementHistory, {
           fieldBefore: skill.field,
           fieldAfter: skill.field,
-          key: 'parentField',
+          key: 'parentFields',
           before,
-          after: skill.parentField
+          after: parentFieldsOf(skill)
         });
         selectedField = skill.field;
         selectedBranch = skill.branch;
         preview = null;
-        statusText = `Rewired ${skill.name} parent.`;
+        statusText = `Added ${rewire.parentField} as a parent of ${skill.name}.`;
       }
       connectionState = null;
       connectionSource = null;
       pointerId = null;
       draggedField = '';
+      draggedDegree = null;
       removeConnectionPreview(svg);
       scroller.classList.remove('connecting-parent');
       workspace!.diagnostics = validateClientWorkspace();
-      render();
+      suppressNextGraphNodeClick = true;
+      window.setTimeout(() => {
+        suppressNextGraphNodeClick = false;
+      }, 250);
+      refreshAfterConnectionRewire();
+      restoreCurrentGraphViewport(viewport);
+      return;
+    }
+    if (draggedDegree !== null && dragOrigin) {
+      const position = ensureDegreeLabelPosition(draggedDegree, dragOrigin);
+      recordDegreeLabelMovement(movementHistory, {
+        type: 'degree-label-position',
+        degree: draggedDegree,
+        before: dragOrigin,
+        after: {
+          x: position.x,
+          y: position.y
+        }
+      });
+      statusText = `Moved Degree ${draggedDegree} label.`;
+      dragState = null;
+      dragOrigin = null;
+      pointerId = null;
+      draggedField = '';
+      draggedDegree = null;
+      scroller.classList.remove('dragging-degree-label');
+      workspace!.diagnostics = validateClientWorkspace();
+      renderPreservingGraphViewport(viewport);
       return;
     }
     const skill = allSkills().find(candidate => candidate.field === draggedField);
@@ -601,9 +811,10 @@ function wireGraphNodeDragging(): void {
     dragOrigin = null;
     pointerId = null;
     draggedField = '';
+    draggedDegree = null;
     scroller.classList.remove('dragging-node');
     workspace!.diagnostics = validateClientWorkspace();
-    render();
+    renderPreservingGraphViewport(viewport);
   };
 
   scroller.addEventListener('pointermove', onMove);
@@ -622,7 +833,15 @@ function redoLastMovement(): void {
 function applyMovementTarget(target: MovementTarget | undefined, verb: string): void {
   if (!target || !workspace) return;
   let lastSkill: SkillModel | null = null;
+  let lastDegreeLabel: number | null = null;
   for (const update of target.updates) {
+    if (update.degreeLabel) {
+      const position = ensureDegreeLabelPosition(update.degreeLabel.degree, update.degreeLabel.position);
+      position.x = update.degreeLabel.position.x;
+      position.y = update.degreeLabel.position.y;
+      lastDegreeLabel = update.degreeLabel.degree;
+      continue;
+    }
     const skill = allSkills().find(candidate => candidate.field === update.field);
     if (!skill) continue;
     if (update.position) {
@@ -634,6 +853,13 @@ function applyMovementTarget(target: MovementTarget | undefined, verb: string): 
     lastSkill = skill;
   }
   if (!lastSkill) {
+    if (lastDegreeLabel !== null) {
+      preview = null;
+      workspace.diagnostics = validateClientWorkspace();
+      statusText = `${verb} for Degree ${lastDegreeLabel} label.`;
+      render();
+      return;
+    }
     statusText = 'History targets no longer exist.';
     render();
     return;
@@ -690,9 +916,10 @@ function updateGraphDomEdges(): void {
   if (!workspace) return;
   const layout = computeGraphLayout(workspace.branches);
   for (const edge of layout.edges) {
-    const paths = document.querySelectorAll<SVGPathElement>(`.edge[data-edge-to="${edge.toField}"]`);
-    for (const path of paths) {
+    const path = document.querySelector<SVGPathElement>(`.edge[data-edge-from="${edge.fromField}"][data-edge-to="${edge.toField}"]`);
+    if (path) {
       path.setAttribute('d', edge.path);
+      path.style.stroke = edge.color;
     }
   }
 }
@@ -702,6 +929,25 @@ function updatePositionInputs(skill: SkillModel): void {
   const yInput = document.querySelector<HTMLInputElement>('[data-edit="treeY"]');
   if (xInput) xInput.value = String(skill.treeX ?? '');
   if (yInput) yInput.value = String(skill.treeY ?? '');
+}
+
+function ensureDegreeLabelPosition(degree: number, fallback: NodePosition): DegreeLabelPosition {
+  const branch = degreeLabelOwnerBranch();
+  if (!branch) {
+    return { degree, x: fallback.x, y: fallback.y };
+  }
+  branch.degreeLabels ??= [];
+  let label = branch.degreeLabels.find(candidate => candidate.degree === degree);
+  if (!label) {
+    label = { degree, x: fallback.x, y: fallback.y };
+    branch.degreeLabels.push(label);
+    branch.degreeLabels.sort((a, b) => a.degree - b.degree);
+  }
+  return label;
+}
+
+function degreeLabelOwnerBranch(): SkillBranchFile | undefined {
+  return workspace?.branches.find(branch => branch.branch === 'core') ?? workspace?.branches[0];
 }
 
 function graphPointFromPointer(scroller: HTMLElement, event: PointerEvent): NodePosition {
@@ -770,7 +1016,52 @@ function updateSelectedSkill(input: HTMLInputElement | HTMLSelectElement | HTMLT
   render();
 }
 
+function addParentToSelectedSkill(parentField: string): void {
+  const skill = selectedSkill();
+  if (!skill) return;
+  const before = parentFieldsOf(skill);
+  addParentField(skill, parentField);
+  recordSkillEdit(movementHistory, {
+    fieldBefore: skill.field,
+    fieldAfter: skill.field,
+    key: 'parentFields',
+    before,
+    after: parentFieldsOf(skill)
+  });
+  preview = null;
+  workspace!.diagnostics = validateClientWorkspace();
+  render();
+}
+
+function removeParentFromSelectedSkill(parentField: string): void {
+  const skill = selectedSkill();
+  if (!skill) return;
+  const before = parentFieldsOf(skill);
+  removeParentField(skill, parentField);
+  recordSkillEdit(movementHistory, {
+    fieldBefore: skill.field,
+    fieldAfter: skill.field,
+    key: 'parentFields',
+    before,
+    after: parentFieldsOf(skill)
+  });
+  preview = null;
+  workspace!.diagnostics = validateClientWorkspace();
+  render();
+}
+
+function updateCurrentBranchColor(value: string): void {
+  const branch = currentBranch();
+  if (!branch) return;
+  branch.color = normalizeBranchColor(value, branch.branch);
+  preview = null;
+  workspace!.diagnostics = validateClientWorkspace();
+  statusText = `${labelize(branch.branch)} trace color set to ${branch.color}.`;
+  renderPreservingGraphViewport(captureCurrentGraphViewport());
+}
+
 function skillEditValue(skill: SkillModel, key: EditableSkillKey): SkillEditValue {
+  if (key === 'parentFields') return parentFieldsOf(skill);
   return skill[key] as SkillEditValue;
 }
 
@@ -784,6 +1075,9 @@ function coerceSkillEditValue(key: EditableSkillKey, value: string): SkillEditVa
   if (key === 'parentField') {
     return value || null;
   }
+  if (key === 'parentFields') {
+    return [];
+  }
   if (key === 'iconItem') {
     return value.trim() || null;
   }
@@ -796,7 +1090,9 @@ function applySkillEditValue(skill: SkillModel, key: string, value: SkillEditVal
   } else if (key === 'treeX' || key === 'treeY') {
     (skill[key] as number | null) = typeof value === 'number' ? value : null;
   } else if (key === 'parentField') {
-    skill.parentField = typeof value === 'string' && value ? value : null;
+    setParentFields(skill, typeof value === 'string' && value ? [value] : []);
+  } else if (key === 'parentFields') {
+    setParentFields(skill, Array.isArray(value) ? value : []);
   } else if (key === 'iconItem') {
     skill.iconItem = typeof value === 'string' && value.trim() ? value.trim() : null;
   } else if (key === 'branch') {
@@ -819,6 +1115,7 @@ function addSkill(): void {
     maxLevels: 1,
     state: 'LOCKED',
     parentField: selectedSkill()?.field ?? null,
+    parentFields: selectedSkill()?.field ? [selectedSkill()!.field] : [],
     skillPointCost: 1,
     requiredDegree: 0,
     treeX: selectedSkill()?.treeX != null ? selectedSkill()!.treeX! + 64 : null,
@@ -840,6 +1137,7 @@ function duplicateSkill(): void {
   const nextId = Math.max(0, ...allSkills().map(item => item.id)) + 1;
   const clone = {
     ...skill,
+    parentFields: [skill.field],
     id: nextId,
     field: `${skill.field}_copy`,
     name: `${skill.name}_copy`,
@@ -860,7 +1158,7 @@ function deleteSkill(): void {
   if (!branch || !skill) return;
   branch.skills = branch.skills.filter(candidate => candidate.field !== skill.field);
   for (const candidate of allSkills()) {
-    if (candidate.parentField === skill.field) candidate.parentField = null;
+    if (parentFieldsOf(candidate).includes(skill.field)) removeParentField(candidate, skill.field);
   }
   selectedField = branch.skills[0]?.field ?? '';
   preview = null;
@@ -949,8 +1247,10 @@ function validateClientWorkspace(): Diagnostic[] {
     ids.set(skill.id, skill);
     fields.set(skill.field, skill);
     names.set(skill.name, skill);
-    if (skill.parentField && !fields.has(skill.parentField) && !skills.some(candidate => candidate.field === skill.parentField)) {
-      diagnostics.push(issue('error', 'missing_parent_skill', `Missing parent ${skill.parentField}.`, skill));
+    for (const parentField of parentFieldsOf(skill)) {
+      if (!fields.has(parentField) && !skills.some(candidate => candidate.field === parentField)) {
+        diagnostics.push(issue('error', 'missing_parent_skill', `Missing parent ${parentField}.`, skill));
+      }
     }
     if (!skill.description.trim()) diagnostics.push(issue('warning', 'missing_skill_description', `Missing description for ${skill.name}.`, skill));
   }
@@ -987,6 +1287,14 @@ function labelize(value: string): string {
 
 function branchClassName(value: string): string {
   return value.replace(/_/g, '-').replace(/[^a-zA-Z0-9-]/g, '').toLowerCase();
+}
+
+function rgbaFromHex(value: string, alpha: number): string {
+  const color = normalizeBranchColor(value);
+  const r = Number.parseInt(color.slice(1, 3), 16);
+  const g = Number.parseInt(color.slice(3, 5), 16);
+  const b = Number.parseInt(color.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function escapeHtml(value: string): string {

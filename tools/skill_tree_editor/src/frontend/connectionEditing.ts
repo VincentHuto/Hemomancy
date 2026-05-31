@@ -17,7 +17,7 @@ export function finishConnectionDrag(
 ): ConnectionRewire | undefined {
   if (!targetField || targetField === state.sourceField) return undefined;
   return {
-    field: state.sourceField,
-    parentField: targetField
+    field: targetField,
+    parentField: state.sourceField
   };
 }

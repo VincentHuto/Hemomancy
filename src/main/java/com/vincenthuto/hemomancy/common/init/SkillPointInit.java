@@ -11,6 +11,15 @@ import java.util.List;
 
 public class SkillPointInit {
 
+	private static final int[][] DEGREE_LABEL_POSITIONS = {
+			{90, 108},
+			{90, 142},
+			{90, 176},
+			{90, 210},
+			{90, 244},
+			{90, 278}
+	};
+
 	public static List<List<SkillPoint>> SKILL_TREE = new ArrayList<>();
 	public static List<SkillPoint> BASE = new ArrayList<>();
 	public static SkillPoint base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
@@ -41,6 +50,17 @@ public class SkillPointInit {
 	public static List<SkillPoint> registerSkillBranch(List<SkillPoint> branch) {
 		SKILL_TREE.add(branch);
 		return branch;
+	}
+
+	public static void setDegreeLabelPosition(int degree, int x, int y) {
+		if (degree < 0 || degree >= DEGREE_LABEL_POSITIONS.length) return;
+		DEGREE_LABEL_POSITIONS[degree][0] = x;
+		DEGREE_LABEL_POSITIONS[degree][1] = y;
+	}
+
+	public static int[] getDegreeLabelPosition(int degree) {
+		if (degree < 0 || degree >= DEGREE_LABEL_POSITIONS.length) return new int[] {90, 108};
+		return DEGREE_LABEL_POSITIONS[degree];
 	}
 
 	public static List<SkillPoint> getAllSkills() {

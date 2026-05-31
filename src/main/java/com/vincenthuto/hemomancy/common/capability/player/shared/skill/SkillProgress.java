@@ -223,7 +223,7 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 	}
 
 	private static EnumSkillStates defaultState(SkillPoint skill) {
-		return skill.getParent() == null ? EnumSkillStates.UNLOCKED : EnumSkillStates.LOCKED;
+		return skill.getParents().isEmpty() ? EnumSkillStates.UNLOCKED : EnumSkillStates.LOCKED;
 	}
 
 	private static EnumSkillStates parseState(String state, EnumSkillStates fallback) {

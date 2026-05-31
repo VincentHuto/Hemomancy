@@ -1,4 +1,5 @@
 import type { Diagnostic, SkillBranchFile, SkillModel } from '../shared/types';
+import { parentFieldsOf } from '../shared/skillParents';
 
 export function validateSkillWorkspace(branches: SkillBranchFile[], translations: Record<string, string>): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
@@ -57,11 +58,12 @@ export function validateSkillWorkspace(branches: SkillBranchFile[], translations
 
   for (const branch of branches) {
     for (const skill of branch.skills) {
-      if (skill.parentField && !byField.has(skill.parentField)) {
+      for (const parentField of parentFieldsOf(skill)) {
+        if (byField.has(parentField)) continue;
         diagnostics.push({
           severity: 'error',
           code: 'missing_parent_skill',
-          message: `Parent skill ${skill.parentField} was not found.`,
+          message: `Parent skill ${parentField} was not found.`,
           file: branch.path,
           skill: skill.field
         });
@@ -86,12 +88,15 @@ export function hasBlockingDiagnostics(diagnostics: Diagnostic[]): boolean {
 }
 
 function hasParentCycle(skill: SkillModel, byField: Map<string, SkillModel>): boolean {
-  const seen = new Set<string>();
-  let current: SkillModel | undefined = skill;
-  while (current?.parentField) {
-    if (seen.has(current.field)) return true;
-    seen.add(current.field);
-    current = byField.get(current.parentField);
+  return hasParentCycleFrom(skill, byField, new Set<string>());
+}
+
+function hasParentCycleFrom(skill: SkillModel, byField: Map<string, SkillModel>, seen: Set<string>): boolean {
+  if (seen.has(skill.field)) return true;
+  seen.add(skill.field);
+  for (const parentField of parentFieldsOf(skill)) {
+    const parent = byField.get(parentField);
+    if (parent && hasParentCycleFrom(parent, byField, new Set(seen))) return true;
   }
   return false;
 }

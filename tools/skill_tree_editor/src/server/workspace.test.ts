@@ -1,7 +1,7 @@
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { loadWorkspace, previewWorkspaceChanges } from './workspace';
+import { applyPreview, loadWorkspace, previewWorkspaceChanges } from './workspace';
 
 const branchSource = `package example;
 public final class LivingStaffSkillBranch {
@@ -78,6 +78,30 @@ test('previews Java branch edits and lang changes without applying them', async 
   ]);
   expect(preview.diffs[1].after).toContain('new SkillPoint(21, "skill_living_conduit", 275, 3');
   expect(readFileSync(join(root, 'src/main/java/com/vincenthuto/hemomancy/common/init/skills/LivingStaffSkillBranch.java'), 'utf8')).toContain('250');
+});
+
+test('applies degree label positions and reloads them from Java', async () => {
+  const root = makeRepo();
+  writeBranch(root, 'CoreSkillBranch.java', coreBranchSource);
+  writeBranch(root, 'LivingStaffSkillBranch.java', branchSource);
+  writeLang(root, {});
+  const workspace = await loadWorkspace(root);
+  const coreBranch = workspace.branches.find(branch => branch.branch === 'core');
+  expect(coreBranch).toBeDefined();
+  coreBranch!.degreeLabels = [
+    { degree: 0, x: 172, y: 214 },
+    { degree: 4, x: 812, y: 364 }
+  ];
+
+  const preview = await previewWorkspaceChanges(root, { branches: workspace.branches });
+  await applyPreview(root, preview.id);
+  const reloaded = await loadWorkspace(root);
+  const reloadedCore = reloaded.branches.find(branch => branch.branch === 'core');
+
+  expect(reloadedCore?.degreeLabels).toEqual([
+    { degree: 0, x: 172, y: 214 },
+    { degree: 4, x: 812, y: 364 }
+  ]);
 });
 
 function makeRepo(): string {

@@ -65,6 +65,7 @@ function branch(name: string, skills: ReturnType<typeof skill>[]): SkillBranchFi
   return {
     path: `${name}.java`,
     branch: name,
+    color: '#d00000',
     className: `${name}Branch`,
     source: '',
     diagnostics: [],
@@ -82,6 +83,7 @@ function skill(field: string, id: number, parentField: string | null, requiredDe
     maxLevels: 1,
     state: 'LOCKED',
     parentField,
+    parentFields: parentField ? [parentField] : [],
     skillPointCost: 1,
     requiredDegree,
     treeX: null,

@@ -32,7 +32,41 @@ test('preview records inspector edits and supports ctrl-drag parent rewiring', (
   expect(main).toContain('finishConnectionDrag');
   expect(main).toContain('event.ctrlKey');
   expect(main).toContain('connection-preview');
+  expect(main).toContain('refreshAfterConnectionRewire');
+  expect(connectionDropBlock(main)).toContain('candidate.field === rewire.field');
+  expect(connectionDropBlock(main)).not.toContain('renderPreservingGraphViewport');
   expect(css).toContain('.connection-preview');
+});
+
+test('preview exposes multi-parent inspector controls', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('data-action="add-parent"');
+  expect(main).toContain('data-action="remove-parent"');
+  expect(main).toContain('parentFields');
+  expect(css).toContain('.parent-list');
+  expect(css).toContain('.parent-pill');
+});
+
+test('preview exposes draggable degree labels', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('data-degree-label');
+  expect(main).toContain('recordDegreeLabelMovement');
+  expect(main).toContain('ensureDegreeLabelPosition');
+  expect(css).toContain('.degree-guide-label');
+  expect(css).toContain('dragging-degree-label');
+});
+
+test('preview preserves the graph viewport across full renders', () => {
+  const main = read('main.ts');
+  const renderBlockSource = renderBlock(main);
+
+  expect(renderBlockSource).toContain('captureCurrentGraphViewport');
+  expect(renderBlockSource).toContain('restoreCurrentGraphViewport');
+  expect(main).toContain("requestAnimationFrame(() => restoreCurrentGraphViewport(viewport))");
 });
 
 test('preview colors trace lines by destination branch', () => {
@@ -61,6 +95,8 @@ test('preview colors branch list buttons by branch', () => {
   const css = read('styles.css');
 
   expect(main).toContain('branch-button-');
+  expect(main).toContain('branchButtonStyle');
+  expect(main).toContain('data-branch-edit="color"');
   expect(css).toContain('.branch-button-core');
   expect(css).toContain('.branch-button-scars');
   expect(css).toContain('.branch-button-summons');
@@ -88,4 +124,18 @@ function cssPx(source: string, selector: string, property: string): number {
   const match = new RegExp(`${escaped} \\{[\\s\\S]*?${property}:\\s*(\\d+)px`).exec(source);
   if (!match) throw new Error(`Missing ${property} for ${selector}.`);
   return Number(match[1]);
+}
+
+function connectionDropBlock(source: string): string {
+  const start = source.indexOf('if (connectionState) {');
+  const end = source.indexOf('if (draggedDegree !== null && dragOrigin)', start + 1);
+  if (start < 0 || end < 0) throw new Error('Missing connection drop block.');
+  return source.slice(start, end);
+}
+
+function renderBlock(source: string): string {
+  const start = source.indexOf('function render(): void {');
+  const end = source.indexOf('function renderBranchButton', start);
+  if (start < 0 || end < 0) throw new Error('Missing render block.');
+  return source.slice(start, end);
 }

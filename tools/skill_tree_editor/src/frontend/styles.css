@@ -310,7 +310,8 @@ small {
 }
 
 .graph-scroll.panning,
-.graph-scroll.dragging-node {
+.graph-scroll.dragging-node,
+.graph-scroll.dragging-degree-label {
   cursor: grabbing;
 }
 
@@ -402,6 +403,12 @@ small {
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 11px;
   font-weight: 700;
+  cursor: grab;
+  user-select: none;
+}
+
+.degree-guide-label:active {
+  cursor: grabbing;
 }
 
 .branch-label {
@@ -529,6 +536,53 @@ label {
   color: #c9b9ab;
   font-size: 12px;
   font-weight: 700;
+}
+
+.field-label {
+  color: #c9b9ab;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.parent-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.parent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 34px;
+  padding: 8px;
+  border: 1px solid #4c3b37;
+  border-radius: 7px;
+  background: #0f0d0c;
+}
+
+.parent-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 26px;
+  padding: 0 8px;
+  border-color: #6a2d28;
+  border-radius: 6px;
+  background: #2a1715;
+  color: #f0cfb5;
+  font-size: 12px;
+}
+
+.parent-pill b {
+  color: #e47a68;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.parent-empty {
+  align-self: center;
+  color: #776965;
+  font-size: 12px;
 }
 
 input,

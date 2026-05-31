@@ -32,11 +32,11 @@ final class SkillTraceLayerCache {
     private static final int COMPASS_CENTER_Y = 480;
     private static final int[] DEGREE_RING_RADII = {72, 120, 190, 260, 330, 400};
 
-    private static final int TRACE_CORE = 0xFFD00000;
-    private static final int TRACE_SCARS = 0xFF9A9A9F;
-    private static final int TRACE_SUMMONS = 0xFF2370DB;
-    private static final int TRACE_LIVING_STAFF = 0xFFD9AD28;
-    private static final int TRACE_DEGREE_RING = 0x30972A26;
+    private static final int TRACE_DEGREE_RING = 0x1858231F;
+    private static final int TRACE_NODE_TRIM_RADIUS = 11;
+    private static final double TRACE_ORGANIC_SWAY_MIN = 8.0;
+    private static final double TRACE_ORGANIC_SWAY_MAX = 18.0;
+    private static final double TRACE_ORGANIC_SWAY_FACTOR = 0.08;
     private static final float HEARTBEAT_PERIOD_SECONDS = 1.35f;
     private static final float HEARTBEAT_MAX_ALPHA = 0.30f;
     private static final float HEARTBEAT_EXPANSION = 0.018f;
@@ -72,24 +72,24 @@ final class SkillTraceLayerCache {
 
         for (int radius : DEGREE_RING_RADII) {
             bakeDegreeRing(image, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, TRACE_DEGREE_RING);
-            bakeDegreeRing(heartbeatImage, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, withAlpha(TRACE_DEGREE_RING, 42));
+            bakeDegreeRing(heartbeatImage, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, withAlpha(TRACE_DEGREE_RING, 24));
         }
 
         List<FlowTrace> traces = new ArrayList<>();
         for (SkillPoint sp : sortedSkills(nodePositions)) {
-            SkillPoint parent = sp.getParent();
-            if (parent == null) continue;
-            int[] childPos = nodePositions.get(sp);
-            int[] parentPos = nodePositions.get(parent);
-            if (childPos == null || parentPos == null) continue;
+            for (SkillPoint parent : sp.getParents()) {
+                int[] childPos = nodePositions.get(sp);
+                int[] parentPos = nodePositions.get(parent);
+                if (childPos == null || parentPos == null) continue;
 
-            boolean parentUnlocked = SkillProgressClientCache.current().getState(parent) == EnumSkillStates.UNLOCKED;
-            int branchColor = parentUnlocked ? branchTraceColor(sp) : dimTraceColor(branchTraceColor(sp));
-            int bakedColor = withAlpha(branchColor, parentUnlocked ? 112 : 58);
-            List<TracePoint> points = sampleCubic(parentPos[0], parentPos[1], childPos[0], childPos[1]);
-            bakePointTrace(image, points, bakedColor);
-            bakePointTrace(heartbeatImage, points, heartbeatTraceColor(branchColor, parentUnlocked));
-            traces.add(new FlowTrace(points, withAlpha(branchColor, parentUnlocked ? 160 : 70), sp.getId()));
+                boolean parentUnlocked = SkillProgressClientCache.current().getState(parent) == EnumSkillStates.UNLOCKED;
+                int branchColor = parentUnlocked ? branchTraceColor(sp) : dimTraceColor(branchTraceColor(sp));
+                int bakedColor = withAlpha(branchColor, parentUnlocked ? 148 : 78);
+                List<TracePoint> points = sampleCubic(parentPos[0], parentPos[1], childPos[0], childPos[1]);
+                bakePointTrace(image, points, bakedColor);
+                bakePointTrace(heartbeatImage, points, heartbeatTraceColor(branchColor, parentUnlocked));
+                traces.add(new FlowTrace(points, withAlpha(branchColor, parentUnlocked ? 160 : 70), sp.getId() * 31 + parent.getId()));
+            }
         }
 
         flowTraces = List.copyOf(traces);
@@ -224,12 +224,14 @@ final class SkillTraceLayerCache {
         out.append(contentW).append('x').append(contentH);
         for (SkillPoint sp : sortedSkills(nodePositions)) {
             int[] pos = nodePositions.get(sp);
-            SkillPoint parent = sp.getParent();
             out.append('|').append(sp.getId())
                     .append('@').append(pos[0]).append(',').append(pos[1])
                     .append(':').append(sp.getBranch())
-                    .append(':').append(parent == null ? -1 : parent.getId())
-                    .append(':').append(SkillProgressClientCache.current().getState(sp).name());
+                    .append(':').append(sp.getBranchColor());
+            for (SkillPoint parent : sp.getParents()) {
+                out.append(':').append(parent.getId());
+            }
+            out.append(':').append(SkillProgressClientCache.current().getState(sp).name());
         }
         return out.toString();
     }
@@ -241,13 +243,7 @@ final class SkillTraceLayerCache {
     }
 
     private static int branchTraceColor(SkillPoint sp) {
-        return switch (sp.getBranch()) {
-            case "living_staff" -> TRACE_LIVING_STAFF;
-            case "scars" -> TRACE_SCARS;
-            case "summons" -> TRACE_SUMMONS;
-            case "base", "core" -> TRACE_CORE;
-            default -> TRACE_CORE;
-        };
+        return sp.getBranchColor();
     }
 
     private static int dimTraceColor(int color) {
@@ -259,13 +255,15 @@ final class SkillTraceLayerCache {
     }
 
     private static List<TracePoint> sampleCubic(int x1, int y1, int x2, int y2) {
-        double[] controls = cubicControls(x1, y1, x2, y2);
-        int steps = Math.max(18, (int) (estimateCubicLength(x1, y1, controls[0], controls[1], controls[2], controls[3], x2, y2) / 8));
+        int[] start = trimTraceEndpoint(x1, y1, x2, y2);
+        int[] end = trimTraceEndpoint(x2, y2, x1, y1);
+        double[] controls = cubicControls(start[0], start[1], end[0], end[1]);
+        int steps = Math.max(18, (int) (estimateCubicLength(start[0], start[1], controls[0], controls[1], controls[2], controls[3], end[0], end[1]) / 8));
         List<TracePoint> points = new ArrayList<>(steps + 1);
         for (int i = 0; i <= steps; i++) {
             double t = i / (double) steps;
-            int x = (int) Math.round(cubicPoint(x1, controls[0], controls[2], x2, t));
-            int y = (int) Math.round(cubicPoint(y1, controls[1], controls[3], y2, t));
+            int x = (int) Math.round(cubicPoint(start[0], controls[0], controls[2], end[0], t));
+            int y = (int) Math.round(cubicPoint(start[1], controls[1], controls[3], end[1], t));
             if (points.isEmpty() || points.get(points.size() - 1).x() != x || points.get(points.size() - 1).y() != y) {
                 points.add(new TracePoint(x, y));
             }
@@ -273,17 +271,48 @@ final class SkillTraceLayerCache {
         return points;
     }
 
+    private static int[] trimTraceEndpoint(int x, int y, int towardX, int towardY) {
+        double dx = towardX - x;
+        double dy = towardY - y;
+        double length = Math.hypot(dx, dy);
+        if (length < 0.001) return new int[] {x, y};
+        double offset = Math.min(TRACE_NODE_TRIM_RADIUS, Math.max(0.0, length / 2.0 - 1.0));
+        return new int[] {
+                (int) Math.round(x + dx / length * offset),
+                (int) Math.round(y + dy / length * offset)
+        };
+    }
+
     private static double[] cubicControls(int x1, int y1, int x2, int y2) {
         double distance = Math.hypot(x2 - x1, y2 - y1);
         double handle = Math.max(36.0, Math.min(120.0, distance * 0.34));
         double[] fromRadial = radialFromCenter(x1, y1, x2 - x1, y2 - y1);
         double[] toRadial = radialFromCenter(x2, y2, x2 - x1, y2 - y1);
+        double[] sway = organicSway(x1, y1, x2, y2);
         return new double[] {
-                x1 + fromRadial[0] * handle,
-                y1 + fromRadial[1] * handle,
-                x2 - toRadial[0] * handle,
-                y2 - toRadial[1] * handle
+                x1 + fromRadial[0] * handle + sway[0],
+                y1 + fromRadial[1] * handle + sway[1],
+                x2 - toRadial[0] * handle - sway[0],
+                y2 - toRadial[1] * handle - sway[1]
         };
+    }
+
+    private static double[] organicSway(int x1, int y1, int x2, int y2) {
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double distance = Math.hypot(dx, dy);
+        if (distance < 0.001) return new double[] {0.0, 0.0};
+        double amount = Math.min(TRACE_ORGANIC_SWAY_MAX, Math.max(TRACE_ORGANIC_SWAY_MIN, distance * TRACE_ORGANIC_SWAY_FACTOR));
+        double sign = organicSwaySign(x1, y1, x2, y2);
+        return new double[] {
+                -dy / distance * amount * sign,
+                dx / distance * amount * sign
+        };
+    }
+
+    private static double organicSwaySign(int x1, int y1, int x2, int y2) {
+        int hash = x1 * 31 + y1 * 17 + x2 * 13 + y2 * 7;
+        return (hash & 1) == 0 ? 1.0 : -1.0;
     }
 
     private static double[] radialFromCenter(int x, int y, int fallbackX, int fallbackY) {

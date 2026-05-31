@@ -1,10 +1,17 @@
 import type { NodePosition } from './layoutEditing';
 
-export type SkillEditValue = string | number | null;
+export type SkillEditValue = string | number | null | string[];
 
 export interface MovementChange {
   type?: 'position';
   field: string;
+  before: NodePosition;
+  after: NodePosition;
+}
+
+export interface DegreeLabelMovementChange {
+  type?: 'degree-label-position';
+  degree: number;
   before: NodePosition;
   after: NodePosition;
 }
@@ -18,7 +25,7 @@ export interface SkillEditChange {
   after: SkillEditValue;
 }
 
-export type HistoryChange = MovementChange | SkillEditChange;
+export type HistoryChange = MovementChange | SkillEditChange | DegreeLabelMovementChange;
 
 export interface MovementHistory {
   undoStack: HistoryChange[][];
@@ -28,8 +35,12 @@ export interface MovementHistory {
 }
 
 export interface MovementTargetUpdate {
-  field: string;
+  field?: string;
   position?: NodePosition;
+  degreeLabel?: {
+    degree: number;
+    position: NodePosition;
+  };
   edit?: {
     key: string;
     value: SkillEditValue;
@@ -57,6 +68,13 @@ export function recordMovements(history: MovementHistory, changes: MovementChang
   const meaningfulChanges = changes.filter(change => !samePosition(change.before, change.after));
   if (!meaningfulChanges.length) return;
   history.undoStack.push(meaningfulChanges);
+  history.redoStack = [];
+  refreshFlags(history);
+}
+
+export function recordDegreeLabelMovement(history: MovementHistory, change: DegreeLabelMovementChange): void {
+  if (samePosition(change.before, change.after)) return;
+  history.undoStack.push([{ ...change, type: 'degree-label-position' }]);
   history.redoStack = [];
   refreshFlags(history);
 }
@@ -89,6 +107,14 @@ export function redoMovement(history: MovementHistory): MovementTarget | undefin
 }
 
 function changeToTargetUpdate(change: HistoryChange, direction: 'undo' | 'redo'): MovementTargetUpdate {
+  if (isDegreeLabelMovementChange(change)) {
+    return {
+      degreeLabel: {
+        degree: change.degree,
+        position: direction === 'undo' ? change.before : change.after
+      }
+    };
+  }
   if (isSkillEditChange(change)) {
     return {
       field: direction === 'undo' ? change.fieldAfter : change.fieldBefore,
@@ -108,11 +134,21 @@ function isSkillEditChange(change: HistoryChange): change is SkillEditChange {
   return change.type === 'edit' || 'key' in change;
 }
 
+function isDegreeLabelMovementChange(change: HistoryChange): change is DegreeLabelMovementChange {
+  return change.type === 'degree-label-position' || 'degree' in change;
+}
+
 function samePosition(left: NodePosition, right: NodePosition): boolean {
   return left.x === right.x && left.y === right.y;
 }
 
 function sameEditValue(left: SkillEditValue, right: SkillEditValue): boolean {
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return Array.isArray(left)
+      && Array.isArray(right)
+      && left.length === right.length
+      && left.every((value, index) => value === right[index]);
+  }
   return left === right;
 }
 

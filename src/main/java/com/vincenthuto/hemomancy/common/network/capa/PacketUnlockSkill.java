@@ -64,7 +64,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 
 			EnumSkillStates state = progress.getState(skill);
 			if (state == EnumSkillStates.LOCKED) {
-				if (skill.getParent() != null && progress.getState(skill.getParent()) != EnumSkillStates.UNLOCKED) {
+				if (!hasUnlockedParents(skill, progress)) {
 					player.displayClientMessage(Component.literal("Prerequisite skill not yet unlocked!")
 							.withStyle(ChatFormatting.RED), true);
 					return;
@@ -116,6 +116,15 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 			return false;
 		}
 		progress.spendSkillPoints(cost);
+		return true;
+	}
+
+	private static boolean hasUnlockedParents(SkillPoint skill, SkillProgress progress) {
+		for (SkillPoint parent : skill.getParents()) {
+			if (progress.getState(parent) != EnumSkillStates.UNLOCKED) {
+				return false;
+			}
+		}
 		return true;
 	}
 

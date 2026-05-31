@@ -1,4 +1,6 @@
 import type { SkillBranchFile, SkillModel } from '../shared/types';
+import { normalizeBranchColor } from '../shared/branchColors';
+import { parentFieldsOf } from '../shared/skillParents';
 import {
   COMPASS_CENTER,
   COMPASS_MAX_RING_RADIUS,
@@ -29,6 +31,7 @@ export interface GraphEdge {
   fromField: string;
   toField: string;
   toBranch: string;
+  color: string;
   kind: 'local' | 'cross-branch';
   path: string;
 }
@@ -60,19 +63,30 @@ const NODE_WIDTH = 48;
 const MIN_BRANCH_HEIGHT = 142;
 const MIN_MAX_DEGREE = 5;
 const CANVAS_PADDING = 160;
+const EDGE_NODE_TRIM_RADIUS = 16;
+const EDGE_ORGANIC_SWAY_MIN = 8;
+const EDGE_ORGANIC_SWAY_MAX = 18;
+const EDGE_ORGANIC_SWAY_FACTOR = 0.08;
 
 export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
   const skills = branches.flatMap(branch => branch.skills);
+  const branchColors = new Map(branches.map(branch => [branch.branch, normalizeBranchColor(branch.color, branch.branch)]));
+  const degreeLabelPositions = new Map(branches
+    .flatMap(branch => branch.degreeLabels ?? [])
+    .map(label => [label.degree, { x: label.x, y: label.y }]));
   const maxDegree = Math.max(MIN_MAX_DEGREE, ...skills.map(skill => skill.requiredDegree));
-  const degreeGuides = Array.from({ length: maxDegree + 1 }, (_, degree) => ({
-    degree,
-    label: `Degree ${degree}`,
-    cx: COMPASS_CENTER.x,
-    cy: COMPASS_CENTER.y,
-    radius: compassGuideRadius(degree),
-    labelX: COMPASS_CENTER.x - compassGuideRadius(degree) + 10,
-    labelY: COMPASS_CENTER.y - 8
-  }));
+  const degreeGuides = Array.from({ length: maxDegree + 1 }, (_, degree) => {
+    const label = degreeLabelPositions.get(degree) ?? degreeGuideLabelPosition(degree);
+    return {
+      degree,
+      label: `Degree ${degree}`,
+      cx: COMPASS_CENTER.x,
+      cy: COMPASS_CENTER.y,
+      radius: compassGuideRadius(degree),
+      labelX: label.x,
+      labelY: label.y
+    };
+  });
   const maxGuideRadius = Math.max(...degreeGuides.map(guide => guide.radius));
   const fallbackPositions = createCompassPositionMap(branches);
   const nodes: GraphNodePosition[] = [];
@@ -110,18 +124,20 @@ export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
 
   const byPosition = new Map(nodes.map(node => [node.skill.field, node]));
   const edges = nodes
-    .filter(node => node.skill.parentField && byPosition.has(node.skill.parentField))
-    .map(node => {
-      const parent = byPosition.get(node.skill.parentField!)!;
-      const kind: GraphEdge['kind'] = parent.skill.branch === node.skill.branch ? 'local' : 'cross-branch';
-      return {
-        fromField: parent.skill.field,
-        toField: node.skill.field,
-        toBranch: node.skill.branch,
-        kind,
-        path: edgePath(parent, node, kind)
-      };
-    });
+    .flatMap(node => parentFieldsOf(node.skill)
+      .filter(parentField => byPosition.has(parentField))
+      .map(parentField => {
+        const parent = byPosition.get(parentField)!;
+        const kind: GraphEdge['kind'] = parent.skill.branch === node.skill.branch ? 'local' : 'cross-branch';
+        return {
+          fromField: parent.skill.field,
+          toField: node.skill.field,
+          toBranch: node.skill.branch,
+          color: branchColors.get(node.skill.branch) ?? normalizeBranchColor(null, node.skill.branch),
+          kind,
+          path: edgePath(parent, node, kind)
+        };
+      }));
 
   return {
     nodes,
@@ -129,25 +145,53 @@ export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
     bands,
     edges,
     degreeGuides,
-    width: Math.max(980, CANVAS_PADDING + maxNodeX + NODE_WIDTH),
-    height: Math.max(980, CANVAS_PADDING + Math.max(COMPASS_CENTER.y + maxGuideRadius, maxNodeY))
+    width: Math.max(980, CANVAS_PADDING + Math.max(maxNodeX + NODE_WIDTH, ...degreeGuides.map(guide => guide.labelX))),
+    height: Math.max(980, CANVAS_PADDING + Math.max(COMPASS_CENTER.y + maxGuideRadius, maxNodeY, ...degreeGuides.map(guide => guide.labelY)))
   };
 }
 
 function edgePath(parent: GraphNodePosition, child: GraphNodePosition, kind: GraphEdge['kind']): string {
-  const fromX = Math.round(parent.x);
-  const fromY = Math.round(parent.y);
-  const toX = Math.round(child.x);
-  const toY = Math.round(child.y);
+  const trimmed = trimEdgeEndpoints(parent, child);
+  const fromX = Math.round(trimmed.from.x);
+  const fromY = Math.round(trimmed.from.y);
+  const toX = Math.round(trimmed.to.x);
+  const toY = Math.round(trimmed.to.y);
   const distance = Math.hypot(toX - fromX, toY - fromY);
   const handle = Math.max(48, Math.min(150, distance * (kind === 'cross-branch' ? 0.42 : 0.34)));
   const fromRadial = radialVector(fromX, fromY, toX - fromX, toY - fromY);
   const toRadial = radialVector(toX, toY, toX - fromX, toY - fromY);
-  const c1x = Math.round(fromX + fromRadial.x * handle);
-  const c1y = Math.round(fromY + fromRadial.y * handle);
-  const c2x = Math.round(toX - toRadial.x * handle);
-  const c2y = Math.round(toY - toRadial.y * handle);
+  const sway = organicSway(fromX, fromY, toX, toY);
+  const c1x = Math.round(fromX + fromRadial.x * handle + sway.x);
+  const c1y = Math.round(fromY + fromRadial.y * handle + sway.y);
+  const c2x = Math.round(toX - toRadial.x * handle - sway.x);
+  const c2y = Math.round(toY - toRadial.y * handle - sway.y);
   return `M ${fromX} ${fromY} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${toX} ${toY}`;
+}
+
+function trimEdgeEndpoints(parent: GraphNodePosition, child: GraphNodePosition): { from: { x: number; y: number }; to: { x: number; y: number } } {
+  const dx = child.x - parent.x;
+  const dy = child.y - parent.y;
+  const distance = Math.hypot(dx, dy);
+  if (distance < 0.001) {
+    return {
+      from: { x: parent.x, y: parent.y },
+      to: { x: child.x, y: child.y }
+    };
+  }
+  const offset = Math.min(EDGE_NODE_TRIM_RADIUS, Math.max(0, distance / 2 - 1));
+  const nx = dx / distance;
+  const ny = dy / distance;
+  return {
+    from: { x: parent.x + nx * offset, y: parent.y + ny * offset },
+    to: { x: child.x - nx * offset, y: child.y - ny * offset }
+  };
+}
+
+function degreeGuideLabelPosition(degree: number): { x: number; y: number } {
+  return {
+    x: COMPASS_CENTER.x - COMPASS_MAX_RING_RADIUS + 10,
+    y: COMPASS_CENTER.y - COMPASS_MAX_RING_RADIUS + 28 + degree * 34
+  };
 }
 
 function radialVector(x: number, y: number, fallbackX: number, fallbackY: number): { x: number; y: number } {
@@ -161,6 +205,24 @@ function radialVector(x: number, y: number, fallbackX: number, fallbackY: number
   }
   if (length < 0.001) return { x: 0, y: -1 };
   return { x: dx / length, y: dy / length };
+}
+
+function organicSway(fromX: number, fromY: number, toX: number, toY: number): { x: number; y: number } {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const distance = Math.hypot(dx, dy);
+  if (distance < 0.001) return { x: 0, y: 0 };
+  const amount = Math.min(EDGE_ORGANIC_SWAY_MAX, Math.max(EDGE_ORGANIC_SWAY_MIN, distance * EDGE_ORGANIC_SWAY_FACTOR));
+  const sign = organicSwaySign(fromX, fromY, toX, toY);
+  return {
+    x: -dy / distance * amount * sign,
+    y: dx / distance * amount * sign
+  };
+}
+
+function organicSwaySign(fromX: number, fromY: number, toX: number, toY: number): number {
+  const hash = Math.trunc(fromX * 31 + fromY * 17 + toX * 13 + toY * 7);
+  return (hash & 1) === 0 ? 1 : -1;
 }
 
 function branchLabelPosition(branch: string): { x: number; y: number } {
