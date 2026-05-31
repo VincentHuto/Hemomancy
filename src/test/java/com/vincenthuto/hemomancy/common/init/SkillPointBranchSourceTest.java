@@ -14,6 +14,7 @@ public final class SkillPointBranchSourceTest {
 		String init = read("src/main/java/com/vincenthuto/hemomancy/common/init/SkillPointInit.java");
 		String skillPoint = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/skill/SkillPoint.java");
 		String skillsTab = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillsTabController.java");
+		String traceCache = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillTraceLayerCache.java");
 		String core = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/CoreSkillBranch.java");
 		String scars = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/ScarSkillBranch.java");
 		String summons = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/SummonSkillBranch.java");
@@ -41,8 +42,33 @@ public final class SkillPointBranchSourceTest {
 		assertContains("skills tab defines scar trace color", skillsTab, "TRACE_SCARS");
 		assertContains("skills tab defines summon trace color", skillsTab, "TRACE_SUMMONS");
 		assertContains("skills tab defines living staff trace color", skillsTab, "TRACE_LIVING_STAFF");
-		assertContains("skills tab colors traces by child branch", skillsTab, "branchTraceColor(sp)");
-		assertContains("skills tab dims locked branch traces", skillsTab, "dimTraceColor(branchTraceColor(sp))");
+		assertContains("skills tab owns a cached trace layer", skillsTab, "SkillTraceLayerCache traceCache");
+		assertContains("skills tab rebuilds cached traces on state changes", skillsTab, "traceCache.rebuildIfNeeded");
+		assertContains("skills tab renders cached trace texture", skillsTab, "traceCache.render(gfx, ctx, panZoom)");
+		assertContains("skills tab renders heartbeat over cached trace texture", skillsTab, "traceCache.renderHeartbeat");
+		assertContains("skills tab renders lightweight animated trace flow", skillsTab, "traceCache.renderFlow");
+		assertContains("trace cache colors traces by child branch", traceCache, "branchTraceColor(sp)");
+		assertContains("trace cache dims locked branch traces", traceCache, "dimTraceColor(branchTraceColor(sp))");
+		assertContains("trace cache bakes to a dynamic texture", traceCache, "DynamicTexture");
+		assertContains("trace cache bakes pixels through NativeImage", traceCache, "NativeImage");
+		assertContains("trace cache draws compass degree rings while baking", traceCache, "bakeDegreeRing");
+		assertContains("trace cache renders one cached texture layer", traceCache, "gfx.blit(textureLocation");
+		assertContains("trace cache defines heartbeat cadence", traceCache, "HEARTBEAT_PERIOD_SECONDS");
+		assertContains("trace cache computes a double heartbeat pulse", traceCache, "heartbeatPulse");
+		assertContains("trace cache expands the cached layer around the base skill", traceCache, "renderPulsedTexture");
+		assertContains("trace cache emphasizes the base skill as heartbeat source", traceCache, "renderCenterHeartbeat");
+		assertContains("trace cache uses a center heartbeat source color", traceCache, "CENTER_HEARTBEAT_SOURCE_COLOR");
+		assertContains("trace cache draws rounded center pulse rings", traceCache, "drawCenterPulseRing");
+		assertContains("trace cache fills rounded center pulse glow", traceCache, "fillCenterCircle");
+		assertContains("trace cache uses branch-colored heartbeat texture", traceCache, "heartbeatTextureLocation");
+		assertContains("trace cache boosts heartbeat trace alpha", traceCache, "HEARTBEAT_TRACE_ALPHA_BOOST");
+		assertContains("trace cache renders branch-colored heartbeat texture", traceCache, "renderBranchHeartbeatTexture");
+		assertContains("trace cache keeps heartbeat shader neutral so summons blue can pulse", traceCache, "RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f");
+		assertNotContains("trace cache no longer uses square center pulse boxes", traceCache, "fillCenterBox");
+		assertNotContains("trace cache no longer red-tints branch heartbeat texture", traceCache, "RenderSystem.setShaderColor(1.0f, 0.15f, 0.12f");
+		assertNotContains("skills tab avoids expensive layered traces", skillsTab, "ScreenDrawUtils.drawTendrilTrace");
+		assertNotContains("skills tab avoids per-frame cubic rasterizing", skillsTab, "ScreenDrawUtils.drawFineCubicTrace");
+		assertNotContains("skills tab avoids per-frame degree-ring rasterizing", skillsTab, "ScreenDrawUtils.drawCircleTrace");
 		assertContains("core branch keeps base skill", core, "SkillPointInit.base_skill");
 		assertContains("scar branch keeps scar mastery", scars, "SkillPointInit.skill_scar_mastery");
 		assertContains("summon branch keeps puppet skills", summons, "SkillPointInit.skill_puppet_skein");
@@ -51,10 +77,11 @@ public final class SkillPointBranchSourceTest {
 		assertContains("scar branch marks skills for in-game traces", scars, ".setBranch(\"scars\")");
 		assertContains("summon branch marks skills for in-game traces", summons, ".setBranch(\"summons\")");
 		assertContains("living staff branch marks skills for in-game traces", staff, ".setBranch(\"living_staff\")");
-		assertContains("core branch keeps a centered base trunk", core, "setTreePosition(360, 424)");
-		assertContains("summon branch stays in the left lane", summons, "setTreePosition(80, 280)");
-		assertContains("living staff branch has its own right lane", staff, "setTreePosition(630, 352)");
-		assertContains("scar branch has a far-right lane", scars, "setTreePosition(700, 136)");
+		assertContains("core branch keeps center root", core, "setTreePosition(480, 480)");
+		assertContains("core branch reaches north on degree five", core, "setTreePosition(521, 80)");
+		assertContains("summon branch grows east", summons, "setTreePosition(670, 480)");
+		assertContains("living staff branch grows west", staff, "setTreePosition(360, 480)");
+		assertContains("scar branch grows south", scars, "setTreePosition(480, 880)");
 	}
 
 	private static String read(String path) throws IOException {

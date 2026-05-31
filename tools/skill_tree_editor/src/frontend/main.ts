@@ -5,10 +5,11 @@ import type {
   SkillModel,
   SkillWorkspace
 } from '../shared/types';
+import { applyCompassLayout } from './compassLayout';
 import { beginDragPan, type DragPanState, shouldStartDragPan, updateDragPan } from './dragPan';
-import { computeGraphLayout } from './graphLayout';
+import { computeGraphLayout, type GraphEdge } from './graphLayout';
 import { beginNodeDrag, type NodeDragState, type NodePosition, updateNodeDrag } from './layoutEditing';
-import { createMovementHistory, recordMovement, redoMovement, undoMovement } from './movementHistory';
+import { createMovementHistory, recordMovement, recordMovements, redoMovement, undoMovement } from './movementHistory';
 import { clampZoom, zoomScrollAnchor } from './viewportZoom';
 import './styles.css';
 
@@ -102,6 +103,7 @@ function render(): void {
             ${tabButton('diff', `Diff ${preview ? `(${preview.diffs.length})` : ''}`)}
           </nav>
           <div class="history-controls" aria-label="Movement history controls">
+            <button data-action="compass-layout" title="Arrange skills into compass rings" ${isBusy ? 'disabled' : ''}>Compass Auto-Layout</button>
             <button data-action="undo-move" title="Undo move (Ctrl+Z)" ${!movementHistory.canUndo || isBusy ? 'disabled' : ''}>Undo</button>
             <button data-action="redo-move" title="Redo move (Ctrl+Y or Ctrl+Shift+Z)" ${!movementHistory.canRedo || isBusy ? 'disabled' : ''}>Redo</button>
           </div>
@@ -150,11 +152,11 @@ function renderGraph(): string {
   const scaledWidth = Math.round(layout.width * graphZoom);
   const scaledHeight = Math.round(layout.height * graphZoom);
   const edges = layout.edges
-    .map(edge => `<path class="edge ${edge.kind === 'cross-branch' ? 'cross-edge' : 'local-edge'} edge-branch-${branchClassName(edge.toBranch)}" data-edge-to="${escapeAttr(edge.toField)}" d="${edge.path}" />`)
+    .map(renderWireEdge)
     .join('');
   const degreeGuides = layout.degreeGuides.map(guide =>
-    `<line x1="32" y1="${guide.y}" x2="${layout.width - 32}" y2="${guide.y}" class="degree-guide-line"></line>
-    <text x="14" y="${guide.y - 20}" class="degree-guide-label">${escapeHtml(guide.label)}</text>`
+    `<circle cx="${guide.cx}" cy="${guide.cy}" r="${guide.radius}" class="degree-guide-line"></circle>
+    <text x="${guide.labelX}" y="${guide.labelY}" class="degree-guide-label">${escapeHtml(guide.label)}</text>`
   ).join('');
   const nodes = layout.nodes.map(renderSkillNode).join('');
   const zoomLabel = `${Math.round(graphZoom * 100)}%`;
@@ -183,6 +185,14 @@ function renderGraph(): string {
     <g class="edges">${edges}</g>
     <g class="nodes">${nodes}</g>
   </svg></div></div>`;
+}
+
+function renderWireEdge(edge: GraphEdge): string {
+  const edgeKind = edge.kind === 'cross-branch' ? 'cross-edge' : 'local-edge';
+  const branch = `edge-branch-${branchClassName(edge.toBranch)}`;
+  const toField = escapeAttr(edge.toField);
+  const path = escapeAttr(edge.path);
+  return `<path class="edge wire-edge ${edgeKind} ${branch}" data-edge-to="${toField}" d="${path}" />`;
 }
 
 function renderSkillNode({ skill, x, y }: { skill: SkillModel; x: number; y: number }): string {
@@ -290,6 +300,7 @@ function wireEvents(): void {
   document.querySelector('[data-action="add-skill"]')?.addEventListener('click', addSkill);
   document.querySelector('[data-action="duplicate-skill"]')?.addEventListener('click', duplicateSkill);
   document.querySelector('[data-action="delete-skill"]')?.addEventListener('click', deleteSkill);
+  document.querySelector('[data-action="compass-layout"]')?.addEventListener('click', applyCompassAutoLayout);
   document.querySelector('[data-action="undo-move"]')?.addEventListener('click', undoLastMovement);
   document.querySelector('[data-action="redo-move"]')?.addEventListener('click', redoLastMovement);
   document.querySelector('[data-action="zoom-in"]')?.addEventListener('click', () => zoomGraphFromCenter(buttonZoomStep));
@@ -547,21 +558,45 @@ function redoLastMovement(): void {
   applyMovementTarget(redoMovement(movementHistory), 'Redid move');
 }
 
-function applyMovementTarget(target: { field: string; position: NodePosition } | undefined, verb: string): void {
+function applyMovementTarget(target: { updates: { field: string; position: NodePosition }[] } | undefined, verb: string): void {
   if (!target || !workspace) return;
-  const skill = allSkills().find(candidate => candidate.field === target.field);
-  if (!skill) {
-    statusText = 'Move history target no longer exists.';
+  let lastSkill: SkillModel | null = null;
+  for (const update of target.updates) {
+    const skill = allSkills().find(candidate => candidate.field === update.field);
+    if (!skill) continue;
+    skill.treeX = update.position.x;
+    skill.treeY = update.position.y;
+    lastSkill = skill;
+  }
+  if (!lastSkill) {
+    statusText = 'Move history targets no longer exist.';
     render();
     return;
   }
-  skill.treeX = target.position.x;
-  skill.treeY = target.position.y;
-  selectedField = skill.field;
-  selectedBranch = skill.branch;
+  selectedField = lastSkill.field;
+  selectedBranch = lastSkill.branch;
   preview = null;
   workspace.diagnostics = validateClientWorkspace();
-  statusText = `${verb} for ${skill.name}.`;
+  statusText = `${verb} for ${target.updates.length} skill${target.updates.length === 1 ? '' : 's'}.`;
+  render();
+}
+
+function applyCompassAutoLayout(): void {
+  if (!workspace) return;
+  const changes = applyCompassLayout(workspace.branches);
+  recordMovements(movementHistory, changes);
+  if (changes.length) {
+    const last = allSkills().find(skill => skill.field === changes[changes.length - 1].field);
+    if (last) {
+      selectedField = last.field;
+      selectedBranch = last.branch;
+    }
+  }
+  preview = null;
+  workspace.diagnostics = validateClientWorkspace();
+  statusText = changes.length
+    ? `Compass layout placed ${changes.length} skills.`
+    : 'Compass layout already matches the draft.';
   render();
 }
 
@@ -590,8 +625,10 @@ function updateGraphDomEdges(): void {
   if (!workspace) return;
   const layout = computeGraphLayout(workspace.branches);
   for (const edge of layout.edges) {
-    const path = document.querySelector<SVGPathElement>(`.edge[data-edge-to="${edge.toField}"]`);
-    if (path) path.setAttribute('d', edge.path);
+    const paths = document.querySelectorAll<SVGPathElement>(`.edge[data-edge-to="${edge.toField}"]`);
+    for (const path of paths) {
+      path.setAttribute('d', edge.path);
+    }
   }
 }
 

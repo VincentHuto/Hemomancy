@@ -1,20 +1,23 @@
 import type { SkillBranchFile } from '../shared/types';
 import { computeGraphLayout } from './graphLayout';
 
-test('spreads fallback branches horizontally while sharing vertical degree tiers', () => {
+test('spreads fallback branches into compass directions around the center', () => {
   const layout = computeGraphLayout([
     branch('core', 15),
     branch('living_staff', 3),
     branch('scars', 3),
     branch('summons', 3)
   ]);
+  const core = layout.nodes.find(node => node.skill.branch === 'core')!;
+  const staff = layout.nodes.find(node => node.skill.branch === 'living_staff')!;
+  const scars = layout.nodes.find(node => node.skill.branch === 'scars')!;
+  const summons = layout.nodes.find(node => node.skill.branch === 'summons')!;
 
   expect(layout.labels.map(label => label.branch)).toEqual(['core', 'living_staff', 'scars', 'summons']);
-  expect(layout.nodes.find(node => node.skill.branch === 'living_staff')!.x)
-    .toBeGreaterThan(layout.nodes.filter(node => node.skill.branch === 'core').at(-1)!.x);
-  expect(layout.nodes.find(node => node.skill.branch === 'scars')!.x)
-    .toBeGreaterThan(layout.nodes.filter(node => node.skill.branch === 'living_staff').at(-1)!.x);
-  expect(new Set(layout.nodes.map(node => node.y))).toEqual(new Set([layout.degreeGuides[0].y]));
+  expect(core).toEqual(expect.objectContaining({ x: 480, y: 480 }));
+  expect(staff.x).toBeLessThan(core.x);
+  expect(scars.y).toBeGreaterThan(core.y);
+  expect(summons.x).toBeGreaterThan(core.x);
 });
 
 test('keeps long root edges out of unrelated sibling skill rows', () => {
@@ -98,7 +101,7 @@ test('records destination branch on each edge for branch-colored traces', () => 
   }));
 });
 
-test('positions fallback nodes on vertical degree tiers with higher degrees above lower degrees', () => {
+test('positions fallback nodes on concentric degree rings with higher core degrees farther north', () => {
   const layout = computeGraphLayout([
     {
       path: 'CoreSkillBranch.java',
@@ -113,16 +116,16 @@ test('positions fallback nodes on vertical degree tiers with higher degrees abov
       ]
     }
   ]);
-  const guideY = Object.fromEntries(layout.degreeGuides.map(guide => [guide.degree, guide.y]));
-  const nodeY = Object.fromEntries(layout.nodes.map(node => [node.skill.field, node.y]));
+  const guides = Object.fromEntries(layout.degreeGuides.map(guide => [guide.degree, guide]));
+  const node = Object.fromEntries(layout.nodes.map(item => [item.skill.field, item]));
 
   expect(layout.degreeGuides.map(guide => guide.degree)).toEqual([0, 1, 2, 3, 4, 5]);
-  expect(nodeY.base_skill).toBe(guideY[0]);
-  expect(nodeY.skill_last_wind).toBe(guideY[2]);
-  expect(nodeY.skill_vital_link).toBe(guideY[5]);
-  expect(guideY[5]).toBeLessThan(guideY[2]);
-  expect(guideY[0]).toBeGreaterThan(guideY[5]);
-  expect(guideY[0] - guideY[5]).toBe(360);
+  expect(guides[0]).toEqual(expect.objectContaining({ cx: 480, cy: 480, radius: 72 }));
+  expect(guides[5]).toEqual(expect.objectContaining({ cx: 480, cy: 480, radius: 400 }));
+  expect(node.base_skill).toEqual(expect.objectContaining({ x: 480, y: 480 }));
+  expect(node.skill_last_wind).toEqual(expect.objectContaining({ x: 480, y: 290 }));
+  expect(node.skill_vital_link).toEqual(expect.objectContaining({ x: 480, y: 80 }));
+  expect(node.skill_vital_link.y).toBeLessThan(node.skill_last_wind.y);
 });
 
 test('uses explicit tree positions when skills define in-game coordinates', () => {
@@ -150,7 +153,7 @@ test('uses explicit tree positions when skills define in-game coordinates', () =
   }));
 });
 
-test('draws skill links as game-style orthogonal connector segments', () => {
+test('draws skill links as game-style curved connector paths', () => {
   const layout = computeGraphLayout([
     {
       path: 'CoreSkillBranch.java',
@@ -165,8 +168,8 @@ test('draws skill links as game-style orthogonal connector segments', () => {
     }
   ]);
 
-  expect(layout.edges[0].path).toMatch(/^M \d+ \d+ L \d+ \d+ L \d+ \d+ L \d+ \d+$/);
-  expect(layout.edges[0].path).not.toContain('C');
+  expect(layout.edges[0].path).toMatch(/^M \d+ \d+ C /);
+  expect(layout.edges[0].path).toContain(' C ');
 });
 
 function branch(name: string, count: number): SkillBranchFile {

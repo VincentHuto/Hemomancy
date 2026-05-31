@@ -3,11 +3,24 @@ import { join, relative, resolve } from 'node:path';
 import { parseSkillBranchJava } from './skillParser';
 
 const repoRoot = resolve(process.cwd(), '..', '..');
-const degreeStartY = 64;
-const degreeStepY = 72;
-const minimumMaxDegree = 5;
-const maxInGameLayoutWidth = 720;
-const maxInGameLayoutHeight = 400;
+const compassCenter = { x: 480, y: 480 };
+const degreeRadii = new Map<number, number>([
+  [0, 72],
+  [1, 120],
+  [2, 190],
+  [3, 260],
+  [4, 330],
+  [5, 400]
+]);
+const branchDirections = new Map<string, { x: number; y: number }>([
+  ['core', { x: 0, y: -1 }],
+  ['base', { x: 0, y: -1 }],
+  ['living_staff', { x: -1, y: 0 }],
+  ['summons', { x: 1, y: 0 }],
+  ['scars', { x: 0, y: 1 }]
+]);
+const maxInGameLayoutWidth = 820;
+const maxInGameLayoutHeight = 820;
 
 test('java skill points expose editable in-game tree coordinates', () => {
   const source = read('src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/skill/SkillPoint.java');
@@ -26,7 +39,7 @@ test('in-game skills tab uses explicit skill positions when present', () => {
   expect(source).toContain('sp.getTreeY()');
 });
 
-test('authored java skill positions line up with required degree tiers', () => {
+test('authored java skill positions line up with compass degree rings', () => {
   const branchRoot = resolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/skills');
   const parsedBranches = readdirSync(branchRoot)
     .filter(name => name.endsWith('SkillBranch.java'))
@@ -36,11 +49,14 @@ test('authored java skill positions line up with required degree tiers', () => {
       const relPath = relative(repoRoot, absPath).replaceAll('\\', '/');
       return parseSkillBranchJava(relPath, source);
     });
-  const maxDegree = Math.max(minimumMaxDegree, ...parsedBranches.flatMap(branch => branch.skills.map(skill => skill.requiredDegree)));
   const mismatches = parsedBranches.flatMap(branch => branch.skills
-    .filter(skill => skill.treeY !== null)
-    .filter(skill => skill.treeY !== degreeStartY + (maxDegree - skill.requiredDegree) * degreeStepY)
-    .map(skill => `${skill.field}: y=${skill.treeY}, degree=${skill.requiredDegree}`));
+    .filter(skill => skill.treeX !== null && skill.treeY !== null)
+    .filter(skill => {
+      const direction = branchDirections.get(skill.branch)!;
+      const actual = Math.round((skill.treeX! - compassCenter.x) * direction.x + (skill.treeY! - compassCenter.y) * direction.y);
+      return actual !== expectedCompassRadius(skill);
+    })
+    .map(skill => `${skill.field}: x=${skill.treeX}, y=${skill.treeY}, branch=${skill.branch}, degree=${skill.requiredDegree}`));
 
   expect(mismatches).toEqual([]);
 });
@@ -72,4 +88,9 @@ function javaBranchSkills() {
       const relPath = relative(repoRoot, absPath).replaceAll('\\', '/');
       return parseSkillBranchJava(relPath, source).skills;
     });
+}
+
+function expectedCompassRadius(skill: { branch: string; parentField: string | null; requiredDegree: number }): number {
+  if ((skill.branch === 'core' || skill.branch === 'base') && !skill.parentField && skill.requiredDegree === 0) return 0;
+  return degreeRadii.get(skill.requiredDegree) ?? degreeRadii.get(5)! + (skill.requiredDegree - 5) * 70;
 }

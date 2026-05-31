@@ -7,15 +7,19 @@ export interface MovementChange {
 }
 
 export interface MovementHistory {
-  undoStack: MovementChange[];
-  redoStack: MovementChange[];
+  undoStack: MovementChange[][];
+  redoStack: MovementChange[][];
   canUndo: boolean;
   canRedo: boolean;
 }
 
-export interface MovementTarget {
+export interface MovementTargetUpdate {
   field: string;
   position: NodePosition;
+}
+
+export interface MovementTarget {
+  updates: MovementTargetUpdate[];
 }
 
 export function createMovementHistory(): MovementHistory {
@@ -28,31 +32,40 @@ export function createMovementHistory(): MovementHistory {
 }
 
 export function recordMovement(history: MovementHistory, change: MovementChange): void {
-  if (samePosition(change.before, change.after)) return;
-  history.undoStack.push(change);
+  recordMovements(history, [change]);
+}
+
+export function recordMovements(history: MovementHistory, changes: MovementChange[]): void {
+  const meaningfulChanges = changes.filter(change => !samePosition(change.before, change.after));
+  if (!meaningfulChanges.length) return;
+  history.undoStack.push(meaningfulChanges);
   history.redoStack = [];
   refreshFlags(history);
 }
 
 export function undoMovement(history: MovementHistory): MovementTarget | undefined {
-  const change = history.undoStack.pop();
-  if (!change) return undefined;
-  history.redoStack.push(change);
+  const changes = history.undoStack.pop();
+  if (!changes) return undefined;
+  history.redoStack.push(changes);
   refreshFlags(history);
   return {
-    field: change.field,
-    position: change.before
+    updates: changes.map(change => ({
+      field: change.field,
+      position: change.before
+    }))
   };
 }
 
 export function redoMovement(history: MovementHistory): MovementTarget | undefined {
-  const change = history.redoStack.pop();
-  if (!change) return undefined;
-  history.undoStack.push(change);
+  const changes = history.redoStack.pop();
+  if (!changes) return undefined;
+  history.undoStack.push(changes);
   refreshFlags(history);
   return {
-    field: change.field,
-    position: change.after
+    updates: changes.map(change => ({
+      field: change.field,
+      position: change.after
+    }))
   };
 }
 
@@ -64,4 +77,3 @@ function refreshFlags(history: MovementHistory): void {
   history.canUndo = history.undoStack.length > 0;
   history.canRedo = history.redoStack.length > 0;
 }
-

@@ -130,6 +130,7 @@ function renderSkillDeclaration(skill: SkillModel, markerIndent: string): string
   if (skill.treeX !== null && skill.treeY !== null) {
     metadataChain.push(`setTreePosition(${skill.treeX}, ${skill.treeY})`);
   }
+  metadataChain.push(`setBranch("${escapeJavaString(skill.branch)}")`);
   if (metadataChain.length) {
     lines.push(`${chainIndent}.${metadataChain.join('.')}`);
   }

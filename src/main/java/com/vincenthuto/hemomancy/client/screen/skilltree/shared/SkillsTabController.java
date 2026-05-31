@@ -22,19 +22,27 @@ public class SkillsTabController implements IProgressTab {
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
     private static final int NODE_GAP_Y = 60;
+    private static final int COMPASS_CENTER_X = 480;
+    private static final int COMPASS_CENTER_Y = 480;
+    private static final int[] DEGREE_RING_RADII = {72, 120, 190, 260, 330, 400};
+    private static final int COMPASS_CONTENT_PADDING = 80;
     private static final int TRACE_CORE = 0xFFD00000;
     private static final int TRACE_SCARS = 0xFF9A9A9F;
     private static final int TRACE_SUMMONS = 0xFF2370DB;
     private static final int TRACE_LIVING_STAFF = 0xFFD9AD28;
+    private static final int TRACE_DEGREE_RING = 0x3A972A26;
+    private static final int TRACE_DEGREE_LABEL = 0x88D66458;
     private static final int COL_NODE_BG           = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK  = 0xFF333333;
     private static final int COL_NODE_BORDER_UNLOCK= 0xFFCC2222;
     private static final int COL_NODE_BORDER_AVAIL = 0xFFBB8833;
 
+    private final SkillTraceLayerCache traceCache = new SkillTraceLayerCache();
     private final PanZoomState panZoom = new PanZoomState();
     private final Map<SkillPoint, int[]> nodePositions = new HashMap<>();
     private int contentW, contentH;
     private int playerDegree;
+    private float animTime = 0f;
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
@@ -92,6 +100,8 @@ public class SkillsTabController implements IProgressTab {
             contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
             contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
         }
+        contentW = Math.max(contentW, COMPASS_CENTER_X + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
+        contentH = Math.max(contentH, COMPASS_CENTER_Y + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
     }
 
     private static int depth(SkillPoint sp) {
@@ -104,23 +114,14 @@ public class SkillsTabController implements IProgressTab {
     private int sy(ProgressScreenContext ctx, int cy) { return panZoom.sy(ctx.guiTop(), cy); }
     private int halfNode() { return panZoom.halfNode(NODE_SIZE); }
 
-    private static int branchTraceColor(SkillPoint sp) {
-        return switch (sp.getBranch()) {
-            case "living_staff" -> TRACE_LIVING_STAFF;
-            case "scars" -> TRACE_SCARS;
-            case "summons" -> TRACE_SUMMONS;
-            case "base", "core" -> TRACE_CORE;
-            default -> TRACE_CORE;
-        };
-    }
-
-    private static int dimTraceColor(int color) {
-        return (color & 0x00FFFFFF) | 0x88000000;
-    }
-
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
-        drawConnections(gfx, ctx);
+        animTime += 0.016f;
+        traceCache.rebuildIfNeeded(nodePositions, contentW, contentH);
+        traceCache.render(gfx, ctx, panZoom);
+        traceCache.renderHeartbeat(gfx, ctx, panZoom, animTime);
+        drawDegreeLabels(gfx, ctx);
+        traceCache.renderFlow(gfx, ctx, panZoom, animTime);
         drawNodes(gfx, ctx);
     }
 
@@ -132,30 +133,18 @@ public class SkillsTabController implements IProgressTab {
         drawTooltip(gfx, ctx, mouseX, mouseY);
     }
 
-    private void drawConnections(GuiGraphics gfx, ProgressScreenContext ctx) {
-        int hn = halfNode();
-        for (var e : nodePositions.entrySet()) {
-            SkillPoint sp = e.getKey();
-            if (sp.getParent() == null) continue;
-            int[] cPos = e.getValue();
-            int[] pPos = nodePositions.get(sp.getParent());
-            if (pPos == null) continue;
-            int x1 = sx(ctx, pPos[0]), y1 = sy(ctx, pPos[1]);
-            int x2 = sx(ctx, cPos[0]), y2 = sy(ctx, cPos[1]);
-            boolean parentUnlocked = SkillProgressClientCache.current().getState(sp.getParent()) == EnumSkillStates.UNLOCKED;
-            int col = parentUnlocked ? branchTraceColor(sp) : dimTraceColor(branchTraceColor(sp));
-            int lw = Math.max(1, (int)(panZoom.zoom * 1.5f));
-            int midY = (y1 + y2) / 2;
-            gfx.fill(x1 - lw, y1 + hn, x1 + lw, midY, col);
-            gfx.fill(Math.min(x1, x2) - lw, midY - lw, Math.max(x1, x2) + lw, midY + lw, col);
-            gfx.fill(x2 - lw, midY, x2 + lw, y2 - hn, col);
+    private void drawDegreeLabels(GuiGraphics gfx, ProgressScreenContext ctx) {
+        int centerX = sx(ctx, COMPASS_CENTER_X);
+        int centerY = sy(ctx, COMPASS_CENTER_Y);
+        if (panZoom.zoom < 0.5f) return;
+        for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
+            int radius = Math.max(1, (int) Math.round(DEGREE_RING_RADII[degree] * panZoom.zoom));
+            gfx.drawString(ctx.font(), "Degree " + degree, centerX - radius + 8, centerY - 6, TRACE_DEGREE_LABEL, false);
         }
     }
-private float animTime = 0f;
-    private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
-        	animTime += 0.016f; // ~60 FPS approximation
 
-		float time = animTime;
+    private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
+        float time = animTime;
         int hn = halfNode();
         for (var e : nodePositions.entrySet()) {
             SkillPoint sp = e.getKey();

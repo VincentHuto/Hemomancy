@@ -1,6 +1,7 @@
 import {
   createMovementHistory,
   recordMovement,
+  recordMovements,
   redoMovement,
   undoMovement
 } from './movementHistory';
@@ -15,14 +16,18 @@ test('undoes and redoes recorded node movements as single drag steps', () => {
   });
 
   const undo = undoMovement(history);
-  expect(undo?.field).toBe('skill_sanguine_reach');
-  expect(undo?.position).toEqual({ x: 128, y: 256 });
+  expect(undo?.updates).toEqual([{
+    field: 'skill_sanguine_reach',
+    position: { x: 128, y: 256 }
+  }]);
   expect(history.canUndo).toBe(false);
   expect(history.canRedo).toBe(true);
 
   const redo = redoMovement(history);
-  expect(redo?.field).toBe('skill_sanguine_reach');
-  expect(redo?.position).toEqual({ x: 160, y: 288 });
+  expect(redo?.updates).toEqual([{
+    field: 'skill_sanguine_reach',
+    position: { x: 160, y: 288 }
+  }]);
   expect(history.canUndo).toBe(true);
   expect(history.canRedo).toBe(false);
 });
@@ -48,3 +53,28 @@ test('drops redo movements when a new movement is recorded', () => {
   expect(redoMovement(history)).toBeUndefined();
 });
 
+test('undoes and redoes a batch of auto-layout movements as one history step', () => {
+  const history = createMovementHistory();
+
+  recordMovements(history, [
+    {
+      field: 'base_skill',
+      before: { x: 360, y: 424 },
+      after: { x: 480, y: 480 }
+    },
+    {
+      field: 'skill_capacity',
+      before: { x: 270, y: 424 },
+      after: { x: 439, y: 408 }
+    }
+  ]);
+
+  expect(undoMovement(history)?.updates).toEqual([
+    { field: 'base_skill', position: { x: 360, y: 424 } },
+    { field: 'skill_capacity', position: { x: 270, y: 424 } }
+  ]);
+  expect(redoMovement(history)?.updates).toEqual([
+    { field: 'base_skill', position: { x: 480, y: 480 } },
+    { field: 'skill_capacity', position: { x: 439, y: 408 } }
+  ]);
+});

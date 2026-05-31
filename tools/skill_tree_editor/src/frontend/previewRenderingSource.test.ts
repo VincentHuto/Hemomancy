@@ -28,6 +28,16 @@ test('preview colors trace lines by destination branch', () => {
   const css = read('styles.css');
 
   expect(main).toContain('edge-branch-');
+  expect(main).toContain('renderWireEdge');
+  expect(main).toContain('wire-edge');
+  expect(main).not.toContain('tendril-edge-halo');
+  expect(main).not.toContain('tendril-edge-shadow');
+  expect(main).not.toContain('tendril-edge-core');
+  expect(css).toContain('stroke-linecap: round');
+  expect(css).toContain('.wire-edge');
+  expect(css).not.toContain('.tendril-edge-halo');
+  expect(css).not.toContain('.tendril-edge-shadow');
+  expect(css).not.toContain('.tendril-edge-core');
   expect(css).toContain('.edge-branch-core');
   expect(css).toContain('.edge-branch-scars');
   expect(css).toContain('.edge-branch-summons');

@@ -321,20 +321,20 @@ small {
 
 .edge {
   fill: none;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .local-edge {
   stroke: #c00000;
-  stroke-width: 5;
-  opacity: 0.95;
+  stroke-width: 2px;
+  opacity: 0.44;
 }
 
 .cross-edge {
   stroke: #970000;
-  stroke-width: 4;
-  opacity: 0.78;
+  stroke-width: 2px;
+  opacity: 0.34;
 }
 
 .edge-branch-core,
@@ -352,6 +352,10 @@ small {
 
 .edge-branch-living-staff {
   stroke: #d9ad28;
+}
+
+.wire-edge {
+  pointer-events: none;
 }
 
 .branch-band {
@@ -372,6 +376,7 @@ small {
 }
 
 .degree-guide-line {
+  fill: none;
   stroke: rgba(151, 42, 38, 0.32);
   stroke-dasharray: 10 14;
   stroke-width: 2;

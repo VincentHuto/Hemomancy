@@ -415,4 +415,142 @@ public final class ScreenDrawUtils {
 	public static boolean isOverLayerButton(double mx, double my, int bx, int by) {
 		return isOverLayerButton(mx, my, bx, by, LAYER_BTN_SIZE);
 	}
+
+	public static void drawCubicTrace(GuiGraphics gfx,
+			int x0, int y0,
+			int c1x, int c1y,
+			int c2x, int c2y,
+			int x3, int y3,
+			int thickness,
+			int color) {
+		int steps = Math.max(18, (int) (estimateCubicLength(x0, y0, c1x, c1y, c2x, c2y, x3, y3) / 10));
+		int prevX = x0;
+		int prevY = y0;
+		for (int i = 1; i <= steps; i++) {
+			double t = i / (double) steps;
+			int x = (int) Math.round(cubicPoint(x0, c1x, c2x, x3, t));
+			int y = (int) Math.round(cubicPoint(y0, c1y, c2y, y3, t));
+			drawStampedLine(gfx, prevX, prevY, x, y, thickness, color);
+			prevX = x;
+			prevY = y;
+		}
+	}
+
+	public static void drawFineCubicTrace(GuiGraphics gfx,
+			int x0, int y0,
+			int c1x, int c1y,
+			int c2x, int c2y,
+			int x3, int y3,
+			float zoom,
+			int color) {
+		int alpha = (color >>> 24) & 0xFF;
+		if (alpha <= 0) return;
+
+		int traceColor = withAlpha(color, Math.max(18, alpha * 112 / 255));
+		int steps = Math.max(18, (int) (estimateCubicLength(x0, y0, c1x, c1y, c2x, c2y, x3, y3) / 12));
+		int pixelSize = zoom >= 1.9f ? 2 : 1;
+		int spacing = zoom < 0.85f ? 2 : 1;
+		int prevX = x0;
+		int prevY = y0;
+		for (int i = 1; i <= steps; i++) {
+			double t = i / (double) steps;
+			int x = (int) Math.round(cubicPoint(x0, c1x, c2x, x3, t));
+			int y = (int) Math.round(cubicPoint(y0, c1y, c2y, y3, t));
+			drawFineLine(gfx, prevX, prevY, x, y, pixelSize, spacing, traceColor);
+			prevX = x;
+			prevY = y;
+		}
+	}
+
+	public static void drawCircleTrace(GuiGraphics gfx, int centerX, int centerY, int radius, int thickness, int color) {
+		if (radius <= 0) return;
+		int segments = Math.max(48, radius / 4);
+		int prevX = centerX + radius;
+		int prevY = centerY;
+		for (int i = 1; i <= segments; i++) {
+			double angle = Math.PI * 2.0 * i / segments;
+			int x = centerX + (int) Math.round(Math.cos(angle) * radius);
+			int y = centerY + (int) Math.round(Math.sin(angle) * radius);
+			drawStampedLine(gfx, prevX, prevY, x, y, thickness, color);
+			prevX = x;
+			prevY = y;
+		}
+	}
+
+	private static double estimateCubicLength(int x0, int y0, int c1x, int c1y, int c2x, int c2y, int x3, int y3) {
+		double length = 0;
+		double prevX = x0;
+		double prevY = y0;
+		for (int i = 1; i <= 12; i++) {
+			double t = i / 12.0;
+			double x = cubicPoint(x0, c1x, c2x, x3, t);
+			double y = cubicPoint(y0, c1y, c2y, y3, t);
+			length += Math.hypot(x - prevX, y - prevY);
+			prevX = x;
+			prevY = y;
+		}
+		return length;
+	}
+
+	private static double cubicPoint(double p0, double p1, double p2, double p3, double t) {
+		double inv = 1.0 - t;
+		return inv * inv * inv * p0
+				+ 3.0 * inv * inv * t * p1
+				+ 3.0 * inv * t * t * p2
+				+ t * t * t * p3;
+	}
+
+	private static int withAlpha(int color, int alpha) {
+		return (color & 0x00FFFFFF) | (Math.max(0, Math.min(255, alpha)) << 24);
+	}
+
+	private static void drawFineLine(GuiGraphics gfx, int x0, int y0, int x1, int y1, int pixelSize, int spacing, int color) {
+		int steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+		if (steps == 0) {
+			drawFinePixel(gfx, x0, y0, pixelSize, color);
+			return;
+		}
+		int step = Math.max(1, spacing);
+		for (int i = 0; i <= steps; i += step) {
+			double t = i / (double) steps;
+			int x = (int) Math.round(x0 + (x1 - x0) * t);
+			int y = (int) Math.round(y0 + (y1 - y0) * t);
+			drawFinePixel(gfx, x, y, pixelSize, color);
+		}
+		if (steps % step != 0) {
+			drawFinePixel(gfx, x1, y1, pixelSize, color);
+		}
+	}
+
+	private static void drawFinePixel(GuiGraphics gfx, int centerX, int centerY, int pixelSize, int color) {
+		int size = Math.max(1, pixelSize);
+		int half = size / 2;
+		gfx.fill(centerX - half, centerY - half, centerX - half + size, centerY - half + size, color);
+	}
+
+	private static void drawStampedLine(GuiGraphics gfx, int x0, int y0, int x1, int y1, int thickness, int color) {
+		int steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+		if (steps == 0) {
+			drawRoundStamp(gfx, x0, y0, thickness, color);
+			return;
+		}
+		for (int i = 0; i <= steps; i++) {
+			double t = i / (double) steps;
+			int x = (int) Math.round(x0 + (x1 - x0) * t);
+			int y = (int) Math.round(y0 + (y1 - y0) * t);
+			drawRoundStamp(gfx, x, y, thickness, color);
+		}
+	}
+
+	private static void drawRoundStamp(GuiGraphics gfx, int centerX, int centerY, int thickness, int color) {
+		int radius = Math.max(0, thickness / 2);
+		if (radius <= 0) {
+			gfx.fill(centerX, centerY, centerX + 1, centerY + 1, color);
+			return;
+		}
+		for (int dy = -radius; dy <= radius; dy++) {
+			int halfWidth = (int) Math.round(Math.sqrt(radius * radius - dy * dy));
+			gfx.fill(centerX - halfWidth, centerY + dy, centerX + halfWidth + 1, centerY + dy + 1, color);
+		}
+	}
 }

@@ -1,4 +1,10 @@
 import type { SkillBranchFile, SkillModel } from '../shared/types';
+import {
+  COMPASS_CENTER,
+  COMPASS_MAX_RING_RADIUS,
+  compassGuideRadius,
+  createCompassPositionMap
+} from './compassLayout';
 
 export interface GraphNodePosition {
   skill: SkillModel;
@@ -30,7 +36,11 @@ export interface GraphEdge {
 export interface GraphDegreeGuide {
   degree: number;
   label: string;
-  y: number;
+  cx: number;
+  cy: number;
+  radius: number;
+  labelX: number;
+  labelY: number;
 }
 
 export interface GraphLayout {
@@ -44,17 +54,12 @@ export interface GraphLayout {
 }
 
 const LEFT_LABEL_X = 24;
-const NODE_START_X = 210;
 const BRANCH_START_Y = 72;
 const BRANCH_LABEL_OFFSET_Y = 28;
-const NODE_STEP_Y = 72;
-const NODE_STEP_X = 96;
 const NODE_WIDTH = 48;
-const BRANCH_GAP = 120;
 const MIN_BRANCH_HEIGHT = 142;
 const MIN_MAX_DEGREE = 5;
-const CANVAS_PADDING = 120;
-const DEGREE_START_Y = 64;
+const CANVAS_PADDING = 160;
 
 export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
   const skills = branches.flatMap(branch => branch.skills);
@@ -62,33 +67,36 @@ export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
   const degreeGuides = Array.from({ length: maxDegree + 1 }, (_, degree) => ({
     degree,
     label: `Degree ${degree}`,
-    y: degreeTierY(degree, maxDegree)
+    cx: COMPASS_CENTER.x,
+    cy: COMPASS_CENTER.y,
+    radius: compassGuideRadius(degree),
+    labelX: COMPASS_CENTER.x - compassGuideRadius(degree) + 10,
+    labelY: COMPASS_CENTER.y - 8
   }));
-  const maxGuideY = Math.max(...degreeGuides.map(guide => guide.y));
+  const maxGuideRadius = Math.max(...degreeGuides.map(guide => guide.radius));
+  const fallbackPositions = createCompassPositionMap(branches);
   const nodes: GraphNodePosition[] = [];
   const labels: GraphBranchLabel[] = [];
   const bands: GraphBranchBand[] = [];
-  let cursorX = NODE_START_X;
   let maxNodeX = 0;
   let maxNodeY = 0;
 
   for (const branch of branches) {
-    const xByField = layoutBranchColumns(branch, cursorX);
+    const branchLabel = branchLabelPosition(branch.branch);
     const branchNodes = branch.skills.map((skill) => ({
       skill,
-      x: skill.treeX ?? xByField.get(skill.field) ?? cursorX,
-      y: skill.treeY ?? degreeTierY(skill.requiredDegree, maxDegree)
+      x: skill.treeX ?? fallbackPositions.get(skill.field)?.x ?? COMPASS_CENTER.x,
+      y: skill.treeY ?? fallbackPositions.get(skill.field)?.y ?? COMPASS_CENTER.y
     }));
     const localMinY = Math.min(BRANCH_START_Y, ...branchNodes.map(node => node.y - 44));
     const localMaxY = Math.max(BRANCH_START_Y, ...branchNodes.map(node => node.y + 72));
-    const localMaxX = Math.max(cursorX, ...branchNodes.map(node => node.x + 72));
     const branchHeight = Math.max(MIN_BRANCH_HEIGHT, localMaxY - localMinY);
 
     labels.push({
       branch: branch.branch,
       text: labelize(branch.branch),
-      x: LEFT_LABEL_X,
-      y: localMinY + BRANCH_LABEL_OFFSET_Y
+      x: branchLabel.x,
+      y: branchLabel.y
     });
     bands.push({
       branch: branch.branch,
@@ -98,7 +106,6 @@ export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
     nodes.push(...branchNodes);
     maxNodeX = Math.max(maxNodeX, ...branchNodes.map(node => node.x));
     maxNodeY = Math.max(maxNodeY, ...branchNodes.map(node => node.y));
-    cursorX = localMaxX + BRANCH_GAP;
   }
 
   const byPosition = new Map(nodes.map(node => [node.skill.field, node]));
@@ -123,7 +130,7 @@ export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
     edges,
     degreeGuides,
     width: Math.max(980, CANVAS_PADDING + maxNodeX + NODE_WIDTH),
-    height: Math.max(620, CANVAS_PADDING + Math.max(maxGuideY, maxNodeY))
+    height: Math.max(980, CANVAS_PADDING + Math.max(COMPASS_CENTER.y + maxGuideRadius, maxNodeY))
   };
 }
 
@@ -132,60 +139,43 @@ function edgePath(parent: GraphNodePosition, child: GraphNodePosition, kind: Gra
   const fromY = Math.round(parent.y);
   const toX = Math.round(child.x);
   const toY = Math.round(child.y);
-  const midY = Math.round((fromY + toY) / 2);
-  return `M ${fromX} ${fromY} L ${fromX} ${midY} L ${toX} ${midY} L ${toX} ${toY}`;
+  const distance = Math.hypot(toX - fromX, toY - fromY);
+  const handle = Math.max(48, Math.min(150, distance * (kind === 'cross-branch' ? 0.42 : 0.34)));
+  const fromRadial = radialVector(fromX, fromY, toX - fromX, toY - fromY);
+  const toRadial = radialVector(toX, toY, toX - fromX, toY - fromY);
+  const c1x = Math.round(fromX + fromRadial.x * handle);
+  const c1y = Math.round(fromY + fromRadial.y * handle);
+  const c2x = Math.round(toX - toRadial.x * handle);
+  const c2y = Math.round(toY - toRadial.y * handle);
+  return `M ${fromX} ${fromY} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${toX} ${toY}`;
 }
 
-function layoutBranchColumns(branch: SkillBranchFile, branchX: number): Map<string, number> {
-  const byField = new Map(branch.skills.map(skill => [skill.field, skill]));
-  const children = new Map<string, SkillModel[]>();
-  for (const skill of branch.skills) {
-    if (!skill.parentField || !byField.has(skill.parentField)) continue;
-    const existing = children.get(skill.parentField) ?? [];
-    existing.push(skill);
-    children.set(skill.parentField, existing);
+function radialVector(x: number, y: number, fallbackX: number, fallbackY: number): { x: number; y: number } {
+  let dx = x - COMPASS_CENTER.x;
+  let dy = y - COMPASS_CENTER.y;
+  let length = Math.hypot(dx, dy);
+  if (length < 0.001) {
+    dx = fallbackX;
+    dy = fallbackY;
+    length = Math.hypot(dx, dy);
   }
-  for (const group of children.values()) {
-    group.sort(compareSkillPosition);
-  }
-
-  const roots = branch.skills
-    .filter(skill => !skill.parentField || !byField.has(skill.parentField))
-    .sort(compareSkillPosition);
-  const xByField = new Map<string, number>();
-  let column = 0;
-
-  const place = (skill: SkillModel): number => {
-    const existing = xByField.get(skill.field);
-    if (existing !== undefined) return existing;
-    const localChildren = children.get(skill.field) ?? [];
-    if (!localChildren.length) {
-      const x = branchX + column * NODE_STEP_X;
-      column++;
-      xByField.set(skill.field, x);
-      return x;
-    }
-    const childXs = localChildren.map(place);
-    const x = childXs.reduce((sum, childX) => sum + childX, 0) / childXs.length;
-    xByField.set(skill.field, x);
-    return x;
-  };
-
-  for (const root of roots) {
-    place(root);
-  }
-  for (const skill of branch.skills.sort(compareSkillPosition)) {
-    place(skill);
-  }
-  return xByField;
+  if (length < 0.001) return { x: 0, y: -1 };
+  return { x: dx / length, y: dy / length };
 }
 
-function compareSkillPosition(a: SkillModel, b: SkillModel): number {
-  return a.id - b.id || a.field.localeCompare(b.field);
-}
-
-function degreeTierY(degree: number, maxDegree: number): number {
-  return DEGREE_START_Y + Math.max(0, maxDegree - Math.max(0, degree)) * NODE_STEP_Y;
+function branchLabelPosition(branch: string): { x: number; y: number } {
+  switch (branch) {
+    case 'living_staff':
+      return { x: Math.max(LEFT_LABEL_X, COMPASS_CENTER.x - COMPASS_MAX_RING_RADIUS - 84), y: COMPASS_CENTER.y };
+    case 'summons':
+      return { x: COMPASS_CENTER.x + COMPASS_MAX_RING_RADIUS + 34, y: COMPASS_CENTER.y };
+    case 'scars':
+      return { x: COMPASS_CENTER.x - 24, y: COMPASS_CENTER.y + COMPASS_MAX_RING_RADIUS + 52 };
+    case 'core':
+    case 'base':
+    default:
+      return { x: COMPASS_CENTER.x - 16, y: COMPASS_CENTER.y - COMPASS_MAX_RING_RADIUS - BRANCH_LABEL_OFFSET_Y };
+  }
 }
 
 function labelize(value: string): string {

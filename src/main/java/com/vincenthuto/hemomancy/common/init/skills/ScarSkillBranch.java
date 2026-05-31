@@ -16,15 +16,15 @@ public final class ScarSkillBranch {
 		// <skill-editor branch="scars">
 			SkillPointInit.skill_scar_affinity = SkillPointInit.registerSkill(branch,
 					new SkillPoint(15, "skill_scar_affinity", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_crimson_mastery)
-							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(700, 136)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(439, 810).setBranch("scars")
 							.setIconItem(() -> new ItemStack(ItemInit.scar_blank.get())));
 			SkillPointInit.skill_scar_resonance = SkillPointInit.registerSkill(branch,
 					new SkillPoint(16, "skill_scar_resonance", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_scar_affinity)
-							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(780, 136)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(521, 810).setBranch("scars")
 							.setIconItem(() -> new ItemStack(ItemInit.scar_heart.get())));
 			SkillPointInit.skill_scar_mastery = SkillPointInit.registerSkill(branch,
 					new SkillPoint(17, "skill_scar_mastery", 600, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_scar_resonance)
-							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(700, 64)
+							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(480, 880).setBranch("scars")
 							.setIconItem(() -> new ItemStack(ItemInit.scar_transcendence.get())));
 		// </skill-editor>
 	}
