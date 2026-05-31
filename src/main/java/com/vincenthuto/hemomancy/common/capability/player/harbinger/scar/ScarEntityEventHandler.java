@@ -178,8 +178,12 @@ public class ScarEntityEventHandler {
 							if (blood != null && blood.isActive() && blood.getBloodVolume() > 0) {
 								blood.drain(blood.getBloodVolume());
 								splitHusk.startCooldown(fungalSlot, gameTime);
-								player.setHealth(player.getMaxHealth() * ThanomycesResurgensItem.REFORM_FRACTION);
-								player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 4, true, false));
+								int symbiosis = SkillPointHelper.getFungalSymbiosisLevel(player);
+								float reformFraction = (float) Math.min(0.45F,
+										ThanomycesResurgensItem.REFORM_FRACTION + symbiosis * 0.03F);
+								player.setHealth(player.getMaxHealth() * reformFraction);
+								player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+										60 + symbiosis * 10, 4, true, false));
 								ServerLevel world = (ServerLevel) player.level();
 								world.playSound(player, player.getX(), player.getY(), player.getZ(),
 										SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS, 0.6f, 0.7f);
@@ -260,10 +264,13 @@ public class ScarEntityEventHandler {
 				if (fungalSlot.getItem() instanceof SaprovittaVestigiumItem) {
 					double movSq = player.getDeltaMovement().horizontalDistanceSqr();
 					if (movSq > SaprovittaVestigiumItem.MOVEMENT_THRESHOLD_SQ) {
-						AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS);
+						int symbiosis = SkillPointHelper.getFungalSymbiosisLevel(player);
+						AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS
+								+ symbiosis * 0.4D);
+						float damage = SaprovittaVestigiumItem.TRAIL_DAMAGE * (1.0F + symbiosis * 0.08F);
 						List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area);
 						for (Monster mob : mobs) {
-							mob.hurt(player.damageSources().magic(), SaprovittaVestigiumItem.TRAIL_DAMAGE);
+							mob.hurt(player.damageSources().magic(), damage);
 						}
 					}
 				}
@@ -332,10 +339,12 @@ public class ScarEntityEventHandler {
 
 				// Vein Orchard (Sanguiflora cadens) — chance to drop blood resources at kill site
 				ItemStack fungalSlot = scars.getStackInSlot(0);
+				int symbiosis = SkillPointHelper.getFungalSymbiosisLevel(player);
 				if (fungalSlot.getItem() instanceof SanguifloraeCadensItem
-						&& player.level().random.nextFloat() < SanguifloraeCadensItem.ORCHARD_CHANCE) {
+						&& player.level().random.nextFloat() < Math.min(1.0F,
+								SanguifloraeCadensItem.ORCHARD_CHANCE + symbiosis * 0.04F)) {
 					double x = killed.getX(), y = killed.getY(), z = killed.getZ();
-					int sporeCount = 1 + player.level().random.nextInt(2);
+					int sporeCount = 1 + player.level().random.nextInt(2) + (symbiosis >= 2 ? 1 : 0);
 					for (int n = 0; n < sporeCount; n++) {
 						player.level().addFreshEntity(
 								new ItemEntity(player.level(), x, y, z, new ItemStack(ItemInit.spore_sac.get())));

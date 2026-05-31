@@ -3,7 +3,9 @@ export const DEFAULT_BRANCH_COLORS: Record<string, string> = {
   core: '#d00000',
   living_staff: '#d9ad28',
   scars: '#9a9a9f',
-  summons: '#2370db'
+  summons: '#2370db',
+  covenant: '#a54569',
+  mycelial: '#6e8f3a'
 };
 
 export function defaultBranchColor(branch: string): string {
@@ -35,4 +37,3 @@ export function argbLiteralFromHex(value: string | null | undefined, branch = 'c
   const hex = normalizeBranchColor(value, branch).slice(1).toUpperCase();
   return `0xFF${hex}`;
 }
-

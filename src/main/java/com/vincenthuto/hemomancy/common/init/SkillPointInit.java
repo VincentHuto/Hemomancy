@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.init.skills.CoreSkillBranch;
+import com.vincenthuto.hemomancy.common.init.skills.CovenantSkillBranch;
 import com.vincenthuto.hemomancy.common.init.skills.LivingStaffSkillBranch;
+import com.vincenthuto.hemomancy.common.init.skills.MycelialSkillBranch;
 import com.vincenthuto.hemomancy.common.init.skills.ScarSkillBranch;
 import com.vincenthuto.hemomancy.common.init.skills.SummonSkillBranch;
 
@@ -17,18 +19,28 @@ public class SkillPointInit {
 			{90, 176},
 			{90, 210},
 			{90, 244},
-			{90, 278}
+			{90, 278},
+			{90, 312},
+			{90, 346},
+			{90, 380}
 	};
 
 	public static List<List<SkillPoint>> SKILL_TREE = new ArrayList<>();
 	public static List<SkillPoint> BASE = new ArrayList<>();
-	public static SkillPoint base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
+	public static SkillPoint base_skill, deep_base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
 			skill_feeding_frenzy, skill_hemostasis, skill_sanguine_surge, skill_crimson_mastery,
 			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach,
 			skill_manip_slots,
 			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery,
 			skill_puppet_skein, skill_living_sinew, skill_far_tether,
-			skill_living_conduit, skill_vascular_draw, skill_crimson_projection;
+			skill_living_conduit, skill_vascular_draw, skill_crimson_projection,
+			skill_hematic_focus, skill_vespers_refusal,
+			skill_thread_economy, skill_bound_command,
+			skill_deep_inscription, skill_fungal_symbiosis,
+			skill_sanctum_suture, skill_bloodline_concord, skill_servitor_tender,
+			skill_ancestral_sovereignty,
+			skill_sporitic_attunement, skill_hyphal_cultivation, skill_qliphoth_gestation,
+			skill_primal_morphogenesis;
 
 	public static void init() {
 		initBaseBranch();
@@ -36,9 +48,11 @@ public class SkillPointInit {
 
 	public static void initBaseBranch() {
 		CoreSkillBranch.register(BASE);
-		ScarSkillBranch.register(BASE);
-		SummonSkillBranch.register(BASE);
 		LivingStaffSkillBranch.register(BASE);
+		SummonSkillBranch.register(BASE);
+		ScarSkillBranch.register(BASE);
+		CovenantSkillBranch.register(BASE);
+		MycelialSkillBranch.register(BASE);
 		registerSkillBranch(BASE);
 	}
 

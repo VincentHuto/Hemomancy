@@ -344,4 +344,213 @@ public final class SkillPointHelper {
 		if (sp == null || !progress.isUnlocked(sp)) return 0;
 		return progress.getLevel(sp);
 	}
+
+	public static int getHematicFocusLevel(Player player) {
+		return getHematicFocusLevel(progress(player));
+	}
+
+	public static int getHematicFocusLevel() {
+		return getHematicFocusLevel(progress(null));
+	}
+
+	private static int getHematicFocusLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_hematic_focus;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getVespersRefusalLevel(Player player) {
+		return getVespersRefusalLevel(progress(player));
+	}
+
+	public static int getVespersRefusalLevel() {
+		return getVespersRefusalLevel(progress(null));
+	}
+
+	private static int getVespersRefusalLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_vespers_refusal;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getThreadEconomyLevel(Player player) {
+		return getThreadEconomyLevel(progress(player));
+	}
+
+	public static int getThreadEconomyLevel() {
+		return getThreadEconomyLevel(progress(null));
+	}
+
+	private static int getThreadEconomyLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_thread_economy;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getBoundCommandLevel(Player player) {
+		return getBoundCommandLevel(progress(player));
+	}
+
+	public static int getBoundCommandLevel() {
+		return getBoundCommandLevel(progress(null));
+	}
+
+	private static int getBoundCommandLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_bound_command;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static boolean hasDeepInscription(Player player) {
+		return hasDeepInscription(progress(player));
+	}
+
+	public static boolean hasDeepInscription() {
+		return hasDeepInscription(progress(null));
+	}
+
+	private static boolean hasDeepInscription(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_deep_inscription;
+		return sp != null && progress.isUnlocked(sp);
+	}
+
+	public static int getDeepInscriptionLevel(Player player) {
+		return getDeepInscriptionLevel(progress(player));
+	}
+
+	public static int getDeepInscriptionLevel() {
+		return getDeepInscriptionLevel(progress(null));
+	}
+
+	private static int getDeepInscriptionLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_deep_inscription;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getFungalSymbiosisLevel(Player player) {
+		return getFungalSymbiosisLevel(progress(player));
+	}
+
+	public static int getFungalSymbiosisLevel() {
+		return getFungalSymbiosisLevel(progress(null));
+	}
+
+	private static int getFungalSymbiosisLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_fungal_symbiosis;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getSanctumSutureLevel(Player player) {
+		return getSanctumSutureLevel(progress(player));
+	}
+
+	public static int getSanctumSutureLevel() {
+		return getSanctumSutureLevel(progress(null));
+	}
+
+	private static int getSanctumSutureLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_sanctum_suture;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getBloodlineConcordLevel(Player player) {
+		return getBloodlineConcordLevel(progress(player));
+	}
+
+	public static int getBloodlineConcordLevel() {
+		return getBloodlineConcordLevel(progress(null));
+	}
+
+	private static int getBloodlineConcordLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_bloodline_concord;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getServitorTenderLevel(Player player) {
+		return getServitorTenderLevel(progress(player));
+	}
+
+	public static int getServitorTenderLevel() {
+		return getServitorTenderLevel(progress(null));
+	}
+
+	private static int getServitorTenderLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_servitor_tender;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getAncestralSovereigntyLevel(Player player) {
+		return getAncestralSovereigntyLevel(progress(player));
+	}
+
+	public static int getAncestralSovereigntyLevel() {
+		return getAncestralSovereigntyLevel(progress(null));
+	}
+
+	private static int getAncestralSovereigntyLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_ancestral_sovereignty;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getSporiticAttunementLevel(Player player) {
+		return getSporiticAttunementLevel(progress(player));
+	}
+
+	public static int getSporiticAttunementLevel() {
+		return getSporiticAttunementLevel(progress(null));
+	}
+
+	private static int getSporiticAttunementLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_sporitic_attunement;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getHyphalCultivationLevel(Player player) {
+		return getHyphalCultivationLevel(progress(player));
+	}
+
+	public static int getHyphalCultivationLevel() {
+		return getHyphalCultivationLevel(progress(null));
+	}
+
+	private static int getHyphalCultivationLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_hyphal_cultivation;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getQliphothGestationLevel(Player player) {
+		return getQliphothGestationLevel(progress(player));
+	}
+
+	public static int getQliphothGestationLevel() {
+		return getQliphothGestationLevel(progress(null));
+	}
+
+	private static int getQliphothGestationLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_qliphoth_gestation;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getPrimalMorphogenesisLevel(Player player) {
+		return getPrimalMorphogenesisLevel(progress(player));
+	}
+
+	public static int getPrimalMorphogenesisLevel() {
+		return getPrimalMorphogenesisLevel(progress(null));
+	}
+
+	private static int getPrimalMorphogenesisLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_primal_morphogenesis;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
 }

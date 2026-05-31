@@ -24,9 +24,18 @@ public final class SporiticThuribleRules {
 		return BASE_BLOOD_DRAIN_PER_SECOND + SWING_BLOOD_DRAIN_PER_SECOND * clamped;
 	}
 
+	public static double bloodDrainPerSecond(double swingIntensity, int sporiticAttunementLevel) {
+		double multiplier = Math.max(0.75, 1.0 - Math.max(0, sporiticAttunementLevel) * 0.05);
+		return bloodDrainPerSecond(swingIntensity) * multiplier;
+	}
+
 	public static double auraRadius(double swingIntensity) {
 		double clamped = Mth.clamp(swingIntensity, 0.0, 1.0);
 		return BASE_AURA_RADIUS + SWING_AURA_RADIUS * clamped;
+	}
+
+	public static double auraRadius(double swingIntensity, int sporiticAttunementLevel) {
+		return auraRadius(swingIntensity) + Math.max(0, sporiticAttunementLevel) * 0.25;
 	}
 
 	public static double burnFraction(int burnTicks, int maxBurnTicks) {

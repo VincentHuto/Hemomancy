@@ -7,6 +7,12 @@ import {
   compassGuideRadius,
   createCompassPositionMap
 } from './compassLayout';
+import {
+  DEEP_ROOT_FIELD,
+  degreeRangeForWorkspace,
+  filterBranchesForWorkspace,
+  type SkillTreeWorkspaceMode
+} from './skillTreeLayers';
 
 export interface GraphNodePosition {
   skill: SkillModel;
@@ -32,7 +38,7 @@ export interface GraphEdge {
   toField: string;
   toBranch: string;
   color: string;
-  kind: 'local' | 'cross-branch';
+  kind: 'local' | 'cross-branch' | 'cross-layer-anchor';
   path: string;
 }
 
@@ -61,41 +67,49 @@ const BRANCH_START_Y = 72;
 const BRANCH_LABEL_OFFSET_Y = 28;
 const NODE_WIDTH = 48;
 const MIN_BRANCH_HEIGHT = 142;
-const MIN_MAX_DEGREE = 5;
+const MIN_MAX_DEGREE = 8;
 const CANVAS_PADDING = 160;
 const EDGE_NODE_TRIM_RADIUS = 16;
 const EDGE_ORGANIC_SWAY_MIN = 8;
 const EDGE_ORGANIC_SWAY_MAX = 18;
 const EDGE_ORGANIC_SWAY_FACTOR = 0.08;
 
-export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
-  const skills = branches.flatMap(branch => branch.skills);
+export interface GraphLayoutOptions {
+  workspace?: SkillTreeWorkspaceMode | 'all';
+}
+
+export function computeGraphLayout(branches: SkillBranchFile[], options: GraphLayoutOptions = {}): GraphLayout {
+  const workspace = options.workspace ?? 'all';
+  const visibleBranches = filterBranchesForWorkspace(branches, workspace);
+  const skills = visibleBranches.flatMap(branch => branch.skills);
   const branchColors = new Map(branches.map(branch => [branch.branch, normalizeBranchColor(branch.color, branch.branch)]));
   const degreeLabelPositions = new Map(branches
     .flatMap(branch => branch.degreeLabels ?? [])
     .map(label => [label.degree, { x: label.x, y: label.y }]));
-  const maxDegree = Math.max(MIN_MAX_DEGREE, ...skills.map(skill => skill.requiredDegree));
-  const degreeGuides = Array.from({ length: maxDegree + 1 }, (_, degree) => {
+  const degrees = workspace === 'all'
+    ? Array.from({ length: Math.max(MIN_MAX_DEGREE, ...skills.map(skill => skill.requiredDegree)) + 1 }, (_, degree) => degree)
+    : degreeRangeForWorkspace(workspace);
+  const degreeGuides = degrees.map((degree) => {
     const label = degreeLabelPositions.get(degree) ?? degreeGuideLabelPosition(degree);
     return {
       degree,
       label: `Degree ${degree}`,
       cx: COMPASS_CENTER.x,
       cy: COMPASS_CENTER.y,
-      radius: compassGuideRadius(degree),
+      radius: compassGuideRadius(degree, workspace),
       labelX: label.x,
       labelY: label.y
     };
   });
   const maxGuideRadius = Math.max(...degreeGuides.map(guide => guide.radius));
-  const fallbackPositions = createCompassPositionMap(branches);
+  const fallbackPositions = createCompassPositionMap(branches, { workspace });
   const nodes: GraphNodePosition[] = [];
   const labels: GraphBranchLabel[] = [];
   const bands: GraphBranchBand[] = [];
   let maxNodeX = 0;
   let maxNodeY = 0;
 
-  for (const branch of branches) {
+  for (const branch of visibleBranches) {
     const branchLabel = branchLabelPosition(branch.branch);
     const branchNodes = branch.skills.map((skill) => ({
       skill,
@@ -125,17 +139,24 @@ export function computeGraphLayout(branches: SkillBranchFile[]): GraphLayout {
   const byPosition = new Map(nodes.map(node => [node.skill.field, node]));
   const edges = nodes
     .flatMap(node => parentFieldsOf(node.skill)
-      .filter(parentField => byPosition.has(parentField))
-      .map(parentField => {
-        const parent = byPosition.get(parentField)!;
-        const kind: GraphEdge['kind'] = parent.skill.branch === node.skill.branch ? 'local' : 'cross-branch';
+      .flatMap(parentField => {
+        const parent = byPosition.get(parentField);
+        if (!parent && workspace !== 'deep') return [];
+        const visualParent = parent ?? {
+          skill: node.skill,
+          x: COMPASS_CENTER.x,
+          y: COMPASS_CENTER.y
+        };
+        const kind: GraphEdge['kind'] = parent
+          ? (parent.skill.branch === node.skill.branch ? 'local' : 'cross-branch')
+          : 'cross-layer-anchor';
         return {
-          fromField: parent.skill.field,
+          fromField: parent?.skill.field ?? DEEP_ROOT_FIELD,
           toField: node.skill.field,
           toBranch: node.skill.branch,
           color: branchColors.get(node.skill.branch) ?? normalizeBranchColor(null, node.skill.branch),
           kind,
-          path: edgePath(parent, node, kind)
+          path: edgePath(visualParent, node, kind)
         };
       }));
 
@@ -233,6 +254,16 @@ function branchLabelPosition(branch: string): { x: number; y: number } {
       return { x: COMPASS_CENTER.x + COMPASS_MAX_RING_RADIUS + 34, y: COMPASS_CENTER.y };
     case 'scars':
       return { x: COMPASS_CENTER.x - 24, y: COMPASS_CENTER.y + COMPASS_MAX_RING_RADIUS + 52 };
+    case 'covenant':
+      return {
+        x: COMPASS_CENTER.x + Math.round(COMPASS_MAX_RING_RADIUS * Math.SQRT1_2) + 32,
+        y: COMPASS_CENTER.y - Math.round(COMPASS_MAX_RING_RADIUS * Math.SQRT1_2) - 14
+      };
+    case 'mycelial':
+      return {
+        x: Math.max(LEFT_LABEL_X, COMPASS_CENTER.x - Math.round(COMPASS_MAX_RING_RADIUS * Math.SQRT1_2) - 120),
+        y: COMPASS_CENTER.y + Math.round(COMPASS_MAX_RING_RADIUS * Math.SQRT1_2) + 36
+      };
     case 'core':
     case 'base':
     default:

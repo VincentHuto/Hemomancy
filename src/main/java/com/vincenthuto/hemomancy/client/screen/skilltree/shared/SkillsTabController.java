@@ -24,7 +24,7 @@ public class SkillsTabController implements IProgressTab {
     private static final int NODE_GAP_Y = 60;
     private static final int COMPASS_CENTER_X = 480;
     private static final int COMPASS_CENTER_Y = 480;
-    private static final int[] DEGREE_RING_RADII = {72, 120, 190, 260, 330, 400};
+    private static final int[] DEGREE_RING_RADII = {72, 120, 170, 220, 270, 320, 370, 420, 470};
     private static final int COMPASS_CONTENT_PADDING = 80;
     private static final int DEGREE_LABEL_X = COMPASS_CENTER_X - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 10;
     private static final int DEGREE_LABEL_TOP_Y = COMPASS_CENTER_Y - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 28;
@@ -32,29 +32,37 @@ public class SkillsTabController implements IProgressTab {
     private static final int TRACE_DEGREE_LABEL = 0x88D66458;
     private static final int COL_NODE_BG           = 0xCC1A0505;
 
-    private final SkillTraceLayerCache traceCache = new SkillTraceLayerCache();
-    private final PanZoomState panZoom = new PanZoomState();
-    private final Map<SkillPoint, int[]> nodePositions = new HashMap<>();
+    private final SkillTraceLayerCache surfaceTraceCache = new SkillTraceLayerCache();
+    private final SkillTraceLayerCache deepTraceCache = new SkillTraceLayerCache();
+    private final PanZoomState surfacePanZoom = new PanZoomState();
+    private final PanZoomState deepPanZoom = new PanZoomState();
+    private final SkillTreeDiveState diveState = new SkillTreeDiveState();
+    private final Map<SkillPoint, int[]> surfaceNodePositions = new HashMap<>();
+    private final Map<SkillPoint, int[]> deepNodePositions = new HashMap<>();
     private int contentW, contentH;
     private int playerDegree;
     private float animTime = 0f;
+    private float deepFade = 0f;
+    private float lockedPortalFade = 0f;
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
         this.playerDegree = ctx.playerDegree();
         buildLayout();
-        panZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
     }
 
     private void buildLayout() {
-        nodePositions.clear();
+        surfaceNodePositions.clear();
+        deepNodePositions.clear();
         contentW = 0;
         contentH = 0;
         buildAutomaticLayout();
         for (List<SkillPoint> branch : SkillPointInit.SKILL_TREE) {
             for (SkillPoint sp : branch) {
                 if (sp.hasTreePosition()) {
-                    nodePositions.put(sp, new int[]{sp.getTreeX(), sp.getTreeY()});
+                    positionsForLayer(sp).put(sp, new int[]{sp.getTreeX(), sp.getTreeY()});
                 }
             }
         }
@@ -82,7 +90,8 @@ public class SkillsTabController implements IProgressTab {
                 int y = 40 + (maxDepth - d) * NODE_GAP_Y;
                 for (int i = 0; i < n; i++) {
                     int x = x0 + i * NODE_GAP_X;
-                    nodePositions.put(row.get(i), new int[]{x, y});
+                    SkillPoint sp = row.get(i);
+                    positionsForLayer(sp).put(sp, new int[]{x, y});
                 }
             }
         }
@@ -91,7 +100,13 @@ public class SkillsTabController implements IProgressTab {
     private void recalculateContentBounds() {
         contentW = 0;
         contentH = 0;
-        for (int[] pos : nodePositions.values()) {
+        for (Map<SkillPoint, int[]> layerPositions : List.of(surfaceNodePositions, deepNodePositions)) {
+            for (int[] pos : layerPositions.values()) {
+                contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
+                contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
+            }
+        }
+        for (int[] pos : List.of(new int[] {COMPASS_CENTER_X, COMPASS_CENTER_Y})) {
             contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
             contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
         }
@@ -102,6 +117,10 @@ public class SkillsTabController implements IProgressTab {
         }
         contentW = Math.max(contentW, COMPASS_CENTER_X + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
         contentH = Math.max(contentH, COMPASS_CENTER_Y + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
+    }
+
+    private Map<SkillPoint, int[]> positionsForLayer(SkillPoint sp) {
+        return SkillTreeLayerRules.layerForDegree(sp.getRequiredDegree()) == SkillTreeLayer.DEEP ? deepNodePositions : surfaceNodePositions;
     }
 
     private static int depth(SkillPoint sp) {
@@ -117,19 +136,49 @@ public class SkillsTabController implements IProgressTab {
         return max;
     }
 
-    private int sx(ProgressScreenContext ctx, int cx) { return panZoom.sx(ctx.guiLeft(), cx); }
-    private int sy(ProgressScreenContext ctx, int cy) { return panZoom.sy(ctx.guiTop(), cy); }
-    private int halfNode() { return panZoom.halfNode(NODE_SIZE); }
+    private int sx(ProgressScreenContext ctx, PanZoomState view, int cx) { return view.sx(ctx.guiLeft(), cx); }
+    private int sy(ProgressScreenContext ctx, PanZoomState view, int cy) { return view.sy(ctx.guiTop(), cy); }
+    private int halfNode(PanZoomState view) { return view.halfNode(NODE_SIZE); }
+
+    private PanZoomState activePanZoom() {
+        return diveState.isDeepActive() ? deepPanZoom : surfacePanZoom;
+    }
+
+    private PanZoomState deepRenderPanZoom() {
+        return diveState.isDeepActive() ? deepPanZoom : surfacePanZoom;
+    }
+
+    private PanZoomState transitionPulseView() {
+        return diveState.transitionPulseEnteringDeep() ? surfacePanZoom : deepPanZoom;
+    }
 
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
         animTime += 0.016f;
-        traceCache.rebuildIfNeeded(nodePositions, contentW, contentH);
-        traceCache.render(gfx, ctx, panZoom);
-        traceCache.renderHeartbeat(gfx, ctx, panZoom, animTime);
-        drawDegreeLabels(gfx, ctx);
-        traceCache.renderFlow(gfx, ctx, panZoom, animTime);
-        drawNodes(gfx, ctx);
+        updateDiveProgress(ctx);
+        float surfaceAlpha = 1.0f - deepFade;
+        float deepAlpha = deepFade;
+        PanZoomState deepView = deepRenderPanZoom();
+        surfaceTraceCache.rebuildIfNeeded(surfaceNodePositions, contentW, contentH, false, SkillTreeLayer.SURFACE);
+        deepTraceCache.rebuildIfNeeded(deepNodePositions, contentW, contentH, true, SkillTreeLayer.DEEP);
+
+        if (surfaceAlpha > 0.01f) surfaceTraceCache.render(gfx, ctx, surfacePanZoom, surfaceAlpha);
+        if (deepAlpha > 0.01f) deepTraceCache.render(gfx, ctx, deepView, deepAlpha);
+        surfaceTraceCache.renderHeartbeat(gfx, ctx, surfacePanZoom, animTime, surfaceAlpha);
+        if (deepAlpha > 0.01f) deepTraceCache.renderHeartbeat(gfx, ctx, deepView, animTime, deepAlpha);
+        if (lockedPortalFade > 0.01f) surfaceTraceCache.renderPortalPulse(gfx, ctx, surfacePanZoom, lockedPortalFade, true);
+        if (!diveState.isDeepActive() && deepFade > 0.01f) deepTraceCache.renderPortalPulse(gfx, ctx, deepView, deepFade, false);
+        float transitionPulse = diveState.transitionPulseProgress();
+        if (transitionPulse > 0.01f) {
+            surfaceTraceCache.renderScreenTransitionPulse(gfx, ctx, transitionPulseView(), transitionPulse, diveState.transitionPulseEnteringDeep());
+            diveState.tickTransitionPulse();
+        }
+        drawDegreeLabels(gfx, ctx, surfacePanZoom, SkillTreeLayer.SURFACE, surfaceAlpha);
+        drawDegreeLabels(gfx, ctx, deepView, SkillTreeLayer.DEEP, deepAlpha);
+        surfaceTraceCache.renderFlow(gfx, ctx, surfacePanZoom, animTime, surfaceAlpha);
+        if (deepAlpha > 0.01f) deepTraceCache.renderFlow(gfx, ctx, deepView, animTime, deepAlpha);
+        drawNodes(gfx, ctx, surfacePanZoom, surfaceNodePositions, surfaceAlpha);
+        drawNodes(gfx, ctx, deepView, deepNodePositions, deepAlpha);
     }
 
     @Override
@@ -140,52 +189,85 @@ public class SkillsTabController implements IProgressTab {
         drawTooltip(gfx, ctx, mouseX, mouseY);
     }
 
-    private void drawDegreeLabels(GuiGraphics gfx, ProgressScreenContext ctx) {
-        if (panZoom.zoom < 0.5f) return;
+    public float getDeepFade() {
+        return deepFade;
+    }
+
+    public float updateAndGetDeepFade(ProgressScreenContext ctx) {
+        updateDiveProgress(ctx);
+        return deepFade;
+    }
+
+    private void updateDiveProgress(ProgressScreenContext ctx) {
+        if (diveState.isDeepActive()) {
+            deepFade = 1.0f;
+            lockedPortalFade = 0.0f;
+            return;
+        }
+        double centerX = surfacePanZoom.panX + COMPASS_CENTER_X * surfacePanZoom.zoom;
+        double centerY = surfacePanZoom.panY + COMPASS_CENTER_Y * surfacePanZoom.zoom;
+        float centerFocus = SkillTreeLayerRules.centerFocus(centerX, centerY, ctx.guiWidth(), ctx.guiHeight());
+        float surfaceDive = SkillTreeLayerRules.diveProgress(playerDegree, surfacePanZoom.zoom, centerFocus);
+        if (diveState.updateSurfaceDive(playerDegree, surfaceDive)) {
+            deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+            deepFade = 1.0f;
+            lockedPortalFade = 0.0f;
+            return;
+        }
+        deepFade = diveState.deepFade(surfaceDive);
+        lockedPortalFade = SkillTreeLayerRules.lockedPortalProgress(playerDegree, surfacePanZoom.zoom, centerFocus);
+    }
+
+    private void drawDegreeLabels(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState view, SkillTreeLayer layer, float alpha) {
+        if (alpha <= 0.01f) return;
+        if (view.zoom < 0.5f) return;
         for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
+            if (SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
             int[] labelPosition = SkillPointInit.getDegreeLabelPosition(degree);
-            gfx.drawString(ctx.font(), "Degree " + degree, sx(ctx, labelPosition[0]), sy(ctx, labelPosition[1]), TRACE_DEGREE_LABEL, false);
+            gfx.drawString(ctx.font(), "Degree " + degree, sx(ctx, view, labelPosition[0]), sy(ctx, view, labelPosition[1]),
+                    withAlpha(TRACE_DEGREE_LABEL, Math.round(((TRACE_DEGREE_LABEL >>> 24) & 0xFF) * alpha)), false);
         }
     }
 
-    private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
+    private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState view, Map<SkillPoint, int[]> positions, float alpha) {
+        if (alpha <= 0.01f) return;
         float time = animTime;
-        int hn = halfNode();
-        for (var e : nodePositions.entrySet()) {
+        int hn = halfNode(view);
+        for (var e : positions.entrySet()) {
             SkillPoint sp = e.getKey();
             int[] pos = e.getValue();
-            int nx = sx(ctx, pos[0]);
-            int ny = sy(ctx, pos[1]);
+            int nx = sx(ctx, view, pos[0]);
+            int ny = sy(ctx, view, pos[1]);
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
             EnumNodeShape shape = sp.getNodeShape();
             int branchColor = sp.getBranchColor();
             int border;
             if (degreeLocked) {
-                border = withAlpha(branchColor, 0xCC);
+                border = withAlpha(branchColor, Math.round(0xCC * alpha));
             } else {
                 switch (SkillProgressClientCache.current().getState(sp)) {
                     case UNLOCKED -> {
-                        border = branchColor;
+                        border = fadeColor(branchColor, alpha);
                         float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
-                        int ga = (int)(40 * p);
+                        int ga = (int)(40 * p * alpha);
                         NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3, withAlpha(branchColor, ga));
                     }
                     case LOCKED -> {
-                        border = withAlpha(branchColor, 0xAA);
+                        border = withAlpha(branchColor, Math.round(0xAA * alpha));
                         if (!sp.getParents().isEmpty() && areParentsUnlocked(sp))
-                            border = withAlpha(branchColor, 0xEE);
+                            border = withAlpha(branchColor, Math.round(0xEE * alpha));
                     }
-                    default -> border = withAlpha(branchColor, 0xAA);
+                    default -> border = withAlpha(branchColor, Math.round(0xAA * alpha));
                 }
             }
-            NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
+            NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fadeColor(COL_NODE_BG, alpha));
             NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
             if (degreeLocked) {
-                NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
-                if (panZoom.zoom >= 0.5f) gfx.drawCenteredString(ctx.font(), "?", nx, ny - 4, 0xFF111111);
+                NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, fadeColor(0xBB000000, alpha));
+                if (view.zoom >= 0.5f) gfx.drawCenteredString(ctx.font(), "?", nx, ny - 4, fadeColor(0xFF111111, alpha));
                 continue;
             }
-            if (panZoom.zoom >= 0.5f) {
+            if (view.zoom >= 0.5f) {
                 ResourceLocation iconTex = sp.getIconTexture();
                 if (iconTex != null) {
                     ScreenDrawUtils.renderScaledTexture(gfx, iconTex, nx, ny, hn);
@@ -196,14 +278,14 @@ public class SkillsTabController implements IProgressTab {
                     } else {
                         String ini = getSkillInitial(sp);
                         int textCol = SkillProgressClientCache.current().getState(sp) == EnumSkillStates.UNLOCKED ? 0xFFFFAAAA : 0xFF888888;
-                        gfx.drawCenteredString(ctx.font(), ini, nx, ny - 4, textCol);
+                        gfx.drawCenteredString(ctx.font(), ini, nx, ny - 4, fadeColor(textCol, alpha));
                     }
                 }
                 if (sp.getMaxLevels() > 0) {
                     int level = SkillProgressClientCache.current().getLevel(sp);
                     String lvlStr = level + "/" + sp.getMaxLevels();
                     int lvlCol = SkillProgressClientCache.current().isMaxed(sp) ? 0xFF44AA44 : 0xFF888888;
-                    gfx.drawCenteredString(ctx.font(), lvlStr, nx, ny + hn + 3, lvlCol);
+                    gfx.drawCenteredString(ctx.font(), lvlStr, nx, ny + hn + 3, fadeColor(lvlCol, alpha));
                 }
             }
         }
@@ -213,11 +295,12 @@ public class SkillsTabController implements IProgressTab {
         boolean insideGui = mouseX >= ctx.guiLeft() && mouseX < ctx.guiLeft() + ctx.guiWidth()
                 && mouseY >= ctx.guiTop() && mouseY < ctx.guiTop() + ctx.guiHeight();
         if (!insideGui) return;
-        int hn = halfNode();
-        for (var e : nodePositions.entrySet()) {
+        PanZoomState view = activePanZoom();
+        int hn = halfNode(view);
+        for (var e : interactiveNodePositions().entrySet()) {
             SkillPoint sp = e.getKey();
             int[] pos = e.getValue();
-            int nx = sx(ctx, pos[0]), ny = sy(ctx, pos[1]);
+            int nx = sx(ctx, view, pos[0]), ny = sy(ctx, view, pos[1]);
             if (!NodeShapeRenderer.isInside(sp.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
             List<Component> tip = new ArrayList<>();
             boolean degreeLocked = sp.isDegreeLocked(playerDegree);
@@ -278,14 +361,23 @@ public class SkillsTabController implements IProgressTab {
         return (color & 0x00FFFFFF) | (Mth.clamp(alpha, 0, 255) << 24);
     }
 
+    private static int fadeColor(int color, float alpha) {
+        return withAlpha(color, Math.round(((color >>> 24) & 0xFF) * Mth.clamp(alpha, 0.0f, 1.0f)));
+    }
+
     private SkillPoint nodeUnder(ProgressScreenContext ctx, double mx, double my) {
-        int h = halfNode();
-        for (var e : nodePositions.entrySet()) {
+        PanZoomState view = activePanZoom();
+        int h = halfNode(view);
+        for (var e : interactiveNodePositions().entrySet()) {
             int[] p = e.getValue();
-            int nx = sx(ctx, p[0]), ny = sy(ctx, p[1]);
+            int nx = sx(ctx, view, p[0]), ny = sy(ctx, view, p[1]);
             if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h)) return e.getKey();
         }
         return null;
+    }
+
+    private Map<SkillPoint, int[]> interactiveNodePositions() {
+        return diveState.isDeepActive() || SkillTreeLayerRules.isDeepUnlocked(playerDegree) && deepFade >= 0.5f ? deepNodePositions : surfaceNodePositions;
     }
 
     private void tryUnlock(SkillPoint sp) {
@@ -296,6 +388,7 @@ public class SkillsTabController implements IProgressTab {
     private static String getSkillInitial(SkillPoint sp) {
         return switch (sp.getName()) {
             case "base"                  -> "\u2726";
+            case "deep_base"             -> "\u2726";
             case "skill_capacity"        -> "C";
             case "skill_efficiency"      -> "E";
             case "skill_last_wind"       -> "W";
@@ -315,6 +408,20 @@ public class SkillsTabController implements IProgressTab {
             case "skill_living_conduit"  -> "L";
             case "skill_vascular_draw"   -> "V";
             case "skill_crimson_projection" -> "P";
+            case "skill_hematic_focus" -> "F";
+            case "skill_vespers_refusal" -> "R";
+            case "skill_thread_economy" -> "T";
+            case "skill_bound_command" -> "B";
+            case "skill_deep_inscription" -> "D";
+            case "skill_fungal_symbiosis" -> "F";
+            case "skill_sanctum_suture" -> "S";
+            case "skill_bloodline_concord" -> "C";
+            case "skill_servitor_tender" -> "T";
+            case "skill_ancestral_sovereignty" -> "A";
+            case "skill_sporitic_attunement" -> "A";
+            case "skill_hyphal_cultivation" -> "H";
+            case "skill_qliphoth_gestation" -> "Q";
+            case "skill_primal_morphogenesis" -> "P";
             default                      -> "?";
         };
     }
@@ -331,10 +438,33 @@ public class SkillsTabController implements IProgressTab {
     }
 
     @Override public boolean mouseReleased(ProgressScreenContext ctx, double mx, double my, int btn) { return false; }
-    @Override public boolean mouseDragged(ProgressScreenContext ctx, double mx, double my, int btn, double dx, double dy) { return false; }
-    @Override public boolean mouseScrolled(ProgressScreenContext ctx, double mx, double my, double delta) { return false; }
 
-    @Override public PanZoomState getPanZoomState() { return panZoom; }
+    @Override
+    public boolean mouseDragged(ProgressScreenContext ctx, double mx, double my, int btn, double dx, double dy) {
+        if (btn != 0) return false;
+        PanZoomState view = activePanZoom();
+        view.applyDrag(dx, dy);
+        view.clamp(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        return true;
+    }
+
+    @Override
+    public boolean mouseScrolled(ProgressScreenContext ctx, double mx, double my, double delta) {
+        PanZoomState view = activePanZoom();
+        view.applyScroll(ctx.guiLeft(), ctx.guiTop(), mx, my, delta);
+        view.clamp(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        if (diveState.isDeepActive()) {
+            if (delta < 0 && diveState.updateDeepZoom(deepPanZoom.zoom)) {
+                surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+                deepFade = 0.0f;
+            }
+            return true;
+        }
+        updateDiveProgress(ctx);
+        return true;
+    }
+
+    @Override public PanZoomState getPanZoomState() { return activePanZoom(); }
     public int getContentW() { return contentW; }
     public int getContentH() { return contentH; }
 }

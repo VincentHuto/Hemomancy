@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -75,7 +76,8 @@ public class SporiticThuribleEvents {
 	}
 
 	private static boolean drainUpkeep(ServerPlayer player, ItemStack stack, double intensity) {
-		double drain = SporiticThuribleRules.bloodDrainPerSecond(intensity);
+		double drain = SporiticThuribleRules.bloodDrainPerSecond(intensity,
+				SkillPointHelper.getSporiticAttunementLevel(player));
 		Optional<IBloodVolume> volumeOpt = HemoCapabilityAccess.getBloodVolume(player);
 		if (volumeOpt.isEmpty()) {
 			SporiticThuribleItem.extinguish(stack);
@@ -109,7 +111,8 @@ public class SporiticThuribleEvents {
 
 	private static void applyAura(ServerPlayer owner, SporiticThuribleSpore spore, double intensity) {
 		ServerLevel level = owner.serverLevel();
-		double radius = SporiticThuribleRules.auraRadius(intensity);
+		double radius = SporiticThuribleRules.auraRadius(intensity,
+				SkillPointHelper.getSporiticAttunementLevel(owner));
 		AABB area = owner.getBoundingBox().inflate(radius);
 		long expires = level.getGameTime() + SporiticThuribleRules.RESONANCE_DURATION_TICKS;
 

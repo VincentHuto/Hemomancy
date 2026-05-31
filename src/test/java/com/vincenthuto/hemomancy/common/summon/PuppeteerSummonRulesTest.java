@@ -26,12 +26,17 @@ public final class PuppeteerSummonRulesTest {
 		assertDouble("living sinew health scale", 1.45, PuppeteerSummonRules.healthMultiplier(3));
 		assertDouble("living sinew damage scale", 1.30, PuppeteerSummonRules.damageMultiplier(3));
 		assertDouble("far tether range", 40.0, PuppeteerSummonRules.commandRange(3));
+		assertDouble("bound command extends range after far tether", 52.0, PuppeteerSummonRules.commandRange(3, 3));
 
 		assertEquals("thread refill respects capacity", 256, PuppeteerSummonRules.refilledThread(240, 40));
+		assertEquals("bound command raises thread capacity", 352, PuppeteerSummonRules.threadCapacity(3));
+		assertEquals("thread refill respects upgraded capacity", 300, PuppeteerSummonRules.refilledThread(240, 60, 3));
+		assertDouble("thread economy reduces call cost", 0.85, PuppeteerSummonRules.threadCostMultiplier(3));
 		assertEquals("thread refill ignores negative input", 120, PuppeteerSummonRules.refilledThread(120, -5));
 		assertTrue("vulture has higher upkeep than hulk", vulture.threadUpkeepPerMinute() > hulk.threadUpkeepPerMinute());
 
 		assertEquals("missing crossbar dismissal lasts five seconds", 100, PuppeteerSummonRules.CROSSBAR_DISMISSAL_TICKS);
+		assertEquals("bound command gives longer dismissal grace", 160, PuppeteerSummonRules.dismissalGraceTicks(3));
 		assertDouble("stable summon renders fully", 1.0, PuppeteerSummonRules.dismissalAlpha(0, 0.0F));
 		assertDouble("half dismissed summon renders half strength", 0.5, PuppeteerSummonRules.dismissalAlpha(50, 0.0F));
 		assertDouble("expired dismissal is transparent", 0.0, PuppeteerSummonRules.dismissalAlpha(1, 1.0F));

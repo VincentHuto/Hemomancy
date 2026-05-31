@@ -229,6 +229,8 @@ public class SkillPoint {
 			case "living_staff" -> 0xFFD9AD28;
 			case "scars" -> 0xFF9A9A9F;
 			case "summons" -> 0xFF2370DB;
+			case "covenant" -> 0xFFA54569;
+			case "mycelial" -> 0xFF6E8F3A;
 			case "base", "core" -> 0xFFD00000;
 			default -> 0xFFD00000;
 		};

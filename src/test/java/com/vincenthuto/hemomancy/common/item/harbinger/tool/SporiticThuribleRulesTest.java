@@ -7,14 +7,24 @@ public final class SporiticThuribleRulesTest {
 	}
 
 	public static void main(String[] args) {
+		bootstrapMinecraftIfAvailable();
 		sporeIdsMapToTendencies();
 		matchingTendencyReceivesResonanceDiscounts();
 		nonMatchingTendencyDoesNotReceiveResonanceDiscounts();
 		swingIntensityScalesDrainAndRadius();
+		sporiticAttunementImprovesAuraAndUpkeep();
 		burnFractionIsClamped();
 		burnTimeUsesEndTickWithoutPerTickStateMutation();
 		sporeParticleColorsUseByteRgbValues();
-		burningSporeDisplayStackUsesCatalystItemId();
+		burningSporeItemIdUsesCatalystItemId();
+	}
+
+	private static void bootstrapMinecraftIfAvailable() {
+		try {
+			Class.forName("net.minecraft.server.Bootstrap").getMethod("bootStrap").invoke(null);
+		} catch (ReflectiveOperationException ignored) {
+			// Pure rule test classpaths do not always include the Minecraft bootstrap.
+		}
 	}
 
 	private static void sporeIdsMapToTendencies() {
@@ -59,6 +69,11 @@ public final class SporiticThuribleRulesTest {
 		assertDouble("full swing aura radius", 5.0, SporiticThuribleRules.auraRadius(1.0));
 	}
 
+	private static void sporiticAttunementImprovesAuraAndUpkeep() {
+		assertDouble("attunement lowers upkeep", 13.6, SporiticThuribleRules.bloodDrainPerSecond(1.0, 3));
+		assertDouble("attunement widens aura", 5.75, SporiticThuribleRules.auraRadius(1.0, 3));
+	}
+
 	private static void burnFractionIsClamped() {
 		assertDouble("full burn fraction", 1.0,
 				SporiticThuribleRules.burnFraction(SporiticThuribleRules.DEFAULT_BURN_TICKS,
@@ -89,14 +104,13 @@ public final class SporiticThuribleRulesTest {
 		assertDouble("vivacious blue byte", 75.0, vivacious.blue());
 	}
 
-	private static void burningSporeDisplayStackUsesCatalystItemId() {
+	private static void burningSporeItemIdUsesCatalystItemId() {
 		try {
-			Object displayStack = SporiticThuribleSpore.RUINOUS.getClass().getMethod("displayStack")
+			Object itemId = SporiticThuribleSpore.RUINOUS.getClass().getMethod("itemId")
 					.invoke(SporiticThuribleSpore.RUINOUS);
-			boolean isEmpty = (boolean) displayStack.getClass().getMethod("isEmpty").invoke(displayStack);
-			assertTrue("display stack exists for catalyst", !isEmpty);
+			assertEquals("burning spore catalyst id", "hemomancy:ruinous_spores", String.valueOf(itemId));
 		} catch (ReflectiveOperationException exception) {
-			throw new AssertionError("burning spore display stack is available", exception);
+			throw new AssertionError("burning spore item id is available", exception);
 		}
 	}
 

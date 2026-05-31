@@ -215,6 +215,7 @@ small {
   display: flex;
   flex: 0 0 auto;
   gap: 6px;
+  align-items: center;
 }
 
 .history-controls button {
@@ -223,6 +224,30 @@ small {
   color: #ead3c9;
   font-size: 12px;
   font-weight: 800;
+}
+
+.workspace-toggle {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid rgba(119, 67, 58, 0.72);
+  border-radius: 6px;
+  background: rgba(14, 6, 6, 0.86);
+}
+
+.workspace-toggle button {
+  border: 0;
+  border-right: 1px solid rgba(119, 67, 58, 0.58);
+  border-radius: 0;
+  background: transparent;
+}
+
+.workspace-toggle button:last-child {
+  border-right: 0;
+}
+
+.workspace-toggle button.active {
+  background: #4a1c17;
+  color: #ffd8cc;
 }
 
 .snap-toggle {
@@ -342,6 +367,11 @@ small {
   opacity: 0.34;
 }
 
+.anchor-edge {
+  stroke-width: 2px;
+  opacity: 0.28;
+}
+
 .edge-branch-core,
 .edge-branch-base {
   stroke: #d00000;
@@ -357,6 +387,14 @@ small {
 
 .edge-branch-living-staff {
   stroke: #d9ad28;
+}
+
+.edge-branch-covenant {
+  stroke: #a54569;
+}
+
+.edge-branch-mycelial {
+  stroke: #6e8f3a;
 }
 
 .wire-edge {

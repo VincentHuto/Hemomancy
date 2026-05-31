@@ -150,7 +150,9 @@ public class HarbingerProgressScreen extends Screen {
     @Override
     public boolean mouseClicked(double mx, double my, int btn) {
         if (btn == 0) {
-            if (activeController().getPanZoomState() != null && isOverHomeButton(mx, my)) {
+            PanZoomState activeView = activeController().getPanZoomState();
+            if (activeView != null && isOverHomeButton(mx, my)) {
+                view = activeView;
                 view.centreOn(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
                 return true;
             }
@@ -216,18 +218,20 @@ public class HarbingerProgressScreen extends Screen {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
-        veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight);
+        ProgressScreenContext ctx = makeContext();
+        veinBg.render(gfx, guiLeft, guiTop, guiWidth, guiHeight, activeTab == Tab.SKILLS ? skills.updateAndGetDeepFade(ctx) : 0.0f);
         ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, 0xFF330808, 0xFF220606);
 
         gfx.enableScissor(guiLeft + 2, guiTop + 2, guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
-        ProgressScreenContext ctx = makeContext();
         activeController().render(gfx, ctx, mouseX, mouseY, partial);
         gfx.disableScissor();
 
         activeController().renderOverlay(gfx, ctx, mouseX, mouseY);
 
         drawTabsAboveCanvas(gfx, mouseX, mouseY);
-        if (activeController().getPanZoomState() != null) {
+        PanZoomState activeView = activeController().getPanZoomState();
+        if (activeView != null) {
+            view = activeView;
             drawHomeButton(gfx, mouseX, mouseY);
         }
 

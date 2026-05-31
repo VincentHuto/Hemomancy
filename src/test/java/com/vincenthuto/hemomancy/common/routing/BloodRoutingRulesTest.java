@@ -10,6 +10,7 @@ public final class BloodRoutingRulesTest {
         drawsEquippedGourdBeforePlayer();
         respectsPlayerSafetyFloor();
         maintainsWorkingReserveInsteadOfFillingTarget();
+        covenantSkillsImproveRoutingBudgets();
     }
 
     private static void drawsEquippedGourdBeforePlayer() {
@@ -51,6 +52,18 @@ public final class BloodRoutingRulesTest {
         double request = BloodRoutingRules.calculateReserveRequest(target, 600.0, 1000.0);
 
         assertEquals(25.0, request, "request is capped at the working reserve gap");
+    }
+
+    private static void covenantSkillsImproveRoutingBudgets() {
+        assertEquals(840.0, BloodRoutingRules.workingReserve(3), "sanctum suture raises working reserve");
+        assertEquals(1.30, BloodRoutingRules.bloodlineEfficiencyMultiplier(3),
+                "bloodline concord improves bloodline routing");
+        assertEquals(1.45, BloodRoutingRules.servitorThroughputMultiplier(3),
+                "servitor tender improves thrall and drudge throughput");
+        assertEquals(28.0, BloodRoutingRules.servitorCommandRange(16.0, 3),
+                "servitor tender improves courier range");
+        assertEquals(1.18, BloodRoutingRules.ancestralSovereigntyMultiplier(3),
+                "ancestral sovereignty improves covenant-domain support");
     }
 
     private static IBloodVolume volume(double current, double max) {

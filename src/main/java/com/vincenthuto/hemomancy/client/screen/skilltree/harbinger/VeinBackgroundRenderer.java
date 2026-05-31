@@ -33,42 +33,50 @@ public final class VeinBackgroundRenderer {
     private float animTime = 0f;
 
     public void render(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
+        render(gfx, gx, gy, gw, gh, 0.0f);
+    }
+
+    public void render(GuiGraphics gfx, int gx, int gy, int gw, int gh, float deepFade) {
         // --- NEW: advance time (frame-based fallback) ---
         animTime += 0.016f; // ~60 FPS approximation
 
         float time = animTime;
+        float fade = Mth.clamp(deepFade, 0.0f, 1.0f);
 
         gfx.enableScissor(gx, gy, gx + gw, gy + gh);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        gfx.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
+        gfx.fill(gx, gy, gx + gw, gy + gh, lerpArgb(0xFF0A0204, 0xFF0E020D, fade));
 
         int cx = gx + gw / 2, cy = gy + gh / 2;
         int glowRadius = Math.max(gw, gh) / 2;
         for (int ring = glowRadius; ring > 0; ring -= 4) {
             float t = (float)ring / glowRadius;
-            int alpha = (int)(35 * (1f - t));
-            int red = (int)(40 * (1f - t));
-            gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16));
+            int alpha = (int)((35 + 10 * fade) * (1f - t));
+            int red = (int)((40 + 7 * fade) * (1f - t));
+            int green = (int)((4 + fade) * (1f - t));
+            int blue = (int)((3 + 12 * fade) * (1f - t));
+            gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16) | (green << 8) | blue);
         }
 
         for (int i = 0; i < VEIN_COUNT; i++) {
-            drawVeinTendril(gfx, i, time, gx, gy, gw, gh);
+            drawVeinTendril(gfx, i, time, gx, gy, gw, gh, fade);
         }
 
         Random speckRand = new Random(12345L);
         for (int s = 0; s < 120; s++) {
             int spx = gx + speckRand.nextInt(gw), spy = gy + speckRand.nextInt(gh);
-            int sr = 10 + speckRand.nextInt(20), sg = speckRand.nextInt(6), sa = 15 + speckRand.nextInt(25);
-            gfx.fill(spx, spy, spx + 1, spy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+            int sr = 10 + speckRand.nextInt(20) + (int)(7 * fade), sg = (int)(speckRand.nextInt(5) * (1f - fade)), sa = 15 + speckRand.nextInt(25);
+            int sb = (int)(fade * (6 + speckRand.nextInt(7)));
+            gfx.fill(spx, spy, spx + 1, spy + 1, (sa << 24) | (sr << 16) | (sg << 8) | sb);
         }
 
         RenderSystem.disableBlend();
         gfx.disableScissor();
     }
 
-    private void drawVeinTendril(GuiGraphics gfx, int index, float time, int gx, int gy, int gw, int gh) {
+    private void drawVeinTendril(GuiGraphics gfx, int index, float time, int gx, int gy, int gw, int gh, float deepFade) {
         float[] p = veinParams[index];
 
         float startX    = gx + p[0] * gw;
@@ -90,9 +98,11 @@ public final class VeinBackgroundRenderer {
         // --- NEW: seeded phase for consistency ---
         float timeOffset = time * speed * 2.0f + baseAngle;
 
-        int baseRed   = (int)(40 + 50 * brightness);
-        int baseGreen = (int)(2  + 8  * brightness);
-        int baseBlue  = (int)(5  + 5  * brightness);
+        int baseRed   = (int)Mth.lerp(deepFade, 40 + 50 * brightness, 34 + 24 * brightness);
+        int baseGreen = (int)Mth.lerp(deepFade, 2  + 8  * brightness, 3  + 4  * brightness);
+        int baseBlue  = (int)Mth.lerp(deepFade, 5  + 5  * brightness, 18 + 16 * brightness);
+        float deepRedScale = Mth.lerp(deepFade, 1.0f, 0.86f);
+        float deepBlueScale = Mth.lerp(deepFade, 0.3f, 0.74f);
 
         for (int step = 0; step < length; step++) {
             float squiggle      = amplitude * Mth.sin(frequency * step + timeOffset);
@@ -114,11 +124,23 @@ public final class VeinBackgroundRenderer {
             float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
 
             int a = (int)Mth.clamp(tipFade * pulse * 180, 20, 200);
-            int r = (int)Mth.clamp(baseRed   * pulse,        0, 255);
+            int r = (int)Mth.clamp(baseRed   * pulse * deepRedScale, 0, 255);
             int g = (int)Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-            int b = (int)Mth.clamp(baseBlue  * pulse * 0.3f, 0, 255);
+            int b = (int)Mth.clamp(baseBlue  * pulse * deepBlueScale, 0, 255);
 
             gfx.fill(ix, iy, ix + thickness, iy + thickness, (a << 24) | (r << 16) | (g << 8) | b);
         }
+    }
+
+    private static int lerpArgb(int from, int to, float t) {
+        int a = lerpChannel((from >>> 24) & 0xFF, (to >>> 24) & 0xFF, t);
+        int r = lerpChannel((from >>> 16) & 0xFF, (to >>> 16) & 0xFF, t);
+        int g = lerpChannel((from >>> 8) & 0xFF, (to >>> 8) & 0xFF, t);
+        int b = lerpChannel(from & 0xFF, to & 0xFF, t);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static int lerpChannel(int from, int to, float t) {
+        return (int) Mth.clamp(from + (to - from) * t, 0, 255);
     }
 }

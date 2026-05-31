@@ -30,7 +30,7 @@ final class SkillTraceLayerCache {
 
     private static final int COMPASS_CENTER_X = 480;
     private static final int COMPASS_CENTER_Y = 480;
-    private static final int[] DEGREE_RING_RADII = {72, 120, 190, 260, 330, 400};
+    private static final int[] DEGREE_RING_RADII = {72, 120, 170, 220, 270, 320, 370, 420, 470};
 
     private static final int TRACE_DEGREE_RING = 0x1858231F;
     private static final int TRACE_NODE_TRIM_RADIUS = 11;
@@ -57,7 +57,15 @@ final class SkillTraceLayerCache {
     private List<FlowTrace> flowTraces = List.of();
 
     void rebuildIfNeeded(Map<SkillPoint, int[]> nodePositions, int contentW, int contentH) {
-        String nextSignature = buildSignature(nodePositions, contentW, contentH);
+        rebuildIfNeeded(nodePositions, contentW, contentH, false, null);
+    }
+
+    void rebuildIfNeeded(Map<SkillPoint, int[]> nodePositions, int contentW, int contentH, boolean anchorMissingParents) {
+        rebuildIfNeeded(nodePositions, contentW, contentH, anchorMissingParents, null);
+    }
+
+    void rebuildIfNeeded(Map<SkillPoint, int[]> nodePositions, int contentW, int contentH, boolean anchorMissingParents, SkillTreeLayer layer) {
+        String nextSignature = buildSignature(nodePositions, contentW, contentH, anchorMissingParents, layer);
         if (nextSignature.equals(signature) && texture != null) {
             return;
         }
@@ -70,7 +78,9 @@ final class SkillTraceLayerCache {
         clearImage(image);
         clearImage(heartbeatImage);
 
-        for (int radius : DEGREE_RING_RADII) {
+        for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
+            if (layer != null && SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
+            int radius = degreeRingRadius(degree, layer);
             bakeDegreeRing(image, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, TRACE_DEGREE_RING);
             bakeDegreeRing(heartbeatImage, COMPASS_CENTER_X, COMPASS_CENTER_Y, radius, withAlpha(TRACE_DEGREE_RING, 24));
         }
@@ -80,7 +90,11 @@ final class SkillTraceLayerCache {
             for (SkillPoint parent : sp.getParents()) {
                 int[] childPos = nodePositions.get(sp);
                 int[] parentPos = nodePositions.get(parent);
-                if (childPos == null || parentPos == null) continue;
+                if (childPos == null) continue;
+                if (parentPos == null) {
+                    if (!anchorMissingParents) continue;
+                    parentPos = new int[] {COMPASS_CENTER_X, COMPASS_CENTER_Y};
+                }
 
                 boolean parentUnlocked = SkillProgressClientCache.current().getState(parent) == EnumSkillStates.UNLOCKED;
                 int branchColor = parentUnlocked ? branchTraceColor(sp) : dimTraceColor(branchTraceColor(sp));
@@ -98,35 +112,53 @@ final class SkillTraceLayerCache {
     }
 
     void render(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom) {
+        render(gfx, ctx, panZoom, 1.0f);
+    }
+
+    void render(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float alpha) {
         if (texture == null) return;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, clamp01(alpha));
         PoseStack pose = gfx.pose();
         pose.pushPose();
         pose.translate(ctx.guiLeft() + panZoom.panX, ctx.guiTop() + panZoom.panY, 0);
         pose.scale(panZoom.zoom, panZoom.zoom, 1.0f);
         gfx.blit(textureLocation, 0, 0, 0, 0, textureW, textureH, textureW, textureH);
         pose.popPose();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
     }
 
     void renderHeartbeat(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float animTime) {
+        renderHeartbeat(gfx, ctx, panZoom, animTime, 1.0f);
+    }
+
+    void renderHeartbeat(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float animTime, float alpha) {
         if (heartbeatTexture == null) return;
         float pulse = heartbeatPulse(animTime);
         if (pulse <= 0.015f) return;
+        float clampedAlpha = clamp01(alpha);
+        if (clampedAlpha <= 0.01f) return;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, HEARTBEAT_MAX_ALPHA * pulse);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, HEARTBEAT_MAX_ALPHA * pulse * clampedAlpha);
         renderBranchHeartbeatTexture(gfx, ctx, panZoom, 1.0f + HEARTBEAT_EXPANSION * pulse);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
-        renderCenterHeartbeat(gfx, ctx, panZoom, pulse);
+        renderCenterHeartbeat(gfx, ctx, panZoom, pulse, clampedAlpha);
     }
 
     void renderFlow(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float animTime) {
+        renderFlow(gfx, ctx, panZoom, animTime, 1.0f);
+    }
+
+    void renderFlow(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float animTime, float alpha) {
         if (flowTraces.isEmpty() || panZoom.zoom < 0.45f) return;
+        float clampedAlpha = clamp01(alpha);
+        if (clampedAlpha <= 0.01f) return;
 
         int size = panZoom.zoom >= 1.85f ? 2 : 1;
         for (FlowTrace trace : flowTraces) {
@@ -137,8 +169,37 @@ final class SkillTraceLayerCache {
             int x = panZoom.sx(ctx.guiLeft(), point.x());
             int y = panZoom.sy(ctx.guiTop(), point.y());
             int half = size / 2;
-            gfx.fill(x - half, y - half, x - half + size, y - half + size, trace.color());
+            gfx.fill(x - half, y - half, x - half + size, y - half + size, multiplyAlpha(trace.color(), clampedAlpha));
         }
+    }
+
+    void renderPortalPulse(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float progress, boolean locked) {
+        float pulse = clamp01(progress);
+        if (pulse <= 0.01f) return;
+        int centerX = panZoom.sx(ctx.guiLeft(), COMPASS_CENTER_X);
+        int centerY = panZoom.sy(ctx.guiTop(), COMPASS_CENTER_Y);
+        int baseRadius = Math.max(10, Math.round((18.0f + 10.0f * pulse) * panZoom.zoom));
+        int ringRadius = baseRadius + Math.max(7, Math.round(18.0f * panZoom.zoom * pulse));
+        int glowColor = locked ? 0xFF4A0B10 : 0xFFD00000;
+        int sourceColor = locked ? 0xFF6C1118 : CENTER_HEARTBEAT_SOURCE_COLOR;
+        fillCenterCircle(gfx, centerX, centerY, ringRadius + 7, withAlpha(glowColor, (int) (86 * pulse)));
+        fillCenterCircle(gfx, centerX, centerY, baseRadius, withAlpha(sourceColor, (int) (130 * pulse)));
+        drawCenterPulseRing(gfx, centerX, centerY, ringRadius, Math.max(2, ringRadius / 10), withAlpha(sourceColor, (int) (230 * pulse)));
+    }
+
+    void renderScreenTransitionPulse(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float progress, boolean enteringDeep) {
+        float pulse = clamp01(progress);
+        if (pulse <= 0.01f) return;
+        float elapsed = 1.0f - pulse;
+        float eased = 1.0f - (1.0f - elapsed) * (1.0f - elapsed);
+        int centerX = panZoom.sx(ctx.guiLeft(), COMPASS_CENTER_X);
+        int centerY = panZoom.sy(ctx.guiTop(), COMPASS_CENTER_Y);
+        int maxRadius = Math.max(ctx.guiWidth(), ctx.guiHeight()) / 2 + 64;
+        int ringRadius = 18 + Math.round(maxRadius * eased);
+        int sourceColor = enteringDeep ? 0xFFE2241E : 0xFFD66458;
+        int glowColor = enteringDeep ? 0xFF7A0208 : 0xFFB3161E;
+        drawCenterPulseRing(gfx, centerX, centerY, ringRadius, Math.max(2, ringRadius / 30), withAlpha(sourceColor, Math.round(220 * pulse)));
+        drawCenterPulseRing(gfx, centerX, centerY, Math.max(4, ringRadius - 8), 1, withAlpha(glowColor, Math.round(120 * pulse)));
     }
 
     private void upload(NativeImage image, boolean heartbeat) {
@@ -181,16 +242,16 @@ final class SkillTraceLayerCache {
         pose.popPose();
     }
 
-    private static void renderCenterHeartbeat(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float pulse) {
+    private static void renderCenterHeartbeat(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float pulse, float alpha) {
         int centerX = panZoom.sx(ctx.guiLeft(), COMPASS_CENTER_X);
         int centerY = panZoom.sy(ctx.guiTop(), COMPASS_CENTER_Y);
         int baseRadius = Math.max(9, Math.round(16.0f * panZoom.zoom));
         int pulseRadius = baseRadius + Math.max(4, Math.round(10.0f * panZoom.zoom * pulse));
         int glowRadius = pulseRadius + Math.max(4, Math.round(6.0f * panZoom.zoom));
 
-        int glowAlpha = Math.min(118, Math.max(18, (int) (92.0f * pulse)));
-        int sourceAlpha = Math.min(230, Math.max(48, (int) (190.0f * pulse)));
-        int frameAlpha = Math.min(255, Math.max(76, (int) (225.0f * pulse)));
+        int glowAlpha = Math.min(118, Math.max(18, (int) (92.0f * pulse * alpha)));
+        int sourceAlpha = Math.min(230, Math.max(48, (int) (190.0f * pulse * alpha)));
+        int frameAlpha = Math.min(255, Math.max(76, (int) (225.0f * pulse * alpha)));
 
         fillCenterCircle(gfx, centerX, centerY, glowRadius, withAlpha(CENTER_HEARTBEAT_GLOW_COLOR, glowAlpha / 3));
         fillCenterCircle(gfx, centerX, centerY, Math.max(baseRadius, glowRadius - 5), withAlpha(CENTER_HEARTBEAT_GLOW_COLOR, glowAlpha));
@@ -219,9 +280,10 @@ final class SkillTraceLayerCache {
         }
     }
 
-    private static String buildSignature(Map<SkillPoint, int[]> nodePositions, int contentW, int contentH) {
+    private static String buildSignature(Map<SkillPoint, int[]> nodePositions, int contentW, int contentH, boolean anchorMissingParents, SkillTreeLayer layer) {
         StringBuilder out = new StringBuilder();
-        out.append(contentW).append('x').append(contentH);
+        out.append(contentW).append('x').append(contentH).append(anchorMissingParents ? ":anchor" : ":local")
+                .append(':').append(layer == null ? "all" : layer.name());
         for (SkillPoint sp : sortedSkills(nodePositions)) {
             int[] pos = nodePositions.get(sp);
             out.append('|').append(sp.getId())
@@ -352,6 +414,13 @@ final class SkillTraceLayerCache {
         }
     }
 
+    private static int degreeRingRadius(int degree, SkillTreeLayer layer) {
+        if (layer == SkillTreeLayer.DEEP) {
+            return 120 + Math.max(0, degree - SkillTreeLayerRules.DEEP_MIN_DEGREE) * 50;
+        }
+        return DEGREE_RING_RADII[Math.max(0, Math.min(DEGREE_RING_RADII.length - 1, degree))];
+    }
+
     private static void bakeLine(NativeImage image, int x0, int y0, int x1, int y1, int color) {
         int steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
         if (steps == 0) {
@@ -448,6 +517,15 @@ final class SkillTraceLayerCache {
 
     private static int withAlpha(int color, int alpha) {
         return (color & 0x00FFFFFF) | (Math.max(0, Math.min(255, alpha)) << 24);
+    }
+
+    private static int multiplyAlpha(int color, float multiplier) {
+        int alpha = (color >>> 24) & 0xFF;
+        return withAlpha(color, Math.round(alpha * clamp01(multiplier)));
+    }
+
+    private static float clamp01(float value) {
+        return Math.max(0.0f, Math.min(1.0f, value));
     }
 
     private static float heartbeatPulse(float animTime) {

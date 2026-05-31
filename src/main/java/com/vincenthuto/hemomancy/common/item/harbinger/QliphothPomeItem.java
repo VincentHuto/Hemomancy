@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -85,7 +86,6 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	private static final int REGEN_DURATION_TICKS = 240;
 	private static final int DARKNESS_DURATION_TICKS = 140;
 	private static final int DARKNESS_TAINTED_DURATION_TICKS = 300;
-	private static final long EMPOWERMENT_DURATION_TICKS = 3600L;
 	private static final long CREATIVE_TEST_BLOOM_ORIGIN = Long.MIN_VALUE;
 	private static final String POME_MESSAGE_KEY_BASE = "message.hemomancy.qliphoth_pome.consume.";
 
@@ -220,7 +220,8 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				DARKNESS_DURATION_TICKS, 0, false, true, true));
 
 		// ── Timed manipulation discount ──
-		long expiryTick = level.getGameTime() + EMPOWERMENT_DURATION_TICKS;
+		long expiryTick = level.getGameTime()
+				+ QliphothPomeRules.empowermentDurationTicks(SkillPointHelper.getQliphothGestationLevel(player));
 		HemoCapabilityAccess.getInitiatoryDegree(player)
 				.ifPresent(d -> d.setPomeEmpowermentExpiry(expiryTick));
 

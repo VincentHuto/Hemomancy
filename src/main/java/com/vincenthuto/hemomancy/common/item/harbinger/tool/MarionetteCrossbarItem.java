@@ -92,9 +92,11 @@ public class MarionetteCrossbarItem extends Item {
 		int upkeep = 0;
 		for (Mob mob : active) {
 			if (mob instanceof BoundPuppeteerSummon bound) {
-				upkeep += PuppeteerSummonDefinitions.byName(bound.hemomancy$getSummonName())
+				int baseUpkeep = PuppeteerSummonDefinitions.byName(bound.hemomancy$getSummonName())
 						.map(PuppeteerSummonDefinition::threadUpkeepPerMinute)
 						.orElse(0);
+				upkeep += Math.max(1, (int) Math.ceil(baseUpkeep
+						* PuppeteerSummonRules.threadCostMultiplier(SkillPointHelper.getThreadEconomyLevel(player))));
 			}
 		}
 		if (upkeep > 0 && !consumeThread(stack, upkeep)) {
@@ -342,7 +344,8 @@ public class MarionetteCrossbarItem extends Item {
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
-		if (getThread(stack) < definition.threadSummonCost()) {
+		int summonCost = summonThreadCost(player, definition);
+		if (getThread(stack) < summonCost) {
 			player.displayClientMessage(Component.translatable("hemomancy.summon.thread.low")
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
@@ -354,7 +357,7 @@ public class MarionetteCrossbarItem extends Item {
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
-		if (!consumeThread(stack, definition.threadSummonCost())) {
+		if (!consumeThread(stack, summonCost)) {
 			return;
 		}
 		Mob mob = mobOpt.get();
@@ -400,6 +403,11 @@ public class MarionetteCrossbarItem extends Item {
 			}
 		}
 		return active;
+	}
+
+	private static int summonThreadCost(Player player, PuppeteerSummonDefinition definition) {
+		double multiplier = PuppeteerSummonRules.threadCostMultiplier(SkillPointHelper.getThreadEconomyLevel(player));
+		return Math.max(1, (int) Math.ceil(definition.threadSummonCost() * multiplier));
 	}
 
 	private static CompoundTag getData(ItemStack stack) {

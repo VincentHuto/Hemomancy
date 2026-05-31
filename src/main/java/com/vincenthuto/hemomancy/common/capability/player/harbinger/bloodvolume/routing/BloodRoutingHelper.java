@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsI
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -35,11 +36,11 @@ public final class BloodRoutingHelper {
 
     public static double routeLinkedTarget(ServerLevel level, BlockPos targetPos, DirectBloodLinkData link) {
         return routeLinkedTarget(level, targetPos, targetPos, link,
-                DEFAULT_MAX_RATE_PER_TICK * ROUTE_INTERVAL_TICKS);
+                DEFAULT_MAX_RATE_PER_TICK * ROUTE_INTERVAL_TICKS * routingRateMultiplier(level, link));
     }
 
     public static double routeAdjacentTargets(ServerLevel level, BlockPos nodePos, DirectBloodLinkData link) {
-        double remainingBudget = DEFAULT_MAX_RATE_PER_TICK * ROUTE_INTERVAL_TICKS;
+        double remainingBudget = DEFAULT_MAX_RATE_PER_TICK * ROUTE_INTERVAL_TICKS * routingRateMultiplier(level, link);
         double routed = 0;
         for (Direction direction : Direction.values()) {
             if (remainingBudget <= 0) {
@@ -69,7 +70,7 @@ public final class BloodRoutingHelper {
             return 0;
         }
 
-        double request = requestForTarget(be, targetVolume, link.workingReserve(), maxAmount);
+        double request = requestForTarget(be, targetVolume, effectiveWorkingReserve(level, link), maxAmount);
         if (request <= 0) {
             return 0;
         }
@@ -160,7 +161,8 @@ public final class BloodRoutingHelper {
         if (remaining > 0) {
             double playerFloor = BloodRoutingRules.calculateSafetyFloor(ownerVolume);
             double safeAvailable = BloodRoutingRules.availableAboveFloor(ownerVolume, playerFloor);
-            double playerDraw = Math.min(remaining, DEFAULT_PLAYER_RATE_PER_TICK * ROUTE_INTERVAL_TICKS);
+            double playerDraw = Math.min(remaining, DEFAULT_PLAYER_RATE_PER_TICK * ROUTE_INTERVAL_TICKS
+                    * BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getSanctumSutureLevel(owner)));
             playerDraw = Math.min(playerDraw, safeAvailable);
             playerDraw = drawFromVolume(ownerVolume, playerDraw, playerDraw);
             remaining -= playerDraw;
@@ -168,7 +170,8 @@ public final class BloodRoutingHelper {
         }
 
         if (remaining > 0 && canUseBloodline(level, owner, ownerVolume, link, sourcePos)) {
-            double bloodlineDraw = Math.min(remaining, DEFAULT_BLOODLINE_RATE_PER_TICK * ROUTE_INTERVAL_TICKS);
+            double bloodlineDraw = Math.min(remaining, DEFAULT_BLOODLINE_RATE_PER_TICK * ROUTE_INTERVAL_TICKS
+                    * BloodRoutingRules.bloodlineEfficiencyMultiplier(SkillPointHelper.getBloodlineConcordLevel(owner)));
             Bloodline line = ownerVolume.getBloodLine();
             BloodlineSavedData savedData = BloodlineSavedData.get(owner.server.overworld());
             float fromPool = savedData.drawBlood(line.getBloodlineUUID(), (float) bloodlineDraw);
@@ -186,6 +189,22 @@ public final class BloodRoutingHelper {
             return target.getBloodRoutingRequest(maxAmount);
         }
         return BloodRoutingRules.calculateReserveRequest(targetVolume, reserve, maxAmount);
+    }
+
+    private static double effectiveWorkingReserve(ServerLevel level, DirectBloodLinkData link) {
+        ServerPlayer owner = findOwner(level, link);
+        if (owner == null) {
+            return link.workingReserve();
+        }
+        return Math.max(link.workingReserve(), BloodRoutingRules.workingReserve(SkillPointHelper.getSanctumSutureLevel(owner)));
+    }
+
+    private static double routingRateMultiplier(ServerLevel level, DirectBloodLinkData link) {
+        ServerPlayer owner = findOwner(level, link);
+        if (owner == null) {
+            return 1.0;
+        }
+        return BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getSanctumSutureLevel(owner));
     }
 
     @Nullable

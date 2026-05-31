@@ -5,7 +5,9 @@ public final class PuppeteerSummonRules {
 	public static final int THREAD_PER_ITEM = 1;
 	public static final double BASE_COMMAND_RANGE = 16.0;
 	public static final double COMMAND_RANGE_PER_TETHER_LEVEL = 8.0;
+	public static final int THREAD_CAPACITY_PER_BOUND_COMMAND_LEVEL = 32;
 	public static final int CROSSBAR_DISMISSAL_TICKS = 100;
+	public static final int DISMISSAL_GRACE_PER_BOUND_COMMAND_LEVEL = 20;
 
 	private PuppeteerSummonRules() {
 	}
@@ -30,8 +32,28 @@ public final class PuppeteerSummonRules {
 		return BASE_COMMAND_RANGE + Math.max(0, farTetherLevel) * COMMAND_RANGE_PER_TETHER_LEVEL;
 	}
 
+	public static double commandRange(int farTetherLevel, int boundCommandLevel) {
+		return commandRange(farTetherLevel) + Math.max(0, boundCommandLevel) * 4.0;
+	}
+
+	public static int threadCapacity(int boundCommandLevel) {
+		return THREAD_CAPACITY + Math.max(0, boundCommandLevel) * THREAD_CAPACITY_PER_BOUND_COMMAND_LEVEL;
+	}
+
 	public static int refilledThread(int currentThread, int addedThread) {
-		return Math.min(THREAD_CAPACITY, Math.max(0, currentThread) + Math.max(0, addedThread));
+		return refilledThread(currentThread, addedThread, 0);
+	}
+
+	public static int refilledThread(int currentThread, int addedThread, int boundCommandLevel) {
+		return Math.min(threadCapacity(boundCommandLevel), Math.max(0, currentThread) + Math.max(0, addedThread));
+	}
+
+	public static double threadCostMultiplier(int threadEconomyLevel) {
+		return Math.max(0.7, 1.0 - Math.max(0, threadEconomyLevel) * 0.05);
+	}
+
+	public static int dismissalGraceTicks(int boundCommandLevel) {
+		return CROSSBAR_DISMISSAL_TICKS + Math.max(0, boundCommandLevel) * DISMISSAL_GRACE_PER_BOUND_COMMAND_LEVEL;
 	}
 
 	public static double dismissalAlpha(int remainingDismissalTicks, float partialTick) {

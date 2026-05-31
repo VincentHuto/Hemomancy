@@ -1,4 +1,5 @@
 import type { SkillBranchFile } from '../shared/types';
+import { defaultBranchColor } from '../shared/branchColors';
 import { computeGraphLayout } from './graphLayout';
 
 test('spreads fallback branches into compass directions around the center', () => {
@@ -6,18 +7,35 @@ test('spreads fallback branches into compass directions around the center', () =
     branch('core', 15),
     branch('living_staff', 3),
     branch('scars', 3),
-    branch('summons', 3)
+    branch('summons', 3),
+    branch('covenant', 4),
+    branch('mycelial', 4)
   ]);
-  const core = layout.nodes.find(node => node.skill.branch === 'core')!;
-  const staff = layout.nodes.find(node => node.skill.branch === 'living_staff')!;
-  const scars = layout.nodes.find(node => node.skill.branch === 'scars')!;
-  const summons = layout.nodes.find(node => node.skill.branch === 'summons')!;
+  const core = branchCenter(layout.nodes, 'core');
+  const staff = branchCenter(layout.nodes, 'living_staff');
+  const scars = branchCenter(layout.nodes, 'scars');
+  const summons = branchCenter(layout.nodes, 'summons');
+  const covenant = branchCenter(layout.nodes, 'covenant');
+  const mycelial = branchCenter(layout.nodes, 'mycelial');
+  const root = layout.nodes.find(node => node.skill.field === 'core_0')!;
 
-  expect(layout.labels.map(label => label.branch)).toEqual(['core', 'living_staff', 'scars', 'summons']);
-  expect(core).toEqual(expect.objectContaining({ x: 480, y: 480 }));
-  expect(staff.x).toBeLessThan(core.x);
-  expect(scars.y).toBeGreaterThan(core.y);
-  expect(summons.x).toBeGreaterThan(core.x);
+  expect(layout.labels.map(label => label.branch)).toEqual([
+    'core',
+    'living_staff',
+    'scars',
+    'summons',
+    'covenant',
+    'mycelial'
+  ]);
+  expect(root).toEqual(expect.objectContaining({ x: 480, y: 480 }));
+  expect(core.y).toBeLessThan(480);
+  expect(staff.x).toBeLessThan(480);
+  expect(scars.y).toBeGreaterThan(480);
+  expect(summons.x).toBeGreaterThan(480);
+  expect(covenant.x).toBeGreaterThan(480);
+  expect(covenant.y).toBeLessThan(480);
+  expect(mycelial.x).toBeLessThan(480);
+  expect(mycelial.y).toBeGreaterThan(480);
 });
 
 test('keeps long root edges out of unrelated sibling skill rows', () => {
@@ -107,6 +125,11 @@ test('records destination branch on each edge for branch-colored traces', () => 
   }));
 });
 
+test('uses default colors for covenant and mycelial branches', () => {
+  expect(defaultBranchColor('covenant')).toBe('#a54569');
+  expect(defaultBranchColor('mycelial')).toBe('#6e8f3a');
+});
+
 test('draws one connector for each parent requirement', () => {
   const layout = computeGraphLayout([
     {
@@ -152,12 +175,12 @@ test('positions fallback nodes on concentric degree rings with higher core degre
   const guides = Object.fromEntries(layout.degreeGuides.map(guide => [guide.degree, guide]));
   const node = Object.fromEntries(layout.nodes.map(item => [item.skill.field, item]));
 
-  expect(layout.degreeGuides.map(guide => guide.degree)).toEqual([0, 1, 2, 3, 4, 5]);
+  expect(layout.degreeGuides.map(guide => guide.degree)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   expect(guides[0]).toEqual(expect.objectContaining({ cx: 480, cy: 480, radius: 72 }));
-  expect(guides[5]).toEqual(expect.objectContaining({ cx: 480, cy: 480, radius: 400 }));
+  expect(guides[8]).toEqual(expect.objectContaining({ cx: 480, cy: 480, radius: 470 }));
   expect(node.base_skill).toEqual(expect.objectContaining({ x: 480, y: 480 }));
-  expect(node.skill_last_wind).toEqual(expect.objectContaining({ x: 480, y: 290 }));
-  expect(node.skill_vital_link).toEqual(expect.objectContaining({ x: 480, y: 80 }));
+  expect(node.skill_last_wind).toEqual(expect.objectContaining({ x: 480, y: 310 }));
+  expect(node.skill_vital_link).toEqual(expect.objectContaining({ x: 480, y: 160 }));
   expect(node.skill_vital_link.y).toBeLessThan(node.skill_last_wind.y);
 });
 
@@ -352,6 +375,14 @@ function skill(field: string, name: string, id: number, parentField: string | nu
 
 function isBetween(value: number, a: number, b: number): boolean {
   return value > Math.min(a, b) && value < Math.max(a, b);
+}
+
+function branchCenter(nodes: { skill: { branch: string }; x: number; y: number }[], branch: string) {
+  const branchNodes = nodes.filter(node => node.skill.branch === branch);
+  return {
+    x: Math.round(branchNodes.reduce((sum, node) => sum + node.x, 0) / branchNodes.length),
+    y: Math.round(branchNodes.reduce((sum, node) => sum + node.y, 0) / branchNodes.length)
+  };
 }
 
 function pathPoints(path: string): { start: { x: number; y: number }; end: { x: number; y: number } } {

@@ -103,7 +103,7 @@ public class GoreboundHulkEntity extends Zombie implements BoundPuppeteerSummon 
 	@Override public void hemomancy$setSummonName(String summonName) { entityData.set(DATA_SUMMON_NAME, summonName == null ? "" : summonName); }
 	@Override public int hemomancy$getDismissalTicks() { return entityData.get(DATA_DISMISSAL_TICKS); }
 	@Override public void hemomancy$setDismissalTicks(int ticks) {
-		entityData.set(DATA_DISMISSAL_TICKS, Math.max(0, Math.min(PuppeteerSummonRules.CROSSBAR_DISMISSAL_TICKS, ticks)));
+		entityData.set(DATA_DISMISSAL_TICKS, Math.max(0, ticks));
 	}
 	@Override public boolean hemomancy$isTrialSummon() { return entityData.get(DATA_TRIAL_SUMMON); }
 	@Override public void hemomancy$setTrialSummon(boolean trialSummon) { entityData.set(DATA_TRIAL_SUMMON, trialSummon); }

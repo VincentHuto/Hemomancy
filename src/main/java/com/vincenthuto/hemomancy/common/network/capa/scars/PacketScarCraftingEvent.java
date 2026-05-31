@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.network.capa.scars;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
+import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
@@ -61,7 +64,15 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 				AbstractContainerMenu container = player.containerMenu;
 				if (container instanceof ScarStationMenu) {
 					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
-					station.getCurrentRecipe();
+					ScarRecipe recipe = station.getCurrentRecipe();
+					if (recipe != null && recipe.getTier() >= 3
+							&& !SkillPointHelper.isUnlocked(player, SkillPointInit.skill_deep_inscription)) {
+						player.displayClientMessage(
+								Component.literal("The third inscription tier refuses a shallow hand.")
+										.withStyle(ChatFormatting.DARK_RED),
+								false);
+						return;
+					}
 					station.craftEvent();
 				}
 			});

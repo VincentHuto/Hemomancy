@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.network.chat.Component;
@@ -70,11 +71,12 @@ public class FungalMorphlingItem extends MorphlingItem {
 
 		// Mature (3+): Mycorrhizal Network — heal nearby allied players
 		if (maturity >= 3 && !player.level().isClientSide) {
-			double radius = 8.0;
+			int hyphal = SkillPointHelper.getHyphalCultivationLevel(player);
+			double radius = 8.0 + hyphal;
 			AABB area = player.getBoundingBox().inflate(radius);
 			List<Player> nearbyPlayers = player.level().getEntitiesOfClass(Player.class, area,
 					p -> p != player && p.getHealth() < p.getMaxHealth());
-			float healPerAlly = 0.5f + (maturity - 3) * 0.5f; // 0.5 at Mature, 1.0 at Apex
+			float healPerAlly = 0.5f + (maturity - 3) * 0.5f + hyphal * 0.15f; // 0.5 at Mature, 1.0 at Apex
 			for (Player ally : nearbyPlayers) {
 				ally.heal(healPerAlly);
 			}
@@ -92,7 +94,8 @@ public class FungalMorphlingItem extends MorphlingItem {
 			if (now - lastSpore >= SPORULATION_COOLDOWN) {
 				setLastAbilityTick(stack, "Sporulation", now);
 
-				double radius = 5.0 + (maturity - 2) * 1.0; // 5 at Developing, 6 Mature, 7 Apex
+				int hyphal = SkillPointHelper.getHyphalCultivationLevel(player);
+				double radius = 5.0 + (maturity - 2) * 1.0 + hyphal * 0.5; // 5 at Developing, 6 Mature, 7 Apex
 				AABB area = player.getBoundingBox().inflate(radius);
 				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
 
@@ -116,7 +119,8 @@ public class FungalMorphlingItem extends MorphlingItem {
 		// poisons and slows nearby hostiles AND drops bonus loot
 		if (maturity >= 4 && player.level() instanceof ServerLevel serverLevel) {
 			// Toxic burst: Poison + Slowness to all nearby hostiles
-			double radius = 6.0;
+			int hyphal = SkillPointHelper.getHyphalCultivationLevel(player);
+			double radius = 6.0 + hyphal * 0.5;
 			AABB area = victim.getBoundingBox().inflate(radius);
 			List<Monster> hostiles = serverLevel.getEntitiesOfClass(Monster.class, area,
 					m -> m != victim && m.isAlive());
@@ -152,9 +156,12 @@ public class FungalMorphlingItem extends MorphlingItem {
 			long lastMycorrhiza = getLastAbilityTick(stack, "PrimalMycorrhiza");
 			if (now - lastMycorrhiza >= PRIMAL_MYCORRHIZA_COOLDOWN) {
 				setLastAbilityTick(stack, "PrimalMycorrhiza", now);
-				MorphlingItem.applyMorphicStrain(player, 220, 0);
+				MorphlingItem.applyMorphicStrain(player,
+						PrimalMorphlingRules.morphicStrainDuration(220,
+								SkillPointHelper.getPrimalMorphogenesisLevel(player)),
+						0);
 
-				double radius = 7.0;
+				double radius = 7.0 + SkillPointHelper.getHyphalCultivationLevel(player) * 0.75;
 				AABB area = victim.getBoundingBox().inflate(radius);
 				for (Player ally : serverLevel.getEntitiesOfClass(Player.class, area, Player::isAlive)) {
 					ally.heal(3.0f);
@@ -167,7 +174,7 @@ public class FungalMorphlingItem extends MorphlingItem {
 					mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
 							180, 1, true, true, true));
 				}
-				if (serverLevel.random.nextFloat() < 0.12f) {
+				if (serverLevel.random.nextFloat() < 0.12f + SkillPointHelper.getHyphalCultivationLevel(player) * 0.03f) {
 					serverLevel.addFreshEntity(new ItemEntity(serverLevel,
 							victim.getX(), victim.getY(), victim.getZ(),
 							new ItemStack(ItemInit.immature_fungal_scar.get())));

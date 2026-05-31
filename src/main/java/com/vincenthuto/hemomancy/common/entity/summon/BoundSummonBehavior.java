@@ -139,13 +139,14 @@ public final class BoundSummonBehavior {
 			return false;
 		}
 		if (MarionetteCrossbarItem.findEquippedCrossbar(owner, crossbarId).isEmpty()) {
-			return tickMissingEquippedCrossbar(mob, summon);
+			return tickMissingEquippedCrossbar(mob, summon, owner);
 		}
 		if (summon.hemomancy$getDismissalTicks() > 0) {
 			summon.hemomancy$setDismissalTicks(0);
 			mob.setNoAi(false);
 		}
-		double range = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel(owner));
+		double range = PuppeteerSummonRules.commandRange(SkillPointHelper.getFarTetherLevel(owner),
+				SkillPointHelper.getBoundCommandLevel(owner));
 		if (mob.distanceToSqr(owner) > range * range * 9.0) {
 			mob.teleportTo(owner.getX(), owner.getY(), owner.getZ());
 		}
@@ -155,10 +156,10 @@ public final class BoundSummonBehavior {
 		return true;
 	}
 
-	private static boolean tickMissingEquippedCrossbar(Mob mob, BoundPuppeteerSummon summon) {
+	private static boolean tickMissingEquippedCrossbar(Mob mob, BoundPuppeteerSummon summon, Player owner) {
 		int remaining = summon.hemomancy$getDismissalTicks();
 		if (remaining <= 0) {
-			remaining = PuppeteerSummonRules.CROSSBAR_DISMISSAL_TICKS;
+			remaining = PuppeteerSummonRules.dismissalGraceTicks(SkillPointHelper.getBoundCommandLevel(owner));
 		}
 		if (remaining <= 1) {
 			mob.discard();

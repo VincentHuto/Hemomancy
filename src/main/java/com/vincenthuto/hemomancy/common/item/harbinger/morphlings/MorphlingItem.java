@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -210,7 +211,10 @@ public class MorphlingItem extends Item implements IMorphling {
 		if (player instanceof ServerPlayer serverPlayer) {
 			BloodVolumeEvents.syncVolume(serverPlayer, volume);
 		}
-		applyMorphicStrain(player, strainTicks, strainAmplifier);
+		applyMorphicStrain(player,
+				PrimalMorphlingRules.morphicStrainDuration(strainTicks,
+						SkillPointHelper.getPrimalMorphogenesisLevel(player)),
+				strainAmplifier);
 		setLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey, now);
 		return true;
 	}

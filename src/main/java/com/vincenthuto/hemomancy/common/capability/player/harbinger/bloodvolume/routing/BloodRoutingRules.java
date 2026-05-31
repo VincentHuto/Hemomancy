@@ -19,6 +19,30 @@ public final class BloodRoutingRules {
         return Math.min(maxRequest, missingReserve);
     }
 
+    public static double workingReserve(int sanctumSutureLevel) {
+        return DEFAULT_WORKING_RESERVE + Math.max(0, sanctumSutureLevel) * 80.0;
+    }
+
+    public static double routingRateMultiplier(int sanctumSutureLevel) {
+        return 1.0 + Math.max(0, sanctumSutureLevel) * 0.12;
+    }
+
+    public static double bloodlineEfficiencyMultiplier(int bloodlineConcordLevel) {
+        return 1.0 + Math.max(0, bloodlineConcordLevel) * 0.10;
+    }
+
+    public static double servitorThroughputMultiplier(int servitorTenderLevel) {
+        return 1.0 + Math.max(0, servitorTenderLevel) * 0.15;
+    }
+
+    public static double servitorCommandRange(double baseRange, int servitorTenderLevel) {
+        return baseRange + Math.max(0, servitorTenderLevel) * 4.0;
+    }
+
+    public static double ancestralSovereigntyMultiplier(int ancestralSovereigntyLevel) {
+        return 1.0 + Math.max(0, ancestralSovereigntyLevel) * 0.06;
+    }
+
     public static double calculateSafetyFloor(IBloodVolume playerVolume) {
         if (playerVolume == null) {
             return 0;

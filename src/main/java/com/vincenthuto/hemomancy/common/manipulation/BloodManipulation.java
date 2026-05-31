@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -357,7 +358,8 @@ public class BloodManipulation  {
 				long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player)
 						.map(d -> d.getPomeEmpowermentExpiry()).orElse(0L);
 				if (player.level().getGameTime() < pomeExpiry) {
-					effectiveCost *= 0.75;
+					effectiveCost *= QliphothPomeRules.empowermentCostMultiplier(
+							SkillPointHelper.getQliphothGestationLevel(player));
 				}
 
 				// Blood Moon: 25% cost reduction while the blood moon is active

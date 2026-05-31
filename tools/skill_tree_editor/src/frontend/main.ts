@@ -24,6 +24,7 @@ import {
   type SkillEditValue,
   undoMovement
 } from './movementHistory';
+import { isSkillInWorkspace, type SkillTreeWorkspaceMode } from './skillTreeLayers';
 import { captureGraphViewport, type GraphViewport, restoreGraphViewport } from './viewportPreservation';
 import { clampZoom, zoomScrollAnchor } from './viewportZoom';
 import './styles.css';
@@ -45,8 +46,15 @@ let statusText = 'Loading workspace...';
 let isBusy = false;
 let snapToGrid = true;
 let graphZoom = 1;
+let activeWorkspace: SkillTreeWorkspaceMode = 'surface';
+const graphZoomByWorkspace: Record<SkillTreeWorkspaceMode, number> = {
+  surface: 1,
+  deep: 1
+};
+const graphViewportByWorkspace: Partial<Record<SkillTreeWorkspaceMode, GraphViewport>> = {};
 let movementHistory = createMovementHistory();
 let suppressNextGraphNodeClick = false;
+let skipNextViewportPreservation = false;
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('Missing app root.');
@@ -71,7 +79,8 @@ async function load(): Promise<void> {
   try {
     workspace = await api<SkillWorkspace>('/api/workspace');
     selectedBranch = workspace.branches[0]?.branch ?? '';
-    selectedField = workspace.branches[0]?.skills[0]?.field ?? '';
+    selectedField = firstVisibleSkill(workspace.branches[0])?.field ?? '';
+    ensureVisibleSelection();
     movementHistory = createMovementHistory();
     preview = null;
     statusText = `Loaded ${allSkills().length} skills from ${workspace.branches.length} Java branches.`;
@@ -88,7 +97,9 @@ function render(): void {
     app.innerHTML = `<main class="loading"><div>${escapeHtml(statusText)}</div></main>`;
     return;
   }
-  const viewport = captureCurrentGraphViewport();
+  ensureVisibleSelection();
+  const viewport = skipNextViewportPreservation ? null : captureCurrentGraphViewport();
+  skipNextViewportPreservation = false;
 
   app.innerHTML = `
     <main class="shell">
@@ -109,7 +120,7 @@ function render(): void {
           ${workspace.branches.map(renderBranchButton).join('')}
         </div>
         <div class="skill-list">
-          ${currentBranch()?.skills.map(renderSkillButton).join('') ?? ''}
+          ${currentBranchSkills().map(renderSkillButton).join('')}
         </div>
       </aside>
 
@@ -121,6 +132,10 @@ function render(): void {
             ${tabButton('diff', `Diff ${preview ? `(${preview.diffs.length})` : ''}`)}
           </nav>
           <div class="history-controls" aria-label="Movement history controls">
+            <div class="workspace-toggle" aria-label="Skill tree workspace">
+              <button class="${activeWorkspace === 'surface' ? 'active' : ''}" data-workspace="surface">Surface (0-4)</button>
+              <button class="${activeWorkspace === 'deep' ? 'active' : ''}" data-workspace="deep">Deep (5-8)</button>
+            </div>
             <button data-action="compass-layout" title="Arrange skills into compass rings" ${isBusy ? 'disabled' : ''}>Compass Auto-Layout</button>
             <button data-action="undo-move" title="Undo move (Ctrl+Z)" ${!movementHistory.canUndo || isBusy ? 'disabled' : ''}>Undo</button>
             <button data-action="redo-move" title="Redo move (Ctrl+Y or Ctrl+Shift+Z)" ${!movementHistory.canRedo || isBusy ? 'disabled' : ''}>Redo</button>
@@ -151,9 +166,10 @@ function render(): void {
 
 function renderBranchButton(branch: SkillBranchFile): string {
   const selected = branch.branch === selectedBranch ? 'selected' : '';
+  const count = branchSkillsForActiveWorkspace(branch).length;
   return `<button class="branch-button ${selected} branch-button-${branchClassName(branch.branch)}" style="${branchButtonStyle(branch)}" data-branch="${escapeAttr(branch.branch)}">
     <span>${escapeHtml(labelize(branch.branch))}</span>
-    <b>${branch.skills.length}</b>
+    <b>${count}</b>
   </button>`;
 }
 
@@ -181,7 +197,7 @@ function tabButton(tab: ViewTab, label: string): string {
 }
 
 function renderGraph(): string {
-  const layout = computeGraphLayout(workspace!.branches);
+  const layout = computeGraphLayout(workspace!.branches, { workspace: activeWorkspace });
   const scaledWidth = Math.round(layout.width * graphZoom);
   const scaledHeight = Math.round(layout.height * graphZoom);
   const edges = layout.edges
@@ -200,7 +216,7 @@ function renderGraph(): string {
       <button data-action="zoom-reset" title="Reset zoom">${zoomLabel}</button>
       <button data-action="zoom-in" title="Zoom in">+</button>
     </div>
-    <div class="graph-scroll"><svg class="graph" width="${scaledWidth}" height="${scaledHeight}" viewBox="0 0 ${layout.width} ${layout.height}" role="img">
+    <div class="graph-scroll"><svg class="graph workspace-${activeWorkspace}" width="${scaledWidth}" height="${scaledHeight}" viewBox="0 0 ${layout.width} ${layout.height}" role="img">
     <defs>
       <radialGradient id="bloodGlow" cx="50%" cy="48%" r="58%">
         <stop offset="0%" stop-color="#240507" stop-opacity="0.94"></stop>
@@ -221,7 +237,7 @@ function renderGraph(): string {
 }
 
 function renderWireEdge(edge: GraphEdge): string {
-  const edgeKind = edge.kind === 'cross-branch' ? 'cross-edge' : 'local-edge';
+  const edgeKind = edge.kind === 'cross-layer-anchor' ? 'anchor-edge' : (edge.kind === 'cross-branch' ? 'cross-edge' : 'local-edge');
   const branch = `edge-branch-${branchClassName(edge.toBranch)}`;
   const fromField = escapeAttr(edge.fromField);
   const toField = escapeAttr(edge.toField);
@@ -351,6 +367,9 @@ function wireEvents(): void {
   document.querySelector('[data-action="zoom-in"]')?.addEventListener('click', () => zoomGraphFromCenter(buttonZoomStep));
   document.querySelector('[data-action="zoom-out"]')?.addEventListener('click', () => zoomGraphFromCenter(1 / buttonZoomStep));
   document.querySelector('[data-action="zoom-reset"]')?.addEventListener('click', resetGraphZoom);
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-workspace]')) {
+    button.addEventListener('click', () => switchWorkspace(button.dataset.workspace as SkillTreeWorkspaceMode));
+  }
   document.querySelector<HTMLInputElement>('[data-action="snap-grid"]')?.addEventListener('change', event => {
     snapToGrid = (event.currentTarget as HTMLInputElement).checked;
   });
@@ -358,7 +377,7 @@ function wireEvents(): void {
   for (const button of document.querySelectorAll<HTMLButtonElement>('[data-branch]')) {
     button.addEventListener('click', () => {
       selectedBranch = button.dataset.branch ?? selectedBranch;
-      selectedField = currentBranch()?.skills[0]?.field ?? '';
+      selectedField = firstVisibleSkill(currentBranch())?.field ?? '';
       preview = null;
       render();
     });
@@ -393,6 +412,23 @@ function wireEvents(): void {
   wireGraphDragPan();
   wireGraphZoom();
   wireGraphNodeDragging();
+}
+
+function switchWorkspace(nextWorkspace: SkillTreeWorkspaceMode): void {
+  if (nextWorkspace === activeWorkspace) return;
+  const currentViewport = captureCurrentGraphViewport();
+  if (currentViewport) graphViewportByWorkspace[activeWorkspace] = currentViewport;
+  graphZoomByWorkspace[activeWorkspace] = graphZoom;
+  activeWorkspace = nextWorkspace;
+  graphZoom = graphZoomByWorkspace[activeWorkspace] ?? 1;
+  ensureVisibleSelection();
+  skipNextViewportPreservation = true;
+  render();
+  const nextViewport = graphViewportByWorkspace[activeWorkspace];
+  if (nextViewport) {
+    restoreCurrentGraphViewport(nextViewport);
+    requestAnimationFrame(() => restoreCurrentGraphViewport(nextViewport));
+  }
 }
 
 function wireInspectorEvents(): void {
@@ -559,7 +595,7 @@ function refreshGraphEdges(): void {
   if (!workspace) return;
   const edgeGroup = document.querySelector<SVGGElement>('.edges');
   if (!edgeGroup) return;
-  const layout = computeGraphLayout(workspace.branches);
+  const layout = computeGraphLayout(workspace.branches, { workspace: activeWorkspace });
   edgeGroup.innerHTML = layout.edges.map(renderWireEdge).join('');
 }
 
@@ -606,7 +642,7 @@ function wireGraphNodeDragging(): void {
       if (event.button !== 0) return;
       const degree = Number(label.dataset.degreeLabel);
       if (!Number.isFinite(degree)) return;
-      const layoutGuide = computeGraphLayout(workspace!.branches).degreeGuides.find(guide => guide.degree === degree);
+      const layoutGuide = computeGraphLayout(workspace!.branches, { workspace: activeWorkspace }).degreeGuides.find(guide => guide.degree === degree);
       const position = ensureDegreeLabelPosition(degree, {
         x: layoutGuide?.labelX ?? Number(label.getAttribute('x') ?? 0),
         y: layoutGuide?.labelY ?? Number(label.getAttribute('y') ?? 0)
@@ -640,7 +676,7 @@ function wireGraphNodeDragging(): void {
       if (event.button !== 0) return;
       const field = node.dataset.skill ?? '';
       const skill = allSkills().find(candidate => candidate.field === field);
-      const layoutNode = computeGraphLayout(workspace!.branches).nodes.find(candidate => candidate.skill.field === field);
+      const layoutNode = computeGraphLayout(workspace!.branches, { workspace: activeWorkspace }).nodes.find(candidate => candidate.skill.field === field);
       if (!skill || !layoutNode) return;
 
       selectedField = skill.field;
@@ -874,7 +910,7 @@ function applyMovementTarget(target: MovementTarget | undefined, verb: string): 
 
 function applyCompassAutoLayout(): void {
   if (!workspace) return;
-  const changes = applyCompassLayout(workspace.branches);
+  const changes = applyCompassLayout(workspace.branches, { workspace: activeWorkspace });
   recordMovements(movementHistory, changes);
   if (changes.length) {
     const last = allSkills().find(skill => skill.field === changes[changes.length - 1].field);
@@ -886,8 +922,8 @@ function applyCompassAutoLayout(): void {
   preview = null;
   workspace.diagnostics = validateClientWorkspace();
   statusText = changes.length
-    ? `Compass layout placed ${changes.length} skills.`
-    : 'Compass layout already matches the draft.';
+    ? `Compass layout placed ${changes.length} ${activeWorkspace} skills.`
+    : `Compass layout already matches the ${activeWorkspace} draft.`;
   render();
 }
 
@@ -914,7 +950,7 @@ function shouldIgnoreMovementShortcut(target: EventTarget | null): boolean {
 
 function updateGraphDomEdges(): void {
   if (!workspace) return;
-  const layout = computeGraphLayout(workspace.branches);
+  const layout = computeGraphLayout(workspace.branches, { workspace: activeWorkspace });
   for (const edge of layout.edges) {
     const path = document.querySelector<SVGPathElement>(`.edge[data-edge-from="${edge.fromField}"][data-edge-to="${edge.toField}"]`);
     if (path) {
@@ -1117,7 +1153,7 @@ function addSkill(): void {
     parentField: selectedSkill()?.field ?? null,
     parentFields: selectedSkill()?.field ? [selectedSkill()!.field] : [],
     skillPointCost: 1,
-    requiredDegree: 0,
+    requiredDegree: activeWorkspace === 'deep' ? 5 : 0,
     treeX: selectedSkill()?.treeX != null ? selectedSkill()!.treeX! + 64 : null,
     treeY: selectedSkill()?.treeY != null ? selectedSkill()!.treeY! + 64 : null,
     iconItem: null,
@@ -1269,12 +1305,36 @@ function allSkills(): SkillModel[] {
   return workspace?.branches.flatMap(branch => branch.skills) ?? [];
 }
 
+function visibleSkills(): SkillModel[] {
+  return allSkills().filter(skill => isSkillInWorkspace(skill, activeWorkspace));
+}
+
 function currentBranch(): SkillBranchFile | undefined {
   return workspace?.branches.find(branch => branch.branch === selectedBranch);
 }
 
+function branchSkillsForActiveWorkspace(branch: SkillBranchFile | undefined): SkillModel[] {
+  return branch?.skills.filter(skill => isSkillInWorkspace(skill, activeWorkspace)) ?? [];
+}
+
+function currentBranchSkills(): SkillModel[] {
+  return branchSkillsForActiveWorkspace(currentBranch());
+}
+
+function firstVisibleSkill(branch: SkillBranchFile | undefined): SkillModel | undefined {
+  return branchSkillsForActiveWorkspace(branch)[0];
+}
+
 function selectedSkill(): SkillModel | undefined {
   return allSkills().find(skill => skill.field === selectedField);
+}
+
+function ensureVisibleSelection(): void {
+  const skill = selectedSkill();
+  if (skill && isSkillInWorkspace(skill, activeWorkspace)) return;
+  const next = firstVisibleSkill(currentBranch()) ?? visibleSkills()[0];
+  selectedField = next?.field ?? '';
+  if (next) selectedBranch = next.branch;
 }
 
 function relativeRoot(): string {

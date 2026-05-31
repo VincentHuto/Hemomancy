@@ -11,6 +11,8 @@ public final class LivingStaffFocusRulesTest {
 		vascularDrawIncreasesAbsorptionAmountAndPulseSpeed();
 		crimsonProjectionIncreasesProjectionRates();
 		vesperMemoryIsTheHighestFocusTier();
+		hematicFocusImprovesMidgameStaffFocus();
+		vespersRefusalOnlyAmplifiesAwakenedMemory();
 	}
 
 	private static void bareAbsorptionOnlyTargetsOneCreature() {
@@ -73,6 +75,31 @@ public final class LivingStaffFocusRulesTest {
 		assertTrue("Vesper-awakened staff has highest projection rate", vesperProjection > normalProjection);
 	}
 
+	private static void hematicFocusImprovesMidgameStaffFocus() {
+		LivingStaffFocusProfile normal = new LivingStaffFocusProfile(3, 3, 3, 0, 0, false);
+		LivingStaffFocusProfile focused = new LivingStaffFocusProfile(3, 3, 3, 3, 0, false);
+		assertTrue("hematic focus increases staff target cap",
+				LivingStaffFocusRules.absorptionTargetCap(true, focused)
+						> LivingStaffFocusRules.absorptionTargetCap(true, normal));
+		assertTrue("hematic focus increases staff projection rate",
+				LivingStaffFocusRules.structureProjectionRate(true, focused)
+						> LivingStaffFocusRules.structureProjectionRate(true, normal));
+	}
+
+	private static void vespersRefusalOnlyAmplifiesAwakenedMemory() {
+		LivingStaffFocusProfile inert = new LivingStaffFocusProfile(3, 3, 3, 3, 3, false);
+		LivingStaffFocusProfile focused = new LivingStaffFocusProfile(3, 3, 3, 3, 0, false);
+		assertDouble("vesper refusal is inert without awakened memory",
+				LivingStaffFocusRules.structureProjectionRate(true, focused),
+				LivingStaffFocusRules.structureProjectionRate(true, inert));
+
+		LivingStaffFocusProfile awakened = new LivingStaffFocusProfile(3, 3, 3, 3, 0, true);
+		LivingStaffFocusProfile refused = new LivingStaffFocusProfile(3, 3, 3, 3, 3, true);
+		assertTrue("vesper refusal amplifies awakened memory",
+				LivingStaffFocusRules.structureProjectionRate(true, refused)
+						> LivingStaffFocusRules.structureProjectionRate(true, awakened));
+	}
+
 	private static void assertEquals(String label, int expected, int actual) {
 		if (expected != actual) {
 			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
@@ -82,6 +109,12 @@ public final class LivingStaffFocusRulesTest {
 	private static void assertTrue(String label, boolean value) {
 		if (!value) {
 			throw new AssertionError(label);
+		}
+	}
+
+	private static void assertDouble(String label, double expected, double actual) {
+		if (Math.abs(expected - actual) > 0.000001) {
+			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
 		}
 	}
 }
