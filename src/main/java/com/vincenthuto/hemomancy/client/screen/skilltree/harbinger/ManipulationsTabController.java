@@ -34,6 +34,13 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int ALPHA_OPAQUE_MASK = 0xFF000000;
     private static final float INFO_PANEL_Z = 400.0F;
     private static final int INFO_PANEL_SHADOW = 0xAA000000;
+    private static final int INFO_PANEL_MARGIN = 8;
+    private static final int MANIP_DESCRIPTION_MAX_LINES = 2;
+    private static final int MANIP_STAT_COLUMNS = 2;
+    private static final int MANIP_STAT_ROWS = 3;
+    private static final int MANIP_STAT_CELL_H = 20;
+    private static final int MANIP_STAT_COL_GAP = 6;
+    private static final int MANIP_STAT_ROW_GAP = 2;
 
     private final PanZoomState panZoom = new PanZoomState();
     private int manipRingCenterX, manipRingCenterY;
@@ -486,15 +493,21 @@ public class ManipulationsTabController implements IProgressTab {
         int tendB = (int)pc.getBlue();
         int tendCol = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
 
-        int panelW = 170;
-        int panelX = ctx.guiLeft() + ctx.guiWidth() - panelW - 8;
-        int panelY = ctx.guiTop() + 30;
+        int panelW = 188;
+        int panelYTarget = ctx.guiTop() + 30;
+        int panelBottomLimit = ctx.guiTop() + ctx.guiHeight() - INFO_PANEL_MARGIN;
+        int minPanelY = ctx.guiTop() + INFO_PANEL_MARGIN;
+        int availablePanelH = panelBottomLimit - minPanelY;
+        int fitPanelH = Math.max(1, availablePanelH);
         int maxW = panelW - 16;
         int lineH = 11;
 
         String name = rankLocked ? "???" : HLTextUtils.toProperCase(manip.getName().replace("_", " "));
         List<String> nameLines = ScreenDrawUtils.wrapText(ctx.font(), name, maxW - 20);
         int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
+        List<String> descriptionLines = rankLocked ? List.of()
+                : manipDescriptionLines(ctx, manip, maxW - 8, MANIP_DESCRIPTION_MAX_LINES);
+        int descriptionH = descriptionHeight(descriptionLines);
 
         ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
         RecipeLookup.FoundRecipe foundRecipe = (!rankLocked && memoryStack != null && !memoryStack.isEmpty())
@@ -505,27 +518,35 @@ public class ManipulationsTabController implements IProgressTab {
         int statsH = 0;
         if (!rankLocked) {
             statsH += lineH; // known/unknown
-            statsH += lineH; // type
-            statsH += lineH; // rank
-            statsH += lineH; // tendency
-            statsH += lineH; // blood cost
-            statsH += lineH; // section
-            if (manip.getCooldownTicks() > 0) statsH += lineH;
+            statsH += 3;
+            statsH += manipStatGridHeight();
         } else {
             statsH += lineH * 2;
         }
-        int panelH = 6 + nameRowH + 1 + 5 + statsH + recipeSection + 8;
+        int panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + 8;
+        if (panelH > fitPanelH && !rankLocked && descriptionLines.size() > 1) {
+            descriptionLines = manipDescriptionLines(ctx, manip, maxW - 8, 1);
+            descriptionH = descriptionHeight(descriptionLines);
+            panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + 8;
+        }
+        float panelScale = panelH > fitPanelH ? Math.min(1.0F, fitPanelH / (float) panelH) : 1.0F;
+        int scaledPanelW = Mth.ceil(panelW * panelScale);
+        int scaledPanelH = Mth.ceil(panelH * panelScale);
+        int panelX = ctx.guiLeft() + ctx.guiWidth() - scaledPanelW - 8;
+        int maxPanelY = Math.max(minPanelY, panelBottomLimit - scaledPanelH);
+        int panelY = Mth.clamp(panelYTarget, minPanelY, maxPanelY);
         int solidBg = 0xFF000000 | (0x1A0505);
 
         var pose = gfx.pose();
         pose.pushPose();
-        pose.translate(0.0F, 0.0F, INFO_PANEL_Z);
-        gfx.fill(panelX - 2, panelY - 2, panelX + panelW + 2, panelY + panelH + 2, INFO_PANEL_SHADOW);
-        gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, solidBg);
-        ScreenDrawUtils.drawSimpleBorder(gfx, panelX, panelY, panelW, panelH, tendCol);
+        pose.translate(panelX, panelY, INFO_PANEL_Z);
+        pose.scale(panelScale, panelScale, 1.0F);
+        gfx.fill(-2, -2, panelW + 2, panelH + 2, INFO_PANEL_SHADOW);
+        gfx.fill(0, 0, panelW, panelH, solidBg);
+        ScreenDrawUtils.drawSimpleBorder(gfx, 0, 0, panelW, panelH, tendCol);
 
-        int tx = panelX + 6;
-        int ty = panelY + 6;
+        int tx = 6;
+        int ty = 6;
 
         if (!rankLocked && memoryStack != null && !memoryStack.isEmpty()) gfx.renderItem(memoryStack, tx, ty);
         int nameCol = rankLocked ? 0xFF555555 : tendCol;
@@ -538,8 +559,11 @@ public class ManipulationsTabController implements IProgressTab {
                     nx, ty + 4 + li * 10, 0, false);
         }
         ty += nameRowH;
+        if (!rankLocked) {
+            ty += drawManipDescription(gfx, ctx, descriptionLines, tx + 4, ty, veilUnknown);
+        }
 
-        gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF442222);
+        gfx.fill(tx, ty, panelW - 6, ty + 1, 0xFF442222);
         ty += 5;
 
         if (rankLocked) {
@@ -553,52 +577,102 @@ public class ManipulationsTabController implements IProgressTab {
             String statusStr = known ? "Known" : "Unknown";
             int statusCol = known ? 0xFF44AA44 : 0xFFAA4444;
             gfx.drawString(ctx.font(), statusStr, tx, ty, statusCol, false);
-            ty += lineH;
-
-            gfx.drawString(ctx.font(), Component.literal("Type: ").withStyle(s -> s.withColor(0xFF888888))
-                    .append(Component.literal(HLTextUtils.toProperCase(manip.getType().name())).withStyle(s -> s.withColor(0xFFCCCCCC))),
-                    tx, ty, 0, false);
-            ty += lineH;
-
-            gfx.drawString(ctx.font(), Component.literal("Rank: ").withStyle(s -> s.withColor(0xFF888888))
-                    .append(Component.literal(HLTextUtils.toProperCase(manip.getRank().name())).withStyle(s -> s.withColor(0xFFCCCCCC))),
-                    tx, ty, 0, false);
-            ty += lineH;
-
-            String tendName = HLTextUtils.toProperCase(manip.getTend().name());
-            double alignReq = manip.getAlignLevel();
-            String tendText = alignReq > 0 ? tendName + " (" + (int)alignReq + ")" : tendName;
-            gfx.drawString(ctx.font(), Component.literal("Tendency: ").withStyle(s -> s.withColor(0xFF888888))
-                    .append(Component.literal(tendText).withStyle(s -> s.withColor(tendCol))),
-                    tx, ty, 0, false);
-            ty += lineH;
-
-            gfx.drawString(ctx.font(), Component.literal("Blood Cost: ").withStyle(s -> s.withColor(0xFF888888))
-                    .append(Component.literal((int)manip.getCost() + " mL").withStyle(s -> s.withColor(0xFFAA4444))),
-                    tx, ty, 0, false);
-            ty += lineH;
-
-            gfx.drawString(ctx.font(), Component.literal("Section: ").withStyle(s -> s.withColor(0xFF888888))
-                    .append(Component.literal(HLTextUtils.toProperCase(manip.getSection().name())).withStyle(s -> s.withColor(0xFFAAAAAA))),
-                    tx, ty, 0, false);
-            ty += lineH;
-
-            if (manip.getCooldownTicks() > 0) {
-                float seconds = manip.getCooldownTicks() / 20f;
-                gfx.drawString(ctx.font(), Component.literal("Cooldown: ").withStyle(s -> s.withColor(0xFF888888))
-                        .append(Component.literal(String.format("%.1fs", seconds)).withStyle(s -> s.withColor(0xFFAAAA88))),
-                        tx, ty, 0, false);
-                ty += lineH;
-            }
+            ty += lineH + 3;
+            drawManipStatGrid(gfx, ctx, manip, tx, ty, maxW, tendCol);
+            ty += manipStatGridHeight();
         }
 
         if (foundRecipe != null) {
             ty += 3;
-            gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF442222);
+            gfx.fill(tx, ty, panelW - 6, ty + 1, 0xFF442222);
             ty += 4;
             MiniRecipeRenderer.draw(gfx, ctx.font(), foundRecipe, tx, ty, maxW, tendCol, MiniRecipeRenderer.BLOOD);
         }
         pose.popPose();
+    }
+
+    private List<String> manipDescriptionLines(ProgressScreenContext ctx, BloodManipulation manip, int maxW,
+                                               int maxLines) {
+        Component description = Component.translatable(manipDescriptionKey(manip));
+        List<String> lines = ScreenDrawUtils.wrapText(ctx.font(), description.getString(), maxW);
+        if (lines.size() <= maxLines) {
+            return lines;
+        }
+        List<String> compact = new ArrayList<>(lines.subList(0, maxLines));
+        int lastIndex = compact.size() - 1;
+        String lastLine = compact.get(lastIndex);
+        while (!lastLine.isEmpty() && ctx.font().width(lastLine + "...") > maxW) {
+            lastLine = lastLine.substring(0, lastLine.length() - 1);
+        }
+        compact.set(lastIndex, lastLine + "...");
+        return compact;
+    }
+
+    private static int descriptionHeight(List<String> lines) {
+        return lines.isEmpty() ? 0 : lines.size() * 10 + 4;
+    }
+
+    private int drawManipDescription(GuiGraphics gfx, ProgressScreenContext ctx, List<String> lines,
+                                     int x, int y, boolean veilUnknown) {
+        for (int i = 0; i < lines.size(); i++) {
+            Component line = Component.literal(lines.get(i)).withStyle(s -> s.withColor(0xFFB88A8A).withItalic(true));
+            gfx.drawString(ctx.font(), veilUnknown ? AbocipherText.veil(line) : line, x, y + i * 10, 0, false);
+        }
+        return descriptionHeight(lines);
+    }
+
+    private static String manipDescriptionKey(BloodManipulation manip) {
+        return "hemomancy.manipulation." + manip.getName() + ".desc";
+    }
+
+    private static int manipStatGridHeight() {
+        return MANIP_STAT_ROWS * MANIP_STAT_CELL_H + (MANIP_STAT_ROWS - 1) * MANIP_STAT_ROW_GAP;
+    }
+
+    private void drawManipStatGrid(GuiGraphics gfx, ProgressScreenContext ctx, BloodManipulation manip,
+                                   int x, int y, int width, int tendCol) {
+        List<ManipStatCell> cells = manipStatCells(manip, tendCol);
+        int cellW = (width - MANIP_STAT_COL_GAP * (MANIP_STAT_COLUMNS - 1)) / MANIP_STAT_COLUMNS;
+        for (int i = 0; i < cells.size(); i++) {
+            int col = i % MANIP_STAT_COLUMNS;
+            int row = i / MANIP_STAT_COLUMNS;
+            int cellX = x + col * (cellW + MANIP_STAT_COL_GAP);
+            int cellY = y + row * (MANIP_STAT_CELL_H + MANIP_STAT_ROW_GAP);
+            drawManipStatCell(gfx, ctx, cells.get(i), cellX, cellY, cellW);
+        }
+    }
+
+    private List<ManipStatCell> manipStatCells(BloodManipulation manip, int tendCol) {
+        String tendName = HLTextUtils.toProperCase(manip.getTend().name());
+        double alignReq = manip.getAlignLevel();
+        String tendText = alignReq > 0 ? tendName + " (" + (int)alignReq + ")" : tendName;
+        return List.of(
+                new ManipStatCell("Type", HLTextUtils.toProperCase(manip.getType().name()), 0xFFCCCCCC),
+                new ManipStatCell("Rank", HLTextUtils.toProperCase(manip.getRank().name()), 0xFFCCCCCC),
+                new ManipStatCell("Tendency", tendText, tendCol),
+                new ManipStatCell("Cost", (int)manip.getCost() + " mL", 0xFFAA4444),
+                new ManipStatCell("Section", HLTextUtils.toProperCase(manip.getSection().name()), 0xFFAAAAAA),
+                new ManipStatCell("Cooldown", cooldownText(manip.getCooldownTicks()), 0xFFAAAA88)
+        );
+    }
+
+    private void drawManipStatCell(GuiGraphics gfx, ProgressScreenContext ctx, ManipStatCell cell,
+                                   int x, int y, int width) {
+        gfx.fill(x, y, x + width, y + MANIP_STAT_CELL_H, 0x66180505);
+        ScreenDrawUtils.drawSimpleBorder(gfx, x, y, width, MANIP_STAT_CELL_H, 0xFF442222);
+        gfx.drawString(ctx.font(), cell.label(), x + 4, y + 2, 0xFF888888, false);
+        String value = ScreenDrawUtils.truncateText(ctx.font(), cell.value(), width - 8);
+        gfx.drawString(ctx.font(), value, x + 4, y + 10, cell.valueColor(), false);
+    }
+
+    private static String cooldownText(int cooldownTicks) {
+        if (cooldownTicks <= 0) {
+            return "None";
+        }
+        return String.format(Locale.ROOT, "%.1fs", cooldownTicks / 20.0F);
+    }
+
+    private record ManipStatCell(String label, String value, int valueColor) {
     }
 
     private ManipulationTreeEntry manipNodeUnder(ProgressScreenContext ctx, double mx, double my) {
