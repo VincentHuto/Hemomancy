@@ -73,6 +73,40 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType silentArchonArmorOverlay(float gameTime, float shardSeed, float burden, float attuned,
+			float guiClamp) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"silent_archon_armor_overlay_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "ShardSeed", shardSeed);
+					setUniform(shader, "Burden", burden);
+					setUniform(shader, "Attuned", attuned);
+					setUniform(shader, "GuiClamp", guiClamp);
+					setUniform(shader, "FractalScale", guiClamp > 0.5f ? 9.0f : 11.0f);
+					setUniform(shader, "Snap", 0.65f);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("silent_archon_armor_overlay",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MONOLITH_FRAGMENT_ENTITY.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.OVERLAY)
+						.createCompositeState(false));
+	}
+
 	public static RenderType bloodStructureWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
 			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

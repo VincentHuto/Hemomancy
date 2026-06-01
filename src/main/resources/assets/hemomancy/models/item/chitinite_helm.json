@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/chitinite_helm"
-  }
+    "layer0": "hemomancy:item/chitinite_helm",
+    "particle": "hemomancy:item/chitinite_helm"
+  },
+  "gui_light": "front",
+  "display": {}
 }

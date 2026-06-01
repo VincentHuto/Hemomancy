@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/covenant_mantle"
-  }
+    "layer0": "hemomancy:item/covenant_mantle",
+    "particle": "hemomancy:item/covenant_mantle"
+  },
+  "gui_light": "front",
+  "display": {}
 }

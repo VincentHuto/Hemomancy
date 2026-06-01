@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/unstained_leggings"
-  }
+    "layer0": "hemomancy:item/unstained_leggings",
+    "particle": "hemomancy:item/unstained_leggings"
+  },
+  "gui_light": "front",
+  "display": {}
 }

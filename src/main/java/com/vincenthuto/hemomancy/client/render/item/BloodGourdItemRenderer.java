@@ -19,18 +19,21 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     public static final ResourceLocation TEXTURE_WHITE = Hemomancy.rloc("textures/entity/blood_gourd/white.png");
     public static final ResourceLocation TEXTURE_RED = Hemomancy.rloc("textures/entity/blood_gourd/red.png");
     public static final ResourceLocation TEXTURE_BLACK = Hemomancy.rloc("textures/entity/blood_gourd/black.png");
+    public static final ResourceLocation TEXTURE_DRIED = Hemomancy.rloc("textures/entity/blood_gourd/dried.png");
     public static final ResourceLocation TEXTURE_CURVED = Hemomancy.rloc("textures/entity/blood_gourd/curved_horn.png");
     public static final ResourceLocation TEXTURE_RIB = Hemomancy.rloc("textures/entity/blood_gourd/hemorath_rib.png");
 
     public static final ResourceLocation TEXTURE_WHITE_OPEN = Hemomancy.rloc("textures/entity/blood_gourd/white_open.png");
     public static final ResourceLocation TEXTURE_RED_OPEN = Hemomancy.rloc("textures/entity/blood_gourd/red_open.png");
     public static final ResourceLocation TEXTURE_BLACK_OPEN = Hemomancy.rloc("textures/entity/blood_gourd/black_open.png");
+    public static final ResourceLocation TEXTURE_DRIED_OPEN = Hemomancy.rloc("textures/entity/blood_gourd/dried_open.png");
     public static final ResourceLocation TEXTURE_CURVED_OPEN = Hemomancy.rloc("textures/entity/blood_gourd/curved_horn_open.png");
     public static final ResourceLocation TEXTURE_RIB_OPEN = Hemomancy.rloc("textures/entity/blood_gourd/hemorath_rib_open.png");
     private HemorathRibModel<?> modelHemorathRib;
@@ -66,7 +69,8 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
 
         if (stack.getItem() instanceof BloodGourdItem) {
             // Check if the gourd is open
-            boolean isOpen = stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(BloodGourdItem.TAG_STATE);
+            boolean isOpen = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                    .copyTag().getBoolean(BloodGourdItem.TAG_STATE);
 
             // Determine texture based on which gourd item it is and its open/closed state
             ResourceLocation texture;
@@ -77,6 +81,8 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
                 texture = isOpen ? TEXTURE_CURVED_OPEN : TEXTURE_CURVED;
             } else if (isRib) {
                 texture = isOpen ? TEXTURE_RIB_OPEN : TEXTURE_RIB;
+            } else if (stack.is(ItemInit.dried_gourd.get())) {
+                texture = isOpen ? TEXTURE_DRIED_OPEN : TEXTURE_DRIED;
             } else if (stack.is(ItemInit.blood_gourd_white.get())) {
                 texture = isOpen ? TEXTURE_WHITE_OPEN : TEXTURE_WHITE;
             } else if (stack.is(ItemInit.blood_gourd_red.get())) {
@@ -84,7 +90,7 @@ public class BloodGourdItemRenderer extends BlockEntityWithoutLevelRenderer {
             } else if (stack.is(ItemInit.blood_gourd_black.get())) {
                 texture = isOpen ? TEXTURE_BLACK_OPEN : TEXTURE_BLACK;
             } else {
-                texture = isOpen ? TEXTURE_WHITE_OPEN : TEXTURE_WHITE;
+                texture = isOpen ? TEXTURE_DRIED_OPEN : TEXTURE_DRIED;
             }
 
             poseStack.pushPose();

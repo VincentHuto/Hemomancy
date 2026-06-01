@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/silent_archon_leggings"
-  }
+    "layer0": "hemomancy:item/silent_archon_leggings",
+    "particle": "hemomancy:item/silent_archon_leggings"
+  },
+  "gui_light": "front",
+  "display": {}
 }

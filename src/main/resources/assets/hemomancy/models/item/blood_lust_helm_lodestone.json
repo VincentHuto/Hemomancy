@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/blood_lust_helm_lodestone"
-  }
+    "layer0": "hemomancy:item/blood_lust_helm_lodestone",
+    "particle": "hemomancy:item/blood_lust_helm_lodestone"
+  },
+  "gui_light": "front",
+  "display": {}
 }

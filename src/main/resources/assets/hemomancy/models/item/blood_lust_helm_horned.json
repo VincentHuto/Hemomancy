@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/blood_lust_helm_horned"
-  }
+    "layer0": "hemomancy:item/blood_lust_helm_horned",
+    "particle": "hemomancy:item/blood_lust_helm_horned"
+  },
+  "gui_light": "front",
+  "display": {}
 }

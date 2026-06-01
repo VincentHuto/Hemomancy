@@ -19,19 +19,22 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.CustomData;
 
 public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
     public static ResourceLocation white = getGourdTexture("white");
     public static ResourceLocation red = getGourdTexture("red");
     public static ResourceLocation black = getGourdTexture("black");
+    public static ResourceLocation dried = getGourdTexture("dried");
     public static ResourceLocation curved = getGourdTexture("curved_horn");
     public static ResourceLocation hemorath_rib = getGourdTexture("hemorath_rib");
 
     public static ResourceLocation white_open = getGourdTexture("white_open");
     public static ResourceLocation red_open = getGourdTexture("red_open");
     public static ResourceLocation black_open = getGourdTexture("black_open");
+    public static ResourceLocation dried_open = getGourdTexture("dried_open");
     public static ResourceLocation curved_open = getGourdTexture("curved_horn_open");
-    public static ResourceLocation hemorath_rib_open = getGourdTexture("hemorath_rib");
+    public static ResourceLocation hemorath_rib_open = getGourdTexture("hemorath_rib_open");
     private final BloodGourdModel<T> modelBloodGourd;
     private final CurvedHornModel<T> modelCurvedHorn;
     private final OpenBloodGourdModel<T> modelOpenBloodGourd;
@@ -70,13 +73,16 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
                     this.translateToBody(matrixStack);
 
                     // Check if the gourd is open
-                    boolean isOpen = stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(BloodGourdItem.TAG_STATE);
+                    boolean isOpen = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                            .copyTag().getBoolean(BloodGourdItem.TAG_STATE);
 
                     ResourceLocation text;
                     if (gourd == ItemInit.curved_horn.get()) {
                         text = isOpen ? curved_open : curved;
                     } else if (gourd == ItemInit.hemorath_rib.get()) {
                         text = isOpen ? hemorath_rib_open : hemorath_rib;
+                    } else if (gourd == ItemInit.dried_gourd.get()) {
+                        text = isOpen ? dried_open : dried;
                     } else if (gourd == ItemInit.blood_gourd_white.get()) {
                         text = isOpen ? white_open : white;
                     } else if (gourd == ItemInit.blood_gourd_red.get()) {
@@ -84,7 +90,7 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
                     } else if (gourd == ItemInit.blood_gourd_black.get()) {
                         text = isOpen ? black_open : black;
                     } else {
-                        text = isOpen ? curved_open : curved;
+                        text = isOpen ? dried_open : dried;
                     }
 
                     if (gourd == ItemInit.curved_horn.get()) {

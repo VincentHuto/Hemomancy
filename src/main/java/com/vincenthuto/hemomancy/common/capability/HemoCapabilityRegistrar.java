@@ -65,6 +65,7 @@ public final class HemoCapabilityRegistrar {
                     }
                     return new BloodVolume();
                 },
+                ItemInit.dried_gourd.get(),
                 ItemInit.blood_gourd_white.get(),
                 ItemInit.blood_gourd_red.get(),
                 ItemInit.blood_gourd_black.get(),

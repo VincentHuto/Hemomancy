@@ -527,7 +527,7 @@ public class ItemInit {
             () -> new MoleMorphlingItem(new Item.Properties().stacksTo(1)));
     /// Blood Gourds
     public static final DeferredHolder<Item, Item> dried_gourd = BASEITEMS.register("dried_gourd",
-            () -> new Item(new Item.Properties()));
+            () -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.DRIED));
     public static final DeferredHolder<Item, Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
             () -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.SIMPLE));
     public static final DeferredHolder<Item, Item> blood_gourd_red = SPECIALITEMS.register("blood_gourd_red",

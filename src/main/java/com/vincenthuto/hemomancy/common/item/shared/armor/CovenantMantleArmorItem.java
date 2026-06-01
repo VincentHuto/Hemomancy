@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.common.item.shared.armor;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.model.armor.CovenantLeaderArmorModel;
+import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -33,6 +36,9 @@ public class CovenantMantleArmorItem extends ArmorItem implements HemoClientItem
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new ModelBackedArmorItemRenderer(
+					Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
@@ -40,6 +46,11 @@ public class CovenantMantleArmorItem extends ArmorItem implements HemoClientItem
 					return CovenantLeaderArmorModel.chest.get();
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
+			}
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
 			}
 		};
 	}

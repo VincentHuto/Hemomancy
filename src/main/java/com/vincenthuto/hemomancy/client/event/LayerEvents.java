@@ -279,6 +279,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
 			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
+			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
 		}
 	}
 

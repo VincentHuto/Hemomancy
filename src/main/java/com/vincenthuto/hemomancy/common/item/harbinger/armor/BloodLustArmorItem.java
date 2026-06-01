@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
+import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -57,6 +60,9 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new ModelBackedArmorItemRenderer(
+					Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
@@ -78,6 +84,11 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 					return BloodLustArmorModel.boots.get();
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
+			}
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
 			}
 		};
 	}

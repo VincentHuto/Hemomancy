@@ -1983,7 +1983,7 @@ Crimson Lodge combat vestment upgraded from either D3 armor fork:
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_2.png)
 >
-> Runtime rendering uses `BloodLustArmorModel` for piecewise 3D armor renders, with mask variants routed through the custom armor model layer and item textures above.
+> Runtime rendering uses `BloodLustArmorModel` for piecewise 3D armor renders, with mask variants routed through the custom armor model layer and item textures above. Inventory, hand, frame, and dropped item stacks route through `ModelBackedArmorItemRenderer` instead of flat generated sprites.
 
 ### 22.3 Barbed Armor
 
@@ -1995,6 +1995,8 @@ Defensive barbed armor set:
 - **Set Bonus (4 pieces):** Thorns — attackers take 2 damage and receive Blood Loss effect (3 seconds)
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_2.png)
+>
+> Item stacks use the same model-backed 3D renderer as the worn armor.
 
 ### 22.4 Chitinite Armor
 
@@ -2007,6 +2009,8 @@ Insectoid/chitin-based armor:
 - **Set Bonus (4 pieces):** +2.0 Armor Toughness (via attribute modifier) and 25% projectile damage reduction
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_2.png)
+>
+> Item stacks use the same model-backed 3D renderer as the worn armor.
 
 ### 22.5 Unstained Armor
 
@@ -2017,6 +2021,8 @@ Anti-blood zealot armor (for the Unstained path):
 - **Set Bonus (4 pieces):** Immunity to Blood Loss and Hemolysis effects (auto-removed on tick)
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_2.png)
+>
+> Item stacks use the same model-backed 3D renderer as the worn armor.
 
 Unstained weapon items now render through 3D custom item models rather than flat handheld sprites. `unstained_warhammer`, `silthmere_glaive`, `absolution_dagger`, and `annettas_absolution_dagger` use `builtin/entity` item model JSONs and `HemoClientItemExtensionsProvider` to route to `UnstainedWeaponItemRenderer`. Model layers are registered in `LayerEvents`: `UnstainedWarhammerModel` uses a Pale Silver Bell-inspired striking head, `SilthmereGlaiveModel` uses a long polearm shaft with a swept blade, and `AbsolutionDaggerModel` uses a narrow stiletto profile shared by Annetta's boss-drop variant. `UnstainedWeaponRendererResourceTest` guards against these items regressing to 2D handheld model JSONs or losing their client renderer/model layer wiring.
 
@@ -2031,13 +2037,13 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 ### 22.7 Silent Archon Vestments and One-Off Pieces
 
-**Silent Archon Vestments** are D7 survivor-duelist vestments made by reforging Blood Lust armor with Monolith Imbued Cloth after choosing the Silent Archon path (`hemomancy:archon_choice_made = "silent"`). Their full-set bonus refuses lethal damage once per 12,000-tick cooldown by spending 3,000 player blood, leaving the player barely alive and applying Resistance briefly plus harsh Weakness, Slowness, Mining Fatigue, and Darkness recovery debuffs. The bonus excludes Degree 8 Apotheos players. Runtime rendering uses `SilentArchonArmorModel` and the robe-derived `silent_archon_layer_1/2.png` armor textures.
+**Silent Archon Vestments** are D7 survivor-duelist vestments made by reforging Blood Lust armor with Monolith Imbued Cloth after choosing the Silent Archon path (`hemomancy:archon_choice_made = "silent"`). Their full-set bonus refuses lethal damage once per 12,000-tick cooldown by spending 3,000 player blood, leaving the player barely alive and applying Resistance briefly plus harsh Weakness, Slowness, Mining Fatigue, and Darkness recovery debuffs. The bonus excludes Degree 8 Apotheos players. Runtime rendering uses `SilentArchonArmorModel`, the robe-derived `silent_archon_layer_1/2.png` armor textures, and a semi-translucent Monolith Fragment shader overlay when worn; inventory, hand, frame, and dropped item stacks use the same custom 3D armor-piece renderer instead of flat generated sprites.
 
 One-off armor pieces intentionally use distinct material holders so they break full-set bonuses:
 - **Hemolymphopoda Headpiece:** existing D3 aquatic/organic helmet.
 - **Crown of Sacred Marrow:** D5/D6 artifact helmet with high-blood melee bonus.
-- **Chalybeate Sclerite Sabatons:** D3/D4 boots from nonlethally knapped Chalybeate Sclerite; reduce projectile/fall damage and brace long falls. Uses the imported Fortress armor model/texture for its 3D boot render.
-- **Covenant Mantle:** D6 chest piece tied to bloodline covenant play; spends wearer blood to grant nearby initiated allies brief resistance. Uses the imported cultist leader armor model/texture for its 3D chest render.
+- **Chalybeate Sclerite Sabatons:** D3/D4 boots from nonlethally knapped Chalybeate Sclerite; reduce projectile/fall damage and brace long falls. Uses the imported Fortress armor model/texture for worn and item-stack 3D boot renders.
+- **Covenant Mantle:** D6 chest piece tied to bloodline covenant play; spends wearer blood to grant nearby initiated allies brief resistance. Uses the imported cultist leader armor model/texture for worn and item-stack 3D chest renders.
 
 ---
 
@@ -3112,7 +3118,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Fungal Scar Cultivation** — **Implemented:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
 - **Mycelial Lantern / Enzyme Fruiting** — **Implemented:** `MycelialLanternBlockEntity`, `EnzymeFruitingRecipe`, `EnzymeFruitingRecipeSerializer`, eight spore culture items, eight enzyme-fruiting JSON recipes, Blood Structure recipe, menu/screen, block entity renderer, item renderer, Blockbench source, and JEI category/catalyst/recipe registration are present.
 - **Hematic Armature / Armor Upgrade Path** — **Implemented:** `HematicArmatureBlockEntity`, `ArmatureUpgradeRecipe`, custom renderer/model/item renderer, hidden restraint entity, no-GUI right-click bowl interaction, walk-on mounting, filler-block multiblock bounds, 5-second per-piece processing, bowl/player particle feedback, and JEI category/catalyst wiring are present. Recipes live in `data/hemomancy/recipe/armature_upgrade/`.
-- **Harbinger Armor Model and Texture Pass** — **Implemented:** Blood Lust mask variants, Silent Archon Vestments, Chalybeate Sclerite Sabatons, Covenant Mantle, Crimson Lacquer, Monolith Imbued Cloth, and the recent memory overlays all have item/model resource coverage. Blood Lust, Silent Archon, Chalybeate, and Covenant pieces render through custom 3D armor models where applicable.
+- **Harbinger Armor Model and Texture Pass** — **Implemented:** Blood Lust mask variants, Silent Archon Vestments, Barbed, Chitinite, Unstained, Chalybeate Sclerite Sabatons, Covenant Mantle, Crimson Lacquer, Monolith Imbued Cloth, and the recent memory overlays all have item/model resource coverage. All custom 3D armor sets and one-off armor pieces except Hematic Iron now use model-backed 3D item-stack rendering where applicable.
 - **Sporitic Thurible** - **Implemented:** Degree 4 Harbinger offhand support item with aligned-spore ignition, 6,000-tick catalyst burn time, GUI burn meter computed from `BurnEndGameTime`, blood upkeep, server-derived swing intensity, spore-colored ambient particles, hostile infection aura, Sporitic Resonance manipulation discount/cooldown hooks, Blood Structure recipe, custom first-person renderer, third-person player layer, hidden vanilla held item, active catalyst miniature rendered inside the thurible head, and articulated client-side chain physics. The supplied thurible photo remains visual reference only and is not packaged as an asset.
 - **Direct Blood Routing** — **Implemented:** `HematicSutureNeedleItem`, `HematicSutureNodeBlockEntity`, `BloodRoutingSavedData`, `IBloodSourceContract`, `IBloodRoutingTarget`, and `BloodRoutingHelper` provide pull-based machine feeding without a basin, fluid, or bulk storage block. Current behavior supports nearby personal/gourd links, Degree 5 sanctum links, optional bloodline-pool draw with leader/opt-in checks, Blood Thrall courier draw/deposit, and Drudge tendering around an SSC.
 - **Puppeteer Spindle and Trial Unlocks** — **Implemented:** `PuppeteersSpindleBlockEntity`, `PuppeteersSpindleMenu`, `PuppeteersSpindleScreen`, `PacketPuppeteersSpindleAction`, `PuppeteersSpindleRenderer`, and `PuppeteersSpindleItemRenderer` provide the two-slot spindle workflow, persistent 512-thread buffer, slotted crossbar filling/binding, themed screen, custom block model, and facing-aware placement. `PuppeteerTrialRecipe`, `PuppeteerTrialRecipeSerializer`, and `PuppeteerSummonTrialEvents` provide the Sanguine Quintessence Blood Crafting trial unlock path for Veinwing Vulture, Marrow Spitter, and Gorebound Hulk.

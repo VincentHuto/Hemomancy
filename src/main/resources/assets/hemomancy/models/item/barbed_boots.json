@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/barbed_boots"
-  }
+    "layer0": "hemomancy:item/barbed_boots",
+    "particle": "hemomancy:item/barbed_boots"
+  },
+  "gui_light": "front",
+  "display": {}
 }

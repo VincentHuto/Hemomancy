@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.model.armor.SilentArchonArmorModel;
+import com.vincenthuto.hemomancy.client.render.item.SilentArchonArmorItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -33,6 +36,9 @@ public class SilentArchonArmorItem extends ArmorItem implements HemoClientItemEx
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new SilentArchonArmorItemRenderer(
+					Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
@@ -46,6 +52,11 @@ public class SilentArchonArmorItem extends ArmorItem implements HemoClientItemEx
 					return SilentArchonArmorModel.boots.get();
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
+			}
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
 			}
 		};
 	}

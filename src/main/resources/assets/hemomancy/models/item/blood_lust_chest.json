@@ -1,6 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/blood_lust_chest"
-  }
+    "layer0": "hemomancy:item/blood_lust_chest",
+    "particle": "hemomancy:item/blood_lust_chest"
+  },
+  "gui_light": "front",
+  "display": {}
 }

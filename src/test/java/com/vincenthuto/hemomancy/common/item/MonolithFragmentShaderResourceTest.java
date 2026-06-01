@@ -23,12 +23,24 @@ public final class MonolithFragmentShaderResourceTest {
 
 		assertContains("shader holder registered", shaderInit,
 				"MONOLITH_FRAGMENT = new ShaderHolder(Hemomancy.rloc(\"item/monolith_fragment\")");
+		assertContains("entity shader holder registered for armor overlays", shaderInit,
+				"MONOLITH_FRAGMENT_ENTITY = new ShaderHolder(Hemomancy.rloc(\"item/monolith_fragment\")");
+		assertContains("entity shader holder uses entity vertex format", shaderInit,
+				"DefaultVertexFormat.NEW_ENTITY");
 		assertContains("shader holder exposes gui clamp uniform", shaderInit,
 				"\"GuiClamp\"");
 		assertContains("shader registration runs on resource reload", shaderInit,
 				"registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));");
+		assertContains("entity shader registration runs on resource reload", shaderInit,
+				"registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));");
 		assertContains("render type uses fragment shader holder", renderTypes,
 				"ShaderInit.MONOLITH_FRAGMENT.getShard()");
+		assertContains("armor overlay render type exists", renderTypes,
+				"silentArchonArmorOverlay");
+		assertContains("armor overlay uses entity model vertex format", renderTypes,
+				"DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS");
+		assertContains("armor overlay uses entity shader holder", renderTypes,
+				"ShaderInit.MONOLITH_FRAGMENT_ENTITY.getShard()");
 		assertContains("render type carries burden uniform", renderTypes,
 				"setUniform(shader, \"Burden\", burden)");
 		assertContains("render type carries attunement uniform", renderTypes,
