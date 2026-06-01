@@ -408,6 +408,7 @@ public class SkillsTabController implements IProgressTab {
             case "skill_living_conduit"  -> "L";
             case "skill_vascular_draw"   -> "V";
             case "skill_crimson_projection" -> "P";
+            case "skill_weapons_master" -> "W";
             case "skill_hematic_focus" -> "F";
             case "skill_vespers_refusal" -> "R";
             case "skill_thread_economy" -> "T";

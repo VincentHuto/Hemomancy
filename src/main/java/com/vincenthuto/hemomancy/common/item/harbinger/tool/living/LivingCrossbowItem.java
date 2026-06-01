@@ -93,6 +93,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 			ItemStack projectile, float soundPitch, boolean isCreativeMode, float velocity, float inaccuracy,
 			float projectileAngle) {
 		if (!worldIn.isClientSide) {
+			boolean restoredStaffForm = false;
 			boolean flag = projectile.getItem() == Items.FIREWORK_ROCKET;
 			Projectile Projectile;
 			if (flag) {
@@ -127,15 +128,21 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
 						} else {
 							playerVolume.drain(damageMod);
-							crossbow.hurtAndBreak(2050, shooter,
-									handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+							restoredStaffForm = LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(crossbow, shooter, handIn);
+							if (!restoredStaffForm) {
+								crossbow.hurtAndBreak(2050, shooter,
+										handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+							}
 						}
 
 					}
 				}
 			}
-			crossbow.hurtAndBreak(flag ? 3 : 1, shooter,
-					handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+			if (!restoredStaffForm) {
+				crossbow.hurtAndBreak(flag ? 3 : 1, shooter,
+						handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+			}
 			worldIn.addFreshEntity(Projectile);
 			worldIn.playSound((Player) null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.CROSSBOW_SHOOT,
 					SoundSource.PLAYERS, 1.0F, soundPitch);
@@ -381,6 +388,11 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {
 		return 0;
+	}
+
+	@Override
+	public boolean canFitInsideContainerItems() {
+		return false;
 	}
 
 	@Override

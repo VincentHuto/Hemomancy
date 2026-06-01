@@ -358,6 +358,18 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
     public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_blade));
+    public static final DeferredHolder<Item, Item> memory_living_axe = BASEITEMS.register("memory_living_axe",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_axe));
+    public static final DeferredHolder<Item, Item> memory_living_spear = BASEITEMS.register("memory_living_spear",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_spear));
+    public static final DeferredHolder<Item, Item> memory_living_claws = BASEITEMS.register("memory_living_claws",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_claws));
+    public static final DeferredHolder<Item, Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_crossbow));
+    public static final DeferredHolder<Item, Item> memory_living_torch = BASEITEMS.register("memory_living_torch",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_torch));
+    public static final DeferredHolder<Item, Item> memory_living_flail = BASEITEMS.register("memory_living_flail",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_flail));
     public static final DeferredHolder<Item, Item> memory_conjure_living_staff = BASEITEMS.register(
             "memory_conjure_living_staff",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_staff));
@@ -491,6 +503,10 @@ public class ItemInit {
             () -> new LivingBaghnakhItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
             () -> new LivingCrossbowItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> living_torch = SPECIALITEMS.register("living_torch",
+            () -> new LivingTorchItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1).fireResistant()));
+    public static final DeferredHolder<Item, Item> living_flail = SPECIALITEMS.register("living_flail",
+            () -> new LivingFlailItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> blood_bolt = BASEITEMS.register("blood_bolt",
             () -> new BloodBoltItem(new Item.Properties()));
     // Blood Thrall â€" creature-based blood transport

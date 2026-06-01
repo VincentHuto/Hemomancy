@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.manips;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -36,7 +37,6 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
-				float pTic = message.parTick;
 				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 						.orElseThrow(NullPointerException::new);
 				// Build a list of only equipped manipulations
@@ -54,22 +54,22 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 					return;
 				}
 
+				BloodManipulation target;
 				if (!equipped.contains(known.getSelectedManip())) {
-					known.setSelectedManip(equipped.get(0));
-					player.displayClientMessage(
-							Component.literal("Selected:" + equipped.get(0).getProperName()), true);
+					target = equipped.get(0);
 				} else {
 					int foundIndex = equipped.indexOf(known.getSelectedManip());
 					if (foundIndex < equipped.size() - 1) {
-						known.setSelectedManip(equipped.get(foundIndex + 1));
-						player.displayClientMessage(
-								Component.literal("Selected:" + equipped.get(foundIndex + 1).getProperName()), true);
+						target = equipped.get(foundIndex + 1);
 					} else {
-						known.setSelectedManip(equipped.get(0));
-						player.displayClientMessage(Component.literal("Selected:" + equipped.get(0).getProperName()),
-								true);
+						target = equipped.get(0);
 					}
 				}
+				if (!LivingStaffWeaponFormHelper.applySelection(player, target)) {
+					return;
+				}
+				known.setSelectedManip(target);
+				player.displayClientMessage(Component.literal("Selected:" + target.getProperName()), true);
 			}
 
 		});

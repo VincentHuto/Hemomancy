@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:frozen_clot"
+  },
+  "congeatio": true,
+  "ferric": true,
+  "result": "hemomancy:memory_living_flail",
+  "count": 1
+}

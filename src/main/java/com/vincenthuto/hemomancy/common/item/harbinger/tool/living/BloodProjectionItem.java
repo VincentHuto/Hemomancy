@@ -85,6 +85,9 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 	public static double projectFromEntity(Level worldIn, LivingEntity player, double structureFeedRate,
 			double tileTransferRate) {
+		if (worldIn.isClientSide) {
+			return 0.0D;
+		}
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		double beforeBlood = playerVolume.getBloodVolume();
@@ -92,7 +95,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		HitResult trace = player.pick(5.5,0, true);
 		if (trace.getType() == Type.BLOCK) {
 			BlockPos targetPos = ((BlockHitResult) trace).getBlockPos();
-			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer
+			if (player instanceof ServerPlayer serverPlayer
 					&& worldIn instanceof ServerLevel serverLevel
 					&& BloodStructureFeedManager.feedStructure(serverPlayer, serverLevel, targetPos,
 							player.getOffhandItem(), structureFeedRate)) {
@@ -116,7 +119,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 			}
 
 		}
-		if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		if (player instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
 		}
 		return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());

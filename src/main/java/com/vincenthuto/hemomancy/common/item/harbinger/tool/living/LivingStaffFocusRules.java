@@ -5,19 +5,22 @@ public final class LivingStaffFocusRules {
 	private static final int STAFF_BASE_ABSORPTION_TARGET_CAP = 2;
 	private static final int STAFF_MAX_ABSORPTION_TARGET_CAP = 8;
 
+	private static final double BARE_ABSORPTION_RANGE = 5.0D;
+	private static final double BARE_ABSORPTION_DAMAGE = 1.0D;
+
 	private static final double STAFF_BASE_ABSORPTION_RANGE = 6.0D;
 	private static final double STAFF_ABSORPTION_RANGE_PER_CONDUIT_LEVEL = 1.5D;
 	private static final double STAFF_ABSORPTION_RANGE_PER_FOCUS_LEVEL = 0.75D;
 	private static final double VESPER_ABSORPTION_RANGE_BONUS = 1.5D;
 	private static final double VESPER_REFUSAL_ABSORPTION_RANGE_BONUS = 0.75D;
 
-	private static final double STAFF_BASE_ABSORPTION_DAMAGE = 2.0D;
-	private static final double STAFF_ABSORPTION_DAMAGE_PER_DRAW_LEVEL = 0.4D;
-	private static final double STAFF_ABSORPTION_DAMAGE_PER_FOCUS_LEVEL = 0.15D;
-	private static final double VESPER_ABSORPTION_DAMAGE_BONUS = 0.3D;
-	private static final double VESPER_REFUSAL_ABSORPTION_DAMAGE_BONUS = 0.2D;
+	private static final double STAFF_BASE_ABSORPTION_DAMAGE = 4.0D;
+	private static final double STAFF_ABSORPTION_DAMAGE_PER_DRAW_LEVEL = 0.75D;
+	private static final double STAFF_ABSORPTION_DAMAGE_PER_FOCUS_LEVEL = 0.25D;
+	private static final double VESPER_ABSORPTION_DAMAGE_BONUS = 0.5D;
+	private static final double VESPER_REFUSAL_ABSORPTION_DAMAGE_BONUS = 0.25D;
 
-	private static final int STAFF_BASE_ABSORPTION_PULSE_INTERVAL = 8;
+	private static final int STAFF_BASE_ABSORPTION_PULSE_INTERVAL = 4;
 	private static final int VESPER_ABSORPTION_PULSE_INTERVAL_BONUS = 1;
 
 	private static final double BARE_STRUCTURE_PROJECTION_RATE = 5.0D;
@@ -48,6 +51,26 @@ public final class LivingStaffFocusRules {
 			cap += 1 + safeFocus.vespersRefusalLevel();
 		}
 		return Math.min(STAFF_MAX_ABSORPTION_TARGET_CAP, cap);
+	}
+
+	public static double bareAbsorptionRange() {
+		return BARE_ABSORPTION_RANGE;
+	}
+
+	public static double bareAbsorptionDamagePerTick() {
+		return BARE_ABSORPTION_DAMAGE;
+	}
+
+	public static double bareAbsorptionPerSecond() {
+		return BARE_ABSORPTION_DAMAGE * 20.0D;
+	}
+
+	public static double staffAbsorptionPerSecond(LivingStaffFocusProfile focus, int availableTargets) {
+		if (availableTargets <= 0) {
+			return 0.0D;
+		}
+		int targets = Math.min(absorptionTargetCap(true, focus), availableTargets);
+		return absorptionDamagePerTarget(focus) * targets * (20.0D / absorptionPulseIntervalTicks(focus));
 	}
 
 	public static double absorptionRange(LivingStaffFocusProfile focus) {

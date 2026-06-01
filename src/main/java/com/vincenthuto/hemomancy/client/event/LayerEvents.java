@@ -60,6 +60,8 @@ public class LayerEvents {
 				LivingBladeUnleashedModel::createLayers);
 		event.registerLayerDefinition(LivingAxeModel.living_axe, LivingAxeModel::createLayers);
 		event.registerLayerDefinition(LivingSpearModel.living_spear, LivingSpearModel::createLayers);
+		event.registerLayerDefinition(LivingTorchModel.LAYER_LOCATION, LivingTorchModel::createBodyLayer);
+		event.registerLayerDefinition(LivingFlailModel.LAYER_LOCATION, LivingFlailModel::createBodyLayer);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);
@@ -279,6 +281,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
 			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
+			livingRenderer.addLayer(new LivingFlailLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
 		}
 	}

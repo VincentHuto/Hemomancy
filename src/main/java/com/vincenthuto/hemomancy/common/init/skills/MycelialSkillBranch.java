@@ -16,7 +16,7 @@ public final class MycelialSkillBranch {
 		// <skill-editor branch="mycelial">
 			SkillPointInit.skill_sporitic_attunement = SkillPointInit.registerSkill(branch,
 					new SkillPoint(34, "skill_sporitic_attunement", 450, 3, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
-							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(657, 687).setBranch("mycelial").setBranchColor(0xFF6E8F3A)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(593, 735).setBranch("mycelial").setBranchColor(0xFF6E8F3A)
 							.setIconItem(() -> new ItemStack(ItemInit.sporitic_thurible.get())));
 			SkillPointInit.skill_hyphal_cultivation = SkillPointInit.registerSkill(branch,
 					new SkillPoint(35, "skill_hyphal_cultivation", 550, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_sporitic_attunement)

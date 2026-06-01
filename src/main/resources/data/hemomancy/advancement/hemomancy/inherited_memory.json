@@ -33,7 +33,13 @@
               "hemomancy:memory_deadly_gaze",
               "hemomancy:memory_sanguine_ward",
               "hemomancy:memory_activation_potential",
-              "hemomancy:memory_living_blade"
+              "hemomancy:memory_living_blade",
+              "hemomancy:memory_living_axe",
+              "hemomancy:memory_living_spear",
+              "hemomancy:memory_living_claws",
+              "hemomancy:memory_living_crossbow",
+              "hemomancy:memory_living_torch",
+              "hemomancy:memory_living_flail"
             ]
           }
         ]

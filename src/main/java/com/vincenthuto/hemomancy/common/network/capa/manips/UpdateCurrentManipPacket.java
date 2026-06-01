@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.manips;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
@@ -33,7 +34,6 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 					IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 							.orElseThrow(NullPointerException::new);
 					List<BloodManipulation> manips = known.getManipList();
-					System.out.println(msg.selected);
 					if (msg.selected >= 0 && msg.selected < manips.size() && manips.get(msg.selected) != null) {
 						BloodManipulation target = manips.get(msg.selected);
 						// Only allow selecting equipped manipulations
@@ -41,6 +41,9 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 							player.displayClientMessage(
 									Component.literal("That manipulation is not equipped!")
 											.withStyle(net.minecraft.ChatFormatting.RED), true);
+							return;
+						}
+						if (!LivingStaffWeaponFormHelper.applySelection(player, target)) {
 							return;
 						}
 						known.setSelectedManip(target);

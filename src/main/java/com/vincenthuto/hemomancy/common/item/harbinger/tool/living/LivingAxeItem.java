@@ -56,10 +56,12 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
+		if (LivingStaffWeaponFormHelper.wasRestoredOutOfHand(stack, attacker)) {
+			return true;
+		}
 		if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
 			attacker.heal(this.getLivingAttackDamage() / 2);
-			if (!attacker.level().isClientSide) {
-				Player playerIn = (Player) attacker;
+			if (!attacker.level().isClientSide && attacker instanceof Player playerIn) {
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						.orElseThrow(NullPointerException::new);
 				float damageMod = this.getLivingAttackDamage() * 75f;
@@ -70,12 +72,14 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 				} else {
 					playerVolume.drain(damageMod);
 					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
-					stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
+					if (!LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(stack, attacker)) {
+						stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
+					}
 				}
 
 			}
 		}
-		return super.hurtEnemy(stack, target, attacker);
+		return true;
 	}
 
 	@Override

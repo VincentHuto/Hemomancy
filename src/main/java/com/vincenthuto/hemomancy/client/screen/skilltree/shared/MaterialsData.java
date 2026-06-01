@@ -528,6 +528,16 @@ public final class MaterialsData {
                 "Equipment", () -> new ItemStack(ItemInit.living_crossbow.get()),
                 true, UnlockPredicate.minDegree(4)));
 
+        list.add(new MaterialEntry("living_torch", "Living Torch",
+                "A living brand that keeps fervent blood burning at its crown.",
+                "Equipment", () -> new ItemStack(ItemInit.living_torch.get()),
+                true, UnlockPredicate.minDegree(4)));
+
+        list.add(new MaterialEntry("living_flail", "Living Flail",
+                "A cold chained head of living tissue that drags heat from whatever it strikes.",
+                "Equipment", () -> new ItemStack(ItemInit.living_flail.get()),
+                true, UnlockPredicate.minDegree(4)));
+
         // ── Containers ──
         list.add(new MaterialEntry("bloody_flask", "Bloody Flask",
                 "Portable blood container. Holds 250 mL.",

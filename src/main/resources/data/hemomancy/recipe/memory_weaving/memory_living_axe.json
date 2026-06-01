@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:chalybeate_sclerite"
+  },
+  "ductilis": true,
+  "ferric": true,
+  "mortem": true,
+  "result": "hemomancy:memory_living_axe",
+  "count": 1
+}

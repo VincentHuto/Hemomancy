@@ -72,11 +72,12 @@ public class ManipulationsTabController implements IProgressTab {
 
         for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
             BloodManipulation manip = entry.resolve();
-            if (manip == null || manip.getTend() == null) {
+            EnumBloodTendency tendency = manip != null ? manip.getTend() : null;
+            if (tendency == null) {
                 fallbackEntries.add(entry);
                 continue;
             }
-            byTendency.computeIfAbsent(manip.getTend(), k -> new ArrayList<>()).add(entry);
+            byTendency.computeIfAbsent(tendency, k -> new ArrayList<>()).add(entry);
         }
 
         Map<ManipulationTreeEntry, int[]> rawPositions = new HashMap<>();
@@ -227,7 +228,7 @@ public class ManipulationsTabController implements IProgressTab {
             boolean childKnown = knownManipNames.contains(entry.getManipName());
             boolean childLocked = isManipRankLocked(entry.resolve());
 
-            for (String parentName : entry.getParentNames()) {
+            for (String parentName : entry.getConnectionParentNames()) {
                 ManipulationTreeEntry parentEntry = ManipulationTreeInit.getEntry(parentName);
                 if (parentEntry == null) continue;
                 int[] parentPos = manipPositions.get(parentEntry);

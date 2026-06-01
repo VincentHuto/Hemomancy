@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ public class ManipulationTreeEntry {
 	private final String manipName;
 	private final int x, y;
 	private final List<String> parentNames;
+	private List<String> softParentNames = List.of();
 	private EnumNodeShape nodeShape = EnumNodeShape.SQUARE;
 
 	/**
@@ -49,6 +51,29 @@ public class ManipulationTreeEntry {
 
 	public List<String> getParentNames() {
 		return parentNames;
+	}
+
+	public List<String> getSoftParentNames() {
+		return softParentNames;
+	}
+
+	public List<String> getConnectionParentNames() {
+		return parentNames;
+	}
+
+	public List<String> getRequirementParentNames() {
+		if (softParentNames.isEmpty()) {
+			return parentNames;
+		}
+		List<String> parents = new ArrayList<>(parentNames);
+		parents.addAll(softParentNames);
+		return parents;
+	}
+
+	/** Builder-style setter for non-lineage dependency links that should not draw tree edges. */
+	public ManipulationTreeEntry setSoftParents(String... parents) {
+		this.softParentNames = List.of(parents);
+		return this;
 	}
 
 	/** Builder-style setter for the node shape on the skill tree. */

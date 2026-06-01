@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:molten_scab"
+  },
+  "flammeus": true,
+  "ferric": true,
+  "result": "hemomancy:memory_living_torch",
+  "count": 1
+}

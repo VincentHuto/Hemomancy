@@ -106,6 +106,11 @@ public class LivingStaffItem extends LivingItemItem implements IDispellable {
 	}
 
 	@Override
+	public boolean canFitInsideContainerItems() {
+		return false;
+	}
+
+	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		CompoundTag staffnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();

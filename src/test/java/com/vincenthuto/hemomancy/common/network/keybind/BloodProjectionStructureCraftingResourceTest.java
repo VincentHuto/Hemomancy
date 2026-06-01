@@ -53,6 +53,8 @@ public final class BloodProjectionStructureCraftingResourceTest {
 
 		assertContains("projection item tries structure feed before tile transfer", projectionItem,
 				"BloodStructureFeedManager.feedStructure");
+		assertContains("projection transfer is server authoritative", projectionItem,
+				"if (worldIn.isClientSide)");
 		assertContains("projection use starts while player has blood", projectionItem,
 				"volume.getBloodVolume() > 0");
 		assertContains("key packet leaves normal Harbinger structures to projection", keyPacket,

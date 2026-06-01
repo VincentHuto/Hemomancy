@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:puppeteering_thread"
+  },
+  "ductilis": true,
+  "ferric": true,
+  "result": "hemomancy:memory_living_crossbow",
+  "count": 1
+}

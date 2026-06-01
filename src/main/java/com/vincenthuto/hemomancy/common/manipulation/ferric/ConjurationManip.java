@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingArsenalInventoryGuard;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -27,6 +29,10 @@ public class ConjurationManip extends BloodManipulation {
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (heldItemMainhand.isEmpty()) {
+			if (item.get() == ItemInit.living_staff.get()
+					&& LivingArsenalInventoryGuard.summonOrRecoverStaff(player, heldItemMainhand)) {
+				return;
+			}
 			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item.get()));
 		}
 	}

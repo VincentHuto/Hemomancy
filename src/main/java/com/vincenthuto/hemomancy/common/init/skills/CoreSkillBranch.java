@@ -14,15 +14,15 @@ public final class CoreSkillBranch {
 
 	public static void register(List<SkillPoint> branch) {
 		// <skill-editor branch="core">
-			SkillPointInit.setDegreeLabelPosition(0, 410, 540);
-			SkillPointInit.setDegreeLabelPosition(1, 362, 558);
-			SkillPointInit.setDegreeLabelPosition(2, 298, 576);
-			SkillPointInit.setDegreeLabelPosition(3, 218, 594);
-			SkillPointInit.setDegreeLabelPosition(4, 154, 612);
+			SkillPointInit.setDegreeLabelPosition(0, 522, 524);
+			SkillPointInit.setDegreeLabelPosition(1, 554, 558);
+			SkillPointInit.setDegreeLabelPosition(2, 586, 592);
+			SkillPointInit.setDegreeLabelPosition(3, 634, 626);
+			SkillPointInit.setDegreeLabelPosition(4, 666, 660);
 			SkillPointInit.setDegreeLabelPosition(5, 522, 566);
-			SkillPointInit.setDegreeLabelPosition(6, 570, 584);
-			SkillPointInit.setDegreeLabelPosition(7, 618, 602);
-			SkillPointInit.setDegreeLabelPosition(8, 666, 620);
+			SkillPointInit.setDegreeLabelPosition(6, 570, 600);
+			SkillPointInit.setDegreeLabelPosition(7, 602, 634);
+			SkillPointInit.setDegreeLabelPosition(8, 650, 668);
 			SkillPointInit.base_skill = SkillPointInit.registerSkill(branch,
 					new SkillPoint(0, "base", 0, 1, EnumSkillStates.UNLOCKED, null)
 							.setTreePosition(480, 480).setBranch("core").setBranchColor(0xFFD00000)
@@ -85,7 +85,7 @@ public final class CoreSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
 			SkillPointInit.skill_manip_slots = SkillPointInit.registerSkill(branch,
 					new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
-							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(368, 504).setBranch("core").setBranchColor(0xFFD00000)
+							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(384, 424).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
 		// </skill-editor>
 	}

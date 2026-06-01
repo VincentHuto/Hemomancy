@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.skill;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import net.minecraft.world.entity.player.Player;
 
@@ -371,6 +372,28 @@ public final class SkillPointHelper {
 		SkillPoint sp = SkillPointInit.skill_vespers_refusal;
 		if (sp == null || !progress.isUnlocked(sp)) return 0;
 		return progress.getLevel(sp);
+	}
+
+	public static int getWeaponsMasterLevel(Player player) {
+		return getWeaponsMasterLevel(progress(player));
+	}
+
+	public static int getWeaponsMasterLevel() {
+		return getWeaponsMasterLevel(progress(null));
+	}
+
+	private static int getWeaponsMasterLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_weapons_master;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static double getLivingStaffHotSwapCost(Player player) {
+		return LivingStaffWeaponFormRules.hotSwapCostForWeaponsMasterLevel(getWeaponsMasterLevel(player));
+	}
+
+	public static double getLivingStaffHotSwapCost() {
+		return LivingStaffWeaponFormRules.hotSwapCostForWeaponsMasterLevel(getWeaponsMasterLevel());
 	}
 
 	public static int getThreadEconomyLevel(Player player) {

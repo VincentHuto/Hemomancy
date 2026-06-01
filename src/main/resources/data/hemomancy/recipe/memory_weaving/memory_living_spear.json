@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:calcified_blood_spine"
+  },
+  "animus": true,
+  "ferric": true,
+  "lux": true,
+  "result": "hemomancy:memory_living_spear",
+  "count": 1
+}

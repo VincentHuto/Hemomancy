@@ -60,6 +60,11 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 	}
 
 	@Override
+	public boolean canFitInsideContainerItems() {
+		return false;
+	}
+
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return Component
@@ -83,7 +88,10 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 					} else {
 						playerVolume.drain(damageMod);
 						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
-						stack.hurtAndBreak(getMaxDamage(stack) + 10, attacker, EquipmentSlot.MAINHAND);
+						boolean restoredStaffForm = LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(stack, attacker);
+						if (!restoredStaffForm) {
+							stack.hurtAndBreak(getMaxDamage(stack) + 10, attacker, EquipmentSlot.MAINHAND);
+						}
 						Vec3 pos = playerIn.position();
 						if (attacker.level() instanceof ServerLevel serverLevel) {
 							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, serverLevel);

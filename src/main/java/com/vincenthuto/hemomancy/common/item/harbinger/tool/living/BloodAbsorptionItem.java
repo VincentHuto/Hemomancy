@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand, HemoClientItemExtensionsProvider {
-	private static final double BARE_ABSORPTION_RANGE = 5.0D;
-	private static final double BARE_ABSORPTION_AMOUNT = 3.0D;
-
 	public BloodAbsorptionItem(Properties prop) {
 		super(prop.stacksTo(1));
 	}
@@ -110,8 +107,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (worldIn.isClientSide) {
 			return;
 		}
-		findBareAbsorptionTarget(player, BARE_ABSORPTION_RANGE)
-				.ifPresent(target -> absorbFromTarget(worldIn, player, target, BARE_ABSORPTION_AMOUNT));
+		findBareAbsorptionTarget(player, LivingStaffFocusRules.bareAbsorptionRange())
+				.ifPresent(target -> absorbFromTarget(worldIn, player, target,
+						LivingStaffFocusRules.bareAbsorptionDamagePerTick()));
 	}
 
 	public static Optional<LivingEntity> findBareAbsorptionTarget(LivingEntity user, double range) {

@@ -215,8 +215,14 @@ public class RadialChooseManipScreen extends Screen {
 
 	private ResourceLocation memoryOverlayTexture(BloodManipulation manipulation) {
 		String texture = switch (manipulation.getName()) {
+			case "conjure_axe" -> "memory_living_axe_overlay";
 			case "conjure_blade" -> "memory_living_blade_overlay";
+			case "conjure_claws" -> "memory_living_claws_overlay";
+			case "conjure_crossbow" -> "memory_living_crossbow_overlay";
+			case "conjure_flail" -> "memory_living_flail_overlay";
+			case "conjure_spear" -> "memory_living_spear_overlay";
 			case "conjure_staff" -> "memory_living_staff_overlay";
+			case "conjure_torch" -> "memory_living_torch_overlay";
 			default -> "memory_" + manipulation.getName() + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

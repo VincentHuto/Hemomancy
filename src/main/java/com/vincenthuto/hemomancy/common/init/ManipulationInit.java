@@ -239,9 +239,38 @@ public class ManipulationInit {
 					}, "Applies Glowing to all nearby entities"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
-			() -> new ConjurationManip("conjure_blade", ItemInit.living_blade, 1000, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
-					.setCooldownTicks(40)
+			() -> new StaffWeaponFormManip("conjure_blade", ItemInit.living_blade, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.ARMS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_axe = MANIPS.register("conjure_axe",
+			() -> new StaffWeaponFormManip("conjure_axe", ItemInit.living_axe, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_spear = MANIPS.register("conjure_spear",
+			() -> new StaffWeaponFormManip("conjure_spear", ItemInit.living_spear, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.ARMS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_claws = MANIPS.register("conjure_claws",
+			() -> new StaffWeaponFormManip("conjure_claws", ItemInit.living_baghnakh, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_crossbow = MANIPS.register("conjure_crossbow",
+			() -> new StaffWeaponFormManip("conjure_crossbow", ItemInit.living_crossbow, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.ARMS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_torch = MANIPS.register("conjure_torch",
+			() -> new StaffWeaponFormManip("conjure_torch", ItemInit.living_torch, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.ARMS)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_flail = MANIPS.register("conjure_flail",
+			() -> new StaffWeaponFormManip("conjure_flail", ItemInit.living_flail, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_staff = MANIPS.register("conjure_staff",

@@ -1,0 +1,12 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:chitinous_husk"
+  },
+  "animus": true,
+  "ductilis": true,
+  "ferric": true,
+  "tenebris": true,
+  "result": "hemomancy:memory_living_claws",
+  "count": 1
+}

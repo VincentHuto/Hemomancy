@@ -812,7 +812,7 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 
 ### 8.2 Registered Manipulations
 
-`ManipulationInit` currently registers 44 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role.
+`ManipulationInit` currently registers 51 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role.
 
 | Name | Cost | Type | Rank | Tendency | Vein Section | Cooldown | Description |
 |------|------|------|------|----------|-------------|----------|-------------|
@@ -828,7 +828,13 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 | `sanguine_ward` | 10 | Continuous | Mediocritas | Ductilis | Body | 20t | Passive damage reduction shield (logic handled in ManipEvents on hurt) |
 | `hemolymphal_pulse` | 400 | Quick | Humilis | Ductilis | Head | 20t | Blood-sense pulse that applies Glowing to nearby living entities for 15 seconds |
 | `ferric_transmutation` | 1000 | Quick | Summa | Ferric | Body | 20t | **Sanguine Alloy** — saturates the caster's blood with ferrous compounds for 90s: grants Strength II (iron-enriched blood hits harder) + Sanguine Siphon II (accelerated blood regeneration). Memory item display name: "Memory Sanguine Alloy". |
-| `conjure_blade` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Living Blade into empty main hand |
+| `conjure_blade` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Animus | Right Arm | — | Reshapes a held Living Staff into a Living Blade; cost reduced by Weapons Master |
+| `conjure_axe` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Mortem | Right Arm | — | Reshapes a held Living Staff into a Living Axe; cost reduced by Weapons Master |
+| `conjure_spear` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Lux | Right Arm | — | Reshapes a held Living Staff into a Living Spear; cost reduced by Weapons Master |
+| `conjure_claws` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Tenebris | Right Arm | — | Reshapes a held Living Staff into Living Baghnakh claws; cost reduced by Weapons Master |
+| `conjure_crossbow` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Ductilis | Right Arm | — | Reshapes a held Living Staff into a Living Crossbow; cost reduced by Weapons Master |
+| `conjure_torch` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Flammeus | Right Arm | — | Reshapes a held Living Staff into a Living Torch; ignites struck targets; cost reduced by Weapons Master |
+| `conjure_flail` | 250 hot-swap | Quick (Living Staff Form) | Mediocritas | Congeatio | Right Arm | — | Reshapes a held Living Staff into a Living Flail; slows struck targets and uses a physics-rendered chain model; cost reduced by Weapons Master |
 | `conjure_staff` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Living Staff into empty main hand after the first Living Staff blood-structure craft unlocks the staff bond |
 | `blood_absorption` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Absorption tool into empty main hand |
 | `blood_projection` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Projection launcher into empty main hand |
@@ -861,6 +867,18 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 | `unclosing_eye` | 350 | Quick | Summa | Lux | Head | 120t | **Canon Memory (Seraphae)** — applies Glowing to ALL living entities in 32 blocks (including the caster), strips Invisibility from any target that has it, grants Night Vision 30s. Anti-stealth weapon; total mutual exposure. Feedback reports concealments dissolved. |
 | `bloom_of_rot` | 500 | Quick | Summa | Mortem | Body | 80t | **Canon Memory (Putriciel)** — 8-block AoE: applies Wither II (10s) + Poison I (10s) + Slowness III (10s) to all entities; caster also receives Poison I (5s). |
 | `endless_hour` | 600 | Quick | Summa | Congeatio | Body | 200t | **Canon Memory (Velorum)** — absorbs all incoming damage for 10s (Absorption V + Resistance IV), then repays the full accumulated damage when the effect expires. |
+
+#### 8.2.1 Living Staff Rework Summary
+
+The Living Staff is now the central living-weapon platform rather than a parallel conjured tool. `conjure_blade`, `conjure_axe`, `conjure_spear`, `conjure_claws`, `conjure_crossbow`, `conjure_torch`, and `conjure_flail` are `StaffWeaponFormManip` entries: selecting or using one while holding a Living Staff reshapes the staff into that weapon form and stores the original staff stack in custom item data. Switching to another staff weapon form restores the stored staff first, then applies the new form.
+
+Each living weapon form now has its own gameplay tendency, giving tendency-specialized players a reason to favor a matching form: blade is Animus, axe is Mortem, spear is Lux, claws are Tenebris, crossbow is Ductilis, torch is Flammeus, and flail is Congeatio. The Manipulations tab treats `conjure_staff` as a soft parent for these forms: each weapon appears in its own tendency tree, while a soft staff connection still communicates that the form can only be used through the Living Staff.
+
+Hot-swapping into a staff weapon form costs 250mL by default. `Weapons Master` has 4 levels and reduces that cost by 50mL per level, down to a 50mL minimum. Running out of blood while using a transformed staff weapon causes it to recoil back into the stored Living Staff instead of breaking into a separate living weapon.
+
+Use-manipulation key behavior is a toggle when the selected manipulation still matches the active transformed weapon. Example: selected `conjure_spear` + held Living Spear form -> tap use-manipulation key to restore the Living Staff; tap again with `conjure_spear` still selected to reshape back into the spear.
+
+Inventory guardrails are intentional. A player may carry only one Living Staff/living weapon family item at a time (`living_staff`, `living_blade`, `living_axe`, `living_spear`, `living_baghnakh`, `living_crossbow`, `living_torch`, `living_flail`). Living arsenal items cannot be placed into container items, and server-side inventory/menu hooks remove duplicates and pull living arsenal items back out of non-player inventories. Casting `conjure_staff` with an empty hand recovers an existing staff/transformed staff from the player's inventory when possible, purging duplicate living arsenal items in the process.
 
 ### 8.3 Memory Learning and Early Starter Flow
 
@@ -957,6 +975,7 @@ Skill definitions are Java-owned. `SkillPointInit` keeps the public static field
 | Skill | ID | Max Lvl | SP Cost | Req. Degree | Effect | Parent |
 |-------|----|---------|---------|-------------|--------|--------|
 | Base | 0 | 1 | — | — | Root node, unlocked by default | — |
+| Deep Base | 38 | 1 | 1 | 5 | Late-path anchor used by deep Harbinger branches | — |
 | Capacity | 1 | 5 | 1 | — | +500 max blood volume per level | Base |
 | Efficiency | 2 | 5 | 1 | — | -8% manipulation cost per level (multiplicative, ~34% at max) | Base |
 | Manip Slots | 14 | 5 | 2 | 1 | +1 active manipulation slot per level | Base |
@@ -969,6 +988,9 @@ Skill definitions are Java-owned. `SkillPointInit` keeps the public static field
 | Feeding Frenzy | 5 | 3 | 3 | 3 | +25% blood gained from kills | Last Wind |
 | Iron Will | 10 | 3 | 3 | 3 | 10% damage reduction per level when blood < 15% | Last Wind |
 | Crimson Projection | 23 | 3 | 3 | 3 | Living Staff structure feed and blood vessel feed rates increase per level | Living Conduit |
+| Weapons Master | 39 | 4 | 2 | 4 | -50mL Living Staff weapon hot-swap cost per level (250mL -> 50mL) | Crimson Projection + Vascular Draw |
+| Hematic Focus | 24 | 3 | 3 | 5 | Broad Living Staff focus: absorption cap/range/amount/pulse and projection rates improve per level | Crimson Projection + Vascular Draw + Deep Base |
+| Vesper's Refusal | 25 | 3 | 4 | 7 | Amplifies awakened Vesper memory on the Living Staff; inert until Vesper's memory is awakened | Hematic Focus |
 | Blood Flow | 11 | 5 | 2 | 3 | -5% manipulation cooldowns per level | Hemostasis |
 | Coagulation | 12 | 3 | 3 | 4 | +15% chance to block incoming bleed effects | Hemostasis |
 | Crimson Mastery | 8 | 3 | 3 | 4 | +15% manipulation damage/effectiveness per level | Dynamic Use |
@@ -986,6 +1008,7 @@ Skill bonuses are computed in `SkillPointHelper`.
 |-------|--------|-------------|
 | Capacity | ✅ Yes | `BloodVolumeEvents` — adds flat bonus to max blood volume each tick |
 | Efficiency | ✅ Yes | `BloodManipulation.performAction()` — multiplies manipulation blood cost |
+| Deep Base | ✅ Yes | `SkillPointInit` / branch definitions — degree-gated anchor for deeper progression paths |
 | Manip Slots | ✅ Yes | `KnownManipulationEvents` — expands active manipulation slot count |
 | Living Conduit | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — increases Living Staff absorption target cap and range |
 | Last Wind | ✅ Yes | `BloodVolumeEvents` — passive blood regen when below 10% threshold |
@@ -994,6 +1017,9 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Hemostasis | ✅ Yes | `BloodVolumeEvents` — multiplies blood drained when taking damage |
 | Vascular Draw | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — increases Living Staff absorption amount and pulse speed |
 | Crimson Projection | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — increases Living Staff projection/feed rates |
+| Weapons Master | ✅ Yes | `LivingStaffWeaponFormHelper` / `LivingStaffWeaponFormRules` — reduces Living Staff weapon hot-swap cost by 50mL per level |
+| Hematic Focus | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — improves all staff focus channels: absorption cap/range/amount/pulse and projection rates |
+| Vesper's Refusal | ✅ Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` — only applies when Vesper memory is awakened; improves staff target cap, range, absorption, pulse speed, and projection rates |
 | Sanguine Surge | ✅ Yes | `BloodVolumeEvents` — adds passive blood regen per tick |
 | Crimson Mastery | ✅ Yes | `PyreticForgeManip` — scales items smelted per cast |
 | Vital Link | ✅ Yes | `KnownManipulationEvents` — chance to heal player on dealing manipulation damage |
@@ -1564,6 +1590,12 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_ward` | Grants Resistance I to nearby player allies for 10 seconds |
 | `hemolymphal_pulse` | Applies Glowing to all nearby living entities |
 | `conjure_blade` | Unsupported; cannot be used by Drudges |
+| `conjure_axe` | Unsupported; cannot be used by Drudges |
+| `conjure_spear` | Unsupported; cannot be used by Drudges |
+| `conjure_claws` | Unsupported; cannot be used by Drudges |
+| `conjure_crossbow` | Unsupported; cannot be used by Drudges |
+| `conjure_torch` | Unsupported; cannot be used by Drudges |
+| `conjure_flail` | Unsupported; cannot be used by Drudges |
 | `conjure_staff` | Unsupported; cannot be used by Drudges |
 | `blood_absorption` | Unsupported; cannot be used by Drudges |
 | `blood_projection` | Unsupported; cannot be used by Drudges |
@@ -1776,10 +1808,23 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_stained_stone.png) Blood Stained Stone | Memory-related item |
 | Blood Memory (per manipulation) | One for each registered manipulation — using it teaches the player |
 | Crude Memory Shards | Early starter memories that teach and auto-equip weak manipulations without needing the Mnemonic Reliquary; current set covers `blood_shot`, `blood_rush`, `deadly_gaze`, `crimson_harvest`, `sanguine_mending`, `blood_lamp`, `hemorrhage`, `glacial_grasp`, `sanguine_ignition`, and `void_shroud` |
+| Living Weapon Memories | `memory_living_blade`, `memory_living_axe`, `memory_living_spear`, `memory_living_claws`, `memory_living_crossbow`, `memory_living_torch`, and `memory_living_flail` teach the Living Staff weapon-form manipulations |
 | **Canon Memory: Crimson Tithe** | Saint manipulation memory (Hemorath) — obtained via Somatic Loom with Hallowed Residuum of Hemorath |
 | **Canon Memory: Unclosing Eye** | Saint manipulation memory (Seraphae) — obtained via Somatic Loom with Hallowed Residuum of Seraphae |
 | **Canon Memory: Bloom of Rot** | Saint manipulation memory (Putriciel) — obtained via Somatic Loom with Hallowed Residuum of Putriciel |
 | **Canon Memory: Endless Hour** | Saint manipulation memory (Velorum) — obtained via Somatic Loom with Hallowed Residuum of Velorum |
+
+Living weapon memory weaving recipes intentionally share the Living Blade recipe shape without being exact duplicates:
+
+| Memory | Teaches | Ingredient | Tendency Flags |
+|--------|---------|------------|----------------|
+| `memory_living_blade` | `conjure_blade` | `hematic_iron_powder` | Animus, Ductilis, Ferric |
+| `memory_living_axe` | `conjure_axe` | `chalybeate_sclerite` | Ductilis, Ferric, Mortem |
+| `memory_living_spear` | `conjure_spear` | `calcified_blood_spine` | Animus, Ferric, Lux |
+| `memory_living_claws` | `conjure_claws` | `chitinous_husk` | Animus, Ductilis, Ferric, Tenebris |
+| `memory_living_crossbow` | `conjure_crossbow` | `puppeteering_thread` | Ductilis, Ferric |
+| `memory_living_torch` | `conjure_torch` | `molten_scab` | Ferric, Flammeus |
+| `memory_living_flail` | `conjure_flail` | `frozen_clot` | Congeatio, Ferric |
 
 **Memory Textures Gallery:**
 
@@ -1790,6 +1835,8 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_shot_overlay.png) Blood Shot | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_deadly_gaze_overlay.png) Deadly Gaze | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_needle_overlay.png) Blood Needle | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_rush_overlay.png) Blood Rush |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_cloud_overlay.png) Blood Cloud | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_aneurysm_overlay.png) Blood Aneurysm | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_activation_potential_overlay.png) Activation Potential | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_sanguine_ward_overlay.png) Sanguine Ward |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_venous_travel_overlay.png) Venous Travel | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_ferric_transmutation_overlay.png) Sanguine Alloy *(item id: memory_ferric_transmutation)* | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_blade_overlay.png) Living Blade | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_absorption_overlay.png) Blood Absorption |
+| ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_axe_overlay.png) Living Axe | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_spear_overlay.png) Living Spear | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_claws_overlay.png) Living Claws | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_crossbow_overlay.png) Living Crossbow |
+| ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_torch_overlay.png) Living Torch | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_living_flail_overlay.png) Living Flail |  |  |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_projection_overlay.png) Blood Projection | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_summon_avatar_overlay.png) Summon Avatar | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_flame_conjuration_overlay.png) Crimson Flame Conjuration | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_lamp_overlay.png) Blood Lamp |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_sight_overlay.png) Crimson Sight | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_harvest_overlay.png) Crimson Harvest | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hemosynthesis_overlay.png) Hemosynthesis | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_pyretic_forge_overlay.png) Pyretic Forge |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_vital_effusion_overlay.png) Vital Effusion | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hemolymphal_pulse_overlay.png) Hemolymphal Pulse | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_vascular_dowsing_overlay.png) Vascular Dowsing | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_ferric_resonance_overlay.png) Ferric Resonance |
@@ -1897,7 +1944,7 @@ Produced by the **Visceral Mirror** ritual (requires Degree 3+). Spectral imprin
 
 ### 21.2 Living Tools (Blood-powered)
 
-All are single-stack, use the `LIVING` tool tier:
+All are single-stack, use the `LIVING` tool tier. The Living Staff is the preferred long-term interface for living weapons and blood utility, while the bare Blood Absorption / Blood Projection items remain fallback conjured hand tools.
 
 | Weapon | Class | Notes |
 |--------|-------|-------|
@@ -1905,7 +1952,9 @@ All are single-stack, use the `LIVING` tool tier:
 | Living Axe | `LivingAxeItem` | Blood-feeding axe |
 | Living Spear | `LivingSpearItem` | Blood-feeding polearm |
 | Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding claw weapon |
-| Living Staff | `LivingStaffItem` | Channels morphlings and blood magic. First blood-structure craft unlocks the player Living Staff bond and `conjure_staff`; absorption/projection power now reads from Living Conduit, Vascular Draw, and Crimson Projection skill levels, while handled blood remains a player stat. |
+| Living Torch | `LivingTorchItem` | Flammeus staff weapon form; ignites struck targets |
+| Living Flail | `LivingFlailItem` | Congeatio staff weapon form; slows struck targets and uses a physics-rendered chain/head model |
+| Living Staff | `LivingStaffItem` | Channels morphlings, blood magic, and living weapon forms. First blood-structure craft unlocks the player Living Staff bond and `conjure_staff`; absorption/projection power now reads from Living Conduit, Vascular Draw, and Crimson Projection skill levels, while Weapons Master reduces weapon-form hot-swap cost. |
 | Memory of Vesper | `MemoryOfVesperItem` | Vesper Evening Star drop. Right-click after forming a Living Staff bond to permanently awaken Vesper's memory in player staff progress instead of crafting a separate or stack-bound weapon. |
 | Living Syringe | `LivingSyringeItem` | Extracts blood vials from mobs into a loaded Vial Rack (Shift to eject rack) |
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
@@ -1913,6 +1962,50 @@ All are single-stack, use the `LIVING` tool tier:
 | Annetta's Sanguis Lancea | `AnnettasSanguisLanceaItem` | Epic Harbinger-route Annetta drop. Held/item rendering uses `AnnettasSanguisLanceaItemRenderer`, `AnnettasSanguisLanceaModel`, `model_annettas_sanguis_lancea.png`, and a crimson glint overlay; the thrown form still uses the shared `SanguisLanceaEntity`/renderer path. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_absorption.png) Blood Absorption | `BloodAbsorptionItem` | Conjured blood-absorbing tool |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_projection.png) Blood Projection | `BloodProjectionItem` | Conjured blood projectile launcher |
+
+#### 21.2.1 Living Staff Weapon Forms
+
+The Living Staff can inherit living weapons as temporary forms rather than creating separate inventory items. `LivingStaffWeaponFormHelper` stores the original staff stack under `HemomancyStoredLivingStaff` and marks the active form with `HemomancyStaffWeaponForm`. The transformed item is still a normal living weapon item for combat behavior, but it remains logically tied to the staff.
+
+| Form Manipulation | Active Item | Notes |
+|-------------------|-------------|-------|
+| `conjure_blade` | `living_blade` | Animus living blade form; retains living tool blood-failure recoil |
+| `conjure_axe` | `living_axe` | Mortem living axe form |
+| `conjure_spear` | `living_spear` | Lux living spear form |
+| `conjure_claws` | `living_baghnakh` | Tenebris living claw form |
+| `conjure_crossbow` | `living_crossbow` | Ductilis living crossbow form; Blood Bolt firing can recoil to staff if blood runs out |
+| `conjure_torch` | `living_torch` | Flammeus living torch form; ignites struck targets |
+| `conjure_flail` | `living_flail` | Congeatio living flail form; slows struck targets and renders with a damped physics chain patterned after the Sporitic Thurible |
+
+Selecting a staff weapon form through manipulation cycling/radial selection applies that form if the Living Staff is held. Selecting a non-staff-weapon manipulation restores a transformed weapon back into the stored staff. Pressing the use-manipulation key while the selected staff weapon form matches the held transformed item toggles back to staff; pressing it again reshapes back into the selected weapon.
+
+Hot-swap cost is handled by `LivingStaffWeaponFormRules`: 250mL base, reduced by 50mL per `Weapons Master` level, minimum 50mL at level 4. Reverting a transformed weapon back to staff is not a new hot-swap and does not charge the form cost.
+
+#### 21.2.2 Living Arsenal Guardrails
+
+`LivingArsenalInventoryGuard` keeps the living arsenal from becoming clutter or duplication fuel. This Living arsenal guard is deliberately server-backed:
+
+- Only one living arsenal item may remain in the player's inventory at a time: `living_staff`, `living_blade`, `living_axe`, `living_spear`, `living_baghnakh`, `living_crossbow`, `living_torch`, or `living_flail`.
+- Living staff/weapon items cannot fit inside container items, and server container hooks pull them back out of non-player inventories.
+- If `conjure_staff` is cast with an empty hand and a staff or transformed staff is already somewhere in the player's inventory, the guard recovers it into the main hand and removes duplicates.
+- Transformed weapons stored outside the selected hotbar slot are normalized back into a Living Staff during inventory sanitation.
+
+#### 21.2.3 Staff Blood Utility Rates
+
+Bare Blood Absorption now acts as the fallback hand tool at 1mL/tick against one target within 5 blocks. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff and starts at 4mL per target every 4 ticks, with a base target cap of 2 and base range of 6 blocks. It matches the bare hand on one target and outperforms it as soon as two targets are available.
+
+Staff focus scaling is centralized in `LivingStaffFocusRules`:
+
+| Source | Staff Effect |
+|--------|--------------|
+| Living Conduit | +1 target cap and +1.5 block absorption range per level |
+| Vascular Draw | +0.75 absorption per target and -1 pulse interval tick per level |
+| Crimson Projection | +3 structure feed and +75 blood tile transfer per level |
+| Hematic Focus | +1 target cap, +0.75 range, +0.25 absorption, faster pulse at higher levels, +1.5 structure feed, +35 tile transfer per level |
+| Vesper memory awakened | +1 target cap, +1.5 range, +0.5 absorption, -1 pulse interval tick, +3 structure feed, +75 tile transfer |
+| Vesper's Refusal | Only while Vesper memory is awakened: +1 target cap, +0.75 range, +0.25 absorption, faster pulse at higher levels, +2 structure feed, +50 tile transfer per level |
+
+Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`, and blood transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
 
 > *Note: Living tools (blade, axe, spear, staff, syringe, crossbow, lancea, baghnakh) use 3D entity models rather than flat item textures — see `src/main/resources/assets/hemomancy/textures/entity/` for their model textures:*
 >
@@ -2255,6 +2348,7 @@ Current datapack paths use the 1.21 singular directory names already present in 
 | Main recipes | `src/main/resources/data/hemomancy/recipe/` |
 | Harbinger Blood Structure recipes | `src/main/resources/data/hemomancy/recipe/blood_structure/` |
 | Harbinger Cardinal Rites | `src/main/resources/data/hemomancy/recipe/cardinal_rite/` |
+| Memory weaving recipes | `src/main/resources/data/hemomancy/recipe/memory_weaving/` |
 | Puppeteer trials | `src/main/resources/data/hemomancy/recipe/puppeteer_trial/` |
 | Enzyme fruiting | `src/main/resources/data/hemomancy/recipe/enzyme_fruiting/` |
 | Armature upgrades | `src/main/resources/data/hemomancy/recipe/armature_upgrade/` |

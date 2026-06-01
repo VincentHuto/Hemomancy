@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
@@ -76,6 +78,10 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 								player.displayClientMessage(
 										Component.literal("That manipulation is not equipped!")
 												.withStyle(ChatFormatting.RED), true);
+								return;
+							}
+							if (LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedManip.getName())) {
+								LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip);
 								return;
 							}
 							// Handle conjuration dispel logic

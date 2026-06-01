@@ -85,7 +85,7 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 		 *
 		 * } }
 		 */
-		return super.hurtEnemy(stack, target, attacker);
+		return true;
 	}
 
 	@Override

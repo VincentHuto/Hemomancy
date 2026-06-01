@@ -61,6 +61,9 @@ public class ManipulationTreeInit {
 		register("blood_shot",     ax,               TREE_TOP_Y + ROW_GAP * 2);
 		register("blood_needle",   ax + COL_GAP,     TREE_TOP_Y + ROW_GAP * 2);
 		register("blood_rush",     ax + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
+		register("vital_effusion", ax + COL_GAP * 3, TREE_TOP_Y + ROW_GAP * 2, "blood_rush");
+		register("conjure_blade",  ax + COL_GAP * 3, TREE_TOP_Y + ROW_GAP * 3, "vital_effusion")
+				.setSoftParents("conjure_staff");
 
 		// ═══════════════════════════════════════════
 		//  FERRIC tendency cluster  (grey / metallic)
@@ -68,18 +71,19 @@ public class ManipulationTreeInit {
 		int fx = ax + COL_GAP * 3 + 160;  // gap after ANIMUS
 
 		// Row 0 (top) — SUMMA
-		register("ferric_transmutation", fx + 40,    TREE_TOP_Y,             "blood_absorption", "blood_projection");
+		register("ferric_transmutation", fx + 40,    TREE_TOP_Y,             "blood_absorption", "blood_projection", "ferric_resonance");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("blood_absorption",     fx,         TREE_TOP_Y + ROW_GAP,   "venous_travel");
-		register("blood_projection",     fx + COL_GAP, TREE_TOP_Y + ROW_GAP, "conjure_blade");
+		register("blood_projection",     fx + COL_GAP, TREE_TOP_Y + ROW_GAP, "venous_travel");
 		register("sanguine_excavation",  fx + COL_GAP * 2, TREE_TOP_Y + ROW_GAP, "sanguine_mending");
+		register("ferric_resonance",     fx + COL_GAP * 3, TREE_TOP_Y + ROW_GAP, "sanguine_mending", "sanguine_excavation");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
 		register("venous_travel",        fx,         TREE_TOP_Y + ROW_GAP * 2);
-		register("conjure_blade",        fx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2);
-		register("conjure_staff",        fx + COL_GAP, TREE_TOP_Y + ROW_GAP * 3, "conjure_blade");
+		register("conjure_staff",        fx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2, "blood_projection");
 		register("sanguine_mending",     fx + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
+		register("vascular_dowsing",     fx + COL_GAP * 3, TREE_TOP_Y + ROW_GAP * 2, "venous_travel");
 
 		// ═══════════════════════════════════════════
 		//  DUCTILIS tendency cluster  (yellow / nervous)
@@ -94,18 +98,26 @@ public class ManipulationTreeInit {
 
 		// Row 2 (bottom) — HUMILIS
 		register("crimson_harvest",      dx,         TREE_TOP_Y + ROW_GAP * 2);
+		register("hemolymphal_pulse",    dx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2, "activation_potential");
+		register("conjure_crossbow",     dx + COL_GAP, TREE_TOP_Y + ROW_GAP * 3, "hemolymphal_pulse")
+				.setSoftParents("conjure_staff");
 
 		// ═══════════════════════════════════════════
 		//  LUX tendency cluster  (white / light)
 		// ═══════════════════════════════════════════
 		int lx = dx + 160;  // gap after DUCTILIS
 
-		// Row 0 (top) — MEDIOCRITAS
-		register("crimson_sight",        lx + 40,    TREE_TOP_Y,             "hemosynthesis", "blood_lamp");
+		// Row 0 (top) — SUMMA
+		register("unclosing_eye",        lx + 40,    TREE_TOP_Y,             "crimson_sight");
 
-		// Row 1 (bottom) — HUMILIS
-		register("hemosynthesis",        lx,         TREE_TOP_Y + ROW_GAP);
-		register("blood_lamp",           lx + COL_GAP, TREE_TOP_Y + ROW_GAP);
+		// Row 1 (middle) — MEDIOCRITAS
+		register("crimson_sight",        lx + 40,    TREE_TOP_Y + ROW_GAP,   "hemosynthesis", "blood_lamp");
+
+		// Row 2 (bottom) — HUMILIS
+		register("hemosynthesis",        lx,         TREE_TOP_Y + ROW_GAP * 2);
+		register("blood_lamp",           lx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2);
+		register("conjure_spear",        lx + 40,    TREE_TOP_Y + ROW_GAP * 3, "crimson_sight")
+				.setSoftParents("conjure_staff");
 
 		// ═══════════════════════════════════════════
 		//  Elemental / Esoteric clusters
@@ -114,10 +126,13 @@ public class ManipulationTreeInit {
 
 		// ── CONGEATIO (blue / cold) ──
 		// Row 0 (top) — SUMMA
-		register("osseous_bloom",        ex + 40,    TREE_TOP_Y,             "glacial_bastion");
+		register("osseous_bloom",        ex,         TREE_TOP_Y,             "glacial_bastion");
+		register("endless_hour",         ex + COL_GAP, TREE_TOP_Y,           "glacial_bastion");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("glacial_bastion",      ex + 40,    TREE_TOP_Y + ROW_GAP,   "glacial_grasp", "cryogenic_pulse");
+		register("conjure_flail",        ex + 40,    TREE_TOP_Y + ROW_GAP * 3, "glacial_bastion")
+				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
 		register("glacial_grasp",        ex,         TREE_TOP_Y + ROW_GAP * 2);
@@ -133,6 +148,8 @@ public class ManipulationTreeInit {
 		// Row 1 (middle) — MEDIOCRITAS
 		register("pyretic_forge",        fmx,        TREE_TOP_Y + ROW_GAP,   "sanguine_ignition");
 		register("crimson_flame_conjuration", fmx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2,   "sanguine_ignition");
+		register("conjure_torch",        fmx + COL_GAP, TREE_TOP_Y + ROW_GAP * 3, "crimson_flame_conjuration")
+				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
 		register("sanguine_ignition",    fmx,        TREE_TOP_Y + ROW_GAP * 2);
@@ -146,16 +163,24 @@ public class ManipulationTreeInit {
 		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
 		register("void_shroud",          tx,         TREE_TOP_Y + ROW_GAP);
 		register("blood_eclipse",        tx + COL_GAP, TREE_TOP_Y + ROW_GAP);
+		register("conjure_claws",        tx,         TREE_TOP_Y + ROW_GAP * 2, "void_shroud")
+				.setSoftParents("conjure_staff");
 
 		// ── MORTEM (dark green / death) ──
 		int mx = tx + COL_GAP * 2 + 80;  // gap after TENEBRIS
 
-		// Row 0 (top) — MEDIOCRITAS
-		register("vital_reservoir",      mx + 40,    TREE_TOP_Y,             "hemorrhage", "exsanguinate");
+		// Row 0 (top) — SUMMA
+		register("crimson_tithe",        mx,         TREE_TOP_Y,             "vital_reservoir", "exsanguinate");
+		register("bloom_of_rot",         mx + COL_GAP, TREE_TOP_Y,           "vital_reservoir", "hemorrhage", "exsanguinate");
 
-		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
-		register("hemorrhage",           mx,         TREE_TOP_Y + ROW_GAP);
-		register("exsanguinate",         mx + COL_GAP, TREE_TOP_Y + ROW_GAP);
+		// Row 1 (middle) — MEDIOCRITAS
+		register("vital_reservoir",      mx + 40,    TREE_TOP_Y + ROW_GAP,   "hemorrhage", "exsanguinate");
+
+		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS
+		register("hemorrhage",           mx,         TREE_TOP_Y + ROW_GAP * 2);
+		register("exsanguinate",         mx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2);
+		register("conjure_axe",          mx + COL_GAP, TREE_TOP_Y + ROW_GAP * 3, "exsanguinate")
+				.setSoftParents("conjure_staff");
 	}
 
 	// ────────────────────────────────────────────────────────────

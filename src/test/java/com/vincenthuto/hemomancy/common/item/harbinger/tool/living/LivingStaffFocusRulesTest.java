@@ -7,6 +7,7 @@ public final class LivingStaffFocusRulesTest {
 	public static void main(String[] args) {
 		bareAbsorptionOnlyTargetsOneCreature();
 		unskilledStaffAbsorbsAndProjectsFasterThanBareHands();
+		unskilledStaffAbsorptionMatchesBareHandOnOneTargetAndBeatsItWithTwo();
 		livingConduitIncreasesAbsorptionTargetsAndRange();
 		vascularDrawIncreasesAbsorptionAmountAndPulseSpeed();
 		crimsonProjectionIncreasesProjectionRates();
@@ -28,6 +29,16 @@ public final class LivingStaffFocusRulesTest {
 		double bareProjection = LivingStaffFocusRules.structureProjectionRate(false, LivingStaffFocusProfile.NONE);
 		double staffProjection = LivingStaffFocusRules.structureProjectionRate(true, LivingStaffFocusProfile.NONE);
 		assertTrue("living staff projects faster than bare blood projection", staffProjection > bareProjection);
+	}
+
+	private static void unskilledStaffAbsorptionMatchesBareHandOnOneTargetAndBeatsItWithTwo() {
+		double bareRate = LivingStaffFocusRules.bareAbsorptionPerSecond();
+		double oneTargetStaffRate = LivingStaffFocusRules.staffAbsorptionPerSecond(LivingStaffFocusProfile.NONE, 1);
+		double twoTargetStaffRate = LivingStaffFocusRules.staffAbsorptionPerSecond(LivingStaffFocusProfile.NONE, 2);
+		assertTrue("unskilled staff should at least match bare absorption on one target",
+				oneTargetStaffRate >= bareRate);
+		assertTrue("unskilled staff should beat bare absorption when two targets are available",
+				twoTargetStaffRate > bareRate);
 	}
 
 	private static void livingConduitIncreasesAbsorptionTargetsAndRange() {

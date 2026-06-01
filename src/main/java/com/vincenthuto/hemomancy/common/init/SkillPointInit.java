@@ -34,7 +34,7 @@ public class SkillPointInit {
 			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery,
 			skill_puppet_skein, skill_living_sinew, skill_far_tether,
 			skill_living_conduit, skill_vascular_draw, skill_crimson_projection,
-			skill_hematic_focus, skill_vespers_refusal,
+			skill_weapons_master, skill_hematic_focus, skill_vespers_refusal,
 			skill_thread_economy, skill_bound_command,
 			skill_deep_inscription, skill_fungal_symbiosis,
 			skill_sanctum_suture, skill_bloodline_concord, skill_servitor_tender,

@@ -68,12 +68,7 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 
 	@Override
 	public boolean fillFromSource(IBloodVolume src, double points) {
-		if (src.drain(points) && src.getBloodVolume() > points) {
-			fill(points);
-			return true;
-		} else {
-			return false;
-		}
+		return BloodVolumeTransferRules.fillFromSource(this, src, points);
 	}
 
 	@Override
