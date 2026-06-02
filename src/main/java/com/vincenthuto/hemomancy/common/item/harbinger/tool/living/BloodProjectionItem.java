@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -80,11 +81,16 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
 		projectFromEntity(worldIn, player,
 				LivingStaffFocusRules.structureProjectionRate(false, LivingStaffFocusProfile.NONE),
-				LivingStaffFocusRules.bloodTileProjectionRate(false, LivingStaffFocusProfile.NONE));
+				LivingStaffFocusRules.bloodTileProjectionRate(false, LivingStaffFocusProfile.NONE), false);
 	}
 
 	public static double projectFromEntity(Level worldIn, LivingEntity player, double structureFeedRate,
 			double tileTransferRate) {
+		return projectFromEntity(worldIn, player, structureFeedRate, tileTransferRate, false);
+	}
+
+	public static double projectFromEntity(Level worldIn, LivingEntity player, double structureFeedRate,
+			double tileTransferRate, boolean livingStaff) {
 		if (worldIn.isClientSide) {
 			return 0.0D;
 		}
@@ -104,6 +110,15 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 			BlockEntity be = worldIn.getBlockEntity(targetPos);
 			if (be != null) {
+				if (be instanceof SomaticLoomBlockEntity loom && player instanceof Player projectingPlayer) {
+					if (loom.tryChargeRitualBlood(projectingPlayer, tileTransferRate, livingStaff)) {
+						if (projectingPlayer instanceof ServerPlayer serverPlayer) {
+							PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
+						}
+						return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
+					}
+					return 0.0D;
+				}
 				if (HemoCapabilityAccess.getBloodVolume(be).isPresent()) {
 
 					IBloodVolume tileVolume = HemoCapabilityAccess.getBloodVolume(be)

@@ -74,12 +74,14 @@ public final class LivingStaffArmamentSourceTest {
 
 		String torchRecipe = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_torch.json");
 		String flailRecipe = read("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_flail.json");
-		assertContains("torch recipe result", torchRecipe, "\"result\": \"hemomancy:memory_living_torch\"");
-		assertContains("torch recipe has flammeus", torchRecipe, "\"flammeus\": true");
-		assertContains("torch recipe has ferric", torchRecipe, "\"ferric\": true");
-		assertContains("flail recipe result", flailRecipe, "\"result\": \"hemomancy:memory_living_flail\"");
-		assertContains("flail recipe has congeatio", flailRecipe, "\"congeatio\": true");
-		assertContains("flail recipe has ferric", flailRecipe, "\"ferric\": true");
+		String compactTorchRecipe = torchRecipe.replaceAll("\\s+", "");
+		String compactFlailRecipe = flailRecipe.replaceAll("\\s+", "");
+		assertContains("torch recipe result", compactTorchRecipe, "\"result\":\"hemomancy:memory_living_torch\"");
+		assertContains("torch recipe has flammeus", compactTorchRecipe, "\"flammeus\":1");
+		assertContains("torch recipe has ferric", compactTorchRecipe, "\"ferric\":1");
+		assertContains("flail recipe result", compactFlailRecipe, "\"result\":\"hemomancy:memory_living_flail\"");
+		assertContains("flail recipe has congeatio", compactFlailRecipe, "\"congeatio\":1");
+		assertContains("flail recipe has ferric", compactFlailRecipe, "\"ferric\":1");
 
 		String flailItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingFlailItem.java");
 		String flailRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/hematic/LivingFlailItemRenderer.java");

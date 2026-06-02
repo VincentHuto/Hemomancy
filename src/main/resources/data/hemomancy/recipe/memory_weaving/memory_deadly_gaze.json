@@ -1,9 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:scrying_dish"
-  },
-  "lux": true,
-  "result": "hemomancy:memory_deadly_gaze",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:scrying_dish"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  1,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  50,
+    "result":  "hemomancy:memory_deadly_gaze",
+    "count":  1
 }

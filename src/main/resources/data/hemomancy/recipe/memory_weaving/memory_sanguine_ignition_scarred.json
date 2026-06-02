@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:scar_phoenix"
-  },
-  "flammeus": true,
-  "animus": true,
-  "result": "hemomancy:memory_sanguine_ignition",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:scar_phoenix"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  1,
+                    "flammeus":  1,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_sanguine_ignition",
+    "count":  1
 }

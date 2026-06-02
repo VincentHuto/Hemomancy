@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:hallowed_residuum_seraphae"
-  },
-  "lux": true,
-  "ductilis": true,
-  "result": "hemomancy:memory_unclosing_eye",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:hallowed_residuum_seraphae"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  1,
+                    "lux":  1,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_unclosing_eye",
+    "count":  1
 }

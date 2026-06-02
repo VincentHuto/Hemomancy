@@ -1,9 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:sanguine_salve"
-  },
-  "ferric": true,
-  "result": "hemomancy:memory_sanguine_mending",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:sanguine_salve"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  0
+                },
+    "blood":  50,
+    "result":  "hemomancy:memory_sanguine_mending",
+    "count":  1
 }

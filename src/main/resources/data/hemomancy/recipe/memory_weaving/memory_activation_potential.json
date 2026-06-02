@@ -1,9 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:smouldering_ash_trail"
-  },
-  "flammeus": true,
-  "result": "hemomancy:memory_activation_potential",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:smouldering_ash_trail"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  1,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  50,
+    "result":  "hemomancy:memory_activation_potential",
+    "count":  1
 }

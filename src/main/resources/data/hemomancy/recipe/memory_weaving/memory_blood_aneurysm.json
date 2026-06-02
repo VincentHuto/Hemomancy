@@ -1,9 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "minecraft:bone"
-  },
-  "mortem": true,
-  "result": "hemomancy:memory_blood_aneurysm",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "minecraft:bone"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  1,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  50,
+    "result":  "hemomancy:memory_blood_aneurysm",
+    "count":  1
 }

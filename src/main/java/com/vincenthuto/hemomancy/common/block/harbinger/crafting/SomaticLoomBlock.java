@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +17,13 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -36,13 +44,10 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0),new BlockPos(0, 2, 0)
+			new BlockPos(0, 1, 0)
 	};
-
 	private static final VoxelShape SHAPE_N = Shapes.block();
-
 
 	@Nullable
 	@SuppressWarnings("unchecked")
@@ -88,8 +93,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_,
-			CollisionContext p_60558_) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return SHAPE_N;
 	}
 
@@ -97,12 +101,11 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
-		// Need 1 block above the base (Y+1) for the filler
 		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
 			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
 					.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
-		return null; // Prevents placement if there's not enough room
+		return null;
 	}
 
 	@Override
@@ -122,12 +125,9 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.somatic_loom.get(),
-					SomaticLoomBlockEntity::clientTick);
-		} else {
-			return createTickerHelper(type, BlockEntityInit.somatic_loom.get(),
-					SomaticLoomBlockEntity::serverTick);
+			return createTickerHelper(type, BlockEntityInit.somatic_loom.get(), SomaticLoomBlockEntity::clientTick);
 		}
+		return createTickerHelper(type, BlockEntityInit.somatic_loom.get(), SomaticLoomBlockEntity::serverTick);
 	}
 
 	@Override
@@ -141,8 +141,8 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new SomaticLoomBlockEntity(p_153215_, p_153216_);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new SomaticLoomBlockEntity(pos, state);
 	}
 
 	@Override
@@ -180,51 +180,29 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		super.onRemove(state, level, pos, newState, isMoving);
 	}
 
-	/**
-	 * All player interaction funnels through here.
-	 *
-	 * <p><b>With an item in hand:</b> delegates to {@code te.addItem()}.
-	 * Enzymes, blood containers, memories, and catalysts are all handled there.</p>
-	 *
-	 * <p><b>Empty hand (not crouching):</b> if a ritual is active, does nothing
-	 * (just stay near the block). Otherwise, freshly checks the recipe state and
-	 * either starts the ritual or shows feedback about what's missing.</p>
-	 *
-	 * <p><b>Empty hand (crouching):</b> during a ritual, cancels it.
-	 * Otherwise, removes items from the block (catalyst first, then memory).</p>
-	 */
 	private InteractionResult handleEmptyHandUse(Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
 
-		// ---- Empty hand + crouching ----
-		if (player.isCrouching()) {
-			if (te.isCrafting()) {
+		if (player.isShiftKeyDown()) {
+			if (te.isWeavingOrbs()) {
 				te.cancelRitual(player);
 				return InteractionResult.SUCCESS;
 			}
-			// Remove catalyst first, then memory
 			if (te.removeItem(player, false) || te.removeItem(player, true)) {
 				return InteractionResult.SUCCESS;
 			}
 			return InteractionResult.PASS;
 		}
 
-		// ---- Empty hand + standing ----
-		if (te.isCrafting()) {
-			// Nothing to do — just stay near the block
-			return InteractionResult.PASS;
-		}
-
-		// Freshly evaluate recipe before deciding
-		te.refreshRecipe();
-		if (te.hasValidRecipe()) {
-			te.startRitual(player);
+		if (te.isWeavingOrbs()) {
+			te.provideTendencyFeedback(player);
 			return InteractionResult.SUCCESS;
 		}
 
+		te.refreshRecipe();
 		te.provideTendencyFeedback(player);
 		return InteractionResult.SUCCESS;
 	}
@@ -234,8 +212,13 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
-		if (te.isCrafting()) return InteractionResult.PASS;
+		if (isProjectionTool(stack)) return InteractionResult.PASS;
+		if (te.isWeavingOrbs()) return InteractionResult.PASS;
 		return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+	}
+
+	private static boolean isProjectionTool(ItemStack stack) {
+		return stack.getItem() instanceof BloodProjectionItem || stack.getItem() instanceof LivingStaffItem;
 	}
 
 	@Override
@@ -247,9 +230,11 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
+		if (isProjectionTool(stack)) {
+			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+		}
 		return handleItemUse(worldIn, pos, player, stack, handIn) == InteractionResult.PASS
 				? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
 				: ItemInteractionResult.SUCCESS;
 	}
-
 }

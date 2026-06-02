@@ -129,6 +129,17 @@ public class RenderTypeInit extends RenderType {
 					.createCompositeState(false));
 
 	// Somatic Loom flat-color effect — uses rite-style POSITION_COLOR with proper depth testing
+	public static final RenderType LOOM_EFFECT_CORE = create("LoomEffectCore",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType LOOM_EFFECT = create("LoomEffect",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder()

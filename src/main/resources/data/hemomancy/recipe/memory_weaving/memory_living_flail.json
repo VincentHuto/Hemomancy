@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:frozen_clot"
-  },
-  "congeatio": true,
-  "ferric": true,
-  "result": "hemomancy:memory_living_flail",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:frozen_clot"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  1,
+                    "ferric":  1,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_living_flail",
+    "count":  1
 }

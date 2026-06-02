@@ -154,7 +154,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		gfx.drawString(font, Component.literal("Out"), OUTPUT_SLOT_X, OUTPUT_SLOT_Y - 10, LABEL_COLOR, false);
 
 		// ── Tendency fractal wheel ──
-		drawTendencyWheel(gfx, recipe.getTendency());
+		drawTendencyWheel(gfx, recipe);
 	}
 
 	@Override
@@ -164,11 +164,14 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ItemInit.hematic_memory.get()));
 
 		// Catalyst ingredient — show if recipe has a non-empty ingredient
-		for (Ingredient ingr : recipe.getIngredients()) {
+		int catalystIndex = 0;
+		for (Ingredient ingr : recipe.getCatalysts()) {
 			if (ingr != null && ingr != Ingredient.EMPTY && ingr.getItems().length > 0) {
-				builder.addSlot(RecipeIngredientRole.INPUT, CATALYST_SLOT_X, CATALYST_SLOT_Y)
+				int x = CATALYST_SLOT_X + (catalystIndex % 3) * 18;
+				int y = CATALYST_SLOT_Y + (catalystIndex / 3) * 18;
+				builder.addSlot(RecipeIngredientRole.INPUT, x, y)
 						.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(ingr.getItems()));
-				break;
+				catalystIndex++;
 			}
 		}
 
@@ -187,7 +190,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	 * Must undo JEI's pose translation to draw in absolute screen coords
 	 * since HLGuiUtils.fracLine works in screen space.
 	 */
-	private void drawTendencyWheel(GuiGraphics gfx, Map<EnumBloodTendency, Float> tendencies) {
+	private void drawTendencyWheel(GuiGraphics gfx, MemoryWeavingRecipe recipe) {
 		PoseStack ms = gfx.pose();
 		Matrix4f mat = ms.last().pose();
 
@@ -207,7 +210,8 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		int halfItem = ITEM_SIZE / 2;
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			boolean required = tendencies.getOrDefault(tend, 0f) > 0f;
+			int requiredAmount = recipe.getEnzymeRequirement(tend);
+			boolean required = requiredAmount > 0;
 
 			// Base spoke endpoints
 			double baseAngleRad1 = Math.toRadians(angle + SPOKE_BASE_HALF_ANGLE);
@@ -243,7 +247,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			// Show "Required" label next to the enzyme icon for required tendencies
 			if (required) {
 				Font font = Minecraft.getInstance().font;
-				String label = GTE + "3";
+				String label = "x" + requiredAmount;
 				ms.pushPose();
 				ms.scale(LABEL_SCALE, LABEL_SCALE, 1f);
 				int labelX = (int) ((iconX + ITEM_SIZE) / LABEL_SCALE);

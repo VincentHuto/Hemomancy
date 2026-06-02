@@ -219,10 +219,9 @@ public final class MiniRecipeRenderer {
 										  int x, int y, int maxW, Theme theme) {
 		long tick = getAnimTick();
 
-		// Catalyst input slot (if present)
 		int cx = x;
-		Ingredient ingredient = recipe.getIngredient();
-		if (ingredient != null && ingredient != Ingredient.EMPTY && ingredient.getItems().length > 0) {
+		for (Ingredient ingredient : recipe.getCatalysts()) {
+			if (ingredient == null || ingredient == Ingredient.EMPTY || ingredient.getItems().length <= 0) continue;
 			drawSlot(gfx, cx, y, theme);
 			ItemStack[] items = ingredient.getItems();
 			renderSlotItem(gfx, items[(int) ((tick / 30) % items.length)], cx + 1, y + 1);
@@ -246,6 +245,9 @@ public final class MiniRecipeRenderer {
 				int px = pipX + col * (pipSize + pipGap);
 				int py = pipY + row * (pipSize + pipGap);
 				gfx.fill(px, py, px + pipSize, py + pipSize, color);
+				if (val > 1.01f) {
+					gfx.drawString(font, Integer.toString((int) val), px + pipSize + 1, py - 1, color, false);
+				}
 				pipIdx++;
 			}
 		}

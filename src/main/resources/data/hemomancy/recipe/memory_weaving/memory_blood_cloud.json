@@ -1,9 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:spore_sac"
-  },
-  "congeatio": true,
-  "result": "hemomancy:memory_blood_cloud",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:spore_sac"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  1,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  50,
+    "result":  "hemomancy:memory_blood_cloud",
+    "count":  1
 }

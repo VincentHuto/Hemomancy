@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:cleansed_blood_crystal_shard"
-  },
-  "lux": true,
-  "tenebris": true,
-  "result": "hemomancy:memory_crimson_sight",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:cleansed_blood_crystal_shard"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  1,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  0,
+                    "tenebris":  1
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_crimson_sight",
+    "count":  1
 }

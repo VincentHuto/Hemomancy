@@ -198,10 +198,11 @@ public final class ManipulationTreeCoverageSourceTest {
 	}
 
 	private static void assertCrossbowMemoryRecipeIsDuctilis(String recipe) {
-		if (!recipe.contains("\"ductilis\": true")) {
+		String compact = recipe.replaceAll("\\s+", "");
+		if (!compact.contains("\"ductilis\":1")) {
 			throw new AssertionError("Living Crossbow memory recipe should include Ductilis");
 		}
-		if (recipe.contains("\"flammeus\": true")) {
+		if (compact.contains("\"flammeus\":1")) {
 			throw new AssertionError("Living Crossbow memory recipe should not include Flammeus");
 		}
 	}

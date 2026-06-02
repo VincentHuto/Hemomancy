@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:puppeteering_thread"
-  },
-  "ductilis": true,
-  "ferric": true,
-  "result": "hemomancy:memory_living_crossbow",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:puppeteering_thread"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  1,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_living_crossbow",
+    "count":  1
 }

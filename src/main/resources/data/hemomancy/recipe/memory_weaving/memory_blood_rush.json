@@ -1,15 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:blood_crystal_shard"
-  },
-  "animus": true,
-  "mortem": true,
-  "ductilis": true,
-  "ferric": true,
-  "tenebris": true,
-  "flammeus": true,
-  "congeatio": true,
-  "result": "hemomancy:memory_blood_rush",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:blood_crystal_shard"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  1,
+                    "flammeus":  1,
+                    "ductilis":  1,
+                    "lux":  0,
+                    "mortem":  1,
+                    "congeatio":  1,
+                    "ferric":  1,
+                    "tenebris":  1
+                },
+    "blood":  350,
+    "result":  "hemomancy:memory_blood_rush",
+    "count":  1
 }

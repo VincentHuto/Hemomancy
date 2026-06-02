@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -167,6 +168,9 @@ public class LivingStaffItem extends LivingItemItem implements IDispellable {
 
 		}
 		if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
+			if (dragNearestLoomOrb(pLevel, player)) {
+				return;
+			}
 			if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
 				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
@@ -316,8 +320,25 @@ public class LivingStaffItem extends LivingItemItem implements IDispellable {
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 		double handled = BloodProjectionItem.projectFromEntity(level, player,
 				LivingStaffFocusRules.structureProjectionRate(true, focus),
-				LivingStaffFocusRules.bloodTileProjectionRate(true, focus));
+				LivingStaffFocusRules.bloodTileProjectionRate(true, focus), true);
 		recordUtilityBloodHandled(player, handled);
+	}
+
+	private static boolean dragNearestLoomOrb(Level level, Player player) {
+		BlockPos origin = player.blockPosition();
+		int radius = 10;
+		boolean handled = false;
+		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-radius, -radius / 2, -radius),
+				origin.offset(radius, radius / 2, radius))) {
+			if (level.getBlockEntity(pos) instanceof SomaticLoomBlockEntity loom
+					&& loom.isWeavingOrbs()
+					&& player.distanceToSqr(Vec3.atCenterOf(pos)) <= 144.0D
+					&& loom.dragSelectedOrb(player, 1.0D)) {
+				handled = true;
+				break;
+			}
+		}
+		return handled;
 	}
 
 	private static void recordUtilityBloodHandled(Player player, double handled) {

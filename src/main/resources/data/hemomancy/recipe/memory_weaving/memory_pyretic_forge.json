@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:fervent_husk"
-  },
-  "flammeus": true,
-  "ferric": true,
-  "result": "hemomancy:memory_pyretic_forge",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:fervent_husk"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  1,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_pyretic_forge",
+    "count":  1
 }

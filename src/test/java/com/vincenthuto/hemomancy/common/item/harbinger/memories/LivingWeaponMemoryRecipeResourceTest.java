@@ -23,11 +23,11 @@ public final class LivingWeaponMemoryRecipeResourceTest {
 		for (String name : names) {
 			Path recipePath = ROOT.resolve("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_living_" + name + ".json");
 			String recipe = Files.readString(recipePath).replace("\r\n", "\n");
-			assertContains("recipe result for " + name, recipe, "\"result\": \"hemomancy:memory_living_" + name + "\"");
-			assertContains("recipe has ferric-style living weapon tendency", recipe, "\"ferric\": true");
-			String ingredient = between(recipe, "\"ingredient\"", "},");
-			String tendencies = recipe.replaceAll("(?s).*}\\s*,", "").replaceAll("\"result\".*", "");
-			if (!recipeFingerprints.add(ingredient + tendencies)) {
+			String compact = recipe.replaceAll("\\s+", "");
+			assertContains("recipe result for " + name, compact, "\"result\":\"hemomancy:memory_living_" + name + "\"");
+			assertContains("recipe has ferric-style living weapon enzyme", compact, "\"ferric\":1");
+			String catalystsAndEnzymes = between(recipe, "\"catalysts\"", "\"blood\"");
+			if (!recipeFingerprints.add(catalystsAndEnzymes.replaceAll("\\s+", ""))) {
 				throw new AssertionError("Living weapon memory recipe is not unique for " + name);
 			}
 		}

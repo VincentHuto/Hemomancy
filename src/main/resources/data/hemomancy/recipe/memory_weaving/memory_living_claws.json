@@ -1,12 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:chitinous_husk"
-  },
-  "animus": true,
-  "ductilis": true,
-  "ferric": true,
-  "tenebris": true,
-  "result": "hemomancy:memory_living_claws",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:chitinous_husk"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  1,
+                    "flammeus":  0,
+                    "ductilis":  1,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  1
+                },
+    "blood":  200,
+    "result":  "hemomancy:memory_living_claws",
+    "count":  1
 }

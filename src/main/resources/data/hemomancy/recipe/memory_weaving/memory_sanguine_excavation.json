@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:consecrated_copper_ingot"
-  },
-  "ferric": true,
-  "ductilis": true,
-  "result": "hemomancy:memory_sanguine_excavation",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:consecrated_copper_ingot"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  1,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_sanguine_excavation",
+    "count":  1
 }

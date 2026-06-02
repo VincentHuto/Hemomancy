@@ -16,6 +16,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 import java.util.Map;
@@ -56,6 +58,15 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private static final int RING_SEGMENTS = 64;
 	/** Segment count for the thinner enzyme indicator rings. */
 	private static final int ENZYME_RING_SEGMENTS = 48;
+	private static final int ORB_LAT_SEGMENTS = 8;
+	private static final int ORB_LON_SEGMENTS = 16;
+	private static final double ORB_RENDER_BOUNDS = 10.0D;
+	private static final float ORB_THREAD_CENTER_Y = 0.58f;
+	private static final int ORB_UNRAVEL_STRANDS = 9;
+	private static final float ORB_CENTER_STRAND_WIDTH = 0.012f;
+	private static final float ORB_UNRAVEL_STRAND_WIDTH = 0.01f;
+	private static final float ORB_UNRAVEL_MIN_LENGTH = 0.32f;
+	private static final float ORB_UNRAVEL_MAX_LENGTH = 0.78f;
 
 	// â”€â”€ Ring widths (used by enzyme, blood, crafting rings) â”€â”€
 	private static final float RING_CORE_WIDTH = 0.06f;
@@ -77,16 +88,18 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		return true;
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-	//  Main render entry point
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+	@Override
+	public AABB getRenderBoundingBox(SomaticLoomBlockEntity te) {
+		return new AABB(te.getBlockPos()).inflate(ORB_RENDER_BOUNDS);
+	}
+
 
 	@Override
 	public void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
-		boolean showEffects = !te.contents.get(0).isEmpty();
+		boolean showEffects = !te.contents.get(0).isEmpty() || te.isCrafting();
 
 		// === Items (always rendered, depth writes first) ===
 		stack.pushPose();
@@ -103,10 +116,16 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
 
 			// Fractal tendency star
+			stack.translate(0F, -0.5F, 0F);
+
 			drawFractalStar(vc, mat, te, currentTime);
 
 			// Enzyme indicator rings
 			drawEnzymeRings(vc, mat, te, currentTime);
+
+			if (te.isAwaitingBlood()) {
+				drawAwaitingBloodGlow(vc, mat, te, currentTime);
+			}
 
 			// Blood volume ring
 			double bloodVol = te.getBloodVolume();
@@ -123,13 +142,18 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 						te.getCraftingPhase() == 2, currentTime);
 			}
 
+			if (te.isWeavingOrbs()) {
+				stack.pushPose();
+				stack.translate(0F, 0.5F, 0F);
+				drawRitualOrbs(buffer, stack.last().pose(), te, currentTime, partialTicks);
+				stack.popPose();
+			}
+
 			stack.popPose();
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Item rendering (unchanged)
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
@@ -149,12 +173,15 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 
 		// Slot 1 â€” second item, floating above the first
-		ItemStack stack1 = te.contents.get(1);
-		if (!stack1.isEmpty()) {
+		for (int i = 1; i < te.contents.size(); i++) {
+			ItemStack stack1 = te.contents.get(i);
+			if (stack1.isEmpty()) continue;
 			matrixStackIn.pushPose();
-			matrixStackIn.translate(0.5F, 1.75F, 0.5F);
-			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-gameTime * 0.75f).toMoj());
-			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+			double angle = gameTime * 0.04D + (i - 1) * Math.PI * 2.0D / Math.max(1, te.contents.size() - 1);
+			double radius = 0.32D + Math.min(0.18D, (te.contents.size() - 2) * 0.025D);
+			matrixStackIn.translate(0.5F + Math.cos(angle) * radius, 1.72F, 0.5F + Math.sin(angle) * radius);
+			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-gameTime * 0.75f + i * 25f).toMoj());
+			matrixStackIn.scale(0.42f, 0.42f, 0.42f);
 			mc.getItemRenderer().renderStatic(null, stack1, ItemDisplayContext.FIXED, true, matrixStackIn, bufferIn,
 					null, combinedLightIn, combinedOverlayIn, 0);
 			matrixStackIn.popPose();
@@ -176,9 +203,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Fractal Tendency Star
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private void drawFractalStar(VertexConsumer vc, Matrix4f mat,
 			SomaticLoomBlockEntity te, float currentTime) {
@@ -189,7 +214,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		double pulse = (Math.sin(currentTime * 0.08) + 1.0) * 0.5;
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float affinity = affs.getOrDefault(tend, 0f);
+			float affinity = Math.min(3.0f, affs.getOrDefault(tend, 0f) / 16.0f);
 			ParticleColor color = tend.getColor();
 			float r = color.getRed() / 255f;
 			float g = color.getGreen() / 255f;
@@ -244,10 +269,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Enzyme Indicator Rings
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
 	/**
 	 * Draws concentric dark rings at the fractal star's Y-level. One ring per
 	 * 0.2f enzyme dose reached by any tendency. Radii match spike tip positions.
@@ -260,7 +282,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		for (Float v : affs.values()) {
 			if (v != null && v > maxAff) maxAff = v;
 		}
-		int steps = Math.min((int) Math.ceil(maxAff / 0.2f), 5);
+		int steps = Math.min((int) Math.ceil(maxAff / 8.0f), 8);
 		if (steps <= 0) return;
 
 		for (int s = 1; s <= steps; s++) {
@@ -275,9 +297,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Blood Volume Ring
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private void drawBloodVolumeRing(VertexConsumer vc, Matrix4f mat,
 			double fillRatio, float currentTime) {
@@ -315,9 +335,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Crafting Progress Ring
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	private void drawCraftingProgressRing(VertexConsumer vc, Matrix4f mat,
 			double progressRatio, boolean pulsing, float currentTime) {
@@ -354,15 +372,159 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	//  Fractal Line (recursive midpoint displacement)
-	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	/**
 	 * Recursively subdivides a line with random midpoint displacement to
 	 * produce a jagged fractal lightning effect, then draws each leaf segment
 	 * as a flat quad strip (core + glow) in the XZ plane.
 	 */
+	private void drawAwaitingBloodGlow(VertexConsumer vc, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime) {
+		double required = te.getRitualBloodRequired();
+		double charged = required <= 0.0D ? 0.0D : Mth.clamp(te.getRitualBloodCharged() / required, 0.0D, 1.0D);
+		float pulse = 0.55f + 0.35f * Mth.sin(currentTime * 0.18f);
+		float radius = 0.9f + (float) charged * 0.22f;
+		drawUndulatingRing(vc, mat, CX, STAR_Y + 0.65f, CZ, radius,
+				0.36f, 0.0f, 0.0f, 0.42f * pulse, 0.18f * pulse,
+				0.05f, 0.16f, currentTime, -1f, RING_SEGMENTS);
+	}
+
+	private void drawRitualOrbs(MultiBufferSource buffer, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
+		VertexConsumer coreVc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT_CORE);
+		drawRitualOrbLayer(coreVc, mat, te, currentTime, partialTicks, false);
+
+		VertexConsumer glowVc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
+		drawRitualOrbLayer(glowVc, mat, te, currentTime, partialTicks, true);
+	}
+
+	private void drawRitualOrbLayer(VertexConsumer vc, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime, float partialTicks, boolean glow) {
+		for (SomaticLoomBlockEntity.RitualOrb orb : te.getRitualOrbs()) {
+			if (orb.completed()) continue;
+			ParticleColor color = orb.tendency().getColor();
+			float r = color.getRed() / 255f;
+			float g = color.getGreen() / 255f;
+			float b = color.getBlue() / 255f;
+			Vec3 offset = orb.renderOffset(partialTicks);
+			float x = 0.5f + (float) offset.x;
+			float y = 0.5f + (float) offset.y;
+			float z = 0.5f + (float) offset.z;
+			float pulse = 0.75f + 0.25f * Mth.sin(currentTime * 0.22f + orb.enzymeCost());
+			float size = (0.18f + orb.enzymeCost() * 0.025f) * pulse;
+			if (glow) {
+				drawOrbCenterStrand(vc, mat, x, y, z, currentTime, r, g, b);
+				drawOrbTrail(vc, mat, orb, offset, partialTicks, r, g, b);
+				drawOrbUnraveledStrands(vc, mat, orb, x, y, z, currentTime, r, g, b);
+			}
+			drawOrbSphere(vc, mat, x, y, z, size, r, g, b, 0.82f, glow);
+		}
+	}
+
+	private void drawOrbCenterStrand(VertexConsumer vc, Matrix4f mat,
+			float x, float y, float z, float currentTime, float r, float g, float b) {
+		float pulse = 0.65f + 0.25f * Mth.sin(currentTime * 0.17f + x * 2.0f + z * 2.0f);
+		fracLine(vc, mat, CX, ORB_THREAD_CENTER_Y, CZ, x, y, z,
+				r, g, b, 0.16f * pulse, 0.08f * pulse,
+				ORB_CENTER_STRAND_WIDTH, 0.045f, 0.12D, FRACTAL_DETAIL);
+	}
+
+	private void drawOrbTrail(VertexConsumer vc, Matrix4f mat, SomaticLoomBlockEntity.RitualOrb orb,
+			Vec3 renderOffset, float partialTicks, float r, float g, float b) {
+		Vec3 previous = orb.previousOffset();
+		if (previous.distanceToSqr(renderOffset) < 0.001D) {
+			return;
+		}
+		float fade = Mth.clamp(1.0f - partialTicks * 0.35f, 0.35f, 1.0f);
+		drawFlatLine(vc, mat,
+				0.5f + (float) previous.x, 0.5f + (float) previous.y, 0.5f + (float) previous.z,
+				0.5f + (float) renderOffset.x, 0.5f + (float) renderOffset.y, 0.5f + (float) renderOffset.z,
+				r, g, b, 0.12f * fade, 0.06f * fade, 0.035f, 0.18f);
+	}
+
+	private void drawOrbUnraveledStrands(VertexConsumer vc, Matrix4f mat,
+			SomaticLoomBlockEntity.RitualOrb orb, float x, float y, float z,
+			float currentTime, float r, float g, float b) {
+		long flickerFrame = (long) Math.floor(currentTime / 3.0f);
+		long seed = 97L * orb.tendency().ordinal()
+				+ 131L * orb.enzymeCost()
+				+ 313L * flickerFrame;
+		FRAC_RAND.setSeed(seed);
+		for (int i = 0; i < ORB_UNRAVEL_STRANDS; i++) {
+			double yaw = FRAC_RAND.nextDouble() * Math.PI * 2.0D;
+			double vertical = (FRAC_RAND.nextDouble() - 0.42D) * 0.8D;
+			float length = ORB_UNRAVEL_MIN_LENGTH
+					+ FRAC_RAND.nextFloat() * (ORB_UNRAVEL_MAX_LENGTH - ORB_UNRAVEL_MIN_LENGTH);
+			float rootRadius = 0.12f + FRAC_RAND.nextFloat() * 0.12f;
+			float sx = x + (float) Math.cos(yaw) * rootRadius;
+			float sy = y + (FRAC_RAND.nextFloat() - 0.5f) * 0.22f;
+			float sz = z + (float) Math.sin(yaw) * rootRadius;
+			float ex = sx + (float) Math.cos(yaw) * length;
+			float ey = sy + (float) vertical * length;
+			float ez = sz + (float) Math.sin(yaw) * length;
+			float alpha = 0.09f + FRAC_RAND.nextFloat() * 0.07f;
+			fracLine(vc, mat, sx, sy, sz, ex, ey, ez,
+					r, g, b, alpha, alpha * 0.45f,
+					ORB_UNRAVEL_STRAND_WIDTH, 0.055f, 0.08D, FRACTAL_DETAIL);
+		}
+	}
+
+	private static void drawOrbSphere(VertexConsumer vc, Matrix4f mat,
+			float x, float y, float z, float radius, float r, float g, float b, float alpha, boolean glow) {
+		float layerRadius = glow ? radius * 1.45f : radius;
+		float layerAlpha = glow ? alpha * 0.18f : alpha;
+		drawSphere(vc, mat, x, y, z, layerRadius, r, g, b, layerAlpha);
+	}
+
+	private static void drawSphere(VertexConsumer vc, Matrix4f mat,
+			float cx, float cy, float cz, float radius, float r, float g, float b, float alpha) {
+		for (int lat = 0; lat < ORB_LAT_SEGMENTS; lat++) {
+			double theta1 = Math.PI * lat / ORB_LAT_SEGMENTS;
+			double theta2 = Math.PI * (lat + 1) / ORB_LAT_SEGMENTS;
+			for (int lon = 0; lon < ORB_LON_SEGMENTS; lon++) {
+				double phi1 = Math.PI * 2.0D * lon / ORB_LON_SEGMENTS;
+				double phi2 = Math.PI * 2.0D * (lon + 1) / ORB_LON_SEGMENTS;
+				emitSphereQuad(vc, mat, cx, cy, cz, radius, theta1, phi1, theta2, phi2, r, g, b, alpha);
+			}
+		}
+	}
+
+	private static void emitSphereQuad(VertexConsumer vc, Matrix4f mat,
+			float cx, float cy, float cz, float radius,
+			double theta1, double phi1, double theta2, double phi2,
+			float r, float g, float b, float alpha) {
+		float x1 = sphereX(cx, radius, theta1, phi1);
+		float y1 = sphereY(cy, radius, theta1);
+		float z1 = sphereZ(cz, radius, theta1, phi1);
+		float x2 = sphereX(cx, radius, theta2, phi1);
+		float y2 = sphereY(cy, radius, theta2);
+		float z2 = sphereZ(cz, radius, theta2, phi1);
+		float x3 = sphereX(cx, radius, theta2, phi2);
+		float y3 = sphereY(cy, radius, theta2);
+		float z3 = sphereZ(cz, radius, theta2, phi2);
+		float x4 = sphereX(cx, radius, theta1, phi2);
+		float y4 = sphereY(cy, radius, theta1);
+		float z4 = sphereZ(cz, radius, theta1, phi2);
+		emitQuad(vc, mat,
+				x1, y1, z1, r, g, b, alpha,
+				x2, y2, z2, r, g, b, alpha,
+				x3, y3, z3, r, g, b, alpha,
+				x4, y4, z4, r, g, b, alpha);
+	}
+
+	private static float sphereX(float cx, float radius, double theta, double phi) {
+		return cx + radius * (float) (Math.sin(theta) * Math.cos(phi));
+	}
+
+	private static float sphereY(float cy, float radius, double theta) {
+		return cy + radius * (float) Math.cos(theta);
+	}
+
+	private static float sphereZ(float cz, float radius, double theta, double phi) {
+		return cz + radius * (float) (Math.sin(theta) * Math.sin(phi));
+	}
+
 	private void fracLine(VertexConsumer vc, Matrix4f mat,
 			float x1, float y1, float z1, float x2, float y2, float z2,
 			float r, float g, float b, float coreAlpha, float glowAlpha,

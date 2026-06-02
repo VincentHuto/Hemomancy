@@ -1,11 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:calcified_blood_spine"
-  },
-  "animus": true,
-  "ferric": true,
-  "lux": true,
-  "result": "hemomancy:memory_living_spear",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:calcified_blood_spine"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  1,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  1,
+                    "mortem":  0,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  0
+                },
+    "blood":  150,
+    "result":  "hemomancy:memory_living_spear",
+    "count":  1
 }

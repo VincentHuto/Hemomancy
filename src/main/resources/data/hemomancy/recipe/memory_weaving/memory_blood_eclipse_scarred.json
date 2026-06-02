@@ -1,10 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "ingredient": {
-    "item": "hemomancy:scar_moon"
-  },
-  "congeatio": true,
-  "tenebris": true,
-  "result": "hemomancy:memory_blood_eclipse",
-  "count": 1
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:scar_moon"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  0,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  1,
+                    "ferric":  0,
+                    "tenebris":  1
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_blood_eclipse",
+    "count":  1
 }

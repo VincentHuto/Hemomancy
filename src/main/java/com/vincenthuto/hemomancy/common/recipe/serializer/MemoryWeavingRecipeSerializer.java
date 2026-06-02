@@ -1,12 +1,19 @@
 package com.vincenthuto.hemomancy.common.recipe.serializer;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.*;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -16,18 +23,31 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWeavingRecipe> {
-	public static HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();
+	public static final HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();
 
 	public static MemoryWeavingRecipe getRecipe(String path) {
-		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:memory_weaving/" + path));
+		if (path == null || path.isBlank()) {
+			return null;
+		}
+		ResourceLocation direct = ResourceLocation.tryParse(path);
+		if (direct != null && ALL_RECIPES.containsKey(direct)) {
+			return ALL_RECIPES.get(direct);
+		}
+		String cleanPath = path;
+		int colon = cleanPath.indexOf(':');
+		if (colon >= 0) {
+			cleanPath = cleanPath.substring(colon + 1);
+		}
+		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:memory_weaving/" + cleanPath));
 	}
-
-	// ---- JSON helpers (reused by codec) ----
 
 	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
 		JsonObject json = new JsonObject();
@@ -39,45 +59,103 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return json;
 	}
 
-	private static MemoryWeavingRecipe fromJsonObject(ResourceLocation pRecipeId, JsonObject pJson) {
-		Map<EnumBloodTendency, Float> tendency = MemoryWeavingRecipe.blank();
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			String key = tend.toString().toLowerCase();
-			if (pJson.has(key)) {
-				tendency.put(tend, pJson.get(key).getAsBoolean() ? 1f : 0f);
-			} else {
-				tendency.put(tend, 0f);
-			}
-		}
+	private static MemoryWeavingRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json) {
+		List<Ingredient> catalysts = parseCatalysts(json);
+		EnumMap<EnumBloodTendency, Integer> enzymes = parseEnzymes(json);
+		double blood = json.has("blood")
+				? Math.max(0.0D, GsonHelper.getAsDouble(json, "blood"))
+				: legacyBloodCost(enzymes);
 
-		ItemStack result = RecipeResultStackParser.parseResultStack(pJson, "result");
-
-		// Validate result is not empty
+		ItemStack result = RecipeResultStackParser.parseResultStack(json, "result");
 		if (result.isEmpty()) {
-			Hemomancy.LOGGER.warn("Memory weaving recipe {} has an empty result item. This recipe will be skipped.", pRecipeId);
-			// Use a non-empty fallback so network sync cannot crash.
+			Hemomancy.LOGGER.warn("Memory weaving recipe {} has an empty result item. This recipe will be skipped.", recipeId);
 			result = new ItemStack(Items.BARRIER);
 		}
 
-		if (pJson.has("ingredient")) {
-			JsonElement jsonelement = GsonHelper.isArrayNode(pJson, "ingredient")
-					? GsonHelper.getAsJsonArray(pJson, "ingredient")
-					: GsonHelper.getAsJsonObject(pJson, "ingredient");
-			Ingredient ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, jsonelement)
-					.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient: " + err));
-			return new MemoryWeavingRecipe(pRecipeId, ingredient, tendency, result);
-		} else {
-			return new MemoryWeavingRecipe(pRecipeId, Ingredient.EMPTY, tendency, result);
+		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(recipeId, catalysts, enzymes, blood, result);
+		cacheRecipe(recipe);
+		return recipe;
+	}
+
+	private static List<Ingredient> parseCatalysts(JsonObject json) {
+		List<Ingredient> catalysts = new ArrayList<>();
+		if (json.has("catalysts")) {
+			JsonElement catalystElement = json.get("catalysts");
+			if (catalystElement.isJsonArray()) {
+				JsonArray array = catalystElement.getAsJsonArray();
+				for (JsonElement element : array) {
+					catalysts.add(parseIngredient(element));
+				}
+			} else {
+				catalysts.add(parseIngredient(catalystElement));
+			}
+		} else if (json.has("ingredient")) {
+			JsonElement legacy = GsonHelper.isArrayNode(json, "ingredient")
+					? GsonHelper.getAsJsonArray(json, "ingredient")
+					: GsonHelper.getAsJsonObject(json, "ingredient");
+			catalysts.add(parseIngredient(legacy));
+		}
+		if (catalysts.isEmpty()) {
+			throw new JsonSyntaxException("Memory weaving recipes require at least one catalyst");
+		}
+		return catalysts;
+	}
+
+	private static Ingredient parseIngredient(JsonElement element) {
+		return Ingredient.CODEC.parse(JsonOps.INSTANCE, element)
+				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient: " + err));
+	}
+
+	private static EnumMap<EnumBloodTendency, Integer> parseEnzymes(JsonObject json) {
+		EnumMap<EnumBloodTendency, Integer> enzymes = MemoryWeavingRecipe.blankEnzymeRequirements();
+		if (json.has("enzymes")) {
+			JsonObject enzymeJson = GsonHelper.getAsJsonObject(json, "enzymes");
+			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+				String key = tendency.toString().toLowerCase();
+				int amount = enzymeJson.has(key) ? GsonHelper.getAsInt(enzymeJson, key) : 0;
+				validateEnzymeAmount(key, amount);
+				enzymes.put(tendency, amount);
+			}
+			return enzymes;
+		}
+
+		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			String key = tendency.toString().toLowerCase();
+			enzymes.put(tendency, json.has(key) && GsonHelper.getAsBoolean(json, key) ? 1 : 0);
+		}
+		return enzymes;
+	}
+
+	private static void validateEnzymeAmount(String key, int amount) {
+		if (amount < 0 || amount > MemoryWeavingRecipe.MAX_ENZYMES_PER_TENDENCY) {
+			throw new JsonSyntaxException("Memory weaving enzyme '" + key + "' must be between 0 and "
+					+ MemoryWeavingRecipe.MAX_ENZYMES_PER_TENDENCY + ", got " + amount);
 		}
 	}
 
-	// ---- RecipeSerializer 1.21.1 API ----
+	private static double legacyBloodCost(Map<EnumBloodTendency, Integer> enzymes) {
+		int requiredTendencies = 0;
+		for (int amount : enzymes.values()) {
+			if (amount > 0) {
+				requiredTendencies++;
+			}
+		}
+		return requiredTendencies * 50.0D;
+	}
 
-	private static final MapCodec<MemoryWeavingRecipe> CODEC = new MapCodec<MemoryWeavingRecipe>() {
+	private static void cacheRecipe(MemoryWeavingRecipe recipe) {
+		ALL_RECIPES.put(recipe.getId(), recipe);
+		ResourceLocation resultId = BuiltInRegistries.ITEM.getKey(recipe.getResultItem(null).getItem());
+		if (resultId != null) {
+			ALL_RECIPES.put(Hemomancy.rloc("memory_weaving/" + resultId.getPath()), recipe);
+		}
+	}
+
+	private static final MapCodec<MemoryWeavingRecipe> CODEC = new MapCodec<>() {
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
 			return Stream.concat(
-					Stream.of("id", "ingredient", "result", "count"),
+					Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "result", "count"),
 					Stream.of(EnumBloodTendency.values()).map(e -> e.toString().toLowerCase()))
 					.map(ops::createString);
 		}
@@ -89,9 +167,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 				ResourceLocation id = json.has("id")
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("memory_weaving/unknown");
-				MemoryWeavingRecipe recipe = fromJsonObject(id, json);
-				ALL_RECIPES.put(id, recipe);
-				return DataResult.success(recipe);
+				return DataResult.success(fromJsonObject(id, json));
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode MemoryWeavingRecipe: " + e.getMessage());
 			}
@@ -100,11 +176,19 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		@Override
 		public <T> RecordBuilder<T> encode(MemoryWeavingRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 			prefix.add("id", ops.createString(recipe.getId().toString()));
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				prefix.add(tend.toString().toLowerCase(), ops.createBoolean(recipe.isTendencyRequired(tend)));
+			JsonArray catalysts = new JsonArray();
+			for (Ingredient ingredient : recipe.getCatalysts()) {
+				Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, ingredient).result()
+						.ifPresent(catalysts::add);
 			}
-			Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, recipe.getIngredient()).result()
-					.ifPresent(e -> prefix.add("ingredient", JsonOps.INSTANCE.convertTo(ops, e)));
+			prefix.add("catalysts", JsonOps.INSTANCE.convertTo(ops, catalysts));
+
+			JsonObject enzymes = new JsonObject();
+			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+				enzymes.addProperty(tendency.toString().toLowerCase(), recipe.getEnzymeRequirement(tendency));
+			}
+			prefix.add("enzymes", JsonOps.INSTANCE.convertTo(ops, enzymes));
+			prefix.add("blood", ops.createDouble(recipe.getBloodCost()));
 			ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, recipe.getResultItem(null)).result()
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			return prefix;
@@ -116,54 +200,44 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			MemoryWeavingRecipeSerializer::fromNetwork);
 
 	@Override
-	public MapCodec<MemoryWeavingRecipe> codec() { return CODEC; }
-
-	@Override
-	public StreamCodec<RegistryFriendlyByteBuf, MemoryWeavingRecipe> streamCodec() { return STREAM_CODEC; }
-
-	private static MemoryWeavingRecipe fromNetwork(RegistryFriendlyByteBuf pBuffer) {
-		try {
-			ResourceLocation id = pBuffer.readResourceLocation();
-			boolean hasIngredient = pBuffer.readBoolean();
-			Ingredient input = hasIngredient
-					? Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer)
-					: Ingredient.EMPTY;
-			Map<EnumBloodTendency, Float> tends = new HashMap<>();
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tends.put(tend, pBuffer.readBoolean() ? 1f : 0f);
-			}
-			ItemStack output = ItemStack.STREAM_CODEC.decode(pBuffer);
-			return new MemoryWeavingRecipe(id, input, tends, output);
-		} catch (Exception e) {
-			Hemomancy.LOGGER.error("Error reading memory weaving recipe from packet.", e);
-			throw e;
-		}
+	public MapCodec<MemoryWeavingRecipe> codec() {
+		return CODEC;
 	}
 
-	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, MemoryWeavingRecipe pRecipe) {
-		try {
-			pBuffer.writeResourceLocation(pRecipe.getId());
-			Ingredient ingredient = pRecipe.getIngredient();
-			boolean hasIngredient = ingredient != null && !ingredient.isEmpty();
-			pBuffer.writeBoolean(hasIngredient);
-			if (hasIngredient) {
-				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, ingredient);
-			}
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				pBuffer.writeBoolean(pRecipe.getTendency().getOrDefault(tend, 0f) > 0f);
-			}
-			// Validate result is not empty before encoding
-			ItemStack result = pRecipe.getResultItem(null);
-			if (result.isEmpty()) {
-				Hemomancy.LOGGER.warn("Memory weaving recipe {} has an empty result item. Skipping network sync.", pRecipe.getId());
-				// Write a non-empty sentinel stack to maintain protocol alignment.
-				ItemStack.STREAM_CODEC.encode(pBuffer, new ItemStack(Items.BARRIER));
-			} else {
-				ItemStack.STREAM_CODEC.encode(pBuffer, result);
-			}
-		} catch (Exception e) {
-			Hemomancy.LOGGER.error("Error writing memory weaving recipe to packet.", e);
-			throw e;
+	@Override
+	public StreamCodec<RegistryFriendlyByteBuf, MemoryWeavingRecipe> streamCodec() {
+		return STREAM_CODEC;
+	}
+
+	private static MemoryWeavingRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+		ResourceLocation id = buffer.readResourceLocation();
+		int catalystCount = buffer.readVarInt();
+		List<Ingredient> catalysts = new ArrayList<>(catalystCount);
+		for (int i = 0; i < catalystCount; i++) {
+			catalysts.add(Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
 		}
+		EnumMap<EnumBloodTendency, Integer> enzymes = MemoryWeavingRecipe.blankEnzymeRequirements();
+		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			enzymes.put(tendency, buffer.readVarInt());
+		}
+		double blood = buffer.readDouble();
+		ItemStack output = ItemStack.STREAM_CODEC.decode(buffer);
+		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(id, catalysts, enzymes, blood, output);
+		cacheRecipe(recipe);
+		return recipe;
+	}
+
+	private static void toNetwork(RegistryFriendlyByteBuf buffer, MemoryWeavingRecipe recipe) {
+		buffer.writeResourceLocation(recipe.getId());
+		buffer.writeVarInt(recipe.getCatalysts().size());
+		for (Ingredient catalyst : recipe.getCatalysts()) {
+			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, catalyst);
+		}
+		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			buffer.writeVarInt(recipe.getEnzymeRequirement(tendency));
+		}
+		buffer.writeDouble(recipe.getBloodCost());
+		ItemStack result = recipe.getResultItem(null);
+		ItemStack.STREAM_CODEC.encode(buffer, result.isEmpty() ? new ItemStack(Items.BARRIER) : result);
 	}
 }

@@ -1,12 +1,21 @@
 {
-  "type": "hemomancy:memory_weaving",
-  "animus": true,
-  "mortem": true,
-  "ductilis": true,
-  "ferric": true,
-  "lux": true,
-  "tenebris": true,
-  "flammeus": true,
-  "result": "hemomancy:sanguine_formation",
-  "count": 8
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "hemomancy:sanguine_formation"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  1,
+                    "flammeus":  1,
+                    "ductilis":  1,
+                    "lux":  1,
+                    "mortem":  1,
+                    "congeatio":  0,
+                    "ferric":  1,
+                    "tenebris":  1
+                },
+    "blood":  350,
+    "result":  "hemomancy:sanguine_formation",
+    "count":  8
 }
