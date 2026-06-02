@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "stage=0": { "model": "hemomancy:block/gourdvine_tap_stage0" },
+    "stage=1": { "model": "hemomancy:block/gourdvine_tap_stage1" },
+    "stage=2": { "model": "hemomancy:block/gourdvine_tap_stage2" },
+    "stage=3": { "model": "hemomancy:block/gourdvine_tap_stage3" }
+  }
+}
+

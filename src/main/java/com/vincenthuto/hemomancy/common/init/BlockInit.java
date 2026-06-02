@@ -572,6 +572,14 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
 
+	public static final DeferredHolder<Block, Block> gourdvine_tap = MODELEDBLOCKS.register("gourdvine_tap",
+			() -> new GourdvineTapBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.PLANT)
+					.noCollission()
+					.instabreak()
+					.noOcclusion()
+					.sound(SoundType.GRASS)));
+
 	public static final DeferredHolder<Block, Block> covenant_throne = MODELEDBLOCKS.register("covenant_throne",
 			() -> new CovenantThroneBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()

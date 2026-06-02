@@ -127,6 +127,7 @@
   "block.hemomancy.consecrated_bloodwell.inactive": "Your blood is not yet awakened.",
   "block.hemomancy.consecrated_bloodwell.not_in_sanctum": "You must be within your own sanctum to withdraw.",
   "block.hemomancy.consecrated_bloodwell.withdrew": "Withdrew %s blood. Well: %s / %s",
+  "block.hemomancy.gourdvine_tap": "Gourdvine Tap",
   "block.hemomancy.covenant_throne": "Covenant Throne",
   "block.hemomancy.covenant_throne.insufficient_blood": "The Covenant demands %s blood for the Trance. You cannot afford it.",
   "block.hemomancy.covenant_throne.no_blood": "Your blood is not yet awakened.",
