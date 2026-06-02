@@ -11,6 +11,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
@@ -125,6 +129,12 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
         return held;
     }
 
+    private void clearStoredItems() {
+        for (int i = 0; i < items.size(); i++) {
+            items.set(i, ItemStack.EMPTY);
+        }
+    }
+
     private static void configureInsertedGourd(ItemStack stack) {
         if (!(stack.getItem() instanceof BloodGourdItem gourd)) return;
         IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
@@ -206,6 +216,30 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
         items.set(SLOT_GOURD, ItemStack.EMPTY);
     }
 
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return saveWithoutMetadata(provider);
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
+        loadAdditional(tag, provider);
+    }
+
+    @Override
+    public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet,
+            HolderLookup.Provider provider) {
+        if (packet.getTag() != null) {
+            handleUpdateTag(packet.getTag(), provider);
+        }
+    }
+
     // ── NBT ───────────────────────────────────────────────────────────────────
 
     @Override
@@ -222,6 +256,7 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
+        clearStoredItems();
         ContainerHelper.loadAllItems(tag, items, provider);
 
         if (tag.contains(TAG_BLOOD_LEVEL)) {

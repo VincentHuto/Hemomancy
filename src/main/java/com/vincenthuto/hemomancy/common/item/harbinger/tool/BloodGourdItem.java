@@ -41,6 +41,12 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 		return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 	}
 
+	private static String formatBloodAmount(double amount) {
+		double rounded = Math.round(amount * 10.0D) / 10.0D;
+		long whole = Math.round(rounded);
+		return Math.abs(rounded - whole) < 1.0E-6D ? Long.toString(whole) : Double.toString(rounded);
+	}
+
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
@@ -60,7 +66,7 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 			tooltip.add(Component.literal("Proper vessel: no Blood Drunkenness")
 					.withStyle(ChatFormatting.GRAY));
 			if (!data.isEmpty()) {
-				tooltip.add(Component.literal("Blood Volume: " + bloodVolume.getBloodVolume() + " ml")
+				tooltip.add(Component.literal("Blood Volume: " + formatBloodAmount(bloodVolume.getBloodVolume()) + " ml")
 						.withStyle(ChatFormatting.RED));
 				if (data.getBoolean(TAG_STATE)) {
 					tooltip.add(Component.literal("State: Open").withStyle(ChatFormatting.RED));

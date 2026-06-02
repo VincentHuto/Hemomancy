@@ -29,6 +29,18 @@ public final class FungalSurfaceBiomeRules
 		return new ResourceKey[] { BiomeInit.FUNGAL_GARDENS, BiomeInit.ERYTHROCORAL_REEF };
 	}
 
+	@SuppressWarnings("unchecked")
+	static ResourceKey<Biome>[] fungalGardensBiome()
+	{
+		return new ResourceKey[] { BiomeInit.FUNGAL_GARDENS };
+	}
+
+	@SuppressWarnings("unchecked")
+	static ResourceKey<Biome>[] erythrocoralReefBiome()
+	{
+		return new ResourceKey[] { BiomeInit.ERYTHROCORAL_REEF };
+	}
+
 	public static String[] surfaceRuleOrderNames()
 	{
 		return SURFACE_RULE_ORDER_NAMES.clone();

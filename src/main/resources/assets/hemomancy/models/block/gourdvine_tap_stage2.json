@@ -1,8 +1,113 @@
 {
-  "parent": "minecraft:block/cross",
+  "parent": "minecraft:block/block",
   "render_type": "cutout",
+  "ambientocclusion": false,
   "textures": {
-    "cross": "hemomancy:block/dendritic_stem_2"
-  }
+    "stem": "hemomancy:block/dendritic_stem_2",
+    "particle": "hemomancy:block/dendritic_stem_2"
+  },
+  "elements": [
+    {
+      "from": [6.5, 0, 6.5],
+      "to": [9.5, 2, 9.5],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.75, 0, 6.75],
+      "to": [9.25, 15, 9.25],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.5, 14, 6.5],
+      "to": [9.5, 16, 9.5],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [8, 7, 7],
+      "to": [11, 13, 9],
+      "rotation": { "origin": [8, 8, 8], "axis": "z", "angle": -22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [5, 8, 7],
+      "to": [8, 14, 9],
+      "rotation": { "origin": [8, 9, 8], "axis": "z", "angle": 22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [7, 9, 5],
+      "to": [9, 15, 8],
+      "rotation": { "origin": [8, 10, 8], "axis": "x", "angle": 22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [7, 6, 8],
+      "to": [9, 12, 11],
+      "rotation": { "origin": [8, 7, 8], "axis": "x", "angle": -22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [7, 13, 7],
+      "to": [9, 16, 9],
+      "rotation": { "origin": [8, 13, 8], "axis": "z", "angle": 0, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    }
+  ]
 }
 
