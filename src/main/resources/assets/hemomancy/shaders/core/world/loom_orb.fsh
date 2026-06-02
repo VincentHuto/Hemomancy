@@ -19,21 +19,29 @@ in float surfaceLift;
 
 out vec4 fragColor;
 
+float lineBand(float value, float threadWidth) {
+    float distanceToLine = abs(fract(value) - 0.5);
+    return smoothstep(threadWidth + 0.035, threadWidth, distanceToLine);
+}
+
 void main() {
     vec3 n = normalize(orbNormal + vec3(0.0001));
     float longitude = atan(n.z, n.x);
     float latitude = asin(clamp(n.y, -1.0, 1.0));
-    float wrapA = sin(longitude * 5.0 + latitude * 9.0 + HemoTime * 0.045 + OrbSeed);
-    float wrapB = sin(longitude * -7.0 + latitude * 6.0 - HemoTime * 0.061 + OrbSeed * 2.4);
-    float threadBand = smoothstep(0.58, 0.96, abs(wrapA * 0.62 + wrapB * 0.38 + threadFlow * 0.55));
-    float knotShadow = smoothstep(0.70, 0.98,
-            abs(sin((n.x * n.z + n.y * 0.33) * ThreadScale * 1.8 + OrbSeed * 4.7)));
+    float drift = HemoTime * 0.010 + OrbSeed * 0.017;
+    float wrapA = longitude * 0.82 + latitude * 1.96 + threadFlow * 0.22 + drift;
+    float wrapB = longitude * -1.35 + latitude * 1.28 - threadFlow * 0.18 - drift * 0.72;
+    float wrapC = longitude * 1.90 - latitude * 0.54 + surfaceLift * 0.34 + OrbSeed * 0.031;
+    float threadWidth = 0.030 + GlowLayer * 0.014;
+    float threadBand = max(lineBand(wrapA, threadWidth),
+            max(lineBand(wrapB, threadWidth * 0.82) * 0.82,
+                    lineBand(wrapC, threadWidth * 0.68) * 0.56));
     float rim = pow(1.0 - clamp(abs(n.z) * 0.18 + abs(n.y) * 0.34, 0.0, 0.92), 1.6);
 
     vec3 tendency = vertexColor.rgb * ColorModulator.rgb;
     vec3 darkThread = tendency * 0.18;
     vec3 litThread = min(tendency * (1.08 + surfaceLift * 1.4), vec3(1.0));
-    vec3 color = mix(litThread, darkThread, clamp(threadBand * 0.72 + knotShadow * 0.34, 0.0, 1.0));
+    vec3 color = mix(litThread, darkThread, clamp(threadBand * 0.86, 0.0, 1.0));
     color += tendency * rim * (GlowLayer > 0.5 ? 0.28 : 0.08);
 
     float coreAlpha = vertexColor.a * (0.78 + threadBand * 0.08);

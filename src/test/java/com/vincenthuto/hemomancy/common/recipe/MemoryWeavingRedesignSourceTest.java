@@ -132,6 +132,9 @@ public final class MemoryWeavingRedesignSourceTest {
 				renderer, "fracLine(vc, mat, sx, sy, sz, ex, ey, ez");
 		assertContains("loom renderer uses a small swarm of unraveled strands", renderer, "ORB_UNRAVEL_STRANDS = 9");
 		assertContains("loom renderer keeps orb strands thin", renderer, "ORB_CENTER_STRAND_WIDTH = 0.012f");
+		assertDoesNotContain("loom unraveled strands no longer reseed from animation time", renderer, "flickerFrame");
+		assertDoesNotContain("loom unraveled strand random seed does not include a time bucket", renderer, "+ 313L *");
+		assertContains("loom unraveled strands use continuous strand-wave motion", renderer, "strandWave");
 		assertContains("loom renderer tessellates ritual orb latitude bands", renderer, "ORB_LAT_SEGMENTS");
 		assertDoesNotContain("loom renderer no longer draws ritual orbs as crossed planes", renderer,
 				"drawOrbBillboard");
@@ -149,8 +152,15 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertContains("loom orb vertex shader writhes vertices outward from orb center", loomOrbVertexShader,
 				"vec3 dir = normalize(Position - OrbCenter");
 		assertContains("loom orb vertex shader uses stable seed-driven motion", loomOrbVertexShader, "OrbSeed");
-		assertContains("loom orb fragment shader renders thread-like bands", loomOrbFragmentShader, "threadBand");
+		assertDoesNotContain("loom orb vertex shader does not use high-contrast knot deformation", loomOrbVertexShader,
+				"float knot");
+		assertContains("loom orb fragment shader renders thin stripe-style thread bands", loomOrbFragmentShader, "lineBand");
+		assertContains("loom orb fragment shader keeps yarn stripes narrow", loomOrbFragmentShader, "threadWidth");
+		assertDoesNotContain("loom orb fragment shader does not use broad filled region masks",
+				loomOrbFragmentShader, "smoothstep(0.60, 0.96, abs(");
 		assertContains("loom orb fragment shader preserves tendency color", loomOrbFragmentShader, "vertexColor.rgb");
+		assertDoesNotContain("loom orb fragment shader does not paint sponge-like dark knots",
+				loomOrbFragmentShader, "knotShadow");
 		assertContains("input edits reset partial awaiting-blood progress", loom, "resetEditableRitualProgress()");
 		assertContains("memory-only loom feedback asks for catalysts", loom, "Add catalyst items to shape the memory.");
 		assertContains("bad catalyst pattern feedback is specific", loom, "No recipe accepts this catalyst pattern.");

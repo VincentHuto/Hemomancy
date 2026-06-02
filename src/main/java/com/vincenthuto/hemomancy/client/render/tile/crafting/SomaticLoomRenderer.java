@@ -480,23 +480,28 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private void drawOrbUnraveledStrands(VertexConsumer vc, Matrix4f mat,
 			SomaticLoomBlockEntity.RitualOrb orb, float x, float y, float z,
 			float currentTime, float r, float g, float b) {
-		long flickerFrame = (long) Math.floor(currentTime / 3.0f);
 		long seed = 97L * orb.tendency().ordinal()
 				+ 131L * orb.enzymeCost()
-				+ 313L * flickerFrame;
+				+ Double.doubleToLongBits(orb.startOffset().x * 3.17D)
+				+ Double.doubleToLongBits(orb.startOffset().y * 5.13D)
+				+ Double.doubleToLongBits(orb.startOffset().z * 11.71D);
 		FRAC_RAND.setSeed(seed);
 		for (int i = 0; i < ORB_UNRAVEL_STRANDS; i++) {
 			double yaw = FRAC_RAND.nextDouble() * Math.PI * 2.0D;
-			double vertical = (FRAC_RAND.nextDouble() - 0.42D) * 0.8D;
+			float phase = FRAC_RAND.nextFloat() * Mth.TWO_PI;
+			float strandWave = Mth.sin(currentTime * 0.055f + phase);
+			float strandCurl = Mth.cos(currentTime * 0.041f + phase * 1.31f);
+			double vertical = (FRAC_RAND.nextDouble() - 0.42D) * 0.8D + strandCurl * 0.16D;
+			double animatedYaw = yaw + strandWave * 0.22D;
 			float length = ORB_UNRAVEL_MIN_LENGTH
 					+ FRAC_RAND.nextFloat() * (ORB_UNRAVEL_MAX_LENGTH - ORB_UNRAVEL_MIN_LENGTH);
-			float rootRadius = 0.12f + FRAC_RAND.nextFloat() * 0.12f;
-			float sx = x + (float) Math.cos(yaw) * rootRadius;
-			float sy = y + (FRAC_RAND.nextFloat() - 0.5f) * 0.22f;
-			float sz = z + (float) Math.sin(yaw) * rootRadius;
-			float ex = sx + (float) Math.cos(yaw) * length;
+			float rootRadius = 0.12f + FRAC_RAND.nextFloat() * 0.12f + strandWave * 0.018f;
+			float sx = x + (float) Math.cos(animatedYaw) * rootRadius;
+			float sy = y + (FRAC_RAND.nextFloat() - 0.5f) * 0.22f + strandCurl * 0.018f;
+			float sz = z + (float) Math.sin(animatedYaw) * rootRadius;
+			float ex = sx + (float) Math.cos(animatedYaw) * length;
 			float ey = sy + (float) vertical * length;
-			float ez = sz + (float) Math.sin(yaw) * length;
+			float ez = sz + (float) Math.sin(animatedYaw) * length;
 			float alpha = 0.09f + FRAC_RAND.nextFloat() * 0.07f;
 			fracLine(vc, mat, sx, sy, sz, ex, ey, ez,
 					r, g, b, alpha, alpha * 0.45f,

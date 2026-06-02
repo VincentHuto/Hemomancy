@@ -31,8 +31,7 @@ void main() {
     float bandA = wave(dir, normalize(vec3(1.0, 0.35, 0.62)), 0.083, 1.7);
     float bandB = wave(dir, normalize(vec3(-0.54, 1.0, 0.27)), -0.071, 2.3);
     float bandC = wave(dir, normalize(vec3(0.22, -0.46, 1.0)), 0.119, 3.1);
-    float knot = sin((dir.x * dir.z + dir.y * 0.45) * ThreadScale * 2.1 + HemoTime * 0.17 + OrbSeed * 5.0);
-    float writhe = (bandA * 0.42 + bandB * 0.30 + bandC * 0.20 + knot * 0.18) * WritheStrength;
+    float writhe = (bandA * 0.44 + bandB * 0.34 + bandC * 0.22) * WritheStrength;
     float pulse = 0.62 + 0.38 * sin(HemoTime * 0.21 + OrbSeed * 1.9);
     float glowPush = GlowLayer * OrbRadius * 0.32;
     vec3 p = Position + dir * (glowPush + OrbRadius * writhe * pulse);
@@ -41,6 +40,6 @@ void main() {
     vertexDistance = fog_distance(p, FogShape);
     vertexColor = Color;
     orbNormal = dir;
-    threadFlow = bandA * 0.48 + bandB * 0.34 + knot * 0.18;
+    threadFlow = bandA * 0.52 + bandB * 0.32 + bandC * 0.16;
     surfaceLift = writhe;
 }
