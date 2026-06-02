@@ -40,6 +40,39 @@ public final class HemoRenderTypes {
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	public static RenderType loomOrbShell(float gameTime, float orbSeed, float centerX, float centerY, float centerZ,
+			float orbRadius, float writheStrength, float threadScale, boolean glowLayer) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"loom_orb_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.LOOM_ORB.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "OrbSeed", orbSeed);
+					setUniform(shader, "OrbCenter", centerX, centerY, centerZ);
+					setUniform(shader, "OrbRadius", orbRadius);
+					setUniform(shader, "WritheStrength", writheStrength);
+					setUniform(shader, "ThreadScale", threadScale);
+					setUniform(shader, "GlowLayer", glowLayer ? 1.0f : 0.0f);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.LOOM_ORB.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create(glowLayer ? "loom_orb_shell_glow" : "loom_orb_shell_core",
+				DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 2048, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.LOOM_ORB.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(glowLayer ? RenderType.COLOR_WRITE : RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType monolithFragment(float gameTime, float shardSeed, float burden, float attuned,
 			float guiClamp) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

@@ -17,6 +17,11 @@ public final class MemoryWeavingRedesignSourceTest {
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomBlock.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/crafting/SomaticLoomRenderer.java");
 		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/common/init/RenderTypeInit.java");
+		String hemoRenderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
+		String shaderInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+		String loomOrbShaderJson = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.json");
+		String loomOrbVertexShader = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.vsh");
+		String loomOrbFragmentShader = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.fsh");
 		String enzyme = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/EnzymeItem.java");
 		String loomEvents = read("src/main/java/com/vincenthuto/hemomancy/common/event/SomaticLoomInteractionEvents.java");
 		String projectionEvents = read("src/main/java/com/vincenthuto/hemomancy/common/event/BloodProjectionInteractionEvents.java");
@@ -105,13 +110,20 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertContains("loom renderer stays visible off screen", renderer, "shouldRenderOffScreen");
 		assertContains("loom renderer has expanded renderer bounds", renderer, "getRenderBoundingBox");
 		assertContains("loom renderer bounds include ritual orb radius", renderer, "ORB_RENDER_BOUNDS");
-		assertContains("loom renderer uses depth-writing orb core render type", renderer,
-				"RenderTypeInit.LOOM_EFFECT_CORE");
+		assertContains("loom renderer uses shader-backed orb shell render type", renderer,
+				"HemoRenderTypes.loomOrbShell");
 		assertContains("loom renderer defers ritual orb buffer switching until orb drawing", renderer,
 				"drawRitualOrbs(buffer, stack.last().pose(), te, currentTime, partialTicks)");
 		assertContains("loom renderer cancels flat-effect y shift before drawing ritual orbs", renderer,
 				"stack.translate(0F, 0.5F, 0F);");
-		assertContains("loom renderer draws ritual orbs as spheres", renderer, "drawOrbSphere");
+		assertContains("loom renderer draws orb strands before switching to shader shell buffers", renderer,
+				"drawRitualOrbEffects");
+		assertContains("loom renderer draws shader shells in a separate pass", renderer, "drawRitualOrbShells");
+		assertContains("loom renderer draws ritual orb shells through shader", renderer, "drawShaderWrithedOrbShell");
+		assertContains("loom renderer uses per-orb shader batches for unique writhe", renderer,
+				"HemoRenderTypes.loomOrbShell");
+		assertContains("loom renderer passes a stable per-orb shader seed", renderer, "orbShaderSeed(orb)");
+		assertContains("loom renderer still emits sphere geometry for shader deformation", renderer, "drawOrbSphere");
 		assertContains("loom renderer interpolates ritual orb movement", renderer, "orb.renderOffset(partialTicks)");
 		assertContains("loom renderer draws a subtle drag trail", renderer, "drawOrbTrail");
 		assertContains("loom renderer draws center-to-orb weaving strands", renderer, "drawOrbCenterStrand");
@@ -126,6 +138,19 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertContains("loom effect has a depth-writing core layer", renderTypes, "LOOM_EFFECT_CORE");
 		assertContains("loom effect core writes depth for translucent-world ordering", renderTypes,
 				"COLOR_DEPTH_WRITE");
+		assertContains("loom orb shader core writes depth for translucent-world ordering", hemoRenderTypes,
+				"glowLayer ? RenderType.COLOR_WRITE : RenderType.COLOR_DEPTH_WRITE");
+		assertContains("loom orb shader is registered", shaderInit, "LOOM_ORB");
+		assertContains("loom orb shader caches animation uniforms", shaderInit, "\"WritheStrength\"");
+		assertContains("loom orb render type uses custom shader", hemoRenderTypes, "ShaderInit.LOOM_ORB.getShard()");
+		assertContains("loom orb render type sets per-orb center uniform", hemoRenderTypes, "\"OrbCenter\"");
+		assertContains("loom orb shader json points to vertex shader", loomOrbShaderJson, "\"vertex\": \"hemomancy:world/loom_orb\"");
+		assertContains("loom orb shader json accepts position-color geometry", loomOrbShaderJson, "\"Position\"");
+		assertContains("loom orb vertex shader writhes vertices outward from orb center", loomOrbVertexShader,
+				"vec3 dir = normalize(Position - OrbCenter");
+		assertContains("loom orb vertex shader uses stable seed-driven motion", loomOrbVertexShader, "OrbSeed");
+		assertContains("loom orb fragment shader renders thread-like bands", loomOrbFragmentShader, "threadBand");
+		assertContains("loom orb fragment shader preserves tendency color", loomOrbFragmentShader, "vertexColor.rgb");
 		assertContains("input edits reset partial awaiting-blood progress", loom, "resetEditableRitualProgress()");
 		assertContains("memory-only loom feedback asks for catalysts", loom, "Add catalyst items to shape the memory.");
 		assertContains("bad catalyst pattern feedback is specific", loom, "No recipe accepts this catalyst pattern.");

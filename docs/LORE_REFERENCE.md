@@ -2,10 +2,11 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-05-29 Endgame Vesper/Mycophant boss lore and current implementation status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-06-01 Somatic Loom memory-weaving ritual framing and current implementation status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
-> **Current Lore-State Snapshot (2026-05-29 audit):**
+> **Current Lore-State Snapshot (2026-06-01 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
+> - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
 > - **Vesper and The Mycophant now have documented endgame roles:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant is the fruiting-body endpoint for Apotheos-aligned Harbingers. Their entities, rendering, sound hooks, boss music, core combat behavior, and guaranteed final reward loot tables are wired; summoning rituals remain WIP.
@@ -111,7 +112,11 @@ The rarest and most extreme endpoint — performing small fungal rituals that st
 
 Blood manipulations — the spells and powers of a Hemomancer — are not truly learned. They are **remembered**.
 
-Everyone carries dormant **blood memories** deep in their biology, inherited from the infection's long history in the world. These memories are potential, not active — they cannot be accessed without the infection fully taking hold. Once awakened (via the Mortal Display and Sanguine Initiation), these memories can be drawn out, shaped, and activated through a process called **Memory Weaving** — feeding enzymes and reagents into a Somatic Loom to crystallize a specific dormant memory into a usable Hematic Memory item.
+Everyone carries dormant **blood memories** deep in their biology, inherited from the infection's long history in the world. These memories are potential, not active — they cannot be accessed without the infection fully taking hold. Once awakened (via the Mortal Display and Sanguine Initiation), these memories can be drawn out, shaped, and activated through a process called **Memory Weaving**.
+
+Memory Weaving is not ordinary crafting. A blank Hematic Memory is placed into the Somatic Loom as a vessel, while catalyst items act like witnesses, anchors, or symbolic hooks that tell the infection which dormant instruction to expose. Enzymes are no longer just present or absent; the loom stores them as internal, unrecoverable dye-like reservoirs keyed to the eight tendencies. When the correct pattern is present, the player must project blood into the loom before the memory can be physically wrestled into form.
+
+The visible rite externalizes the infection's resistance. A black pulse scatters colored memory-orbs around the loom, each one representing a required enzyme-unit of tendency. The Harbinger draws them home with the Living Staff, pulling unruly strands back into the blank memory until the dormant instruction crystallizes as a usable Hematic Memory item.
 
 **This is the truth the Harbingers believe**: that blood magic is simply a gift they were born carrying, a sacred inheritance that should not be wasted.
 
@@ -220,7 +225,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### INITIATE 3 — *of the Scarlet Sanctum*
 **Lore:** The Scarlet Sanctum was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Sanctum's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
 
-**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their Trial Chambers, extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom alongside tendency-aligned enzyme configurations to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
+**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their Trial Chambers, extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom with a blank Hematic Memory, stored tendency enzymes, projected blood, and the physical orb-weaving rite to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
 
 #### ADEPT 4 — *of the Sanguine Brotherhood*
 **Lore:** The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the earliest form of the Bloodline system. An Adept has moved beyond solo practice into understanding blood as communal inheritance. Simultaneously, the first **Fungal Whispers** begin — subliminal and barely perceptible. Just seeds of doubt.

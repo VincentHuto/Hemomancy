@@ -42,6 +42,10 @@ public class ShaderInit {
 	public static ShaderHolder BLOOD_STRUCTURE_WARP = new ShaderHolder(Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp");
 
+	public static ShaderHolder LOOM_ORB = new ShaderHolder(Hemomancy.rloc("world/loom_orb"),
+			DefaultVertexFormat.POSITION_COLOR, "HemoTime", "OrbSeed", "OrbCenter", "OrbRadius", "WritheStrength",
+			"ThreadScale", "GlowLayer");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -61,6 +65,7 @@ public class ShaderInit {
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
+        registerShader(event, LOOM_ORB.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

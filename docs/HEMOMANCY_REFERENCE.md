@@ -1,6 +1,6 @@
 # Hemomancy - Developer Reference
 
-> **Last audited:** 2026-05-29
+> **Last audited:** 2026-06-01
 > **Mod ID / package:** `hemomancy` / `com.vincenthuto.hemomancy`
 > **Target:** Minecraft `1.21.1`, NeoForge `21.1.219`, Java `21`
 > **Version:** `6.0.1-neoforge.1.21.1.0`
@@ -11,7 +11,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Status legend:** `Implemented` means present in the current NeoForge 1.21.1 runtime path. `Partial` means a playable or compiled spine exists with explicit remaining work. `Dormant` means source/design is preserved but excluded or unregistered. `Planned` means design/lore intent without active runtime behavior.
 
-**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -491,16 +491,16 @@ At around **Degree 3–4**, the Harbinger Vicar and/or the player's own research
 
 **Reward (two output types):** Each saint yields two things from their blood:
 1. **Hallowed Residuum** (`hallowed_residuum_<saint>`) — extracted by processing a Consecrated Syringe in the Vial Centrifuge. Serves as the catalyst currency for the Somatic Loom's Canon Memory recipes.
-2. **Canon Memory** (via Somatic Loom) — placing the Hallowed Residuum as the loom's catalyst and aligning the loom's tendencies to match the saint's pair unlocks that saint's unique SUMMA-rank blood manipulation.
+2. **Canon Memory** (via Somatic Loom) — placing a blank Hematic Memory plus the saint's Hallowed Residuum catalyst, storing the paired enzyme requirements in the loom, projecting the recipe blood cost, and drawing the scattered memory-orbs home unlocks that saint's unique SUMMA-rank blood manipulation.
 
 **Saint → Canon Memory → Fungal Scar Family (at-a-glance):**
 
-| Saint | Tendencies | Loom Recipe (mortem true etc.) | Canon Memory | Related Fungal Scar |
-|-------|-----------|-------------------------------|--------------|----------------------|
-| **Hemorath** | MORTEM + ANIMUS | `mortem: true`, `animus: true` + Residuum of Hemorath | Crimson Tithe | Talaromyces Minus |
-| **Seraphae** | LUX + DUCTILIS | `lux: true`, `ductilis: true` + Residuum of Seraphae | Unclosing Eye | Noctifly Agaric / Anastocordyceps nexus / Antiphonomyces resonans |
-| **Putriciel** | MORTEM + FLAMMEUS | `mortem: true`, `flammeus: true` + Residuum of Putriciel | Bloom of Rot | Respergillus / Sanguiflora cadens / Saprovitta vestigium |
-| **Velorum** | CONGEATIO + TENEBRIS | `congeatio: true`, `tenebris: true` + Residuum of Velorum | Endless Hour | Lumina Devorans / Thanomyces resurgens |
+| Saint | Tendencies | Somatic Loom Pattern | Canon Memory | Related Fungal Scar |
+|-------|-----------|----------------------|--------------|----------------------|
+| **Hemorath** | MORTEM + ANIMUS | `hallowed_residuum_hemorath` + `animus: 1`, `mortem: 1`, `blood: 100` | Crimson Tithe | Talaromyces Minus |
+| **Seraphae** | LUX + DUCTILIS | `hallowed_residuum_seraphae` + `ductilis: 1`, `lux: 1`, `blood: 100` | Unclosing Eye | Noctifly Agaric / Anastocordyceps nexus / Antiphonomyces resonans |
+| **Putriciel** | MORTEM + FLAMMEUS | `hallowed_residuum_putriciel` + `flammeus: 1`, `mortem: 1`, `blood: 100` | Bloom of Rot | Respergillus / Sanguiflora cadens / Saprovitta vestigium |
+| **Velorum** | CONGEATIO + TENEBRIS | `hallowed_residuum_velorum` + `congeatio: 1`, `tenebris: 1`, `blood: 100` | Endless Hour | Lumina Devorans / Thanomyces resurgens |
 
 > The older saint-residuum + vanilla-catalyst incubator recipes for fungal scars have been replaced by Mycelial Crucible cultivation recipes. Hallowed Residuum still matters for Canon Memories and Saint rewards; scar growth now keys off the recipe tendency, blood cost, and aligned enzymes.
 
@@ -912,6 +912,8 @@ Current crude memory shard items:
 
 Harbinger outpost loot now favors these crude starter memories in early danger/exploration rewards instead of over-granting full memory items. The Mnemonic Reliquary remains the Degree 2 deliberate loadout-management tool, and the Somatic Loom remains the Degree 3 refined memory-weaving station.
 
+Somatic Loom memory weaving is now an in-world ritual rather than a passive slot check. A valid recipe begins with one blank `hematic_memory`, one or more catalyst candidates, stored enzyme reservoirs inside the loom, and a recipe-specific `blood` cost. Once the exact recipe is ready, the loom glows in its awaiting-blood phase; the player projects blood into it, then uses a Living Staff to drag scattered tendency-colored memory-orbs back into the block. Only the orb-weaving phase locks the inputs. See §25.7 for the recipe schema and ritual flow.
+
 ### 8.4 Manipulation Tree
 
 Manipulations are organized in a visual **Manipulation Tree** (displayed on the Skill Tree screen alongside the skill tree). Entries are defined in `ManipulationTreeInit` with parent-child relationships. Each node shows whether the player has learned it.
@@ -934,6 +936,8 @@ The player has alignment scores across **8 blood tendencies**. These represent t
 | **Tenebris** | Darkness, Stealth, The End | Purple (70,0,110) | ![](../src/main/resources/assets/hemomancy/textures/item/umbral_enzyme.png) Umbral Enzyme |
 
 Enzymes are obtained using a **Living Syringe** on mobs (now rack-fed via **Vial Rack** storage), then processed in a **Vial Centrifuge** to extract enzymes and Hematic Iron Powder.
+
+The Somatic Loom stores enzymes internally as dye-like tendency reservoirs. Each tendency can hold up to 64 enzyme units; inserted enzymes are converted into integer storage and cannot be recovered. Memory weaving recipes draw from these stored values during the physical orb-dragging step rather than checking whether a tendency was merely present.
 
 ---
 
@@ -1809,22 +1813,22 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 | Blood Memory (per manipulation) | One for each registered manipulation — using it teaches the player |
 | Crude Memory Shards | Early starter memories that teach and auto-equip weak manipulations without needing the Mnemonic Reliquary; current set covers `blood_shot`, `blood_rush`, `deadly_gaze`, `crimson_harvest`, `sanguine_mending`, `blood_lamp`, `hemorrhage`, `glacial_grasp`, `sanguine_ignition`, and `void_shroud` |
 | Living Weapon Memories | `memory_living_blade`, `memory_living_axe`, `memory_living_spear`, `memory_living_claws`, `memory_living_crossbow`, `memory_living_torch`, and `memory_living_flail` teach the Living Staff weapon-form manipulations |
-| **Canon Memory: Crimson Tithe** | Saint manipulation memory (Hemorath) — obtained via Somatic Loom with Hallowed Residuum of Hemorath |
-| **Canon Memory: Unclosing Eye** | Saint manipulation memory (Seraphae) — obtained via Somatic Loom with Hallowed Residuum of Seraphae |
-| **Canon Memory: Bloom of Rot** | Saint manipulation memory (Putriciel) — obtained via Somatic Loom with Hallowed Residuum of Putriciel |
-| **Canon Memory: Endless Hour** | Saint manipulation memory (Velorum) — obtained via Somatic Loom with Hallowed Residuum of Velorum |
+| **Canon Memory: Crimson Tithe** | Saint manipulation memory (Hemorath) — obtained through the Somatic Loom ritual with Hallowed Residuum of Hemorath, paired stored enzymes, and projected blood |
+| **Canon Memory: Unclosing Eye** | Saint manipulation memory (Seraphae) — obtained through the Somatic Loom ritual with Hallowed Residuum of Seraphae, paired stored enzymes, and projected blood |
+| **Canon Memory: Bloom of Rot** | Saint manipulation memory (Putriciel) — obtained through the Somatic Loom ritual with Hallowed Residuum of Putriciel, paired stored enzymes, and projected blood |
+| **Canon Memory: Endless Hour** | Saint manipulation memory (Velorum) — obtained through the Somatic Loom ritual with Hallowed Residuum of Velorum, paired stored enzymes, and projected blood |
 
-Living weapon memory weaving recipes intentionally share the Living Blade recipe shape without being exact duplicates:
+Living weapon memory weaving recipes keep a shared family identity without being exact duplicates. Each recipe still consumes one blank Hematic Memory at the loom, but the data row below lists the recipe-specific catalyst pattern, stored enzyme requirements, and projected ritual blood:
 
-| Memory | Teaches | Ingredient | Tendency Flags |
-|--------|---------|------------|----------------|
-| `memory_living_blade` | `conjure_blade` | `hematic_iron_powder` | Animus, Ductilis, Ferric |
-| `memory_living_axe` | `conjure_axe` | `chalybeate_sclerite` | Ductilis, Ferric, Mortem |
-| `memory_living_spear` | `conjure_spear` | `calcified_blood_spine` | Animus, Ferric, Lux |
-| `memory_living_claws` | `conjure_claws` | `chitinous_husk` | Animus, Ductilis, Ferric, Tenebris |
-| `memory_living_crossbow` | `conjure_crossbow` | `puppeteering_thread` | Ductilis, Ferric |
-| `memory_living_torch` | `conjure_torch` | `molten_scab` | Ferric, Flammeus |
-| `memory_living_flail` | `conjure_flail` | `frozen_clot` | Congeatio, Ferric |
+| Memory | Teaches | Catalyst Pattern | Enzyme Requirements | Ritual Blood |
+|--------|---------|------------------|---------------------|--------------|
+| `memory_living_blade` | `conjure_blade` | `hematic_iron_powder` | `animus: 1`, `ductilis: 1`, `ferric: 1` | 150 |
+| `memory_living_axe` | `conjure_axe` | `chalybeate_sclerite` | `ductilis: 1`, `mortem: 1`, `ferric: 1` | 150 |
+| `memory_living_spear` | `conjure_spear` | `calcified_blood_spine` | `animus: 1`, `lux: 1`, `ferric: 1` | 150 |
+| `memory_living_claws` | `conjure_claws` | `chitinous_husk` | `animus: 1`, `ductilis: 1`, `ferric: 1`, `tenebris: 1` | 200 |
+| `memory_living_crossbow` | `conjure_crossbow` | `puppeteering_thread` | `ductilis: 1`, `ferric: 1` | 100 |
+| `memory_living_torch` | `conjure_torch` | `molten_scab` | `flammeus: 1`, `ferric: 1` | 100 |
+| `memory_living_flail` | `conjure_flail` | `frozen_clot` | `congeatio: 1`, `ferric: 1` | 100 |
 
 **Memory Textures Gallery:**
 
@@ -2147,7 +2151,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 | **Mortal Display**                   | `MortalDisplayBlockEntity`                 | Activates blood magic when clicked in a Blood Temple ![](../src/main/resources/assets/hemomancy/textures/entity/model_floating_heart.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | **Scrying Podium**                   | `ScryingPodiumBlockEntity`                 | Blood-reflection podium, Hemopothecary workstation, and **Advanced diagnostic station**. Normal right-click opens the Sanguine Diagnosis screen with player-facing blood volume, dominant/latent tendency, vascular health, known memory, and rite-readiness summaries. Shift-right-click still converts it back into an Unstained Podium and drops the Scrying Dish.                                                                                                                                                                                                                                                                                                             |
 | **Scarlet Vanity**                   | `ScarletVanityBlockEntity`                 | Opens the Harbinger equipment screen for equipping the Charm of Vascularium, Blood Gourds, and Morphling Jar. The block uses a red vanity JSON model with a central blood-reflection bowl, while `ScarletVanityRenderer` displays the currently equipped items flat on the tabletop.                                                                                                                                                                                                                                                                                                                        |
-| **Somatic Loom**                     | `SomaticLoomBlockEntity`                   | Crafting station for creating Hematic Memories using enzymes, blank memories, and catalysts                  ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/somatic_loom.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Somatic Loom**                     | `SomaticLoomBlockEntity`                   | Degree 3 refined memory-weaving station. Stores up to 64 internal enzyme units per tendency, accepts one blank Hematic Memory plus a list of catalyst candidates, enters an editable dark-red awaiting-blood glow when an exact recipe is ready, then runs a physical orb-weaving ritual where the player projects blood and drags colored tendency-orbs home with a Living Staff. Renders expanded offscreen bounds for the ritual orbs, strands, trails, and shader-writhed orb shells. ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/somatic_loom.png)                                                                                                                                                                                                                                                    |
 | **Puppeteer's Spindle**              | `PuppeteersSpindleBlockEntity`             | Harbinger puppeteer control station. Two-slot container: slot 0 accepts a `marionette_crossbar`, slot 1 accepts `puppeteering_thread`. Thread inserted into the feeder slot is consumed immediately into a persistent `threadBuffer` capped at 512, and the slotted crossbar auto-fills from that buffer up to its 256-thread cap. The screen handles summon selection, crossbar binding/attunement, and call/recall preparation for the slotted crossbar. The placed block stores horizontal facing, faces the placer, and renders through `PuppeteersSpindleRenderer` / `PuppeteersSpindleModel` plus a custom block item renderer. |
 | **Hematic Armature**                 | `HematicArmatureBlockEntity`               | Standing ritual armor-upgrade machine with no player-facing GUI. Right-click inserts held reagents into the four one-item bowl slots in insertion order, crouch/right-click withdraws the most recent bowl item first, and blood containers fill the 8,000-blood reservoir. Walking onto the block mounts the player to a hidden `ArmatureRestraintEntity`; while restrained, worn armor upgrades in helmet/chest/legs/boots order through `hemomancy:armature_upgrade` recipes. Any bowl reagent can satisfy any matching worn armor piece. Crafting takes 100 ticks per item, allows partial completion, and emits windup/completion particles. Renders through `HematicArmatureModel`/`HematicArmatureRenderer` with animated banners, bowl item renders, an overhead heart reservoir fill, custom block item renderer, extended culling bounds, and linked filler blocks for the wide bowl stands/top arch. |
 | **Vial Centrifuge**                  | `VialCentrifugeBlockEntity`                | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. Accepts **Vial Rack** right-click bulk inserts, and startup now requires at least one processable vial with valid output fit. ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/vial_centrifuge.png)                                                                                                                                                                                                                                   |
@@ -2315,6 +2319,7 @@ This section tracks shared recipe infrastructure and Harbinger-facing recipe cat
 | `scar_recipe` | `ScarRecipeSerializer` | Cerebral Scarring Station | Crafting scars |
 | `distillation_recipe` | `DistillationRecipeSerializer` | Ghastly Alembic / Pallid Retort | Shared distillation serializer. Ghastly Alembic is the Harbinger station; `pallid: true` routes to the Pallid Retort and is cataloged with Unstained crafting in §15.3. |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
+| `memory_weaving` | `MemoryWeavingRecipeSerializer` | Somatic Loom | Refined Hematic Memory crafting. Recipes require a blank memory vessel, a `catalysts` list, integer stored-enzyme requirements, projected ritual blood, and the physical orb-weaving event. |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (13 morphling recipes). JEI-integrated via `IncubatorRecipeCategory`. Fungal scar crafting has moved out to the Mycelial Crucible. |
 | `fungal_scar_cultivation` | `FungalScarCultivationSerializer` | Mycelial Crucible | Two-phase fungal scar cultivation. Phase 1 produces `immature_fungal_scar`; Phase 2 matures the culture with aligned enzymes into one of 9 finished `ItemFungalScar` variants. |
 | `enzyme_fruiting` | `EnzymeFruitingRecipeSerializer` | Mycelial Lantern | Reusable aligned spore culture + blood -> matching enzyme. Defaults: 2,400 ticks, 0.25 blood/tick, 600 total blood, output count 1; JSON-tunable per recipe. |
@@ -2536,32 +2541,78 @@ When drafting new ritual patterns and recipe structures, use faction palettes to
 - Do not reuse the same core `hitBlock` family across multiple adjacent rite tiers unless intentionally signaling a direct progression upgrade.
 - If a Hemomancy-exclusive block is mandatory for function, diversify the surrounding pattern with faction-appropriate Vanilla blocks.
 
-### 25.7 Saint Canon Memory Recipes (Somatic Loom)
+### 25.7 Somatic Loom Memory Weaving Recipes
 
-Each of the four saints yields a Canon Memory when the player places a Hallowed Residuum into the Somatic Loom's catalyst slot while the loom's tendency alignment matches the saint's paired tendencies (both must reach the TENDENCY_THRESHOLD of 3.0).
+Memory weaving recipes live under `src/main/resources/data/hemomancy/recipe/memory_weaving/` with JSON type `hemomancy:memory_weaving`. The recipe data describes the memory pattern; the placed loom supplies the blank memory vessel, stored enzyme reservoirs, projected blood, and in-world orb-weaving event.
 
-| Canon Memory | Ingredient (catalyst slot) | Loom Tendencies Required | Unlocks Manipulation |
-|-------------|---------------------------|--------------------------|---------------------|
-| `memory_crimson_tithe` | Hallowed Residuum of Hemorath | MORTEM + ANIMUS | Crimson Tithe (SUMMA, MORTEM) |
-| `memory_unclosing_eye` | Hallowed Residuum of Seraphae | LUX + DUCTILIS | Unclosing Eye (SUMMA, LUX) |
-| `memory_bloom_of_rot` | Hallowed Residuum of Putriciel | MORTEM + FLAMMEUS | Bloom of Rot (SUMMA, MORTEM) |
-| `memory_endless_hour` | Hallowed Residuum of Velorum | CONGEATIO + TENEBRIS | Endless Hour (SUMMA, CONGEATIO) |
+Current authored schema:
+
+```json
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    { "item": "minecraft:blue_ice" }
+  ],
+  "enzymes": {
+    "animus": 0,
+    "flammeus": 0,
+    "ductilis": 0,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 2,
+    "ferric": 0,
+    "tenebris": 0
+  },
+  "blood": 100,
+  "result": "hemomancy:memory_cryogenic_pulse",
+  "count": 1
+}
+```
+
+Recipe rules:
+- The loom always requires one blank `hematic_memory` in its memory input before weaving.
+- `catalysts` is a list/array of one or more ingredient definitions. Any ordinary held item can be inserted as a candidate catalyst; exact recipe matching decides validity later. The serializer retains legacy single-`ingredient` and boolean-tendency fallbacks, but new authored data should use `catalysts` and `enzymes`.
+- `enzymes` accepts any unique combination of the eight tendencies. Each tendency amount is an integer from 0 to 8. A requirement of 2 for one tendency spawns two same-colored orbs, not one compressed orb.
+- The Somatic Loom stores up to 64 enzyme units per tendency. Inserted enzyme items become internal integer storage and cannot be recovered.
+- `blood` is the recipe-specific projected blood cost. During Blood Moons the loom applies the existing 25% ritual blood discount from `SomaticLoomBlockEntity.startRitual()`.
+
+Ritual flow:
+1. Insert the blank Hematic Memory and catalyst candidates. Inputs remain editable until orb weaving actually begins.
+2. When the catalyst list exactly matches a recipe and the loom has enough stored enzymes, the block enters `PHASE_AWAITING_BLOOD`, glows dark red, and prompts blood projection. Editing the memory/catalysts during this phase clears partial `ritualBloodCharged` and recalculates the recipe.
+3. Blood Projection / Living Staff use passes through to item behavior, then charges `ritualBloodCharged` only while the loom has an exact recipe-ready state.
+4. Once charged, the loom emits the black pulse and enters `PHASE_WEAVING_ORBS`. One colored orb is created for each required enzyme unit, with tendency color taken from `EnumBloodTendency`.
+5. Orbs wander within the ritual field, currently bounded to roughly 10 blocks in X/Z and 3 blocks in Y around the loom. The player holds right click with a Living Staff to grab one orb and drag it through the world; enzyme storage is spent during dragging.
+6. An orb is absorbed when it intersects the loom's absorption bounds. Absorption plays sound/particle feedback, marks that orb complete, and leaves remaining orbs in their current world positions.
+7. When all orbs are absorbed, the loom consumes the matched catalysts and blank memory, spawns the recipe result item, clears the ritual state, and announces that the memory crystallizes.
+
+Client rendering notes: `SomaticLoomRenderer` renders expanded/offscreen bounds so ritual orbs do not vanish when the block leaves the camera frustum. Orb shells use `HemoRenderTypes.loomOrbShell(...)` and the `assets/hemomancy/shaders/core/world/loom_orb.*` shader resources for a writhing sphere surface. The center strand, drag trail, and unraveled strands remain on the separate `LOOM_EFFECT` pass so line effects and shader shells do not fight over the same buffer state.
+
+#### 25.7.1 Saint Canon Memory Recipes (Somatic Loom)
+
+Each of the four saints yields a Canon Memory through the new Somatic Loom ritual: one blank Hematic Memory, one Hallowed Residuum catalyst, the paired stored enzyme units, 100 projected blood, then the orb-weaving event.
+
+| Canon Memory | Catalyst Pattern | Enzyme Requirements | Blood | Unlocks Manipulation |
+|-------------|------------------|---------------------|-------|---------------------|
+| `memory_crimson_tithe` | `hallowed_residuum_hemorath` | `animus: 1`, `mortem: 1` | 100 | Crimson Tithe (SUMMA, MORTEM) |
+| `memory_unclosing_eye` | `hallowed_residuum_seraphae` | `ductilis: 1`, `lux: 1` | 100 | Unclosing Eye (SUMMA, LUX) |
+| `memory_bloom_of_rot` | `hallowed_residuum_putriciel` | `flammeus: 1`, `mortem: 1` | 100 | Bloom of Rot (SUMMA, MORTEM) |
+| `memory_endless_hour` | `hallowed_residuum_velorum` | `congeatio: 1`, `tenebris: 1` | 100 | Endless Hour (SUMMA, CONGEATIO) |
 
 > These are SUMMA-rank manipulations — the most costly and powerful tier. They are imprinted rather than learned; no blood cost reduction from Dynamic Use applies.
 
-### 25.7.1 Scar-Catalyst Memory Recipes (Somatic Loom)
+#### 25.7.2 Scar-Catalyst Memory Recipes (Somatic Loom)
 
-Five scar items can serve as Somatic Loom catalysts, providing an alternative path to certain memories. These are distinct from the standard routes (different ingredient, and in most cases different tendency combination). They are intended as mid-game rewards for players who have invested in the scar system:
+Five scar items can serve as Somatic Loom catalyst patterns, providing an alternative path to certain memories. These are distinct from the standard routes and are intended as mid-game rewards for players who have invested in the scar system:
 
-| Memory | Scar Catalyst | Loom Tendencies Required | Notes |
-|--------|--------------|--------------------------|-------|
-| `memory_blood_rush` | `scar_heart` | ANIMUS + LUX | Heart-scar resonance variant; pushes blood through willpower alone |
-| `memory_umbral_step` | `scar_shade` | TENEBRIS | Shade-scar variant; same tendency as ender-eye route, different catalyst |
-| `memory_hemorrhage` | `scar_thorn` | MORTEM + FERRIC | Thorn scar pierces — the wound follows the scar |
-| `memory_blood_eclipse` | `scar_moon` | CONGEATIO + TENEBRIS | Moon scar harmonizes with the eclipse; overlapping tendency with fermented spider eye route |
-| `memory_sanguine_ignition` | `scar_phoenix` | FLAMMEUS + ANIMUS | Phoenix scar kindles blood into flame; requires two tendencies vs the standard single-tendency fire_charge route |
+| Memory | Scar Catalyst Pattern | Enzyme Requirements | Blood | Notes |
+|--------|----------------------|---------------------|-------|-------|
+| `memory_blood_rush` | `scar_heart` | `animus: 1`, `lux: 1` | 100 | Heart-scar resonance variant; pushes blood through willpower alone |
+| `memory_umbral_step` | `scar_shade` | `tenebris: 1` | 50 | Shade-scar variant; same tendency as ender-eye route, different catalyst |
+| `memory_hemorrhage` | `scar_thorn` | `mortem: 1`, `ferric: 1` | 100 | Thorn scar pierces — the wound follows the scar |
+| `memory_blood_eclipse` | `scar_moon` | `congeatio: 1`, `tenebris: 1` | 100 | Moon scar harmonizes with the eclipse; overlapping tendency with fermented spider eye route |
+| `memory_sanguine_ignition` | `scar_phoenix` | `animus: 1`, `flammeus: 1` | 100 | Phoenix scar kindles blood into flame; requires two tendencies vs the standard single-tendency fire_charge route |
 
-> Recipes live in `data/hemomancy/recipe/memory_weaving/memory_*_scarred.json`. The loom's recipe matcher checks both tendencies AND ingredient, so scar-catalyst and standard-catalyst routes for the same memory coexist without conflict.
+> Recipes live in `data/hemomancy/recipe/memory_weaving/memory_*_scarred.json`. The loom's matcher checks the exact catalyst list and integer enzyme requirements, so scar-catalyst and standard-catalyst routes for the same memory coexist without conflict.
 
 ### 25.8 Hallowed Residuum Extraction (Vial Centrifuge)
 

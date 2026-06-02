@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.util.Map;
 import java.util.Random;
@@ -392,15 +394,31 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 	private void drawRitualOrbs(MultiBufferSource buffer, Matrix4f mat,
 			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
-		VertexConsumer coreVc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT_CORE);
-		drawRitualOrbLayer(coreVc, mat, te, currentTime, partialTicks, false);
-
-		VertexConsumer glowVc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
-		drawRitualOrbLayer(glowVc, mat, te, currentTime, partialTicks, true);
+		drawRitualOrbEffects(buffer, mat, te, currentTime, partialTicks);
+		drawRitualOrbShells(buffer, mat, te, currentTime, partialTicks);
 	}
 
-	private void drawRitualOrbLayer(VertexConsumer vc, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime, float partialTicks, boolean glow) {
+	private void drawRitualOrbEffects(MultiBufferSource buffer, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
+		VertexConsumer effectVc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
+		for (SomaticLoomBlockEntity.RitualOrb orb : te.getRitualOrbs()) {
+			if (orb.completed()) continue;
+			ParticleColor color = orb.tendency().getColor();
+			float r = color.getRed() / 255f;
+			float g = color.getGreen() / 255f;
+			float b = color.getBlue() / 255f;
+			Vec3 offset = orb.renderOffset(partialTicks);
+			float x = 0.5f + (float) offset.x;
+			float y = 0.5f + (float) offset.y;
+			float z = 0.5f + (float) offset.z;
+			drawOrbCenterStrand(effectVc, mat, x, y, z, currentTime, r, g, b);
+			drawOrbTrail(effectVc, mat, orb, offset, partialTicks, r, g, b);
+			drawOrbUnraveledStrands(effectVc, mat, orb, x, y, z, currentTime, r, g, b);
+		}
+	}
+
+	private void drawRitualOrbShells(MultiBufferSource buffer, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
 		for (SomaticLoomBlockEntity.RitualOrb orb : te.getRitualOrbs()) {
 			if (orb.completed()) continue;
 			ParticleColor color = orb.tendency().getColor();
@@ -413,13 +431,29 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float z = 0.5f + (float) offset.z;
 			float pulse = 0.75f + 0.25f * Mth.sin(currentTime * 0.22f + orb.enzymeCost());
 			float size = (0.18f + orb.enzymeCost() * 0.025f) * pulse;
-			if (glow) {
-				drawOrbCenterStrand(vc, mat, x, y, z, currentTime, r, g, b);
-				drawOrbTrail(vc, mat, orb, offset, partialTicks, r, g, b);
-				drawOrbUnraveledStrands(vc, mat, orb, x, y, z, currentTime, r, g, b);
-			}
-			drawOrbSphere(vc, mat, x, y, z, size, r, g, b, 0.82f, glow);
+			drawShaderWrithedOrbShell(buffer, mat, orb, x, y, z, size, currentTime, r, g, b, false);
+			drawShaderWrithedOrbShell(buffer, mat, orb, x, y, z, size, currentTime, r, g, b, true);
 		}
+	}
+
+	private void drawShaderWrithedOrbShell(MultiBufferSource buffer, Matrix4f mat,
+			SomaticLoomBlockEntity.RitualOrb orb, float x, float y, float z, float size,
+			float currentTime, float r, float g, float b, boolean glow) {
+		float layerRadius = glow ? size * 1.45f : size;
+		Vector3f center = mat.transformPosition(x, y, z, new Vector3f());
+		VertexConsumer vc = buffer.getBuffer(HemoRenderTypes.loomOrbShell(currentTime, orbShaderSeed(orb),
+				center.x(), center.y(), center.z(), layerRadius,
+				glow ? 0.08f : 0.18f, glow ? 7.0f : 11.0f, glow));
+		drawOrbSphere(vc, mat, x, y, z, size, r, g, b, 0.82f, glow);
+	}
+
+	private static float orbShaderSeed(SomaticLoomBlockEntity.RitualOrb orb) {
+		Vec3 start = orb.startOffset();
+		return (float) (orb.tendency().ordinal() * 31.0D
+				+ orb.enzymeCost() * 7.0D
+				+ start.x * 3.17D
+				+ start.y * 5.13D
+				+ start.z * 11.71D);
 	}
 
 	private void drawOrbCenterStrand(VertexConsumer vc, Matrix4f mat,
