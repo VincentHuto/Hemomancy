@@ -25,7 +25,17 @@ public class TestSurfaceRuleData
             SurfaceRules.ifTrue(isAtOrAboveWaterLevel, ERYTHROCYTIC_MYCELIUM), ERYTHROCYTIC_DIRT);
 
         return SurfaceRules.sequence(
-            SurfaceRules.ifTrue(SurfaceRules.isBiome(FungalSurfaceBiomeRules.fungalSurfaceBiomes()),
+            SurfaceRules.ifTrue(SurfaceRules.isBiome(FungalSurfaceBiomeRules.fungalGardensBiome()),
+                SurfaceRules.sequence(
+                    SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, fungalSurface),
+                    SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, ERYTHROCYTIC_DIRT),
+                    SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, hemorrhagic_crust),
+                    SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, VENOUS_STONE)
+
+                )
+            ),
+
+            SurfaceRules.ifTrue(SurfaceRules.isBiome(FungalSurfaceBiomeRules.erythrocoralReefBiome()),
                 SurfaceRules.sequence(
                     SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, hemorrhagic_crust),
                     SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, VENOUS_STONE),

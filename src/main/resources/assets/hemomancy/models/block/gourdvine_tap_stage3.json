@@ -1,0 +1,138 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "stem": "hemomancy:block/dendritic_stem_3",
+    "particle": "hemomancy:block/dendritic_stem_3"
+  },
+  "elements": [
+    {
+      "from": [6, 0, 6],
+      "to": [10, 2, 10],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.5, 0, 6.5],
+      "to": [9.5, 16, 9.5],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.25, 9, 6.25],
+      "to": [9.75, 12, 9.75],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.5, 15, 6.5],
+      "to": [9.5, 16, 9.5],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [8, 7, 7],
+      "to": [11, 15, 9],
+      "rotation": { "origin": [8, 8, 8], "axis": "z", "angle": -22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [5, 8, 7],
+      "to": [8, 16, 9],
+      "rotation": { "origin": [8, 9, 8], "axis": "z", "angle": 22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [7, 9, 4],
+      "to": [9, 16, 8],
+      "rotation": { "origin": [8, 10, 8], "axis": "x", "angle": 22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [7, 7, 8],
+      "to": [9, 14, 12],
+      "rotation": { "origin": [8, 8, 8], "axis": "x", "angle": -22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [7, 12, 7],
+      "to": [9, 16, 9],
+      "rotation": { "origin": [8, 12, 8], "axis": "z", "angle": 0, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.75, 13, 6.75],
+      "to": [8.75, 16, 8.75],
+      "rotation": { "origin": [8, 13, 8], "axis": "x", "angle": 22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    }
+  ]
+}
+

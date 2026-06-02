@@ -628,6 +628,7 @@ public class ClientEvents {
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourdvine_tap.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_lantern.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_silver_chain.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_chain.get(), RenderType.cutout());
@@ -655,6 +656,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.mycelial_crucible.get(), MycelialCrucibleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mycelial_lantern.get(), MycelialLanternRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_cradle.get(), MorphlingCradleRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.gourdvine_tap.get(), GourdvineTapRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.specimen_jar.get(), SpecimenJarRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);

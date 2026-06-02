@@ -1,0 +1,62 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "stem": "hemomancy:block/gourd_stem",
+    "particle": "hemomancy:block/gourd_stem"
+  },
+  "elements": [
+    {
+      "from": [7, 0, 7],
+      "to": [9, 8, 9],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [6.5, 7, 6.5],
+      "to": [9.5, 9, 9.5],
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [8, 4, 7],
+      "to": [12, 6, 9],
+      "rotation": { "origin": [8, 5, 8], "axis": "z", "angle": -22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    },
+    {
+      "from": [4, 3, 7],
+      "to": [8, 5, 9],
+      "rotation": { "origin": [8, 4, 8], "axis": "z", "angle": 22.5, "rescale": true },
+      "faces": {
+        "north": { "texture": "#stem" },
+        "east": { "texture": "#stem" },
+        "south": { "texture": "#stem" },
+        "west": { "texture": "#stem" },
+        "up": { "texture": "#stem" },
+        "down": { "texture": "#stem" }
+      }
+    }
+  ]
+}
+
