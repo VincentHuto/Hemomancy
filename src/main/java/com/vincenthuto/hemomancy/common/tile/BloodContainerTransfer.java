@@ -68,15 +68,23 @@ public final class BloodContainerTransfer {
         IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(gourdStack).orElse(null);
         if (gourdVolume == null) return false;
 
+        double gourdMax = ((BloodGourdItem) gourdStack.getItem()).getMaxBlood();
+        if (gourdMax > 0) {
+            gourdVolume.setMaxBloodVolume(gourdMax);
+            if (gourdVolume.getBloodVolume() > gourdMax) {
+                gourdVolume.setBloodVolume(gourdMax);
+            }
+        }
+
         double transfer = calculateGourdTransfer(
                 reservoir.getBloodVolume(),
                 gourdVolume.getBloodVolume(),
-                gourdVolume.getMaxBloodVolume(),
+                gourdMax > 0 ? gourdMax : gourdVolume.getMaxBloodVolume(),
                 transferRate);
         if (transfer <= 0) return false;
 
         reservoir.drain(transfer);
-        gourdVolume.addBloodVolume(transfer);
+        gourdVolume.fill(transfer);
         return true;
     }
 

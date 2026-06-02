@@ -25,7 +25,7 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
 
     public static final int SLOT_GOURD = 0;
     public static final int INVENTORY_SIZE = 1;
-    public static final double MAX_BLOOD = 4_000.0;
+    public static final double MAX_BLOOD = 10_000.0;
 
     private static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
@@ -74,10 +74,10 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
 
     private static double generationRate(int stage) {
         return switch (stage) {
-            case 1 -> 0.10D;
-            case 2 -> 0.15D;
-            case 3 -> 0.20D;
-            default -> 0.05D;
+            case 1 -> 0.20D;
+            case 2 -> 0.35D;
+            case 3 -> 0.50D;
+            default -> 0.10D;
         };
     }
 
@@ -105,6 +105,7 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
         if (!items.get(SLOT_GOURD).isEmpty()) return false;
 
         ItemStack toInsert = stack.copyWithCount(1);
+        configureInsertedGourd(toInsert);
         items.set(SLOT_GOURD, toInsert);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
@@ -122,6 +123,19 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
         setChanged();
         sendUpdates();
         return held;
+    }
+
+    private static void configureInsertedGourd(ItemStack stack) {
+        if (!(stack.getItem() instanceof BloodGourdItem gourd)) return;
+        IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(stack).orElse(null);
+        if (vol == null) return;
+        double max = gourd.getMaxBlood();
+        if (max > 0) {
+            vol.setMaxBloodVolume(max);
+            if (vol.getBloodVolume() > max) {
+                vol.setBloodVolume(max);
+            }
+        }
     }
 
     // ── IBloodTile ────────────────────────────────────────────────────────────
