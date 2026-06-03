@@ -29,6 +29,26 @@ export interface NodePosition {
   y: number;
 }
 
+export interface RenderedPositionFrame {
+  anchorX: number;
+  anchorY: number;
+  clusterCenterX: number;
+  clusterCenterY: number;
+}
+
+export interface ManipulationRingMetrics {
+  clusterHalf: number;
+  branchRadius: number;
+  ringCenterRawX: number;
+  ringCenterRawY: number;
+}
+
+export interface ManipulationRingMetricOptions {
+  padding?: number;
+  minRadius?: number;
+  radiusScale?: number;
+}
+
 export function beginNodeDrag(start: NodeDragStart): NodeDragState {
   const zoom = start.zoom ?? 1;
   return {
@@ -46,6 +66,38 @@ export function updateNodeDrag(state: NodeDragState, update: NodeDragUpdate): No
   return {
     x: snapFromOrigin(rawX, state.originX, update.snap),
     y: snapFromOrigin(rawY, state.originY, update.snap)
+  };
+}
+
+export function modelPositionFromRenderedPosition(
+  position: NodePosition,
+  frame: RenderedPositionFrame,
+  sourceCoordinateScale = 1
+): NodePosition {
+  return {
+    x: Math.round((position.x - frame.anchorX) / sourceCoordinateScale) + frame.clusterCenterX,
+    y: Math.round((position.y - frame.anchorY) / sourceCoordinateScale) + frame.clusterCenterY
+  };
+}
+
+export function manipulationRingMetricsFromClusterSize(
+  maxClusterW: number,
+  maxClusterH: number,
+  stableMetrics?: ManipulationRingMetrics,
+  options: ManipulationRingMetricOptions = {}
+): ManipulationRingMetrics {
+  if (stableMetrics) return stableMetrics;
+  const padding = options.padding ?? 40;
+  const minRadius = options.minRadius ?? 250;
+  const radiusScale = options.radiusScale ?? 1.35;
+  const clusterSize = Math.max(maxClusterW, maxClusterH);
+  const clusterHalf = clusterSize / 2;
+  const branchRadius = Math.max(minRadius, Math.ceil(clusterSize * radiusScale));
+  return {
+    clusterHalf,
+    branchRadius,
+    ringCenterRawX: padding + clusterHalf + branchRadius,
+    ringCenterRawY: padding + clusterHalf + branchRadius
   };
 }
 

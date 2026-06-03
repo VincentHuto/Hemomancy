@@ -10,6 +10,7 @@ interface ParsedNode {
   xExprSpan: Span;
   yExprSpan: Span;
   parentListSpan: Span | null;
+  softParentsSpan: Span | null;
 }
 
 interface ParseResult {
@@ -26,10 +27,12 @@ export function parseManipulationTreeJava(path: string, source: string, tendency
   const diagnostics: Diagnostic[] = [];
 
   for (const statement of scanJavaStatements(source)) {
-    const varDecl = parseIntDeclaration(statement.text);
-    if (varDecl) {
+    const varDecls = parseIntDeclarations(statement.text);
+    for (const varDecl of varDecls) {
       const value = evalIntExpression(varDecl.expr, env);
       if (value !== null) env.set(varDecl.name, value);
+    }
+    if (varDecls.length) {
       continue;
     }
 
@@ -68,6 +71,9 @@ export function parseManipulationTreeJava(path: string, source: string, tendency
       yExprSpan: absoluteSpan(statement.start + register.ySpan.start, statement.start + register.ySpan.end),
       parentListSpan: register.parentsSpan
         ? absoluteSpan(statement.start + register.parentsSpan.start, statement.start + register.parentsSpan.end)
+        : null,
+      softParentsSpan: register.softParentsSpan
+        ? absoluteSpan(statement.start + register.softParentsSpan.start, statement.start + register.softParentsSpan.end)
         : null
     });
   }
@@ -88,7 +94,7 @@ export function parseManipulationTreeJava(path: string, source: string, tendency
 export function renderManipulationTreeJava(
   source: string,
   parsedNodes: ParsedNode[],
-  updates: Map<string, Pick<ManipulationNodeModel, 'treeX' | 'treeY' | 'parents'>>
+  updates: Map<string, Pick<ManipulationNodeModel, 'treeX' | 'treeY' | 'parents' | 'softParents'>>
 ): string {
   const replacements: Array<{ start: number; end: number; value: string }> = [];
 
@@ -114,6 +120,14 @@ export function renderManipulationTreeJava(
         value: renderParentArgs(update.parents)
       });
     }
+
+    if (parsed.softParentsSpan) {
+      replacements.push({
+        start: parsed.softParentsSpan.start,
+        end: parsed.softParentsSpan.end,
+        value: renderSoftParentArgs(update.softParents)
+      });
+    }
   }
 
   replacements.sort((a, b) => b.start - a.start);
@@ -127,6 +141,10 @@ export function renderManipulationTreeJava(
 function renderParentArgs(parents: string[]): string {
   if (!parents.length) return '';
   return ', ' + parents.map(name => `"${name}"`).join(', ');
+}
+
+function renderSoftParentArgs(softParents: string[]): string {
+  return softParents.map(name => `"${name}"`).join(', ');
 }
 
 function absoluteSpan(start: number, end: number): Span {
@@ -168,13 +186,15 @@ function validateManipulationTree(nodes: ManipulationNodeModel[], diagnostics: D
   }
 }
 
-function parseIntDeclaration(statement: string): { name: string; expr: string } | null {
-  const match = /^\s*(?:final\s+)?int\s+(\w+)\s*=\s*([^;]+);\s*$/.exec(statement);
-  if (!match) return null;
-  return {
-    name: match[1],
-    expr: match[2]
-  };
+function parseIntDeclarations(statement: string): Array<{ name: string; expr: string }> {
+  const declarations: Array<{ name: string; expr: string }> = [];
+  for (const match of statement.matchAll(/(?:^|[^\w])(?:final\s+)?int\s+(\w+)\s*=\s*([^;]+);/gm)) {
+    declarations.push({
+      name: match[1],
+      expr: match[2]
+    });
+  }
+  return declarations;
 }
 
 function parseRegisterStatement(statement: string): null | {
@@ -187,6 +207,7 @@ function parseRegisterStatement(statement: string): null | {
   xSpan: Span;
   ySpan: Span;
   parentsSpan: Span | null;
+  softParentsSpan: Span | null;
 } {
   const startIndex = statement.indexOf('register(');
   if (startIndex < 0) return null;
@@ -217,7 +238,7 @@ function parseRegisterStatement(statement: string): null | {
     callStart + argsText.length
   );
 
-  const softParents = parseSoftParents(statement);
+  const softParentsInfo = parseSoftParents(statement);
   const nodeShape = parseNodeShape(statement) ?? 'SQUARE';
 
   return {
@@ -225,11 +246,12 @@ function parseRegisterStatement(statement: string): null | {
     xExpr,
     yExpr,
     parents,
-    softParents,
+    softParents: softParentsInfo.parents,
     nodeShape,
     xSpan,
     ySpan,
-    parentsSpan
+    parentsSpan,
+    softParentsSpan: softParentsInfo.span
   };
 }
 
@@ -237,12 +259,21 @@ function spanWithinStatement(start: number, end: number): Span {
   return { start, end };
 }
 
-function parseSoftParents(statement: string): string[] {
+function parseSoftParents(statement: string): { parents: string[]; span: Span | null } {
   const match = /\.setSoftParents\(([^)]*)\)/.exec(statement);
-  if (!match) return [];
-  return splitTopLevelArgs(match[1])
+  if (!match || match.index == null) return { parents: [], span: null };
+  const openParenIndex = statement.indexOf('(', match.index);
+  if (openParenIndex < 0) return { parents: [], span: null };
+  const closeParenIndex = findMatchingParen(statement, openParenIndex);
+  if (closeParenIndex < 0) return { parents: [], span: null };
+  const argsText = statement.slice(openParenIndex + 1, closeParenIndex);
+  const parents = splitTopLevelArgs(argsText)
     .map(arg => parseStringLiteral(arg.text.trim()))
     .filter((value): value is string => Boolean(value));
+  return {
+    parents,
+    span: { start: openParenIndex + 1, end: closeParenIndex }
+  };
 }
 
 function parseNodeShape(statement: string): string | null {

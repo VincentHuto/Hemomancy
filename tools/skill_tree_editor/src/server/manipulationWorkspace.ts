@@ -29,12 +29,13 @@ export async function previewManipulationWorkspaceChanges(repoRoot: string, requ
   const colorByTendency = defaultTendencyColors();
   const parsed = parseManipulationTreeJava(treePath, before, tendencyByManip, colorByTendency);
 
-  const updates = new Map<string, { treeX: number; treeY: number; parents: string[] }>();
+  const updates = new Map<string, { treeX: number; treeY: number; parents: string[]; softParents: string[] }>();
   for (const node of request.nodes ?? []) {
     updates.set(node.name, {
       treeX: node.treeX,
       treeY: node.treeY,
-      parents: node.parents ?? []
+      parents: node.parents ?? [],
+      softParents: node.softParents ?? []
     });
   }
 

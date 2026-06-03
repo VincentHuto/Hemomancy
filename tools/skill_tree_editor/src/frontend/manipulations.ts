@@ -1,7 +1,14 @@
 import type { Diagnostic, ManipulationNodeModel, ManipulationWorkspace, PreviewResult } from '../shared/types';
 import { beginConnectionDrag, type ConnectionDragState, finishConnectionDrag } from './connectionEditing';
 import { beginDragPan, type DragPanState, shouldStartDragPan, updateDragPan } from './dragPan';
-import { beginNodeDrag, type NodeDragState, updateNodeDrag } from './layoutEditing';
+import {
+  beginNodeDrag,
+  manipulationRingMetricsFromClusterSize,
+  modelPositionFromRenderedPosition,
+  type ManipulationRingMetrics,
+  type NodeDragState,
+  updateNodeDrag
+} from './layoutEditing';
 import { clampZoom, zoomScrollAnchor } from './viewportZoom';
 import {
   createMovementHistory,
@@ -13,10 +20,53 @@ import './styles.css';
 
 type ViewTab = 'graph' | 'validation' | 'diff';
 
+interface PositionedNode {
+  node: ManipulationNodeModel;
+  x: number;
+  y: number;
+}
+
+interface NodePosition {
+  x: number;
+  y: number;
+}
+
+interface TendencyFrame {
+  key: string;
+  anchorX: number;
+  anchorY: number;
+  clusterCenterX: number;
+  clusterCenterY: number;
+}
+
+interface ManipulationLayout {
+  width: number;
+  height: number;
+  offsetX: number;
+  offsetY: number;
+  ringCenterX: number;
+  ringCenterY: number;
+  nodes: PositionedNode[];
+  edges: Array<{ from: ManipulationNodeModel; to: ManipulationNodeModel }>;
+  positionsByName: Map<string, NodePosition>;
+  frameByTendency: Map<string, TendencyFrame>;
+}
+
 const graphMinZoom = 0.55;
 const graphMaxZoom = 2.75;
 const wheelZoomStep = 1.12;
 const buttonZoomStep = 1.2;
+const tendencyOrder = ['ANIMUS', 'FLAMMEUS', 'DUCTILIS', 'LUX', 'MORTEM', 'CONGEATIO', 'FERRIC', 'TENEBRIS'] as const;
+const sourceCoordinateScale = 1;
+const traceNodeTrimRadius = 11;
+const traceOrganicSwayMin = 8;
+const traceOrganicSwayMax = 18;
+const traceOrganicSwayFactor = 0.08;
+const layoutNodeSize = 26;
+const layoutNodeGapX = 80;
+const layoutPadding = 40;
+const layoutRingMinRadius = 250;
+const layoutRingRadiusScale = 1.35;
 
 let workspace: ManipulationWorkspace | null = null;
 let selectedName = '';
@@ -31,18 +81,24 @@ let draggingNode: NodeDragState | null = null;
 let dragOriginBase: { x: number; y: number } | null = null;
 let dragPan: DragPanState | null = null;
 let dragConnection: ConnectionDragState | null = null;
+let dragConnectionSource: NodePosition | null = null;
 let suppressNextGraphNodeClick = false;
+let renderedLayout: ManipulationLayout | null = null;
+let stableClusterCenters = new Map<string, NodePosition>();
+let stableRingMetrics: ManipulationRingMetrics | null = null;
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('Missing app root.');
 const app = appRoot;
 
 window.addEventListener('keydown', event => {
-  if (event.target && (event.target as HTMLElement).tagName === 'INPUT') return;
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+  if (shouldIgnoreMovementShortcut(event.target)) return;
+  if (isMovementUndoShortcut(event)) {
     event.preventDefault();
-    if (event.shiftKey) redoLastMovement();
-    else undoLastMovement();
+    undoLastMovement();
+  } else if (isMovementRedoShortcut(event)) {
+    event.preventDefault();
+    redoLastMovement();
   }
 });
 
@@ -54,6 +110,8 @@ async function load(): Promise<void> {
   try {
     workspace = await api<ManipulationWorkspace>('/api/manipulations');
     selectedName = workspace.tree.nodes[0]?.name ?? '';
+    stableClusterCenters = computeClusterCenters(workspace.tree.nodes);
+    stableRingMetrics = null;
     movementHistory = createMovementHistory();
     preview = null;
     statusText = `Loaded ${workspace.tree.nodes.length} manipulation nodes.`;
@@ -71,15 +129,17 @@ function render(): void {
     return;
   }
 
+  const priorGraphViewport = captureGraphViewport();
+
   app.innerHTML = `
     <main class="shell">
       <aside class="sidebar">
         <div class="brand">
           <span class="brand-mark"></span>
           <div>
-            <h1>Skill Tree Editor</h1>
+            <h1>Manipulation Tree Editor</h1>
             <p>${escapeHtml(relativeRoot())}</p>
-            <p><a href="/workspace.html">Skills</a> · <b>Manipulations</b></p>
+            <p><a href="/workspace.html">Skills</a> - <b>Manipulations</b></p>
           </div>
         </div>
         <div class="toolbar">
@@ -89,28 +149,55 @@ function render(): void {
         </div>
         <div class="branch-list">
           <div class="form-heading">
-            <h2>Nodes</h2>
+            <h2>Manipulations</h2>
             <p>${escapeHtml(workspace.tree.path)}</p>
           </div>
-          <div class="selection-controls">
-            <label><input type="checkbox" data-action="snap-grid" ${snapToGrid ? 'checked' : ''}/> Snap</label>
-          </div>
+        </div>
+        <div class="skill-list">
           ${workspace.tree.nodes.map(renderNodeButton).join('')}
         </div>
-        <div class="status">${escapeHtml(statusText)}</div>
       </aside>
-      <section class="content">
-        <header class="tabs">
-          ${tabButton('graph', 'Graph')}
-          ${tabButton('validation', `Validation${countBadge(validationCount())}`)}
-          ${tabButton('diff', `Diff${countBadge(preview?.diffs.length ?? 0)}`)}
+      <section class="main">
+        <header class="topbar">
+          <nav class="tabs">
+            ${tabButton('graph', 'Layout')}
+            ${tabButton('validation', `Validation${countBadge(validationCount())}`)}
+            ${tabButton('diff', `Diff${countBadge(preview?.diffs.length ?? 0)}`)}
+          </nav>
+          <div class="history-controls" aria-label="Movement history controls">
+            <button data-action="undo-move" title="Undo move (Ctrl+Z)" ${!movementHistory.canUndo || isBusy ? 'disabled' : ''}>Undo</button>
+            <button data-action="redo-move" title="Redo move (Ctrl+Y or Ctrl+Shift+Z)" ${!movementHistory.canRedo || isBusy ? 'disabled' : ''}>Redo</button>
+          </div>
+          <label class="snap-toggle"><input type="checkbox" data-action="snap-grid" ${snapToGrid ? 'checked' : ''}/> Snap</label>
+          <div class="status">${escapeHtml(statusText)}</div>
         </header>
-        <div class="tab-body">${renderTab()}</div>
+        <section class="content">
+          <section class="canvas-panel">${renderTab()}</section>
+          <aside class="inspector">${renderInspector()}</aside>
+        </section>
       </section>
     </main>
   `;
 
   bindEvents();
+  restoreGraphViewport(priorGraphViewport);
+}
+
+function captureGraphViewport(): { left: number; top: number } | null {
+  const scroller = app.querySelector<HTMLDivElement>('.graph-scroll');
+  if (!scroller) return null;
+  return {
+    left: scroller.scrollLeft,
+    top: scroller.scrollTop
+  };
+}
+
+function restoreGraphViewport(viewport: { left: number; top: number } | null): void {
+  if (!viewport) return;
+  const scroller = document.querySelector<HTMLDivElement>('.graph-scroll');
+  if (!scroller) return;
+  scroller.scrollLeft = Math.max(0, viewport.left);
+  scroller.scrollTop = Math.max(0, viewport.top);
 }
 
 function tabButton(tab: ViewTab, label: string): string {
@@ -142,22 +229,21 @@ function renderTab(): string {
 
 function renderValidation(): string {
   const diagnostics = workspace?.tree.diagnostics ?? [];
-  if (!diagnostics.length) return `<div class="empty-state">No diagnostics.</div>`;
+  if (!diagnostics.length) return `<div class="empty">No diagnostics.</div>`;
   return `<div class="diagnostics">${diagnostics.map(renderDiagnostic).join('')}</div>`;
 }
 
 function renderDiagnostic(diag: Diagnostic): string {
-  const sev = escapeAttr(diag.severity);
-  return `<div class="diag diag-${sev}">
+  return `<article class="diagnostic ${escapeAttr(diag.severity)}">
     <b>${escapeHtml(diag.severity.toUpperCase())}</b>
     <span>${escapeHtml(diag.code)}</span>
     <p>${escapeHtml(diag.message)}</p>
-  </div>`;
+  </article>`;
 }
 
 function renderDiff(): string {
-  if (!preview) return `<div class="empty-state">Click Preview to generate diffs.</div>`;
-  if (!preview.diffs.length) return `<div class="empty-state">No changes.</div>`;
+  if (!preview) return `<div class="empty">Click Preview to generate diffs.</div>`;
+  if (!preview.diffs.length) return `<div class="empty">No changes.</div>`;
   return `<div class="diffs">
     ${preview.diffs.map(diff => `<section class="diff">
       <h2>${escapeHtml(diff.path)}</h2>
@@ -166,13 +252,79 @@ function renderDiff(): string {
   </div>`;
 }
 
+function renderInspector(): string {
+  const node = findNode(selectedName);
+  if (!node) return '<div class="empty">No manipulation selected.</div>';
+
+  const candidates = allNodes()
+    .filter(candidate => candidate.name !== node.name)
+    .sort((left, right) => left.name.localeCompare(right.name));
+
+  const parentOptions = [
+    '<option value="">Add parent...</option>',
+    ...candidates
+      .filter(candidate => !node.parents.includes(candidate.name))
+      .map(candidate => `<option value="${escapeAttr(candidate.name)}">${escapeHtml(candidate.name)}</option>`)
+  ].join('');
+
+  const softParentOptions = [
+    '<option value="">Add soft parent...</option>',
+    ...candidates
+      .filter(candidate => !node.softParents.includes(candidate.name))
+      .map(candidate => `<option value="${escapeAttr(candidate.name)}">${escapeHtml(candidate.name)}</option>`)
+  ].join('');
+
+  const parents = node.parents.length
+    ? node.parents.map(parent => `<button type="button" class="parent-pill" data-action="remove-parent" data-parent-kind="hard" data-parent-name="${escapeAttr(parent)}"><span>${escapeHtml(parent)}</span><b>x</b></button>`).join('')
+    : '<span class="parent-empty">None</span>';
+  const softParents = node.softParents.length
+    ? node.softParents.map(parent => `<button type="button" class="parent-pill" data-action="remove-parent" data-parent-kind="soft" data-parent-name="${escapeAttr(parent)}"><span>${escapeHtml(parent)}</span><b>x</b></button>`).join('')
+    : '<span class="parent-empty">None</span>';
+
+  return `<form class="editor-form">
+    <div class="form-heading">
+      <div>
+        <h2>${escapeHtml(node.name)}</h2>
+        <p>${escapeHtml(node.tendency ?? 'Unaligned')} - ${escapeHtml(node.nodeShape)}</p>
+      </div>
+      <div class="icon-chip">${escapeHtml(node.color)}</div>
+    </div>
+    <div class="grid2">
+      <label>
+        <span>Tree X</span>
+        <input type="number" data-edit="treeX" value="${escapeAttr(String(node.treeX))}" />
+      </label>
+      <label>
+        <span>Tree Y</span>
+        <input type="number" data-edit="treeY" value="${escapeAttr(String(node.treeY))}" />
+      </label>
+    </div>
+    <label>
+      <span>Color</span>
+      <input type="text" value="${escapeAttr(node.color)}" readonly />
+    </label>
+    <div class="parent-editor">
+      <span class="field-label">Parents</span>
+      <div class="parent-list">${parents}</div>
+      <label>Add<select data-action="add-parent" data-parent-kind="hard">${parentOptions}</select></label>
+    </div>
+    <div class="parent-editor">
+      <span class="field-label">Soft Parents</span>
+      <div class="parent-list">${softParents}</div>
+      <label>Add<select data-action="add-parent" data-parent-kind="soft">${softParentOptions}</select></label>
+    </div>
+  </form>`;
+}
+
 function renderGraph(): string {
   const layout = computeLayout(workspace!.tree.nodes);
+  renderedLayout = layout;
   const edges = layout.edges.map(edge => renderEdge(edge.from, edge.to)).join('');
   const nodes = layout.nodes.map(node => renderNode(node.node, node.x, node.y)).join('');
   const zoomLabel = `${Math.round(graphZoom * 100)}%`;
   const scaledWidth = Math.round(layout.width * graphZoom);
   const scaledHeight = Math.round(layout.height * graphZoom);
+  const tendencyGuides = tendencyOrder.map(renderTendencyGuide).join('');
 
   return `<div class="graph-shell">
     <div class="graph-zoom-controls" aria-label="Graph zoom controls">
@@ -194,15 +346,28 @@ function renderGraph(): string {
       </defs>
       <rect width="${layout.width}" height="${layout.height}" fill="url(#bloodGlow)"></rect>
       <rect width="${layout.width}" height="${layout.height}" fill="url(#veinPattern)" opacity="0.58"></rect>
+      <g class="degree-guides">${tendencyGuides}</g>
       <g class="edges">${edges}</g>
       <g class="nodes">${nodes}</g>
     </svg></div>
   </div>`;
 }
 
+function renderTendencyGuide(tendency: string): string {
+  const layout = renderedLayout;
+  const frame = layout?.frameByTendency.get(tendency);
+  if (!layout || !frame) return '';
+  const x = frame.anchorX + layout.offsetX;
+  const y = frame.anchorY + layout.offsetY;
+  return `<text x="${x.toFixed(0)}" y="${(y - 74).toFixed(0)}" class="degree-guide-label">${escapeHtml(tendency)}</text>`;
+}
+
 function renderEdge(from: ManipulationNodeModel, to: ManipulationNodeModel): string {
-  const bounds = computeBounds(workspace!.tree.nodes);
-  const path = edgePath(from.treeX + bounds.offsetX, from.treeY + bounds.offsetY, to.treeX + bounds.offsetX, to.treeY + bounds.offsetY);
+  const layout = renderedLayout ?? computeLayout(workspace!.tree.nodes);
+  const fromPos = layout.positionsByName.get(from.name);
+  const toPos = layout.positionsByName.get(to.name);
+  if (!fromPos || !toPos) return '';
+  const path = edgePath(fromPos.x, fromPos.y, toPos.x, toPos.y, layout.ringCenterX, layout.ringCenterY);
   return `<path class="edge wire-edge local-edge" style="stroke: ${escapeAttr(to.color)}" data-edge-from="${escapeAttr(from.name)}" data-edge-to="${escapeAttr(to.name)}" d="${escapeAttr(path)}" />`;
 }
 
@@ -241,8 +406,11 @@ function bindEvents(): void {
     });
   }
 
+  wireInspectorEvents();
+
   const scroll = app.querySelector<HTMLDivElement>('.graph-scroll');
   if (!scroll) return;
+  const svg = scroll.querySelector<SVGSVGElement>('.graph');
   scroll.addEventListener('wheel', event => {
     if (event.deltaY === 0) return;
     const rect = scroll.getBoundingClientRect();
@@ -256,10 +424,23 @@ function bindEvents(): void {
     const target = event.target as HTMLElement | null;
     const nodeElement = target?.closest<SVGGElement>('g[data-node]');
     const edgeElement = target?.closest<SVGPathElement>('path[data-edge-from]');
+    const layout = renderedLayout ?? computeLayout(workspace!.tree.nodes);
 
-    if (edgeElement && event.shiftKey) {
-      dragConnection = beginConnectionDrag(edgeElement.dataset.edgeFrom ?? '');
+    if (edgeElement && (event.shiftKey || event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      event.stopPropagation();
+      const sourceField = edgeElement.dataset.edgeFrom ?? '';
+      dragConnection = beginConnectionDrag(sourceField);
+      const sourceNode = findNode(sourceField);
+      if (sourceNode) {
+        const sourcePosition = renderedLayout?.positionsByName.get(sourceField);
+        if (sourcePosition) dragConnectionSource = sourcePosition;
+      }
+      scroll.setPointerCapture(event.pointerId);
       scroll.classList.add('connecting-parent');
+      if (svg && dragConnectionSource) {
+        updateConnectionPreview(svg, dragConnectionSource, graphPointFromPointer(scroll, event));
+      }
       return;
     }
 
@@ -267,13 +448,29 @@ function bindEvents(): void {
       const name = nodeElement.dataset.node ?? '';
       const node = findNode(name);
       if (!node) return;
-      const bounds = computeBounds(workspace!.tree.nodes);
+      const nodePos = layout.positionsByName.get(name);
+      if (!nodePos) return;
+      selectedName = name;
+
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+        event.stopPropagation();
+        dragConnection = beginConnectionDrag(name);
+        dragConnectionSource = nodePos;
+        scroll.setPointerCapture(event.pointerId);
+        scroll.classList.add('connecting-parent');
+        if (svg && dragConnectionSource) {
+          updateConnectionPreview(svg, dragConnectionSource, graphPointFromPointer(scroll, event));
+        }
+        return;
+      }
+
       selectedName = name;
       draggingNode = beginNodeDrag({
         clientX: event.clientX,
         clientY: event.clientY,
-        nodeX: node.treeX + bounds.offsetX,
-        nodeY: node.treeY + bounds.offsetY,
+        nodeX: nodePos.x,
+        nodeY: nodePos.y,
         scrollLeft: scroll.scrollLeft,
         scrollTop: scroll.scrollTop,
         zoom: graphZoom
@@ -281,9 +478,10 @@ function bindEvents(): void {
       dragOriginBase = { x: node.treeX, y: node.treeY };
       scroll.setPointerCapture(event.pointerId);
       scroll.classList.add('dragging-node');
-      render();
       return;
     }
+
+    if (event.ctrlKey || event.metaKey) return;
 
     if (shouldStartDragPan(event.target)) {
       dragPan = beginDragPan(event.clientX, event.clientY, scroll.scrollLeft, scroll.scrollTop);
@@ -299,10 +497,16 @@ function bindEvents(): void {
       scroll.scrollTop = update.scrollTop;
       return;
     }
+    if (dragConnection) {
+      if (svg && dragConnectionSource) {
+        updateConnectionPreview(svg, dragConnectionSource, graphPointFromPointer(scroll, event));
+      }
+      return;
+    }
     if (!draggingNode) return;
     const node = findNode(selectedName);
     if (!node) return;
-    const bounds = computeBounds(workspace!.tree.nodes);
+    const layout = renderedLayout ?? computeLayout(workspace!.tree.nodes);
     const pos = updateNodeDrag(draggingNode, {
       clientX: event.clientX,
       clientY: event.clientY,
@@ -311,8 +515,9 @@ function bindEvents(): void {
       snap: snapToGrid ? 10 : 1,
       zoom: graphZoom
     });
-    node.treeX = pos.x - bounds.offsetX;
-    node.treeY = pos.y - bounds.offsetY;
+    const nextModelPosition = toModelPosition(node, pos, layout);
+    node.treeX = nextModelPosition.x;
+    node.treeY = nextModelPosition.y;
     suppressNextGraphNodeClick = true;
     render();
   });
@@ -325,10 +530,11 @@ function bindEvents(): void {
     }
 
     if (dragConnection) {
-      const target = event.target as HTMLElement | null;
-      const nodeElement = target?.closest<SVGGElement>('g[data-node]');
-      const rewire = finishConnectionDrag(dragConnection, nodeElement?.dataset.node);
+      const targetField = connectionTargetNodeAt(event);
+      const rewire = finishConnectionDrag(dragConnection, targetField ?? undefined);
       dragConnection = null;
+      dragConnectionSource = null;
+      if (svg) removeConnectionPreview(svg);
       scroll.classList.remove('connecting-parent');
       if (rewire) {
         const node = findNode(rewire.field);
@@ -353,7 +559,84 @@ function bindEvents(): void {
     draggingNode = null;
     dragOriginBase = null;
     scroll.classList.remove('dragging-node');
+    render();
   });
+}
+
+function wireInspectorEvents(): void {
+  const selected = findNode(selectedName);
+  if (!selected) return;
+
+  for (const input of app.querySelectorAll<HTMLInputElement>('input[data-edit]')) {
+    input.addEventListener('change', () => updateSelectedNode(input));
+  }
+
+  for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-action="remove-parent"]')) {
+    button.addEventListener('click', () => {
+      const kind = button.dataset.parentKind === 'soft' ? 'soft' : 'hard';
+      const parentName = button.dataset.parentName;
+      if (!parentName) return;
+      removeParentFromSelectedNode(kind, parentName);
+    });
+  }
+
+  for (const select of app.querySelectorAll<HTMLSelectElement>('select[data-action="add-parent"]')) {
+    select.addEventListener('change', () => {
+      const parentName = select.value;
+      if (!parentName) return;
+      const kind = select.dataset.parentKind === 'soft' ? 'soft' : 'hard';
+      addParentToSelectedNode(kind, parentName);
+    });
+  }
+}
+
+function updateSelectedNode(input: HTMLInputElement): void {
+  const node = findNode(selectedName);
+  if (!node) return;
+  const key = input.dataset.edit;
+  if (key !== 'treeX' && key !== 'treeY') return;
+  const numeric = Number(input.value);
+  if (!Number.isFinite(numeric)) {
+    render();
+    return;
+  }
+  const nextValue = Math.round(numeric);
+  const before = { x: node.treeX, y: node.treeY };
+  if (key === 'treeX') node.treeX = nextValue;
+  if (key === 'treeY') node.treeY = nextValue;
+  const after = { x: node.treeX, y: node.treeY };
+  recordMovement(movementHistory, {
+    field: node.name,
+    before,
+    after
+  });
+  preview = null;
+  statusText = `Updated ${node.name} to (${node.treeX}, ${node.treeY}).`;
+  render();
+}
+
+function addParentToSelectedNode(kind: 'hard' | 'soft', parentName: string): void {
+  const node = findNode(selectedName);
+  if (!node || parentName === node.name) return;
+  const list = kind === 'soft' ? node.softParents : node.parents;
+  if (list.includes(parentName)) return;
+  list.push(parentName);
+  preview = null;
+  statusText = `Added ${kind === 'soft' ? 'soft parent' : 'parent'} ${parentName} to ${node.name}.`;
+  render();
+}
+
+function removeParentFromSelectedNode(kind: 'hard' | 'soft', parentName: string): void {
+  const node = findNode(selectedName);
+  if (!node) return;
+  if (kind === 'soft') {
+    node.softParents = node.softParents.filter(parent => parent !== parentName);
+  } else {
+    node.parents = node.parents.filter(parent => parent !== parentName);
+  }
+  preview = null;
+  statusText = `Removed ${kind === 'soft' ? 'soft parent' : 'parent'} ${parentName} from ${node.name}.`;
+  render();
 }
 
 function handleAction(action: string): void {
@@ -377,6 +660,12 @@ function handleAction(action: string): void {
       if (graphZoom !== 1) {
         zoomGraphAt(app.querySelector<HTMLElement>('.graph-scroll'), (app.querySelector<HTMLElement>('.graph-scroll')?.clientWidth ?? 0) / 2, (app.querySelector<HTMLElement>('.graph-scroll')?.clientHeight ?? 0) / 2, 1 / graphZoom);
       }
+      return;
+    case 'undo-move':
+      undoLastMovement();
+      return;
+    case 'redo-move':
+      redoLastMovement();
       return;
   }
 }
@@ -468,6 +757,27 @@ function applyMovementTarget(target: { updates: Array<{ field?: string; position
   render();
 }
 
+function isMovementUndoShortcut(event: KeyboardEvent): boolean {
+  return hasCommandModifier(event) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'z';
+}
+
+function isMovementRedoShortcut(event: KeyboardEvent): boolean {
+  if (!hasCommandModifier(event) || event.altKey) return false;
+  const key = event.key.toLowerCase();
+  return key === 'y' || (event.shiftKey && key === 'z');
+}
+
+function hasCommandModifier(event: KeyboardEvent): boolean {
+  return event.ctrlKey || event.metaKey;
+}
+
+function shouldIgnoreMovementShortcut(target: EventTarget | null): boolean {
+  return target instanceof HTMLInputElement
+    || target instanceof HTMLSelectElement
+    || target instanceof HTMLTextAreaElement
+    || target instanceof HTMLElement && target.isContentEditable;
+}
+
 function validationCount(): number {
   return workspace?.tree.diagnostics.length ?? 0;
 }
@@ -475,10 +785,106 @@ function validationCount(): number {
 function computeLayout(nodes: ManipulationNodeModel[]): {
   width: number;
   height: number;
+  offsetX: number;
+  offsetY: number;
+  ringCenterX: number;
+  ringCenterY: number;
   nodes: Array<{ node: ManipulationNodeModel; x: number; y: number }>;
   edges: Array<{ from: ManipulationNodeModel; to: ManipulationNodeModel }>;
+  positionsByName: Map<string, NodePosition>;
+  frameByTendency: Map<string, TendencyFrame>;
 } {
-  const bounds = computeBounds(nodes);
+  const groups = new Map<string, ManipulationNodeModel[]>();
+  const fallbackNodes: ManipulationNodeModel[] = [];
+  for (const node of nodes) {
+    const key = tendencyKey(node);
+    if (key === '__FALLBACK__') {
+      fallbackNodes.push(node);
+      continue;
+    }
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(node);
+  }
+
+  let maxClusterW = 0;
+  let maxClusterH = 0;
+  const boundsByTendency = new Map<string, { minX: number; maxX: number; minY: number; maxY: number }>();
+  for (const tendency of tendencyOrder) {
+    const tendencyNodes = groups.get(tendency) ?? [];
+    if (!tendencyNodes.length) continue;
+    const minX = Math.min(...tendencyNodes.map(node => node.treeX));
+    const maxX = Math.max(...tendencyNodes.map(node => node.treeX));
+    const minY = Math.min(...tendencyNodes.map(node => node.treeY));
+    const maxY = Math.max(...tendencyNodes.map(node => node.treeY));
+    boundsByTendency.set(tendency, { minX, maxX, minY, maxY });
+    maxClusterW = Math.max(maxClusterW, maxX - minX + layoutNodeSize);
+    maxClusterH = Math.max(maxClusterH, maxY - minY + layoutNodeSize);
+  }
+
+  const ringMetrics = manipulationRingMetricsFromClusterSize(maxClusterW, maxClusterH, stableRingMetrics ?? undefined, {
+    padding: layoutPadding,
+    minRadius: layoutRingMinRadius,
+    radiusScale: layoutRingRadiusScale
+  });
+  if (!stableRingMetrics) stableRingMetrics = ringMetrics;
+  const { clusterHalf, branchRadius, ringCenterRawX, ringCenterRawY } = ringMetrics;
+
+  const frameByTendency = new Map<string, TendencyFrame>();
+  for (let i = 0; i < tendencyOrder.length; i += 1) {
+    const tendency = tendencyOrder[i];
+    const tendencyNodes = groups.get(tendency) ?? [];
+    if (!tendencyNodes.length) continue;
+    const bounds = boundsByTendency.get(tendency);
+    if (!bounds) continue;
+    const stableCenter = stableClusterCenters.get(tendency);
+    const clusterCenterX = stableCenter?.x ?? (bounds.minX + bounds.maxX) * 0.5;
+    const clusterCenterY = stableCenter?.y ?? (bounds.minY + bounds.maxY) * 0.5;
+    const angle = (-Math.PI / 2) + (i * Math.PI / 4);
+    const anchorX = ringCenterRawX + Math.cos(angle) * branchRadius;
+    const anchorY = ringCenterRawY + Math.sin(angle) * branchRadius;
+    frameByTendency.set(tendency, {
+      key: tendency,
+      anchorX,
+      anchorY,
+      clusterCenterX,
+      clusterCenterY
+    });
+  }
+
+  const absoluteByName = new Map<string, NodePosition>();
+  for (const node of nodes) {
+    const key = tendencyKey(node);
+    const frame = frameByTendency.get(key);
+    if (!frame) {
+      absoluteByName.set(node.name, { x: node.treeX, y: node.treeY });
+      continue;
+    }
+    const local = {
+      x: (node.treeX - frame.clusterCenterX) * sourceCoordinateScale,
+      y: (node.treeY - frame.clusterCenterY) * sourceCoordinateScale
+    };
+    const absolute = {
+      x: frame.anchorX + local.x,
+      y: frame.anchorY + local.y
+    };
+    absoluteByName.set(node.name, absolute);
+  }
+
+  if (fallbackNodes.length) {
+    const fallbackY = ringCenterRawY + branchRadius + clusterHalf + layoutNodeGapX;
+    const startX = ringCenterRawX - ((fallbackNodes.length - 1) * layoutNodeGapX) * 0.5;
+    fallbackNodes
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((node, index) => {
+        absoluteByName.set(node.name, {
+          x: startX + index * layoutNodeGapX,
+          y: fallbackY
+        });
+      });
+  }
+
+  const bounds = computeBounds(Array.from(absoluteByName.values()));
   const width = bounds.width;
   const height = bounds.height;
 
@@ -491,17 +897,33 @@ function computeLayout(nodes: ManipulationNodeModel[]): {
     }
   }
 
+  const positionsByName = new Map<string, NodePosition>();
+  for (const [name, position] of absoluteByName.entries()) {
+    positionsByName.set(name, {
+      x: position.x + bounds.offsetX,
+      y: position.y + bounds.offsetY
+    });
+  }
+
   return {
     width,
     height,
-    nodes: nodes.map(node => ({ node, x: node.treeX + bounds.offsetX, y: node.treeY + bounds.offsetY })),
-    edges
+    offsetX: bounds.offsetX,
+    offsetY: bounds.offsetY,
+    ringCenterX: ringCenterRawX + bounds.offsetX,
+    ringCenterY: ringCenterRawY + bounds.offsetY,
+    nodes: nodes.map(node => {
+      const position = positionsByName.get(node.name) ?? { x: bounds.offsetX, y: bounds.offsetY };
+      return { node, x: position.x, y: position.y };
+    }),
+    edges,
+    positionsByName,
+    frameByTendency
   };
 }
 
-function computeBounds(nodes: ManipulationNodeModel[]): { offsetX: number; offsetY: number; width: number; height: number } {
+function computeBounds(positions: NodePosition[]): { offsetX: number; offsetY: number; width: number; height: number } {
   const padding = 80;
-  const positions = nodes.map(node => ({ x: node.treeX, y: node.treeY }));
   const minX = Math.min(...positions.map(pos => pos.x), 0);
   const minY = Math.min(...positions.map(pos => pos.y), 0);
   const maxX = Math.max(...positions.map(pos => pos.x), 0);
@@ -513,17 +935,82 @@ function computeBounds(nodes: ManipulationNodeModel[]): { offsetX: number; offse
   return { offsetX, offsetY, width, height };
 }
 
-function edgePath(x0: number, y0: number, x3: number, y3: number): string {
-  const dx = x3 - x0;
-  const dy = y3 - y0;
-  const distance = Math.hypot(dx, dy);
-  const handle = Math.max(36, Math.min(140, distance * 0.34));
-  const sway = organicSway(x0, y0, x3, y3);
-  const c1x = x0 + dx / Math.max(1, distance) * handle + sway.x;
-  const c1y = y0 + dy / Math.max(1, distance) * handle + sway.y;
-  const c2x = x3 - dx / Math.max(1, distance) * handle - sway.x;
-  const c2y = y3 - dy / Math.max(1, distance) * handle - sway.y;
-  return `M ${x0} ${y0} C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${x3} ${y3}`;
+function computeClusterCenters(nodes: ManipulationNodeModel[]): Map<string, NodePosition> {
+  const groups = new Map<string, ManipulationNodeModel[]>();
+  for (const node of nodes) {
+    const key = tendencyKey(node);
+    if (key === '__FALLBACK__') continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(node);
+  }
+  const centers = new Map<string, NodePosition>();
+  for (const [key, group] of groups.entries()) {
+    centers.set(key, {
+      x: (Math.min(...group.map(node => node.treeX)) + Math.max(...group.map(node => node.treeX))) * 0.5,
+      y: (Math.min(...group.map(node => node.treeY)) + Math.max(...group.map(node => node.treeY))) * 0.5
+    });
+  }
+  return centers;
+}
+
+function tendencyKey(node: ManipulationNodeModel): string {
+  const key = (node.tendency ?? '').trim().toUpperCase();
+  return tendencyOrder.includes(key as (typeof tendencyOrder)[number]) ? key : '__FALLBACK__';
+}
+
+function toModelPosition(node: ManipulationNodeModel, absolutePosition: NodePosition, layout: ManipulationLayout): NodePosition {
+  const frame = layout.frameByTendency.get(tendencyKey(node));
+  if (!frame) return { x: node.treeX, y: node.treeY };
+  return modelPositionFromRenderedPosition({
+    x: absolutePosition.x - layout.offsetX,
+    y: absolutePosition.y - layout.offsetY
+  }, frame, sourceCoordinateScale);
+}
+
+function edgePath(x0: number, y0: number, x3: number, y3: number, centerX: number, centerY: number): string {
+  const start = trimTraceEndpoint(x0, y0, x3, y3);
+  const end = trimTraceEndpoint(x3, y3, x0, y0);
+  const controls = cubicControls(start.x, start.y, end.x, end.y, centerX, centerY);
+  return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} C ${controls.c1x.toFixed(2)} ${controls.c1y.toFixed(2)}, ${controls.c2x.toFixed(2)} ${controls.c2y.toFixed(2)}, ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+}
+
+function trimTraceEndpoint(x: number, y: number, towardX: number, towardY: number): NodePosition {
+  const dx = towardX - x;
+  const dy = towardY - y;
+  const length = Math.hypot(dx, dy);
+  if (length < 0.001) return { x, y };
+  const offset = Math.min(traceNodeTrimRadius, Math.max(0, length / 2 - 1));
+  return {
+    x: x + dx / length * offset,
+    y: y + dy / length * offset
+  };
+}
+
+function cubicControls(x1: number, y1: number, x2: number, y2: number, centerX: number, centerY: number): { c1x: number; c1y: number; c2x: number; c2y: number } {
+  const distance = Math.hypot(x2 - x1, y2 - y1);
+  const handle = Math.max(36, Math.min(120, distance * 0.34));
+  const fromRadial = radialFromCenter(x1, y1, x2 - x1, y2 - y1, centerX, centerY);
+  const toRadial = radialFromCenter(x2, y2, x2 - x1, y2 - y1, centerX, centerY);
+  const sway = organicSway(x1, y1, x2, y2);
+  return {
+    c1x: x1 + fromRadial.x * handle + sway.x,
+    c1y: y1 + fromRadial.y * handle + sway.y,
+    c2x: x2 - toRadial.x * handle - sway.x,
+    c2y: y2 - toRadial.y * handle - sway.y
+  };
+}
+
+function radialFromCenter(x: number, y: number, fallbackX: number, fallbackY: number, centerX: number, centerY: number): NodePosition {
+  let dx = x - centerX;
+  let dy = y - centerY;
+  let length = Math.hypot(dx, dy);
+  if (length < 0.001) {
+    dx = fallbackX;
+    dy = fallbackY;
+    length = Math.hypot(dx, dy);
+  }
+  if (length < 0.001) return { x: 0, y: -1 };
+  return { x: dx / length, y: dy / length };
 }
 
 function organicSway(x1: number, y1: number, x2: number, y2: number): { x: number; y: number } {
@@ -531,17 +1018,69 @@ function organicSway(x1: number, y1: number, x2: number, y2: number): { x: numbe
   const dy = y2 - y1;
   const distance = Math.hypot(dx, dy);
   if (distance < 0.001) return { x: 0, y: 0 };
-  const amount = Math.min(18, Math.max(8, distance * 0.08));
-  const hash = ((x1 * 31) ^ (y1 * 17) ^ (x2 * 13) ^ (y2 * 7)) & 1;
-  const sign = hash === 0 ? 1 : -1;
+  const amount = Math.min(traceOrganicSwayMax, Math.max(traceOrganicSwayMin, distance * traceOrganicSwayFactor));
+  const sign = organicSwaySign(x1, y1, x2, y2);
   return {
     x: -dy / distance * amount * sign,
     y: dx / distance * amount * sign
   };
 }
 
+function organicSwaySign(x1: number, y1: number, x2: number, y2: number): number {
+  const hash = Math.trunc(x1 * 31 + y1 * 17 + x2 * 13 + y2 * 7);
+  return (hash & 1) === 0 ? 1 : -1;
+}
+
 function findNode(name: string): ManipulationNodeModel | undefined {
   return workspace?.tree.nodes.find(node => node.name === name);
+}
+
+function allNodes(): ManipulationNodeModel[] {
+  return workspace?.tree.nodes ?? [];
+}
+
+function graphPointFromPointer(scroller: HTMLElement, event: PointerEvent): NodePosition {
+  const rect = scroller.getBoundingClientRect();
+  return {
+    x: (event.clientX - rect.left + scroller.scrollLeft) / graphZoom,
+    y: (event.clientY - rect.top + scroller.scrollTop) / graphZoom
+  };
+}
+
+function connectionTargetNodeAt(event: PointerEvent): string | null {
+  const element = document.elementFromPoint(event.clientX, event.clientY);
+  if (!(element instanceof Element)) return null;
+  return element.closest<SVGGElement>('.skill-node[data-node]')?.dataset.node ?? null;
+}
+
+function updateConnectionPreview(svg: SVGSVGElement, from: NodePosition, to: NodePosition): void {
+  let path = svg.querySelector<SVGPathElement>('.connection-preview');
+  if (!path) {
+    path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'connection-preview');
+    svg.querySelector('.edges')?.append(path);
+  }
+  path.setAttribute('d', connectionPreviewPath(from, to));
+}
+
+function removeConnectionPreview(svg: SVGSVGElement): void {
+  svg.querySelector('.connection-preview')?.remove();
+}
+
+function connectionPreviewPath(from: NodePosition, to: NodePosition): string {
+  const distance = Math.hypot(to.x - from.x, to.y - from.y);
+  const handle = Math.max(48, Math.min(150, distance * 0.36));
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const nx = dx / length;
+  const ny = dy / length;
+  return [
+    `M ${Math.round(from.x)} ${Math.round(from.y)}`,
+    `C ${Math.round(from.x + nx * handle)} ${Math.round(from.y + ny * handle)},`,
+    `${Math.round(to.x - nx * handle)} ${Math.round(to.y - ny * handle)},`,
+    `${Math.round(to.x)} ${Math.round(to.y)}`
+  ].join(' ');
 }
 
 function relativeRoot(): string {
