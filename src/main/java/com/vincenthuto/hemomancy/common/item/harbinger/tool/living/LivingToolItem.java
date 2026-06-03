@@ -33,10 +33,11 @@ import java.util.HashSet;
 public class LivingToolItem extends DiggerItem implements IDispellable {
 	private static final HashSet<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private final float attackDamage;
-	private float speed;
+	private final float speed;
 
 	public LivingToolItem(float speedIn, float attackDamageIn, float attackSpeedIn, Tier tier, Properties builderIn) {
-		super(tier, BlockTags.WART_BLOCKS, builderIn);
+		super(tier, BlockTags.WART_BLOCKS,
+				builderIn.attributes(DiggerItem.createAttributes(tier, attackDamageIn, attackSpeedIn)));
 		this.attackDamage = attackDamageIn;
 		this.speed = speedIn;
 	}

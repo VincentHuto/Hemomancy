@@ -12,6 +12,8 @@ npm run dev
 
 Open `http://127.0.0.1:5184/workspace.html`.
 
+Manipulation editor: `http://127.0.0.1:5184/manipulations.html`.
+
 The API defaults to port `5185`. Set `HEMO_REPO_ROOT` when running the tool outside this folder.
 
 ## Source Model

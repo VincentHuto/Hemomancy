@@ -28,7 +28,6 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int NODE_GAP_X = 80;
     private static final float TENDENCY_VALUE_DISTANCE_DIVISOR = 1.75f;
     private static final int TENDENCY_VALUE_VERTICAL_OFFSET = 0;
-    private static final int COL_LINE_LOCKED = 0x88444444;
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
     private static final int ALPHA_OPAQUE_MASK = 0xFF000000;
@@ -42,6 +41,9 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int MANIP_STAT_COL_GAP = 6;
     private static final int MANIP_STAT_ROW_GAP = 2;
 
+    private static final int KNOWN_MANIP_REFRESH_TICKS = 60; // ~1s at ~60 FPS
+
+    private final ManipulationTraceLayerCache traceCache = new ManipulationTraceLayerCache();
     private final PanZoomState panZoom = new PanZoomState();
     private int manipRingCenterX, manipRingCenterY;
     private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
@@ -50,6 +52,7 @@ public class ManipulationsTabController implements IProgressTab {
     private int contentW, contentH;
     private ManipulationTreeEntry selectedEntry = null;
     private int playerDegree;
+    private int knownManipRefreshCooldown = 0;
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
@@ -203,7 +206,9 @@ public class ManipulationsTabController implements IProgressTab {
 
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
-        drawManipConnections(gfx, ctx);
+        tickKnownManipCache();
+        traceCache.rebuildIfNeeded(ManipulationTreeInit.ENTRIES, manipPositions, knownManipNames, playerDegree, contentW, contentH, manipRingCenterX, manipRingCenterY);
+        traceCache.render(gfx, ctx, panZoom);
         drawManipTendencyStar(gfx, ctx);
         drawManipNodes(gfx, ctx);
     }
@@ -218,51 +223,13 @@ public class ManipulationsTabController implements IProgressTab {
         drawManipTooltip(gfx, ctx, mouseX, mouseY);
     }
 
-    private void drawManipConnections(GuiGraphics gfx, ProgressScreenContext ctx) {
-        int hn = halfNode();
-        int lw = Math.max(1, (int)(panZoom.zoom * 1.5f));
-
-        for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
-            int[] childPos = manipPositions.get(entry);
-            if (childPos == null) continue;
-            boolean childKnown = knownManipNames.contains(entry.getManipName());
-            boolean childLocked = isManipRankLocked(entry.resolve());
-
-            for (String parentName : entry.getConnectionParentNames()) {
-                ManipulationTreeEntry parentEntry = ManipulationTreeInit.getEntry(parentName);
-                if (parentEntry == null) continue;
-                int[] parentPos = manipPositions.get(parentEntry);
-                if (parentPos == null) continue;
-
-                boolean parentKnown = knownManipNames.contains(parentName);
-                boolean parentLocked = isManipRankLocked(parentEntry.resolve());
-
-                int col;
-                if (childLocked || parentLocked) {
-                    col = 0x44222222;
-                } else if (parentKnown && childKnown) {
-                    BloodManipulation manip = entry.resolve();
-                    if (manip != null) {
-                        ParticleColor pc = manip.getTend().getColor();
-                        int r = (int)Math.min(pc.getRed() * 0.7f, 255);
-                        int g = (int)Math.min(pc.getGreen() * 0.7f, 255);
-                        int b = (int)Math.min(pc.getBlue() * 0.7f, 255);
-                        col = 0xCC000000 | (r << 16) | (g << 8) | b;
-                    } else {
-                        col = 0xFFAA6600;
-                    }
-                } else {
-                    col = COL_LINE_LOCKED;
-                }
-
-                int x1 = sx(ctx, parentPos[0]), y1 = sy(ctx, parentPos[1]);
-                int x2 = sx(ctx, childPos[0]),  y2 = sy(ctx, childPos[1]);
-                int midY = (y1 + y2) / 2;
-                gfx.fill(x1 - lw, y1 + hn, x1 + lw, midY, col);
-                gfx.fill(Math.min(x1, x2) - lw, midY - lw, Math.max(x1, x2) + lw, midY + lw, col);
-                gfx.fill(x2 - lw, midY, x2 + lw, y2 - hn, col);
-            }
+    private void tickKnownManipCache() {
+        if (knownManipRefreshCooldown > 0) {
+            knownManipRefreshCooldown--;
+            return;
         }
+        knownManipRefreshCooldown = KNOWN_MANIP_REFRESH_TICKS;
+        cacheKnownManipulations();
     }
 
     private void drawManipTendencyStar(GuiGraphics gfx, ProgressScreenContext ctx) {
@@ -308,7 +275,7 @@ public class ManipulationsTabController implements IProgressTab {
             }
         });
     }
-		private float animTime = 0f;
+	private float animTime = 0f;
 
     private void drawManipNodes(GuiGraphics gfx, ProgressScreenContext ctx) {
         animTime += 0.016f; // ~60 FPS approximation

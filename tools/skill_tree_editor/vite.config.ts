@@ -13,7 +13,10 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: 'workspace.html'
+      input: {
+        workspace: 'workspace.html',
+        manipulations: 'manipulations.html'
+      }
     }
   }
 });

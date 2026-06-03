@@ -7,6 +7,10 @@ import { hasBlockingDiagnostics, validateSkillWorkspace } from './validation';
 
 const previews = new Map<string, PreviewResult>();
 
+export function storePreview(result: PreviewResult): void {
+  previews.set(result.id, result);
+}
+
 export function defaultRepoRoot(): string {
   return resolve(process.cwd(), '..', '..');
 }
@@ -83,7 +87,7 @@ export async function previewWorkspaceChanges(repoRoot: string, request: Preview
     diagnostics,
     canApply: !hasBlockingDiagnostics(diagnostics)
   };
-  previews.set(result.id, result);
+  storePreview(result);
   return result;
 }
 

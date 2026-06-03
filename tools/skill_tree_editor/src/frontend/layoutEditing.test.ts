@@ -1,4 +1,9 @@
-import { beginNodeDrag, updateNodeDrag } from './layoutEditing';
+import {
+  beginNodeDrag,
+  manipulationRingMetricsFromClusterSize,
+  modelPositionFromRenderedPosition,
+  updateNodeDrag
+} from './layoutEditing';
 
 test('moves a node in canvas coordinates while preserving pointer offset', () => {
   const drag = beginNodeDrag({ clientX: 240, clientY: 160, nodeX: 200, nodeY: 120, scrollLeft: 30, scrollTop: 10 });
@@ -30,4 +35,25 @@ test('snaps drag deltas without forcing unsnapped node origins onto the grid', (
   const position = updateNodeDrag(drag, { clientX: 360, clientY: 456, scrollLeft: 0, scrollTop: 0, snap: 16 });
 
   expect(position).toEqual({ x: 360, y: 456 });
+});
+
+test('maps rendered manipulation drag movement back to model coordinates with the same direction', () => {
+  const model = modelPositionFromRenderedPosition(
+    { x: 610, y: 440 },
+    {
+      anchorX: 500,
+      anchorY: 300,
+      clusterCenterX: 2100,
+      clusterCenterY: 120
+    }
+  );
+
+  expect(model).toEqual({ x: 2210, y: 260 });
+});
+
+test('can reuse manipulation ring metrics while a dragged node expands cluster bounds', () => {
+  const loadedMetrics = manipulationRingMetricsFromClusterSize(266, 236);
+  const expandedDuringDrag = manipulationRingMetricsFromClusterSize(266, 539, loadedMetrics);
+
+  expect(expandedDuringDrag).toEqual(loadedMetrics);
 });
