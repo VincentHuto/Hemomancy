@@ -68,3 +68,31 @@ export interface PreviewResult {
   diagnostics: Diagnostic[];
   canApply: boolean;
 }
+
+export interface ManipulationNodeModel {
+  name: string;
+  treeX: number;
+  treeY: number;
+  parents: string[];
+  softParents: string[];
+  nodeShape: string;
+  tendency: string | null;
+  color: string;
+}
+
+export interface ManipulationTreeFile {
+  path: string;
+  source: string;
+  nodes: ManipulationNodeModel[];
+  diagnostics: Diagnostic[];
+}
+
+export interface ManipulationWorkspace {
+  repoRoot: string;
+  tree: ManipulationTreeFile;
+  diagnostics: Diagnostic[];
+}
+
+export interface ManipulationPreviewRequest {
+  nodes: ManipulationNodeModel[];
+}
