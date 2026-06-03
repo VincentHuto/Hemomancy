@@ -103,6 +103,18 @@ test('preview colors branch list buttons by branch', () => {
   expect(css).toContain('.branch-button-living-staff');
 });
 
+test('manipulation nodes render layered memory item textures', () => {
+  const manipulations = read('manipulations.ts');
+
+  expect(manipulations).toContain('memory_blank');
+  expect(manipulations).toContain('memoryOverlayName(node.name)');
+  expect(manipulations).toContain('case \'conjure_blade\': return \'memory_living_blade_overlay\';');
+  expect(manipulations).toContain('case \'conjure_torch\': return \'memory_living_torch_overlay\';');
+  expect(manipulations).toContain('return `memory_${nodeName}_overlay`;');
+  expect(manipulations).toContain('class="memory-base"');
+  expect(manipulations).toContain('class="memory-overlay"');
+});
+
 function read(path: string): string {
   return readFileSync(resolve(sourceRoot, path), 'utf8');
 }

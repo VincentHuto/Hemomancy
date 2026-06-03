@@ -29,18 +29,33 @@ export async function previewManipulationWorkspaceChanges(repoRoot: string, requ
   const colorByTendency = defaultTendencyColors();
   const parsed = parseManipulationTreeJava(treePath, before, tendencyByManip, colorByTendency);
 
-  const updates = new Map<string, { treeX: number; treeY: number; parents: string[]; softParents: string[] }>();
+  const updates = new Map<string, { treeX: number; treeY: number; parents: string[]; softParents: string[]; tendency: string | null }>();
   for (const node of request.nodes ?? []) {
     updates.set(node.name, {
       treeX: node.treeX,
       treeY: node.treeY,
       parents: node.parents ?? [],
-      softParents: node.softParents ?? []
+      softParents: node.softParents ?? [],
+      tendency: node.tendency ?? null
     });
   }
 
-  const after = renderManipulationTreeJava(before, parsed.parsedNodes, updates);
-  const diffs = before === after ? [] : [makeFileDiff(treePath, before, after)];
+  const changes = new Map<string, string>();
+  changes.set(treePath, renderManipulationTreeJava(before, parsed.parsedNodes, updates));
+  const initPath = 'src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java';
+  const initAbs = safeResolve(repoRoot, initPath);
+  const initBefore = existsSync(initAbs) ? readFileSync(initAbs, 'utf8') : '';
+  if (initBefore) {
+    changes.set(initPath, renderManipulationInitTendencies(initBefore, updates));
+  }
+
+  const diffs = [...changes.entries()]
+    .map(([path, after]) => {
+      const abs = safeResolve(repoRoot, path);
+      const sourceBefore = existsSync(abs) ? readFileSync(abs, 'utf8') : '';
+      return sourceBefore === after ? null : makeFileDiff(path, sourceBefore, after);
+    })
+    .filter((diff): diff is NonNullable<typeof diff> => diff !== null);
   const diagnostics = parsed.tree.diagnostics;
 
   const result: PreviewResult = {
@@ -51,6 +66,36 @@ export async function previewManipulationWorkspaceChanges(repoRoot: string, requ
   };
   storePreview(result);
   return result;
+}
+
+function renderManipulationInitTendencies(
+  source: string,
+  updates: Map<string, { tendency: string | null }>
+): string {
+  const replacements: Array<{ start: number; end: number; value: string }> = [];
+  const pattern = /MANIPS\.register\("([^"]+)"[\s\S]*?EnumBloodTendency\.(ANIMUS|FLAMMEUS|DUCTILIS|LUX|MORTEM|CONGEATIO|FERRIC|TENEBRIS)/g;
+  for (const match of source.matchAll(pattern)) {
+    const name = match[1];
+    const tendency = updates.get(name)?.tendency;
+    if (!tendency || !defaultTendencyColors().has(tendency)) continue;
+    const matchedText = match[0];
+    const existing = match[2];
+    if (existing === tendency) continue;
+    const enumOffset = matchedText.lastIndexOf(existing);
+    if (enumOffset < 0 || match.index == null) continue;
+    replacements.push({
+      start: match.index + enumOffset,
+      end: match.index + enumOffset + existing.length,
+      value: tendency
+    });
+  }
+
+  replacements.sort((a, b) => b.start - a.start);
+  let next = source;
+  for (const replacement of replacements) {
+    next = next.slice(0, replacement.start) + replacement.value + next.slice(replacement.end);
+  }
+  return next;
 }
 
 function loadManipulationTendencies(repoRoot: string): Map<string, string> {

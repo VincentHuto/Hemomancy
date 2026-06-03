@@ -67,6 +67,16 @@ const layoutNodeGapX = 80;
 const layoutPadding = 40;
 const layoutRingMinRadius = 250;
 const layoutRingRadiusScale = 1.35;
+const tendencyColors = new Map<string, string>([
+  ['ANIMUS', '#ff0000'],
+  ['FLAMMEUS', '#ff6400'],
+  ['DUCTILIS', '#ffff00'],
+  ['LUX', '#ffffff'],
+  ['MORTEM', '#003a00'],
+  ['CONGEATIO', '#0064ff'],
+  ['FERRIC', '#353535'],
+  ['TENEBRIS', '#46006e']
+]);
 
 let workspace: ManipulationWorkspace | null = null;
 let selectedName = '';
@@ -280,6 +290,9 @@ function renderInspector(): string {
   const softParents = node.softParents.length
     ? node.softParents.map(parent => `<button type="button" class="parent-pill" data-action="remove-parent" data-parent-kind="soft" data-parent-name="${escapeAttr(parent)}"><span>${escapeHtml(parent)}</span><b>x</b></button>`).join('')
     : '<span class="parent-empty">None</span>';
+  const tendencyOptions = tendencyOrder
+    .map(tendency => `<option value="${escapeAttr(tendency)}" ${node.tendency === tendency ? 'selected' : ''}>${escapeHtml(tendency)}</option>`)
+    .join('');
 
   return `<form class="editor-form">
     <div class="form-heading">
@@ -289,6 +302,10 @@ function renderInspector(): string {
       </div>
       <div class="icon-chip">${escapeHtml(node.color)}</div>
     </div>
+    <label>
+      <span>Tendency</span>
+      <select data-edit="tendency">${tendencyOptions}</select>
+    </label>
     <div class="grid2">
       <label>
         <span>Tree X</span>
@@ -374,12 +391,30 @@ function renderEdge(from: ManipulationNodeModel, to: ManipulationNodeModel): str
 function renderNode(node: ManipulationNodeModel, x: number, y: number): string {
   const selected = node.name === selectedName ? 'selected' : '';
   const initial = node.name.charAt(0).toUpperCase() || '?';
+  const memoryBaseUrl = '/asset/item/memory_blank.png';
+  const memoryOverlayUrl = `/asset/item/${encodeURIComponent(memoryOverlayName(node.name))}.png`;
   return `<g class="skill-node ${selected}" data-node="${escapeAttr(node.name)}" transform="translate(${x} ${y})">
     <rect class="node-glow" x="-22" y="-22" width="44" height="44" style="stroke: ${escapeAttr(node.color)}"></rect>
     <rect class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke: ${escapeAttr(node.color)}"></rect>
     <rect class="node-core" x="-12" y="-12" width="24" height="24"></rect>
+    <image class="memory-base" href="${escapeAttr(memoryBaseUrl)}" x="-11" y="-11" width="22" height="22" preserveAspectRatio="xMidYMid meet"></image>
+    <image class="memory-overlay" href="${escapeAttr(memoryOverlayUrl)}" x="-11" y="-11" width="22" height="22" preserveAspectRatio="xMidYMid meet"></image>
     <text x="0" y="5" class="node-fallback">${escapeHtml(initial)}</text>
   </g>`;
+}
+
+function memoryOverlayName(nodeName: string): string {
+  switch (nodeName) {
+    case 'conjure_axe': return 'memory_living_axe_overlay';
+    case 'conjure_blade': return 'memory_living_blade_overlay';
+    case 'conjure_claws': return 'memory_living_claws_overlay';
+    case 'conjure_crossbow': return 'memory_living_crossbow_overlay';
+    case 'conjure_flail': return 'memory_living_flail_overlay';
+    case 'conjure_spear': return 'memory_living_spear_overlay';
+    case 'conjure_staff': return 'memory_living_staff_overlay';
+    case 'conjure_torch': return 'memory_living_torch_overlay';
+    default: return `memory_${nodeName}_overlay`;
+  }
 }
 
 function bindEvents(): void {
@@ -570,6 +605,10 @@ function wireInspectorEvents(): void {
   for (const input of app.querySelectorAll<HTMLInputElement>('input[data-edit]')) {
     input.addEventListener('change', () => updateSelectedNode(input));
   }
+  const tendency = app.querySelector<HTMLSelectElement>('select[data-edit="tendency"]');
+  if (tendency) {
+    tendency.addEventListener('change', () => updateSelectedNodeTendency(tendency));
+  }
 
   for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-action="remove-parent"]')) {
     button.addEventListener('click', () => {
@@ -612,6 +651,21 @@ function updateSelectedNode(input: HTMLInputElement): void {
   });
   preview = null;
   statusText = `Updated ${node.name} to (${node.treeX}, ${node.treeY}).`;
+  render();
+}
+
+function updateSelectedNodeTendency(select: HTMLSelectElement): void {
+  const node = findNode(selectedName);
+  if (!node) return;
+  const nextTendency = select.value;
+  if (!tendencyColors.has(nextTendency) || node.tendency === nextTendency) {
+    render();
+    return;
+  }
+  node.tendency = nextTendency;
+  node.color = tendencyColors.get(nextTendency) ?? node.color;
+  preview = null;
+  statusText = `Updated ${node.name} tendency to ${nextTendency}.`;
   render();
 }
 

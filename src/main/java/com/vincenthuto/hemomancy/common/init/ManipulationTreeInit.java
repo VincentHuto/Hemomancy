@@ -49,20 +49,20 @@ public class ManipulationTreeInit {
 		int ax = TREE_OFFSET_X;
 
 		// Row 0 (top) — SUMMA
-		register("blood_aneurysm",390,40, "deadly_gaze", "blood_cloud");
-		register("summon_avatar",470,40, "blood_cloud", "blood_rush");
+		register("blood_aneurysm",370,210, "blood_cloud");
+		register("summon_avatar",520,160, "blood_cloud", "blood_rush");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("deadly_gaze",350,110, "blood_shot");
-		register("blood_cloud",430,110, "blood_needle", "blood_shot");
-		register("summon_thrall",510,110, "blood_rush");
+		register("deadly_gaze",1130,150, "activation_potential");
+		register("blood_cloud",410,160, "blood_needle", "blood_shot");
+		register("summon_thrall",560,210, "blood_rush");
 
 		// Row 2 (bottom) — HUMILIS
-		register("blood_shot",350,180);
-		register("blood_needle",430,180);
-		register("blood_rush",510,180);
-		register("vital_effusion",590,180, "blood_rush");
-		register("conjure_blade",590,260, "vital_effusion")
+		register("blood_shot",410,280);
+		register("blood_needle",440,220);
+		register("blood_rush",490,220);
+		register("vital_effusion",520,280, "blood_rush");
+		register("conjure_blade",465,330, "vital_effusion")
 				.setSoftParents("conjure_staff");
 
 		// ═══════════════════════════════════════════
@@ -71,19 +71,19 @@ public class ManipulationTreeInit {
 		int fx = ax + COL_GAP * 3 + 160;  // gap after ANIMUS
 
 		// Row 0 (top) — SUMMA
-		register("ferric_transmutation",790,40, "blood_absorption", "blood_projection", "ferric_resonance");
+		register("ferric_transmutation",920,50, "blood_absorption", "blood_projection");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("blood_absorption",750,110, "venous_travel");
-		register("blood_projection",830,110, "venous_travel");
-		register("sanguine_excavation",910,110, "sanguine_mending");
-		register("ferric_resonance",990,110, "sanguine_mending", "sanguine_excavation");
+		register("blood_absorption",980,140);
+		register("blood_projection",980,50);
+		register("sanguine_excavation",860,50, "ferric_transmutation");
+		register("ferric_resonance",850,140, "sanguine_mending", "sanguine_excavation");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
-		register("venous_travel",750,180);
-		register("conjure_staff",830,180, "blood_projection");
-		register("sanguine_mending",910,180);
-		register("vascular_dowsing",990,180, "venous_travel");
+		register("venous_travel",1067,60, "activation_potential");
+		register("conjure_staff",1040,90, "blood_projection", "blood_absorption");
+		register("sanguine_mending",910,140);
+		register("vascular_dowsing",930,210, "sanguine_mending");
 
 		// ═══════════════════════════════════════════
 		//  DUCTILIS tendency cluster  (yellow / nervous)
@@ -91,15 +91,15 @@ public class ManipulationTreeInit {
 		int dx = fx + COL_GAP * 2 + 160;  // gap after FERRIC
 
 		// Row 0 (top) — MEDIOCRITAS
-		register("sanguine_ward",1070,40, "activation_potential");
+		register("sanguine_ward",1010,110, "activation_potential");
 
 		// Row 1 (middle) — MEDIOCRITAS root
-		register("activation_potential",1070,110, "crimson_harvest");
+		register("activation_potential",1060,160, "crimson_harvest");
 
 		// Row 2 (bottom) — HUMILIS
-		register("crimson_harvest",1070,180);
-		register("hemolymphal_pulse",1150,180, "activation_potential");
-		register("conjure_crossbow",1150,250, "hemolymphal_pulse")
+		register("crimson_harvest",990,170);
+		register("hemolymphal_pulse",1110,210, "activation_potential", "deadly_gaze");
+		register("conjure_crossbow",1050,260, "hemolymphal_pulse")
 				.setSoftParents("conjure_staff");
 
 		// ═══════════════════════════════════════════
@@ -108,14 +108,14 @@ public class ManipulationTreeInit {
 		int lx = dx + 160;  // gap after DUCTILIS
 
 		// Row 0 (top) — SUMMA
-		register("unclosing_eye",1270,40, "crimson_sight");
+		register("unclosing_eye",1260,70, "crimson_sight");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("crimson_sight",1270,110, "hemosynthesis", "blood_lamp");
+		register("crimson_sight",1270,160, "hemosynthesis", "blood_lamp");
 
 		// Row 2 (bottom) — HUMILIS
-		register("hemosynthesis",1230,180);
-		register("blood_lamp",1310,180);
+		register("hemosynthesis",1200,110);
+		register("blood_lamp",1330,110);
 		register("conjure_spear",1270,250, "crimson_sight")
 				.setSoftParents("conjure_staff");
 
@@ -126,29 +126,29 @@ public class ManipulationTreeInit {
 
 		// ── CONGEATIO (blue / cold) ──
 		// Row 0 (top) — SUMMA
-		register("osseous_bloom",1470,40, "glacial_bastion");
-		register("endless_hour",1550,40, "glacial_bastion");
+		register("osseous_bloom",1440,80, "glacial_bastion");
+		register("endless_hour",1510,30, "glacial_bastion");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("glacial_bastion",1510,110, "glacial_grasp", "cryogenic_pulse");
-		register("conjure_flail",1510,250, "glacial_bastion")
+		register("conjure_flail",1510,200, "glacial_bastion")
 				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
-		register("glacial_grasp",1470,180);
-		register("cryogenic_pulse",1550,180, "glacial_circulation");
-		register("glacial_circulation",1630,180);
+		register("glacial_grasp",1440,160);
+		register("cryogenic_pulse",1580,160, "glacial_circulation");
+		register("glacial_circulation",1580,80);
 
 		// ── FLAMMEUS (orange / fire) ──
 		int fmx = ex + COL_GAP * 3 + 80;  // gap after CONGEATIO (now wider)
 
 		// Row 0 (top) — SUMMA
-		register("vitric_combustion",1830,40, "pyretic_forge", "sanguine_ignition");
+		register("vitric_combustion",1830,50, "pyretic_forge");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("pyretic_forge",1790,110, "sanguine_ignition");
+		register("pyretic_forge",1800,110, "sanguine_ignition");
 		register("crimson_flame_conjuration",1870,180, "sanguine_ignition");
-		register("conjure_torch",1870,250, "crimson_flame_conjuration")
+		register("conjure_torch",1860,110, "crimson_flame_conjuration")
 				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
@@ -163,23 +163,23 @@ public class ManipulationTreeInit {
 		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
 		register("void_shroud",1950,110);
 		register("blood_eclipse",2030,110);
-		register("conjure_claws",1950,180, "void_shroud")
+		register("conjure_claws",1990,190, "void_shroud")
 				.setSoftParents("conjure_staff");
 
 		// ── MORTEM (dark green / death) ──
 		int mx = tx + COL_GAP * 2 + 80;  // gap after TENEBRIS
 
 		// Row 0 (top) — SUMMA
-		register("crimson_tithe",2190,40, "vital_reservoir", "exsanguinate");
-		register("bloom_of_rot",2270,40, "vital_reservoir", "hemorrhage", "exsanguinate");
+		register("crimson_tithe",2270,120, "exsanguinate");
+		register("bloom_of_rot",2300,0, "hemorrhage", "exsanguinate");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("vital_reservoir",2230,110, "hemorrhage", "exsanguinate");
+		register("vital_reservoir",2180,0, "hemorrhage", "exsanguinate");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS
-		register("hemorrhage",2190,180);
-		register("exsanguinate",2270,180);
-		register("conjure_axe",2270,250, "exsanguinate")
+		register("hemorrhage",2240,-30);
+		register("exsanguinate",2240,50, "hemorrhage");
+		register("conjure_axe",2210,120, "exsanguinate")
 				.setSoftParents("conjure_staff");
 	}
 

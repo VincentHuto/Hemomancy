@@ -96,6 +96,7 @@ function serveItemAsset(res: ServerResponse, fileName: string): void {
   const candidates = [
     `src/main/resources/assets/hemomancy/textures/item/${id}.png`,
     `src/main/resources/assets/hemomancy/textures/item/scars/${id}.png`,
+    `src/main/resources/assets/hemomancy/textures/item/memories/${id}.png`,
     `src/main/resources/assets/hemomancy/textures/item/memories/${id}_overlay.png`
   ];
   for (const candidate of candidates) {
