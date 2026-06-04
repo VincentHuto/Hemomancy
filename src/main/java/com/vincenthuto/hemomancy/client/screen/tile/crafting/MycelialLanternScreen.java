@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialLanternMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,8 +25,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     private static final int BORDER_INNER = 0xFF3A1A08;
     private static final int AMBER = 0xFFDD8822;
 
-    private static final int CRAFT_AREA_HEIGHT = 104;
-    private static final int INVENTORY_PANEL_WIDTH = 172;
+    private static final int CRAFT_AREA_HEIGHT = 108;
     private static final int TENDRIL_COUNT = 14;
     private static final int SPORE_COUNT = 28;
 
@@ -101,16 +101,18 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         renderFungalBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
         drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
-        int invPanelX = gx + this.inventoryLabelX - 5;
-        int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
-        int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
-        renderAmberGradientBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
+        Slot firstInventorySlot = this.menu.slots.get(MycelialLanternMenu.SLOT_COUNT);
+        InventoryPanelTextures.blit(gfx, InventoryPanelTextures.FUNGAL,
+                gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
         for (int i = 0; i < menu.slots.size(); i++) {
+            if (i >= MycelialLanternMenu.SLOT_COUNT) {
+                continue;
+            }
             Slot slot = menu.slots.get(i);
             int sx = gx + slot.x;
             int sy = gy + slot.y;
-            drawSlotBackground(gfx, sx, sy, i < MycelialLanternMenu.SLOT_COUNT ? slot.index : -1);
+            drawSlotBackground(gfx, sx, sy, slot.index);
         }
 
         renderProgress(gfx, gx, gy);
@@ -120,7 +122,6 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     @Override
     protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
         gfx.drawString(font, title, titleLabelX, 4, AMBER, false);
-        gfx.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF886633, false);
     }
 
     private void renderProgress(GuiGraphics gfx, int gx, int gy) {
@@ -273,25 +274,6 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
             int b = (int) (5 + 10 * p[4]);
             gfx.fill(sx, sy, sx + 1, sy + 1, (alpha << 24) | (r << 16) | (g << 8) | b);
         }
-    }
-
-    private void renderAmberGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-        for (int row = 0; row < h; row++) {
-            float t = (float) row / Math.max(h, 1);
-            int r = (int) (30 + 20 * t);
-            int g = (int) (16 + 12 * t);
-            int b = (int) (6 + 6 * t);
-            gfx.fill(x, y + row, x + w, y + row + 1, (0xEE << 24) | (r << 16) | (g << 8) | b);
-        }
-        drawInventoryBorder(gfx, x, y, w, h);
-    }
-
-    private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        gfx.fill(x, y, x + w, y + 1, BORDER_RED);
-        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
-        gfx.fill(x, y, x + 1, y + h, BORDER_RED);
-        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
     }
 
     private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {

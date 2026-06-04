@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
@@ -27,14 +28,13 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	// Border gradient endpoints
 	private static final int BORDER_RED = 0xFFAA2200;
 	private static final int BORDER_YELLOW = 0xFFCC8800;
+	private static final int BORDER_INNER = 0xFF3A1A08;
 
 	private static final int TENDRIL_COUNT = 18;
 	private static final int SPORE_COUNT = 40;
 
 	// Upper fungal area height (where scar slots sit)
-	private static final int FUNGAL_AREA_HEIGHT = 78;
-	private static final int INVENTORY_PANEL_WIDTH = 172;
-
+	private static final int FUNGAL_AREA_HEIGHT = 76;
 	private float[][] tendrilParams;
 	private float[][] sporeParams;
 	private int[][] speckleParams;
@@ -109,16 +109,16 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 		// ───── Fungal background for the upper scar area ─────
 		renderFungalBackground(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
-		drawGradientBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
+		drawBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
 
 		// ───── Dark amber gradient panel behind the inventory section ─────
-		int invPanelX = gx + this.inventoryLabelX - 5;
-		int invPanelY = gy + FUNGAL_AREA_HEIGHT + 2;
-		int invPanelH = gh - (FUNGAL_AREA_HEIGHT + 2) - 2;
-		renderAmberGradientBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
+		Slot firstInventorySlot = this.menu.slots.get(5);
+		InventoryPanelTextures.blit(gfx, InventoryPanelTextures.FUNGAL,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		// ───── Slot backgrounds ─────
-		for (Slot slot : this.menu.slots) {
+		for (int i = 0; i < 5; i++) {
+			Slot slot = this.menu.slots.get(i);
 			int sx = gx + slot.x;
 			int sy = gy + slot.y;
 			drawSlotBackground(gfx, sx, sy, slot);
@@ -136,7 +136,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		gfx.drawString(font, this.title, this.titleLabelX, 3, 0xFFDD8822, false);
 
 		// Inventory label
-		gfx.drawString(font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF886633, false);
 	}
 
 	// ───── Fungal-themed animated background ─────
@@ -310,69 +309,18 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	// ───── Red-to-yellow gradient border ─────
 
-	private void drawGradientBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		// Draw a 2px border with a vertical gradient from red (top) to yellow (bottom)
-		int redR = (BORDER_RED >> 16) & 0xFF, redG = (BORDER_RED >> 8) & 0xFF, redB = BORDER_RED & 0xFF;
-		int yelR = (BORDER_YELLOW >> 16) & 0xFF, yelG = (BORDER_YELLOW >> 8) & 0xFF, yelB = BORDER_YELLOW & 0xFF;
-
-		// Outer border - horizontal lines
-		for (int col = 0; col < w; col++) {
-			// Top edge: full red
-			gfx.fill(x + col, y, x + col + 1, y + 1, BORDER_RED);
-			gfx.fill(x + col, y + 1, x + col + 1, y + 2, darken(BORDER_RED, 0.7f));
-			// Bottom edge: full yellow
-			gfx.fill(x + col, y + h - 1, x + col + 1, y + h, BORDER_YELLOW);
-			gfx.fill(x + col, y + h - 2, x + col + 1, y + h - 1, darken(BORDER_YELLOW, 0.7f));
-		}
-
-		// Outer border - vertical lines with gradient
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h - 1, 1);
-			int r = (int) (redR + (yelR - redR) * t);
-			int g = (int) (redG + (yelG - redG) * t);
-			int b = (int) (redB + (yelB - redB) * t);
-			int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
-			int innerColor = darken(color, 0.7f);
-
-			// Left edge
-			gfx.fill(x, y + row, x + 1, y + row + 1, color);
-			gfx.fill(x + 1, y + row, x + 2, y + row + 1, innerColor);
-			// Right edge
-			gfx.fill(x + w - 1, y + row, x + w, y + row + 1, color);
-			gfx.fill(x + w - 2, y + row, x + w - 1, y + row + 1, innerColor);
-		}
-	}
-
-	private static int darken(int color, float factor) {
-		int a = (color >> 24) & 0xFF;
-		int r = (int) (((color >> 16) & 0xFF) * factor);
-		int g = (int) (((color >> 8) & 0xFF) * factor);
-		int b = (int) ((color & 0xFF) * factor);
-		return (a << 24) | (r << 16) | (g << 8) | b;
-	}
-
-	// ───── Dark amber inventory background ─────
-
-	private void renderAmberGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			// Warm dark amber gradient
-			int r = (int) (30 + 20 * t);
-			int g = (int) (16 + 12 * t);
-			int b = (int) (6 + 6 * t);
-			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-			gfx.fill(x, y + row, x + w, y + row + 1, color);
-		}
-		drawInventoryBorder(gfx, x, y, w, h);
-	}
-
-	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
 		gfx.fill(x, y, x + w, y + 1, BORDER_RED);
 		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
 		gfx.fill(x, y, x + 1, y + h, BORDER_RED);
 		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, 0xFF3A1A08);
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
+		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
+		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
+		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
 	}
+
+	// ───── Dark amber inventory background ─────
 
 	// ───── Slot background rendering ─────
 

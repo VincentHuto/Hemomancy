@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.Objects;
 
 public class ScarStationMenu extends AbstractContainerMenu {
+	private static final int TOP_CONTENT_Y_OFFSET = -4;
+
 	private final ScarStationBlockEntity te;
 	public int[] activatedScars;
 
@@ -30,11 +32,11 @@ public class ScarStationMenu extends AbstractContainerMenu {
 		super(ContainerInit.scar_station.get(), windowId);
 		this.te = te;
 		// SLOTS
-		addSlot(new ScarStationSlot(te, 3, 8, 14));
-		addSlot(new Slot(te, 0, 8, 18 + 1 * 18));
-		addSlot(new Slot(te, 1, 8, 22 + 2 * 18));
-		addSlot(new ScarPatternSlot(te, 4, 8, 26 + 3 * 18));
-		addSlot(new OutputSlot(te, 2, 145, 44));
+		addSlot(new ScarStationSlot(te, 3, 8, 14 + TOP_CONTENT_Y_OFFSET));
+		addSlot(new Slot(te, 0, 8, 18 + 1 * 18 + TOP_CONTENT_Y_OFFSET));
+		addSlot(new Slot(te, 1, 8, 22 + 2 * 18 + TOP_CONTENT_Y_OFFSET));
+		addSlot(new ScarPatternSlot(te, 4, 8, 26 + 3 * 18 + TOP_CONTENT_Y_OFFSET));
+		addSlot(new OutputSlot(te, 2, 145, 44 + TOP_CONTENT_Y_OFFSET));
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {

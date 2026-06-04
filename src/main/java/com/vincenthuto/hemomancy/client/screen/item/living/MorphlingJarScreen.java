@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
@@ -33,11 +34,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 	private static final int DISPLAY_Y = 18;
 	private static final int DISPLAY_W = 116;
 	private static final int DISPLAY_H = 76;
-	private static final int TOP_AREA_HEIGHT = 112;
-	private static final int INVENTORY_PANEL_X = MorphlingJarMenu.PLAYER_INV_X - 4;
-	private static final int INVENTORY_PANEL_Y = TOP_AREA_HEIGHT + 2;
-	private static final int INVENTORY_PANEL_W = 9 * 18 + 8;
-	private static final int INVENTORY_PANEL_H = MorphlingJarMenu.SCREEN_HEIGHT - INVENTORY_PANEL_Y - 8;
+	private static final int TOP_AREA_HEIGHT = 116;
 	private static final int ICON = 16;
 	private static final int HIT_R = 14;
 	private static final int VEIN_COUNT = 22;
@@ -151,14 +148,16 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 
 		renderVeinBackground(graphics, gx, gy, this.imageWidth, TOP_AREA_HEIGHT, time);
 		drawBorder(graphics, gx, gy, this.imageWidth, TOP_AREA_HEIGHT);
-		int invX = gx + INVENTORY_PANEL_X;
-		int invY = gy + INVENTORY_PANEL_Y;
-		renderInventoryBackground(graphics, invX, invY, INVENTORY_PANEL_W, INVENTORY_PANEL_H);
-		drawInventoryBorder(graphics, invX, invY, INVENTORY_PANEL_W, INVENTORY_PANEL_H);
+		Slot firstInventorySlot = this.menu.slots.get(this.menu.slotcount);
+		InventoryPanelTextures.blit(graphics, InventoryPanelTextures.MORPHIC,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		renderDisplayFrame(graphics, gx + DISPLAY_X, gy + DISPLAY_Y, DISPLAY_W, DISPLAY_H, time);
 
 		for (int menuIndex = 0; menuIndex < this.menu.slots.size(); menuIndex++) {
+			if (menuIndex >= this.menu.slotcount) {
+				continue;
+			}
 			Slot slot = this.menu.slots.get(menuIndex);
 			boolean jarSlot = menuIndex < this.menu.slotcount;
 			boolean activeSlot = jarSlot && menuIndex == this.activeIndex;
@@ -171,8 +170,6 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 		int titleWidth = this.font.width(this.title);
 		graphics.drawString(this.font, this.title, (this.imageWidth - titleWidth) / 2, this.titleLabelY,
 				0xFF9BCB8D, false);
-		graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-				0xFF5B8A57, false);
 		if (this.menu.slotcount > 0) {
 			String fillText = this.menu.getFilledSlotCount() + "/" + this.menu.slotcount;
 			graphics.drawString(this.font, fillText, DISPLAY_X + DISPLAY_W - this.font.width(fillText) - 4,
@@ -291,17 +288,6 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 		graphics.fill(x + w - thickness, y, x + w, y + h, color);
 	}
 
-	private void renderInventoryBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			int red = (int) (5 + 18 * t);
-			int green = (int) (20 + 44 * t);
-			int blue = (int) (8 + 16 * t);
-			graphics.fill(x, y + row, x + w, y + row + 1,
-					(0xFF << 24) | (red << 16) | (green << 8) | blue);
-		}
-	}
-
 	private void drawSlotBackground(GuiGraphics graphics, int sx, int sy, boolean jarSlot, boolean activeSlot) {
 		graphics.fill(sx - 1, sy - 1, sx + 17, sy + 17, activeSlot ? SLOT_BORDER_ACTIVE : SLOT_BORDER_DARK);
 		graphics.fill(sx, sy, sx + 16, sy + 16, jarSlot ? SLOT_BG_JAR : SLOT_BG);
@@ -310,14 +296,6 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 		if (jarSlot) {
 			graphics.fill(sx, sy, sx + 16, sy + 16, activeSlot ? 0x33FFD76A : 0x220BAA42);
 		}
-	}
-
-	private void drawInventoryBorder(GuiGraphics graphics, int x, int y, int w, int h) {
-		graphics.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		graphics.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		graphics.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
 	}
 
 	private void drawBorder(GuiGraphics graphics, int x, int y, int w, int h) {

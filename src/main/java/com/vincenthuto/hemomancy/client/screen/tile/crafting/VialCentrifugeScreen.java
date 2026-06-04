@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -31,7 +32,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	private static final int BORDER_INNER = 0xFF220606;
 
 	private static final int CRAFT_AREA_HEIGHT = 114;
-	private static final int INVENTORY_PANEL_WIDTH = 172;
 	private static final int VEIN_COUNT = 20;
 
 	// Ring center for the vial slot arrangement (in GUI-relative coords)
@@ -124,13 +124,13 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ── Red gradient panel behind inventory section ──
-		int invPanelX = gx + this.inventoryLabelX - 5;
-		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
-		int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
-		renderInventoryBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
+		Slot firstInventorySlot = this.menu.slots.get(VialCentrifugeMenu.SLOT_COUNT);
+		InventoryPanelTextures.blit(gfx, InventoryPanelTextures.BLOODY,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		// ── Draw slot backgrounds ──
-		for (Slot slot : this.menu.slots) {
+		for (int i = 0; i < VialCentrifugeMenu.SLOT_COUNT; i++) {
+			Slot slot = this.menu.slots.get(i);
 			int sx = gx + slot.x;
 			int sy = gy + slot.y;
 			drawSlotBackground(gfx, sx, sy, slot.index);
@@ -148,8 +148,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 	@Override
 	protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
+		gfx.drawString(font, this.title, this.titleLabelX, 4, 0xFFAA2222, false);
 		// Inventory label
-		gfx.drawString(font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF444444, false);
 
 		// Status text — bottom right of craft area
 		if (this.menu.isSpinning()) {
@@ -160,26 +160,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	}
 
 	// ───── Red gradient inventory background ─────
-
-	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			int r = (int) (26 + 44 * t);
-			int g = (int) (4 + 12 * t);
-			int b = (int) (6 + 14 * t);
-			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-			gfx.fill(x, y + row, x + w, y + row + 1, color);
-		}
-		drawInventoryBorder(gfx, x, y, w, h);
-	}
-
-	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-	}
 
 	// ───── Slot backgrounds ─────
 

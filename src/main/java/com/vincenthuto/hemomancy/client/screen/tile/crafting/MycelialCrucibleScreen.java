@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.MycelialCrucibleBlockEntity;
@@ -30,12 +31,13 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
     // ── Layout constants ──────────────────────────────────────────────────────
     private static final int CRAFT_AREA_HEIGHT = 116;
-    private static final int INVENTORY_PANEL_WIDTH = 172;
 
     // ── Colour palette (amber / orange — matching SporeImplantScreen) ─────────
     private static final int BG_BASE          = 0xFF1A0D04;  // dark amber base
-    private static final int BORDER_OUTER     = 0xFFAA2200;  // red-orange outer border
-    private static final int BORDER_INNER     = 0xFF3A1208;  // darker inner border
+    private static final int BORDER_RED       = 0xFFAA2200;
+    private static final int BORDER_YELLOW    = 0xFFCC8800;
+    private static final int BORDER_INNER     = 0xFF3A1A08;
+    private static final int AMBER            = 0xFFDD8822;
     private static final int SLOT_BG          = 0xFF2A1508;
     private static final int SLOT_BORDER_DARK = 0xFF140A02;
     private static final int SLOT_BORDER_LITE = 0xFF4A2A10;
@@ -105,13 +107,13 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
         // Lower inventory area
-        int invPanelX = gx + this.inventoryLabelX - 5;
-        int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
-        int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
-        renderInventoryBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
+        Slot firstInventorySlot = this.menu.slots.get(MycelialCrucibleMenu.SLOT_COUNT);
+        InventoryPanelTextures.blit(gfx, InventoryPanelTextures.FUNGAL,
+                gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
         // Slot decorations
-        for (Slot slot : menu.slots) {
+        for (int i = 0; i < MycelialCrucibleMenu.SLOT_COUNT; i++) {
+            Slot slot = menu.slots.get(i);
             drawSlotBg(gfx, gx + slot.x, gy + slot.y, slot.index);
         }
 
@@ -127,7 +129,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
     @Override
     protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
-        gfx.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF886633, false);
+        gfx.drawString(font, title, titleLabelX, 4, AMBER, false);
         int mode = menu.getMode();
         if (mode == 1) {
             String txt = "Implanting...";
@@ -221,26 +223,6 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
     // ── Inventory background ──────────────────────────────────────────────────
 
-    private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-        for (int row = 0; row < h; row++) {
-            float t = (float) row / Math.max(h, 1);
-            // Warm dark amber gradient (matching SporeImplantScreen)
-            int r = (int) (30 + 20 * t);
-            int g = (int) (16 + 12 * t);
-            int b = (int) (6  +  6 * t);
-            gfx.fill(x, y + row, x + w, y + row + 1, (0xEE << 24) | (r << 16) | (g << 8) | b);
-        }
-        drawInventoryBorder(gfx, x, y, w, h);
-    }
-
-    private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-        gfx.fill(x, y + h - 1, x + w, y + h, 0xFFCC6600);
-        gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-        gfx.fill(x + w - 1, y, x + w, y + h, 0xFFCC6600);
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-    }
-
     // ── Slot decorations ──────────────────────────────────────────────────────
 
     private void drawSlotBg(GuiGraphics gfx, int sx, int sy, int slotIndex) {
@@ -318,7 +300,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         int filled     = (int) (barW * fraction);
 
         // Background track
-        gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_OUTER);
+        gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_RED);
         gfx.fill(barX, barY, barX + barW, barY + barH, 0xFF0B130A);
 
         // Fill
@@ -357,7 +339,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         int barY = gy + 74 - barH - 4;
         if (BloodVolumeBarWidget.Bounds.EMPTY != null) {
             bloodBarBounds = BloodVolumeBarWidget.render(gfx, barX, barY, barW, barH,
-                    te.getBloodVolume(), te.getMaxBloodVolume(), animTime, BORDER_OUTER, BORDER_INNER);
+                    te.getBloodVolume(), te.getMaxBloodVolume(), animTime, BORDER_RED, BORDER_INNER);
             return;
         }
 
@@ -368,7 +350,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         double ratio  = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
         // Frame
-        gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_OUTER);
+        gfx.fill(barX - 2, barY - 2, barX + barW + 2, barY + barH + 2, BORDER_RED);
         gfx.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, BORDER_INNER);
         gfx.fill(barX, barY, barX + barW, barY + barH, 0xFF040902);
 
@@ -401,10 +383,10 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
     // ── Border ────────────────────────────────────────────────────────────────
 
     private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-        gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+        gfx.fill(x, y, x + w, y + 1, BORDER_RED);
+        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
+        gfx.fill(x, y, x + 1, y + h, BORDER_RED);
+        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
         gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
         gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
         gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);

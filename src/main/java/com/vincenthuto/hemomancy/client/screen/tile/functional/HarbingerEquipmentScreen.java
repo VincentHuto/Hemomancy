@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
@@ -30,8 +31,6 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	private static final int BORDER_INNER = 0xFF220606;
 
 	private static final int VANITY_AREA_HEIGHT = 108;
-	private static final int INVENTORY_PANEL_X = 22;
-	private static final int INVENTORY_PANEL_W = 170;
 	private static final int MIRROR_X = 82;
 	private static final int MIRROR_Y = 13;
 	private static final int MIRROR_W = 74;
@@ -115,12 +114,15 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		renderMirrorPanel(gfx, gx, gy);
 		renderSlotRails(gfx, gx, gy);
 
-		int invX = gx + INVENTORY_PANEL_X;
-		int invTop = gy + VANITY_AREA_HEIGHT + 4;
-		int invH = this.imageHeight - VANITY_AREA_HEIGHT - 8;
-		renderInventoryBackground(gfx, invX, invTop, INVENTORY_PANEL_W, invH);
+		Slot firstInventorySlot = this.menu.slots.get(7);
+		InventoryPanelTextures.blit(gfx, InventoryPanelTextures.BLOODY,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
-		for (Slot slot : this.menu.slots) {
+		for (int i = 0; i < this.menu.slots.size(); i++) {
+			if (i >= 7 && i <= 42) {
+				continue;
+			}
+			Slot slot = this.menu.slots.get(i);
 			drawSlotBackground(gfx, gx + slot.x, gy + slot.y, slot);
 		}
 
@@ -137,8 +139,6 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
 		Component screenTitle = getScreenTitle();
 		gfx.drawString(font, screenTitle, (this.imageWidth - font.width(screenTitle)) / 2, 5, 0xFFAA2222, true);
-		gfx.drawString(font, this.playerInventory.getDisplayName(), this.inventoryLabelX, this.inventoryLabelY,
-				0xFF442222, false);
 	}
 
 	private Component getScreenTitle() {
@@ -205,17 +205,6 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 				gfx.blit(EMPTY_JAR_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 			}
 		}
-	}
-
-	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			int r = (int) (36 + 70 * t);
-			int g = (int) (6 + 22 * t);
-			int b = (int) (7 + 18 * t);
-			gfx.fill(x, y + row, x + w, y + row + 1, (0xEE << 24) | (r << 16) | (g << 8) | b);
-		}
-		drawInventoryBorder(gfx, x, y, w, h);
 	}
 
 	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {

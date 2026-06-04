@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
@@ -43,8 +44,8 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;
 
-	private static final int CRAFT_AREA_HEIGHT = 100;
-	private static final int INVENTORY_PANEL_WIDTH = 172;
+	private static final int CRAFT_AREA_HEIGHT = 96;
+	private static final int TOP_CONTENT_Y_OFFSET = -4;
 	private static final int VEIN_COUNT = 14;
 
 	private final Inventory playerInv;
@@ -204,10 +205,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		graphics.drawString(font, titleText,
 				(this.imageWidth - font.width(titleText)) / 2, 4, 0xFFAA2222, true);
 
-		// Inventory label
-		graphics.drawString(font, this.playerInv.getDisplayName(), 8, CRAFT_AREA_HEIGHT + 7,
-				0xFF444444, false);
-
 		if (te.hasValidRecipe()) {
 			ScarRecipe currentRecipe = te.getCurrentRecipe();
 
@@ -292,14 +289,13 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		drawBorder(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ── Lower inventory area: red gradient background ──
-		int invPanelX = gx + 3;
-		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
-		int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
-		renderInventoryBackground(graphics, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
+		Slot firstInventorySlot = this.menu.slots.get(5);
+		InventoryPanelTextures.blit(graphics, InventoryPanelTextures.BLOODY,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		// ── scar grid recessed area ──
 		int gridX = gx + 49;
-		int gridY = gy + 25;
+		int gridY = gy + 25 + TOP_CONTENT_Y_OFFSET;
 		int gridW = 66;
 		int gridH = 66;
 		// Recessed border around the scar grid area
@@ -308,7 +304,8 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		graphics.fill(gridX, gridY, gridX + gridW, gridY + gridH, 0xFF080204);
 
 		// ── Draw slot backgrounds ──
-		for (Slot slot : this.menu.slots) {
+		for (int i = 0; i < 5; i++) {
+			Slot slot = this.menu.slots.get(i);
 			int sx = gx + slot.x;
 			int sy = gy + slot.y;
 			drawSlotBackground(graphics, sx, sy, slot);
@@ -354,26 +351,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	}
 
 	// ───── Red gradient inventory background ─────
-
-	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			int r = (int) (26 + 44 * t);
-			int g = (int) (4 + 12 * t);
-			int b = (int) (6 + 14 * t);
-			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-			gfx.fill(x, y + row, x + w, y + row + 1, color);
-		}
-		drawInventoryBorder(gfx, x, y, w, h);
-	}
-
-	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-	}
 
 	// ───── Procedural animated vein background ─────
 	private float animTime = 0f;
@@ -764,7 +741,8 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		for (int i = 0; i < scarbuttonArray.length; i++) {
 			for (int j = 0; j < scarbuttonArray.length; j++) {
 				this.addRenderableWidget(scarbuttonArray[i][j] = new ScarButton(GUI_Chisel, inc, i, j,
-						left + guiWidth - (guiWidth - 50 - (j * 8)), top + guiHeight - (160 - (i * 8)), 8, 8, 176, 0,
+						left + guiWidth - (guiWidth - 50 - (j * 8)),
+						top + guiHeight - (160 - (i * 8)) + TOP_CONTENT_Y_OFFSET, 8, 8, 176, 0,
 						te.scarsList[i][j] != 0, (press) -> {
 							// Handled by click-and-drag system in mouseClicked/mouseDragged/mouseReleased
 						}));
@@ -774,7 +752,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 		// Themed action buttons
 		this.addRenderableWidget(clearButton = new ScarActionButton(
-				left + 120, top + 16, 16, 16,
+				left + 120, top + 16 + TOP_CONTENT_Y_OFFSET, 16, 16,
 				ScarActionButton.IconType.CLEAR, (press) -> {
 					pattern = ScarRecipe.blank();
 					preview = ScarRecipe.blank();
@@ -782,7 +760,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 					PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 				}));
 		this.addRenderableWidget(ScarButton = new ScarActionButton(
-				left + 120, top + 36, 16, 16,
+				left + 120, top + 36 + TOP_CONTENT_Y_OFFSET, 16, 16,
 				ScarActionButton.IconType.CHISEL, (press) -> {
 					if (te.contents.get(3).getItem() != Items.AIR) {
 						PacketHandler.sendToServer(new PacketScarCraftingEvent());
@@ -793,7 +771,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 					}
 				}));
 		this.addRenderableWidget(loadPatternButton = new ScarActionButton(
-				left + 28, top + 80, 16, 16,
+				left + 28, top + 80 + TOP_CONTENT_Y_OFFSET, 16, 16,
 				ScarActionButton.IconType.LOAD, (press) -> {
 					ItemStack patternStack = te.getItem(4);
 					if (patternStack.getItem() instanceof ItemScarPattern scarPattern) {

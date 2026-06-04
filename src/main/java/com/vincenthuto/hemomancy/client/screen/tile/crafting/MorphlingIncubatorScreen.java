@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
@@ -26,7 +27,6 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 
 	// Working area is now taller: 96px craft area, then inventory below
 	private static final int CRAFT_AREA_HEIGHT = 96;
-	private static final int INVENTORY_PANEL_WIDTH = 172;
 
 	final MorphlingIncubatorBlockEntity te;
 	private float[][] veinParams;
@@ -95,13 +95,13 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ───── Red gradient panel behind inventory section ─────
-		int invPanelX = gx + this.inventoryLabelX - 5;
-		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
-		int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
-		renderInventoryBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
+		Slot firstInventorySlot = this.menu.slots.get(MorphlingIncubatorMenu.SLOT_COUNT);
+		InventoryPanelTextures.blit(gfx, InventoryPanelTextures.BLOODY,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		// ───── Draw slot backgrounds for all slots ─────
-		for (Slot slot : this.menu.slots) {
+		for (int i = 0; i < MorphlingIncubatorMenu.SLOT_COUNT; i++) {
+			Slot slot = this.menu.slots.get(i);
 			int sx = gx + slot.x;
 			int sy = gy + slot.y;
 			drawSlotBackground(gfx, sx, sy, slot.index);
@@ -124,10 +124,9 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 	@Override
 	protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
 		// Title centered in the craft area
-		//gfx.drawString(font, this.title, this.titleLabelX, 4, 0xFFAA2222, false);
+		gfx.drawString(font, this.title, this.titleLabelX, 4, 0xFFAA2222, false);
 
 		// Inventory label
-		gfx.drawString(font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF444444, false);
 
 		// Mode indicator text — bottom right of craft area
 		int mode = this.menu.getMode();
@@ -143,28 +142,6 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 	}
 
 	// ───── Red gradient inventory background ─────
-
-	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-		// Render a vertical gradient from darker red at top to lighter at bottom
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			// Dark blood-red at top → muted lighter red at bottom
-			int r = (int) (26 + 44 * t);
-			int g = (int) (4 + 12 * t);
-			int b = (int) (6 + 14 * t);
-			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
-			gfx.fill(x, y + row, x + w, y + row + 1, color);
-		}
-		drawInventoryBorder(gfx, x, y, w, h);
-	}
-
-	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-	}
 
 	// ───── Slot background rendering ─────
 

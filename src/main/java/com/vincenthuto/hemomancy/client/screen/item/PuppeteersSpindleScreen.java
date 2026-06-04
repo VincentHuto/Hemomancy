@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -29,8 +30,8 @@ import java.util.Random;
 
 public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersSpindleMenu> {
 	private static final int GUI_WIDTH = 276;
-	private static final int GUI_HEIGHT = 232;
-	private static final int CRAFT_AREA_HEIGHT = 136;
+	private static final int GUI_HEIGHT = 234;
+	private static final int CRAFT_AREA_HEIGHT = 146;
 	private static final int VEIN_COUNT = 10;
 	private static final int INPUT_X = 10;
 	private static final int PATTERN_X = 110;
@@ -40,8 +41,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 	private static final int PATTERN_W = 104;
 	private static final int WORK_W = 42;
 	private static final int PANEL_H = 102;
-	private static final int INVENTORY_PANEL_W = 172;
-
 	private static final int SLOT_BG = 0xFF1A0808;
 	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
 	private static final int SLOT_BORDER_LIGHT = 0xFF4A151B;
@@ -158,12 +157,12 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		drawPanel(graphics, gx + PATTERN_X, gy + PANEL_Y, PATTERN_W, PANEL_H);
 		drawPanel(graphics, gx + WORK_X, gy + PANEL_Y, WORK_W, PANEL_H);
 		drawBorder(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
-		int invPanelX = gx + inventoryLabelX - 5;
-		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
-		renderInventoryBackground(graphics, invPanelX, invPanelY,
-				INVENTORY_PANEL_W, imageHeight - (CRAFT_AREA_HEIGHT + 2) - 2);
+		Slot firstInventorySlot = this.menu.slots.get(PuppeteersSpindleMenu.SLOT_COUNT);
+		InventoryPanelTextures.blit(graphics, InventoryPanelTextures.BLOODY,
+				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
-		for (Slot slot : menu.slots) {
+		for (int i = 0; i < PuppeteersSpindleMenu.SLOT_COUNT; i++) {
+			Slot slot = menu.slots.get(i);
 			drawSlotBackground(graphics, gx + slot.x, gy + slot.y, slot.index);
 		}
 
@@ -184,8 +183,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 				PATTERN_X + 7, PANEL_Y + 8, PATTERN_W - 14, TEXT_MUTED);
 		drawTrimmedString(graphics, Component.translatable("screen.hemomancy.puppeteers_spindle.work"),
 				WORK_X + 7, PANEL_Y + 8, WORK_W - 14, TEXT_MUTED);
-		graphics.drawString(font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY,
-				0xFF452126, false);
 	}
 
 	private void renderMeters(GuiGraphics graphics, int gx, int gy) {
@@ -353,26 +350,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 	private void drawTrimmedString(GuiGraphics graphics, String text, int x, int y, int maxWidth, int color) {
 		graphics.drawString(font, trimToWidth(text, maxWidth), x, y, color, false);
-	}
-
-	private void renderInventoryBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-		for (int row = 0; row < h; row++) {
-			float t = (float) row / Math.max(h, 1);
-			int red = (int) (26 + 44 * t);
-			int green = (int) (4 + 12 * t);
-			int blue = (int) (6 + 14 * t);
-			graphics.fill(x, y + row, x + w, y + row + 1,
-					(0xEE << 24) | (red << 16) | (green << 8) | blue);
-		}
-		drawInventoryBorder(graphics, x, y, w, h);
-	}
-
-	private void drawInventoryBorder(GuiGraphics graphics, int x, int y, int w, int h) {
-		graphics.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		graphics.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		graphics.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
 	}
 
 	private void drawBorder(GuiGraphics graphics, int x, int y, int w, int h) {
