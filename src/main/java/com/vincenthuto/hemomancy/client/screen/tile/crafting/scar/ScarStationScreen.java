@@ -44,6 +44,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	private static final int BORDER_INNER = 0xFF220606;
 
 	private static final int CRAFT_AREA_HEIGHT = 100;
+	private static final int INVENTORY_PANEL_WIDTH = 172;
 	private static final int VEIN_COUNT = 14;
 
 	private final Inventory playerInv;
@@ -204,7 +205,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 				(this.imageWidth - font.width(titleText)) / 2, 4, 0xFFAA2222, true);
 
 		// Inventory label
-		graphics.drawString(font, this.playerInv.getDisplayName(), 8, this.imageHeight - 92,
+		graphics.drawString(font, this.playerInv.getDisplayName(), 8, CRAFT_AREA_HEIGHT + 7,
 				0xFF444444, false);
 
 		if (te.hasValidRecipe()) {
@@ -291,13 +292,10 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		drawBorder(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ── Lower inventory area: red gradient background ──
-		int invTop = gy + CRAFT_AREA_HEIGHT;
-		int invH = gh - CRAFT_AREA_HEIGHT;
-		renderRedGradientBackground(graphics, gx, invTop, gw, invH);
-
-		// Separator border between crafting and inventory areas
-		graphics.fill(gx, invTop, gx + gw, invTop + 1, BORDER_OUTER);
-		graphics.fill(gx, invTop + 1, gx + gw, invTop + 2, BORDER_INNER);
+		int invPanelX = gx + 3;
+		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
+		int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
+		renderInventoryBackground(graphics, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
 
 		// ── scar grid recessed area ──
 		int gridX = gx + 49;
@@ -357,15 +355,24 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 	// ───── Red gradient inventory background ─────
 
-	private void renderRedGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
 		for (int row = 0; row < h; row++) {
-			float t = (float) row / h;
-			int r = (int) (60 + 100 * t);
-			int g = (int) (10 + 40 * t);
-			int b = (int) (10 + 30 * t);
-			int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
+			float t = (float) row / Math.max(h, 1);
+			int r = (int) (26 + 44 * t);
+			int g = (int) (4 + 12 * t);
+			int b = (int) (6 + 14 * t);
+			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
 			gfx.fill(x, y + row, x + w, y + row + 1, color);
 		}
+		drawInventoryBorder(gfx, x, y, w, h);
+	}
+
+	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
 	}
 
 	// ───── Procedural animated vein background ─────

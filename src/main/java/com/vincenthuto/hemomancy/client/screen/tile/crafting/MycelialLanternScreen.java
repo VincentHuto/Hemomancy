@@ -25,6 +25,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     private static final int AMBER = 0xFFDD8822;
 
     private static final int CRAFT_AREA_HEIGHT = 104;
+    private static final int INVENTORY_PANEL_WIDTH = 172;
     private static final int TENDRIL_COUNT = 14;
     private static final int SPORE_COUNT = 28;
 
@@ -39,7 +40,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         super(menu, inv, title);
         this.imageWidth = 176;
         this.imageHeight = 198;
-        this.inventoryLabelY = CRAFT_AREA_HEIGHT + 2;
+        this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
     }
 
     @Override
@@ -100,10 +101,10 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         renderFungalBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
         drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
-        int invTop = gy + CRAFT_AREA_HEIGHT;
-        renderAmberGradientBackground(gfx, gx, invTop, gw, gh - CRAFT_AREA_HEIGHT);
-        gfx.fill(gx, invTop, gx + gw, invTop + 1, BORDER_RED);
-        gfx.fill(gx, invTop + 1, gx + gw, invTop + 2, BORDER_INNER);
+        int invPanelX = gx + this.inventoryLabelX - 5;
+        int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
+        int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
+        renderAmberGradientBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
 
         for (int i = 0; i < menu.slots.size(); i++) {
             Slot slot = menu.slots.get(i);
@@ -114,7 +115,6 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
 
         renderProgress(gfx, gx, gy);
         renderBloodBar(gfx, gx, gy);
-        drawBorder(gfx, gx, gy, gw, gh);
     }
 
     @Override
@@ -277,12 +277,21 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
 
     private void renderAmberGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
         for (int row = 0; row < h; row++) {
-            float t = (float) row / h;
+            float t = (float) row / Math.max(h, 1);
             int r = (int) (30 + 20 * t);
             int g = (int) (16 + 12 * t);
             int b = (int) (6 + 6 * t);
-            gfx.fill(x, y + row, x + w, y + row + 1, (0xFF << 24) | (r << 16) | (g << 8) | b);
+            gfx.fill(x, y + row, x + w, y + row + 1, (0xEE << 24) | (r << 16) | (g << 8) | b);
         }
+        drawInventoryBorder(gfx, x, y, w, h);
+    }
+
+    private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+        gfx.fill(x, y, x + w, y + 1, BORDER_RED);
+        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
+        gfx.fill(x, y, x + 1, y + h, BORDER_RED);
+        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
     }
 
     private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {

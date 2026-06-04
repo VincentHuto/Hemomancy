@@ -26,6 +26,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 
 	// Working area is now taller: 96px craft area, then inventory below
 	private static final int CRAFT_AREA_HEIGHT = 96;
+	private static final int INVENTORY_PANEL_WIDTH = 172;
 
 	final MorphlingIncubatorBlockEntity te;
 	private float[][] veinParams;
@@ -38,7 +39,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		this.te = menu.getTe();
 		this.imageWidth = 176;
 		this.imageHeight = 186; // taller to accommodate bigger working area
-		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 2; // push inventory label down
+		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7; // push inventory label down
 	}
 
 	@Override
@@ -94,13 +95,10 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ───── Red gradient panel behind inventory section ─────
-		int invTop = gy + CRAFT_AREA_HEIGHT;
-		int invH = gh - CRAFT_AREA_HEIGHT;
-		renderRedGradientBackground(gfx, gx, invTop, gw, invH);
-
-		// Separator border between crafting area and inventory
-		gfx.fill(gx, invTop, gx + gw, invTop + 1, BORDER_OUTER);
-		gfx.fill(gx, invTop + 1, gx + gw, invTop + 2, BORDER_INNER);
+		int invPanelX = gx + this.inventoryLabelX - 5;
+		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
+		int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
+		renderInventoryBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
 
 		// ───── Draw slot backgrounds for all slots ─────
 		for (Slot slot : this.menu.slots) {
@@ -146,17 +144,26 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 
 	// ───── Red gradient inventory background ─────
 
-	private void renderRedGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
 		// Render a vertical gradient from darker red at top to lighter at bottom
 		for (int row = 0; row < h; row++) {
-			float t = (float) row / h;
+			float t = (float) row / Math.max(h, 1);
 			// Dark blood-red at top → muted lighter red at bottom
-			int r = (int) (60 + 100 * t);
-			int g = (int) (10 + 40 * t);
-			int b = (int) (10 + 30 * t);
-			int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
+			int r = (int) (26 + 44 * t);
+			int g = (int) (4 + 12 * t);
+			int b = (int) (6 + 14 * t);
+			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
 			gfx.fill(x, y + row, x + w, y + row + 1, color);
 		}
+		drawInventoryBorder(gfx, x, y, w, h);
+	}
+
+	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
 	}
 
 	// ───── Slot background rendering ─────

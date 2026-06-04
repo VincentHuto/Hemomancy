@@ -28,6 +28,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	private static final int BORDER_INNER = 0xFF172028;
 
 	private static final int CRAFT_AREA_HEIGHT = 80;
+	private static final int INVENTORY_PANEL_WIDTH = 172;
 	private static final int RHOMBUS_COUNT     = 5;
 
 	final PallidRetortBlockEntity te;
@@ -40,7 +41,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		this.te = menu.getTe();
 		this.imageWidth = 176;
 		this.imageHeight = 176;
-		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 2;
+		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
 	}
 
 	@Override
@@ -87,13 +88,10 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
 		// ── Blue/silver gradient panel behind inventory section ──
-		int invTop = gy + CRAFT_AREA_HEIGHT;
-		int invH = gh - CRAFT_AREA_HEIGHT;
-		renderBlueGradientBackground(gfx, gx, invTop, gw, invH);
-
-		// Separator border
-		gfx.fill(gx, invTop, gx + gw, invTop + 1, BORDER_OUTER);
-		gfx.fill(gx, invTop + 1, gx + gw, invTop + 2, BORDER_INNER);
+		int invPanelX = gx + this.inventoryLabelX - 5;
+		int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
+		int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
+		renderInventoryBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
 
 		// ── Draw slot backgrounds ──
 		for (Slot slot : this.menu.slots) {
@@ -129,15 +127,24 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 
 	// ───── Blue/silver gradient inventory background ─────
 
-	private void renderBlueGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
 		for (int row = 0; row < h; row++) {
-			float t = (float) row / h;
-			int r = (int) (40 + 90 * t);
-			int g = (int) (52 + 98 * t);
-			int b = (int) (62 + 105 * t);
-			int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
+			float t = (float) row / Math.max(h, 1);
+			int r = (int) (22 + 38 * t);
+			int g = (int) (30 + 44 * t);
+			int b = (int) (38 + 54 * t);
+			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
 			gfx.fill(x, y + row, x + w, y + row + 1, color);
 		}
+		drawInventoryBorder(gfx, x, y, w, h);
+	}
+
+	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
 	}
 
 	// ───── Slot backgrounds ─────

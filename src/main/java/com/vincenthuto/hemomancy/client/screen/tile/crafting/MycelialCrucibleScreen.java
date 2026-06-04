@@ -30,6 +30,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
     // ── Layout constants ──────────────────────────────────────────────────────
     private static final int CRAFT_AREA_HEIGHT = 116;
+    private static final int INVENTORY_PANEL_WIDTH = 172;
 
     // ── Colour palette (amber / orange — matching SporeImplantScreen) ─────────
     private static final int BG_BASE          = 0xFF1A0D04;  // dark amber base
@@ -53,7 +54,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         this.te          = menu.getTe();
         this.imageWidth  = 176;
         this.imageHeight = 206;
-        this.inventoryLabelY = CRAFT_AREA_HEIGHT + 2;
+        this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
     }
 
     @Override
@@ -104,13 +105,10 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
         // Lower inventory area
-        int invTop = gy + CRAFT_AREA_HEIGHT;
-        int invH   = gh - CRAFT_AREA_HEIGHT;
-        renderInventoryBackground(gfx, gx, invTop, gw, invH);
-
-        // Separator
-        gfx.fill(gx, invTop, gx + gw, invTop + 1, BORDER_OUTER);
-        gfx.fill(gx, invTop + 1, gx + gw, invTop + 2, BORDER_INNER);
+        int invPanelX = gx + this.inventoryLabelX - 5;
+        int invPanelY = gy + CRAFT_AREA_HEIGHT + 2;
+        int invPanelH = gh - (CRAFT_AREA_HEIGHT + 2) - 2;
+        renderInventoryBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
 
         // Slot decorations
         for (Slot slot : menu.slots) {
@@ -225,13 +223,22 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
 
     private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
         for (int row = 0; row < h; row++) {
-            float t = (float) row / h;
+            float t = (float) row / Math.max(h, 1);
             // Warm dark amber gradient (matching SporeImplantScreen)
             int r = (int) (30 + 20 * t);
             int g = (int) (16 + 12 * t);
             int b = (int) (6  +  6 * t);
-            gfx.fill(x, y + row, x + w, y + row + 1, (0xFF << 24) | (r << 16) | (g << 8) | b);
+            gfx.fill(x, y + row, x + w, y + row + 1, (0xEE << 24) | (r << 16) | (g << 8) | b);
         }
+        drawInventoryBorder(gfx, x, y, w, h);
+    }
+
+    private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+        gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+        gfx.fill(x, y + h - 1, x + w, y + h, 0xFFCC6600);
+        gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+        gfx.fill(x + w - 1, y, x + w, y + h, 0xFFCC6600);
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
     }
 
     // ── Slot decorations ──────────────────────────────────────────────────────

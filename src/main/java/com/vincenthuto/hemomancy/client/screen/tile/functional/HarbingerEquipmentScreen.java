@@ -1,108 +1,329 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarArmorSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.VasculariumCharmSlot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.util.Random;
+
 @OnlyIn(Dist.CLIENT)
 public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<HarbingerEquipmentMenu> {
 
-	public static final ResourceLocation background = Hemomancy.rloc("textures/gui/charm_slot.png");
+	private static final int SLOT_BG = 0xFF1A0808;
+	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
+	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
+	private static final int BORDER_OUTER = 0xFF330808;
+	private static final int BORDER_INNER = 0xFF220606;
 
+	private static final int VANITY_AREA_HEIGHT = 108;
+	private static final int INVENTORY_PANEL_X = 22;
+	private static final int INVENTORY_PANEL_W = 170;
+	private static final int MIRROR_X = 82;
+	private static final int MIRROR_Y = 13;
+	private static final int MIRROR_W = 74;
+	private static final int MIRROR_H = 87;
+	private static final int VEIN_COUNT = 18;
+	private static final ResourceLocation EMPTY_CHARM_SLOT =
+			Hemomancy.rloc("textures/gui/empty_charm_slot_background.png");
+	private static final ResourceLocation EMPTY_GOURD_SLOT =
+			Hemomancy.rloc("textures/gui/empty_gourd_slot_background.png");
+	private static final ResourceLocation EMPTY_JAR_SLOT =
+			Hemomancy.rloc("textures/gui/empty_jar_slot_background.png");
+
+	private final Inventory playerInventory;
 	private float oldMouseX;
 	private float oldMouseY;
+	private float animTime;
+	private float[][] veinParams;
+	private int[][] speckleData;
 
 	public HarbingerEquipmentScreen(HarbingerEquipmentMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
-	}
-
-	private void drawTexturedQuad(int x, int y, int width, int height, float tx, float ty, float tw, float th,
-			float z) {
-		Tesselator tess = Tesselator.getInstance();
-		BufferBuilder buffer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-
-		buffer.addVertex((float) x, (float) y + height, z).setUv(tx, ty + th);
-		buffer.addVertex((float) x + width, (float) y + height, z).setUv(tx + tw, ty + th);
-		buffer.addVertex((float) x + width, (float) y, z).setUv(tx + tw, ty);
-		buffer.addVertex((float) x, (float) y, z).setUv(tx, ty);
-
-		BufferUploader.drawWithShader(buffer.buildOrThrow());
+		this.playerInventory = inventory;
+		this.imageWidth = 214;
+		this.imageHeight = 198;
+		this.inventoryLabelX = 26;
+		this.inventoryLabelY = VANITY_AREA_HEIGHT + 4;
 	}
 
 	@Override
-	protected void init() { // init
-		this.renderables.clear(); // this.renderables
+	protected void init() {
 		super.init();
-		this.resetGuiLeft();
+		this.titleLabelX = (this.imageWidth - this.font.width(getScreenTitle())) / 2;
+
+		Random veinRand = new Random(41285L);
+		veinParams = new float[VEIN_COUNT][9];
+		for (int i = 0; i < VEIN_COUNT; i++) {
+			veinParams[i][0] = veinRand.nextFloat();
+			veinParams[i][1] = veinRand.nextFloat();
+			veinParams[i][2] = (float) (veinRand.nextFloat() * Math.PI * 2);
+			veinParams[i][3] = 0.25f + veinRand.nextFloat() * 0.65f;
+			veinParams[i][4] = 7f + veinRand.nextFloat() * 15f;
+			veinParams[i][5] = 0.04f + veinRand.nextFloat() * 0.08f;
+			veinParams[i][6] = 48 + veinRand.nextInt(100);
+			veinParams[i][7] = 1 + veinRand.nextInt(2);
+			veinParams[i][8] = veinRand.nextFloat();
+		}
+
+		Random speckRand = new Random(49152L);
+		speckleData = new int[72][4];
+		for (int i = 0; i < speckleData.length; i++) {
+			speckleData[i][0] = speckRand.nextInt(this.imageWidth);
+			speckleData[i][1] = speckRand.nextInt(VANITY_AREA_HEIGHT);
+			speckleData[i][2] = 10 + speckRand.nextInt(26);
+			speckleData[i][3] = 14 + speckRand.nextInt(28);
+		}
 	}
 
-	// Replacing tick because im lazy
 	@Override
-	protected boolean isHovering(int p_97768_, int p_97769_, int p_97770_, int p_97771_, double p_97772_,
-			double p_97773_) {
-		return super.isHovering(p_97768_, p_97769_, p_97770_, p_97771_, p_97772_, p_97773_);
+	public boolean isPauseScreen() {
+		return false;
 	}
 
 	@Override
-	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) { // render
-		this.renderBackground(graphics, mouseX, mouseY, partialTicks); // renderBackground
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
-		this.renderTooltip(graphics, mouseX, mouseY); // renderHoveredToolTip
+		this.renderTooltip(graphics, mouseX, mouseY);
 		this.oldMouseX = mouseX;
 		this.oldMouseY = mouseY;
-}
+	}
 
 	@Override
-	protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) { // drawGuiContainerBackgroundLayer
-		if (this.minecraft != null) {
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			RenderSystem.setShaderTexture(0, background);
+	protected void renderBg(GuiGraphics gfx, float partialTicks, int mouseX, int mouseY) {
+		animTime += partialTicks * 0.008f;
 
-			int k = this.leftPos;
-			int l = this.topPos;
-			graphics.blit(background, k, l, 0, 0, this.getXSize(), this.getYSize());
-			graphics.blit(background, k, l, 0, 0, this.getXSize(), this.getYSize()); // blit
-			graphics.blit(background, k, l, 0, 0, this.imageWidth, this.imageHeight); // blit
-			drawTexturedQuad(0, 0, 0, 0, 0, 0, 0, 0, 0);
-			for (Slot slot : this.menu.slots) {
-				if (slot.hasItem() && slot.getMaxStackSize() == 1) {
-					graphics.blit(background, k + slot.x, l + slot.y, 200, 0, 16, 16);
-				}
+		int gx = this.leftPos;
+		int gy = this.topPos;
+
+		renderVeinBackground(gfx, gx, gy, this.imageWidth, VANITY_AREA_HEIGHT);
+		drawBorder(gfx, gx, gy, this.imageWidth, VANITY_AREA_HEIGHT);
+		renderMirrorPanel(gfx, gx, gy);
+		renderSlotRails(gfx, gx, gy);
+
+		int invX = gx + INVENTORY_PANEL_X;
+		int invTop = gy + VANITY_AREA_HEIGHT + 4;
+		int invH = this.imageHeight - VANITY_AREA_HEIGHT - 8;
+		renderInventoryBackground(gfx, invX, invTop, INVENTORY_PANEL_W, invH);
+
+		for (Slot slot : this.menu.slots) {
+			drawSlotBackground(gfx, gx + slot.x, gy + slot.y, slot);
+		}
+
+		if (this.minecraft != null && this.minecraft.player != null) {
+			gfx.enableScissor(gx + MIRROR_X, gy + MIRROR_Y, gx + MIRROR_X + MIRROR_W, gy + MIRROR_Y + MIRROR_H);
+			InventoryScreen.renderEntityInInventoryFollowsMouse(gfx, gx + MIRROR_X + 7, gy + MIRROR_Y + 3,
+					gx + MIRROR_X + MIRROR_W - 7, gy + MIRROR_Y + MIRROR_H - 2, 34,
+					0.0625F, this.oldMouseX, this.oldMouseY, this.minecraft.player);
+			gfx.disableScissor();
+		}
+	}
+
+	@Override
+	protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
+		Component screenTitle = getScreenTitle();
+		gfx.drawString(font, screenTitle, (this.imageWidth - font.width(screenTitle)) / 2, 5, 0xFFAA2222, true);
+		gfx.drawString(font, this.playerInventory.getDisplayName(), this.inventoryLabelX, this.inventoryLabelY,
+				0xFF442222, false);
+	}
+
+	private Component getScreenTitle() {
+		return this.menu.isOpenedFromScarletVanity() ? Component.literal("Scarlet Vanity") : this.title;
+	}
+
+	private void renderMirrorPanel(GuiGraphics gfx, int gx, int gy) {
+		int panelX = gx + MIRROR_X;
+		int panelY = gy + MIRROR_Y;
+		int panelW = MIRROR_W;
+		int panelH = MIRROR_H;
+		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xAA050102);
+		gfx.fill(panelX + 1, panelY + 1, panelX + panelW - 1, panelY + panelH - 1, 0x550F0405);
+		drawBorder(gfx, panelX, panelY, panelW, panelH);
+
+		int glassX = panelX + 8;
+		int glassY = panelY + 8;
+		int glassW = panelW - 16;
+		int glassH = panelH - 14;
+		gfx.fill(glassX, glassY, glassX + glassW, glassY + glassH, 0x33000000);
+		gfx.fill(glassX, glassY, glassX + glassW, glassY + 1, 0x55401212);
+		gfx.fill(glassX, glassY, glassX + 1, glassY + glassH, 0x55401212);
+	}
+
+	private void renderSlotRails(GuiGraphics gfx, int gx, int gy) {
+		gfx.fill(gx + 12, gy + 13, gx + 42, gy + 101, 0x77060203);
+		gfx.fill(gx + 170, gy + 20, gx + 200, gy + 101, 0x77060203);
+		drawBorder(gfx, gx + 12, gy + 13, 30, 88);
+		drawBorder(gfx, gx + 170, gy + 20, 30, 81);
+		gfx.fill(gx + 45, gy + 73, gx + 74, gy + 101, 0x66060203);
+		drawInventoryBorder(gfx, gx + 45, gy + 73, 29, 28);
+	}
+
+	private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, Slot slot) {
+		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
+		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
+		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+
+		if (slot instanceof ScarArmorSlot) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15CC2222);
+		} else if (slot instanceof SelectiveScarTypeSlot) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x18AA1530);
+		} else if (slot instanceof VasculariumCharmSlot) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20D65C7A);
+		} else if (slot instanceof ScarOffHandSlot) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15303030);
+		}
+
+		renderEmptySlotOverlay(gfx, sx, sy, slot);
+	}
+
+	private void renderEmptySlotOverlay(GuiGraphics gfx, int sx, int sy, Slot slot) {
+		if (slot.hasItem()) {
+			return;
+		}
+		int menuSlot = this.menu.slots.indexOf(slot);
+		if (slot instanceof VasculariumCharmSlot) {
+			gfx.blit(EMPTY_CHARM_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
+		} else if (slot instanceof SelectiveScarTypeSlot) {
+			if (slot.index == HarbingerEquipmentMenu.GOURD_SLOT_INDEX || menuSlot == 6) {
+				gfx.blit(EMPTY_GOURD_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
+			} else if (slot.index == HarbingerEquipmentMenu.JAR_SLOT_INDEX || menuSlot == 4) {
+				gfx.blit(EMPTY_JAR_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 			}
-			InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, k + 26, l + 8, k + 76, l + 78, 30, 0.0625F,
-					this.oldMouseX, this.oldMouseY, this.minecraft.player);
 		}
 	}
 
-	@Override
-	protected void renderLabels(GuiGraphics graphics, int p_146979_1_, int p_146979_2_) { // drawGuiContainerForegroundLayer
-		if (this.minecraft != null) { // this.minecraft
-			graphics.drawString(font, Component.translatable("container.crafting"), 115 - 18, 8 + 22, 4210752, false);
+	private void renderInventoryBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+		for (int row = 0; row < h; row++) {
+			float t = (float) row / Math.max(h, 1);
+			int r = (int) (36 + 70 * t);
+			int g = (int) (6 + 22 * t);
+			int b = (int) (7 + 18 * t);
+			gfx.fill(x, y + row, x + w, y + row + 1, (0xEE << 24) | (r << 16) | (g << 8) | b);
 		}
+		drawInventoryBorder(gfx, x, y, w, h);
 	}
 
-	// No Longer necccisairy as you cannot acsess scars from INV anymore
-	/*
-	 * @Override public boolean keyPressed(int keyCode, int scanCode, int what) { //
-	 * keyPressed if
-	 * (ClientEventSubscriber.KEY_scars.isActiveAndMatches(InputMappings.
-	 * getInputByCode(keyCode, scanCode))) { if (this.minecraft != null) {
-	 * this.minecraft.player.closeScreen(); } return true; } else { return
-	 * super.keyPressed(keyCode, scanCode, what); } }
-	 */
-	private void resetGuiLeft() {
-		this.leftPos = (this.width - this.imageWidth) / 2; // width
+	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
+	}
+
+	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
+		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
+		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
+		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
+	}
+
+	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
+		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+
+		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
+
+		int cx = gx + gw / 2;
+		int cy = gy + gh / 2;
+		int glowRadius = Math.max(gw, gh) / 2;
+		for (int ring = glowRadius; ring > 0; ring -= 4) {
+			float t = (float) ring / glowRadius;
+			int alpha = (int) (32 * (1f - t));
+			int red = (int) (42 * (1f - t));
+			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16));
+		}
+
+		if (veinParams != null) {
+			for (int i = 0; i < VEIN_COUNT; i++) {
+				drawVeinTendril(graphics, i, animTime, gx, gy, gw, gh);
+			}
+		}
+
+		if (speckleData != null) {
+			for (int[] speck : speckleData) {
+				int sx = gx + speck[0] % gw;
+				int sy = gy + speck[1] % gh;
+				int sr = speck[2];
+				int sg = sr / 5;
+				int sa = speck[3];
+				graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+			}
+		}
+
+		RenderSystem.disableBlend();
+		graphics.disableScissor();
+	}
+
+	private void drawVeinTendril(GuiGraphics graphics, int index, float time, int gx, int gy, int gw, int gh) {
+		float[] p = veinParams[index];
+		float startX = gx + p[0] * gw;
+		float startY = gy + p[1] * gh;
+		float baseAngle = p[2];
+		float speed = p[3];
+		float amplitude = p[4];
+		float frequency = p[5];
+		int length = (int) p[6];
+		int thickness = (int) p[7];
+		float brightness = p[8];
+
+		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
+		float cosA = Mth.cos(angleDrift);
+		float sinA = Mth.sin(angleDrift);
+		float timeOffset = time * speed * 2.0f;
+
+		int baseRed = (int) (42 + 54 * brightness);
+		int baseGreen = (int) (2 + 8 * brightness);
+		int baseBlue = (int) (5 + 5 * brightness);
+
+		for (int step = 0; step < length; step++) {
+			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
+			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
+			float displacement = squiggle + microSquiggle;
+
+			float px = startX + step * cosA * 1.5f - displacement * sinA;
+			float py = startY + step * sinA * 1.5f + displacement * cosA;
+			int ix = (int) px;
+			int iy = (int) py;
+
+			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) {
+				continue;
+			}
+
+			float tipFade = 1f;
+			if (step < 10) {
+				tipFade = step / 10f;
+			} else if (step > length - 10) {
+				tipFade = (length - step) / 10f;
+			}
+
+			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
+			int a = (int) Mth.clamp(tipFade * pulse * 180, 20, 200);
+			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
+			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
+			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
+			graphics.fill(ix, iy, ix + thickness, iy + thickness, (a << 24) | (r << 16) | (g << 8) | b);
+		}
 	}
 }

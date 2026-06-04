@@ -33,6 +33,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	// Upper fungal area height (where scar slots sit)
 	private static final int FUNGAL_AREA_HEIGHT = 78;
+	private static final int INVENTORY_PANEL_WIDTH = 172;
 
 	private float[][] tendrilParams;
 	private float[][] sporeParams;
@@ -45,7 +46,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		super(container, inventory, name);
 		this.imageWidth = 176;
 		this.imageHeight = 166;
-		this.inventoryLabelY = FUNGAL_AREA_HEIGHT + 2;
+		this.inventoryLabelY = FUNGAL_AREA_HEIGHT + 7;
 	}
 
 	@Override
@@ -111,13 +112,10 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		drawGradientBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
 
 		// ───── Dark amber gradient panel behind the inventory section ─────
-		int invTop = gy + FUNGAL_AREA_HEIGHT;
-		int invH = gh - FUNGAL_AREA_HEIGHT;
-		renderAmberGradientBackground(gfx, gx, invTop, gw, invH);
-
-		// Separator
-		gfx.fill(gx, invTop, gx + gw, invTop + 1, BORDER_RED);
-		gfx.fill(gx, invTop + 1, gx + gw, invTop + 2, 0xFF3A1A08);
+		int invPanelX = gx + this.inventoryLabelX - 5;
+		int invPanelY = gy + FUNGAL_AREA_HEIGHT + 2;
+		int invPanelH = gh - (FUNGAL_AREA_HEIGHT + 2) - 2;
+		renderAmberGradientBackground(gfx, invPanelX, invPanelY, INVENTORY_PANEL_WIDTH, invPanelH);
 
 		// ───── Slot backgrounds ─────
 		for (Slot slot : this.menu.slots) {
@@ -130,7 +128,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 //		renderFungalSlotGlow(gfx, gx, gy);
 
 		// ───── Outer border around the entire GUI ─────
-		drawGradientBorder(gfx, gx, gy, gw, gh);
 	}
 
 	@Override
@@ -358,14 +355,23 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	private void renderAmberGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
 		for (int row = 0; row < h; row++) {
-			float t = (float) row / h;
+			float t = (float) row / Math.max(h, 1);
 			// Warm dark amber gradient
 			int r = (int) (30 + 20 * t);
 			int g = (int) (16 + 12 * t);
 			int b = (int) (6 + 6 * t);
-			int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
+			int color = (0xEE << 24) | (r << 16) | (g << 8) | b;
 			gfx.fill(x, y + row, x + w, y + row + 1, color);
 		}
+		drawInventoryBorder(gfx, x, y, w, h);
+	}
+
+	private void drawInventoryBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_RED);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
+		gfx.fill(x, y, x + 1, y + h, BORDER_RED);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, 0xFF3A1A08);
 	}
 
 	// ───── Slot background rendering ─────
