@@ -42,7 +42,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	// â”€â”€ Star geometry (block-local coordinates) â”€â”€
 	private static final float CX = 0.5f;
 	private static final float CZ = 0.5f;
-	private static final float STAR_Y = 1.5f;
+	private static final float STAR_Y = 2.3f;
 	private static final float BASE_RADIUS = 0.5f;
 	private static final float SPIKE_BASE_HALF_ANGLE = 22.75f;
 	/** How far each unit of affinity extends a spoke beyond BASE_RADIUS. */

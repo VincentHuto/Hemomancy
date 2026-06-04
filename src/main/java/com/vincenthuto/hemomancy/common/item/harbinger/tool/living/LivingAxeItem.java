@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingAxeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -38,7 +39,7 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 	public static String TAG_STATE = "state";
 
 	public LivingAxeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, tier, builderIn);
+		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.MORTEM, tier, builderIn);
 	}
 
 	@Override
@@ -129,7 +130,7 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 								if (target instanceof LivingEntity) {
 									LivingEntity livingTarget = (LivingEntity) target;
 									float dam = 3f / targets.size();
-									livingTarget.hurt(target.damageSources().generic(), dam);
+										livingTarget.hurt(TendencyWeaponHelper.createWeaponDamageSource(livingTarget, player), dam);
 								}
 							}
 						}

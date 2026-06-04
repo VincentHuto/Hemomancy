@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
@@ -45,7 +46,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0)
+			new BlockPos(0, 1, 0),	new BlockPos(0, 0, -1),	new BlockPos(0, 0, 1)
 	};
 	private static final VoxelShape SHAPE_N = Shapes.block();
 
@@ -62,9 +63,63 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 				.setValue(WATERLOGGED, false));
 	}
 
+	private static BlockPos[] rotatedFillerOffsets(Direction facing) {
+		return HorizontalFacingRotationHelper.rotateNorthOffsets(FILLER_OFFSETS, facing);
+	}
+
+	private boolean canPlaceMultiBlock(Level level, BlockPos mainPos, Direction facing) {
+		for (BlockPos offset : rotatedFillerOffsets(facing)) {
+			if (!level.getBlockState(mainPos.offset(offset)).canBeReplaced()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public BlockPos[] getFillerOffsets() {
 		return FILLER_OFFSETS;
+	}
+
+	@Override
+	public void placeFillers(Level level, BlockPos mainPos, BlockState mainState) {
+		Direction facing = mainState.hasProperty(FACING) ? mainState.getValue(FACING) : Direction.SOUTH;
+		for (BlockPos offset : rotatedFillerOffsets(facing)) {
+			BlockPos fillerPos = mainPos.offset(offset);
+			level.setBlockAndUpdate(fillerPos,
+					com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get().defaultBlockState()
+							.setValue(com.vincenthuto.hemomancy.common.block.shared.FillerBlock.WATERLOGGED,
+									level.getFluidState(fillerPos).is(net.minecraft.tags.FluidTags.WATER)));
+			BlockEntity be = level.getBlockEntity(fillerPos);
+			if (be instanceof com.vincenthuto.hemomancy.common.tile.FillerBlockEntity filler) {
+				filler.setMainBlockPos(mainPos);
+			}
+		}
+	}
+
+	@Override
+	public void removeFillers(Level level, BlockPos mainPos) {
+		BlockState mainState = level.getBlockState(mainPos);
+		Direction facing = mainState.hasProperty(FACING) ? mainState.getValue(FACING) : Direction.SOUTH;
+		for (BlockPos offset : rotatedFillerOffsets(facing)) {
+			BlockPos fillerPos = mainPos.offset(offset);
+			BlockState fillerState = level.getBlockState(fillerPos);
+			if (fillerState.is(com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get())) {
+				if (fillerState.getValue(com.vincenthuto.hemomancy.common.block.shared.FillerBlock.WATERLOGGED)) {
+					level.setBlockAndUpdate(fillerPos, net.minecraft.world.level.block.Blocks.WATER.defaultBlockState());
+				} else {
+					level.removeBlock(fillerPos, false);
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean canPlaceMultiBlock(Level level, BlockPos mainPos) {
+		Direction facing = level.getBlockState(mainPos).hasProperty(FACING)
+				? level.getBlockState(mainPos).getValue(FACING)
+				: Direction.SOUTH;
+		return canPlaceMultiBlock(level, mainPos, facing);
 	}
 
 	@Override
@@ -101,8 +156,9 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
-		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+		Direction facing = context.getHorizontalDirection().getOpposite();
+		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos, facing)) {
+			return this.defaultBlockState().setValue(FACING, facing)
 					.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
 		}
 		return null;

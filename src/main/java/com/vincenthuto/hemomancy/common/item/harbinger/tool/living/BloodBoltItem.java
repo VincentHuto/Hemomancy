@@ -16,7 +16,7 @@ public class BloodBoltItem extends ArrowItem {
 
 	@Override
 	public BloodBoltEntity createArrow(Level worldIn, ItemStack stack, LivingEntity shooter, @Nullable ItemStack weaponStack) {
-		BloodBoltEntity arrowentity = new BloodBoltEntity(worldIn, shooter);
+		BloodBoltEntity arrowentity = new BloodBoltEntity(worldIn, shooter, weaponStack);
 		arrowentity.setPotionEffect(stack);
 		return arrowentity;
 	}

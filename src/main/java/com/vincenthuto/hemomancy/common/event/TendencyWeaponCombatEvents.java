@@ -1,0 +1,56 @@
+package com.vincenthuto.hemomancy.common.event;
+
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
+public final class TendencyWeaponCombatEvents {
+	private TendencyWeaponCombatEvents() {
+	}
+
+	@SubscribeEvent
+	public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
+		if (event.getAmount() <= 0.0f) {
+			return;
+		}
+
+		LivingEntity target = event.getEntity();
+		Entity sourceEntity = event.getSource().getEntity();
+		if (!(sourceEntity instanceof Player player)) {
+			return;
+		}
+
+		ItemStack weaponStack = resolveWeaponStack(event.getSource().getDirectEntity(), player);
+		if (weaponStack.isEmpty()) {
+			return;
+		}
+
+		EnumBloodTendency weaponTendency = TendencyWeaponHelper.getWeaponTendency(weaponStack).orElse(null);
+		if (weaponTendency == null || !TendencyWeaponHelper.isOpposingTarget(target, weaponTendency)) {
+			return;
+		}
+
+		event.setAmount(event.getAmount() * TendencyWeaponHelper.getDamageMultiplier(player, weaponTendency));
+	}
+
+	private static ItemStack resolveWeaponStack(Entity directEntity, Player player) {
+		if (directEntity instanceof AbstractArrow arrow) {
+			return arrow.getWeaponItem();
+		}
+		if (directEntity == player) {
+			return player.getMainHandItem();
+		}
+		return ItemStack.EMPTY;
+	}
+}
+
+

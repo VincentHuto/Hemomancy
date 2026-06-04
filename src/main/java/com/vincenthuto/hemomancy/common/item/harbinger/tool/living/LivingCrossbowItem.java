@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -49,7 +50,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
+public class LivingCrossbowItem extends CrossbowItem implements IDispellable, ITendencyAlignedWeapon {
+	private static final EnumBloodTendency WEAPON_TENDENCY = EnumBloodTendency.DUCTILIS;
+
 	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile, HolderLookup.Provider registryAccess) {
 		CompoundTag CompoundTag = crossbow.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		ListTag listnbt;
@@ -355,6 +358,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
 		List<ItemStack> list = getChargedProjectiles(stack, context.registries());
 		if (isCharged(stack) && !list.isEmpty()) {
 			ItemStack itemstack = list.get(0);
@@ -532,5 +536,10 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	public boolean useOnRelease(ItemStack stack) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public EnumBloodTendency hemomancy$getWeaponTendency() {
+		return WEAPON_TENDENCY;
 	}
 }

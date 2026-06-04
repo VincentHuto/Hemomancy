@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -169,12 +170,7 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
     }
 
     private static BlockPos rotateOffset(BlockPos offset, Direction facing) {
-        return switch (facing) {
-            case NORTH -> new BlockPos(-offset.getX(), offset.getY(), -offset.getZ());
-            case EAST -> new BlockPos(-offset.getZ(), offset.getY(), offset.getX());
-            case WEST -> new BlockPos(offset.getZ(), offset.getY(), -offset.getX());
-            default -> offset;
-        };
+		return HorizontalFacingRotationHelper.rotateSouthOffsetReversed(offset, facing);
     }
 
     @Override

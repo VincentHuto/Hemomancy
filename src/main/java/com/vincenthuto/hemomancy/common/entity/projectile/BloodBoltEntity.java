@@ -62,11 +62,16 @@ public class BloodBoltEntity extends AbstractArrow {
 	}
 
 	public BloodBoltEntity(Level worldIn, double x, double y, double z) {
-		super(EntityInit.blood_bolt.get(), x, y, z, worldIn, new ItemStack(ItemInit.blood_bolt.get()), ItemStack.EMPTY);
+		super(EntityInit.blood_bolt.get(), x, y, z, worldIn, new ItemStack(ItemInit.blood_bolt.get()), null);
 	}
 
 	public BloodBoltEntity(Level worldIn, LivingEntity shooter) {
-		super(EntityInit.blood_bolt.get(), shooter, worldIn, new ItemStack(ItemInit.blood_bolt.get()), ItemStack.EMPTY);
+		this(worldIn, shooter, null);
+	}
+
+	public BloodBoltEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
+		super(EntityInit.blood_bolt.get(), shooter, worldIn, new ItemStack(ItemInit.blood_bolt.get()),
+				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 	}
 
 	@Override

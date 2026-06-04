@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingSpearItemRenderer;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -36,7 +37,7 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 	public static String TAG_STATE = "state";
 
 	public LivingSpearItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, tier, builderIn);
+		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.LUX, tier, builderIn);
 	}
 
 

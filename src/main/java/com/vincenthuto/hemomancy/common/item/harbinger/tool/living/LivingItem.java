@@ -10,9 +10,9 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-public class LivingItemItem extends Item {
+public class LivingItem extends Item {
 
-	public LivingItemItem(Properties properties) {
+	public LivingItem(Properties properties) {
 		super(properties);
 	}
 

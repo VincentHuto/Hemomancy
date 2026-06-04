@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -94,29 +95,10 @@ private static final BlockPos[] BASE_FILLER_OFFSETS = new BlockPos[] {
 };
 
 /**
- * Rotates a base offset (defined for SOUTH) to the given facing direction.
- */
-private static BlockPos rotateOffset(BlockPos offset, Direction facing) {
-	int x = offset.getX();
-	int z = offset.getZ();
-	return switch (facing) {
-		case SOUTH -> offset;                                    // base direction
-		case NORTH -> new BlockPos(-x, offset.getY(), -z);
-		case WEST  -> new BlockPos( z, offset.getY(), -x);
-		case EAST  -> new BlockPos(-z, offset.getY(),  x);
-		default    -> offset;
-	};
-}
-
-/**
  * Returns the filler offsets rotated for the given facing direction.
  */
 private static BlockPos[] getRotatedOffsets(Direction facing) {
-	BlockPos[] rotated = new BlockPos[BASE_FILLER_OFFSETS.length];
-	for (int i = 0; i < BASE_FILLER_OFFSETS.length; i++) {
-		rotated[i] = rotateOffset(BASE_FILLER_OFFSETS[i], facing);
-	}
-	return rotated;
+	return HorizontalFacingRotationHelper.rotateSouthOffsetsReversed(BASE_FILLER_OFFSETS, facing);
 }
 
 public SaintSarcophagusBlock(Properties properties) {

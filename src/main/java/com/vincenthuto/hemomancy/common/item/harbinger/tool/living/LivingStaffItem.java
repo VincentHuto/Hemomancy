@@ -51,7 +51,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-public class LivingStaffItem extends LivingItemItem implements IDispellable {
+public class LivingStaffItem extends LivingItem implements IDispellable {
 	private static final String UTILITY_SESSION_BLOOD_HANDLED_KEY = "HemomancyLivingStaffUtilityBloodHandled";
 
 	private static int getSlotFor(Inventory inv, ItemStack stack) {

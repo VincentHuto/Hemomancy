@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
@@ -410,20 +411,7 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 	}
 
 	private static BlockPos[] rotatedFillerOffsets(Direction facing) {
-		BlockPos[] rotated = new BlockPos[FILLER_OFFSETS.length];
-		for (int i = 0; i < FILLER_OFFSETS.length; i++) {
-			rotated[i] = rotateOffset(FILLER_OFFSETS[i], facing);
-		}
-		return rotated;
-	}
-
-	private static BlockPos rotateOffset(BlockPos offset, Direction facing) {
-		return switch (facing) {
-			case NORTH -> new BlockPos(-offset.getX(), offset.getY(), -offset.getZ());
-			case EAST -> new BlockPos(offset.getZ(), offset.getY(), -offset.getX());
-			case WEST -> new BlockPos(-offset.getZ(), offset.getY(), offset.getX());
-			default -> offset;
-		};
+		return HorizontalFacingRotationHelper.rotateSouthOffsets(FILLER_OFFSETS, facing);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class LivingSyringeItem extends LivingItemItem {
+public class LivingSyringeItem extends LivingItem {
 	public static final String TAG_STATE = "state";
 	public static final String TAG_LOADED_RACK = "loaded_rack";
 
