@@ -8,32 +8,32 @@
   "breakBlocksOnCreation": false,
   "pattern": [
     [
-      "       ",
-      "       "
+      "A     A",
+      "ABBBBBA"
     ],
     [
-      " AEEE  ",
-      " FBBBC "
+      " EB BE ",
+      "BACDCAB"
     ],
     [
-      " E   E ",
-      " B FCF "
+      " BAFAB ",
+      "BCFFFCB"
     ],
     [
-      " E A E ",
-      "BBBCFB "
+      "  FAF  ",
+      "BDFAFDB"
     ],
     [
-      " E   E ",
-      " B FFB "
+      " BAFAB ",
+      "BCFFFCB"
     ],
     [
-      "  EEE  ",
-      "  FBBFF"
+      " EB BE ",
+      "BACDCAB"
     ],
     [
-      "       ",
-      "       "
+      "A     A",
+      "ABBBBBA"
     ]
   ],
   "key": {

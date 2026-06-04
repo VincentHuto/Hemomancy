@@ -101,6 +101,10 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public void removeFillers(Level level, BlockPos mainPos) {
 		BlockState mainState = level.getBlockState(mainPos);
 		Direction facing = mainState.hasProperty(FACING) ? mainState.getValue(FACING) : Direction.SOUTH;
+		removeFillers(level, mainPos, facing);
+	}
+
+	private void removeFillers(Level level, BlockPos mainPos, Direction facing) {
 		for (BlockPos offset : rotatedFillerOffsets(facing)) {
 			BlockPos fillerPos = mainPos.offset(offset);
 			BlockState fillerState = level.getBlockState(fillerPos);
@@ -230,7 +234,8 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 				te.dropContents();
 			}
 			if (!level.isClientSide) {
-				removeFillers(level, pos);
+				Direction facing = state.hasProperty(FACING) ? state.getValue(FACING) : Direction.SOUTH;
+				removeFillers(level, pos, facing);
 			}
 		}
 		super.onRemove(state, level, pos, newState, isMoving);
