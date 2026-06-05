@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
-public class SanguisLanceaEntity extends AbstractArrow {
+public class SanguisLanceaEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
     private static final EntityDataAccessor<Byte> ID_LOYALTY = SynchedEntityData.defineId(SanguisLanceaEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> ID_FOIL = SynchedEntityData.defineId(SanguisLanceaEntity.class, EntityDataSerializers.BOOLEAN);
     private ItemStack sanguisLanceaItem = ItemStack.EMPTY;
@@ -104,6 +104,11 @@ public class SanguisLanceaEntity extends AbstractArrow {
             return this.getDefaultPickupItem();
         }
         return this.sanguisLanceaItem;
+    }
+
+    @Override
+    public ItemStack getCombatWeaponItem() {
+        return this.resolveLanceaStack();
     }
 
     @Override

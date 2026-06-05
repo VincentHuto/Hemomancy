@@ -56,7 +56,7 @@ public class LivingPistolItem extends Item implements IDispellable, HemoClientIt
 				Vector3 vector3f = new Vector3(vector3d);
 				if (mode == 0) {
 					// Pistol
-					BloodNeedleEntity shot = new BloodNeedleEntity(world, player);
+					BloodNeedleEntity shot = new BloodNeedleEntity(world, player, stack);
 					shot.shoot(vector3f.x, vector3f.y, vector3f.z, 4.5F, 1.0f);
 					world.addFreshEntity(shot);
 				} else if (mode == 1) {
@@ -64,7 +64,7 @@ public class LivingPistolItem extends Item implements IDispellable, HemoClientIt
 					int randInt = world.random.nextInt(11) + 10;
 					BloodNeedleEntity[] needles = new BloodNeedleEntity[randInt];
 					for (int i = 0; i < needles.length; i++) {
-						needles[i] = new BloodNeedleEntity(world, player);
+						needles[i] = new BloodNeedleEntity(world, player, stack);
 						needles[i].shoot(vector3f.x, vector3f.y, vector3f.z, world.random.nextInt(5) + 4,
 								world.random.nextInt(20) - world.random.nextInt(20));
 						world.addFreshEntity(needles[i]);
@@ -74,7 +74,7 @@ public class LivingPistolItem extends Item implements IDispellable, HemoClientIt
 					int randInt = world.random.nextInt(3) + 6;
 					BloodBulletEntity[] needles = new BloodBulletEntity[randInt];
 					for (int i = 0; i < needles.length; i++) {
-						needles[i] = new BloodBulletEntity(world, player);
+						needles[i] = new BloodBulletEntity(world, player, stack);
 						needles[i].shoot(vector3f.x, vector3f.y, vector3f.z, world.random.nextInt(5) + 4,
 								world.random.nextInt(5) - world.random.nextInt(5));
 						world.addFreshEntity(needles[i]);

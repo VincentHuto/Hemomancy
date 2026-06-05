@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class BloodBoltEntity extends AbstractArrow {
+public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
 	private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(BloodBoltEntity.class,
 			EntityDataSerializers.INT);
 
@@ -54,6 +54,7 @@ public class BloodBoltEntity extends AbstractArrow {
 	@Nullable
 	private Holder<Potion> potion = null;
 	private final Set<MobEffectInstance> customPotionEffects = Sets.newHashSet();
+	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 
 	private boolean fixedColor;
 
@@ -72,11 +73,16 @@ public class BloodBoltEntity extends AbstractArrow {
 	public BloodBoltEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
 		super(EntityInit.blood_bolt.get(), shooter, worldIn, new ItemStack(ItemInit.blood_bolt.get()),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
+		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
+
+		if (!this.combatWeaponItem.isEmpty()) {
+			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
+		}
 
 		if (this.fixedColor) {
 			compound.putInt("Color", this.getColor());
@@ -92,6 +98,11 @@ public class BloodBoltEntity extends AbstractArrow {
 			compound.put("CustomPotionEffects", listnbt);
 		}
 
+	}
+
+	@Override
+	public ItemStack getCombatWeaponItem() {
+		return this.combatWeaponItem;
 	}
 
 	public void addEffect(MobEffectInstance effect) {
@@ -183,6 +194,9 @@ public class BloodBoltEntity extends AbstractArrow {
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
+		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
+				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
+				: ItemStack.EMPTY;
 		if (compound.contains("Potion", 8)) {
 			String potionId = compound.getString("Potion");
 			this.potion = potionId.isEmpty() ? null : BuiltInRegistries.POTION.getHolder(ResourceLocation.parse(potionId)).orElse(null);
@@ -202,6 +216,10 @@ public class BloodBoltEntity extends AbstractArrow {
 			this.refreshColor();
 		}
 
+	}
+
+	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
+		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
 	}
 
 	private void refreshColor() {

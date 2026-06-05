@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+
+import java.util.Objects;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class TendencyWeaponCombatEvents {
@@ -43,8 +46,11 @@ public final class TendencyWeaponCombatEvents {
 	}
 
 	private static ItemStack resolveWeaponStack(Entity directEntity, Player player) {
+		if (directEntity instanceof CombatWeaponCarrierProjectile combatProjectile) {
+			return combatProjectile.getCombatWeaponItem();
+		}
 		if (directEntity instanceof AbstractArrow arrow) {
-			return arrow.getWeaponItem();
+			return Objects.requireNonNullElse(arrow.getWeaponItem(), ItemStack.EMPTY);
 		}
 		if (directEntity == player) {
 			return player.getMainHandItem();

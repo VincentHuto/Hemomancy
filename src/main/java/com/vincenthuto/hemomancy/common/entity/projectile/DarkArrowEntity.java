@@ -19,10 +19,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class DarkArrowEntity extends AbstractArrow {
+public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
 
 	LivingEntity shooter;
+	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 
 	public DarkArrowEntity(EntityType<? extends DarkArrowEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -33,14 +35,28 @@ public class DarkArrowEntity extends AbstractArrow {
 	}
 
 	public DarkArrowEntity(Level worldIn, LivingEntity shooter) {
-		super(EntityInit.dark_arrow.get(), shooter, worldIn, ItemStack.EMPTY, (ItemStack) null);
+		this(worldIn, shooter, null);
+	}
+
+	public DarkArrowEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
+		super(EntityInit.dark_arrow.get(), shooter, worldIn, ItemStack.EMPTY,
+				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.shooter = shooter;
+		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
+		if (!this.combatWeaponItem.isEmpty()) {
+			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
+		}
 
+	}
+
+	@Override
+	public ItemStack getCombatWeaponItem() {
+		return this.combatWeaponItem;
 	}
 
 	@Override
@@ -76,6 +92,9 @@ public class DarkArrowEntity extends AbstractArrow {
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
+		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
+				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
+				: ItemStack.EMPTY;
 
 	}
 
@@ -104,6 +123,10 @@ public class DarkArrowEntity extends AbstractArrow {
 			}
 		}
 
+	}
+
+	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
+		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
 	}
 
 }

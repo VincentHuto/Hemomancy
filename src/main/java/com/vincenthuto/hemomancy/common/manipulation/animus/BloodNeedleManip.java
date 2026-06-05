@@ -28,7 +28,7 @@ public class BloodNeedleManip extends BloodManipulation {
 		int randInt = world.random.nextInt(11) + 10;
 		BloodNeedleEntity[] needles = new BloodNeedleEntity[randInt];
 		for (int i = 0; i < needles.length; i++) {
-			needles[i] = new BloodNeedleEntity(world, player);
+			needles[i] = new BloodNeedleEntity(world, player, heldItemMainhand);
 			needles[i].shoot(vector3f.x, vector3f.y, vector3f.z, world.random.nextInt(5) + 4,
 					world.random.nextInt(20) - world.random.nextInt(20));
 			world.addFreshEntity(needles[i]);
