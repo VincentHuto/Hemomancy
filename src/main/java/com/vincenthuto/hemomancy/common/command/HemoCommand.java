@@ -430,6 +430,7 @@ public class HemoCommand {
 			BloodlineDisbandHelper.removeOwnedSanctums(source.getServer(), localLine);
 			volume.setBloodLine(Bloodline.NOBLOODLINE);
 			BloodVolumeEvents.syncVolume(player, volume);
+			BloodlineDisbandHelper.burnBloodlineLedgers(player, localLine);
 			source.sendFailure(Component.literal(localLine.getName() + " was already missing from world data; cleared "
 					+ player.getName().getString() + "'s local bloodline state."));
 			return 0;

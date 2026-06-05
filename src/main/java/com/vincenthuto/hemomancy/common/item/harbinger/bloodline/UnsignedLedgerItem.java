@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
 import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -60,6 +61,15 @@ public class UnsignedLedgerItem extends Item {
 	@Override
 	public boolean isFoil(ItemStack stack) {
 		return stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE);
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
+		super.inventoryTick(stack, level, entity, slotId, isSelected);
+		if (level.isClientSide || !(entity instanceof ServerPlayer serverPlayer) || stack.isEmpty()) {
+			return;
+		}
+		BloodlineDisbandHelper.burnInvalidLedgerIfPresent(serverPlayer, stack);
 	}
 
 	@Override

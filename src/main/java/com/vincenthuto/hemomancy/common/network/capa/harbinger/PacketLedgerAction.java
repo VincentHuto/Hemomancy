@@ -274,6 +274,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			BloodlineDisbandHelper.removeOwnedSanctums(player.server, bloodline);
 			volume.setBloodLine(Bloodline.NOBLOODLINE);
 			BloodVolumeEvents.syncVolume(player, volume);
+			BloodlineDisbandHelper.burnBloodlineLedgers(player, bloodline);
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.disband.missing")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),

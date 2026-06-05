@@ -991,6 +991,7 @@
   "hemomancy.lady.vigilant.v2.line1": "§b§o[The cold presence is almost warm now — if cold can be warm — like the first frost of autumn that reminds you the fire is lit inside.]",
   "hemomancy.ledger.recall.no_bloodline": "You have no bloodline — sign the ledger first.",
   "hemomancy.ledger.disband.member_notice": "%s has dissolved the covenant. Your bloodline has been disbanded.",
+  "hemomancy.ledger.disband.ledger_burned": "Your ancestral ledger burns to ash and vanishes. (%s removed)",
   "hemomancy.ledger.disband.missing": "This bloodline no longer exists. Your ledger now lies empty.",
   "hemomancy.ledger.disband.no_bloodline": "You have no bloodline to disband.",
   "hemomancy.ledger.disband.not_leader": "Only the bloodline leader may dissolve the covenant.",
