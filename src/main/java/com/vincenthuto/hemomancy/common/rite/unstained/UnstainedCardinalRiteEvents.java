@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;

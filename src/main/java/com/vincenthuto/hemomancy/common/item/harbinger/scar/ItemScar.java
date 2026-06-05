@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;

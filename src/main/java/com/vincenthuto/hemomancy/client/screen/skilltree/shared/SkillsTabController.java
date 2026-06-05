@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUnlockSkill;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

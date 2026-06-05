@@ -16,7 +16,7 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScryingPodiumBlock.java");
 		String packetHandler = readSource("com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 		String openPacket = readSource(
-				"com/vincenthuto/hemomancy/common/network/capa/manips/PacketOpenScryingDiagnostics.java");
+                "com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/PacketOpenScryingDiagnostics.java");
 		String containerInit = readSource("com/vincenthuto/hemomancy/common/init/ContainerInit.java");
 		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String diagnosticsMenu = readSource("com/vincenthuto/hemomancy/common/menu/ScryingDiagnosticsMenu.java");

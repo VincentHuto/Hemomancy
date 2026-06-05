@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;

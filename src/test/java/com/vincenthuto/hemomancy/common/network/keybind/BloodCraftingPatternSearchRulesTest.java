@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingPatternSearchRules;
+
 import java.util.ArrayList;
 import java.util.List;
 

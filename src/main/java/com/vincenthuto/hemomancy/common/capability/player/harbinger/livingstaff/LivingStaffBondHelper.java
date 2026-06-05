@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipS
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.LivingStaffProgressServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.LivingStaffProgressServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

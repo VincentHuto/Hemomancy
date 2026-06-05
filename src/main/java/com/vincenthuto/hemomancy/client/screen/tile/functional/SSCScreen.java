@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket.DrudgeEntry;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket.DrudgeEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -23,7 +24,7 @@ import java.util.Random;
  *   <li>One row per bound Drudge, showing memory equipped, mode
  *       (Passive / Commanded / ROGUE), and a blood-charge bar.</li>
  * </ul>
- * Opens via {@link com.vincenthuto.hemomancy.common.network.capa.OpenSSCScreenPacket}
+ * Opens via {@link OpenSSCScreenPacket}
  * sent from the server when the player right-clicks the SSC without a held item.
  */
 @OnlyIn(Dist.CLIENT)

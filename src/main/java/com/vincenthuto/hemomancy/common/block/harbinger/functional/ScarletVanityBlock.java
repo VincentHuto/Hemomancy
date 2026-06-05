@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.scars.PacketOpenScarsInv;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketOpenScarsInv;
 import com.vincenthuto.hemomancy.common.tile.functional.ScarletVanityBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

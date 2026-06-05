@@ -36,9 +36,10 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
@@ -1567,8 +1568,8 @@ public class HarbingerCardinalRiteEvents {
 							bloom.center(), bloom.chunkRadius(), pomesDropped));
 				}
 			}
-			com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms packet =
-					new com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms(clientEntries);
+			PacketSyncQliphothBlooms packet =
+					new PacketSyncQliphothBlooms(clientEntries);
 			PacketHandler.sendToPlayer(player, packet);
 		}
 	}

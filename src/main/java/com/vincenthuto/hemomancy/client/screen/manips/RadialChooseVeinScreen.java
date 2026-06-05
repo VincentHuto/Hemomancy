@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.manips.TeleportToVeinPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.TeleportToVeinPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.data;
 
 import com.vincenthuto.hemomancy.common.event.worldevent.SanctumBoundaryRelation;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSanctumBoundaries;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ public final class SanctumBoundaryClientData {
 	private SanctumBoundaryClientData() {
 	}
 
-	public static void setEntries(List<com.vincenthuto.hemomancy.common.network.capa.PacketSyncSanctumBoundaries.Entry> entries) {
+	public static void setEntries(List<PacketSyncSanctumBoundaries.Entry> entries) {
 		ENTRIES.clear();
-		for (com.vincenthuto.hemomancy.common.network.capa.PacketSyncSanctumBoundaries.Entry entry : entries) {
+		for (PacketSyncSanctumBoundaries.Entry entry : entries) {
 			ENTRIES.add(new Entry(entry.center(), entry.radius(), entry.ownerUuid(), entry.relation()));
 		}
 	}

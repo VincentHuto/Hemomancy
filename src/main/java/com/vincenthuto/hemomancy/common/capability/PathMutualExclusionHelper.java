@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketSyncPomeProgress;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 
 import net.minecraft.server.level.ServerPlayer;
 

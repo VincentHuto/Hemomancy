@@ -16,9 +16,9 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ThanomycesRes
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
-import com.vincenthuto.hemomancy.common.network.capa.PacketGourdScarSync;
-import com.vincenthuto.hemomancy.common.network.capa.scars.PacketScarSync;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketCurvedHornAnimation;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketGourdScarSync;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketScarSync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;

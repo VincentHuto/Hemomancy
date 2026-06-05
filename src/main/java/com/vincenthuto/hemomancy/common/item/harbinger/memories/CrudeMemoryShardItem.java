@@ -8,7 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -121,7 +122,7 @@ public class CrudeMemoryShardItem extends Item {
 
 		volume.drain(BLOOD_COST);
 		PacketHandler.sendToPlayer((ServerPlayer) player,
-				new com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket(volume));
+				new BloodVolumeServerPacket(volume));
 		KnownManipulationGrantHelper.learnAndEquipIfPossible(known, manipulation,
 				ManipSlotHelper.getMaxSlots(player));
 		PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));

@@ -9,7 +9,8 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -316,7 +317,7 @@ public class BloodVolumeEvents {
 			volume.setBloodLine(globalLine);
 
 			// Sync shared pool data to client
-			PacketHandler.sendToPlayer(player, new com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool(
+			PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(
 							globalLine.getBloodVolume(),
 							globalLine.getMaxBloodVolume(),
 							globalLine.getPlayerUUIDS().size()));

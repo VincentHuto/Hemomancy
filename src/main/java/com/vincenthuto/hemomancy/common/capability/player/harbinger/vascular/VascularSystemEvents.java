@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;

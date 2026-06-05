@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.SaintRelicItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.EnumCorpusState;
 import com.vincenthuto.hemomancy.common.tile.functional.SaintSarcophagusBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;

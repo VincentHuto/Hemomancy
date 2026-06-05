@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumChar
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeClientPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeClientPacket;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
