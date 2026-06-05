@@ -4,7 +4,7 @@
   "riteType": "greater",
   "required_degree": 4,
   "riteName": "Rite of the Crimson Lodge",
-  "riteDescription": "The fifth rite of the Hematic Order, illuminating the inner secrets of the Crimson Lodge.",
+  "riteDescription": "The fifth rite of the Hematic Order, by which an adept is admitted as Illuminatus of the Crimson Lodge. This is a rite of ascension, not the consecration of a Sanctum.",
   "breakBlocksOnCreation": false,
   "rankup": true,
   "pattern": [

@@ -399,7 +399,7 @@ Four Harbinger NPC types provide lore and gameplay hints through the `DialogueTr
 | Votary | Seven blood tendencies (Fungal, Umbral, Incandescent, Ferric, Vivacious, Ruinous, Neurotic) and their role |
 | Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age; **Saints lore branch** — directs player toward Trial Chambers and Hallowed Residuum extraction |
 | Adept | History of the **Sanguine Brotherhood** — shared blood pools born from war necessity |
-| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently"; **Founding Sanctum branch** — explains Sanguine Quintessence and sanctum consecration; degree hint toward Bloodline Covenant rite |
+| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently"; **Founding Sanctum branch** — explains Sanguine Quintessence as the founding catalyst and clarifies that sanctum consecration is a separate rite performed at a chosen site; degree hint toward Bloodline Covenant rite |
 | Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world"; degree hint toward Archon rite |
 | Archon | Hidden lore: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* |
 | Apotheos | Speechless reverence; the Covenant was "always meant to be outlived — it is a ladder; what you have become is what was always at the top of it" |
@@ -463,16 +463,18 @@ After completing Qliphoth Communion by eating all nine pomes from a single bloom
 
 ### 5.7 The Founding Sanctum (Degree 5)
 
-At **Degree 5 (Illuminatus)**, a Harbinger can perform a founding rite that consecrates an area around their chosen base as a **Harbinger Sanctum**.
+At **Degree 5 (Illuminatus)**, a Harbinger becomes eligible to perform the **Founding Sanctum ritual** — a distinct consecration ceremony separate from the `illuminatus_rite` rank-up. The rank-up rite admits the practitioner to the Crimson Lodge; the Founding Sanctum ritual is what actually anchors territory around a chosen base as a **Harbinger Sanctum**.
 
 - Covers a **5×5 chunk area** centered on the founding location
+- The **Illuminatus rite** grants or teaches access to **Sanguine Quintessence**, but the **Founding Sanctum ritual** is the step that consumes/anchors it as the placed catalyst at the sanctum heart
+- The Founding Sanctum ritual establishes the **sanctum boundary itself**: persistence, boundary rendering, Blood Moon sealing, and the bloodline-owned territory used by sanctum-aware mechanics
+- The sanctum is keyed to the founder's bloodline ownership, so bloodline ledger actions now reference the Founding Sanctum instead of the Crimson Lodge rite
 - All Harbingers present in the sanctum receive enhanced effects: stronger regeneration, lower cooldowns, more potent blood manipulations
 - Intended to encourage collective settlement and cooperative play
-- A crafting material called **Quintessence** is granted by the Illuminatus rite and is required for the founding ritual
 - Client visuals for sanctum boundary domes and screen distortion are controlled by the client config key `world_rendering.renderSanctumBoundary`, defaulting to `true`.
 - Players who have begun the Unstained path through purity or clarity are treated as outsiders for sanctum boundary visuals, so former Harbingers still see the hostile red/black omen dome instead of bloodline/member shimmer.
 
-> **Status: Partial.** Buff application logic is functional (`FoundingSanctumEvents` applies Damage Boost, Regeneration, and Damage Resistance to qualifying players within the sanctum radius). The Sanguine Quintessence item is registered, produced by the Exsanguination cardinal rite, and required as a placed catalyst at the sanctum heart. Sanctum locations persist through `FoundingSanctumSavedData`, and Blood Moon boundary sealing is wired. Remaining WIP is boundary detection confirmation and full gameplay tuning.
+> **Status: Partial.** Buff application logic is functional (`FoundingSanctumEvents` applies Damage Boost, Regeneration, and Damage Resistance to qualifying players within the sanctum radius). `FoundingSanctumSavedData` persists sanctum centers plus recall anchors, sanctum boundary rendering is wired, Blood Moon boundary sealing is wired, and bloodline ledger actions now key off Founding Sanctum ownership/territory. Remaining WIP is boundary tuning and broader gameplay polish.
 
 ### 5.8 The Saints System (Degree 3–4)
 
@@ -2455,7 +2457,7 @@ Cardinal rite patterns now follow a function-first visual pass: Harbinger rites 
 | Rite of the Votary | 250 | Lesser | 1 | 1 -> 2 | Binds the practitioner deeper into the Covenant |
 | Rite of the Scarlet Sanctum | 500 | Lesser | 2 | 2 -> 3 | Grants formal entry into the Scarlet Sanctum |
 | Adept Rite | *(see JSON)* | Lesser | 3 | 3 -> 4 | Fourth rite of the Hematic Order |
-| Rite of the Crimson Lodge | 2000 | Greater | 4 | 4 -> 5 | Illuminates the inner secrets of the Crimson Lodge |
+| Rite of the Crimson Lodge | 2000 | Greater | 4 | 4 -> 5 | Degree-advancement rite admitting the practitioner as Illuminatus; it does **not** consecrate a Sanctum |
 | Rite of the Bloodline Covenant | 3000 | Greater | 5 | 5 -> 6 | Consecrates the practitioner to the Bloodline Covenant |
 | Rite of the Hematic Order | 5000 | Grand | 6 | 6 -> 7 | Crowns the practitioner as Archon |
 | Rite of Apotheos | 7000 | Grand | 7 | 7 -> 8 | Final ascension beyond Archon; requires completed Qliphoth Communion |

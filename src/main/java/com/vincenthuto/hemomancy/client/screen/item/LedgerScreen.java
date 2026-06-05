@@ -16,11 +16,11 @@ import net.minecraft.util.Mth;
 import java.util.Random;
 
 /**
- * The Ancestral Ledger screen provides GUI buttons for lodge actions:
+	 * The Ancestral Ledger screen provides GUI buttons for bloodline sanctum actions:
  * <ul>
- *   <li>Summon recruited NPC Harbingers (within lodge)</li>
- *   <li>Recall to the lodge recall point (from anywhere)</li>
- *   <li>Set recall point to current position (leader only, within lodge)</li>
+	 *   <li>Summon recruited NPC Harbingers (within the Founding Sanctum)</li>
+	 *   <li>Recall to the sanctum recall point (from anywhere)</li>
+	 *   <li>Set the sanctum recall point to current position (leader only, within the Founding Sanctum)</li>
  * </ul>
  * Matches the visual style of BloodlinePoolScreen with procedural vein background.
  */
@@ -77,9 +77,9 @@ public class LedgerScreen extends Screen {
 
 		y += 28;
 
-		// ── Recall to Lodge Button ──
+		// ── Recall to Sanctum Button ──
 		addRenderableWidget(Button.builder(
-				Component.literal("\u2302 Recall to Lodge"),
+				Component.literal("\u2302 Recall to Sanctum"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_RECALL_TO_LODGE));
@@ -88,9 +88,9 @@ public class LedgerScreen extends Screen {
 
 		y += 28;
 
-		// ── Set Recall Point Button (leader only) ──
+		// ── Set Sanctum Recall Point Button (leader only) ──
 		addRenderableWidget(Button.builder(
-				Component.literal("\u2691 Set Recall Point"),
+				Component.literal("\u2691 Set Sanctum Recall"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SET_RECALL_POINT));

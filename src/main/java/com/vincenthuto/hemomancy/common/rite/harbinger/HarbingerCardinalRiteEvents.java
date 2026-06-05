@@ -734,9 +734,9 @@ public class HarbingerCardinalRiteEvents {
 			completeSanguineFervor(sLevel, caster, center);
 		}
 
-		// Rite of the Crimson Lodge: establish a lodge zone with strength and blood virility
+		// Rite of the Crimson Lodge: degree advancement only; territorial consecration belongs to Founding Sanctum
 		if (ILLUMINATUS_RITE.equals(ritePath)) {
-			completeCrimsonLodge(sLevel, caster, center);
+			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED);
 		}
 
 		// ── Unstained rites ──
@@ -1718,9 +1718,15 @@ public class HarbingerCardinalRiteEvents {
 
 
 	private static void completeFoundingSanctum(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		UUID sanctumOwner = HemoCapabilityAccess.getBloodVolume(caster)
+				.map(volume -> {
+					Bloodline bloodline = volume.getBloodLine();
+					return bloodline != null && bloodline.isValid() ? bloodline.getLeaderUUID() : caster.getUUID();
+				})
+				.orElse(caster.getUUID());
 		FoundingSanctumSavedData sanctumData = FoundingSanctumSavedData.get(sLevel);
-		boolean isReconsecrating = sanctumData.hasSanctum(caster.getUUID());
-		sanctumData.consecrate(caster.getUUID(), center);
+		boolean isReconsecrating = sanctumData.hasSanctum(sanctumOwner);
+		sanctumData.consecrate(sanctumOwner, center);
 		if (isReconsecrating) {
 			caster.displayClientMessage(
 					Component.literal("Your Founding Sanctum has been moved to this location.")

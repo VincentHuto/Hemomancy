@@ -7,9 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.rite.harbinger.CrimsonLodgeEvents;
-import com.vincenthuto.hemomancy.common.rite.harbinger.CrimsonLodgeSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,9 +31,9 @@ import java.util.UUID;
  * <p>
  * Actions:
  * <ul>
- *   <li>0 = Summon recruited NPC Harbingers (must be inside lodge)</li>
- *   <li>1 = Recall to lodge recall point (from anywhere)</li>
- *   <li>2 = Set recall point to current position (leader only, must be inside lodge)</li>
+	 *   <li>0 = Summon recruited NPC Harbingers (must be inside the bloodline's Founding Sanctum)</li>
+	 *   <li>1 = Recall to the sanctum recall point (from anywhere)</li>
+	 *   <li>2 = Set sanctum recall point to current position (leader only, must be inside the sanctum)</li>
  * </ul>
  */
 public class PacketLedgerAction implements CustomPacketPayload {
@@ -79,6 +78,36 @@ public class PacketLedgerAction implements CustomPacketPayload {
 
 	// ── Action Handlers (moved from UnsignedLedgerItem) ──
 
+	private static UUID getSanctumOwner(Bloodline bloodline, ServerPlayer player) {
+		return bloodline.isValid() ? bloodline.getLeaderUUID() : player.getUUID();
+	}
+
+	private static boolean isInsideOwnedSanctum(ServerPlayer player, UUID ownerUuid) {
+		if (!(player.level() instanceof ServerLevel currentLevel)) {
+			return false;
+		}
+		return FoundingSanctumSavedData.get(currentLevel).isWithinSanctum(ownerUuid, player.blockPosition());
+	}
+
+	private static ServerLevel findPreferredSanctumLevel(ServerPlayer player, UUID ownerUuid) {
+		if (player.level() instanceof ServerLevel currentLevel
+				&& FoundingSanctumSavedData.get(currentLevel).hasSanctum(ownerUuid)) {
+			return currentLevel;
+		}
+
+		ServerLevel overworld = player.server.overworld();
+		if (FoundingSanctumSavedData.get(overworld).hasSanctum(ownerUuid)) {
+			return overworld;
+		}
+
+		for (ServerLevel level : player.server.getAllLevels()) {
+			if (FoundingSanctumSavedData.get(level).hasSanctum(ownerUuid)) {
+				return level;
+			}
+		}
+		return null;
+	}
+
 	private static void handleNpcSummon(ServerPlayer player, IBloodVolume volume) {
 		Bloodline bloodline = volume.getBloodLine();
 
@@ -98,7 +127,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		if (!CrimsonLodgeEvents.isInCrimsonLodge(player)) {
+		UUID sanctumOwner = getSanctumOwner(bloodline, player);
+		if (!isInsideOwnedSanctum(player, sanctumOwner)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.summon.not_in_lodge")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -146,11 +176,9 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		ServerLevel overworld = player.server.overworld();
-		CrimsonLodgeSavedData data = CrimsonLodgeSavedData.get(overworld);
-		CrimsonLodgeSavedData.LodgeEntry lodge = data.getLodgeForOwner(bloodline.getLeaderUUID());
-
-		if (lodge == null) {
+		UUID sanctumOwner = getSanctumOwner(bloodline, player);
+		ServerLevel targetLevel = findPreferredSanctumLevel(player, sanctumOwner);
+		if (targetLevel == null) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.recall.no_lodge")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -158,17 +186,14 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		BlockPos recall = lodge.recallPoint();
-		ServerLevel targetLevel = null;
-
-		for (ServerLevel dim : player.server.getAllLevels()) {
-			if (dim.dimension().location().toString().equals(lodge.dimension())) {
-				targetLevel = dim;
-				break;
-			}
-		}
-		if (targetLevel == null) {
-			targetLevel = player.server.overworld();
+		FoundingSanctumSavedData data = FoundingSanctumSavedData.get(targetLevel);
+		BlockPos recall = data.getRecallPoint(sanctumOwner);
+		if (recall == null) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.no_lodge")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
 		}
 
 		player.teleportTo(targetLevel,
@@ -202,10 +227,13 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		ServerLevel overworld = player.server.overworld();
-		CrimsonLodgeSavedData data = CrimsonLodgeSavedData.get(overworld);
+		UUID sanctumOwner = getSanctumOwner(bloodline, player);
+		if (!(player.level() instanceof ServerLevel currentLevel)) {
+			return;
+		}
+		FoundingSanctumSavedData data = FoundingSanctumSavedData.get(currentLevel);
 
-		if (data.setRecallPoint(player.getUUID(), player.blockPosition())) {
+		if (data.setRecallPoint(sanctumOwner, player.blockPosition())) {
 			player.level().playSound(null, player.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
 					SoundSource.PLAYERS, 1.0f, 1.0f);
 			player.displayClientMessage(

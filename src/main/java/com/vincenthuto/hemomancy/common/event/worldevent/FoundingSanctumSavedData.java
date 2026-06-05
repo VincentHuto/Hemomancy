@@ -10,13 +10,15 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 /**
  * Persists Founding Sanctum locations across server restarts.
- * Each Illuminatus player (degree 5+) may consecrate one sanctum per dimension.
- * Harbingers standing within the sanctum radius receive passive buffs.
+ * Each bloodline may anchor one Founding Sanctum per dimension, keyed to its
+ * owning player UUID. The sanctum stores both its consecrated center and a
+ * configurable recall point used by the ancestral ledger.
  */
 public class FoundingSanctumSavedData extends SavedData {
 
@@ -28,7 +30,7 @@ public class FoundingSanctumSavedData extends SavedData {
 	public static final double SANCTUM_RADIUS = 40.0;
 
 	/** Map of consecrating player UUID → sanctum center position. */
-	private final Map<UUID, BlockPos> sanctums = new HashMap<>();
+	private final Map<UUID, SanctumEntry> sanctums = new HashMap<>();
 
 	public FoundingSanctumSavedData() {}
 
@@ -42,8 +44,13 @@ public class FoundingSanctumSavedData extends SavedData {
 		for (int i = 0; i < list.size(); i++) {
 			CompoundTag entry = list.getCompound(i);
 			UUID uuid = entry.getUUID("player");
-			BlockPos pos = new BlockPos(entry.getInt("x"), entry.getInt("y"), entry.getInt("z"));
-			data.sanctums.put(uuid, pos);
+			BlockPos center = entry.contains("Center", Tag.TAG_LONG)
+					? BlockPos.of(entry.getLong("Center"))
+					: new BlockPos(entry.getInt("x"), entry.getInt("y"), entry.getInt("z"));
+			BlockPos recallPoint = entry.contains("RecallPoint", Tag.TAG_LONG)
+					? BlockPos.of(entry.getLong("RecallPoint"))
+					: center;
+			data.sanctums.put(uuid, new SanctumEntry(center, recallPoint));
 		}
 		return data;
 	}
@@ -52,12 +59,11 @@ public class FoundingSanctumSavedData extends SavedData {
 	@Nonnull
 	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
 		ListTag list = new ListTag();
-		for (Map.Entry<UUID, BlockPos> entry : sanctums.entrySet()) {
+		for (Map.Entry<UUID, SanctumEntry> entry : sanctums.entrySet()) {
 			CompoundTag e = new CompoundTag();
 			e.putUUID("player", entry.getKey());
-			e.putInt("x", entry.getValue().getX());
-			e.putInt("y", entry.getValue().getY());
-			e.putInt("z", entry.getValue().getZ());
+			e.putLong("Center", entry.getValue().center().asLong());
+			e.putLong("RecallPoint", entry.getValue().recallPoint().asLong());
 			list.add(e);
 		}
 		tag.put("sanctums", list);
@@ -65,7 +71,7 @@ public class FoundingSanctumSavedData extends SavedData {
 	}
 
 	public void consecrate(UUID playerUUID, BlockPos center) {
-		sanctums.put(playerUUID, center);
+		sanctums.put(playerUUID, new SanctumEntry(center, center));
 		setDirty();
 	}
 
@@ -78,8 +84,45 @@ public class FoundingSanctumSavedData extends SavedData {
 		return sanctums.containsKey(playerUUID);
 	}
 
-	/** Returns a snapshot of all active sanctum positions; do not modify. */
+	public BlockPos getSanctumCenter(UUID playerUUID) {
+		SanctumEntry entry = sanctums.get(playerUUID);
+		return entry != null ? entry.center() : null;
+	}
+
+	public BlockPos getRecallPoint(UUID playerUUID) {
+		SanctumEntry entry = sanctums.get(playerUUID);
+		return entry != null ? entry.recallPoint() : null;
+	}
+
+	public boolean setRecallPoint(UUID playerUUID, BlockPos newRecallPoint) {
+		SanctumEntry entry = sanctums.get(playerUUID);
+		if (entry == null || !isWithinSanctum(playerUUID, newRecallPoint)) {
+			return false;
+		}
+		sanctums.put(playerUUID, new SanctumEntry(entry.center(), newRecallPoint));
+		setDirty();
+		return true;
+	}
+
+	public boolean isWithinSanctum(UUID playerUUID, BlockPos pos) {
+		BlockPos center = getSanctumCenter(playerUUID);
+		if (center == null) {
+			return false;
+		}
+		double dx = pos.getX() - center.getX();
+		double dz = pos.getZ() - center.getZ();
+		return dx * dx + dz * dz <= SANCTUM_RADIUS * SANCTUM_RADIUS;
+	}
+
+	/** Returns a snapshot of all active sanctum center positions. */
 	public Map<UUID, BlockPos> getAllSanctums() {
-		return sanctums;
+		Map<UUID, BlockPos> centers = new LinkedHashMap<>();
+		for (Map.Entry<UUID, SanctumEntry> entry : sanctums.entrySet()) {
+			centers.put(entry.getKey(), entry.getValue().center());
+		}
+		return centers;
+	}
+
+	private record SanctumEntry(BlockPos center, BlockPos recallPoint) {
 	}
 }
