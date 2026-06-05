@@ -3,9 +3,12 @@
   "pattern": [
     "ITI",
     "SCS",
-    "ITI"
+    "IFI"
   ],
   "key": {
+    "F": {
+      "item": "hemomancy:ferric_binder"
+    },
     "I": {
       "item": "hemomancy:hematic_iron_scrap"
     },

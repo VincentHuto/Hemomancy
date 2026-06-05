@@ -1,11 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "  I",
+    " FI",
     " T ",
     "B  "
   ],
   "key": {
+    "F": {
+      "item": "hemomancy:ferric_binder"
+    },
     "I": {
       "item": "hemomancy:hematic_iron_scrap"
     },

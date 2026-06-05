@@ -11,7 +11,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Status legend:** `Implemented` means present in the current NeoForge 1.21.1 runtime path. `Partial` means a playable or compiled spine exists with explicit remaining work. `Dormant` means source/design is preserved but excluded or unregistered. `Planned` means design/lore intent without active runtime behavior.
 
-**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, Mnemonic Whispers/Screams brewing effects and mob-effect icons, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -469,6 +469,8 @@ At **Degree 5 (Illuminatus)**, a Harbinger can perform a founding rite that cons
 - All Harbingers present in the sanctum receive enhanced effects: stronger regeneration, lower cooldowns, more potent blood manipulations
 - Intended to encourage collective settlement and cooperative play
 - A crafting material called **Quintessence** is granted by the Illuminatus rite and is required for the founding ritual
+- Client visuals for sanctum boundary domes and screen distortion are controlled by the client config key `world_rendering.renderSanctumBoundary`, defaulting to `true`.
+- Players who have begun the Unstained path through purity or clarity are treated as outsiders for sanctum boundary visuals, so former Harbingers still see the hostile red/black omen dome instead of bloodline/member shimmer.
 
 > **Status: Partial.** Buff application logic is functional (`FoundingSanctumEvents` applies Damage Boost, Regeneration, and Damage Resistance to qualifying players within the sanctum radius). The Sanguine Quintessence item is registered, produced by the Exsanguination cardinal rite, and required as a placed catalyst at the sanctum heart. Sanctum locations persist through `FoundingSanctumSavedData`, and Blood Moon boundary sealing is wired. Remaining WIP is boundary detection confirmation and full gameplay tuning.
 
@@ -1192,14 +1194,17 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 
 ## 14. Status Effects & Potions
 
-Each effect has a corresponding potion, splash potion, lingering potion, and tipped arrow variant:
+Most crafted status effects have a corresponding potion, splash potion, lingering potion, and tipped arrow variant. Some runtime-only effects are applied directly by gameplay systems instead.
 
 | Effect | Category | Color | Notable Mechanic |
 |--------|----------|-------|-----------------|
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/blood_binding.png) **Blood Binding** | Harmful | Dark red | Immobilizes target |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/blood_drunkenness.png) **Blood Drunkenness** | Harmful | 0x6E0E1C | Foreign-blood backlash from direct emergency blood restores. Lasts 3 minutes per use, stacks to amplifier 3, increases manipulation blood cost by +15%/+30%/+45%/+60%, and at amplifier 3 also increases manipulation cooldowns by 25%. Runtime-applied only; no potion recipe. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/blood_loss.png) **Blood Loss** | Harmful | Red | -15% movement speed |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/blood_rush.png) **Blood Rush** | Beneficial | Red | +20% move speed, +10% attack speed |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hemolysis.png) **Hemolysis** | Neutral | Pink | Blood destruction effect |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hematic_strain.png) **Hematic Strain** | Harmful | 0x660000 | Inner Trial debuff; reduces max health by 40% while active. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hemophagy.png) **Hemophagy** | Harmful | 0x4B0000 | Hollow Vessel Empty Pulse debuff; healing reduction is enforced through `HemorathEntity` heal handling. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/fungal_elytra.png) **Noctifly Agaric** (Fungal Elytra) | Beneficial | — | Grants elytra flight ![](../src/main/resources/assets/hemomancy/textures/models/armor/fungal_elytra.png) |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sanguine_fertility.png) **Sanguine Fertility** | Beneficial | 0xCC3344 | Fertility/growth effect |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/arachnid_anastomosis.png) **Arachnid Anastomosis** | Beneficial | 0x8B0000 | Spider-vein healing |
@@ -1212,12 +1217,24 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/luminous_dissipation.png) **Luminous Dissipation** | Beneficial | — | Cuttlefish morphling effect — knockback resistance |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/hemorrhagic_venom.png) **Hemorrhagic Venom** | Beneficial | — | Tick morphling effect — AoE damage aura to nearby hostiles |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/spined_barricade.png) **Spined Barricade** | Beneficial | — | Urchin morphling effect — passive thorns + armor bonus |
-| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphling_centipede.png) **Venomous Resilience** | Beneficial | — | Centipede morphling effect — poison immunity + speed |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/venomous_resilience.png) **Venomous Resilience** | Beneficial | 0x336B87 | Centipede morphling effect — poison immunity + speed. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/burrowers_instinct.png) **Burrower's Instinct** | Beneficial | — | Mole morphling effect — mining speed + underground regen/night vision |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/arcane_resonance.png) **Arcane Resonance** | Beneficial | 0x8800AA | MnA combo marker — next blood manipulation costs less blood (granted by blood-affinity MnA spells) |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sanguine_clarity.png) **Sanguine Clarity** | Beneficial | 0xAA0022 | MnA combo marker — next MnA spell costs less mana (granted by using blood manipulations) |
-| **Sporitic Resonance** | Beneficial | Catalyst-tinted | Granted by a lit Sporitic Thurible aura. Matching-tendency manipulations cost 15% less blood and receive 10% shorter cooldown while the resonance state is active; nonmatching manipulations receive no bonus and multiple thuribles do not stack. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/marked_by_canon.png) **Marked by Canon** | Harmful | 0x8B0000 | Saint sarcophagus rejection mark; lowers extraction odds, slows movement, and can damage high-amplifier trespassers. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/neural_overload.png) **Neural Overload** | Harmful | 0x7DF9FF | Neurotic enzyme disruption; slows the body and escalates into nausea and weakness at higher amplifier levels. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/mnemonic_whispers.png) **Mnemonic Whispers** | Beneficial | 0x7A5C91 | Brewed from Awkward Potion + Mnemonic Ambergris. Lasts 60 seconds and reduces the cooldown started by successful blood manipulations by 25% (`0.75×`) through `BloodManipulation.startCooldown`. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/mnemonic_screams.png) **Mnemonic Screams** | Harmful | 0x3F102B | Anti-abuse backlash. If a player starts drinking another Mnemonic Whispers potion while Whispers is already active, the finish-drink handler removes Whispers and applies Screams for 60 seconds. While active, blood manipulations cost 50% more blood (`1.5×`). Runtime-applied only; no potion recipe. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/sporitic_resonance.png) **Sporitic Resonance** | Beneficial | Catalyst-tinted | Granted by a lit Sporitic Thurible aura. Matching-tendency manipulations cost 15% less blood and receive 10% shorter cooldown while the resonance state is active; nonmatching manipulations receive no bonus and multiple thuribles do not stack. |
 | ![](../src/main/resources/assets/hemomancy/textures/mob_effect/morphic_strain.png) **Morphic Strain** | Harmful | Fungal green | Primal morphling drawback. Modest max-health and movement-speed reduction after successful Primal powers. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/silver_ward.png) **Silver Ward** | Beneficial | 0xC0C0C0 | Unstained protection; grants armor/knockback resistance and reduces damage from hemomancy-coded threats. |
+| ![](../src/main/resources/assets/hemomancy/textures/mob_effect/verdigris_aura.png) **Verdigris Aura** | Beneficial | 0x4A8B6F | Unstained clarity field; weakens and slows hemomancy-tagged mobs with oxidized-copper resonance. |
+
+**Potion and icon notes:**
+- `potion_of_mnemonic_whispers` is registered in `EffectInit.POTION_TYPES`; normal vanilla conversion produces splash, lingering, and tipped-arrow variants with language entries.
+- Mnemonic Whispers is brewed in `EffectInit.registerEnzymeBrewingRecipes(RegisterBrewingRecipesEvent)` from `Potions.AWKWARD` + `ItemInit.mnemonic_ambergris`.
+- Re-drinking protection is handled by `EffectInit.onMnemonicPotionDrinkStart` and `EffectInit.onMnemonicPotionDrinkFinish`, using a short-lived per-player marker so the first Whispers drink is not punished after its own effect is applied.
+- Effect icons live under `src/main/resources/assets/hemomancy/textures/mob_effect/`; every registered mob effect has an exact-ID 16x16 RGBA PNG there.
 
 ---
 
@@ -2502,17 +2519,34 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 | Befouling Ash | Smelting | Foul Paste | 1 |
 | Smouldering Ash | Shapeless | Hematic Iron Powder + Blaze Powder + Gunpowder | 3 |
 
-**Brewing Recipes (Awkward Potion + Plant → Potion):**
+**Brewing Recipes (Awkward Potion + Ingredient -> Potion):**
 
 Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe) deliberately do not brew blood-positive effects — their uses are in ghastly_alembic processing and Unstained crafting chains.
+Mnemonic Ambergris is the non-plant exception: it carries reef-memory chemistry rather than tendency enzyme chemistry and brews Mnemonic Whispers.
 
-| Plant Ingredient | Result Potion |
-|-----------------|---------------|
-| Bleeding Heart | Potion of Sanguine Siphon |
-| Infected Fungus | Potion of Mycorrhizal Mending |
-| Stinkhorn Fungus | Potion of Blood Binding |
-| Rafflesia | Potion of Hemolysis |
-| Sarcodes | Potion of Blood Rush |
+| Ingredient | Result Potion | Notes |
+|------------|---------------|-------|
+| Bleeding Heart | Potion of Sanguine Siphon | Blood-faction plant route |
+| Infected Fungus | Potion of Mycorrhizal Mending | Blood-faction fungus route |
+| Stinkhorn Fungus | Potion of Blood Binding | Blood-faction fungus route |
+| Rafflesia | Potion of Hemolysis | Blood-faction plant route |
+| Sarcodes | Potion of Blood Rush | Blood-faction plant route |
+| Mnemonic Ambergris | Potion of Mnemonic Whispers | 60-second manipulation cooldown reducer. Drinking another while Whispers is already active removes Whispers and applies Mnemonic Screams instead. |
+
+**Enzyme Brewing Alternatives (Awkward Potion + Enzyme -> Vanilla Potion):**
+
+Enzyme brewing provides alternate reagent paths for vanilla potion effects after the player has a brewing stand and Nether Wart access. These recipes spend enzyme items as tendency-flavored biological reagents and do not create enzyme duplication loops.
+
+| Enzyme Ingredient | Result Potion |
+|-------------------|---------------|
+| Vivacious Enzyme | Potion of Regeneration |
+| Fervent Enzyme | Potion of Fire Resistance |
+| Neurotic Enzyme | Potion of Swiftness |
+| Incandescent Enzyme | Potion of Night Vision |
+| Ruinous Enzyme | Potion of Poison |
+| Frigid Enzyme | Potion of Slowness |
+| Ferric Enzyme | Potion of Strength |
+| Umbral Enzyme + Potion of Night Vision | Potion of Invisibility |
 
 ### 25.5 Food Recipes
 
@@ -3241,7 +3275,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, endgame Vesper/Mycophant entity-render-sound wiring, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, Mnemonic Whispers/Screams potion effects and mob-effect icons, Blood Drunkenness mob-effect icon, endgame Vesper/Mycophant entity-render-sound wiring, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
 | Partial | Progression/Liber Java renderer, Founding Sanctum tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Vesper/Mycophant summoning rituals, Annetta final animation/combat polish |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, active Harbinger voyager trade/rumor/dialogue expansion, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |

@@ -4,17 +4,28 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.effect.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EffectInit {
@@ -22,6 +33,7 @@ public class EffectInit {
             Hemomancy.MOD_ID);
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,
             Hemomancy.MOD_ID);
+    private static final Set<UUID> MNEMONIC_WHISPERS_REDRINKS = ConcurrentHashMap.newKeySet();
 
     public static final DeferredHolder<MobEffect, MobEffect> fungal_elytra = EFFECTS.register("fungal_elytra",
             () -> new ElytraEffect()
@@ -209,8 +221,62 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> morphic_strain = EFFECTS.register("morphic_strain",
             () -> new MorphicStrainEffect(MobEffectCategory.HARMFUL, 0x5A2A65));
 
+    public static final DeferredHolder<MobEffect, MobEffect> mnemonic_whispers = EFFECTS.register("mnemonic_whispers",
+            () -> new MnemonicWhispersEffect(MobEffectCategory.BENEFICIAL, 0x7A5C91));
+    public static final DeferredHolder<Potion, Potion> potion_of_mnemonic_whispers = POTION_TYPES.register(
+            "potion_of_mnemonic_whispers",
+            () -> new Potion("potion_of_mnemonic_whispers",
+                    new MobEffectInstance(mnemonic_whispers, MnemonicPotionRules.WHISPERS_DURATION_TICKS, 0)));
+
+    public static final DeferredHolder<MobEffect, MobEffect> mnemonic_screams = EFFECTS.register("mnemonic_screams",
+            () -> new MnemonicScreamsEffect(MobEffectCategory.HARMFUL, 0x3F102B));
+
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
+    }
+
+    @SubscribeEvent
+    public static void registerEnzymeBrewingRecipes(RegisterBrewingRecipesEvent event) {
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.vivacious_enzyme.get(), Potions.REGENERATION);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.fervent_enzyme.get(), Potions.FIRE_RESISTANCE);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.neurotic_enzyme.get(), Potions.SWIFTNESS);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.incandescent_enzyme.get(), Potions.NIGHT_VISION);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.ruinous_enzyme.get(), Potions.POISON);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.frigid_enzyme.get(), Potions.SLOWNESS);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.ferric_enzyme.get(), Potions.STRENGTH);
+        event.getBuilder().addMix(Potions.NIGHT_VISION, ItemInit.umbral_enzyme.get(), Potions.INVISIBILITY);
+        event.getBuilder().addMix(Potions.AWKWARD, ItemInit.mnemonic_ambergris.get(), potion_of_mnemonic_whispers);
+    }
+
+    @SubscribeEvent
+    public static void onMnemonicPotionDrinkStart(LivingEntityUseItemEvent.Start event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        boolean drinkingWhispers = isMnemonicWhispersPotion(event.getItem());
+        if (MnemonicPotionRules.shouldApplyScreamsOnWhispersDrink(drinkingWhispers,
+                player.hasEffect(mnemonic_whispers))) {
+            MNEMONIC_WHISPERS_REDRINKS.add(player.getUUID());
+        } else {
+            MNEMONIC_WHISPERS_REDRINKS.remove(player.getUUID());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMnemonicPotionDrinkFinish(LivingEntityUseItemEvent.Finish event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !isMnemonicWhispersPotion(event.getItem())) {
+            return;
+        }
+        if (MNEMONIC_WHISPERS_REDRINKS.remove(player.getUUID())) {
+            player.removeEffect(mnemonic_whispers);
+            player.addEffect(new MobEffectInstance(mnemonic_screams,
+                    MnemonicPotionRules.SCREAMS_DURATION_TICKS, 0, false, true, true));
+        }
+    }
+
+    private static boolean isMnemonicWhispersPotion(ItemStack stack) {
+        PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+        return contents != null && contents.is(potion_of_mnemonic_whispers);
     }
 
 }

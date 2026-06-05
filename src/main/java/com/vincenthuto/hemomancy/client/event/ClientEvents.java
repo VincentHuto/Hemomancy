@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
+import com.vincenthuto.hemomancy.client.data.SanctumBoundaryClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -392,6 +393,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
         // HutosLib now retains read tracker state across disconnect/reload.
+        SanctumBoundaryClientData.clear();
     }
 
     @SubscribeEvent
@@ -406,9 +408,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+        SanctumBoundaryRenderer.renderPost(event.getGuiGraphics(),
+                event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
         if (SanguineOmenOverlay.instance != null) {
-            Minecraft minecraft = Minecraft.getInstance();
-            float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
             SanguineOmenOverlay.instance.renderWorldGrade(event.getGuiGraphics(),
                     event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
         }
@@ -426,6 +430,7 @@ public class ClientEvents {
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
+            SanctumBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);

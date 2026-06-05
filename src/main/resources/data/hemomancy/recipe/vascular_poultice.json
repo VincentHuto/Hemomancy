@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:hematic_iron_powder" },
+    { "item": "hemomancy:sanguine_salve" },
+    { "tag": "hemomancy:poultice_enzymes" }
+  ],
+  "result": {
+    "id": "hemomancy:vascular_poultice",
+    "count": 2
+  }
+}

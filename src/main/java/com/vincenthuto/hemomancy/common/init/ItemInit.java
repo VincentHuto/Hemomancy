@@ -159,6 +159,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_powder = BASEITEMS.register("hematic_iron_powder",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> enzyme_primer = BASEITEMS.register("enzyme_primer",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> ferric_binder = BASEITEMS.register("ferric_binder",
+            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> serpent_scale = BASEITEMS.register("serpent_scale",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> swollen_leech = BASEITEMS.register("swollen_leech",
@@ -179,6 +183,8 @@ public class ItemInit {
             () -> new BloodStainedStoneItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguine_salve = BASEITEMS.register("sanguine_salve",
             () -> new SanguineSalveItem(new Item.Properties(), 25f));
+    public static final DeferredHolder<Item, Item> vascular_poultice = BASEITEMS.register("vascular_poultice",
+            () -> new VascularPoulticeItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> dicentra_sap = BASEITEMS.register("dicentra_sap",

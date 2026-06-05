@@ -92,6 +92,17 @@ public class BloodlineSavedData extends SavedData {
 	}
 
 	/**
+	 * Remove an entire bloodline from world data and return the removed entry.
+	 */
+	public Bloodline disbandBloodline(UUID bloodlineUUID) {
+		Bloodline removed = bloodlines.remove(bloodlineUUID);
+		if (removed != null) {
+			setDirty();
+		}
+		return removed;
+	}
+
+	/**
 	 * Get a bloodline by its UUID.
 	 */
 	public Bloodline getBloodline(UUID bloodlineUUID) {

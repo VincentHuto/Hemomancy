@@ -103,9 +103,12 @@ public class UnsignedLedgerItem extends Item {
 				// Signed ledger: open the ledger GUI for lodge actions,
 				// or if another player uses it, they join the bloodline.
 				if (worldIn.isClientSide) {
-					// Check if the player is already in this bloodline — if so, open the GUI
+					// Only open the GUI if the player's current synced bloodline still matches this ledger.
 					Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
-					if (savedLine.isValid() && savedLine.hasMember(playerIn.getUUID())) {
+					Bloodline currentLine = volume.getBloodLine();
+					if (savedLine.isValid() && currentLine.isValid()
+							&& currentLine.getBloodlineUUID().equals(savedLine.getBloodlineUUID())
+							&& currentLine.hasMember(playerIn.getUUID())) {
 						LedgerScreen.openScreen();
 					}
 					// If not a member yet, the server side handles joining below

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:hematic_iron_scrap" },
+    { "item": "minecraft:clay_ball" },
+    { "item": "minecraft:slime_ball" },
+    { "item": "hemomancy:dicentra_sap" }
+  ],
+  "result": {
+    "id": "hemomancy:ferric_binder",
+    "count": 1
+  }
+}

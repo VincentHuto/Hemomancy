@@ -11,7 +11,9 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEv
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
+import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
@@ -219,7 +221,7 @@ public class BloodManipulation  {
 		}
 	}
 
-	private void startCooldown(Player player) {
+	private long startCooldown(Player player) {
 		if (cooldownTicks > 0) {
 			// ── Skill: Blood Flow — reduce cooldown duration ──
 			long effectiveCooldown = (long) (cooldownTicks
@@ -235,9 +237,13 @@ public class BloodManipulation  {
 					* CheapBloodInfusionHelper.getManipulationCooldownMultiplier(player));
 			effectiveCooldown = (long) (effectiveCooldown
 					* SporiticThuribleResonanceState.getCooldownMultiplier(player, tend));
+			effectiveCooldown = (long) (effectiveCooldown
+					* MnemonicPotionRules.manipulationCooldownMultiplier(player.hasEffect(EffectInit.mnemonic_whispers)));
 
 			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
+			return effectiveCooldown;
 		}
+		return 0L;
 	}
 
 	/**
@@ -373,6 +379,7 @@ public class BloodManipulation  {
 				}
 				effectiveCost *= CheapBloodInfusionHelper.getManipulationCostMultiplier(player);
 				effectiveCost *= SporiticThuribleResonanceState.getCostMultiplier(player, tend);
+				effectiveCost *= MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams));
 
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
@@ -396,8 +403,8 @@ public class BloodManipulation  {
 							invokeMnAComboHelper(player);
 						}
 
-						startCooldown(player);
-						PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket(cooldownTicks));
+						long appliedCooldown = startCooldown(player);
+						PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 								.withStyle(ChatFormatting.RED), true);

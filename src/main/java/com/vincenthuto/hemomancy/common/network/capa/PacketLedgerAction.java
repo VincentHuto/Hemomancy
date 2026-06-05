@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CrimsonLodgeEvents;
@@ -42,6 +45,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 	public static final int ACTION_SUMMON_NPCS = 0;
 	public static final int ACTION_RECALL_TO_LODGE = 1;
 	public static final int ACTION_SET_RECALL_POINT = 2;
+	public static final int ACTION_DISBAND_BLOODLINE = 3;
 
 	private final int action;
 
@@ -67,6 +71,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 					case ACTION_SUMMON_NPCS -> handleNpcSummon(player, volume);
 					case ACTION_RECALL_TO_LODGE -> handleLodgeRecall(player, volume);
 					case ACTION_SET_RECALL_POINT -> handleSetRecallPoint(player, volume);
+					case ACTION_DISBAND_BLOODLINE -> handleDisbandBloodline(player, volume);
 				}
 			});
 		});
@@ -213,6 +218,55 @@ public class PacketLedgerAction implements CustomPacketPayload {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 		}
+	}
+
+	private static void handleDisbandBloodline(ServerPlayer player, IBloodVolume volume) {
+		Bloodline bloodline = volume.getBloodLine();
+
+		if (!bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.disband.no_bloodline")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.disband.not_leader")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		ServerLevel overworld = player.server.overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+		if (globalLine == null) {
+			BloodlineDisbandHelper.removeOwnedSanctums(player.server, bloodline);
+			volume.setBloodLine(Bloodline.NOBLOODLINE);
+			BloodVolumeEvents.syncVolume(player, volume);
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.disband.missing")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		int playerCount = globalLine.getPlayerUUIDS().size();
+		int npcCount = globalLine.getNpcMemberCount();
+		BloodlineDisbandHelper.removeOwnedSanctums(player.server, globalLine);
+		savedData.disbandBloodline(globalLine.getBloodlineUUID());
+
+		BloodlineDisbandHelper.resetOnlineMembers(player.server, globalLine, member ->
+				member.getUUID().equals(player.getUUID()) ? null
+						: Component.translatable("hemomancy.ledger.disband.member_notice", player.getName().getString())
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.ledger.disband.success", playerCount, npcCount)
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
 	}
 
 	private static boolean teleportOrSpawnNpc(ServerLevel level, ServerPlayer player, UUID npcUUID) {

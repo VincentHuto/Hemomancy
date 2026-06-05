@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:enzyme_primer" },
+    { "item": "hemomancy:frozen_clot" },
+    { "item": "hemomancy:dicentra_sap" }
+  ],
+  "result": {
+    "id": "hemomancy:sanguine_salve",
+    "count": 1
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "tag": "hemomancy:enzymes" },
+    { "item": "hemomancy:hematic_iron_powder" },
+    { "item": "hemomancy:bloody_vial" },
+    { "item": "hemomancy:dicentra_sap" }
+  ],
+  "result": {
+    "id": "hemomancy:enzyme_primer",
+    "count": 2
+  }
+}

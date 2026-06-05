@@ -96,6 +96,17 @@ public class LedgerScreen extends Screen {
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SET_RECALL_POINT));
 					onClose();
 				}).bounds(btnX, y, btnW, 20).build());
+
+		y += 28;
+
+		// ── Disband Bloodline Button (leader only) ──
+		addRenderableWidget(Button.builder(
+				Component.literal("\u2620 Disband Bloodline"),
+				btn -> {
+					PacketHandler.sendToServer(
+							new PacketLedgerAction(PacketLedgerAction.ACTION_DISBAND_BLOODLINE));
+					onClose();
+				}).bounds(btnX, y, btnW, 20).build());
 	}
 
 	@Override

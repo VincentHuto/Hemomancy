@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -51,6 +52,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
+	private static final Direction[] SEARCH_DIRECTIONS = Direction.values();
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
 	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
@@ -537,54 +539,51 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(
 			BloodStructureRecipe recipe, ServerLevel level, BlockPos hitPos) {
 		if (!level.getBlockState(hitPos).is(recipe.getHitBlock())) return null;
-
-		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
-		int maxDim = Math.max(Math.max(
-				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
-		int radius = maxDim - 1;
-		for (BlockPos candidate : BlockPos.betweenClosed(
-				hitPos.offset(-radius, -radius, -radius),
-				hitPos.offset(radius, radius, radius))) {
-			for (Direction finger : Direction.values()) {
-				for (Direction thumb : Direction.values()) {
-					if (thumb == finger || thumb == finger.getOpposite()) continue;
-					BlockPattern.BlockPatternMatch match = blockPattern.matches(level, candidate, finger, thumb);
-					if (match != null && matchContainsPos(match, blockPattern, hitPos)) return match;
-				}
-			}
-		}
-		return null;
-	}
-
-	private static boolean matchContainsPos(
-			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BlockPos pos) {
-		for (int i = 0; i < blockPattern.getWidth(); ++i) {
-			for (int j = 0; j < blockPattern.getHeight(); ++j) {
-				for (int k = 0; k < blockPattern.getDepth(); ++k) {
-					if (match.getBlock(i, j, k).getPos().equals(pos)) return true;
-				}
-			}
-		}
-		return false;
+		return findPatternContainingHit(recipe.getPattern().getBlockPattern(), level, hitPos);
 	}
 
 	private static BlockPattern.BlockPatternMatch findPatternAtHit(
 			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
-		int maxDim = Math.max(Math.max(
-				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
-		int radius = maxDim - 1;
-		for (BlockPos candidate : BlockPos.betweenClosed(
-				hitPos.offset(-radius, -radius, -radius),
-				hitPos.offset(radius, radius, radius))) {
-			for (Direction finger : Direction.values()) {
-				for (Direction thumb : Direction.values()) {
-					if (thumb == finger || thumb == finger.getOpposite()) continue;
-					BlockPattern.BlockPatternMatch match = blockPattern.matches(level, candidate, finger, thumb);
-					if (match != null && matchContainsPos(match, blockPattern, hitPos)) return match;
+		return findPatternContainingHit(blockPattern, level, hitPos);
+	}
+
+	private static BlockPattern.BlockPatternMatch findPatternContainingHit(
+			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
+		int width = blockPattern.getWidth();
+		int height = blockPattern.getHeight();
+		int depth = blockPattern.getDepth();
+		for (Direction finger : SEARCH_DIRECTIONS) {
+			for (Direction thumb : SEARCH_DIRECTIONS) {
+				if (thumb == finger || thumb == finger.getOpposite()) {
+					continue;
+				}
+				for (int i = 0; i < width; ++i) {
+					for (int j = 0; j < height; ++j) {
+						for (int k = 0; k < depth; ++k) {
+							BlockPos origin = patternOriginForHit(hitPos, finger, thumb, i, j, k);
+							BlockPattern.BlockPatternMatch match = blockPattern.matches(level, origin, finger, thumb);
+							if (match != null && match.getBlock(i, j, k).getPos().equals(hitPos)) {
+								return match;
+							}
+						}
+					}
 				}
 			}
 		}
 		return null;
+	}
+
+	private static BlockPos patternOriginForHit(BlockPos hitPos, Direction finger, Direction thumb,
+			int widthOffset, int heightOffset, int depthOffset) {
+		Vec3i fingerNormal = finger.getNormal();
+		Vec3i thumbNormal = thumb.getNormal();
+		int palmX = fingerNormal.getY() * thumbNormal.getZ() - fingerNormal.getZ() * thumbNormal.getY();
+		int palmY = fingerNormal.getZ() * thumbNormal.getX() - fingerNormal.getX() * thumbNormal.getZ();
+		int palmZ = fingerNormal.getX() * thumbNormal.getY() - fingerNormal.getY() * thumbNormal.getX();
+		return hitPos.offset(
+				thumbNormal.getX() * heightOffset - palmX * widthOffset - fingerNormal.getX() * depthOffset,
+				thumbNormal.getY() * heightOffset - palmY * widthOffset - fingerNormal.getY() * depthOffset,
+				thumbNormal.getZ() * heightOffset - palmZ * widthOffset - fingerNormal.getZ() * depthOffset);
 	}
 
 	private static boolean consumeCenterCatalyst(ServerLevel level, BlockPos centerPos, Item requiredItem) {

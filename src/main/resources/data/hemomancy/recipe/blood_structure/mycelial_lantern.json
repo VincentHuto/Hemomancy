@@ -2,7 +2,7 @@
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 2500,
   "required_degree": 5,
-  "heldItem": "hemomancy:spore_sac",
+  "heldItem": "hemomancy:ferric_binder",
   "hitBlock": "hemomancy:hematic_iron_block",
   "pattern": [
     [" G ", "SBS", " G "],

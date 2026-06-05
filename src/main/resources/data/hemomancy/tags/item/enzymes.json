@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:vivacious_enzyme",
+    "hemomancy:fervent_enzyme",
+    "hemomancy:neurotic_enzyme",
+    "hemomancy:incandescent_enzyme",
+    "hemomancy:ruinous_enzyme",
+    "hemomancy:frigid_enzyme",
+    "hemomancy:ferric_enzyme",
+    "hemomancy:umbral_enzyme"
+  ]
+}

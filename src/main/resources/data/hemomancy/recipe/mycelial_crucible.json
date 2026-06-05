@@ -1,13 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "IFI",
+    "IBI",
     "FSF",
-    "IFI"
+    "IBI"
   ],
   "key": {
     "I": {
       "item": "hemomancy:hematic_iron_scrap"
+    },
+    "B": {
+      "item": "hemomancy:ferric_binder"
     },
     "F": {
       "item": "hemomancy:spore_sac"

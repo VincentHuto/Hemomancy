@@ -4,6 +4,7 @@
     { "item": "hemomancy:spore_sac" },
     { "item": "hemomancy:spore_sac" },
     { "item": "hemomancy:hematic_iron_scrap" },
+    { "item": "hemomancy:hematic_iron_powder" },
     { "item": "minecraft:brown_mushroom_block" }
   ],
   "result": {

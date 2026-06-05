@@ -171,6 +171,7 @@ public class PacketHandler {
 
         // ── Cardinal rites ────────────────────────────────────────────────────
         net.playToClient(PacketSyncActiveRites.TYPE, PacketSyncActiveRites.STREAM_CODEC, PacketSyncActiveRites::handle);
+        net.playToClient(PacketSyncSanctumBoundaries.TYPE, PacketSyncSanctumBoundaries.STREAM_CODEC, PacketSyncSanctumBoundaries::handle);
         net.playToClient(PacketBloodCraftRing.TYPE, PacketBloodCraftRing.STREAM_CODEC, PacketBloodCraftRing::handle);
         net.playToClient(PacketBloodStructureFeed.TYPE, PacketBloodStructureFeed.STREAM_CODEC, PacketBloodStructureFeed::handle);
 

@@ -1,11 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "III",
+    "IFI",
     "SBS",
     "PPP"
   ],
   "key": {
+    "F": { "item": "hemomancy:ferric_binder" },
     "I": { "item": "hemomancy:hematic_iron_scrap" },
     "S": { "item": "minecraft:chain" },
     "B": { "item": "hemomancy:blood_crystal" },

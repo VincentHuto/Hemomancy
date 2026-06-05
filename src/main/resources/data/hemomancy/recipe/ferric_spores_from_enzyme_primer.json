@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:enzyme_primer" },
+    { "item": "hemomancy:ferric_enzyme" },
+    { "item": "hemomancy:spore_sac" }
+  ],
+  "result": {
+    "id": "hemomancy:ferric_spores",
+    "count": 2
+  }
+}

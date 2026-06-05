@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "SIS",
-    "I I",
+    "IPI",
     "SIS"
   ],
   "key": {
@@ -11,6 +11,9 @@
     },
     "I": {
       "item": "minecraft:glass"
+    },
+    "P": {
+      "item": "hemomancy:enzyme_primer"
     }
   },
   "result": {

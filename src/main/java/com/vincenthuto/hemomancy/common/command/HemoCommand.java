@@ -27,6 +27,9 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
@@ -64,6 +67,7 @@ import java.util.Locale;
  * /hemo blood setmax &lt;amount&gt; [player]
  * /hemo blood fill [player]
  * /hemo blood activate [player]
+ * /hemo bloodline disband [player]
  *
  * ── Initiatory Degree ──
  * /hemo degree get [player]
@@ -135,6 +139,11 @@ public class HemoCommand {
 								.executes(ctx -> activateBlood(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> activateBlood(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
+				.then(Commands.literal("bloodline")
+						.then(Commands.literal("disband")
+								.executes(ctx -> disbandBloodline(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> disbandBloodline(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
 
 				// ── Initiatory Degree ──
 				.then(Commands.literal("degree")
@@ -400,6 +409,48 @@ public class HemoCommand {
 				.append(Component.literal(" blood active: "))
 				.append(Component.literal(String.valueOf(blood.isActive()))
 						.withStyle(blood.isActive() ? ChatFormatting.GREEN : ChatFormatting.RED)),
+				true);
+		return 1;
+	}
+
+	private static int disbandBloodline(CommandSourceStack source, ServerPlayer player) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
+				.orElseThrow(IllegalStateException::new);
+		Bloodline localLine = volume.getBloodLine();
+
+		if (!localLine.isValid()) {
+			source.sendFailure(Component.literal(player.getName().getString() + " has no bloodline to disband."));
+			return 0;
+		}
+
+		ServerLevel overworld = player.server.overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		Bloodline globalLine = savedData.getBloodline(localLine.getBloodlineUUID());
+		if (globalLine == null) {
+			BloodlineDisbandHelper.removeOwnedSanctums(source.getServer(), localLine);
+			volume.setBloodLine(Bloodline.NOBLOODLINE);
+			BloodVolumeEvents.syncVolume(player, volume);
+			source.sendFailure(Component.literal(localLine.getName() + " was already missing from world data; cleared "
+					+ player.getName().getString() + "'s local bloodline state."));
+			return 0;
+		}
+
+		int playerCount = globalLine.getPlayerUUIDS().size();
+		int npcCount = globalLine.getNpcMemberCount();
+		BloodlineDisbandHelper.removeOwnedSanctums(source.getServer(), globalLine);
+		savedData.disbandBloodline(globalLine.getBloodlineUUID());
+		int onlineReset = BloodlineDisbandHelper.resetOnlineMembers(source.getServer(), globalLine,
+				member -> Component.literal("Your bloodline has been disbanded.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+
+		source.sendSuccess(() -> Component.literal("Disbanded ")
+				.append(Component.literal(globalLine.getName()).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(" for "))
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" (" + playerCount + " player" + (playerCount == 1 ? "" : "s")
+						+ ", " + npcCount + " npc" + (npcCount == 1 ? "" : "s")
+						+ "; " + onlineReset + " online reset).")
+						.withStyle(ChatFormatting.GRAY)),
 				true);
 		return 1;
 	}

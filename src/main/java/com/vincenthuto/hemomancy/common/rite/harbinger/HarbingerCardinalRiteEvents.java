@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
@@ -1240,8 +1241,9 @@ public class HarbingerCardinalRiteEvents {
 			}
 		}
 
-		// Remove the bloodline from world data
-		bloodlineData.getAllBloodlines().remove(bloodline.getBloodlineUUID());
+		// Remove the bloodline and any sanctums owned by its members from world data.
+		BloodlineDisbandHelper.removeOwnedSanctums(sLevel.getServer(), bloodline);
+		bloodlineData.disbandBloodline(bloodline.getBloodlineUUID());
 
 		caster.displayClientMessage(
 				Component.literal("The " + bloodlineName + " is dissolved. What was bound by blood is unbound.")
