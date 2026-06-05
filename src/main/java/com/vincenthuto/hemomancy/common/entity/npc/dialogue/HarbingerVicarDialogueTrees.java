@@ -30,25 +30,27 @@ public final class HarbingerVicarDialogueTrees {
 	 * @param degree       The player's current initiatory degree number (0–7).
 	 * @param entityId     The entity id of the vicar being spoken to.
 	 * @param hasBloodline          Whether the player has an established bloodline.
-	 *                              Recruit and expel options are only shown when this is true.
+	 *                              Recruitment options are only shown when this is true.
+	 * @param isNpcRecruited       Whether this vicar has already pledged to the player's bloodline.
 	 * @param hasAbocipherLiteracy Whether the player can already read blood-script.
 	 */
-	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy) {
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
 			case 2 -> votary(entityId);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId, hasAbocipherLiteracy);
-			case 5 -> illuminatus(entityId, hasBloodline, hasAbocipherLiteracy);
-			case 6 -> sanctified(entityId, hasBloodline, hasAbocipherLiteracy);
-			case 7 -> archon(entityId, hasBloodline, hasAbocipherLiteracy);
-			default -> apotheos(entityId, hasBloodline, hasAbocipherLiteracy); // degree 8+
+			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
+			case 6 -> sanctified(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
+			case 7 -> archon(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
+			default -> apotheos(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy); // degree 8+
 		};
 	}
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline) {
-		return forDegree(degree, entityId, hasBloodline, false);
+		return forDegree(degree, entityId, hasBloodline, false, false);
 	}
 
 	/**
@@ -90,6 +92,16 @@ public final class HarbingerVicarDialogueTrees {
 			options.add(new DialogueOption("hemomancy.dialogue.vicar.option.open_blood_script",
 					"blood_script_ritual", null));
 		}
+	}
+
+	private static void addRecruitmentOption(List<DialogueOption> options, boolean hasBloodline,
+			boolean isNpcRecruited) {
+		if (!hasBloodline) {
+			return;
+		}
+		options.add(isNpcRecruited
+				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger")
+				: new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 	}
 
 	private static DialogueTree.Builder addBloodScriptRitualNodes(DialogueTree.Builder builder) {
@@ -274,16 +286,14 @@ public final class HarbingerVicarDialogueTrees {
 	 * (handing the player a parchment fragment), explains the Founding Sanctum and
 	 * Quintessence, and offers the degree-advancement hint toward Sanctified.
 	 */
-	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
+	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
-		if (hasBloodline) {
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
-		}
+		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
 		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
@@ -339,14 +349,12 @@ public final class HarbingerVicarDialogueTrees {
 	 * The Monolith guides the player from here; the Vicar offers the final degree hint
 	 * toward Archon as the last piece of active counsel they can give.
 	 */
-	public static DialogueTree sanctified(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
+	public static DialogueTree sanctified(int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_hematic_order", "hematic_order_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
-		if (hasBloodline) {
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
-		}
+		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
 		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
@@ -384,14 +392,12 @@ public final class HarbingerVicarDialogueTrees {
 	 * Degree 7 — Archon. The vicar bows and offers a humble admission: the Monolith
 	 * carried the player beyond what the Vicar's doctrine could reach.
 	 */
-	public static DialogueTree archon(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
+	public static DialogueTree archon(int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_the_final_truth", "final_truth", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
-		if (hasBloodline) {
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
-		}
+		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
 		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
@@ -504,14 +510,12 @@ public final class HarbingerVicarDialogueTrees {
 	 * to what the player has become and can only reflect on what the Covenant was always
 	 * pointing toward — without understanding it fully themselves.
 	 */
-	public static DialogueTree apotheos(int entityId, boolean hasBloodline, boolean hasAbocipherLiteracy) {
+	public static DialogueTree apotheos(int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_do_you_make_of_this", "reflection", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
-		if (hasBloodline) {
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
-		}
+		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
 		return addBloodScriptRitualNodes(DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)

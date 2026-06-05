@@ -771,6 +771,7 @@
   "hemomancy.dialogue.recruit.option.release_blood": "Our pact is ended. Withdraw from my bloodline.",
   "hemomancy.dialogue.recruit.pool_increased": "Shared blood pool capacity: %d (Recruited Harbingers: %d)",
   "hemomancy.dialogue.recruit.success": "%s has pledged their blood to your bloodline. Their vitality strengthens the shared pool.",
+  "hemomancy.dialogue.recruit.type_already_member": "A Harbinger of this calling has already pledged to your bloodline.",
   "hemomancy.dialogue.recruit.vicar.accept": "Very well. My blood is your blood. The Covenant strengthens when its servants unite under a single will.",
   "hemomancy.dialogue.recruit.vicar.consider": "You ask me to bind my blood to yours? An Illuminatus of the Crimson Lodge commands respect... and obedience.",
   "hemomancy.dialogue.scout.option.go_in_peace": "§7[You take the notes and step away.]",

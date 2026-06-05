@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ZealotDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -93,10 +94,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
 
             DialogueTree tree;
             ItemStack held = player.getMainHandItem();
-            if (!held.isEmpty()) {
-                // Item inquiry available at any purity stage
-                tree = ZealotDialogueTrees.itemInquiry(held, this.getId(), purity, clarityUnlocked);
-            } else if (hasBegunPurification) {
+            if (hasBegunPurification) {
                 tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), purity, clarityUnlocked, enlightened);
             } else if (volume == null || !volume.isActive()) {
                 tree = ZealotDialogueTrees.noBlood(this.getId());
@@ -105,6 +103,8 @@ public class UnstainedZealotEntity extends PathfinderMob {
             } else {
                 tree = ZealotDialogueTrees.tooDeep(this.getId());
             }
+            tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "zealot",
+                    "hemomancy.zealot.item_inquiry.unknown", 0, purity);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }

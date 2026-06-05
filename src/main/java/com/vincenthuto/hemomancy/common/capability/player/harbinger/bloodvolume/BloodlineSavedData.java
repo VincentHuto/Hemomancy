@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -172,6 +173,14 @@ public class BloodlineSavedData extends SavedData {
 		return line;
 	}
 
+	public Bloodline addNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType) {
+		Bloodline line = bloodlines.get(bloodlineUUID);
+		if (line != null && line.addNpcMember(npcUUID, npcType)) {
+			setDirty();
+		}
+		return line;
+	}
+
 	/**
 	 * Remove a recruited NPC Harbinger from a bloodline.
 	 */
@@ -179,6 +188,13 @@ public class BloodlineSavedData extends SavedData {
 		Bloodline line = bloodlines.get(bloodlineUUID);
 		if (line != null) {
 			line.removeNpcMember(npcUUID);
+			setDirty();
+		}
+	}
+
+	public void removeNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType) {
+		Bloodline line = bloodlines.get(bloodlineUUID);
+		if (line != null && line.removeNpcMember(npcUUID, npcType)) {
 			setDirty();
 		}
 	}

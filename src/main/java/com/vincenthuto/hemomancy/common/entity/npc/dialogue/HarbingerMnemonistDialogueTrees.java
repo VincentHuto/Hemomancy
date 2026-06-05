@@ -21,11 +21,12 @@ public final class HarbingerMnemonistDialogueTrees {
 	private HarbingerMnemonistDialogueTrees() {
 	}
 
-	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean canClaimStarter) {
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
-		return woven(entityId, degree >= 5 && hasBloodline, canClaimStarter);
+		return woven(entityId, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter);
 	}
 
 	public static DialogueTree purifying(int entityId) {
@@ -99,7 +100,8 @@ public final class HarbingerMnemonistDialogueTrees {
 				.build();
 	}
 
-	private static DialogueTree woven(int entityId, boolean hasBloodline, boolean canClaimStarter) {
+	private static DialogueTree woven(int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter) {
 		List<DialogueOption> options = new ArrayList<>();
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_loom", "loom", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
@@ -108,10 +110,7 @@ public final class HarbingerMnemonistDialogueTrees {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
 		}
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_item", "item_hint", null));
-		if (hasBloodline) {
-			options.add(new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
-			options.add(new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"));
-		}
+		addRecruitmentOption(options, hasBloodline, isNpcRecruited);
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null));
 
 		return DialogueTree.builder(SPEAKER, MNEMONIST_ICON, entityId)
@@ -127,6 +126,16 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(recruitOfferNode())
 				.addNode(itemHintNode())
 				.build();
+	}
+
+	private static void addRecruitmentOption(List<DialogueOption> options, boolean hasBloodline,
+			boolean isNpcRecruited) {
+		if (!hasBloodline) {
+			return;
+		}
+		options.add(isNpcRecruited
+				? new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger")
+				: new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null));
 	}
 
 	private static List<DialogueOption> neophyteOptions(boolean canClaimStarter) {

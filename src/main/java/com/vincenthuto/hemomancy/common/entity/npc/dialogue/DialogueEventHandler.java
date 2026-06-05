@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -368,6 +369,7 @@ public class DialogueEventHandler {
 			if (entity == null) {
 				return;
 			}
+			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
 
 			// Check if this NPC is already recruited
 			if (bloodline.hasNpcMember(entity.getUUID())) {
@@ -377,12 +379,19 @@ public class DialogueEventHandler {
 						false);
 				return;
 			}
+			if (bloodline.hasNpcMemberType(npcType)) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.type_already_member")
+								.withStyle(ChatFormatting.GRAY),
+						false);
+				return;
+			}
 
 			// Add the NPC to the bloodline in world-level saved data
 			ServerLevel overworld = player.server.overworld();
 			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 			Bloodline updatedLine = savedData.addNpcMember(
-					bloodline.getBloodlineUUID(), entity.getUUID());
+					bloodline.getBloodlineUUID(), entity.getUUID(), npcType);
 
 			if (updatedLine != null) {
 				// Update the player's local bloodline reference
@@ -447,6 +456,7 @@ public class DialogueEventHandler {
 			if (entity == null) {
 				return;
 			}
+			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
 
 			if (!bloodline.hasNpcMember(entity.getUUID())) {
 				player.displayClientMessage(
@@ -458,7 +468,7 @@ public class DialogueEventHandler {
 
 			ServerLevel overworld = player.server.overworld();
 			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-			savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID());
+			savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID(), npcType);
 			Bloodline updatedLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 			if (updatedLine == null) {
 				return;

@@ -557,8 +557,8 @@ public class EntityInit {
                     .clientTrackingRange(4).setUpdateInterval(20)
                     .build(Hemomancy.rloc("wretched_will").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<BloodShotEntity>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
-            () -> EntityType.Builder.<BloodShotEntity>of(BloodShotEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
+    public static final DeferredHolder<EntityType<?>, EntityType<DarkArrowEntity>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
+            () -> EntityType.Builder.<DarkArrowEntity>of(DarkArrowEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
                     .clientTrackingRange(4).setUpdateInterval(20)
                     .build(Hemomancy.rloc("dark_arrow").toString()));
 

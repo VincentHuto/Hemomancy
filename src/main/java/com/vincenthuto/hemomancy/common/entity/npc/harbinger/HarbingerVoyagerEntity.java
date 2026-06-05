@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVoyagerDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -73,15 +74,15 @@ public class HarbingerVoyagerEntity extends PathfinderMob {
 			ItemStack held = player.getMainHandItem();
 			DialogueTree tree;
 
-			if (!held.isEmpty()) {
-				tree = HarbingerVoyagerDialogueTrees.itemInquiry(held, degree, this.getId());
-			} else if (hasClarityUnlocked(player)) {
+			if (hasClarityUnlocked(player)) {
 				tree = HarbingerVoyagerDialogueTrees.clarity(this.getId());
 			} else if (isPurifying(player)) {
 				tree = HarbingerVoyagerDialogueTrees.purifying(this.getId());
 			} else {
 				tree = HarbingerVoyagerDialogueTrees.forDegree(degree, this.getId());
 			}
+			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "voyager",
+					"hemomancy.voyager.item_inquiry.unknown", degree, 0f);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		}

@@ -2,16 +2,19 @@ package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -91,24 +94,21 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
             ItemStack held = player.getMainHandItem();
             DialogueTree tree;
 
-            if (!held.isEmpty()) {
-                // Alchemist explains their craft to anyone — clinical, even to clarity-bearing players
-                tree = HarbingerAlchemistDialogueTrees.itemInquiry(held, degree, this.getId());
-            } else if (hasClarityUnlocked(player)) {
-                // Clarity-bearing players are ignored — cold shoulder, no engagement
+            if (hasClarityUnlocked(player)) {
                 tree = HarbingerAlchemistDialogueTrees.clarity(this.getId());
             } else if (isPurifying(player)) {
-                // Purifying players are dismissed — the Alchemist has no time for them
                 tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
             } else {
-                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player));
+                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+                        isNpcInPlayerBloodline(player, this));
             }
+            tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "alchemist",
+                    "hemomancy.alchemist.item_inquiry.unknown", degree, 0f);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
-
     /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */
     private static boolean hasClarityUnlocked(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
@@ -120,6 +120,20 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
     private static boolean hasBloodline(Player player) {
         return HemoCapabilityAccess.getBloodVolume(player)
                 .map(vol -> vol.getBloodLine().isValid())
+                .orElse(false);
+    }
+
+    private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(vol -> vol.getBloodLine().isValid() && vol.getBloodLine().hasNpcMember(npc.getUUID()))
+                .orElse(false);
+    }
+
+    private static boolean canShowRecruitment(Player player, Entity npc) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(vol -> vol.getBloodLine().isValid()
+                        && (vol.getBloodLine().hasNpcMember(npc.getUUID())
+                        || !vol.getBloodLine().hasNpcMemberType(BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType()))))
                 .orElse(false);
     }
 

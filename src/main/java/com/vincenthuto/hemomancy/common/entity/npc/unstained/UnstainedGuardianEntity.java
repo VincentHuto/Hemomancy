@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.GuardianDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -79,9 +80,9 @@ public class UnstainedGuardianEntity extends PathfinderMob {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             ItemStack held = player.getMainHandItem();
-            DialogueTree tree = held.isEmpty()
-                    ? GuardianDialogueTrees.ambient(this.getId())
-                    : GuardianDialogueTrees.forItem(held, this.getId());
+            DialogueTree tree = DialogueItemInquiryNodes.withHeldItemInquiry(
+                    GuardianDialogueTrees.ambient(this.getId()), held, "guardian",
+                    "hemomancy.guardian.item_inquiry.unknown", 0, 0f);
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);

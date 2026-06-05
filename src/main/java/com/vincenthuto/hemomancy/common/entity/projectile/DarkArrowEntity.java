@@ -38,6 +38,11 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 		this(worldIn, shooter, null);
 	}
 
+
+
+
+
+
 	public DarkArrowEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
 		super(EntityInit.dark_arrow.get(), shooter, worldIn, ItemStack.EMPTY,
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);

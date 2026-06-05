@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -39,6 +40,12 @@ public class Bloodline {
 						for (int i = 0; i < npcTag.size(); i++) {
 							if (npcTag.get(i) instanceof CompoundTag comp) {
 								line.npcMemberUUIDs.add(comp.getUUID("npc" + i));
+								if (comp.contains("type" + i)) {
+									ResourceLocation typeId = ResourceLocation.tryParse(comp.getString("type" + i));
+									if (typeId != null && !line.npcMemberTypes.contains(typeId)) {
+										line.npcMemberTypes.add(typeId);
+									}
+								}
 							}
 						}
 						line.recalculateMaxVolume();
@@ -64,6 +71,7 @@ public class Bloodline {
 	 * needing real multiplayer partners.
 	 */
 	List<UUID> npcMemberUUIDs = new ArrayList<>();
+	List<ResourceLocation> npcMemberTypes = new ArrayList<>();
 
 	public Bloodline() {
 		this.name = "No Bloodline";
@@ -130,6 +138,19 @@ public class Bloodline {
 		return false;
 	}
 
+	public boolean addNpcMember(UUID npcUUID, ResourceLocation npcType) {
+		if (npcType != null && npcMemberTypes.contains(npcType)) {
+			return false;
+		}
+		if (!addNpcMember(npcUUID)) {
+			return false;
+		}
+		if (npcType != null) {
+			npcMemberTypes.add(npcType);
+		}
+		return true;
+	}
+
 	/**
 	 * Removes a recruited NPC Harbinger from this bloodline.
 	 *
@@ -143,9 +164,21 @@ public class Bloodline {
 		return false;
 	}
 
+	public boolean removeNpcMember(UUID npcUUID, ResourceLocation npcType) {
+		boolean removed = removeNpcMember(npcUUID);
+		if (removed && npcType != null) {
+			npcMemberTypes.remove(npcType);
+		}
+		return removed;
+	}
+
 	/** Returns {@code true} if the given NPC entity UUID is already recruited. */
 	public boolean hasNpcMember(UUID npcUUID) {
 		return npcMemberUUIDs.contains(npcUUID);
+	}
+
+	public boolean hasNpcMemberType(ResourceLocation npcType) {
+		return npcType != null && npcMemberTypes.contains(npcType);
 	}
 
 	/** Returns the number of recruited NPC Harbingers. */
@@ -156,6 +189,10 @@ public class Bloodline {
 	/** Returns the list of recruited NPC UUIDs. */
 	public List<UUID> getNpcMemberUUIDs() {
 		return npcMemberUUIDs;
+	}
+
+	public List<ResourceLocation> getNpcMemberTypes() {
+		return npcMemberTypes;
 	}
 
 	/**
@@ -254,6 +291,9 @@ public class Bloodline {
 			for (int i = 0; i < npcMemberUUIDs.size(); i++) {
 				CompoundTag npc = new CompoundTag();
 				npc.putUUID("npc" + i, npcMemberUUIDs.get(i));
+				if (i < npcMemberTypes.size()) {
+					npc.putString("type" + i, npcMemberTypes.get(i).toString());
+				}
 				npcList.add(npc);
 			}
 			tag.put("npcMembers", npcList);

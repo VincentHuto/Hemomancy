@@ -5,10 +5,12 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInit
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -88,6 +90,20 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 .orElse(false);
     }
 
+    private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(vol -> vol.getBloodLine().isValid() && vol.getBloodLine().hasNpcMember(npc.getUUID()))
+                .orElse(false);
+    }
+
+    private static boolean canShowRecruitment(Player player, Entity npc) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(vol -> vol.getBloodLine().isValid()
+                        && (vol.getBloodLine().hasNpcMember(npc.getUUID())
+                        || !vol.getBloodLine().hasNpcMemberType(BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType()))))
+                .orElse(false);
+    }
+
     /**
      * Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {
@@ -149,18 +165,18 @@ public class HarbingerVicarEntity extends PathfinderMob {
             ItemStack held = player.getMainHandItem();
             DialogueTree tree;
 
-            if (!held.isEmpty()) {
-                tree = HarbingerVicarDialogueTrees.itemInquiry(held, degree, this.getId());
-            } else if (isPurifying(player)) {
+            if (isPurifying(player)) {
                 // Purifying players receive a stern Harbinger warning
                 tree = HarbingerVicarDialogueTrees.purifying(this.getId());
             } else if (degree >= 7 && hasPomeEmpowerment(player)) {
                 // Archon players with active pome empowerment receive the unsettled reaction
                 tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
             } else {
-                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), hasBloodline(player),
-                        hasAbocipherLiteracy(player));
+                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+                        isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player));
             }
+            tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "vicar",
+                    "hemomancy.vicar.item_inquiry.unknown", degree, 0f);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
