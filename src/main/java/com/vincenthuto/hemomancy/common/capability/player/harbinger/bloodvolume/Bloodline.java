@@ -40,12 +40,14 @@ public class Bloodline {
 						for (int i = 0; i < npcTag.size(); i++) {
 							if (npcTag.get(i) instanceof CompoundTag comp) {
 								line.npcMemberUUIDs.add(comp.getUUID("npc" + i));
+								ResourceLocation typeId = null;
 								if (comp.contains("type" + i)) {
-									ResourceLocation typeId = ResourceLocation.tryParse(comp.getString("type" + i));
-									if (typeId != null && !line.npcMemberTypes.contains(typeId)) {
-										line.npcMemberTypes.add(typeId);
-									}
+									typeId = ResourceLocation.tryParse(comp.getString("type" + i));
 								}
+								line.npcMemberTypes.add(typeId);
+								line.npcMemberOutposts.add(comp.contains("outpost" + i)
+										? comp.getString("outpost" + i)
+										: null);
 							}
 						}
 						line.recalculateMaxVolume();
@@ -72,6 +74,7 @@ public class Bloodline {
 	 */
 	List<UUID> npcMemberUUIDs = new ArrayList<>();
 	List<ResourceLocation> npcMemberTypes = new ArrayList<>();
+	List<String> npcMemberOutposts = new ArrayList<>();
 
 	public Bloodline() {
 		this.name = "No Bloodline";
@@ -132,6 +135,8 @@ public class Bloodline {
 	public boolean addNpcMember(UUID npcUUID) {
 		if (!npcMemberUUIDs.contains(npcUUID)) {
 			npcMemberUUIDs.add(npcUUID);
+			npcMemberTypes.add(null);
+			npcMemberOutposts.add(null);
 			recalculateMaxVolume();
 			return true;
 		}
@@ -139,14 +144,25 @@ public class Bloodline {
 	}
 
 	public boolean addNpcMember(UUID npcUUID, ResourceLocation npcType) {
+		return addNpcMember(npcUUID, npcType, null);
+	}
+
+	public boolean addNpcMember(UUID npcUUID, ResourceLocation npcType, String npcOutpost) {
 		if (npcType != null && npcMemberTypes.contains(npcType)) {
+			return false;
+		}
+		if (npcOutpost != null && !npcOutpost.isBlank() && npcMemberOutposts.contains(npcOutpost)) {
 			return false;
 		}
 		if (!addNpcMember(npcUUID)) {
 			return false;
 		}
+		int index = npcMemberUUIDs.indexOf(npcUUID);
 		if (npcType != null) {
-			npcMemberTypes.add(npcType);
+			npcMemberTypes.set(index, npcType);
+		}
+		if (npcOutpost != null && !npcOutpost.isBlank()) {
+			npcMemberOutposts.set(index, npcOutpost);
 		}
 		return true;
 	}
@@ -157,7 +173,15 @@ public class Bloodline {
 	 * @return {@code true} if the NPC was removed.
 	 */
 	public boolean removeNpcMember(UUID npcUUID) {
-		if (npcMemberUUIDs.remove(npcUUID)) {
+		int index = npcMemberUUIDs.indexOf(npcUUID);
+		if (index >= 0) {
+			npcMemberUUIDs.remove(index);
+			if (index < npcMemberTypes.size()) {
+				npcMemberTypes.remove(index);
+			}
+			if (index < npcMemberOutposts.size()) {
+				npcMemberOutposts.remove(index);
+			}
 			recalculateMaxVolume();
 			return true;
 		}
@@ -165,11 +189,11 @@ public class Bloodline {
 	}
 
 	public boolean removeNpcMember(UUID npcUUID, ResourceLocation npcType) {
-		boolean removed = removeNpcMember(npcUUID);
-		if (removed && npcType != null) {
-			npcMemberTypes.remove(npcType);
-		}
-		return removed;
+		return removeNpcMember(npcUUID, npcType, null);
+	}
+
+	public boolean removeNpcMember(UUID npcUUID, ResourceLocation npcType, String npcOutpost) {
+		return removeNpcMember(npcUUID);
 	}
 
 	/** Returns {@code true} if the given NPC entity UUID is already recruited. */
@@ -179,6 +203,10 @@ public class Bloodline {
 
 	public boolean hasNpcMemberType(ResourceLocation npcType) {
 		return npcType != null && npcMemberTypes.contains(npcType);
+	}
+
+	public boolean hasNpcMemberOutpost(String npcOutpost) {
+		return npcOutpost != null && !npcOutpost.isBlank() && npcMemberOutposts.contains(npcOutpost);
 	}
 
 	/** Returns the number of recruited NPC Harbingers. */
@@ -193,6 +221,10 @@ public class Bloodline {
 
 	public List<ResourceLocation> getNpcMemberTypes() {
 		return npcMemberTypes;
+	}
+
+	public List<String> getNpcMemberOutposts() {
+		return npcMemberOutposts;
 	}
 
 	/**
@@ -292,7 +324,16 @@ public class Bloodline {
 				CompoundTag npc = new CompoundTag();
 				npc.putUUID("npc" + i, npcMemberUUIDs.get(i));
 				if (i < npcMemberTypes.size()) {
-					npc.putString("type" + i, npcMemberTypes.get(i).toString());
+					ResourceLocation npcType = npcMemberTypes.get(i);
+					if (npcType != null) {
+						npc.putString("type" + i, npcType.toString());
+					}
+				}
+				if (i < npcMemberOutposts.size()) {
+					String npcOutpost = npcMemberOutposts.get(i);
+					if (npcOutpost != null && !npcOutpost.isBlank()) {
+						npc.putString("outpost" + i, npcOutpost);
+					}
 				}
 				npcList.add(npc);
 			}

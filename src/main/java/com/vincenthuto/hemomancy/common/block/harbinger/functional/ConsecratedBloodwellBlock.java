@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -18,6 +19,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * The Consecrated Bloodwell — a Grand-tier Blood Structure that stores up to
@@ -75,6 +78,20 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
         return CODEC;
     }
 
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        if (context.getLevel() instanceof ServerLevel level
+                && context.getPlayer() instanceof ServerPlayer player
+                && !FoundingSanctumSavedData.get(level).canPlaceBloodwell(context.getClickedPos())) {
+            player.displayClientMessage(Component.translatable(
+                    "block.hemomancy.consecrated_bloodwell.duplicate_heart")
+                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+            return null;
+        }
+        return super.getStateForPlacement(context);
+    }
+
     // ── BlockEntity wiring ─────────────────────────────────────────────────────
 
     @Nullable
@@ -95,6 +112,18 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level instanceof ServerLevel serverLevel) {
+            FoundingSanctumSavedData data = FoundingSanctumSavedData.get(serverLevel);
+            UUID owner = data.findOwnerContaining(pos);
+            if (owner != null) {
+                data.removeHeart(owner, pos);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     // ── Interaction ────────────────────────────────────────────────────────────
@@ -192,12 +221,12 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
      */
     public static boolean isInOwnSanctum(ServerPlayer player) {
         FoundingSanctumSavedData data = FoundingSanctumSavedData.get((ServerLevel) player.level());
-        BlockPos center = data.getAllSanctums().get(player.getUUID());
-        if (center == null) return false;
-        double dx = player.getX() - (center.getX() + 0.5);
-        double dz = player.getZ() - (center.getZ() + 0.5);
-        return (dx * dx + dz * dz)
-                <= FoundingSanctumSavedData.SANCTUM_RADIUS * FoundingSanctumSavedData.SANCTUM_RADIUS;
+        UUID owner = HemoCapabilityAccess.getBloodVolume(player)
+                .map(IBloodVolume::getBloodLine)
+                .filter(Bloodline::isValid)
+                .map(Bloodline::getLeaderUUID)
+                .orElse(player.getUUID());
+        return data.isWithinSanctum(owner, player.blockPosition());
     }
 
     private static void syncPlayerBlood(ServerPlayer player, IBloodVolume volume) {

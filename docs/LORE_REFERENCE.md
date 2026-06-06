@@ -2,9 +2,9 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-06-01 Somatic Loom memory-weaving ritual framing and current implementation status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-06-06 Harbinger bloodline recruitment doctrine and current implementation status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
-> **Current Lore-State Snapshot (2026-06-01 audit):**
+> **Current Lore-State Snapshot (2026-06-06 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
@@ -13,6 +13,7 @@
 > - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, Vesper/Mycophant summoning rituals, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
+> - Harbinger outpost recruitment now reflects covenant restraint: a player's bloodline can draw one pledged voice from an outpost and one of each calling, supporting the Order's doctrine of spreading the cause rather than absorbing an entire lodge.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
 ---
@@ -189,6 +190,8 @@ Each outpost contains:
 - A **Harbinger Vicar** — the outpost's lore-keeper and rank-progression guide. The Vicar guides players from Degree 1 through Degree 5, then steps back as an equal once the player reaches the Crimson Lodge. He delivers faction history, doctrinal lore, and the secret of the 8th Degree at Archon.
 - A **Harbinger Alchemist** — found at the crafting stations, teaches how to use the mod's machines (Alembic, Centrifuge, Somatic Loom, etc.).
 - Generic **chests and loot** from the Order's stores.
+
+When an advanced Harbinger asks an outpost member to pledge blood into their covenant, the outpost does not empty itself into that one bloodline. Each outpost may offer only one voice to a player's covenant, and each calling should remain distinct. This is framed as a doctrine of propagation rather than conquest: *spread our cause, do not dilute or absorb the whole lodge.*
 
 > *Vicar's Secret (Archon only):* "The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."
 

@@ -6,16 +6,18 @@ import java.nio.file.Path;
 
 public final class PacketSyncSanctumBoundariesSourceTest {
 	private static final Path PACKET = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/PacketSyncSanctumBoundaries.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncSanctumBoundaries.java");
 
 	private PacketSyncSanctumBoundariesSourceTest() {
 	}
 
 	public static void main(String[] args) throws IOException {
 		String source = Files.readString(PACKET).replace("\r\n", "\n");
-		assertContains("declares compact sync entry", source,
-				"record Entry(BlockPos center, float radius, UUID ownerUuid, SanctumBoundaryRelation relation)");
-		assertContains("writes center", source, "buf.writeBlockPos(entry.center())");
+		assertContains("declares envelope sync entry", source,
+				"record Entry(BlockPos heart, List<BlockPos> stakes, float radius, UUID ownerUuid, SanctumBoundaryRelation relation)");
+		assertContains("writes heart", source, "buf.writeBlockPos(entry.heart())");
+		assertContains("writes stake count", source, "buf.writeInt(entry.stakes().size())");
+		assertContains("writes stakes", source, "buf.writeBlockPos(stake)");
 		assertContains("writes radius", source, "buf.writeFloat(entry.radius())");
 		assertContains("writes owner", source, "buf.writeUUID(entry.ownerUuid())");
 		assertContains("writes relation", source, "buf.writeEnum(entry.relation())");

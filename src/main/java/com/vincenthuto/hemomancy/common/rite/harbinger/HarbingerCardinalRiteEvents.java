@@ -740,7 +740,7 @@ public class HarbingerCardinalRiteEvents {
 			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED);
 		}
 
-		// ── Unstained rites ──
+				// ── Unstained rites ──
 		UnstainedCardinalRiteEvents.completeRite(sLevel, caster, center, ritePath);
 
 
@@ -1719,6 +1719,13 @@ public class HarbingerCardinalRiteEvents {
 
 
 	private static void completeFoundingSanctum(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		if (!sLevel.getBlockState(center).is(BlockInit.consecrated_bloodwell.get())) {
+			caster.displayClientMessage(
+					Component.literal("The Founding Sanctum requires a Consecrated Bloodwell at its heart.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
 		UUID sanctumOwner = HemoCapabilityAccess.getBloodVolume(caster)
 				.map(volume -> {
 					Bloodline bloodline = volume.getBloodLine();
@@ -1727,7 +1734,7 @@ public class HarbingerCardinalRiteEvents {
 				.orElse(caster.getUUID());
 		FoundingSanctumSavedData sanctumData = FoundingSanctumSavedData.get(sLevel);
 		boolean isReconsecrating = sanctumData.hasSanctum(sanctumOwner);
-		sanctumData.consecrate(sanctumOwner, center);
+		sanctumData.consecrateHeart(sanctumOwner, center);
 		if (isReconsecrating) {
 			caster.displayClientMessage(
 					Component.literal("Your Founding Sanctum has been moved to this location.")

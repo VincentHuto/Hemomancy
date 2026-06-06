@@ -174,8 +174,12 @@ public class BloodlineSavedData extends SavedData {
 	}
 
 	public Bloodline addNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType) {
+		return addNpcMember(bloodlineUUID, npcUUID, npcType, null);
+	}
+
+	public Bloodline addNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType, String npcOutpost) {
 		Bloodline line = bloodlines.get(bloodlineUUID);
-		if (line != null && line.addNpcMember(npcUUID, npcType)) {
+		if (line != null && line.addNpcMember(npcUUID, npcType, npcOutpost)) {
 			setDirty();
 		}
 		return line;
@@ -193,8 +197,12 @@ public class BloodlineSavedData extends SavedData {
 	}
 
 	public void removeNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType) {
+		removeNpcMember(bloodlineUUID, npcUUID, npcType, null);
+	}
+
+	public void removeNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType, String npcOutpost) {
 		Bloodline line = bloodlines.get(bloodlineUUID);
-		if (line != null && line.removeNpcMember(npcUUID, npcType)) {
+		if (line != null && line.removeNpcMember(npcUUID, npcType, npcOutpost)) {
 			setDirty();
 		}
 	}

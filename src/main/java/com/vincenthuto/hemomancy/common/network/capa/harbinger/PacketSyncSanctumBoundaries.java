@@ -28,7 +28,11 @@ public class PacketSyncSanctumBoundaries implements CustomPacketPayload {
 	public static void encode(FriendlyByteBuf buf, PacketSyncSanctumBoundaries msg) {
 		buf.writeInt(msg.entries.size());
 		for (Entry entry : msg.entries) {
-			buf.writeBlockPos(entry.center());
+			buf.writeBlockPos(entry.heart());
+			buf.writeInt(entry.stakes().size());
+			for (BlockPos stake : entry.stakes()) {
+				buf.writeBlockPos(stake);
+			}
 			buf.writeFloat(entry.radius());
 			buf.writeUUID(entry.ownerUuid());
 			buf.writeEnum(entry.relation());
@@ -39,11 +43,16 @@ public class PacketSyncSanctumBoundaries implements CustomPacketPayload {
 		int count = buf.readInt();
 		List<Entry> entries = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
-			BlockPos center = buf.readBlockPos();
+			BlockPos heart = buf.readBlockPos();
+			int stakeCount = buf.readInt();
+			List<BlockPos> stakes = new ArrayList<>(stakeCount);
+			for (int s = 0; s < stakeCount; s++) {
+				stakes.add(buf.readBlockPos());
+			}
 			float radius = buf.readFloat();
 			UUID ownerUuid = buf.readUUID();
 			SanctumBoundaryRelation relation = buf.readEnum(SanctumBoundaryRelation.class);
-			entries.add(new Entry(center, radius, ownerUuid, relation));
+			entries.add(new Entry(heart, stakes, radius, ownerUuid, relation));
 		}
 		return new PacketSyncSanctumBoundaries(entries);
 	}
@@ -61,6 +70,6 @@ public class PacketSyncSanctumBoundaries implements CustomPacketPayload {
 		return TYPE;
 	}
 
-	public record Entry(BlockPos center, float radius, UUID ownerUuid, SanctumBoundaryRelation relation) {
+	public record Entry(BlockPos heart, List<BlockPos> stakes, float radius, UUID ownerUuid, SanctumBoundaryRelation relation) {
 	}
 }

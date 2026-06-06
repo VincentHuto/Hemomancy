@@ -120,15 +120,7 @@ public final class BloodRoutingHelper {
     }
 
     public static boolean isInOwnerSanctum(ServerLevel level, UUID ownerId, BlockPos pos) {
-        FoundingSanctumSavedData data = FoundingSanctumSavedData.get(level);
-        BlockPos center = data.getAllSanctums().get(ownerId);
-        if (center == null) {
-            return false;
-        }
-        double dx = pos.getX() + 0.5 - (center.getX() + 0.5);
-        double dz = pos.getZ() + 0.5 - (center.getZ() + 0.5);
-        return dx * dx + dz * dz
-                <= FoundingSanctumSavedData.SANCTUM_RADIUS * FoundingSanctumSavedData.SANCTUM_RADIUS;
+        return FoundingSanctumSavedData.get(level).isWithinSanctum(ownerId, pos);
     }
 
     private static double drawFromLinkedSources(ServerLevel level, BlockPos sourcePos, DirectBloodLinkData link,

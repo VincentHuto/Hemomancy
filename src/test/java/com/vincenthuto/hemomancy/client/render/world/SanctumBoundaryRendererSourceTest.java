@@ -41,9 +41,28 @@ public final class SanctumBoundaryRendererSourceTest {
 				"copyMainDepthToVisibilityTarget");
 		assertNotContains("renderer no longer applies outside post shader", renderer, "SANCTUM_BOUNDARY_DISTORTION");
 		assertContains("renderer draws member shimmer", renderer, "drawMemberShimmer");
-		assertContains("inside fullscreen check uses dome height", renderer, "double dy = Math.max(0.0D");
-		assertContains("inside fullscreen check uses dome volume", renderer,
+		assertContains("inside fullscreen check uses full sphere height", renderer, "double dy = pos.y -");
+		assertContains("inside fullscreen check uses sphere volume", renderer,
 				"dx * dx + dy * dy + dz * dz <= radius * radius");
+		assertContains("renderer uses full sphere latitude sweep", renderer, "SPHERE_LATITUDE_END = Math.PI");
+		assertContains("renderer uses smoother sphere tessellation", renderer, "DOME_RINGS = 64");
+		assertContains("member shimmer is readable but not over-opaque", renderer,
+				"MEMBER_SHIMMER_ALPHA = 0.18F");
+		assertContains("member shells use flat alpha to avoid latitude banding", renderer,
+				"MEMBER_SHELL_ALPHA_SCALE = 0.42F");
+		assertContains("mundane outsiders get their own deeper red shell", renderer,
+				"MUNDANE_OUTSIDER_SHELL_RED = 0.32F");
+		assertContains("mundane outsiders stay less drastic than clarity outsiders", renderer,
+				"MUNDANE_OUTSIDER_DOME_ALPHA = 0.52F");
+		assertContains("mundane outsiders do not receive screen omen post-pass", renderer,
+				"targetRelation == SanctumBoundaryRelation.MUNDANE_OUTSIDER");
+		assertContains("hostile shells use flat alpha to avoid latitude banding", renderer,
+				"HOSTILE_SHELL_ALPHA_SCALE = 0.70F");
+		assertNotContains("renderer no longer uses per-ring member fade", renderer, "memberDomeFade");
+		assertNotContains("renderer no longer uses per-ring hostile fade", renderer, "hostileDomeFade");
+		assertNotContains("renderer no longer computes latitude edge fades", renderer, "edgeFade");
+		assertNotContains("renderer no longer limits member shells to hemispheres", renderer, "Math.PI * 0.5D");
+		assertNotContains("renderer no longer uses dome ground overrun", renderer, "HOSTILE_DOME_GROUND_OVERRUN");
 		assertContains("renderer avoids unnecessary frame copies", renderer, "requiresPostPass");
 		assertNotContains("shader init no longer registers outside post dome shader", shaderInit,
 				"SANCTUM_BOUNDARY_DISTORTION");

@@ -6,7 +6,8 @@ public final class SanctumBoundaryVisibilityRulesTest {
 
 	public static void main(String[] args) {
 		classifiesBloodlineMembersAsMembers();
-		classifiesLowDegreeNonMembersAsOutsiders();
+		classifiesMundaneNonMembersAsMundaneOutsiders();
+		classifiesInitiatedNonMembersAsOutsiders();
 		classifiesDegreeSixNonMembersAsRivalElders();
 		classifiesUnstainedViewersAsOutsiders();
 		prioritizesHostileInsideEffects();
@@ -18,10 +19,16 @@ public final class SanctumBoundaryVisibilityRulesTest {
 				"bloodline members should be attuned to their own sanctum");
 	}
 
-	private static void classifiesLowDegreeNonMembersAsOutsiders() {
+	private static void classifiesMundaneNonMembersAsMundaneOutsiders() {
+		assertEquals(SanctumBoundaryRelation.MUNDANE_OUTSIDER,
+				SanctumBoundaryVisibilityRules.classifyViewer(false, 0),
+				"non-Harbinger non-members should see a deeper red mundane boundary");
+	}
+
+	private static void classifiesInitiatedNonMembersAsOutsiders() {
 		assertEquals(SanctumBoundaryRelation.OUTSIDER,
-				SanctumBoundaryVisibilityRules.classifyViewer(false, 5),
-				"degree 5 and below non-members should see the hostile omen boundary");
+				SanctumBoundaryVisibilityRules.classifyViewer(false, 1),
+				"initiated Harbinger non-members should see the hostile omen boundary");
 	}
 
 	private static void classifiesDegreeSixNonMembersAsRivalElders() {
@@ -52,6 +59,14 @@ public final class SanctumBoundaryVisibilityRulesTest {
 				SanctumBoundaryVisibilityRules.strongerInsideEffect(
 						SanctumBoundaryRelation.MEMBER, SanctumBoundaryRelation.RIVAL_ELDER),
 				"rival elder fog should win over member shimmer");
+		assertEquals(SanctumBoundaryRelation.MUNDANE_OUTSIDER,
+				SanctumBoundaryVisibilityRules.strongerInsideEffect(
+						SanctumBoundaryRelation.MEMBER, SanctumBoundaryRelation.MUNDANE_OUTSIDER),
+				"mundane outsider shell should win over member shimmer");
+		assertEquals(SanctumBoundaryRelation.RIVAL_ELDER,
+				SanctumBoundaryVisibilityRules.strongerInsideEffect(
+						SanctumBoundaryRelation.MUNDANE_OUTSIDER, SanctumBoundaryRelation.RIVAL_ELDER),
+				"rival elder fog should win over mundane outsider shell");
 	}
 
 	private static void assertEquals(Object expected, Object actual, String message) {

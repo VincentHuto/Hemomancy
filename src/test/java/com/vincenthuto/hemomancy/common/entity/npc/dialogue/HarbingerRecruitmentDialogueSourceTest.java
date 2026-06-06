@@ -34,10 +34,20 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 				read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java"));
 		assertBloodlineStoresNpcTypes(read(
 				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/Bloodline.java"));
+		assertBloodlineStoresNpcOutposts(read(
+				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/Bloodline.java"));
 		assertBloodlineSavedDataPropagatesNpcTypes(read(
+				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodlineSavedData.java"));
+		assertBloodlineSavedDataPropagatesNpcOutposts(read(
 				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodlineSavedData.java"));
 		assertRecruitmentHandlerEnforcesNpcType(read(
 				"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		assertRecruitmentHandlerEnforcesOutpost(read(
+				"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		assertOutpostSpawnerMarksNpcOrigins(read(
+				"src/main/java/com/vincenthuto/hemomancy/common/worldgen/structure/HarbingerOutpostStructure.java"));
+		assertRecruitmentRulesLocateNpcOutposts(read(
+				"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerRecruitmentRules.java"));
 		assertEntityPreservesDialogueWhileHoldingItems("Vicar",
 				read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerVicarEntity.java"));
 		assertEntityPreservesDialogueWhileHoldingItems("Alchemist",
@@ -75,7 +85,8 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 
 	private static void assertEntityHidesDuplicateTypeRecruitment(String label, String source) {
 		assertContains(label + " computes recruitment visibility", source, "canShowRecruitment(player, this)");
-		assertContains(label + " checks recruited NPC type", source, "hasNpcMemberType(BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType()))");
+		assertContains(label + " checks shared recruitment rules", source,
+				"HarbingerRecruitmentRules.canRecruitNpc(vol.getBloodLine(), npc)");
 	}
 
 	private static void assertBloodlineStoresNpcTypes(String source) {
@@ -85,11 +96,25 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 		assertContains("Bloodline serializes recruited NPC type IDs", source, "npc.putString(\"type\" + i");
 	}
 
+	private static void assertBloodlineStoresNpcOutposts(String source) {
+		assertContains("Bloodline stores recruited NPC outpost keys", source, "List<String> npcMemberOutposts");
+		assertContains("Bloodline deserializes recruited NPC outpost keys", source, "comp.getString(\"outpost\" + i)");
+		assertContains("Bloodline rejects duplicate recruited NPC outposts", source, "npcMemberOutposts.contains(npcOutpost)");
+		assertContains("Bloodline serializes recruited NPC outpost keys", source, "npc.putString(\"outpost\" + i");
+	}
+
 	private static void assertBloodlineSavedDataPropagatesNpcTypes(String source) {
 		assertContains("saved data accepts recruited NPC type", source,
 				"addNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType)");
 		assertContains("saved data removes recruited NPC type", source,
 				"removeNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType)");
+	}
+
+	private static void assertBloodlineSavedDataPropagatesNpcOutposts(String source) {
+		assertContains("saved data accepts recruited NPC outpost", source,
+				"addNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType, String npcOutpost)");
+		assertContains("saved data removes recruited NPC outpost", source,
+				"removeNpcMember(UUID bloodlineUUID, UUID npcUUID, ResourceLocation npcType, String npcOutpost)");
 	}
 
 	private static void assertRecruitmentHandlerEnforcesNpcType(String source) {
@@ -98,6 +123,25 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 		assertContains("handler reports duplicate NPC type", source, "hemomancy.dialogue.recruit.type_already_member");
 		assertContains("handler persists recruited NPC type", source,
 				"bloodline.getBloodlineUUID(), entity.getUUID(), npcType");
+	}
+
+	private static void assertRecruitmentHandlerEnforcesOutpost(String source) {
+		assertContains("handler reads NPC outpost", source, "HarbingerRecruitmentRules.findOutpostKey(entity)");
+		assertContains("handler rejects duplicate NPC outpost", source, "bloodline.hasNpcMemberOutpost(npcOutpost)");
+		assertContains("handler reports duplicate NPC outpost", source, "hemomancy.dialogue.recruit.outpost_already_member");
+		assertContains("handler persists recruited NPC outpost", source,
+				"bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost");
+	}
+
+	private static void assertOutpostSpawnerMarksNpcOrigins(String source) {
+		assertContains("outpost spawner computes recruitment key", source, "HarbingerRecruitmentRules.createOutpostKey");
+		assertContains("outpost spawner marks recruited NPC origins", source, "HarbingerRecruitmentRules.markOutpostOrigin");
+	}
+
+	private static void assertRecruitmentRulesLocateNpcOutposts(String source) {
+		assertContains("recruitment rules define outpost origin tag", source, "NPC_OUTPOST_KEY");
+		assertContains("recruitment rules locate structure fallback", source, "getStructureWithPieceAt");
+		assertContains("recruitment rules check outpost duplicates", source, "canRecruitNpc");
 	}
 
 	private static void assertNoRecruitmentOptions(String label, String source) {

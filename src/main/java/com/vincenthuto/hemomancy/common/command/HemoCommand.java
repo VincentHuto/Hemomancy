@@ -32,6 +32,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumEvents;
+import com.vincenthuto.hemomancy.common.event.worldevent.SanctumBoundaryRelation;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
@@ -323,6 +325,20 @@ public class HemoCommand {
 								.executes(ctx -> cancelBloodMoon(ctx.getSource()))))
 
 				// ── Manipulation Slots ──
+				.then(Commands.literal("sanctum")
+						.then(Commands.literal("preview")
+								.then(Commands.literal("member")
+										.executes(ctx -> setSanctumPreview(ctx.getSource(), SanctumBoundaryRelation.MEMBER)))
+								.then(Commands.literal("mundane")
+										.executes(ctx -> setSanctumPreview(ctx.getSource(),
+												SanctumBoundaryRelation.MUNDANE_OUTSIDER)))
+								.then(Commands.literal("outsider")
+										.executes(ctx -> setSanctumPreview(ctx.getSource(), SanctumBoundaryRelation.OUTSIDER)))
+								.then(Commands.literal("rival")
+										.executes(ctx -> setSanctumPreview(ctx.getSource(), SanctumBoundaryRelation.RIVAL_ELDER)))
+								.then(Commands.literal("clear")
+										.executes(ctx -> clearSanctumPreview(ctx.getSource())))))
+
 				.then(Commands.literal("slots")
 						.then(Commands.literal("get")
 								.executes(ctx -> getSlots(ctx.getSource(), ctx.getSource().getPlayerOrException()))
@@ -1113,6 +1129,27 @@ public class HemoCommand {
 		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(false));
 		source.sendSuccess(() -> Component.literal("Blood Moon cancelled.")
 				.withStyle(ChatFormatting.GRAY), true);
+		return 1;
+	}
+
+	private static int setSanctumPreview(CommandSourceStack source, SanctumBoundaryRelation relation)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		FoundingSanctumEvents.setPreviewRelation(player, relation);
+		source.sendSuccess(() -> Component.literal("Sanctum boundary preview set to ")
+				.append(Component.literal(relation.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(". Wait up to two seconds for the next boundary sync.")
+						.withStyle(ChatFormatting.GRAY)),
+				false);
+		return 1;
+	}
+
+	private static int clearSanctumPreview(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		FoundingSanctumEvents.clearPreviewRelation(player);
+		source.sendSuccess(() -> Component.literal("Sanctum boundary preview cleared.").withStyle(ChatFormatting.GRAY),
+				false);
 		return 1;
 	}
 }

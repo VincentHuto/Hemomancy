@@ -16,7 +16,10 @@ public final class SanctumBoundaryVisibilityRules {
 		if (memberOfOwnerBloodline) {
 			return SanctumBoundaryRelation.MEMBER;
 		}
-		return viewerDegree > 5 ? SanctumBoundaryRelation.RIVAL_ELDER : SanctumBoundaryRelation.OUTSIDER;
+		if (viewerDegree > 5) {
+			return SanctumBoundaryRelation.RIVAL_ELDER;
+		}
+		return viewerDegree >= 1 ? SanctumBoundaryRelation.OUTSIDER : SanctumBoundaryRelation.MUNDANE_OUTSIDER;
 	}
 
 	public static SanctumBoundaryRelation strongerInsideEffect(SanctumBoundaryRelation current,
@@ -26,8 +29,9 @@ public final class SanctumBoundaryVisibilityRules {
 
 	private static int priority(SanctumBoundaryRelation relation) {
 		return switch (relation) {
-			case OUTSIDER -> 3;
-			case RIVAL_ELDER -> 2;
+			case OUTSIDER -> 4;
+			case RIVAL_ELDER -> 3;
+			case MUNDANE_OUTSIDER -> 2;
 			case MEMBER -> 1;
 		};
 	}

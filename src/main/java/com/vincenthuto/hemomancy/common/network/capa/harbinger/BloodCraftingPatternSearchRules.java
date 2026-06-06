@@ -5,13 +5,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-final class BloodCraftingPatternSearchRules {
+public final class BloodCraftingPatternSearchRules {
 	private static final int ORIENTATION_COUNT = 24;
 
 	private BloodCraftingPatternSearchRules() {
 	}
 
-	static long estimatedWorstCaseBlockChecks(int width, int height, int depth) {
+	public static long estimatedWorstCaseBlockChecks(int width, int height, int depth) {
 		int radius = searchRadius(width, height, depth);
 		long diameter = radius * 2L + 1L;
 		long candidates = diameter * diameter * diameter;
@@ -19,7 +19,7 @@ final class BloodCraftingPatternSearchRules {
 		return candidates * ORIENTATION_COUNT * volume;
 	}
 
-	static int compareDimensionsBySearchCost(
+	public static int compareDimensionsBySearchCost(
 			int leftWidth, int leftHeight, int leftDepth,
 			int rightWidth, int rightHeight, int rightDepth) {
 		int byCost = Long.compare(
@@ -37,7 +37,7 @@ final class BloodCraftingPatternSearchRules {
 		return Integer.compare(leftWidth * leftHeight * leftDepth, rightWidth * rightHeight * rightDepth);
 	}
 
-	static boolean patternUsesSymbol(String[][] patternArray, String symbol) {
+	public static boolean patternUsesSymbol(String[][] patternArray, String symbol) {
 		if (patternArray == null || symbol == null || symbol.length() != 1) {
 			return false;
 		}

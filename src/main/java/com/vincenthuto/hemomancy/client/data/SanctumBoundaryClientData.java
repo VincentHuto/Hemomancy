@@ -17,7 +17,7 @@ public final class SanctumBoundaryClientData {
 	public static void setEntries(List<PacketSyncSanctumBoundaries.Entry> entries) {
 		ENTRIES.clear();
 		for (PacketSyncSanctumBoundaries.Entry entry : entries) {
-			ENTRIES.add(new Entry(entry.center(), entry.radius(), entry.ownerUuid(), entry.relation()));
+			ENTRIES.add(new Entry(entry.heart(), entry.stakes(), entry.radius(), entry.ownerUuid(), entry.relation()));
 		}
 	}
 
@@ -29,6 +29,6 @@ public final class SanctumBoundaryClientData {
 		ENTRIES.clear();
 	}
 
-	public record Entry(BlockPos center, float radius, UUID ownerUuid, SanctumBoundaryRelation relation) {
+	public record Entry(BlockPos heart, List<BlockPos> stakes, float radius, UUID ownerUuid, SanctumBoundaryRelation relation) {
 	}
 }
