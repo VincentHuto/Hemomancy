@@ -15,6 +15,7 @@ public final class SilentArchonArmorRenderHelper {
 	public static final ResourceLocation LAYER_1 = Hemomancy.rloc("textures/models/armor/silent_archon_layer_1.png");
 	public static final ResourceLocation LAYER_2 = Hemomancy.rloc("textures/models/armor/silent_archon_layer_2.png");
 	public static final int OVERLAY_COLOR = 0x66FFFFFF;
+	public static  float OVERLAY_SCALE = 1.1F;
 	private static final float TIME_CYCLE_MS = 240000.0f;
 
 	private SilentArchonArmorRenderHelper() {

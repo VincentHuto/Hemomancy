@@ -22,6 +22,8 @@ public final class BloodlineScreenRegressionSourceTest {
 		String poolScreen = Files.readString(POOL_SCREEN).replace("\r\n", "\n");
 		String harbingerRites = Files.readString(HARBINGER_RITES).replace("\r\n", "\n");
 		String bloodCraftPacket = Files.readString(BLOOD_CRAFT_PACKET).replace("\r\n", "\n");
+		String foundingFaneGate = section(bloodCraftPacket, "private static boolean canStartFoundingFane",
+				"private static boolean hasActiveFane");
 
 		assertContains("ledger suppresses vanilla menu blur", ledgerScreen,
 				"public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)");
@@ -37,6 +39,12 @@ public final class BloodlineScreenRegressionSourceTest {
 				"bloodline == null || !bloodline.isValid()");
 		assertContains("founding fane activation requires progenitor", bloodCraftPacket,
 				"bloodline.getLeaderUUID().equals(player.getUUID())");
+		assertContains("founding fane activation checks existing active fane data", bloodCraftPacket,
+				"FoundingFaneSavedData.get(level).hasFane(owner)");
+		assertContains("founding fane activation checks every server level for existing fanes", bloodCraftPacket,
+				"player.server.getAllLevels()");
+		assertContains("founding fane validation rejects an already-active fane", foundingFaneGate,
+				"hasActiveFane(player, bloodline.getLeaderUUID())");
 		assertOrder("founding fane activation gate runs before catalyst consumption", bloodCraftPacket,
 				"canStartFoundingFane(serverPlayer)",
 				"consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())");
@@ -64,5 +72,14 @@ public final class BloodlineScreenRegressionSourceTest {
 		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
 			throw new AssertionError(label + ": expected `" + first + "` before `" + second + "`");
 		}
+	}
+
+	private static String section(String text, String start, String end) {
+		int startIndex = text.indexOf(start);
+		int endIndex = text.indexOf(end, startIndex);
+		if (startIndex < 0 || endIndex < 0 || endIndex <= startIndex) {
+			throw new AssertionError("unable to locate section from `" + start + "` to `" + end + "`");
+		}
+		return text.substring(startIndex, endIndex);
 	}
 }

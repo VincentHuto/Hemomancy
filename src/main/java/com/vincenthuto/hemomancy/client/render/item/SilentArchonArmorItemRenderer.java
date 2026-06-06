@@ -47,8 +47,12 @@ public class SilentArchonArmorItemRenderer extends BlockEntityWithoutLevelRender
 		model.renderToBuffer(poseStack, base, packedLight, OverlayTexture.NO_OVERLAY, -1);
 
 		VertexConsumer overlay = buffer.getBuffer(SilentArchonArmorRenderHelper.overlayRenderType(stack, slot, gui));
+		poseStack.pushPose();
+		poseStack.scale(SilentArchonArmorRenderHelper.OVERLAY_SCALE, SilentArchonArmorRenderHelper.OVERLAY_SCALE,
+				SilentArchonArmorRenderHelper.OVERLAY_SCALE);
 		model.renderToBuffer(poseStack, overlay, packedLight, OverlayTexture.NO_OVERLAY,
 				SilentArchonArmorRenderHelper.OVERLAY_COLOR);
+		poseStack.popPose();
 		poseStack.popPose();
 
 		if (gui) {

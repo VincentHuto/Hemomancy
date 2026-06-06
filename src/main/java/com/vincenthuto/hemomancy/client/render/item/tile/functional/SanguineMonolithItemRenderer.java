@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -82,8 +83,10 @@ public class SanguineMonolithItemRenderer extends BlockEntityWithoutLevelRendere
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		}
 
-		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		// Render in black tint to match the placed block
+		float timeSeconds = (System.currentTimeMillis() % 240000L) / 1000.0f;
+		float shaderSeed = Math.floorMod(System.identityHashCode(stack), 10007) / 10007.0f + stack.getCount() * 0.011f;
+		VertexConsumer vertexConsumer = buffer.getBuffer(
+				HemoRenderTypes.monolithEntitySurface(timeSeconds, shaderSeed, 0.45f, 0.88f, isGui ? 6.5f : 7.5f));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
 				OverlayTexture.NO_OVERLAY, packColor(0.05F, 0.02F, 0.02F, 1F));
 

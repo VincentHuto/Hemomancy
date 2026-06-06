@@ -73,6 +73,14 @@ public final class CellHandRenderingResourceTest {
 				"particle.setFirstPersonTargetAnchor(anchor);");
 		assertContains("third-person absorbed cells do not sag below the hand target", particleEffects,
 				"particle.setTargetYOffset(0.0D);");
+		assertContains("absorption particles can target blood-bearing blocks", particleEffects,
+				"BlockBloodInteractions.findLookedAtBloodBlockSource");
+		assertContains("block absorption particles use blood color", particleEffects,
+				"AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD)");
+		assertContains("block absorption particles share the hand-targeted absorbed particle path", particleEffects,
+				"spawnAbsorbedBloodParticle");
+		assertBefore("block absorption visual takes priority before entity absorption targets", particleEffects,
+				"findLookedAtBloodBlockSource", "getAbsorptionParticleTargets");
 		assertContains("first-person particle anchors follow camera rotation", bloodCellParticle,
 				"this.setPosFromCameraAnchor();");
 		assertContains("camera anchored motes use camera basis vectors", bloodCellParticle,
@@ -103,6 +111,14 @@ public final class CellHandRenderingResourceTest {
 	private static void assertDoesNotContain(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + " (still contains '" + unexpected + "')");
+		}
+	}
+
+	private static void assertBefore(String label, String text, String first, String second) {
+		int firstIndex = text.indexOf(first);
+		int secondIndex = text.indexOf(second);
+		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
+			throw new AssertionError(label + " (expected '" + first + "' before '" + second + "')");
 		}
 	}
 }

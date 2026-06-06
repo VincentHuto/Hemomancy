@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandParticleEffects;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
@@ -174,6 +175,9 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
 				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
+				if (tryAbsorbFromLookedAtBlockWithStaff(pLevel, player, focus)) {
+					return;
+				}
 				int elapsed = getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration;
 				int interval = LivingStaffFocusRules.absorptionPulseIntervalTicks(focus);
 				if (elapsed % interval == 0) {
@@ -284,6 +288,17 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				? InteractionResultHolder.success(itemstack)
 				: InteractionResultHolder.consume(itemstack);
 
+	}
+
+	private static boolean tryAbsorbFromLookedAtBlockWithStaff(Level level, Player player,
+			LivingStaffFocusProfile focus) {
+		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(level, player,
+				LivingStaffFocusRules.staffAbsorptionPerSecond(focus, 1) / 20.0D);
+		if (blockHandled <= 0.0D) {
+			return false;
+		}
+		recordUtilityBloodHandled(player, blockHandled);
+		return true;
 	}
 
 	private static void absorbWithStaff(Level level, Player player, ItemStack stack) {

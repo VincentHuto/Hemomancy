@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -44,6 +45,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
@@ -564,7 +566,23 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					false);
 			return false;
 		}
+		if (hasActiveFane(player, bloodline.getLeaderUUID())) {
+			player.displayClientMessage(
+					Component.literal("Your bloodline already has an active Founding Fane.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return false;
+		}
 		return true;
+	}
+
+	private static boolean hasActiveFane(ServerPlayer player, UUID owner) {
+		for (ServerLevel level : player.server.getAllLevels()) {
+			if (FoundingFaneSavedData.get(level).hasFane(owner)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(

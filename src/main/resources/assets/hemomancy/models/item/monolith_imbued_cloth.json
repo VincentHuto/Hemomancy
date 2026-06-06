@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/monolith_imbued_cloth"
+    "particle": "hemomancy:item/qliphoth_pome"
   }
 }

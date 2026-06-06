@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellPartic
 import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -189,7 +190,7 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			double z = cz + Math.sin(angle) * radius;
 			double y = pos.getY() + jetTop - 0.02D + level.random.nextDouble() * 0.08D;
 			level.addParticle(
-					AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+					GlowParticleFactory.createData(ParticleColor.BLOOD),
 					x, y, z,
 					Math.cos(angle) * (0.006D + pressure * 0.012D),
 					0.012D + pressure * 0.018D,

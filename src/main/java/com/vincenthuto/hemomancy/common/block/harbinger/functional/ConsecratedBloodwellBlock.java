@@ -1,15 +1,23 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
+import com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,234 +46,242 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The Consecrated Bloodwell — a Grand-tier Blood Structure that stores up to
- * {@link ConsecratedBloodwellBlockEntity#MAX_BLOOD} units of blood as a local
- * reserve. Deposits and withdrawals require the player to belong to the
- * bloodline bound to this fane. This prevents abuse of large portable blood
- * reserves while making the fane itself a meaningful home-base resource.
- *
- * <ul>
- *   <li>Right-click — deposit {@link #TRANSFER_PER_CLICK} blood from player
- *       into the well.</li>
- *   <li>Sneak + right-click — withdraw {@link #TRANSFER_PER_CLICK} blood from
- *       the well to the player (fane-gated).</li>
- * </ul>
- *
- * A passive server tick also honours the player's {@code autoDrawEnabled}
- * setting: while standing in their own fane, blood is slowly siphoned from
- * the well into the player up to their configured threshold.
+ * Founding Fane heart and physical link to the owner's shared bloodline pool.
+ * The block has no private reservoir: Blood Projection contributes directly to
+ * the bloodline pool, Blood Absorption draws directly from it, and right-click
+ * opens the bloodline pool monitor screen.
  */
-public class ConsecratedBloodwellBlock extends BaseEntityBlock {
+public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockBloodEndpoint {
 
-    public static final MapCodec<ConsecratedBloodwellBlock> CODEC = simpleCodec(ConsecratedBloodwellBlock::new);
+	public static final MapCodec<ConsecratedBloodwellBlock> CODEC = simpleCodec(ConsecratedBloodwellBlock::new);
 
-    /** Blood transferred per manual interaction click. */
-    public static final double TRANSFER_PER_CLICK = 1000.0;
+	public ConsecratedBloodwellBlock(Properties properties) {
+		super(properties);
+	}
 
-    public ConsecratedBloodwellBlock(Properties properties) {
-        super(properties);
-    }
+	public ConsecratedBloodwellBlock() {
+		this(BlockBehaviour.Properties.of()
+				.mapColor(MapColor.COLOR_RED)
+				.requiresCorrectToolForDrops()
+				.strength(3.0f, 8.0f)
+				.sound(SoundType.METAL)
+				.noOcclusion());
+	}
 
-    public ConsecratedBloodwellBlock() {
-        this(BlockBehaviour.Properties.of()
-                .mapColor(MapColor.COLOR_RED)
-                .requiresCorrectToolForDrops()
-                .strength(3.0f, 8.0f)
-                .sound(SoundType.METAL)
-                .noOcclusion());
-    }
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
+	}
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
-    }
+	@Nullable
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		if (context.getLevel() instanceof ServerLevel level
+				&& context.getPlayer() instanceof ServerPlayer player
+				&& !FoundingFaneSavedData.get(level).canPlaceBloodwell(context.getClickedPos())) {
+			player.displayClientMessage(Component.translatable(
+					"block.hemomancy.consecrated_bloodwell.duplicate_heart")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			return null;
+		}
+		return super.getStateForPlacement(context);
+	}
 
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (context.getLevel() instanceof ServerLevel level
-                && context.getPlayer() instanceof ServerPlayer player
-                && !FoundingFaneSavedData.get(level).canPlaceBloodwell(context.getClickedPos())) {
-            player.displayClientMessage(Component.translatable(
-                    "block.hemomancy.consecrated_bloodwell.duplicate_heart")
-                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
-            return null;
-        }
-        return super.getStateForPlacement(context);
-    }
+	@Nullable
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new ConsecratedBloodwellBlockEntity(pos, state);
+	}
 
-    // ── BlockEntity wiring ─────────────────────────────────────────────────────
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
+		return level.isClientSide ? null
+				: createTickerHelper(type, BlockEntityInit.consecrated_bloodwell.get(),
+						ConsecratedBloodwellBlockEntity::serverTick);
+	}
 
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ConsecratedBloodwellBlockEntity(pos, state);
-    }
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.MODEL;
+	}
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
-            BlockEntityType<T> type) {
-        return level.isClientSide ? null
-                : createTickerHelper(type, BlockEntityInit.consecrated_bloodwell.get(),
-                        ConsecratedBloodwellBlockEntity::serverTick);
-    }
+	@Override
+	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+		if (!state.is(newState.getBlock()) && level instanceof ServerLevel serverLevel) {
+			FoundingFaneSavedData data = FoundingFaneSavedData.get(serverLevel);
+			UUID owner = data.findOwnerContaining(pos);
+			if (owner != null) {
+				List<BlockPos> stakes = data.removeHeartAndGetStakes(owner, pos);
+				for (BlockPos stakePos : stakes) {
+					if (serverLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+						serverLevel.removeBlock(stakePos, false);
+					}
+				}
+			}
+		}
+		super.onRemove(state, level, pos, newState, movedByPiston);
+	}
 
-    @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
-    }
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+			Player player, BlockHitResult result) {
+		return handleInteraction(level, pos, player);
+	}
 
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level instanceof ServerLevel serverLevel) {
-            FoundingFaneSavedData data = FoundingFaneSavedData.get(serverLevel);
-            UUID owner = data.findOwnerContaining(pos);
-            if (owner != null) {
-                List<BlockPos> stakes = data.removeHeartAndGetStakes(owner, pos);
-                for (BlockPos stakePos : stakes) {
-                    if (serverLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
-                        serverLevel.removeBlock(stakePos, false);
-                    }
-                }
-            }
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+			BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+		if (stack.getItem() instanceof BloodAbsorptionItem
+				|| stack.getItem() instanceof BloodProjectionItem
+				|| stack.getItem() instanceof LivingStaffItem) {
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		}
+		handleInteraction(level, pos, player);
+		return ItemInteractionResult.SUCCESS;
+	}
 
-    // ── Interaction ────────────────────────────────────────────────────────────
+	private InteractionResult handleInteraction(Level level, BlockPos pos, Player player) {
+		if (level.isClientSide) {
+			BloodlinePoolScreen.openScreen();
+		} else if (player instanceof ServerPlayer serverPlayer) {
+			syncLinkedPool(serverPlayer, pos);
+		}
+		return InteractionResult.SUCCESS;
+	}
 
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
-            Player player, BlockHitResult result) {
-        return handleInteraction(level, pos, player);
-    }
+	@Override
+	public double absorbBloodFromBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
+			double maxAmount) {
+		if (!canUseBloodwell(player, pos)) {
+			player.displayClientMessage(Component.translatable(
+					"block.hemomancy.consecrated_bloodwell.not_bloodline")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return 0.0D;
+		}
 
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
-            BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
-        handleInteraction(level, pos, player);
-        return ItemInteractionResult.SUCCESS;
-    }
+		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (playerBlood == null || !playerBlood.isActive()) {
+			player.displayClientMessage(Component.translatable(
+					"block.hemomancy.consecrated_bloodwell.inactive").withStyle(ChatFormatting.GRAY), true);
+			return 0.0D;
+		}
 
-    private InteractionResult handleInteraction(Level level, BlockPos pos, Player player) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
-        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.SUCCESS;
-        if (!(level.getBlockEntity(pos) instanceof ConsecratedBloodwellBlockEntity well))
-            return InteractionResult.SUCCESS;
+		Bloodline bloodline = playerBlood.getBloodLine();
+		BloodlineSavedData savedData = BloodlineSavedData.get(player.server.overworld());
+		Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+		if (globalLine == null) {
+			return 0.0D;
+		}
 
-        var playerBloodOpt = HemoCapabilityAccess.getBloodVolume(player);
-        if (playerBloodOpt.isEmpty() || !playerBloodOpt.get().isActive()) {
-            player.sendSystemMessage(Component.translatable(
-                    "block.hemomancy.consecrated_bloodwell.inactive").withStyle(ChatFormatting.GRAY));
-            return InteractionResult.SUCCESS;
-        }
+		double capacity = Math.max(0.0D, playerBlood.getMaxBloodVolume() - playerBlood.getBloodVolume());
+		float requested = (float) Math.min(maxAmount, capacity);
+		if (requested <= 0.0F) {
+			return 0.0D;
+		}
 
-        IBloodVolume playerBlood = playerBloodOpt.get();
-        var wellBloodOpt = HemoCapabilityAccess.getBloodVolume(well);
-        if (wellBloodOpt.isEmpty()) return InteractionResult.SUCCESS;
-        IBloodVolume storage = wellBloodOpt.get();
+		float drawn = savedData.drawBlood(bloodline.getBloodlineUUID(), requested);
+		if (drawn <= 0.0F) {
+			return 0.0D;
+		}
 
-        if (player.isShiftKeyDown()) {
-            // Withdraw — fane-gated
-            if (!canUseBloodwell(serverPlayer, pos)) {
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.not_bloodline")
-                        .withStyle(ChatFormatting.DARK_RED));
-                return InteractionResult.SUCCESS;
-            }
-            if (!isInOwnFane(serverPlayer)) {
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.not_in_fane")
-                        .withStyle(ChatFormatting.DARK_RED));
-                return InteractionResult.SUCCESS;
-            }
-            double toWithdraw = Math.min(TRANSFER_PER_CLICK,
-                    Math.min(storage.getBloodVolume(),
-                            playerBlood.getMaxBloodVolume() - playerBlood.getBloodVolume()));
-            if (toWithdraw > 0) {
-                storage.subtractBloodVolume(toWithdraw);
-                playerBlood.fill(toWithdraw);
-                well.sendUpdates();
-                syncPlayerBlood(serverPlayer, playerBlood);
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.withdrew",
-                        (int) toWithdraw,
-                        (int) storage.getBloodVolume(),
-                        (int) storage.getMaxBloodVolume())
-                        .withStyle(ChatFormatting.DARK_RED));
-            } else {
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.empty_or_full")
-                        .withStyle(ChatFormatting.GRAY));
-            }
-        } else {
-            // Deposit — bound bloodline only
-            if (!canUseBloodwell(serverPlayer, pos)) {
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.not_bloodline")
-                        .withStyle(ChatFormatting.DARK_RED));
-                return InteractionResult.SUCCESS;
-            }
-            double toDeposit = Math.min(TRANSFER_PER_CLICK,
-                    Math.min(playerBlood.getBloodVolume(),
-                            storage.getMaxBloodVolume() - storage.getBloodVolume()));
-            if (toDeposit > 0) {
-                playerBlood.drain(toDeposit);
-                storage.addBloodVolume(toDeposit);
-                well.sendUpdates();
-                syncPlayerBlood(serverPlayer, playerBlood);
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.deposited",
-                        (int) toDeposit,
-                        (int) storage.getBloodVolume(),
-                        (int) storage.getMaxBloodVolume())
-                        .withStyle(ChatFormatting.DARK_RED));
-            } else {
-                player.sendSystemMessage(Component.translatable(
-                        "block.hemomancy.consecrated_bloodwell.cannot_deposit",
-                        (int) storage.getBloodVolume(),
-                        (int) storage.getMaxBloodVolume())
-                        .withStyle(ChatFormatting.GRAY));
-            }
-        }
-        return InteractionResult.SUCCESS;
-    }
+		playerBlood.fill(drawn);
+		BloodVolumeEvents.syncVolume(player, playerBlood);
+		syncBloodlinePool(player, globalLine);
+		syncWellFromPool(level, pos, globalLine);
+		return drawn;
+	}
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+	@Override
+	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
+			double maxAmount) {
+		if (!canUseBloodwell(player, pos)) {
+			player.displayClientMessage(Component.translatable(
+					"block.hemomancy.consecrated_bloodwell.not_bloodline")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return 0.0D;
+		}
 
-    /**
-     * Returns {@code true} if the player is standing within their own Founding
-     * Fane radius. The fane must have been consecrated by this exact player.
-     */
-    public static boolean isInOwnFane(ServerPlayer player) {
-        FoundingFaneSavedData data = FoundingFaneSavedData.get((ServerLevel) player.level());
-        UUID owner = HemoCapabilityAccess.getBloodVolume(player)
-                .map(IBloodVolume::getBloodLine)
-                .filter(Bloodline::isValid)
-                .map(Bloodline::getLeaderUUID)
-                .orElse(player.getUUID());
-        return data.isWithinFane(owner, player.blockPosition());
-    }
+		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (playerBlood == null || !playerBlood.isActive()) {
+			player.displayClientMessage(Component.translatable(
+					"block.hemomancy.consecrated_bloodwell.inactive").withStyle(ChatFormatting.GRAY), true);
+			return 0.0D;
+		}
 
-    public static boolean canUseBloodwell(ServerPlayer player, BlockPos bloodwellPos) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(IBloodVolume::getBloodLine)
-                .filter(Bloodline::isValid)
-                .filter(bloodline -> bloodline.hasMember(player.getUUID()))
-                .map(Bloodline::getLeaderUUID)
-                .map(owner -> {
-                    FoundingFaneSavedData data = FoundingFaneSavedData.get((ServerLevel) player.level());
-                    BlockPos heart = data.getHeart(owner);
-                    if (heart != null) {
-                        return heart.equals(bloodwellPos);
-                    }
-                    return data.isWithinFane(owner, bloodwellPos);
-                })
-                .orElse(false);
-    }
+		Bloodline bloodline = playerBlood.getBloodLine();
+		BloodlineSavedData savedData = BloodlineSavedData.get(player.server.overworld());
+		Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+		if (globalLine == null) {
+			return 0.0D;
+		}
 
-    private static void syncPlayerBlood(ServerPlayer player, IBloodVolume volume) {
-        PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-    }
+		double poolRoom = Math.max(0.0D, globalLine.getMaxBloodVolume() - globalLine.getBloodVolume());
+		double toDeposit = Math.min(maxAmount, Math.min(playerBlood.getBloodVolume(), poolRoom));
+		if (toDeposit <= 0.0D || !playerBlood.drain(toDeposit)) {
+			return 0.0D;
+		}
+
+		savedData.contributeBlood(bloodline.getBloodlineUUID(), (float) toDeposit);
+		BloodVolumeEvents.syncVolume(player, playerBlood);
+		syncBloodlinePool(player, globalLine);
+		syncWellFromPool(level, pos, globalLine);
+		return toDeposit;
+	}
+
+	public static boolean isInOwnFane(ServerPlayer player) {
+		FoundingFaneSavedData data = FoundingFaneSavedData.get((ServerLevel) player.level());
+		UUID owner = HemoCapabilityAccess.getBloodVolume(player)
+				.map(IBloodVolume::getBloodLine)
+				.filter(Bloodline::isValid)
+				.map(Bloodline::getLeaderUUID)
+				.orElse(player.getUUID());
+		return data.isWithinFane(owner, player.blockPosition());
+	}
+
+	public static boolean canUseBloodwell(ServerPlayer player, BlockPos bloodwellPos) {
+		return HemoCapabilityAccess.getBloodVolume(player)
+				.map(IBloodVolume::getBloodLine)
+				.filter(Bloodline::isValid)
+				.filter(bloodline -> bloodline.hasMember(player.getUUID()))
+				.map(Bloodline::getLeaderUUID)
+				.map(owner -> {
+					FoundingFaneSavedData data = FoundingFaneSavedData.get((ServerLevel) player.level());
+					BlockPos heart = data.getHeart(owner);
+					if (heart != null) {
+						return heart.equals(bloodwellPos);
+					}
+					return data.isWithinFane(owner, bloodwellPos);
+				})
+				.orElse(false);
+	}
+
+	private static void syncLinkedPool(ServerPlayer player, BlockPos pos) {
+		HemoCapabilityAccess.getBloodVolume(player)
+				.map(IBloodVolume::getBloodLine)
+				.filter(Bloodline::isValid)
+				.filter(bloodline -> bloodline.hasMember(player.getUUID()))
+				.ifPresent(bloodline -> {
+					Bloodline globalLine = BloodlineSavedData.get(player.server.overworld())
+							.getBloodline(bloodline.getBloodlineUUID());
+					if (globalLine != null) {
+						syncBloodlinePool(player, globalLine);
+						if (player.level() instanceof ServerLevel level) {
+							syncWellFromPool(level, pos, globalLine);
+						}
+					}
+				});
+	}
+
+	private static void syncBloodlinePool(ServerPlayer player, Bloodline globalLine) {
+		PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+				globalLine.getMaxBloodVolume(), globalLine.getPlayerUUIDS().size()));
+	}
+
+	private static void syncWellFromPool(ServerLevel level, BlockPos pos, Bloodline globalLine) {
+		if (level.getBlockEntity(pos) instanceof ConsecratedBloodwellBlockEntity well) {
+			well.syncFromBloodlinePool(globalLine);
+		}
+	}
 }

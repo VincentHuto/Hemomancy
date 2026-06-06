@@ -1,6 +1,6 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "hemomancy:entity/model_sanguine_monolith"
+    "particle": "hemomancy:block/black_particle"
   }
 }

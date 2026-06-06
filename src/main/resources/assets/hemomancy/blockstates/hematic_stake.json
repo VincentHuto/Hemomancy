@@ -1,5 +1,52 @@
 {
-  "variants": {
-    "": { "model": "hemomancy:block/hematic_stake" }
-  }
+  "multipart": [
+    {
+      "when": { "face": "floor", "facing": "north" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "floor", "facing": "east" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "floor", "facing": "south" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "floor", "facing": "west" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "ceiling", "facing": "north" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "ceiling", "facing": "east" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "ceiling", "facing": "south" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "ceiling", "facing": "west" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "wall", "facing": "north" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "wall", "facing": "east" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "wall", "facing": "south" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    },
+    {
+      "when": { "face": "wall", "facing": "west" },
+      "apply": { "model": "hemomancy:block/hematic_stake" }
+    }
+  ]
 }

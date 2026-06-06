@@ -3,10 +3,12 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
@@ -107,6 +109,11 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (worldIn.isClientSide) {
 			return;
 		}
+		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(worldIn, player,
+				LivingStaffFocusRules.bareAbsorptionDamagePerTick());
+		if (blockHandled > 0.0D) {
+			return;
+		}
 		findBareAbsorptionTarget(player, LivingStaffFocusRules.bareAbsorptionRange())
 				.ifPresent(target -> absorbFromTarget(worldIn, player, target,
 						LivingStaffFocusRules.bareAbsorptionDamagePerTick()));
@@ -128,14 +135,19 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (level.isClientSide) {
 			return 0.0D;
 		}
-		target.hurt(user.damageSources().generic(), (float) amount);
+		double healthBefore = target.getHealth();
+		boolean hurt = target.hurt(user.damageSources().generic(), (float) amount);
+		double absorbed = Math.min(amount, Math.max(0.0D, healthBefore - target.getHealth()));
+		if (!hurt || absorbed <= 0.0D) {
+			return 0.0D;
+		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(user)
 				.orElseThrow(NullPointerException::new);
-		volume.fill(amount);
+		volume.fill(absorbed);
 		if (user instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
-		return amount;
+		return absorbed;
 	}
 
 	public static boolean isValidAbsorptionTarget(LivingEntity user, Entity entity) {
@@ -143,6 +155,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				&& target != user
 				&& target.isAlive()
 				&& !target.isSpectator()
+				&& !HemoEntityPredicates.NOBLOOD.test(target)
 				&& !(target instanceof Player);
 	}
 

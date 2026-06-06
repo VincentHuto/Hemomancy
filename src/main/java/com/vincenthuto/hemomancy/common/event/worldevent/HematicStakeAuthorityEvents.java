@@ -36,7 +36,7 @@ public final class HematicStakeAuthorityEvents {
 		}
 
 		BlockPos placePos = event.getPos().relative(event.getFace());
-		if (HematicStakeBlock.manifestStake(level, player, placePos)) {
+		if (HematicStakeBlock.manifestStake(level, player, placePos, event.getFace())) {
 			player.displayClientMessage(Component.translatable("block.hemomancy.hematic_stake.manifested")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			event.setCancellationResult(InteractionResult.SUCCESS);

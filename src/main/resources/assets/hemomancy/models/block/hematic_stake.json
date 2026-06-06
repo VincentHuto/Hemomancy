@@ -1,4 +1,7 @@
 {
   "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "hemomancy:block/black_particle"
+  },
   "elements": []
 }

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
@@ -32,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -50,19 +52,16 @@ public final class CellHandParticleEffects {
 		Level world = living.level();
 		Random rand = new Random();
 		if (isAbsorptionMode(living, activeStack)) {
-			for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
-				Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-				Vec3 finalPos = origin.subtract(targetVec.x, targetVec.y, targetVec.z).reverse();
-				Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
-				ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-				Particle created = mc.particleEngine.createParticle(
-						AbsorbedBloodCellParticleFactory.createData(targetColor),
-						origin.x, origin.y, origin.z,
-						(float) finalPos.x + rand.nextFloat() - 0.5D,
-						(float) finalPos.y - rand.nextFloat(),
-						(float) finalPos.z + rand.nextFloat() - 0.5D);
-				if (created instanceof AbsorbedBloodCellParticle particle) {
-					particle.setTargetYOffset(0.0D);
+			Optional<Vec3> blockSource = BlockBloodInteractions.findLookedAtBloodBlockSource(world, living);
+			if (blockSource.isPresent()) {
+				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand, Optional.empty());
+			} else {
+				for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
+					Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
+					Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
+					ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
+					spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
+							targetColor, rand, Optional.empty());
 				}
 			}
 		} else if (isProjectionMode(living, activeStack)) {
@@ -116,20 +115,17 @@ public final class CellHandParticleEffects {
 		Vec3 origin = firstPersonAnchorToWorld(anchor);
 
 		if (isAbsorptionMode(player, stack)) {
-			for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
-				Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-				Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
-				ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-				Vec3 source = new Vec3(targetVec.x, targetVec.y, targetVec.z);
-				Vec3 finalPos = source.subtract(origin);
-				Particle created = mc.particleEngine.createParticle(
-						AbsorbedBloodCellParticleFactory.createData(targetColor),
-						origin.x, origin.y, origin.z,
-						(float) finalPos.x + rand.nextFloat() - 0.5D,
-						(float) finalPos.y - rand.nextFloat(),
-						(float) finalPos.z + rand.nextFloat() - 0.5D);
-				if (created instanceof AbsorbedBloodCellParticle particle) {
-					particle.setFirstPersonTargetAnchor(anchor);
+			Optional<Vec3> blockSource = BlockBloodInteractions.findLookedAtBloodBlockSource(world, player);
+			if (blockSource.isPresent()) {
+				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand,
+						Optional.of(anchor));
+			} else {
+				for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
+					Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
+					Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
+					ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
+					spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
+							targetColor, rand, Optional.of(anchor));
 				}
 			}
 		} else if (isProjectionMode(player, stack)) {
@@ -155,6 +151,25 @@ public final class CellHandParticleEffects {
 					particleOrigin.x(), particleOrigin.y(), particleOrigin.z(), 0, 0.00, 0);
 			if (created instanceof BloodCellParticle particle) {
 				particle.setFirstPersonAnchor(localOffset);
+			}
+		}
+	}
+
+	private static void spawnAbsorbedBloodParticle(Minecraft mc, Vec3 origin, Vec3 source,
+			ParticleColor targetColor, Random rand, Optional<Vec3> firstPersonTargetAnchor) {
+		Vec3 finalPos = source.subtract(origin);
+		Particle created = mc.particleEngine.createParticle(
+				AbsorbedBloodCellParticleFactory.createData(targetColor),
+				origin.x, origin.y, origin.z,
+				(float) finalPos.x + rand.nextFloat() - 0.5D,
+				(float) finalPos.y - rand.nextFloat(),
+				(float) finalPos.z + rand.nextFloat() - 0.5D);
+		if (created instanceof AbsorbedBloodCellParticle particle) {
+			if (firstPersonTargetAnchor.isPresent()) {
+				Vec3 anchor = firstPersonTargetAnchor.get();
+				particle.setFirstPersonTargetAnchor(anchor);
+			} else {
+				particle.setTargetYOffset(0.0D);
 			}
 		}
 	}

@@ -44,7 +44,11 @@ public class SilentArchonArmorOverlayLayer<T extends LivingEntity, M extends Hum
 		MorphlingPlayerPartVisibility.applyToArmorModel(model, slot);
 
 		VertexConsumer consumer = buffer.getBuffer(SilentArchonArmorRenderHelper.overlayRenderType(stack, slot, false));
+		poseStack.pushPose();
+		poseStack.scale(SilentArchonArmorRenderHelper.OVERLAY_SCALE, SilentArchonArmorRenderHelper.OVERLAY_SCALE,
+				SilentArchonArmorRenderHelper.OVERLAY_SCALE);
 		model.renderToBuffer(poseStack, consumer, OVERLAY_LIGHT, OverlayTexture.NO_OVERLAY,
 				SilentArchonArmorRenderHelper.OVERLAY_COLOR);
+		poseStack.popPose();
 	}
 }

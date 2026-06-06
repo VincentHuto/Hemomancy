@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -40,6 +41,9 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	private static final int TIER_FIVE = 5;
 	private static final int TIER_SEVEN = 7;
 	private static final int TIER_RANGE = TIER_SEVEN - TIER_FIVE;
+	private static final float FRONT_OVERLAY_Z = 0.272f;
+	private static final float BACK_OVERLAY_Z = -0.272f;
+	private static final float SIDE_OVERLAY_X = 0.522f;
 
 	/** How far below the base the monolith starts when first placed. */
 	private static final float RISE_Y_OFFSET = 2.5f;
@@ -93,8 +97,9 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		ms.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
 		ms.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
-		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		// Render entirely black (RGB = 0.05, 0.02, 0.02 for a very dark slab)
+		float shaderSeed = Math.floorMod(te.getBlockPos().asLong(), 10007L) / 10007.0f;
+		VertexConsumer vertexConsumer = bufferIn.getBuffer(
+				HemoRenderTypes.monolithEntitySurface(timeSeconds(te, partialTicks), shaderSeed, 0.45f, 0.88f, 7.5f));
 		model.renderToBuffer(ms, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, 0xFF0D0505);
 		ms.popPose();
 
@@ -114,22 +119,29 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		ms.popPose();
 	}
 
+	private static float timeSeconds(SanguineMonolithBlockEntity te, float partialTicks) {
+		if (te.getLevel() != null) {
+			return (te.getLevel().getGameTime() + partialTicks) / 20.0f;
+		}
+		return (te.getTickCount() + partialTicks) / 20.0f;
+	}
+
 	// ── Vein overlay ─────────────────────────────────────────────────────────────
 
 	private void renderVeinOverlay(PoseStack ms, MultiBufferSource bufferIn, float time, TendrilVisualState state) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 
-		// Render veins on front face (Z = -0.251 so it sits just above the model surface)
-		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, -0.251f, 1.0f, false, state);
+		// Render veins on front face.
+		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, FRONT_OVERLAY_Z, 1.0f, false, state);
 
 		// Render veins on back face
-		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, 0.251f, 1.0f, true, state);
+		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, BACK_OVERLAY_Z, 1.0f, true, state);
 
 		// Render veins on left side (X = -0.501)
-		renderSideVeins(ms, vc, time, -0.501f, 0.0f, 0.0f, false, state);
+		renderSideVeins(ms, vc, time, -SIDE_OVERLAY_X, 0.0f, 0.0f, false, state);
 
 		// Render veins on right side (X = 0.501)
-		renderSideVeins(ms, vc, time, 0.501f, 0.0f, 0.0f, true, state);
+		renderSideVeins(ms, vc, time, SIDE_OVERLAY_X, 0.0f, 0.0f, true, state);
 	}
 
 	private void renderFaceVeins(PoseStack ms, VertexConsumer vc, float time,
@@ -311,7 +323,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	private void renderEyeOverlay(PoseStack ms, MultiBufferSource bufferIn, float time) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 
-		float cz = +0.252f;
+		float cz = FRONT_OVERLAY_Z;
 		float tiltDeg = -22f; // outward tilt for flanking eyes
 
 		// Each eye pulses at a slightly different phase so they feel independent
@@ -423,7 +435,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 		Matrix4f mat = ms.last().pose();
 
-		float cz = -0.252f; // back face (+z = front, -z = back in Pass-2 space)
+		float cz = BACK_OVERLAY_Z; // back face (+z = front, -z = back in Pass-2 space)
 		float cy = 1.25f;    // vertical centre of the 2-block face
 		float R  = 0.400f;
 

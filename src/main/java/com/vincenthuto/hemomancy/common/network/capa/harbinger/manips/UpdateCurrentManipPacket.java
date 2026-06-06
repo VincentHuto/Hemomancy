@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -44,6 +45,9 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 							return;
 						}
 						if (!LivingStaffWeaponFormHelper.applySelection(player, target)) {
+							return;
+						}
+						if (!CellHandFormHelper.applySelection(player, target)) {
 							return;
 						}
 						known.setSelectedManip(target);

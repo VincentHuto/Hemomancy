@@ -46,7 +46,7 @@ public final class HemoRenderTypes {
 					.setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
 					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 					.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
-					.setWriteMaskState(RenderType.COLOR_WRITE)
+					.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
 					.setCullState(RenderType.NO_CULL)
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
@@ -94,9 +94,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "ShardSeed", shardSeed);
 					setUniform(shader, "Burden", burden);
 					setUniform(shader, "Attuned", attuned);
-					setUniform(shader, "GuiClamp", guiClamp);
 					setUniform(shader, "FractalScale", burden > 0.5f ? 13.0f : 8.0f);
-					setUniform(shader, "Snap", burden > 0.5f ? 1.35f : 0.85f);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT.getInstance().get();
@@ -127,9 +125,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "ShardSeed", shardSeed);
 					setUniform(shader, "Burden", burden);
 					setUniform(shader, "Attuned", attuned);
-					setUniform(shader, "GuiClamp", guiClamp);
 					setUniform(shader, "FractalScale", guiClamp > 0.5f ? 9.0f : 11.0f);
-					setUniform(shader, "Snap", 0.65f);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
@@ -145,6 +141,38 @@ public final class HemoRenderTypes {
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
 						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.OVERLAY)
+						.createCompositeState(false));
+	}
+
+	public static RenderType monolithEntitySurface(float gameTime, float shardSeed, float burden, float attuned,
+			float fractalScale) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"monolith_entity_surface_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "ShardSeed", shardSeed);
+					setUniform(shader, "Burden", burden);
+					setUniform(shader, "Attuned", attuned);
+					setUniform(shader, "FractalScale", fractalScale);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("monolith_entity_surface",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MONOLITH_FRAGMENT_ENTITY.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)
 						.setOverlayState(RenderType.OVERLAY)

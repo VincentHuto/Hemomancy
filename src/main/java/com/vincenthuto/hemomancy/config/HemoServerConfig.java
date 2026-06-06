@@ -202,8 +202,8 @@ public class HemoServerConfig {
 				.defineInRange("vascularHealInterval", 100, 1, 6000);
 
 		VASCULAR_DEBUFFS_ENABLED = builder
-				.comment("Whether damaged vascular sections apply debuffs (e.g. slowness for dead legs).")
-				.define("vascularDebuffsEnabled", true);
+				.comment("Whether damaged vascular sections apply debuffs (e.g. slowness for dead legs). for players who want an extra level of punishment")
+				.define("vascularDebuffsEnabled", false);
 
 		builder.pop();
 

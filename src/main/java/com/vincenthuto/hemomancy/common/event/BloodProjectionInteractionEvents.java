@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
@@ -23,24 +25,28 @@ public final class BloodProjectionInteractionEvents {
 
 	@SubscribeEvent
 	public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		if (!isProjectionUse(event.getEntity(), event.getItemStack())
-				|| !isBloodVolumeTileTarget(event.getLevel(), event.getPos())) {
+		if (!isBloodToolUse(event.getEntity(), event.getItemStack())
+				|| !isBloodInteractionBlockTarget(event.getLevel(), event.getPos())) {
 			return;
 		}
 		event.setUseBlock(TriState.FALSE);
 		event.setUseItem(TriState.TRUE);
 	}
 
-	private static boolean isProjectionUse(Player player, ItemStack stack) {
-		if (stack.getItem() instanceof BloodProjectionItem) {
+	private static boolean isBloodToolUse(Player player, ItemStack stack) {
+		if (stack.getItem() instanceof BloodAbsorptionItem || stack.getItem() instanceof BloodProjectionItem) {
 			return true;
 		}
 		return stack.getItem() instanceof LivingStaffItem
 				&& !player.isShiftKeyDown()
-				&& LivingStaffItem.isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION);
+				&& (LivingStaffItem.isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
+						|| LivingStaffItem.isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION));
 	}
 
-	private static boolean isBloodVolumeTileTarget(Level level, BlockPos pos) {
+	private static boolean isBloodInteractionBlockTarget(Level level, BlockPos pos) {
+		if (level.getBlockState(pos).getBlock() instanceof BlockBloodEndpoint) {
+			return true;
+		}
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be instanceof FillerBlockEntity filler) {
 			BlockPos mainPos = filler.getMainBlockPos();

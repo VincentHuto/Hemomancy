@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -97,6 +98,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		double beforeBlood = playerVolume.getBloodVolume();
+
+		double blockHandled = BlockBloodInteractions.tryProjectIntoLookedAtBlock(worldIn, player, tileTransferRate);
+		if (blockHandled > 0.0D) {
+			return blockHandled;
+		}
 
 		HitResult trace = player.pick(5.5,0, true);
 		if (trace.getType() == Type.BLOCK) {

@@ -21,6 +21,19 @@ public final class BloodAbsorptionItemSourceTest {
 				onUseTick, "if (worldIn.isClientSide)", "absorbFromTarget");
 		assertBefore("absorbing from a target only hurts entities on the server",
 				absorbFromTarget, "if (level.isClientSide)", "target.hurt");
+		assertContains("absorption tracks target health before damage",
+				absorbFromTarget, "healthBefore = target.getHealth()");
+		assertContains("absorption records whether damage was accepted",
+				absorbFromTarget, "boolean hurt = target.hurt");
+		assertBefore("absorption measures real health loss before filling blood",
+				absorbFromTarget, "target.getHealth()", "volume.fill");
+		assertContains("absorption ignores rejected or zero-damage hits",
+				absorbFromTarget, "if (!hurt || absorbed <= 0.0D)");
+		assertContains("absorption credits actual damage instead of requested amount",
+				absorbFromTarget, "volume.fill(absorbed)");
+
+		assertContains("absorption excludes bloodless entities",
+				source, "HemoEntityPredicates.NOBLOOD");
 	}
 
 	private static String read(String path) throws IOException {
@@ -32,6 +45,12 @@ public final class BloodAbsorptionItemSourceTest {
 		int secondIndex = text.indexOf(second);
 		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
 			throw new AssertionError(label + " (expected '" + first + "' before '" + second + "')");
+		}
+	}
+
+	private static void assertContains(String label, String text, String needle) {
+		if (!text.contains(needle)) {
+			throw new AssertionError(label + " (missing '" + needle + "')");
 		}
 	}
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.HematicStakeBlockEntity;
 
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 
 import org.joml.Matrix4f;
 
@@ -35,10 +38,35 @@ public class HematicStakeRenderer implements BlockEntityRenderer<HematicStakeBlo
 		VertexConsumer vc = buffer.getBuffer(HemoRenderTypes.monolithFragment(timeSeconds, shardSeed, 0.0f, 0.72f, 0.0f));
 
 		poseStack.pushPose();
-		poseStack.translate(0.5, 0.02, 0.5);
+		applyAttachmentTransform(be, poseStack);
 		poseStack.mulPose(Axis.YP.rotationDegrees(seedNoise(shardSeed, 17) * 28.0f));
 		drawJaggedStakeShard(vc, poseStack.last().pose(), LightTexture.FULL_BRIGHT, shardSeed, 1.0f);
 		poseStack.popPose();
+	}
+
+	private static void applyAttachmentTransform(HematicStakeBlockEntity be, PoseStack poseStack) {
+		AttachFace face = be.getBlockState().getValue(HematicStakeBlock.FACE);
+		Direction facing = be.getBlockState().getValue(HematicStakeBlock.FACING);
+		if (face == AttachFace.CEILING) {
+			poseStack.translate(0.5, 0.98, 0.5);
+			poseStack.mulPose(Axis.XP.rotationDegrees(180.0f));
+		} else if (face == AttachFace.WALL) {
+			poseStack.translate(0.5 - facing.getStepX() * 0.48, 0.5, 0.5 - facing.getStepZ() * 0.48);
+			rotateUpToFacing(poseStack, facing);
+		} else {
+			poseStack.translate(0.5, 0.02, 0.5);
+		}
+	}
+
+	private static void rotateUpToFacing(PoseStack poseStack, Direction facing) {
+		switch (facing) {
+			case NORTH -> poseStack.mulPose(Axis.XP.rotationDegrees(-90.0f));
+			case SOUTH -> poseStack.mulPose(Axis.XP.rotationDegrees(90.0f));
+			case EAST -> poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0f));
+			case WEST -> poseStack.mulPose(Axis.ZP.rotationDegrees(90.0f));
+			default -> {
+			}
+		}
 	}
 
 	public static void drawJaggedStakeShard(VertexConsumer vc, Matrix4f mat, int light, float seed, float scale) {

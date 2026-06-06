@@ -88,30 +88,14 @@ public class BloodVolumeEvents {
 
 					if (globalLine != null) {
 						// â”€â”€ Per-player trickle donation â”€â”€
-						// Only trickle if enabled AND passive regen rate >= trickle rate
-						// (so the player never loses net blood from trickling)
 						if (volume.isTrickleEnabled()) {
-							double trickleRate = volume.getTrickleRate();
-							double regenRate = HemoServerConfig.BLOOD_REGEN_ENABLED.get()
-									? HemoServerConfig.BLOOD_REGEN_RATE.get() : 0;
-							if (regenRate >= trickleRate
-									&& volume.getBloodVolume() > volume.getMaxBloodVolume() * minThreshold) {
-								if (volume.drain(trickleRate)) {
-									globalLine.contributeBlood((float) trickleRate);
-									savedData.setDirty();
-									syncVolume((ServerPlayer) player, volume);
-								}
-							}
+							contributeToBloodlinePool((ServerPlayer) player, volume, globalLine, savedData,
+									overworld, volume.getTrickleRate(), minThreshold);
 						} else {
 							// â”€â”€ Default server-config-driven passive contribution â”€â”€
 							double contributionRate = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_RATE.get();
-							if (volume.getBloodVolume() > volume.getMaxBloodVolume() * minThreshold) {
-								if (volume.drain(contributionRate)) {
-									globalLine.contributeBlood((float) contributionRate);
-									savedData.setDirty();
-									syncVolume((ServerPlayer) player, volume);
-								}
-							}
+							contributeToBloodlinePool((ServerPlayer) player, volume, globalLine, savedData,
+									overworld, contributionRate, minThreshold);
 						}
 
 						// â”€â”€ Per-player auto-draw from pool â”€â”€
@@ -129,6 +113,7 @@ public class BloodVolumeEvents {
 									volume.fill(drawn);
 									savedData.setDirty();
 									syncVolume((ServerPlayer) player, volume);
+									syncBloodlinePool(overworld, globalLine);
 								}
 							}
 						}
@@ -160,6 +145,7 @@ public class BloodVolumeEvents {
 							float drawn = savedData.drawBlood(bloodline.getBloodlineUUID(), healAmount);
 							if (drawn > 0) {
 								player.heal(drawn);
+								syncBloodlinePool(overworld, savedData.getBloodline(bloodline.getBloodlineUUID()));
 							}
 						}
 					}
@@ -285,6 +271,38 @@ public class BloodVolumeEvents {
 				double siphoned = amount * gourd.getKillSiphonMultiplier();
 				HemoCapabilityAccess.getBloodVolume(stack).ifPresent(gourdVolume -> gourdVolume.fill(siphoned));
 				return;
+			}
+		}
+	}
+
+	private static void contributeToBloodlinePool(ServerPlayer player, IBloodVolume volume, Bloodline globalLine,
+			BloodlineSavedData savedData, ServerLevel overworld, double requestedAmount, double minThreshold) {
+		double protectedBlood = volume.getMaxBloodVolume() * minThreshold;
+		double availableToDonate = Math.max(0.0, volume.getBloodVolume() - protectedBlood);
+		double poolRoom = Math.max(0.0, globalLine.getMaxBloodVolume() - globalLine.getBloodVolume());
+		double actualDonation = Math.min(requestedAmount, Math.min(availableToDonate, poolRoom));
+
+		if (actualDonation <= 0 || !volume.drain(actualDonation)) {
+			return;
+		}
+
+		globalLine.contributeBlood((float) actualDonation);
+		savedData.setDirty();
+		syncVolume(player, volume);
+		syncBloodlinePool(overworld, globalLine);
+	}
+
+	private static void syncBloodlinePool(ServerLevel overworld, Bloodline globalLine) {
+		if (globalLine == null) {
+			return;
+		}
+
+		PacketSyncBloodlinePool payload = new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+				globalLine.getMaxBloodVolume(), globalLine.getPlayerUUIDS().size());
+		for (var memberId : globalLine.getPlayerUUIDS()) {
+			ServerPlayer member = overworld.getServer().getPlayerList().getPlayer(memberId);
+			if (member != null) {
+				PacketHandler.sendToPlayer(member, payload);
 			}
 		}
 	}

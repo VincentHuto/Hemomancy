@@ -14,7 +14,10 @@ public final class LivingStaffUtilitySourceTest {
 		String staff = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java");
 		String layer = read("src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandLayer.java");
 		String useMethod = staff.substring(staff.indexOf("public InteractionResultHolder<ItemStack> use"));
+		String onUseTick = between(staff, "public void onUseTick", "public void releaseUsing");
 		String absorbWithStaff = between(staff, "private static void absorbWithStaff", "private static void projectWithStaff");
+		String absorbBlockWithStaff = between(staff, "private static boolean tryAbsorbFromLookedAtBlockWithStaff",
+				"private static void absorbWithStaff");
 		String projectWithStaff = between(staff, "private static void projectWithStaff", "private static void recordUtilityBloodHandled");
 
 		assertBefore("staff starts using before the server-only branch so client hold ticks and particles run",
@@ -29,6 +32,12 @@ public final class LivingStaffUtilitySourceTest {
 				absorbWithStaff, "LivingStaffFocusRules.addBloodHandled");
 		assertNotContains("staff projection pulses do not rewrite stack custom data during held use",
 				projectWithStaff, "LivingStaffFocusRules.addBloodHandled");
+		assertBefore("staff block absorption streams every tick before entity pulse gating",
+				onUseTick, "tryAbsorbFromLookedAtBlockWithStaff", "absorptionPulseIntervalTicks");
+		assertContains("staff block absorption uses the same per-tick standard as bare absorption",
+				absorbBlockWithStaff, "LivingStaffFocusRules.staffAbsorptionPerSecond(focus, 1) / 20.0D");
+		assertNotContains("staff entity absorption no longer hides block draw behind pulse intervals",
+				absorbWithStaff, "tryAbsorbFromLookedAtBlock");
 		assertContains("staff records handled blood away from the held item during utility use",
 				staff, "recordUtilityBloodHandled(player,");
 		assertContains("staff commits handled blood once when utility use is released",

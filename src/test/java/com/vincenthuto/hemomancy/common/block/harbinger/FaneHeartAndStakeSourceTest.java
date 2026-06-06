@@ -15,6 +15,16 @@ public final class FaneHeartAndStakeSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
 	private static final Path BLOODWELL_BLOCK_ENTITY = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/tile/functional/ConsecratedBloodwellBlockEntity.java");
+	private static final Path BLOCK_BLOOD_ENDPOINT = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodEndpoint.java");
+	private static final Path BLOCK_BLOOD_INTERACTIONS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/block/shared/BlockBloodInteractions.java");
+	private static final Path BLOOD_ABSORPTION = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
+	private static final Path BLOOD_PROJECTION = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
+	private static final Path BLOOD_PROJECTION_EVENTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/event/BloodProjectionInteractionEvents.java");
 	private static final Path STAKE_BLOCK_ENTITY = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/tile/functional/HematicStakeBlockEntity.java");
 	private static final Path STAKE_BLOCK_RENDERER = Path.of(
@@ -50,6 +60,11 @@ public final class FaneHeartAndStakeSourceTest {
 		String blockInit = Files.readString(BLOCK_INIT).replace("\r\n", "\n");
 		String blockEntityInit = Files.readString(BLOCK_ENTITY_INIT).replace("\r\n", "\n");
 		String bloodwellBlockEntity = Files.readString(BLOODWELL_BLOCK_ENTITY).replace("\r\n", "\n");
+		String blockBloodEndpoint = Files.readString(BLOCK_BLOOD_ENDPOINT).replace("\r\n", "\n");
+		String blockBloodInteractions = Files.readString(BLOCK_BLOOD_INTERACTIONS).replace("\r\n", "\n");
+		String bloodAbsorption = Files.readString(BLOOD_ABSORPTION).replace("\r\n", "\n");
+		String bloodProjection = Files.readString(BLOOD_PROJECTION).replace("\r\n", "\n");
+		String bloodProjectionEvents = Files.readString(BLOOD_PROJECTION_EVENTS).replace("\r\n", "\n");
 		String stakeBlockEntity = Files.readString(STAKE_BLOCK_ENTITY).replace("\r\n", "\n");
 		String stakeBlockRenderer = Files.readString(STAKE_BLOCK_RENDERER).replace("\r\n", "\n");
 		String bloodwellRenderer = Files.readString(BLOODWELL_RENDERER).replace("\r\n", "\n");
@@ -69,13 +84,50 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("bloodwell breaks associated stakes on removal", bloodwell, "removeBlock(stakePos, false)");
 		assertContains("bloodwell uses footprint membership", bloodwell, "isInOwnFane");
 		assertContains("bloodwell default constructor does not occlude supporting blocks", bloodwell, ".noOcclusion()");
-		assertContains("bloodwell donation requires bound bloodline", bloodwell, "canUseBloodwell(serverPlayer, pos)");
-		assertContains("bloodwell donation rejects outsiders", bloodwell,
+		assertContains("bloodwell opens bloodline pool screen", bloodwell, "BloodlinePoolScreen.openScreen()");
+		assertContains("bloodwell lets absorption/projection tools target endpoint", bloodwell,
+				"ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION");
+		assertContains("bloodwell implements dynamic block blood endpoint", bloodwell,
+				"implements BlockBloodEndpoint");
+		assertContains("bloodwell projection requires bound bloodline", bloodwell, "canUseBloodwell(player, pos)");
+		assertContains("bloodwell projection rejects outsiders", bloodwell,
 				"block.hemomancy.consecrated_bloodwell.not_bloodline");
-		assertContains("bloodwell auto-draw requires bound bloodline", bloodwellBlockEntity,
-				"canUseBloodwell(player, pos)");
-		assertContains("bloodwell auto-draw still requires fane position", bloodwellBlockEntity,
-				"isInOwnFane(player)");
+		assertContains("bloodwell transfers projection directly to shared pool", bloodwell,
+				"savedData.contributeBlood(bloodline.getBloodlineUUID()");
+		assertContains("bloodwell transfers absorption directly from shared pool", bloodwell,
+				"savedData.drawBlood(bloodline.getBloodlineUUID()");
+		assertContains("bloodwell syncs changed bloodline pool after endpoint transfer", bloodwell,
+				"syncBloodlinePool(player, globalLine)");
+		assertNotContains("bloodwell no longer owns fixed 25000ml local buffer", bloodwellBlockEntity, "MAX_BLOOD");
+		assertNotContains("bloodwell no longer implements blood tile storage", bloodwellBlockEntity,
+				"implements IBloodTile");
+		assertNotContains("bloodwell no longer saves local blood level", bloodwellBlockEntity, "TAG_BLOOD_LEVEL");
+		assertContains("bloodwell block entity syncs bloodline pool fullness", bloodwellBlockEntity,
+				"syncFromBloodlinePool");
+		assertContains("dynamic block endpoint exposes absorption", blockBloodEndpoint,
+				"absorbBloodFromBlock");
+		assertContains("dynamic block endpoint exposes projection", blockBloodEndpoint,
+				"projectBloodIntoBlock");
+		assertContains("dynamic block interaction helper resolves block endpoints", blockBloodInteractions,
+				"state.getBlock() instanceof BlockBloodEndpoint");
+		assertContains("dynamic block interaction helper absorbs from legacy blood tiles", blockBloodInteractions,
+				"tryAbsorbFromBloodTile");
+		assertContains("dynamic block interaction helper drains tile blood", blockBloodInteractions,
+				"tileVolume.subtractBloodVolume");
+		assertContains("dynamic block interaction helper fills player blood from tile", blockBloodInteractions,
+				"playerVolume.fill");
+		assertContains("dynamic block interaction helper updates blood tiles", blockBloodInteractions,
+				"bt.sendUpdates()");
+		assertContains("dynamic block interaction helper syncs player after tile absorption", blockBloodInteractions,
+				"new BloodVolumeServerPacket(playerVolume)");
+		assertContains("blood absorption tries block endpoints before entity absorption", bloodAbsorption,
+				"BlockBloodInteractions.tryAbsorbFromLookedAtBlock");
+		assertContains("blood projection tries block endpoints before legacy tile handling", bloodProjection,
+				"BlockBloodInteractions.tryProjectIntoLookedAtBlock");
+		assertContains("blood tool interaction event recognizes block endpoints", bloodProjectionEvents,
+				"BlockBloodEndpoint");
+		assertContains("blood tool interaction event recognizes absorption", bloodProjectionEvents,
+				"BloodAbsorptionItem");
 		assertContains("stake validates connected placement", stake, "canPlaceStake");
 		assertContains("stake registers into fane", stake, "addStake");
 		assertContains("stake unregisters on removal", stake, "removeStake");
@@ -113,8 +165,9 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("bloodwell arc count scales with fullness", bloodwellRenderer, "activeArcCount");
 		assertContains("bloodwell renderer spawns real particles", bloodwellRenderer, "spawnBloodwellParticles");
 		assertContains("bloodwell renderer uses actual level particles", bloodwellRenderer, "level.addParticle");
-		assertContains("bloodwell renderer uses blood cell particles", bloodwellRenderer, "BloodCellParticleFactory");
-		assertContains("bloodwell renderer uses glow particles", bloodwellRenderer, "HitGlowParticleFactory");
+		assertContains("bloodwell renderer uses absorbed blood cell particles", bloodwellRenderer,
+				"AbsorbedBloodCellParticleFactory");
+		assertContains("bloodwell renderer uses glow particles", bloodwellRenderer, "GlowParticleFactory");
 		assertContains("bloodwell renderer uses blood particle color", bloodwellRenderer, "ParticleColor.BLOOD");
 		assertNotContains("bloodwell renderer removes fake tip mist geometry", bloodwellRenderer, "renderJetMist");
 		assertNotContains("bloodwell renderer removes fake ambient mote geometry", bloodwellRenderer, "renderBloodMotes");
@@ -133,6 +186,8 @@ public final class FaneHeartAndStakeSourceTest {
 		assertNotContains("bloodwell stream arcs avoid end gaps", bloodwellRenderer, "if (t1 > 1.0f)");
 		assertContains("bloodwell renderer is animated", bloodwellRenderer, "Mth.sin");
 		assertContains("bloodwell renderer uses blood fountain render type", hemoRenderTypes, "BLOODWELL_FOUNTAIN");
+		assertContains("bloodwell fountain render type writes depth for water sorting",
+				renderTypeBlock(hemoRenderTypes, "BLOODWELL_FOUNTAIN"), "setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)");
 		assertContains("stake renderer registered", clientEvents,
 				"BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new)");
 		assertContains("bloodwell renderer registered", clientEvents,
@@ -158,5 +213,14 @@ public final class FaneHeartAndStakeSourceTest {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + ": unexpected " + unexpected);
 		}
+	}
+
+	private static String renderTypeBlock(String text, String constantName) {
+		int start = text.indexOf("public static final RenderType " + constantName);
+		if (start < 0) {
+			throw new AssertionError("missing render type constant " + constantName);
+		}
+		int end = text.indexOf("public static", start + 1);
+		return end >= 0 ? text.substring(start, end) : text.substring(start);
 	}
 }

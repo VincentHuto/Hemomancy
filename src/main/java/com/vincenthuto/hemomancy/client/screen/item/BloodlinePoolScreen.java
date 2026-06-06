@@ -351,7 +351,7 @@ public class BloodlinePoolScreen extends Screen {
 			graphics.fill(barX + barW - 1, y, barX + barW, y + barH, 0xFF440808);
 
 			// Pool text
-			String poolText = String.format("%.0f / %.0f ml", poolVol, poolMax);
+			String poolText = String.format("%s / %.0f ml", formatPoolVolume(poolVol), poolMax);
 			graphics.drawCenteredString(this.font, poolText, centerX, y + 3, 0xFFFFFFFF);
 			y += barH + scaled(8);
 
@@ -541,5 +541,11 @@ public class BloodlinePoolScreen extends Screen {
 			}
 		});
 		return kickable;
+	}
+
+	private static String formatPoolVolume(float amount) {
+		return Math.abs(amount - Math.round(amount)) < 0.05f
+				? String.format("%.0f", amount)
+				: String.format("%.1f", amount);
 	}
 }
