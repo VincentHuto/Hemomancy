@@ -175,6 +175,37 @@ public class FoundingSanctumSavedData extends SavedData {
 		}
 	}
 
+	public List<BlockPos> removeHeartAndGetStakes(UUID playerUUID, BlockPos pos) {
+		SanctumEntry entry = sanctums.get(playerUUID);
+		if (entry != null && pos.equals(entry.heart())) {
+			List<BlockPos> removedStakes = List.copyOf(entry.stakes());
+			sanctums.put(playerUUID, entry.withoutHeart());
+			setDirty();
+			return removedStakes;
+		}
+		return List.of();
+	}
+
+	public List<BlockPos> removeStakesAndGet(UUID playerUUID) {
+		SanctumEntry entry = sanctums.get(playerUUID);
+		if (entry != null && !entry.stakes().isEmpty()) {
+			List<BlockPos> removedStakes = List.copyOf(entry.stakes());
+			sanctums.put(playerUUID, new SanctumEntry(entry.heart(), List.of(), entry.legacyCenter(), entry.recallPoint()));
+			setDirty();
+			return removedStakes;
+		}
+		return List.of();
+	}
+
+	public UUID findOwnerForStake(BlockPos pos) {
+		for (Map.Entry<UUID, SanctumEntry> entry : sanctums.entrySet()) {
+			if (entry.getValue().stakes().contains(pos)) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	public UUID findOwnerContaining(BlockPos pos) {
 		for (Map.Entry<UUID, SanctumEntry> entry : sanctums.entrySet()) {
 			if (entry.getValue().footprint().contains(pos)) {

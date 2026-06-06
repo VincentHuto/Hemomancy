@@ -11,6 +11,34 @@ public final class SanctumHeartAndStakeSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/HematicStakeBlock.java");
 	private static final Path BLOCK_INIT = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
+	private static final Path BLOCK_ENTITY_INIT = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
+	private static final Path BLOODWELL_BLOCK_ENTITY = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/tile/functional/ConsecratedBloodwellBlockEntity.java");
+	private static final Path STAKE_BLOCK_ENTITY = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/tile/functional/HematicStakeBlockEntity.java");
+	private static final Path STAKE_BLOCK_RENDERER = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/HematicStakeRenderer.java");
+	private static final Path BLOODWELL_RENDERER = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/functional/ConsecratedBloodwellRenderer.java");
+	private static final Path HEMO_RENDER_TYPES = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
+	private static final Path STAKE_ITEM = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/HematicStakeBlockItem.java");
+	private static final Path STAKE_ITEM_RENDERER = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/functional/HematicStakeItemRenderer.java");
+	private static final Path CLIENT_EVENTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+	private static final Path STAKE_AUTHORITY_EVENTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/HematicStakeAuthorityEvents.java");
+	private static final Path SANCTUM_DATA = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingSanctumSavedData.java");
+	private static final Path HARBINGER_RITES = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
+	private static final Path STAKE_ITEM_MODEL = Path.of(
+			"src/main/resources/assets/hemomancy/models/item/hematic_stake.json");
+	private static final Path STAKE_BLOCK_MODEL = Path.of(
+			"src/main/resources/assets/hemomancy/models/block/hematic_stake.json");
 	private static final Path LANG = Path.of("src/main/resources/assets/hemomancy/lang/en_us.json");
 
 	private SanctumHeartAndStakeSourceTest() {
@@ -20,21 +48,115 @@ public final class SanctumHeartAndStakeSourceTest {
 		String bloodwell = Files.readString(BLOODWELL).replace("\r\n", "\n");
 		String stake = Files.readString(STAKE).replace("\r\n", "\n");
 		String blockInit = Files.readString(BLOCK_INIT).replace("\r\n", "\n");
+		String blockEntityInit = Files.readString(BLOCK_ENTITY_INIT).replace("\r\n", "\n");
+		String bloodwellBlockEntity = Files.readString(BLOODWELL_BLOCK_ENTITY).replace("\r\n", "\n");
+		String stakeBlockEntity = Files.readString(STAKE_BLOCK_ENTITY).replace("\r\n", "\n");
+		String stakeBlockRenderer = Files.readString(STAKE_BLOCK_RENDERER).replace("\r\n", "\n");
+		String bloodwellRenderer = Files.readString(BLOODWELL_RENDERER).replace("\r\n", "\n");
+		String hemoRenderTypes = Files.readString(HEMO_RENDER_TYPES).replace("\r\n", "\n");
+		String stakeItem = Files.readString(STAKE_ITEM).replace("\r\n", "\n");
+		String stakeItemRenderer = Files.readString(STAKE_ITEM_RENDERER).replace("\r\n", "\n");
+		String clientEvents = Files.readString(CLIENT_EVENTS).replace("\r\n", "\n");
+		String stakeAuthorityEvents = Files.readString(STAKE_AUTHORITY_EVENTS).replace("\r\n", "\n");
+		String sanctumData = Files.readString(SANCTUM_DATA).replace("\r\n", "\n");
+		String harbingerRites = Files.readString(HARBINGER_RITES).replace("\r\n", "\n");
+		String stakeItemModel = Files.readString(STAKE_ITEM_MODEL).replace("\r\n", "\n");
+		String stakeBlockModel = Files.readString(STAKE_BLOCK_MODEL).replace("\r\n", "\n");
 		String lang = Files.readString(LANG).replace("\r\n", "\n");
 
 		assertContains("bloodwell blocks duplicate hearts", bloodwell, "canPlaceBloodwell");
-		assertContains("bloodwell collapses sanctum on removal", bloodwell, "removeHeart");
+		assertContains("bloodwell collapses sanctum on removal", bloodwell, "removeHeartAndGetStakes");
+		assertContains("bloodwell breaks associated stakes on removal", bloodwell, "removeBlock(stakePos, false)");
 		assertContains("bloodwell uses footprint membership", bloodwell, "isInOwnSanctum");
+		assertContains("bloodwell default constructor does not occlude supporting blocks", bloodwell, ".noOcclusion()");
+		assertContains("bloodwell donation requires bound bloodline", bloodwell, "canUseBloodwell(serverPlayer, pos)");
+		assertContains("bloodwell donation rejects outsiders", bloodwell,
+				"block.hemomancy.consecrated_bloodwell.not_bloodline");
+		assertContains("bloodwell auto-draw requires bound bloodline", bloodwellBlockEntity,
+				"canUseBloodwell(player, pos)");
+		assertContains("bloodwell auto-draw still requires sanctum position", bloodwellBlockEntity,
+				"isInOwnSanctum(player)");
 		assertContains("stake validates connected placement", stake, "canPlaceStake");
 		assertContains("stake registers into sanctum", stake, "addStake");
 		assertContains("stake unregisters on removal", stake, "removeStake");
+		assertContains("stake validates progenitor authority", stake, "isProgenitor");
+		assertContains("stake manifests from authority action", stake, "manifestStake");
+		assertContains("stake is entity rendered", stake, "RenderShape.ENTITYBLOCK_ANIMATED");
+		assertContains("stake creates block entity", stake, "new HematicStakeBlockEntity");
 		assertContains("registers hematic stake block", blockInit, "hematic_stake");
+		assertContains("bloodwell registration does not occlude supporting blocks", blockInit,
+				"sound(SoundType.METAL).noOcclusion().lightLevel(s -> 3)");
+		assertContains("stake has no collision", blockInit, ".noCollission()");
+		assertContains("stake is instant to mine", blockInit, ".instabreak()");
+		assertContains("registers hematic stake block entity", blockEntityInit, "HematicStakeBlockEntity");
+		assertContains("stake block item uses custom renderer", blockInit, "new HematicStakeBlockItem");
+		assertContains("stake authority event handles empty-hand placement", stakeAuthorityEvents,
+				"PlayerInteractEvent.RightClickBlock");
+		assertContains("stake authority event handles break protection", stakeAuthorityEvents,
+				"BlockEvent.BreakEvent");
+		assertContains("stake authority cancels non-owner breaks", stakeAuthorityEvents, "event.setCanceled(true)");
+		assertContains("stake owner lookup uses explicit stake list", sanctumData, "findOwnerForStake");
+		assertContains("sanctum data returns stakes when heart collapses", sanctumData, "removeHeartAndGetStakes");
+		assertContains("sanctum data returns stakes when reconsecrating", sanctumData, "removeStakesAndGet");
+		assertContains("reconsecration breaks old stakes", harbingerRites, "removeStakesAndGet");
+		assertContains("reconsecration removes old stake blocks", harbingerRites, "removeBlock(stakePos, false)");
+		assertContains("stake block entity is render-only", stakeBlockEntity, "sole purpose is");
+		assertContains("stake block renderer uses monolith material", stakeBlockRenderer,
+				"HemoRenderTypes.monolithFragment");
+		assertContains("stake renderer draws jagged sovereign shard", stakeBlockRenderer, "drawJaggedStakeShard");
+		assertContains("bloodwell renderer draws central fountain jet", bloodwellRenderer, "renderCentralBloodJet");
+		assertContains("bloodwell renderer draws falling fountain arcs", bloodwellRenderer, "renderFountainArc");
+		assertContains("bloodwell renderer responds to stored blood", bloodwellRenderer, "getStoredBlood");
+		assertContains("bloodwell renderer uses unclamped pressure scaling", bloodwellRenderer, "bloodPressure(fullness)");
+		assertContains("bloodwell renderer keeps low wells modest", bloodwellRenderer, "LOW_JET_HEIGHT");
+		assertContains("bloodwell renderer expands when full", bloodwellRenderer, "FULL_JET_HEIGHT");
+		assertContains("bloodwell arc count scales with fullness", bloodwellRenderer, "activeArcCount");
+		assertContains("bloodwell renderer spawns real particles", bloodwellRenderer, "spawnBloodwellParticles");
+		assertContains("bloodwell renderer uses actual level particles", bloodwellRenderer, "level.addParticle");
+		assertContains("bloodwell renderer uses blood cell particles", bloodwellRenderer, "BloodCellParticleFactory");
+		assertContains("bloodwell renderer uses glow particles", bloodwellRenderer, "HitGlowParticleFactory");
+		assertContains("bloodwell renderer uses blood particle color", bloodwellRenderer, "ParticleColor.BLOOD");
+		assertNotContains("bloodwell renderer removes fake tip mist geometry", bloodwellRenderer, "renderJetMist");
+		assertNotContains("bloodwell renderer removes fake ambient mote geometry", bloodwellRenderer, "renderBloodMotes");
+		assertNotContains("bloodwell renderer removes crossed quad motes", bloodwellRenderer, "drawMote");
+		assertNotContains("bloodwell renderer removes renderer mote budget", bloodwellRenderer, "MOTE_COUNT");
+		assertNotContains("bloodwell renderer removes flat crown quad", bloodwellRenderer, "topY + crown");
+		assertContains("bloodwell renderer smooths stream arcs", bloodwellRenderer, "renderSmoothFountainArc");
+		assertContains("bloodwell stream arcs use tapered ribbons", bloodwellRenderer, "taperedRibbon");
+		assertContains("bloodwell stream arcs use continuous alpha", bloodwellRenderer, "arcAlphaAt");
+		assertNotContains("bloodwell stream arcs avoid segment overlap padding", bloodwellRenderer, "ARC_STRIP_OVERLAP");
+		assertNotContains("bloodwell stream arcs do not backtrack segment starts", bloodwellRenderer,
+				"- ARC_STRIP_OVERLAP");
+		assertNotContains("bloodwell stream arcs do not extend segment ends", bloodwellRenderer,
+				"+ ARC_STRIP_OVERLAP");
+		assertNotContains("bloodwell stream arcs remove phased texture chunks", bloodwellRenderer, "phase * 0.6f");
+		assertNotContains("bloodwell stream arcs avoid end gaps", bloodwellRenderer, "if (t1 > 1.0f)");
+		assertContains("bloodwell renderer is animated", bloodwellRenderer, "Mth.sin");
+		assertContains("bloodwell renderer uses blood fountain render type", hemoRenderTypes, "BLOODWELL_FOUNTAIN");
+		assertContains("stake renderer registered", clientEvents,
+				"BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new)");
+		assertContains("bloodwell renderer registered", clientEvents,
+				"BlockEntityRenderers.register(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new)");
+		assertContains("stake item implements custom renderer provider", stakeItem,
+				"implements HemoClientItemExtensionsProvider");
+		assertContains("stake item renderer uses monolith material", stakeItemRenderer,
+				"HemoRenderTypes.monolithFragment");
+		assertContains("stake item model routes to custom renderer", stakeItemModel, "\"parent\": \"builtin/entity\"");
+		assertContains("stake block model no longer draws lightning-rod geometry", stakeBlockModel, "\"elements\": []");
 		assertContains("adds hematic stake translation", lang, "\"block.hemomancy.hematic_stake\"");
+		assertContains("adds bloodwell bloodline-gate translation", lang,
+				"\"block.hemomancy.consecrated_bloodwell.not_bloodline\"");
 	}
 
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + ": unexpected " + unexpected);
 		}
 	}
 }

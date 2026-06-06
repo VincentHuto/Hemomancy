@@ -8,7 +8,7 @@ public final class BloodlineDisbandSanctumSourceTest {
 	private static final Path HELPER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodlineDisbandHelper.java");
 	private static final Path LEDGER_PACKET = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/PacketLedgerAction.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketLedgerAction.java");
 	private static final Path COMMAND = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
 	private static final Path RITE_EVENTS = Path.of(
@@ -28,6 +28,13 @@ public final class BloodlineDisbandSanctumSourceTest {
 		assertContains("helper removes every player-owned sanctum in the disbanded bloodline", helper,
 				"disbandedLine.getPlayerUUIDS()");
 		assertContains("helper removes sanctum entries by owner uuid", helper, "sanctumData.remove(memberUuid)");
+		assertContains("helper captures heart position before disband cleanup", helper, "sanctumData.getHeart(memberUuid)");
+		assertContains("helper captures stake positions before disband cleanup", helper,
+				"sanctumData.removeStakesAndGet(memberUuid)");
+		assertContains("helper removes physical stake blocks on disband", helper, "level.removeBlock(stakePos, false)");
+		assertContains("helper removes physical bloodwell block on disband", helper, "level.removeBlock(heartPos, false)");
+		assertContains("helper checks hematic stake blocks before removal", helper, "BlockInit.hematic_stake");
+		assertContains("helper checks bloodwell blocks before removal", helper, "BlockInit.consecrated_bloodwell");
 		assertContains("ledger disband clears sanctums for the disbanded bloodline", ledgerPacket,
 				"BloodlineDisbandHelper.removeOwnedSanctums(player.server, globalLine)");
 		assertContains("command disband clears sanctums for the disbanded bloodline", command,

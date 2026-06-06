@@ -68,7 +68,7 @@ public final class CellHandRenderingResourceTest {
 		assertContains("first-person particles are anchored while alive", particleEffects,
 				"particle.setFirstPersonAnchor(localOffset);");
 		assertContains("absorbed first-person particles are created directly for hand targeting", particleEffects,
-				"AbsrobedBloodCellParticleFactory.createData(targetColor)");
+				"AbsorbedBloodCellParticleFactory.createData(targetColor)");
 		assertContains("absorbed first-person particles follow the active hand target", particleEffects,
 				"particle.setFirstPersonTargetAnchor(anchor);");
 		assertContains("third-person absorbed cells do not sag below the hand target", particleEffects,

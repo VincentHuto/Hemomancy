@@ -677,6 +677,8 @@ public class ClientEvents {
                     SuspendedCleansedBloodCrystalRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
                     DendriticDistributorRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.vial_centrifuge.get(), VialCentrifugeRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.somatic_loom.get(),

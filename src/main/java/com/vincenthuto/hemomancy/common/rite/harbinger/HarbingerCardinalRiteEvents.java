@@ -1726,14 +1726,32 @@ public class HarbingerCardinalRiteEvents {
 					false);
 			return;
 		}
-		UUID sanctumOwner = HemoCapabilityAccess.getBloodVolume(caster)
-				.map(volume -> {
-					Bloodline bloodline = volume.getBloodLine();
-					return bloodline != null && bloodline.isValid() ? bloodline.getLeaderUUID() : caster.getUUID();
-				})
-				.orElse(caster.getUUID());
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster)
+				.map(volume -> volume.getBloodLine())
+				.orElse(Bloodline.NOBLOODLINE);
+		if (bloodline == null || !bloodline.isValid()) {
+			caster.displayClientMessage(
+					Component.literal("The Founding Sanctum requires an established bloodline.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
+			caster.displayClientMessage(
+					Component.literal("Only the bloodline Progenitor may consecrate a Founding Sanctum.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+		UUID sanctumOwner = bloodline.getLeaderUUID();
 		FoundingSanctumSavedData sanctumData = FoundingSanctumSavedData.get(sLevel);
 		boolean isReconsecrating = sanctumData.hasSanctum(sanctumOwner);
+		List<BlockPos> oldStakes = isReconsecrating ? sanctumData.removeStakesAndGet(sanctumOwner) : List.of();
+		for (BlockPos stakePos : oldStakes) {
+			if (sLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+				sLevel.removeBlock(stakePos, false);
+			}
+		}
 		sanctumData.consecrateHeart(sanctumOwner, center);
 		if (isReconsecrating) {
 			caster.displayClientMessage(

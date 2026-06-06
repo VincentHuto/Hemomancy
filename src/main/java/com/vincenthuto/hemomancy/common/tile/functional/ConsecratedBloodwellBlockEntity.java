@@ -76,6 +76,7 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity implements IBlo
 
         for (ServerPlayer player : ((ServerLevel) level).players()) {
             if (!pos.closerThan(player.blockPosition(), 80)) continue;
+            if (!ConsecratedBloodwellBlock.canUseBloodwell(player, pos)) continue;
             if (!ConsecratedBloodwellBlock.isInOwnSanctum(player)) continue;
 
             var playerBloodOpt = HemoCapabilityAccess.getBloodVolume(player);

@@ -6,7 +6,7 @@ import com.mna.api.rituals.IRitualContext;
 import com.mna.api.rituals.RitualEffect;
 import com.mna.api.sound.SFX;
 import com.mna.entities.utility.PresentItem;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.block.harbinger.EngramBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -128,7 +128,7 @@ public class RitualEffectBloodMote extends RitualEffect {
 				new ParticleColor(243, 124, 59), new ParticleColor(229, 60, 81));
 
 		for (int j = 0; j < chakraColors.size(); j++) {
-			world.addParticle(AbsrobedBloodCellParticleFactory.createData(chakraColors.get(j)),
+			world.addParticle(AbsorbedBloodCellParticleFactory.createData(chakraColors.get(j)),
 					centerVec.x + Math.sin(time + j) + HLParticleUtils.inRange(-0.1, 0.1),
 					centerVec.y + (j * 0.5) + 0.1f + HLParticleUtils.inRange(-0.1, 0.1),
 					centerVec.z + Math.cos(time + j) + HLParticleUtils.inRange(-0.1, 0.1), 0, -0.05, 0);
@@ -137,7 +137,7 @@ public class RitualEffectBloodMote extends RitualEffect {
 
 			
 			
-			world.addParticle(AbsrobedBloodCellParticleFactory.createData(chakraColors.get(j)),
+			world.addParticle(AbsorbedBloodCellParticleFactory.createData(chakraColors.get(j)),
 					centerVec.x + Math.sin(time + j) + HLParticleUtils.inRange(-0.1, 0.1),
 					centerVec.y + (j * 0.5) + 0.1f + HLParticleUtils.inRange(-0.1, 0.1),
 					centerVec.z + Math.cos(time + j) + HLParticleUtils.inRange(-0.1, 0.1), 0, -0.05, 0);

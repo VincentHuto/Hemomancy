@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
@@ -501,6 +502,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 				// Founding Sanctum requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
 				if (FOUNDING_SANCTUM_RITE_ID.equals(recipe.getId())) {
+					if (!canStartFoundingSanctum(serverPlayer)) {
+						return;
+					}
 					if (!sLevel.getBlockState(centerPos).is(BlockInit.consecrated_bloodwell.get())) {
 						player.displayClientMessage(
 								Component.literal("The Founding Sanctum must be centered on a Consecrated Bloodwell.")
@@ -540,6 +544,27 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				return;
 			}
 		}
+	}
+
+	private static boolean canStartFoundingSanctum(ServerPlayer player) {
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
+				.map(IBloodVolume::getBloodLine)
+				.orElse(Bloodline.NOBLOODLINE);
+		if (bloodline == null || !bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.literal("The Founding Sanctum requires an established bloodline.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return false;
+		}
+		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
+			player.displayClientMessage(
+					Component.literal("Only the bloodline Progenitor may consecrate a Founding Sanctum.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return false;
+		}
+		return true;
 	}
 
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(

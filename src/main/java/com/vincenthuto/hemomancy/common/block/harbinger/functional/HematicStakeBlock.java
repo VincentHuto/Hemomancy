@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.SanctumFootprint;
+import com.vincenthuto.hemomancy.common.tile.functional.HematicStakeBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -15,8 +16,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
@@ -24,16 +28,27 @@ import net.minecraft.world.level.material.MapColor;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class HematicStakeBlock extends Block {
+public class HematicStakeBlock extends Block implements EntityBlock {
 	public HematicStakeBlock(Properties properties) {
 		super(properties);
+	}
+
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
+	@Nullable
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new HematicStakeBlockEntity(pos, state);
 	}
 
 	public HematicStakeBlock() {
 		this(BlockBehaviour.Properties.of()
 				.mapColor(MapColor.COLOR_RED)
-				.requiresCorrectToolForDrops()
-				.strength(2.5F, 8.0F)
+				.noCollission()
+				.instabreak()
 				.sound(SoundType.METAL)
 				.noOcclusion());
 	}
@@ -69,24 +84,49 @@ public class HematicStakeBlock extends Block {
 	}
 
 	public static boolean canPlaceStake(ServerLevel level, ServerPlayer player, BlockPos pos) {
+		if (!isProgenitor(player) || !level.isEmptyBlock(pos)) {
+			return false;
+		}
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
 				.map(volume -> volume.getBloodLine())
 				.orElse(Bloodline.NOBLOODLINE);
-		UUID owner = bloodline.isValid() ? bloodline.getLeaderUUID() : player.getUUID();
+		UUID owner = bloodline.getLeaderUUID();
 		int budget = configuredStakeBudget(
-				bloodline.isValid() ? bloodline.getPlayerUUIDS().size() : 1,
-				bloodline.isValid() ? bloodline.getNpcMemberCount() : 0);
+				bloodline.getPlayerUUIDS().size(),
+				bloodline.getNpcMemberCount());
 		return FoundingSanctumSavedData.get(level).canAddStake(owner, pos, budget);
+	}
+
+	public static boolean manifestStake(ServerLevel level, ServerPlayer player, BlockPos pos) {
+		if (!canPlaceStake(level, player, pos)) {
+			return false;
+		}
+		if (!level.setBlock(pos, com.vincenthuto.hemomancy.common.init.BlockInit.hematic_stake.get().defaultBlockState(),
+				Block.UPDATE_ALL)) {
+			return false;
+		}
+		registerStake(level, player, pos);
+		return true;
+	}
+
+	public static boolean isProgenitor(ServerPlayer player) {
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
+				.map(volume -> volume.getBloodLine())
+				.orElse(Bloodline.NOBLOODLINE);
+		return bloodline.isValid() && player.getUUID().equals(bloodline.getLeaderUUID());
 	}
 
 	private static void registerStake(ServerLevel level, ServerPlayer player, BlockPos pos) {
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
 				.map(volume -> volume.getBloodLine())
 				.orElse(Bloodline.NOBLOODLINE);
-		UUID owner = bloodline.isValid() ? bloodline.getLeaderUUID() : player.getUUID();
+		if (!bloodline.isValid()) {
+			return;
+		}
+		UUID owner = bloodline.getLeaderUUID();
 		int budget = configuredStakeBudget(
-				bloodline.isValid() ? bloodline.getPlayerUUIDS().size() : 1,
-				bloodline.isValid() ? bloodline.getNpcMemberCount() : 0);
+				bloodline.getPlayerUUIDS().size(),
+				bloodline.getNpcMemberCount());
 		FoundingSanctumSavedData.get(level).addStake(owner, pos, budget);
 	}
 
@@ -100,7 +140,7 @@ public class HematicStakeBlock extends Block {
 
 	private static void removeStake(ServerLevel level, BlockPos pos) {
 		FoundingSanctumSavedData data = FoundingSanctumSavedData.get(level);
-		UUID owner = data.findOwnerContaining(pos);
+		UUID owner = data.findOwnerForStake(pos);
 		if (owner != null) {
 			data.removeStake(owner, pos);
 		}

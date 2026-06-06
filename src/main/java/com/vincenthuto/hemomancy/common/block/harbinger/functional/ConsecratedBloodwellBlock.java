@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity;
@@ -33,15 +34,15 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * The Consecrated Bloodwell — a Grand-tier Blood Structure that stores up to
  * {@link ConsecratedBloodwellBlockEntity#MAX_BLOOD} units of blood as a local
- * reserve. Blood can be deposited freely, but withdrawal requires the player
- * to be standing inside their own Founding Sanctum. This prevents abuse of
- * large portable blood reserves while making the sanctum itself a meaningful
- * home-base resource.
+ * reserve. Deposits and withdrawals require the player to belong to the
+ * bloodline bound to this sanctum. This prevents abuse of large portable blood
+ * reserves while making the sanctum itself a meaningful home-base resource.
  *
  * <ul>
  *   <li>Right-click — deposit {@link #TRANSFER_PER_CLICK} blood from player
@@ -70,7 +71,8 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
                 .mapColor(MapColor.COLOR_RED)
                 .requiresCorrectToolForDrops()
                 .strength(3.0f, 8.0f)
-                .sound(SoundType.METAL));
+                .sound(SoundType.METAL)
+                .noOcclusion());
     }
 
     @Override
@@ -120,7 +122,12 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
             FoundingSanctumSavedData data = FoundingSanctumSavedData.get(serverLevel);
             UUID owner = data.findOwnerContaining(pos);
             if (owner != null) {
-                data.removeHeart(owner, pos);
+                List<BlockPos> stakes = data.removeHeartAndGetStakes(owner, pos);
+                for (BlockPos stakePos : stakes) {
+                    if (serverLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+                        serverLevel.removeBlock(stakePos, false);
+                    }
+                }
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -161,6 +168,12 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
 
         if (player.isShiftKeyDown()) {
             // Withdraw — sanctum-gated
+            if (!canUseBloodwell(serverPlayer, pos)) {
+                player.sendSystemMessage(Component.translatable(
+                        "block.hemomancy.consecrated_bloodwell.not_bloodline")
+                        .withStyle(ChatFormatting.DARK_RED));
+                return InteractionResult.SUCCESS;
+            }
             if (!isInOwnSanctum(serverPlayer)) {
                 player.sendSystemMessage(Component.translatable(
                         "block.hemomancy.consecrated_bloodwell.not_in_sanctum")
@@ -187,7 +200,13 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
                         .withStyle(ChatFormatting.GRAY));
             }
         } else {
-            // Deposit — always allowed
+            // Deposit — bound bloodline only
+            if (!canUseBloodwell(serverPlayer, pos)) {
+                player.sendSystemMessage(Component.translatable(
+                        "block.hemomancy.consecrated_bloodwell.not_bloodline")
+                        .withStyle(ChatFormatting.DARK_RED));
+                return InteractionResult.SUCCESS;
+            }
             double toDeposit = Math.min(TRANSFER_PER_CLICK,
                     Math.min(playerBlood.getBloodVolume(),
                             storage.getMaxBloodVolume() - storage.getBloodVolume()));
@@ -227,6 +246,23 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock {
                 .map(Bloodline::getLeaderUUID)
                 .orElse(player.getUUID());
         return data.isWithinSanctum(owner, player.blockPosition());
+    }
+
+    public static boolean canUseBloodwell(ServerPlayer player, BlockPos bloodwellPos) {
+        return HemoCapabilityAccess.getBloodVolume(player)
+                .map(IBloodVolume::getBloodLine)
+                .filter(Bloodline::isValid)
+                .filter(bloodline -> bloodline.hasMember(player.getUUID()))
+                .map(Bloodline::getLeaderUUID)
+                .map(owner -> {
+                    FoundingSanctumSavedData data = FoundingSanctumSavedData.get((ServerLevel) player.level());
+                    BlockPos heart = data.getHeart(owner);
+                    if (heart != null) {
+                        return heart.equals(bloodwellPos);
+                    }
+                    return data.isWithinSanctum(owner, bloodwellPos);
+                })
+                .orElse(false);
     }
 
     private static void syncPlayerBlood(ServerPlayer player, IBloodVolume volume) {

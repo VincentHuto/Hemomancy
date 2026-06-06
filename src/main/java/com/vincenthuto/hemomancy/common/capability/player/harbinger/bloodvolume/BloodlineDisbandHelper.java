@@ -2,8 +2,10 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -138,11 +141,25 @@ public final class BloodlineDisbandHelper {
 				if (!sanctumData.hasSanctum(memberUuid)) {
 					continue;
 				}
+				removeOwnedSanctumBlocks(level, sanctumData, memberUuid);
 				sanctumData.remove(memberUuid);
 				removed++;
 			}
 		}
 		return removed;
 	}
-}
 
+	private static void removeOwnedSanctumBlocks(ServerLevel level, FoundingSanctumSavedData sanctumData,
+			UUID memberUuid) {
+		BlockPos heartPos = sanctumData.getHeart(memberUuid);
+		List<BlockPos> stakePositions = sanctumData.removeStakesAndGet(memberUuid);
+		for (BlockPos stakePos : stakePositions) {
+			if (level.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+				level.removeBlock(stakePos, false);
+			}
+		}
+		if (heartPos != null && level.getBlockState(heartPos).is(BlockInit.consecrated_bloodwell.get())) {
+			level.removeBlock(heartPos, false);
+		}
+	}
+}
