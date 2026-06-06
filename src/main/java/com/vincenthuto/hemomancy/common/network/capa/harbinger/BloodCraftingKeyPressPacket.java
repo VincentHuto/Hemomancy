@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
@@ -498,11 +499,18 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 				}
 
-				// Founding Sanctum requires a Sanguine Quintessence catalyst at center
+				// Founding Sanctum requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
 				if (FOUNDING_SANCTUM_RITE_ID.equals(recipe.getId())) {
-					if (!consumeCenterCatalyst(sLevel, centerPos, ItemInit.sanguine_quintessence.get())) {
+					if (!sLevel.getBlockState(centerPos).is(BlockInit.consecrated_bloodwell.get())) {
 						player.displayClientMessage(
-								Component.literal("The Founding Sanctum demands a Sanguine Quintessence placed at its heart.")
+								Component.literal("The Founding Sanctum must be centered on a Consecrated Bloodwell.")
+										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+								false);
+						return;
+					}
+					if (!consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())) {
+						player.displayClientMessage(
+								Component.literal("The Founding Sanctum demands a Sanguine Quintessence within the rite.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
 						return;

@@ -7,10 +7,10 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -100,7 +100,7 @@ public class HarbingerVicarEntity extends PathfinderMob {
         return HemoCapabilityAccess.getBloodVolume(player)
                 .map(vol -> vol.getBloodLine().isValid()
                         && (vol.getBloodLine().hasNpcMember(npc.getUUID())
-                        || !vol.getBloodLine().hasNpcMemberType(BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType()))))
+                        || HarbingerRecruitmentRules.canRecruitNpc(vol.getBloodLine(), npc)))
                 .orElse(false);
     }
 

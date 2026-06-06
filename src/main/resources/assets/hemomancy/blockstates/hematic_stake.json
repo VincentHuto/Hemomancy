@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "hemomancy:block/hematic_stake" }
+  }
+}

@@ -572,6 +572,11 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
 
+	public static final DeferredHolder<Block, Block> hematic_stake = MODELEDBLOCKS.register("hematic_stake",
+			() -> new HematicStakeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+					.requiresCorrectToolForDrops().strength(2.5F, 8.0F).sound(SoundType.METAL).noOcclusion()
+					.lightLevel(s -> 2)));
+
 	public static final DeferredHolder<Block, Block> gourdvine_tap = MODELEDBLOCKS.register("gourdvine_tap",
 			() -> new GourdvineTapBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.PLANT)

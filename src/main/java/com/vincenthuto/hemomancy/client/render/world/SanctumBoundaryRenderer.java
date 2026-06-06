@@ -35,11 +35,20 @@ import java.util.List;
 
 public final class SanctumBoundaryRenderer {
 	private static final int DOME_SEGMENTS = 80;
-	private static final int DOME_RINGS = 16;
-	private static final float HOSTILE_DOME_ALPHA = 0.82F;
-	private static final float RIVAL_DOME_ALPHA = 0.30F;
-	private static final float HOSTILE_DOME_GROUND_OVERRUN = 1.5F;
-	private static final float MEMBER_SHIMMER_ALPHA = 0.10F;
+	private static final int DOME_RINGS = 64;
+	private static final double SPHERE_LATITUDE_END = Math.PI;
+	private static final float HEART_RADIUS = 40.0F;
+	private static final float HOSTILE_DOME_ALPHA = 0.90F;
+	private static final float RIVAL_DOME_ALPHA = 0.45F;
+	private static final float MUNDANE_OUTSIDER_DOME_ALPHA = 0.52F;
+	private static final float MUNDANE_OUTSIDER_SHELL_RED = 0.32F;
+	private static final float MUNDANE_OUTSIDER_SHELL_GREEN = 0.015F;
+	private static final float MUNDANE_OUTSIDER_SHELL_BLUE = 0.01F;
+	private static final float MUNDANE_OUTSIDER_SHELL_ALPHA_SCALE = 0.50F;
+	private static final float HOSTILE_SHELL_ALPHA_SCALE = 0.70F;
+	private static final float HOSTILE_GLOW_ALPHA_SCALE = 0.18F;
+	private static final float MEMBER_SHIMMER_ALPHA = 0.18F;
+	private static final float MEMBER_SHELL_ALPHA_SCALE = 0.42F;
 	private static final float FADE_STEP = 0.08F;
 
 	private static TextureTarget frameCopyTarget;
@@ -84,7 +93,8 @@ public final class SanctumBoundaryRenderer {
 		}
 
 		SanctumBoundaryRelation targetRelation = strongestContainingRelation(mc.player);
-		float targetAlpha = targetRelation == SanctumBoundaryRelation.MEMBER ? 0.0F : 1.0F;
+		float targetAlpha = targetRelation == SanctumBoundaryRelation.MEMBER
+				|| targetRelation == SanctumBoundaryRelation.MUNDANE_OUTSIDER ? 0.0F : 1.0F;
 		insideRelation = targetRelation;
 		insideAlpha = approach(insideAlpha, targetAlpha, FADE_STEP);
 
@@ -109,7 +119,7 @@ public final class SanctumBoundaryRenderer {
 	private static SanctumBoundaryRelation strongestContainingRelation(Player player) {
 		SanctumBoundaryRelation strongest = SanctumBoundaryRelation.MEMBER;
 		for (SanctumBoundaryClientData.Entry entry : SanctumBoundaryClientData.entries()) {
-			if (contains(player.position(), entry.center(), entry.radius())) {
+			if (contains(player.position(), entry.heart(), HEART_RADIUS) || containsAnyStake(player.position(), entry)) {
 				strongest = SanctumBoundaryVisibilityRules.strongerInsideEffect(strongest, entry.relation());
 			}
 		}
@@ -122,8 +132,7 @@ public final class SanctumBoundaryRenderer {
 
 	private static boolean contains(Vec3 pos, BlockPos center, float radius) {
 		double dx = pos.x - (center.getX() + 0.5D);
-		double domeBaseY = center.getY() + 0.15D;
-		double dy = Math.max(0.0D, pos.y - domeBaseY);
+		double dy = pos.y - (center.getY() + 0.15D);
 		double dz = pos.z - (center.getZ() + 0.5D);
 		return dx * dx + dy * dy + dz * dz <= radius * radius;
 	}
@@ -172,17 +181,21 @@ public final class SanctumBoundaryRenderer {
 				continue;
 			}
 			float seed = sanctumSeed(entry);
-			float alpha = entry.relation() == SanctumBoundaryRelation.RIVAL_ELDER
-					? RIVAL_DOME_ALPHA * rivalPulse(time + seed)
-					: HOSTILE_DOME_ALPHA;
-			drawHostileDomeShell(poseStack, buffer, cam, entry.center(), entry.radius(), time, seed, alpha, false);
-			drawHostileDomeShell(poseStack, buffer, cam, entry.center(), entry.radius() * 1.025F, time,
-					seed + 19.0F, alpha * 0.34F, true);
+			ShellStyle style = ShellStyle.forRelation(entry.relation(), time + seed);
+			drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed, style, false);
+			if (style.glowAlphaScale() > 0.0F) {
+				drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS * 1.025F, time,
+						seed + 19.0F, style.withAlpha(style.alpha() * 0.34F), true);
+			}
+			for (BlockPos stake : entry.stakes()) {
+				drawHostileDomeShell(poseStack, buffer, cam, stake, entry.radius(), time, seed + stake.getX(),
+						style.withAlpha(style.alpha() * 0.65F), false);
+			}
 		}
 	}
 
 	private static void drawHostileDomeShell(PoseStack poseStack, MultiBufferSource.BufferSource buffer, Vec3 cam,
-			BlockPos center, float radius, float time, float seed, float alpha, boolean glow) {
+			BlockPos center, float radius, float time, float seed, ShellStyle style, boolean glow) {
 		double cx = center.getX() + 0.5D;
 		double cy = center.getY() + 0.15D;
 		double cz = center.getZ() + 0.5D;
@@ -197,7 +210,7 @@ public final class SanctumBoundaryRenderer {
 				shaderCenter.z(), radius, 0.055F, 6.0F, true) : null;
 		RenderType domeType = glow ? glowType : coreType;
 		VertexConsumer vc = buffer.getBuffer(domeType);
-		drawHostileDomeShell(vc, mat, radius, alpha, glow);
+		drawHostileDomeShell(vc, mat, radius, style, glow);
 		if (glow) {
 			buffer.endBatch(glowType);
 		} else {
@@ -206,21 +219,18 @@ public final class SanctumBoundaryRenderer {
 		poseStack.popPose();
 	}
 
-	private static void drawHostileDomeShell(VertexConsumer vc, Matrix4f mat, float radius, float alpha,
+	private static void drawHostileDomeShell(VertexConsumer vc, Matrix4f mat, float radius, ShellStyle style,
 			boolean glow) {
-		double thetaEnd = Math.min(Math.PI * 0.58D,
-				Math.PI * 0.5D + HOSTILE_DOME_GROUND_OVERRUN / Math.max(1.0F, radius));
 		for (int ring = 0; ring < DOME_RINGS; ring++) {
 			double v0 = (double) ring / DOME_RINGS;
 			double v1 = (double) (ring + 1) / DOME_RINGS;
-			double theta0 = v0 * thetaEnd;
-			double theta1 = v1 * thetaEnd;
+			double theta0 = v0 * SPHERE_LATITUDE_END;
+			double theta1 = v1 * SPHERE_LATITUDE_END;
 			float y0 = (float) (Math.cos(theta0) * radius);
 			float y1 = (float) (Math.cos(theta1) * radius);
 			float r0 = (float) (Math.sin(theta0) * radius);
 			float r1 = (float) (Math.sin(theta1) * radius);
-			float edgeFade0 = hostileDomeFade(theta0, thetaEnd);
-			float edgeFade1 = hostileDomeFade(theta1, thetaEnd);
+			float shellAlpha = style.alpha() * (glow ? style.glowAlphaScale() : style.shellAlphaScale());
 
 			for (int seg = 0; seg < DOME_SEGMENTS; seg++) {
 				double a0 = (Math.PI * 2.0D / DOME_SEGMENTS) * seg;
@@ -235,15 +245,15 @@ public final class SanctumBoundaryRenderer {
 				float z11 = (float) Math.sin(a1) * r1;
 
 				if (glow) {
-					emit(vc, mat, x00, y0, z00, 0.85F, 0.05F, 0.04F, alpha * edgeFade0 * 0.55F);
-					emit(vc, mat, x10, y1, z10, 0.85F, 0.05F, 0.04F, alpha * edgeFade1);
-					emit(vc, mat, x11, y1, z11, 0.85F, 0.05F, 0.04F, alpha * edgeFade1);
-					emit(vc, mat, x01, y0, z01, 0.85F, 0.05F, 0.04F, alpha * edgeFade0 * 0.55F);
+					emit(vc, mat, x00, y0, z00, style.glowRed(), style.glowGreen(), style.glowBlue(), shellAlpha);
+					emit(vc, mat, x10, y1, z10, style.glowRed(), style.glowGreen(), style.glowBlue(), shellAlpha);
+					emit(vc, mat, x11, y1, z11, style.glowRed(), style.glowGreen(), style.glowBlue(), shellAlpha);
+					emit(vc, mat, x01, y0, z01, style.glowRed(), style.glowGreen(), style.glowBlue(), shellAlpha);
 				} else {
-					emit(vc, mat, x00, y0, z00, 0.04F, 0.0F, 0.0F, alpha * edgeFade0);
-					emit(vc, mat, x10, y1, z10, 0.04F, 0.0F, 0.0F, alpha * edgeFade1);
-					emit(vc, mat, x11, y1, z11, 0.04F, 0.0F, 0.0F, alpha * edgeFade1);
-					emit(vc, mat, x01, y0, z01, 0.04F, 0.0F, 0.0F, alpha * edgeFade0);
+					emit(vc, mat, x00, y0, z00, style.red(), style.green(), style.blue(), shellAlpha);
+					emit(vc, mat, x10, y1, z10, style.red(), style.green(), style.blue(), shellAlpha);
+					emit(vc, mat, x11, y1, z11, style.red(), style.green(), style.blue(), shellAlpha);
+					emit(vc, mat, x01, y0, z01, style.red(), style.green(), style.blue(), shellAlpha);
 				}
 			}
 		}
@@ -257,7 +267,10 @@ public final class SanctumBoundaryRenderer {
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthMask(false);
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		drawDome(poseStack, cam, entry.center(), entry.radius(), alpha);
+		drawDome(poseStack, cam, entry.heart(), HEART_RADIUS, alpha);
+		for (BlockPos stake : entry.stakes()) {
+			drawDome(poseStack, cam, stake, entry.radius(), alpha * 0.72F);
+		}
 	}
 
 	private static void drawDome(PoseStack poseStack, Vec3 cam, BlockPos center, float radius, float alpha) {
@@ -274,14 +287,13 @@ public final class SanctumBoundaryRenderer {
 		for (int ring = 0; ring < DOME_RINGS; ring++) {
 			double v0 = (double) ring / DOME_RINGS;
 			double v1 = (double) (ring + 1) / DOME_RINGS;
-			double theta0 = v0 * Math.PI * 0.5D;
-			double theta1 = v1 * Math.PI * 0.5D;
+			double theta0 = v0 * SPHERE_LATITUDE_END;
+			double theta1 = v1 * SPHERE_LATITUDE_END;
 			float y0 = (float) (Math.cos(theta0) * radius);
 			float y1 = (float) (Math.cos(theta1) * radius);
 			float r0 = (float) (Math.sin(theta0) * radius);
 			float r1 = (float) (Math.sin(theta1) * radius);
-			float edgeFade0 = memberDomeFade(theta0);
-			float edgeFade1 = memberDomeFade(theta1);
+			float shellAlpha = alpha * MEMBER_SHELL_ALPHA_SCALE;
 
 			for (int seg = 0; seg < DOME_SEGMENTS; seg++) {
 				double a0 = (Math.PI * 2.0D / DOME_SEGMENTS) * seg;
@@ -295,10 +307,10 @@ public final class SanctumBoundaryRenderer {
 				float x11 = (float) Math.cos(a1) * r1;
 				float z11 = (float) Math.sin(a1) * r1;
 
-				emit(buffer, mat, x00, y0, z00, 0.95F, 0.22F, 0.13F, alpha * 0.18F * edgeFade0);
-				emit(buffer, mat, x10, y1, z10, 0.95F, 0.22F, 0.13F, alpha * edgeFade1);
-				emit(buffer, mat, x11, y1, z11, 0.95F, 0.22F, 0.13F, alpha * edgeFade1);
-				emit(buffer, mat, x01, y0, z01, 0.95F, 0.22F, 0.13F, alpha * 0.18F * edgeFade0);
+				emit(buffer, mat, x00, y0, z00, 0.95F, 0.22F, 0.13F, shellAlpha);
+				emit(buffer, mat, x10, y1, z10, 0.95F, 0.22F, 0.13F, shellAlpha);
+				emit(buffer, mat, x11, y1, z11, 0.95F, 0.22F, 0.13F, shellAlpha);
+				emit(buffer, mat, x01, y0, z01, 0.95F, 0.22F, 0.13F, shellAlpha);
 			}
 		}
 
@@ -311,20 +323,18 @@ public final class SanctumBoundaryRenderer {
 	}
 
 	private static float sanctumSeed(SanctumBoundaryClientData.Entry entry) {
-		BlockPos center = entry.center();
+		BlockPos center = entry.heart();
 		return (float) (center.getX() * 0.13D + center.getY() * 0.07D + center.getZ() * 0.17D
 				+ entry.radius() * 0.31D);
 	}
 
-	private static float memberDomeFade(double theta) {
-		float horizon = (float) Math.sin(theta);
-		return horizon * horizon;
-	}
-
-	private static float hostileDomeFade(double theta, double thetaEnd) {
-		float horizon = (float) Math.sin(theta);
-		float crown = (float) Math.sin(Math.min(1.0D, theta / Math.max(0.001D, thetaEnd)) * Math.PI * 0.5D);
-		return Math.max(0.08F, horizon * horizon) * (0.35F + 0.65F * crown);
+	private static boolean containsAnyStake(Vec3 pos, SanctumBoundaryClientData.Entry entry) {
+		for (BlockPos stake : entry.stakes()) {
+			if (contains(pos, stake, entry.radius())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static float approach(float current, float target, float step) {
@@ -342,6 +352,27 @@ public final class SanctumBoundaryRenderer {
 	private static void emit(VertexConsumer vc, Matrix4f mat, float x, float y, float z,
 			float r, float g, float b, float a) {
 		vc.addVertex(mat, x, y, z).setColor(r, g, b, a);
+	}
+
+	private record ShellStyle(float alpha, float red, float green, float blue, float shellAlphaScale,
+			float glowRed, float glowGreen, float glowBlue, float glowAlphaScale) {
+		private static ShellStyle forRelation(SanctumBoundaryRelation relation, float pulseTime) {
+			if (relation == SanctumBoundaryRelation.MUNDANE_OUTSIDER) {
+				return new ShellStyle(MUNDANE_OUTSIDER_DOME_ALPHA, MUNDANE_OUTSIDER_SHELL_RED,
+						MUNDANE_OUTSIDER_SHELL_GREEN, MUNDANE_OUTSIDER_SHELL_BLUE,
+						MUNDANE_OUTSIDER_SHELL_ALPHA_SCALE, 0.55F, 0.04F, 0.03F, 0.0F);
+			}
+			float alpha = relation == SanctumBoundaryRelation.RIVAL_ELDER
+					? RIVAL_DOME_ALPHA * rivalPulse(pulseTime)
+					: HOSTILE_DOME_ALPHA;
+			return new ShellStyle(alpha, 0.04F, 0.0F, 0.0F, HOSTILE_SHELL_ALPHA_SCALE,
+					0.85F, 0.05F, 0.04F, HOSTILE_GLOW_ALPHA_SCALE);
+		}
+
+		private ShellStyle withAlpha(float alpha) {
+			return new ShellStyle(alpha, red, green, blue, shellAlphaScale, glowRed, glowGreen, glowBlue,
+					glowAlphaScale);
+		}
 	}
 
 	private static void drawFullscreenQuad(GuiGraphics graphics, int screenWidth, int screenHeight) {

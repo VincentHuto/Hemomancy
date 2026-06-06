@@ -370,6 +370,7 @@ public class DialogueEventHandler {
 				return;
 			}
 			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+			String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
 
 			// Check if this NPC is already recruited
 			if (bloodline.hasNpcMember(entity.getUUID())) {
@@ -386,12 +387,19 @@ public class DialogueEventHandler {
 						false);
 				return;
 			}
+			if (bloodline.hasNpcMemberOutpost(npcOutpost)) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.outpost_already_member")
+								.withStyle(ChatFormatting.GRAY),
+						false);
+				return;
+			}
 
 			// Add the NPC to the bloodline in world-level saved data
 			ServerLevel overworld = player.server.overworld();
 			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 			Bloodline updatedLine = savedData.addNpcMember(
-					bloodline.getBloodlineUUID(), entity.getUUID(), npcType);
+					bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost);
 
 			if (updatedLine != null) {
 				// Update the player's local bloodline reference
@@ -457,6 +465,7 @@ public class DialogueEventHandler {
 				return;
 			}
 			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+			String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
 
 			if (!bloodline.hasNpcMember(entity.getUUID())) {
 				player.displayClientMessage(
@@ -468,7 +477,7 @@ public class DialogueEventHandler {
 
 			ServerLevel overworld = player.server.overworld();
 			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-			savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID(), npcType);
+			savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost);
 			Bloodline updatedLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 			if (updatedLine == null) {
 				return;

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -125,21 +126,24 @@ public class HarbingerOutpostStructure extends Structure {
 		AbocipherEmitterPlacement.placeHarbingerOutpostEmitters(level, fullBox, random,
 				centerX, centerZ, fullBox.minY(), fullBox.maxY());
 
+		String recruitmentOutpostKey = HarbingerRecruitmentRules.createOutpostKey(
+				level.getLevel().dimension().location(), fullBox);
 		spawnOnFloor(level, random, EntityInit.harbinger_vicar.get(),
-				centerX, centerZ, floorY, npcMaxY, VICAR_SPAWN_SPREAD);
+				centerX, centerZ, floorY, npcMaxY, VICAR_SPAWN_SPREAD, recruitmentOutpostKey);
 
 		int halfWidth = (fullBox.maxX() - fullBox.minX()) / 4;
 		int halfDepth = (fullBox.maxZ() - fullBox.minZ()) / 4;
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
-				centerX - halfWidth, centerZ - halfDepth, floorY, npcMaxY, ALCHEMIST_SPAWN_SPREAD);
+				centerX - halfWidth, centerZ - halfDepth, floorY, npcMaxY, ALCHEMIST_SPAWN_SPREAD, recruitmentOutpostKey);
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
-				centerX + halfWidth, centerZ + halfDepth, floorY, npcMaxY, ALCHEMIST_SPAWN_SPREAD);
+				centerX + halfWidth, centerZ + halfDepth, floorY, npcMaxY, ALCHEMIST_SPAWN_SPREAD, recruitmentOutpostKey);
 		spawnOnFloor(level, random, EntityInit.harbinger_mnemonist.get(),
-				centerX - halfWidth, centerZ + halfDepth, floorY, npcMaxY, MNEMONIST_SPAWN_SPREAD);
+				centerX - halfWidth, centerZ + halfDepth, floorY, npcMaxY, MNEMONIST_SPAWN_SPREAD, recruitmentOutpostKey);
 	}
 
 	private <T extends Entity> void spawnOnFloor(WorldGenLevel level, RandomSource random,
-			EntityType<T> type, int originX, int originZ, int floorY, int maxY, int spread) {
+			EntityType<T> type, int originX, int originZ, int floorY, int maxY, int spread,
+			String recruitmentOutpostKey) {
 
 		for (int attempt = 0; attempt < MAX_PLACEMENT_ATTEMPTS; attempt++) {
 			int dx = (attempt < INITIAL_CENTERED_ATTEMPTS) ? 0 : random.nextInt(spread * 2 + 1) - spread;
@@ -154,20 +158,22 @@ public class HarbingerOutpostStructure extends Structure {
 				if (level.getBlockState(mutable).isAir()
 						&& level.getBlockState(mutable.below()).isFaceSturdy(level, mutable.below(),
 								net.minecraft.core.Direction.UP)) {
-					spawnMob(level, type, mutable.immutable());
+					spawnMob(level, type, mutable.immutable(), recruitmentOutpostKey);
 					return;
 				}
 			}
 		}
 
-		spawnMob(level, type, new BlockPos(originX, floorY + 1, originZ));
+		spawnMob(level, type, new BlockPos(originX, floorY + 1, originZ), recruitmentOutpostKey);
 	}
 
-	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos) {
+	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos,
+			String recruitmentOutpostKey) {
 		T entity = type.create(level.getLevel());
 		if (entity == null) return;
 		entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
 				level.getRandom().nextFloat() * 360.0f, 0.0f);
+		HarbingerRecruitmentRules.markOutpostOrigin(entity, recruitmentOutpostKey);
 		if (entity instanceof Mob mob) {
 			mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos),
 					MobSpawnType.STRUCTURE, null);
