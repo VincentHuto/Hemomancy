@@ -1,0 +1,661 @@
+# Blood Systems
+
+This page provides a comprehensive overview of Hemomancy's blood mechanics, from basic manipulations to advanced tendency mastery.
+
+---
+
+## Blood Volume
+
+**Blood Volume** is your primary resource for using blood magic.
+
+### Key Stats
+- **Starting Volume:** 1000 mL (after Mortal Display activation)
+- **Human Maximum:** ~5000 mL (natural)
+- **Extended Maximum:** 6000+ mL (high-degree Harbingers only)
+- **Average Adult:** 5000 mL
+
+### Regeneration
+- **Base Rate:** Slow passive regeneration over time
+- **Enhanced by:**
+  - Animus-aligned manipulations
+  - Blood Lust armor
+  - Founding Sanctum buffs
+  - Charm of Vascularium (Curios)
+  - Certain foods and potions
+- **Reduced by:**
+  - Combat damage
+  - Overuse of manipulations
+  - Certain status effects
+  - Environmental hazards
+
+### Death and Volume
+- Configurable: volume may reset on death
+- Can be set to partial loss or full reset
+- Affects strategic play significantly
+
+---
+
+## Blood Manipulations
+
+**Manipulations** are the core abilities of blood magic — active and passive powers fueled by blood.
+
+### Manipulation Types
+
+**QUICK**
+- Instant cast
+- Single action
+- Short cooldown
+- Example: Blood Bolt (projectile attack)
+
+**CHARGED**
+- Hold to charge
+- More powerful when fully charged
+- Longer cooldown
+- Example: Crimson Lance (charged spear throw)
+
+**PASSIVE**
+- Always active once learned
+- Constant low cost or free
+- Background benefits
+- Example: Sanguine Regeneration (constant healing)
+
+**CONTINUOUS**
+- Toggle on/off
+- Drains blood while active
+- Sustained effects
+- Example: Blood Barrier (active shield)
+
+### Manipulation Ranks
+
+Manipulations are organized into four power tiers:
+
+**HUMILIS** (Humble)
+- Degree 1 (Pledged) access
+- Low blood cost (100-500 mL)
+- Basic effects
+- Foundation of blood magic
+
+**MEDIOCRITAS** (Moderate)
+- Degree 2 (Illuminatus) access
+- Medium blood cost (500-1500 mL)
+- Enhanced effects
+- Specialized applications
+
+**SUMMA** (Superior)
+- Degree 3 (Adeptus) access
+- High blood cost (1500-3500 mL)
+- Powerful effects
+- Tactical importance
+
+**PERFECTUS** (Perfect)
+- Degree 4 (Sentinel) and higher
+- Very high blood cost (3500-7000 mL)
+- Elite effects
+- Game-changing abilities
+
+### Learning Manipulations
+
+**Method 1: Somatic Loom (Memory Weaving)**
+1. Craft **Blank Hematic Memory**
+2. Gather tendency-specific **Enzyme** (Vivacious, Fervent, Neurotic, etc.)
+3. Collect **Catalyst** materials for the manipulation
+4. Place items in **Somatic Loom** following pattern
+5. Project blood into the Loom
+6. Wrestle colored memory-orbs into shape
+7. Receive completed **Hematic Memory** item
+8. Use Memory to permanently learn manipulation
+
+**Method 2: Field Notes Discovery**
+- Some manipulations can be discovered through gameplay
+- Experimentation with blood tendencies
+- NPC teachings
+- Rare drops from infected creatures
+
+**Method 3: Bloodline Teaching**
+- High-degree Harbingers can teach lower-degree members
+- Requires ritual at Cardinal Altar
+- Costs blood from both parties
+
+### Using Manipulations
+
+**Selection:**
+- Press `V` (default) to open manipulation wheel
+- Move mouse to desired manipulation
+- Release to select
+
+**Activation:**
+- Depends on manipulation type
+- Quick: Single press of manipulation key (`R` default)
+- Charged: Hold manipulation key until charged
+- Passive: Automatically active
+- Continuous: Toggle with manipulation key
+
+**Management:**
+- Check Field Notes (`B`) for known manipulations
+- Organize by tendency or frequency of use
+- Monitor cooldowns via HUD
+
+---
+
+## The Eight Tendencies
+
+**Tendency** (also called **Kinship**) represents the quality or affinity of your blood. Each tendency unlocks different manipulations and playstyles.
+
+### Animus (Life/Vitality)
+
+**Theme:** Healing, regeneration, vitality, growth
+
+**Color:** Crimson-red with warm undertones
+
+**Associated Enzyme:** Vivacious Enzyme
+
+**Philosophy:** Blood is life itself. Master Animus to sustain yourself and others.
+
+**Key Manipulations:**
+- **Sanguine Touch** (Humilis) — Heal self or others with touch
+- **Vital Surge** (Mediocritas) — Temporary health and regeneration boost
+- **Life Ward** (Summa) — Create healing aura around you
+- **Phoenix Blood** (Perfectus) — Auto-revive from lethal damage once
+
+**Playstyle:** Support, sustain, endurance
+
+**Synergies:**
+- Pairs well with tank builds
+- Essential for group play
+- Countered by Mortem tendency
+
+---
+
+### Flammeus (Fire/Heat)
+
+**Theme:** Combustion, heat, burning, explosive power
+
+**Color:** Orange-red with flickering highlights
+
+**Associated Enzyme:** Fervent Enzyme
+
+**Philosophy:** Blood burns hot. Ignite it and unleash destruction.
+
+**Key Manipulations:**
+- **Ember Touch** (Humilis) — Set touch target on fire
+- **Flame Bolt** (Mediocritas) — Projectile that ignites
+- **Conflagration** (Summa) — Area-of-effect explosion
+- **Solar Flare** (Perfectus) — Massive firestorm centered on self
+
+**Playstyle:** Offensive, area damage, crowd control
+
+**Synergies:**
+- High damage output
+- Environmental destruction
+- Countered by Congeatio tendency
+
+---
+
+### Ductilis (Metal/Iron)
+
+**Theme:** Iron manipulation, weaponry, metallurgy
+
+**Color:** Silver-gray with metallic sheen
+
+**Associated Enzyme:** Neurotic Enzyme
+
+**Philosophy:** Blood contains iron. Control it, shape it, weaponize it.
+
+**Key Manipulations:**
+- **Iron Dart** (Humilis) — Launch iron projectile from blood
+- **Ferrous Shield** (Mediocritas) — Summon iron barrier
+- **Blade Storm** (Summa) — Create whirling iron weapons
+- **Arsenal** (Perfectus) — Summon multiple iron constructs
+
+**Playstyle:** Versatile, offense and defense, tactical
+
+**Synergies:**
+- Balanced combat approach
+- Works with Ferric tendency
+- Material-based crafting synergy
+
+---
+
+### Lux (Light/Radiance)
+
+**Theme:** Illumination, purification, holy power
+
+**Color:** Bright crimson with gold highlights
+
+**Associated Enzyme:** Incandescent Enzyme
+
+**Philosophy:** Blood can shine. Let it illuminate the darkness.
+
+**Key Manipulations:**
+- **Radiant Pulse** (Humilis) — Flash of light, blind enemies
+- **Beacon** (Mediocritas) — Create floating light source
+- **Purifying Ray** (Summa) — Beam that damages undead/corrupted
+- **Sanctified Blood** (Perfectus) — Temporary immunity to darkness
+
+**Playstyle:** Support, anti-undead, utility
+
+**Synergies:**
+- Strong against undead and corrupted
+- Vision control
+- Countered by Tenebris tendency
+
+---
+
+### Mortem (Death/Decay)
+
+**Theme:** Necrosis, withering, death magic
+
+**Color:** Dark crimson with black veins
+
+**Associated Enzyme:** Ruinous Enzyme
+
+**Philosophy:** Blood knows death intimately. Wield that knowledge.
+
+**Key Manipulations:**
+- **Wither Touch** (Humilis) — Inflict wither effect
+- **Necrotic Bolt** (Mediocritas) — Projectile that decays
+- **Plague Aura** (Summa) — Area debuff, damages and weakens
+- **Death's Embrace** (Perfectus) — Instant kill on low-health target
+
+**Playstyle:** Debuff, damage-over-time, execution
+
+**Synergies:**
+- Strong against living creatures
+- Combos with damage builds
+- Countered by Animus tendency
+
+---
+
+### Congeatio (Ice/Cold)
+
+**Theme:** Freezing, preservation, cold magic
+
+**Color:** Pale blue-red with frost
+
+**Associated Enzyme:** Frigid Enzyme
+
+**Philosophy:** Blood can be frozen, preserved, weaponized as ice.
+
+**Key Manipulations:**
+- **Frost Touch** (Humilis) — Slow and damage with cold
+- **Ice Shard** (Mediocritas) — Frozen projectile
+- **Glacial Armor** (Summa) — Temporary ice shell, high defense
+- **Absolute Zero** (Perfectus) — Freeze everything in radius
+
+**Playstyle:** Control, defense, slow
+
+**Synergies:**
+- Excellent crowd control
+- Defensive builds
+- Countered by Flammeus tendency
+
+---
+
+### Ferric (Magnetic/Ferrous)
+
+**Theme:** Magnetism, attraction/repulsion, iron control
+
+**Color:** Dark metallic red with magnetic distortion
+
+**Associated Enzyme:** Ferric Enzyme (same name as tendency)
+
+**Philosophy:** Blood iron responds to magnetic force. Command it.
+
+**Key Manipulations:**
+- **Magnetic Pull** (Humilis) — Draw items/enemies toward you
+- **Repulsion Field** (Mediocritas) — Push enemies away
+- **Ferro-kinesis** (Summa) — Control metal objects at range
+- **Singularity** (Perfectus) — Create magnetic vortex
+
+**Playstyle:** Utility, positioning, environmental control
+
+**Synergies:**
+- Works with Ductilis
+- Strong battlefield control
+- Unique utility options
+
+---
+
+### Tenebris (Shadow/Darkness)
+
+**Theme:** Concealment, stealth, shadow magic
+
+**Color:** Black-red with shadowy wisps
+
+**Associated Enzyme:** Umbral Enzyme
+
+**Philosophy:** Blood flows in darkness. Embrace the shadow.
+
+**Key Manipulations:**
+- **Shadow Step** (Humilis) — Short-range teleport
+- **Veil of Night** (Mediocritas) — Invisibility for short time
+- **Umbral Chains** (Summa) — Bind enemy in shadow
+- **Eclipse** (Perfectus) — Create area of absolute darkness
+
+**Playstyle:** Stealth, mobility, ambush
+
+**Synergies:**
+- Rogue/stealth builds
+- Escape and infiltration
+- Countered by Lux tendency
+
+---
+
+## Tendency Alignment
+
+**Alignment** measures how attuned your blood is to each tendency. Higher alignment = more powerful manipulations of that tendency.
+
+### Building Alignment
+
+**Method 1: Use Manipulations**
+- Using a manipulation increases alignment with its tendency
+- More powerful manipulations give more alignment
+- Passive gain over time with frequent use
+
+**Method 2: Consume Enzymes**
+- Each enzyme corresponds to a tendency
+- Drinking/using enzyme directly boosts alignment
+- Quick but resource-intensive
+
+**Method 3: Environmental Exposure**
+- Certain biomes/areas boost specific tendencies
+- Fungal areas boost Mortem and Tenebris
+- Bright areas boost Lux
+- Cold areas boost Congeatio
+
+**Method 4: Equipment**
+- Armor and items can boost tendency alignment
+- Scars provide passive tendency bonuses
+- Founding Sanctum can be tuned to specific tendencies
+
+### Alignment Levels
+
+- **0-25:** Novice — Basic effectiveness
+- **26-50:** Practiced — Improved effectiveness
+- **51-75:** Aligned — Strong effectiveness
+- **76-99:** Mastered — Very strong effectiveness
+- **100:** Perfected — Maximum effectiveness
+
+### Specialization vs Generalization
+
+**Specialist Build:**
+- Focus on 1-2 tendencies
+- Max alignment in chosen tendencies
+- Very powerful in niche
+- Limited versatility
+
+**Generalist Build:**
+- Spread across 3-4 tendencies
+- Medium alignment in all
+- Versatile toolkit
+- Less specialized power
+
+**Recommendation:** Start generalist, specialize later as you understand your playstyle.
+
+---
+
+## Vascular System
+
+The **Vascular System** represents your blood's internal structure and efficiency.
+
+### Vein Sections
+
+Manipulations are organized into **vein sections** — metaphorical regions of your circulatory system:
+
+- **Heart Section** — Core vitality and power (Animus, Mortem)
+- **Artery Section** — Offensive and projection (Flammeus, Lux)
+- **Capillary Section** — Utility and manipulation (Ductilis, Ferric)
+- **Vein Section** — Defensive and control (Congeatio, Tenebris)
+
+### Vascular Health
+
+- **Damaged Vascular System** — Reduces manipulation effectiveness
+- **Healthy Vascular System** — Normal operation
+- **Enhanced Vascular System** — Improved manipulation power
+
+**Maintain health by:**
+- Avoiding overuse of manipulations
+- Using Animus healing
+- Vascular Mending rite (Cardinal Altar)
+- Proper rest and recovery
+
+---
+
+## Skill Tree
+
+The **Skill Tree** provides passive bonuses and unlocks. See the full tree in Field Notes.
+
+### Key Skills
+
+**Blood Efficiency Branch**
+- Reduce manipulation costs
+- Increase blood regeneration
+- Enhance volume capacity
+
+**Tendency Mastery Branch**
+- Boost specific tendency alignments
+- Unlock advanced manipulation variants
+- Cross-tendency synergies
+
+**Combat Branch**
+- Increase damage of offensive manipulations
+- Reduce cooldowns
+- Improve targeting
+
+**Defense Branch**
+- Enhance blood barriers and shields
+- Reduce incoming damage
+- Improve healing effectiveness
+
+**Utility Branch**
+- Extend manipulation durations
+- Increase range
+- Multi-target capabilities
+
+**Scar Branch**
+- **Scar Affinity** — Reduce scar application pain (WIP wiring)
+- **Scar Resonance** — Scars boost manipulations more (WIP wiring)
+- **Scar Mastery** — Wear additional scars (WIP wiring)
+
+### Skill Points
+
+**Earning Points:**
+- Degree advancement
+- Completing rituals
+- Discovering new manipulations
+- Achievements and milestones
+
+**Spending Points:**
+- Open Field Notes skill tree
+- Select desired skill
+- Confirm purchase (irreversible)
+- Skill activates immediately
+
+---
+
+## Advanced Techniques
+
+### Manipulation Combos
+
+Combine manipulations for enhanced effects:
+
+**Flame + Iron = Molten Projectiles**
+- Use Ductilis to create iron
+- Apply Flammeus to superheat it
+- Launch as devastating projectile
+
+**Ice + Shadow = Frozen Ambush**
+- Use Tenebris to conceal
+- Use Congeatio to freeze when revealed
+- Escape with Shadow Step
+
+**Life + Light = Holy Healing**
+- Combine Animus and Lux
+- Enhanced healing with purification
+- Effective against undead
+
+### Blood Routing
+
+**Blood Routing** allows direct transfer of blood between sources:
+
+**From Vial to Self**
+- Quick refill in combat
+- Emergency reserve
+- Portable blood storage
+
+**From Self to Structure**
+- Fuel rituals
+- Power blood machines
+- Activate constructs
+
+**From Structure to Structure**
+- Automate blood networks
+- Create blood infrastructure
+- Advanced base building
+
+### Drudge Actions
+
+Teach your Drudges specific manipulations:
+
+1. Learn manipulation yourself
+2. Craft Drudge Core with memory
+3. Assign to Drudge via ritual
+4. Drudge can now use that manipulation
+
+**Strategic Uses:**
+- Defensive Drudges (barriers, healing)
+- Offensive Drudges (projectiles, debuffs)
+- Utility Drudges (light, telekinesis)
+
+---
+
+## Blood Constructs
+
+**Blood Constructs** are temporary entities created from your blood.
+
+### Types
+
+**Sanguilith** (Sentinel+)
+- Floating turret
+- Auto-targets enemies
+- Shoots blood projectiles
+- Duration-based
+
+**Blood Wall**
+- Physical barrier
+- Blocks movement
+- Takes damage for you
+- Can be shaped
+
+**Crimson Sentinel**
+- Temporary warrior
+- Follows and fights
+- Medium duration
+- Moderate blood cost
+
+### Creation
+- Requires specific manipulation
+- High blood cost
+- Cooldown applies
+- Multiple constructs possible (depending on degree)
+
+---
+
+## Status Effects
+
+### Positive Effects
+
+**Sanguine Vitality**
+- Enhanced blood regeneration
+- Increased health
+- From Animus manipulations
+
+**Iron Will**
+- Reduced manipulation costs
+- Increased effectiveness
+- From Ductilis alignment
+
+**Radiant**
+- Glow effect
+- Damage to nearby undead
+- From Lux manipulations
+
+### Negative Effects
+
+**Exsanguination**
+- Rapid blood loss
+- Weakened manipulations
+- From damage or overuse
+
+**Withered**
+- Reduced healing
+- Damage over time
+- From Mortem attacks
+
+**Frozen**
+- Slowed movement
+- Cannot use manipulations
+- From Congeatio attacks
+
+**Corrupted**
+- Fungal infection active
+- Random effects
+- From high-degree side effects
+
+---
+
+## Tips for Blood Management
+
+1. **Monitor Your Volume** — Never drain completely. Keep 500-1000 mL reserve.
+
+2. **Carry Vials** — Pre-filled blood vials are emergency refills.
+
+3. **Know Your Costs** — High-rank manipulations can drain you instantly. Plan accordingly.
+
+4. **Regeneration Stacking** — Combine multiple regen sources for fast recovery.
+
+5. **Tendency Focus** — Pick 2-3 tendencies and master them. Spreading thin weakens you.
+
+6. **Manipulation Loadouts** — Customize which manipulations you have quick access to.
+
+7. **Cooldown Awareness** — Don't spam. Cooldowns exist for balance.
+
+8. **Practice Combos** — Manipulations that synergize are more powerful than standalone.
+
+9. **Environment Matters** — Use terrain and situation to your advantage.
+
+10. **Upgrade Path** — Progress degrees to unlock higher-rank manipulations. Power scales dramatically.
+
+---
+
+## Integration with Other Systems
+
+### With Mana and Artifice
+If MnA installed:
+- Blood and mana can convert between each other
+- Spells can cost blood instead of mana (Blood Tithe)
+- Arcane Resonance and Sanguine Clarity combo effects
+- Harbinger faction gains mana resource bar
+
+See: **[[Mod Compatibility]]**
+
+### With Curios
+If Curios installed:
+- Charm of Vascularium fits in Curio slot
+- Provides passive blood regeneration
+- Doesn't take armor slot
+- Essential for high-blood builds
+
+---
+
+## Next Steps
+
+- **[[Harbinger Path]]** — Learn how to progress through degrees
+- **[[Advanced Mechanics]]** — Master drudges, morphlings, and puppeteering
+- **[[World Content]]** — Find enzymes, catalysts, and rare materials
+
+---
+
+*"Blood is not merely a resource. It is memory, identity, power, and price. Master it, and you master yourself. Lose control, and it will consume you."*
+
+— From the Liber Sanguinum, Chapter on Fundamentals
