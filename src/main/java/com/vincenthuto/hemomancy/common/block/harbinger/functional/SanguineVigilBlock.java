@@ -35,7 +35,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import javax.annotation.Nullable;
 
 /**
- * The Sanguine Vigil — a Grand-tier Blood Structure that acts as a sanctum
+ * The Sanguine Vigil — a Grand-tier Blood Structure that acts as a fane
  * ward-post. It stores up to {@link SanguineVigilBlockEntity#MAX_BLOOD} units
  * of blood and, while stocked, continuously suppresses hostile mobs within
  * {@link SanguineVigilBlockEntity#WARD_RADIUS} blocks by applying the

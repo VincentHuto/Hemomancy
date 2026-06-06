@@ -118,7 +118,7 @@ public final class LiberEntryDefinitions {
 		registerRite("cardinal_rite/sanguine_dominion",         BLOOD_MEMORIES);
 		registerRite("cardinal_rite/hematic_unbinding",         BLOOD_MEMORIES);
 		registerRite("cardinal_rite/scarlet_summons",           BLOOD_MEMORIES);
-		registerRite("cardinal_rite/founding_sanctum",          BLOOD_MEMORIES);
+		registerRite("cardinal_rite/founding_fane",          BLOOD_MEMORIES);
 		registerRite("cardinal_rite/horn_of_culmination_rite",  BLOOD_MEMORIES);
 		registerRite("cardinal_rite/pruning_of_qliphoth",       QLIPHOTH);
 		registerRite("cardinal_rite/ancestral_communion",       ENTITY);
@@ -165,7 +165,7 @@ public final class LiberEntryDefinitions {
 	}
 
 	private static ResourceLocation entry(String path) {
-		return Hemomancy.rloc("sanctumsanguinium/" + path);
+		return Hemomancy.rloc("fanesanguinium/" + path);
 	}
 
 	private static ResourceLocation immaculatusEntry(String path) {

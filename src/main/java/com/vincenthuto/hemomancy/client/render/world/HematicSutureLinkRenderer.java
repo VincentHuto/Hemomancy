@@ -63,7 +63,7 @@ public final class HematicSutureLinkRenderer {
 			if (normal.lengthSqr() < 0.00001) {
 				normal = new Vec3(0.0, 1.0, 0.0);
 			}
-			int alpha = entry.mode() == BloodRoutingMode.SANCTUM ? 230 : 185;
+			int alpha = entry.mode() == BloodRoutingMode.FANE ? 230 : 185;
 			int green = entry.bloodlineEnabled() ? 128 : 36;
 			consumer.addVertex(pose.pose(), (float) p0.x, (float) p0.y, (float) p0.z)
 					.setColor(235, green, 36, alpha)
@@ -76,7 +76,7 @@ public final class HematicSutureLinkRenderer {
 
 	private static void drawMarker(PoseStack.Pose pose, VertexConsumer consumer, Vec3 center,
 			SutureLinkClientData.Entry entry) {
-		float size = entry.mode() == BloodRoutingMode.SANCTUM ? 0.34F : 0.24F;
+		float size = entry.mode() == BloodRoutingMode.FANE ? 0.34F : 0.24F;
 		int green = entry.bloodlineEnabled() ? 150 : 42;
 		line(pose, consumer, center.add(-size, 0, 0), center.add(size, 0, 0), green);
 		line(pose, consumer, center.add(0, -size, 0), center.add(0, size, 0), green);

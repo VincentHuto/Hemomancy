@@ -465,16 +465,16 @@ public final class SkillPointHelper {
 		return progress.getLevel(sp);
 	}
 
-	public static int getSanctumSutureLevel(Player player) {
-		return getSanctumSutureLevel(progress(player));
+	public static int getFaneSutureLevel(Player player) {
+		return getFaneSutureLevel(progress(player));
 	}
 
-	public static int getSanctumSutureLevel() {
-		return getSanctumSutureLevel(progress(null));
+	public static int getFaneSutureLevel() {
+		return getFaneSutureLevel(progress(null));
 	}
 
-	private static int getSanctumSutureLevel(SkillProgress progress) {
-		SkillPoint sp = SkillPointInit.skill_sanctum_suture;
+	private static int getFaneSutureLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_fane_suture;
 		if (sp == null || !progress.isUnlocked(sp)) return 0;
 		return progress.getLevel(sp);
 	}

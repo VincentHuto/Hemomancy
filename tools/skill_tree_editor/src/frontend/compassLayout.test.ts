@@ -22,7 +22,7 @@ test('places branches in their compass directions by degree ring', () => {
       skill('skill_scar_affinity', 15, 'skill_last_wind', 4)
     ]),
     branch('covenant', [
-      skill('skill_sanctum_suture', 27, 'skill_blood_flow', 5)
+      skill('skill_fane_suture', 27, 'skill_blood_flow', 5)
     ]),
     branch('mycelial', [
       skill('skill_sporitic_attunement', 24, 'base_skill', 4)
@@ -39,8 +39,8 @@ test('places branches in their compass directions by degree ring', () => {
   expect(byField.skill_living_conduit.treeX).toBeLessThan(COMPASS_CENTER.x);
   expect(byField.skill_puppet_skein.treeX).toBeGreaterThan(COMPASS_CENTER.x);
   expect(byField.skill_scar_affinity.treeY).toBeGreaterThan(COMPASS_CENTER.y);
-  expect(byField.skill_sanctum_suture.treeX).toBeGreaterThan(COMPASS_CENTER.x);
-  expect(byField.skill_sanctum_suture.treeY).toBeLessThan(COMPASS_CENTER.y);
+  expect(byField.skill_fane_suture.treeX).toBeGreaterThan(COMPASS_CENTER.x);
+  expect(byField.skill_fane_suture.treeY).toBeLessThan(COMPASS_CENTER.y);
   expect(byField.skill_sporitic_attunement.treeX).toBeLessThan(COMPASS_CENTER.x);
   expect(byField.skill_sporitic_attunement.treeY).toBeGreaterThan(COMPASS_CENTER.y);
 });

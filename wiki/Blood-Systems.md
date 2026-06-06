@@ -19,7 +19,7 @@ This page provides a comprehensive overview of Hemomancy's blood mechanics, from
 - **Enhanced by:**
   - Animus-aligned manipulations
   - Blood Lust armor
-  - Founding Sanctum buffs
+  - Founding Fane buffs
   - Charm of Vascularium (Curios)
   - Certain foods and potions
 - **Reduced by:**
@@ -366,7 +366,7 @@ Manipulations are organized into four power tiers:
 **Method 4: Equipment**
 - Armor and items can boost tendency alignment
 - Scars provide passive tendency bonuses
-- Founding Sanctum can be tuned to specific tendencies
+- Founding Fane can be tuned to specific tendencies
 
 ### Alignment Levels
 

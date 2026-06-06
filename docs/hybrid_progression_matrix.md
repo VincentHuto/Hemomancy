@@ -9,11 +9,11 @@ This matrix aligns Hemomancy's internal paths with familiar Minecraft milestones
 | First hour / Overworld | Degree 0-1 | Signs, gourd seeds, wounded iron, Blood Temple activation, Liber and charm onboarding | Iron, gourds, ash, glass, venous stone, hematic scrap; no true rare gate |
 | First Nether | Degree 2-3 | Workshop loop forms; blood refinement and basic rites become reliable | Basalt, deepslate, soul materials, nether growths through tags |
 | Nether fortress or equivalent | Degree 3-4 | Formal Initiate into Adept; offensive and costly manipulations become reasonable | Blaze, ghast, wart, magma, nether-ichor reagents; larger rite frames |
-| Mansion / Deep Dark / Monument equivalent | Degree 4-5 | Illuminatus tier; sanctum, bloodline, scars, and advanced machines matter | Resonant crystals, ancient alloys, relic tags, conscious mass, infested stone |
-| Stronghold / End prep | Degree 5-6 | Sanctified tier; covenant systems and saint-trial readiness | Void vessels, ender materials, deep ritual stones, sanctum core blocks |
+| Mansion / Deep Dark / Monument equivalent | Degree 4-5 | Illuminatus tier; fane, bloodline, scars, and advanced machines matter | Resonant crystals, ancient alloys, relic tags, conscious mass, infested stone |
+| Stronghold / End prep | Degree 5-6 | Sanctified tier; covenant systems and saint-trial readiness | Void vessels, ender materials, deep ritual stones, fane core blocks |
 | End Dragon | Degree 7 | Archon threshold; Qliphoth preparation and fungal whispers | Dragon proof tags and void ritual stones; grand rites dominate |
 | End Cities | Degree 8 | Apotheos threshold; Fungal Dimension and Qliphoth culmination | End city relics, end ritual blocks, qliphoth soil, chorus/shulker defaults |
-| Postgame | Degree 8+ | Saints, bloodlines, sanctums, Qliphoth maintenance, top-tier memories | Rare Hemomancy-only components mixed with postgame vanilla/modded trophies |
+| Postgame | Degree 8+ | Saints, bloodlines, fanes, Qliphoth maintenance, top-tier memories | Rare Hemomancy-only components mixed with postgame vanilla/modded trophies |
 
 ## Unstained Path
 

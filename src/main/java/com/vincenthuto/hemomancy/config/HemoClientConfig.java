@@ -13,7 +13,7 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_EQUIPPED_MORPHLING_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_EQUIPPED_MORPHLING_HAND_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_MUTATION_LAYER;
-	public static ModConfigSpec.BooleanValue RENDER_SANCTUM_BOUNDARY;
+	public static ModConfigSpec.BooleanValue RENDER_FANE_BOUNDARY;
 
 	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
@@ -62,9 +62,9 @@ public class HemoClientConfig {
 
 		CLIENT_BUILDER.comment("Client-side toggles for Hemomancy world rendering effects").push("world_rendering");
 
-		RENDER_SANCTUM_BOUNDARY = CLIENT_BUILDER
-				.comment("Render Founding Sanctum boundary domes and screen distortion.")
-				.define("renderSanctumBoundary", true);
+		RENDER_FANE_BOUNDARY = CLIENT_BUILDER
+				.comment("Render Founding Fane boundary domes and screen distortion.")
+				.define("renderFaneBoundary", true);
 
 		CLIENT_BUILDER.pop();
 	}

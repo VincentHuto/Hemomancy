@@ -409,7 +409,7 @@ public final class MemoHelper {
 
 	private static boolean legacyEntryMatchesLiber(ItemStack liber, ResourceLocation entryId) {
 		String path = entryId.getPath();
-		if (path.startsWith("sanctumsanguinium/")) {
+		if (path.startsWith("fanesanguinium/")) {
 			return liber.is(ItemInit.liber_sanguinum.get());
 		}
 		if (path.startsWith("liberimmaculatus/")) {

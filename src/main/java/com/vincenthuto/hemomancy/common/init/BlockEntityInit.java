@@ -66,6 +66,10 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity::new,
 							BlockInit.consecrated_bloodwell.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HematicStakeBlockEntity>> hematic_stake = TILES
+			.register("hematic_stake", () -> BlockEntityType.Builder
+					.of(HematicStakeBlockEntity::new, BlockInit.hematic_stake.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GourdvineTapBlockEntity>> gourdvine_tap = TILES
 			.register("gourdvine_tap", () -> BlockEntityType.Builder
 					.of(GourdvineTapBlockEntity::new, BlockInit.gourdvine_tap.get()).build(null));

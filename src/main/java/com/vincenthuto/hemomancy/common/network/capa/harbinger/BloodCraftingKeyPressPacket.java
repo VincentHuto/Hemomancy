@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
@@ -49,7 +50,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	public static final Type<BloodCraftingKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_crafting_key_press_packet"));
 	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
-	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
+	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
 	private static final Direction[] SEARCH_DIRECTIONS = Direction.values();
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
@@ -499,18 +500,21 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					}
 				}
 
-				// Founding Sanctum requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
-				if (FOUNDING_SANCTUM_RITE_ID.equals(recipe.getId())) {
+				// Founding Fane requires a Consecrated Bloodwell heart and a Sanguine Quintessence catalyst.
+				if (FOUNDING_FANE_RITE_ID.equals(recipe.getId())) {
+					if (!canStartFoundingFane(serverPlayer)) {
+						return;
+					}
 					if (!sLevel.getBlockState(centerPos).is(BlockInit.consecrated_bloodwell.get())) {
 						player.displayClientMessage(
-								Component.literal("The Founding Sanctum must be centered on a Consecrated Bloodwell.")
+								Component.literal("The Founding Fane must be centered on a Consecrated Bloodwell.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
 						return;
 					}
 					if (!consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())) {
 						player.displayClientMessage(
-								Component.literal("The Founding Sanctum demands a Sanguine Quintessence within the rite.")
+								Component.literal("The Founding Fane demands a Sanguine Quintessence within the rite.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
 						return;
@@ -540,6 +544,27 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				return;
 			}
 		}
+	}
+
+	private static boolean canStartFoundingFane(ServerPlayer player) {
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
+				.map(IBloodVolume::getBloodLine)
+				.orElse(Bloodline.NOBLOODLINE);
+		if (bloodline == null || !bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.literal("The Founding Fane requires an established bloodline.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return false;
+		}
+		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
+			player.displayClientMessage(
+					Component.literal("Only the bloodline Progenitor may consecrate a Founding Fane.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return false;
+		}
+		return true;
 	}
 
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(

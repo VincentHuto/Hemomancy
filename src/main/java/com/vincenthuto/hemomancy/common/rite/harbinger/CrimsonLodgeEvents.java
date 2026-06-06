@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
  * Legacy hook retained so older worlds with Crimson Lodge data do not crash.
- * Spatial territory mechanics now belong exclusively to Founding Sanctums.
+ * Spatial territory mechanics now belong exclusively to Founding Fanes.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class CrimsonLodgeEvents {
@@ -21,7 +21,7 @@ public class CrimsonLodgeEvents {
 
 	/**
 	 * Legacy helper retained for compatibility. Ledger and boundary logic now use
-	 * Founding Sanctum ownership instead.
+	 * Founding Fane ownership instead.
 	 */
 	public static boolean isInCrimsonLodge(ServerPlayer player) {
 		return false;

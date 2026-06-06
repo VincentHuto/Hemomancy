@@ -168,7 +168,7 @@ These items are created through MnA-specific crafting systems (Manaweaving, Runi
 
 ### 5. Enhanced Faction Features — The Harbingers
 
-All of these are MnA faction features that use MnA-specific systems (Occulus, faction progression, raids, sanctums, manaweaving).
+All of these are MnA faction features that use MnA-specific systems (Occulus, faction progression, raids, fanes, manaweaving).
 
 #### 5a. Faction Tasks / Occulus Progression
 - **Concept:** The Harbingers faction should have unique Occulus tasks that specifically involve both MnA and Hemomancy activities. The Occulus is MnA's progression GUI — tasks here unlock higher faction tiers and rewards.
@@ -183,9 +183,9 @@ All of these are MnA faction features that use MnA-specific systems (Occulus, fa
 - **Concept:** When the Harbinger faction horn is sounded (or a rival faction attacks Harbinger territory), blood-themed enemies appear using MnA's faction raid system.
 - **MnA Justification:** Faction raids are an MnA system (`FactionRaidEvent`, raid wave spawning, raid sound/music). The Harbingers faction needs its own raid roster to feel complete within MnA's faction ecosystem. Raid mobs would be Hemomancy entities (Blood Golems, Fungal creatures) registered through MnA's raid mob system.
 
-#### 5c. Harbinger Sanctum Structure
-- **Concept:** A custom MnA "sanctum" multiblock structure for the Harbingers. Currently `getSanctumStructure` returns MnA's generic council circle.
-- **MnA Justification:** Every MnA faction has a unique sanctum structure (Council Circle, Demon Pit, etc.) that's used for faction-specific rituals and progression. The Harbingers need one built from Hemomancy blocks (venous stone, engrams, blood stained glass) but registered through MnA's structure system. Players discover and activate it through MnA's sanctum mechanics.
+#### 5c. Harbinger Fane Structure
+- **Concept:** A custom MnA "fane" multiblock structure for the Harbingers. Currently `getFaneStructure` returns MnA's generic council circle.
+- **MnA Justification:** Every MnA faction has a unique fane structure (Council Circle, Demon Pit, etc.) that's used for faction-specific rituals and progression. The Harbingers need one built from Hemomancy blocks (venous stone, engrams, blood stained glass) but registered through MnA's structure system. Players discover and activate it through MnA's fane mechanics.
 
 #### 5d. Harbinger-Specific Manaweaving Recipes
 - **Concept:** Manaweaving altar recipes that require the Harbinger faction and produce enhanced Hemomancy items.

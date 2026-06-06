@@ -415,7 +415,7 @@ public class SkillsTabController implements IProgressTab {
             case "skill_bound_command" -> "B";
             case "skill_deep_inscription" -> "D";
             case "skill_fungal_symbiosis" -> "F";
-            case "skill_sanctum_suture" -> "S";
+            case "skill_fane_suture" -> "S";
             case "skill_bloodline_concord" -> "C";
             case "skill_servitor_tender" -> "T";
             case "skill_ancestral_sovereignty" -> "A";

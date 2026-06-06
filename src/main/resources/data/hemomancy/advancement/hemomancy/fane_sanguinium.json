@@ -5,10 +5,10 @@
       "id": "hemomancy:liber_sanguinum"
     },
     "title": {
-      "translate": "advancements.hemomancy.sanctum_sanguinium.title"
+      "translate": "advancements.hemomancy.fane_sanguinium.title"
     },
     "description": {
-      "translate": "advancements.hemomancy.sanctum_sanguinium.description"
+      "translate": "advancements.hemomancy.fane_sanguinium.description"
     },
     "frame": "goal",
     "show_toast": true,

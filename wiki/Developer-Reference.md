@@ -473,7 +473,7 @@ Location: `tools/skill_tree_editor/`
 - NeoForge 1.21.1 port
 - Attachment-based capabilities
 - Payload-based networking
-- Flexible Founding Sanctums
+- Flexible Founding Fanes
 - Somatic Loom memory-weaving rewrite
 - Harbinger outpost NPC recruitment
 - Annetta Knowles encounter partial implementation

@@ -30,7 +30,7 @@ public final class MemoBookFilter implements IBookPageFilter {
 			return source;
 		}
 		String bookPath = source.getResourceLocation().getPath();
-		if (!"sanctumsanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath)) {
+		if (!"fanesanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath)) {
 			return source;
 		}
 		final String entryPrefix = bookPath + "/";

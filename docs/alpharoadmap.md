@@ -54,7 +54,7 @@ Used for gap analysis below. Ordered from most to least impactful on alpha recep
 - 323+ items, 127 registered block declarations, and 87 entities (including 4 bosses, 5 NPCs, 10+ monsters).
 - 12 morphling variants, 20+ scar types, 9 fungal scar cultivars.
 - 8 blood tendency trees + Unstained Still Arts.
-- Qliphoth Bloom, Founding Sanctum, Bloodline pool system — all functional.
+- Qliphoth Bloom, Founding Fane, Bloodline pool system — all functional.
 
 **5. Worldgen — PASSES**
 - 3 Harbinger biomes (Fungal Gardens, Fungal Isles, Hemorrhagic Plateau) + Unstained equivalents via TerraBlender.

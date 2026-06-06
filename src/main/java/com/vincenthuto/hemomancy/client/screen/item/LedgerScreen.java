@@ -16,11 +16,11 @@ import net.minecraft.util.Mth;
 import java.util.Random;
 
 /**
-	 * The Ancestral Ledger screen provides GUI buttons for bloodline sanctum actions:
+	 * The Ancestral Ledger screen provides GUI buttons for bloodline fane actions:
  * <ul>
-	 *   <li>Summon recruited NPC Harbingers (within the Founding Sanctum)</li>
-	 *   <li>Recall to the sanctum recall point (from anywhere)</li>
-	 *   <li>Set the sanctum recall point to current position (leader only, within the Founding Sanctum)</li>
+	 *   <li>Summon recruited NPC Harbingers (within the Founding Fane)</li>
+	 *   <li>Recall to the fane recall point (from anywhere)</li>
+	 *   <li>Set the fane recall point to current position (leader only, within the Founding Fane)</li>
  * </ul>
  * Matches the visual style of BloodlinePoolScreen with procedural vein background.
  */
@@ -77,9 +77,9 @@ public class LedgerScreen extends Screen {
 
 		y += 28;
 
-		// ── Recall to Sanctum Button ──
+		// ── Recall to Fane Button ──
 		addRenderableWidget(Button.builder(
-				Component.literal("\u2302 Recall to Sanctum"),
+				Component.literal("\u2302 Recall to Fane"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_RECALL_TO_LODGE));
@@ -88,9 +88,9 @@ public class LedgerScreen extends Screen {
 
 		y += 28;
 
-		// ── Set Sanctum Recall Point Button (leader only) ──
+		// ── Set Fane Recall Point Button (leader only) ──
 		addRenderableWidget(Button.builder(
-				Component.literal("\u2691 Set Sanctum Recall"),
+				Component.literal("\u2691 Set Fane Recall"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SET_RECALL_POINT));
@@ -114,10 +114,14 @@ public class LedgerScreen extends Screen {
 		return false;
 	}
 
+	/** Suppress the 1.21.1 menu_blur post-effect from Screen#renderBackground. */
+	@Override
+	public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+		// intentionally empty
+	}
+
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-		this.renderBackground(graphics, mouseX, mouseY, partialTick);
-
 		int centerX = this.width / 2;
 		int centerY = this.height / 2;
 		int guiLeft = centerX - GUI_WIDTH / 2;

@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -126,23 +129,37 @@ public final class BloodlineDisbandHelper {
 		return savedLine.isValid() && bloodlineUuid.equals(savedLine.getBloodlineUUID());
 	}
 
-	public static int removeOwnedSanctums(MinecraftServer server, Bloodline disbandedLine) {
+	public static int removeOwnedFanes(MinecraftServer server, Bloodline disbandedLine) {
 		if (server == null || disbandedLine == null || !disbandedLine.isValid()) {
 			return 0;
 		}
 
 		int removed = 0;
 		for (ServerLevel level : server.getAllLevels()) {
-			FoundingSanctumSavedData sanctumData = FoundingSanctumSavedData.get(level);
+			FoundingFaneSavedData faneData = FoundingFaneSavedData.get(level);
 			for (UUID memberUuid : disbandedLine.getPlayerUUIDS()) {
-				if (!sanctumData.hasSanctum(memberUuid)) {
+				if (!faneData.hasFane(memberUuid)) {
 					continue;
 				}
-				sanctumData.remove(memberUuid);
+				removeOwnedFaneBlocks(level, faneData, memberUuid);
+				faneData.remove(memberUuid);
 				removed++;
 			}
 		}
 		return removed;
 	}
-}
 
+	private static void removeOwnedFaneBlocks(ServerLevel level, FoundingFaneSavedData faneData,
+			UUID memberUuid) {
+		BlockPos heartPos = faneData.getHeart(memberUuid);
+		List<BlockPos> stakePositions = faneData.removeStakesAndGet(memberUuid);
+		for (BlockPos stakePos : stakePositions) {
+			if (level.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+				level.removeBlock(stakePos, false);
+			}
+		}
+		if (heartPos != null && level.getBlockState(heartPos).is(BlockInit.consecrated_bloodwell.get())) {
+			level.removeBlock(heartPos, false);
+		}
+	}
+}

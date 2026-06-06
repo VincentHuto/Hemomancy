@@ -141,17 +141,17 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("consecrated_bloodwell", "Consecrated Bloodwell",
-                "A sanctified blood reservoir at the heart of the Founding Sanctum.",
+                "A sanctified blood reservoir at the heart of the Founding Fane.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.consecrated_bloodwell.get()),
                 true, UnlockPredicate.minDegree(5)));
 
         list.add(new MaterialEntry("covenant_throne", "Covenant Throne",
-                "The seat of authority within a consecrated Sanctum.",
+                "The seat of authority within a consecrated Fane.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.covenant_throne.get()),
                 true, UnlockPredicate.minDegree(5)));
 
         list.add(new MaterialEntry("sanguine_vigil", "Sanguine Vigil",
-                "A watchful sentinel structure tied to the Founding Sanctum boundary.",
+                "A watchful sentinel structure tied to the Founding Fane boundary.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.sanguine_vigil.get()),
                 true, UnlockPredicate.minDegree(5)));
 

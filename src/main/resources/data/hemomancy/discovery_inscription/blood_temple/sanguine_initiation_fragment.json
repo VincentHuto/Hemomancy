@@ -12,9 +12,9 @@
     "The basin opens only when the wound is honest. The Order calls this the first courtesy of the vein."
   ],
   "liber_entries": [
-    "hemomancy:sanctumsanguinium/the_hematic_order/pages/first_rite_notes",
-    "hemomancy:sanctumsanguinium/intro/pages/hemomancy",
-    "hemomancy:sanctumsanguinium/intro/pages/the_harbingers"
+    "hemomancy:fanesanguinium/the_hematic_order/pages/first_rite_notes",
+    "hemomancy:fanesanguinium/intro/pages/hemomancy",
+    "hemomancy:fanesanguinium/intro/pages/the_harbingers"
   ],
   "rite_id": "hemomancy:cardinal_rite/sanguine_initiation"
 }

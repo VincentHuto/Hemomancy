@@ -14,7 +14,7 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "hemomancy:hemomancy/sanctum_sanguinium",
+  "parent": "hemomancy:hemomancy/fane_sanguinium",
   "criteria": {
     "has_staff": {
       "trigger": "minecraft:inventory_changed",

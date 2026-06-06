@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -31,9 +31,9 @@ import java.util.UUID;
  * <p>
  * Actions:
  * <ul>
-	 *   <li>0 = Summon recruited NPC Harbingers (must be inside the bloodline's Founding Sanctum)</li>
-	 *   <li>1 = Recall to the sanctum recall point (from anywhere)</li>
-	 *   <li>2 = Set sanctum recall point to current position (leader only, must be inside the sanctum)</li>
+	 *   <li>0 = Summon recruited NPC Harbingers (must be inside the bloodline's Founding Fane)</li>
+	 *   <li>1 = Recall to the fane recall point (from anywhere)</li>
+	 *   <li>2 = Set fane recall point to current position (leader only, must be inside the fane)</li>
  * </ul>
  */
 public class PacketLedgerAction implements CustomPacketPayload {
@@ -78,30 +78,30 @@ public class PacketLedgerAction implements CustomPacketPayload {
 
 	// ── Action Handlers (moved from UnsignedLedgerItem) ──
 
-	private static UUID getSanctumOwner(Bloodline bloodline, ServerPlayer player) {
+	private static UUID getFaneOwner(Bloodline bloodline, ServerPlayer player) {
 		return bloodline.isValid() ? bloodline.getLeaderUUID() : player.getUUID();
 	}
 
-	private static boolean isInsideOwnedSanctum(ServerPlayer player, UUID ownerUuid) {
+	private static boolean isInsideOwnedFane(ServerPlayer player, UUID ownerUuid) {
 		if (!(player.level() instanceof ServerLevel currentLevel)) {
 			return false;
 		}
-		return FoundingSanctumSavedData.get(currentLevel).isWithinSanctum(ownerUuid, player.blockPosition());
+		return FoundingFaneSavedData.get(currentLevel).isWithinFane(ownerUuid, player.blockPosition());
 	}
 
-	private static ServerLevel findPreferredSanctumLevel(ServerPlayer player, UUID ownerUuid) {
+	private static ServerLevel findPreferredFaneLevel(ServerPlayer player, UUID ownerUuid) {
 		if (player.level() instanceof ServerLevel currentLevel
-				&& FoundingSanctumSavedData.get(currentLevel).hasSanctum(ownerUuid)) {
+				&& FoundingFaneSavedData.get(currentLevel).hasFane(ownerUuid)) {
 			return currentLevel;
 		}
 
 		ServerLevel overworld = player.server.overworld();
-		if (FoundingSanctumSavedData.get(overworld).hasSanctum(ownerUuid)) {
+		if (FoundingFaneSavedData.get(overworld).hasFane(ownerUuid)) {
 			return overworld;
 		}
 
 		for (ServerLevel level : player.server.getAllLevels()) {
-			if (FoundingSanctumSavedData.get(level).hasSanctum(ownerUuid)) {
+			if (FoundingFaneSavedData.get(level).hasFane(ownerUuid)) {
 				return level;
 			}
 		}
@@ -127,8 +127,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		UUID sanctumOwner = getSanctumOwner(bloodline, player);
-		if (!isInsideOwnedSanctum(player, sanctumOwner)) {
+		UUID faneOwner = getFaneOwner(bloodline, player);
+		if (!isInsideOwnedFane(player, faneOwner)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.summon.not_in_lodge")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -176,8 +176,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		UUID sanctumOwner = getSanctumOwner(bloodline, player);
-		ServerLevel targetLevel = findPreferredSanctumLevel(player, sanctumOwner);
+		UUID faneOwner = getFaneOwner(bloodline, player);
+		ServerLevel targetLevel = findPreferredFaneLevel(player, faneOwner);
 		if (targetLevel == null) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.recall.no_lodge")
@@ -186,8 +186,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		FoundingSanctumSavedData data = FoundingSanctumSavedData.get(targetLevel);
-		BlockPos recall = data.getRecallPoint(sanctumOwner);
+		FoundingFaneSavedData data = FoundingFaneSavedData.get(targetLevel);
+		BlockPos recall = data.getRecallPoint(faneOwner);
 		if (recall == null) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.recall.no_lodge")
@@ -227,13 +227,13 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			return;
 		}
 
-		UUID sanctumOwner = getSanctumOwner(bloodline, player);
+		UUID faneOwner = getFaneOwner(bloodline, player);
 		if (!(player.level() instanceof ServerLevel currentLevel)) {
 			return;
 		}
-		FoundingSanctumSavedData data = FoundingSanctumSavedData.get(currentLevel);
+		FoundingFaneSavedData data = FoundingFaneSavedData.get(currentLevel);
 
-		if (data.setRecallPoint(sanctumOwner, player.blockPosition())) {
+		if (data.setRecallPoint(faneOwner, player.blockPosition())) {
 			player.level().playSound(null, player.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
 					SoundSource.PLAYERS, 1.0f, 1.0f);
 			player.displayClientMessage(
@@ -271,7 +271,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 		Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 		if (globalLine == null) {
-			BloodlineDisbandHelper.removeOwnedSanctums(player.server, bloodline);
+			BloodlineDisbandHelper.removeOwnedFanes(player.server, bloodline);
 			volume.setBloodLine(Bloodline.NOBLOODLINE);
 			BloodVolumeEvents.syncVolume(player, volume);
 			BloodlineDisbandHelper.burnBloodlineLedgers(player, bloodline);
@@ -284,7 +284,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 
 		int playerCount = globalLine.getPlayerUUIDS().size();
 		int npcCount = globalLine.getNpcMemberCount();
-		BloodlineDisbandHelper.removeOwnedSanctums(player.server, globalLine);
+		BloodlineDisbandHelper.removeOwnedFanes(player.server, globalLine);
 		savedData.disbandBloodline(globalLine.getBloodlineUUID());
 
 		BloodlineDisbandHelper.resetOnlineMembers(player.server, globalLine, member ->

@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class SanctumFootprintSourceTest {
+public final class FaneFootprintSourceTest {
 	private static final Path FOOTPRINT = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/SanctumFootprint.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FaneFootprint.java");
 	private static final Path SAVED_DATA = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingSanctumSavedData.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingFaneSavedData.java");
 
-	private SanctumFootprintSourceTest() {
+	private FaneFootprintSourceTest() {
 	}
 
 	public static void main(String[] args) throws IOException {

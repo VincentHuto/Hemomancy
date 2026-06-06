@@ -30,7 +30,7 @@ public enum HemoMilestone {
     ASHEN_BEGINNINGS("ashen_beginnings", 1, Category.DISCOVERY, 0, "Craft Befouling Ash"),
 
     /** Obtain the Liber Sanguinum guide book. */
-    SANCTUM_SANGUINIUM("sanctum_sanguinium", 1, Category.DISCOVERY, 0, "Obtain the Liber Sanguinum"),
+    FANE_SANGUINIUM("fane_sanguinium", 1, Category.DISCOVERY, 0, "Obtain the Liber Sanguinum"),
 
     /** Activate a Blood Temple's Mortal Display. */
     THE_FIRST_AWAKENING("the_first_awakening", 2, Category.DISCOVERY, 0, "Activate a Blood Temple"),
@@ -75,7 +75,7 @@ public enum HemoMilestone {
     /** Reach Degree 2 — Votary of the Hematic Covenant. */
     VOTARY_ASCENSION("votary_ascension", 4, Category.DEGREE, 1, "Ascend to Votary"),
 
-    /** Reach Degree 3 — Initiate of the Scarlet Sanctum. */
+    /** Reach Degree 3 — Initiate of the Incarnadine Fane. */
     INITIATE_ASCENSION("initiate_ascension", 5, Category.DEGREE, 2, "Ascend to Initiate"),
 
     /** Reach Degree 4 — Adept of the Sanguine Brotherhood. */

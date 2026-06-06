@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
-import com.vincenthuto.hemomancy.client.data.SanctumBoundaryClientData;
+import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -393,7 +393,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientPlayerLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
         // HutosLib now retains read tracker state across disconnect/reload.
-        SanctumBoundaryClientData.clear();
+        FaneBoundaryClientData.clear();
     }
 
     @SubscribeEvent
@@ -410,7 +410,7 @@ public class ClientEvents {
     public static void renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
         float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
-        SanctumBoundaryRenderer.renderPost(event.getGuiGraphics(),
+        FaneBoundaryRenderer.renderPost(event.getGuiGraphics(),
                 event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
         if (SanguineOmenOverlay.instance != null) {
             SanguineOmenOverlay.instance.renderWorldGrade(event.getGuiGraphics(),
@@ -430,7 +430,7 @@ public class ClientEvents {
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
-            SanctumBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
+            FaneBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
@@ -677,6 +677,8 @@ public class ClientEvents {
                     SuspendedCleansedBloodCrystalRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
                     DendriticDistributorRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.vial_centrifuge.get(), VialCentrifugeRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.somatic_loom.get(),

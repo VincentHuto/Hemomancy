@@ -84,11 +84,11 @@ public class HemoLanguageProvider extends LanguageProvider {
         add("item.hemomancy.hematic_suture_needle.bound", "Suture bound: %s");
         add("item.hemomancy.hematic_suture_needle.mode", "Suture mode: %s");
         add("item.hemomancy.hematic_suture_needle.mode.nearby", "Nearby");
-        add("item.hemomancy.hematic_suture_needle.mode.sanctum", "Sanctum");
-        add("item.hemomancy.hematic_suture_needle.mode.sanctum_bloodline", "Sanctum + Bloodline");
-        add("item.hemomancy.hematic_suture_needle.sanctum_unavailable", "This link is outside your sanctum or awaits Degree 5.");
-        add("item.hemomancy.hematic_suture_needle.opt_in_on", "You open your bloodline to sanctum routing.");
-        add("item.hemomancy.hematic_suture_needle.opt_in_off", "You close your bloodline to sanctum routing.");
+        add("item.hemomancy.hematic_suture_needle.mode.fane", "Fane");
+        add("item.hemomancy.hematic_suture_needle.mode.fane_bloodline", "Fane + Bloodline");
+        add("item.hemomancy.hematic_suture_needle.fane_unavailable", "This link is outside your fane or awaits Degree 5.");
+        add("item.hemomancy.hematic_suture_needle.opt_in_on", "You open your bloodline to fane routing.");
+        add("item.hemomancy.hematic_suture_needle.opt_in_off", "You close your bloodline to fane routing.");
         add("item.hemomancy.hematic_suture_needle.inactive", "Your blood is not yet awakened.");
         add("item.hemomancy.hematic_suture_needle.status", "Use on a blood machine or node. Sneak-use to toggle bloodline opt-in.");
 

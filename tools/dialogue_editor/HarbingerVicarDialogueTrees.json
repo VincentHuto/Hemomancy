@@ -345,8 +345,8 @@
           ],
           "options": [
             {
-              "text": "hemomancy.dialogue.vicar.option.tell_me_about_sanctum",
-              "next": "sanctum_lore",
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_fane",
+              "next": "fane_lore",
               "event": null
             },
             {
@@ -372,9 +372,9 @@
           ]
         },
         {
-          "id": "sanctum_lore",
+          "id": "fane_lore",
           "lines": [
-            "hemomancy.vicar.initiate.sanctum_lore"
+            "hemomancy.vicar.initiate.fane_lore"
           ],
           "options": [
             {
@@ -537,8 +537,8 @@
               "event": null
             },
             {
-              "text": "hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum",
-              "next": "founding_sanctum_lore",
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_founding_fane",
+              "next": "founding_fane_lore",
               "event": null
             },
             {
@@ -575,8 +575,8 @@
           ],
           "options": [
             {
-              "text": "hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum",
-              "next": "founding_sanctum_lore",
+              "text": "hemomancy.dialogue.vicar.option.tell_me_about_founding_fane",
+              "next": "founding_fane_lore",
               "event": null
             },
             {
@@ -592,9 +592,9 @@
           ]
         },
         {
-          "id": "founding_sanctum_lore",
+          "id": "founding_fane_lore",
           "lines": [
-            "hemomancy.vicar.illuminatus.founding_sanctum_lore"
+            "hemomancy.vicar.illuminatus.founding_fane_lore"
           ],
           "options": [
             {

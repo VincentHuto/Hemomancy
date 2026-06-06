@@ -4,8 +4,8 @@
   "riteType": "grand",
   "required_degree": 5,
   "breakBlocksOnCreation": false,
-  "riteName": "Rite of the Founding Sanctum",
-  "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, establishing a Harbinger Founding Sanctum whose boundary, recall anchor, and bloodline-tied ground are made real by the rite itself.",
+  "riteName": "Rite of the Founding Fane",
+  "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, establishing a Harbinger Founding Fane whose boundary, recall anchor, and bloodline-tied ground are made real by the rite itself.",
   "pattern": [
     [
       "         ",

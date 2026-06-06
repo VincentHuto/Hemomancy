@@ -204,7 +204,7 @@ Most Harbingers — most outposts, most individual groups — only ever reach **
 | 0 | Uninitiated |
 | 1 | Neophyte of the Crimson Veil |
 | 2 | Votary of the Hematic Covenant |
-| 3 | Initiate of the Scarlet Sanctum |
+| 3 | Initiate of the Incarnadine Fane |
 | 4 | Adept of the Sanguine Brotherhood |
 | 5 | Illuminatus of the Crimson Lodge |
 | 6 | Sanctified of the Bloodline Covenant |
@@ -225,8 +225,8 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 
 **Gameplay:** The **Vial Centrifuge** and the tendency system. Players separate tendency-aligned blood from raw samples via the Living Syringe + Vial Rack workflow. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable. The Alchemist also introduces **Blood Structure crafting** at this degree — Basic-tier multiblock patterns are now available (simple flat layouts using a Blood Key and raw blood cost). Advanced patterns unlock at Degree 4 (Adept); Grand-tier patterns requiring sustained Blood Conduit flow unlock at Degree 5 (Illuminatus).
 
-#### INITIATE 3 — *of the Scarlet Sanctum*
-**Lore:** The Scarlet Sanctum was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Sanctum's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
+#### INITIATE 3 — *of the Incarnadine Fane*
+**Lore:** The Incarnadine Fane was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Fane's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
 
 **Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their Trial Chambers, extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom with a blank Hematic Memory, stored tendency enzymes, projected blood, and the physical orb-weaving rite to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
 
@@ -238,7 +238,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ILLUMINATUS 5 — *of the Crimson Lodge*
 **Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.
 
-**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Sanguine Quintessence & Founding Sanctum** — the Illuminatus rite is the degree-advancement rite into the Crimson Lodge, while the separate **Founding Sanctum ritual** is the true consecration rite. Sanguine Quintessence serves as the founding catalyst placed at the sanctum heart; the Founding Sanctum ritual uses it to establish a 5×5 chunk Harbinger Sanctum with shared buffs, visible boundary phenomena, and bloodline-owned territory for covenant infrastructure and ledger actions. The Sanguine Monolith becomes accessible (Degree 5+ gated).
+**Gameplay:** Three major unlocks. (1) **Morphling Incubator** — biological/fungal crafting for organism-derived items. (2) **Blood Structure Grand tier** — the Blood Conduit pipeline network becomes a mandatory crafting input for the most complex structural patterns; sustained flow within range is required, not just a single key strike. (3) **Sanguine Quintessence & Founding Fane** — the Illuminatus rite is the degree-advancement rite into the Crimson Lodge, while the separate **Founding Fane ritual** is the true consecration rite. Sanguine Quintessence serves as the founding catalyst placed at the fane heart; the Founding Fane ritual uses it to establish a 5×5 chunk Harbinger Fane with shared buffs, visible boundary phenomena, and bloodline-owned territory for covenant infrastructure and ledger actions. The Sanguine Monolith becomes accessible (Degree 5+ gated).
 
 #### SANCTIFIED 6 — *of the Bloodline Covenant*
 **Lore:** The Sanctified do not belong to the Order — they *are* the Order. The Vicar delivers the degree's doctrine: *"The blood becomes indistinguishable from the blood of the world."* The Bloodline Covenant is revealed — a ritual compact between Harbingers that merges blood pools and capabilities. Fungal Whispers grow direct and revelatory: *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium is named as the original organism.
@@ -279,15 +279,15 @@ Silent Archon Vestments are different. They are cloth and armor mixed after the 
 
 One-off pieces should remain covenant-breaking tradeoffs in tone as well as mechanics. The Crown of Sacred Marrow, Hemolymphopoda Headpiece, Chalybeate Sclerite Sabatons, and Covenant Mantle each express a narrow vow or ecology. Wearing one means choosing that vow over the comfort of a full-set identity.
 
-### 6.5 The Founding Sanctum
+### 6.5 The Founding Fane
 
-At Degree 5, a Harbinger becomes eligible to perform the **Founding Sanctum ritual** — a distinct ceremony separate from the Illuminatus rank-up rite. The **Rite of the Crimson Lodge** makes the practitioner Illuminatus; the **Founding Sanctum ritual** is what actually consecrates an area around their chosen base. A **5×5 chunk area** becomes a Harbinger Sanctum — a zone where all Harbingers present receive enhanced powers: stronger regeneration, lower cooldowns, more potent attacks. The rite also makes the sanctum real as covenant territory: its visible boundary, its bloodline ownership, and the recall/summoning ground used by the Ancestral Ledger. **Sanguine Quintessence** is the catalyst set at the rite's heart, but the Quintessence itself is not the consecration — the founding ritual is.
+At Degree 5, a Harbinger becomes eligible to perform the **Founding Fane ritual** — a distinct ceremony separate from the Illuminatus rank-up rite. The **Rite of the Crimson Lodge** makes the practitioner Illuminatus; the **Founding Fane ritual** is what actually consecrates an area around their chosen base. A **5×5 chunk area** becomes a Harbinger Fane — a zone where all Harbingers present receive enhanced powers: stronger regeneration, lower cooldowns, more potent attacks. The rite also makes the fane real as covenant territory: its visible boundary, its bloodline ownership, and the recall/summoning ground used by the Ancestral Ledger. **Sanguine Quintessence** is the catalyst set at the rite's heart, but the Quintessence itself is not the consecration — the founding ritual is.
 
 ### 6.5a The Sanguine Monolith (The Crimson Lodestone)
 
 The Sanguine Monolith — known within the Lodge as *The Crimson Lodestone* — is a 1×2 stone construct accessible to Harbingers of Degree 5 and above. It provides degree-gated guidance up to Degree 7, at which point an Archon may shatter it to recover the Qliphoth Seed inside.
 
-It should not be conflated with the Founding Sanctum. Both become part of Degree 5 play, but they serve different roles: the Monolith is a Lodge relic and guide, while the Founding Sanctum ritual is the act that consecrates territory, manifests sanctum boundaries, and anchors bloodline logistics around a chosen home.
+It should not be conflated with the Founding Fane. Both become part of Degree 5 play, but they serve different roles: the Monolith is a Lodge relic and guide, while the Founding Fane ritual is the act that consecrates territory, manifests fane boundaries, and anchors bloodline logistics around a chosen home.
 
 **What it actually is:** The Crimson Lodge built the Monolith as an incubation vessel: a sealed stone construct housing a dormant fragment of mycelial consciousness, extracted from a deep Erythromycelium vein in the Second Age. The Lodge believed it could sense a Harbinger's degree because hemomancy leaves detectable signatures in the blood — and that explanation is almost right. The fragment inside is alive. It reads degree not as a record-keeping system but as a sporulation assessment. It is watching practitioners ripen.
 
@@ -301,7 +301,7 @@ The Monolith uses degree-gated dialogue that gradually discloses its nature. Pla
 
 From the Harbinger Vicar's lore branches:
 
-- The **Scarlet Sanctum** was founded by **Archon Erythravane** in the Second Age — the first organized gathering of Hemomancers.
+- The **Incarnadine Fane** was founded by **Archon Erythravane** in the Second Age — the first organized gathering of Hemomancers.
 - The **Sanguine Brotherhood** arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the origin of the Bloodline system.
 - The **Crimson Lodge** documented the link between hemomancy and the mycelial network. This knowledge was kept secret — considered something that must be "arrived at independently" to be understood correctly.
 - The **Hematic Order** itself is described by the Vicar not as a rank, but as a state of being, where "the blood becomes indistinguishable from the blood of the world."

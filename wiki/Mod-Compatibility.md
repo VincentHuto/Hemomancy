@@ -239,7 +239,7 @@ Hemomancy supports recipe modification via datapacks:
 - Report issues if found
 
 #### Server Performance
-- Founding Sanctums with many stakes: slight TPS impact
+- Founding Fanes with many stakes: slight TPS impact
 - Blood routing networks: negligible impact
 - Morphling incubators: minimal impact
 - Large rituals: temporary particle load

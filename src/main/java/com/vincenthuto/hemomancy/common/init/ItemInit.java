@@ -98,7 +98,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
-                    .withBookPrefix("sanctumsanguinium/")
+                    .withBookPrefix("fanesanguinium/")
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 

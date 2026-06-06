@@ -114,11 +114,11 @@ public class HematicSutureNeedleItem extends Item {
     private DirectBloodLinkData cycleLink(ServerLevel level, ServerPlayer player, BlockPos pos,
             DirectBloodLinkData existing, int degree) {
         if (existing.mode() == BloodRoutingMode.NEARBY) {
-            if (degree < 5 || !BloodRoutingHelper.canUseSanctumMode(level, player, pos)) {
-                message(player, "item.hemomancy.hematic_suture_needle.sanctum_unavailable", ChatFormatting.GRAY);
+            if (degree < 5 || !BloodRoutingHelper.canUseFaneMode(level, player, pos)) {
+                message(player, "item.hemomancy.hematic_suture_needle.fane_unavailable", ChatFormatting.GRAY);
                 return existing;
             }
-            DirectBloodLinkData next = existing.withMode(BloodRoutingMode.SANCTUM).withBloodlineEnabled(false);
+            DirectBloodLinkData next = existing.withMode(BloodRoutingMode.FANE).withBloodlineEnabled(false);
             message(player, "item.hemomancy.hematic_suture_needle.mode", ChatFormatting.DARK_RED, describeMode(next));
             return next;
         }
@@ -159,9 +159,9 @@ public class HematicSutureNeedleItem extends Item {
     private Component describeMode(DirectBloodLinkData link) {
         String key = switch (link.mode()) {
             case NEARBY -> "item.hemomancy.hematic_suture_needle.mode.nearby";
-            case SANCTUM -> link.bloodlineEnabled()
-                    ? "item.hemomancy.hematic_suture_needle.mode.sanctum_bloodline"
-                    : "item.hemomancy.hematic_suture_needle.mode.sanctum";
+            case FANE -> link.bloodlineEnabled()
+                    ? "item.hemomancy.hematic_suture_needle.mode.fane_bloodline"
+                    : "item.hemomancy.hematic_suture_needle.mode.fane";
         };
         return Component.translatable(key);
     }

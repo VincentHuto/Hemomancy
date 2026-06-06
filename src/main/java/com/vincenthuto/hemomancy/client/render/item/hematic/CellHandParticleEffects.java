@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.item.hematic;
 
 import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -56,7 +56,7 @@ public final class CellHandParticleEffects {
 				Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
 				ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
 				Particle created = mc.particleEngine.createParticle(
-						AbsrobedBloodCellParticleFactory.createData(targetColor),
+						AbsorbedBloodCellParticleFactory.createData(targetColor),
 						origin.x, origin.y, origin.z,
 						(float) finalPos.x + rand.nextFloat() - 0.5D,
 						(float) finalPos.y - rand.nextFloat(),
@@ -70,7 +70,7 @@ public final class CellHandParticleEffects {
 			if (trace.getType() == HitResult.Type.BLOCK) {
 				Vec3 projectionTarget = trace.getLocation().add(0.0D, 1.05D, 0.0D);
 				Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
-				world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+				world.addParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
 						projectionTarget.x, projectionTarget.y, projectionTarget.z,
 						(float) finalPos.x + rand.nextFloat() - 0.5D,
 						(float) finalPos.y - rand.nextFloat() - 0.5F,
@@ -123,7 +123,7 @@ public final class CellHandParticleEffects {
 				Vec3 source = new Vec3(targetVec.x, targetVec.y, targetVec.z);
 				Vec3 finalPos = source.subtract(origin);
 				Particle created = mc.particleEngine.createParticle(
-						AbsrobedBloodCellParticleFactory.createData(targetColor),
+						AbsorbedBloodCellParticleFactory.createData(targetColor),
 						origin.x, origin.y, origin.z,
 						(float) finalPos.x + rand.nextFloat() - 0.5D,
 						(float) finalPos.y - rand.nextFloat(),
@@ -137,7 +137,7 @@ public final class CellHandParticleEffects {
 			if (trace.getType() == HitResult.Type.BLOCK) {
 				Vec3 projectionTarget = trace.getLocation().add(0.0, 1.05D, 0.0);
 				Vec3 finalPos = projectionTarget.subtract(origin.x, origin.y, origin.z).reverse();
-				mc.particleEngine.createParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+				mc.particleEngine.createParticle(AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
 						projectionTarget.x, projectionTarget.y, projectionTarget.z,
 						(float) finalPos.x + rand.nextFloat() - 0.5D,
 						(float) finalPos.y - rand.nextFloat(),

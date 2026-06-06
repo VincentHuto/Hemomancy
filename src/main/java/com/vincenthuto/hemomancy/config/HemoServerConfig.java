@@ -56,7 +56,7 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue BLOODLINE_HEAL_INTERVAL;
 	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_HEALTH_THRESHOLD;
 	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_RANGE;
-	public static ModConfigSpec.IntValue SANCTUM_MAX_STAKE_BUDGET;
+	public static ModConfigSpec.IntValue FANE_MAX_STAKE_BUDGET;
 
 	// ===== Morphling =====
 	public static ModConfigSpec.BooleanValue MORPHLING_PASSIVE_DRAIN_ENABLED;
@@ -250,9 +250,9 @@ public class HemoServerConfig {
 				.comment("Maximum distance (in blocks) between bloodline members for healing to work.")
 				.defineInRange("bloodlineHealRange", 32.0, 1.0, 256.0);
 
-		SANCTUM_MAX_STAKE_BUDGET = builder
-				.comment("Maximum Hematic Stake anchors a single Founding Sanctum may use.")
-				.defineInRange("sanctumMaxStakeBudget", 12, 3, 64);
+		FANE_MAX_STAKE_BUDGET = builder
+				.comment("Maximum Hematic Stake anchors a single Founding Fane may use.")
+				.defineInRange("faneMaxStakeBudget", 12, 3, 64);
 
 		builder.pop();
 

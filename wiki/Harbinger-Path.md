@@ -18,7 +18,7 @@ The Harbinger Path is the way of the **Hematic Order** — a secret society that
 - Bloodline creation and follower recruitment
 - Drudge creation, morphling incubation, puppeteering
 - Cardinal rites for advancement and utility
-- Founding Sanctums with powerful buffs
+- Founding Fanes with powerful buffs
 - Rich NPC interactions and lore discoveries
 
 ---
@@ -164,13 +164,13 @@ The Hematic Order is structured around **seven degrees of initiation**, each rep
 - Consecration of a home territory
 
 **What You Gain:**
-- Ability to establish a **Founding Sanctum**
+- Ability to establish a **Founding Fane**
 - Enhanced bloodline management
 - Can perform Sanguine Initiation for others
 - Access to recruitment and leadership mechanics
 - Apostle authority over local Harbingers
 
-**Special Feature: Founding Sanctum**
+**Special Feature: Founding Fane**
 - Place a **Founding Heart** to establish your territory
 - Extend boundaries with **Founding Stakes**
 - All Harbingers within gain powerful buffs:
@@ -178,8 +178,8 @@ The Hematic Order is structured around **seven degrees of initiation**, each rep
   - Reduced manipulation costs
   - Enhanced tendency alignment
   - Damage resistance
-- Only one Sanctum per Apostle or higher
-- Can invite others to benefit from your Sanctum
+- Only one Fane per Apostle or higher
+- Can invite others to benefit from your Fane
 
 **What Changes:**
 - You are now a leader, not just a practitioner
@@ -198,7 +198,7 @@ The Hematic Order is structured around **seven degrees of initiation**, each rep
 **Requirements:**
 - Degree 5 (Apostle)
 - Large established bloodline (multiple members)
-- Successful Founding Sanctum
+- Successful Founding Fane
 - Proven leadership and wisdom
 - Extremely rare components
 
@@ -325,13 +325,13 @@ At Degree 5 (Apostle) and higher, you can create and manage a **bloodline** — 
   - Offer services based on their calling
 
 ### NPC Callings
-- **Warblood** — Combat specialist, guards your Sanctum
+- **Warblood** — Combat specialist, guards your Fane
 - **Fleshwright** — Crafter and ritualist, assists with rites
 - **Cordwainer** — Merchant and supplier, trades rare components
 - **Bloodletter** — Healer and physician, manages blood health
 
 ### Bloodline Benefits
-- Shared Sanctum buffs
+- Shared Fane buffs
 - Group ritual bonuses
 - Social standing within the Order
 - Practical aid in survival and progression
@@ -622,7 +622,7 @@ As you ascend, you'll hear **Fungal Whispers** — messages from the Erythrocyti
 
 1. **Specialize Early** — Focus on 2-3 tendencies for faster progression
 
-2. **Build Your Sanctum** — Once you hit Apostle, establish your Founding Sanctum immediately. The buffs are essential.
+2. **Build Your Fane** — Once you hit Apostle, establish your Founding Fane immediately. The buffs are essential.
 
 3. **Recruit Wisely** — You have limited NPC recruitment slots. Choose callings that match your playstyle.
 

@@ -212,20 +212,20 @@ public final class HarbingerVicarDialogueTrees {
 				.build();
 	}
 
-	/** Degree 3 — Initiate. The vicar reveals the history of the Scarlet Sanctum and directs the player toward the Saints. */
+	/** Degree 3 — Initiate. The vicar reveals the history of the Incarnadine Fane and directs the player toward the Saints. */
 	public static DialogueTree initiate(int entityId) {
 		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.initiate.line1"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_sanctum", "sanctum_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_fane", "fane_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("sanctum_lore", List.of(
-						"hemomancy.vicar.initiate.sanctum_lore"
+				.addNode(new DialogueNode("fane_lore", List.of(
+						"hemomancy.vicar.initiate.fane_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
@@ -283,14 +283,14 @@ public final class HarbingerVicarDialogueTrees {
 	/**
 	 * Degree 5 — Illuminatus. The vicar reveals the legend of the Crimson Lodge,
 	 * shares vague rumors of an ancient rite harbingers of old used to ascend further
-	 * (handing the player a parchment fragment), explains the Founding Sanctum and
+	 * (handing the player a parchment fragment), explains the Founding Fane and
 	 * Quintessence, and offers the degree-advancement hint toward Sanctified.
 	 */
 	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
@@ -303,12 +303,12 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("lodge_lore", List.of(
 						"hemomancy.vicar.illuminatus.lodge_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_sanctum", "founding_sanctum_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("founding_sanctum_lore", List.of(
-						"hemomancy.vicar.illuminatus.founding_sanctum_lore"
+				.addNode(new DialogueNode("founding_fane_lore", List.of(
+						"hemomancy.vicar.illuminatus.founding_fane_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))

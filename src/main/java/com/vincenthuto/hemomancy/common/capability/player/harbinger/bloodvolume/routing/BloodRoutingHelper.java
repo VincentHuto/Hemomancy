@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -111,16 +111,16 @@ public final class BloodRoutingHelper {
         if (link.mode() == BloodRoutingMode.NEARBY) {
             return owner.level() == level && distanceSqr(owner, sourcePos) <= NEARBY_RANGE * NEARBY_RANGE;
         }
-        return degree >= 5 && isInOwnerSanctum(level, link.owner(), sourcePos);
+        return degree >= 5 && isInOwnerFane(level, link.owner(), sourcePos);
     }
 
-    public static boolean canUseSanctumMode(ServerLevel level, ServerPlayer owner, BlockPos sourcePos) {
+    public static boolean canUseFaneMode(ServerLevel level, ServerPlayer owner, BlockPos sourcePos) {
         return HemoCapabilityAccess.getPlayerDegreeNumber(owner) >= 5
-                && isInOwnerSanctum(level, owner.getUUID(), sourcePos);
+                && isInOwnerFane(level, owner.getUUID(), sourcePos);
     }
 
-    public static boolean isInOwnerSanctum(ServerLevel level, UUID ownerId, BlockPos pos) {
-        return FoundingSanctumSavedData.get(level).isWithinSanctum(ownerId, pos);
+    public static boolean isInOwnerFane(ServerLevel level, UUID ownerId, BlockPos pos) {
+        return FoundingFaneSavedData.get(level).isWithinFane(ownerId, pos);
     }
 
     private static double drawFromLinkedSources(ServerLevel level, BlockPos sourcePos, DirectBloodLinkData link,
@@ -154,7 +154,7 @@ public final class BloodRoutingHelper {
             double playerFloor = BloodRoutingRules.calculateSafetyFloor(ownerVolume);
             double safeAvailable = BloodRoutingRules.availableAboveFloor(ownerVolume, playerFloor);
             double playerDraw = Math.min(remaining, DEFAULT_PLAYER_RATE_PER_TICK * ROUTE_INTERVAL_TICKS
-                    * BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getSanctumSutureLevel(owner)));
+                    * BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getFaneSutureLevel(owner)));
             playerDraw = Math.min(playerDraw, safeAvailable);
             playerDraw = drawFromVolume(ownerVolume, playerDraw, playerDraw);
             remaining -= playerDraw;
@@ -188,7 +188,7 @@ public final class BloodRoutingHelper {
         if (owner == null) {
             return link.workingReserve();
         }
-        return Math.max(link.workingReserve(), BloodRoutingRules.workingReserve(SkillPointHelper.getSanctumSutureLevel(owner)));
+        return Math.max(link.workingReserve(), BloodRoutingRules.workingReserve(SkillPointHelper.getFaneSutureLevel(owner)));
     }
 
     private static double routingRateMultiplier(ServerLevel level, DirectBloodLinkData link) {
@@ -196,7 +196,7 @@ public final class BloodRoutingHelper {
         if (owner == null) {
             return 1.0;
         }
-        return BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getSanctumSutureLevel(owner));
+        return BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getFaneSutureLevel(owner));
     }
 
     @Nullable
@@ -210,8 +210,8 @@ public final class BloodRoutingHelper {
     private static boolean canUseBloodline(ServerLevel level, ServerPlayer owner, IBloodVolume ownerVolume,
             DirectBloodLinkData link, BlockPos sourcePos) {
         if (!link.bloodlineEnabled()
-                || link.mode() != BloodRoutingMode.SANCTUM
-                || !isInOwnerSanctum(level, link.owner(), sourcePos)) {
+                || link.mode() != BloodRoutingMode.FANE
+                || !isInOwnerFane(level, link.owner(), sourcePos)) {
             return false;
         }
         Bloodline line = ownerVolume.getBloodLine();

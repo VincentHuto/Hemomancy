@@ -112,7 +112,7 @@ Check `HEMOMANCY_REFERENCE.md` §38 for the full list, but the big ones:
 - **Saints system** — only Hemorath and the Chain Saint are designed; Saints 3 & 4 TBD; trial chamber gen WIP.
 - **Annetta Knowles (Stained Priestess)** — two-route Broken Church encounter is wired with dedicated Java models/textures; final animation, projectile rendering, and combat polish remain WIP.
 - **Blood Moons** — frequency and ritual trigger designed; full gameplay effects partially wired.
-- **Founding Sanctum** — Degree-5 area-consecration system; buffs work, boundary detection still being tuned.
+- **Founding Fane** — Degree-5 area-consecration system; buffs work, boundary detection still being tuned.
 - **Visceral Organs** — extraction ritual and per-organ gameplay effects are implemented; check the reference before changing tuning.
 - **Liber Sanguinum guidebook** — opens but renders no content (`HemoProgressionScreen.setupEntries()` is commented out).
 - **Blood as a placeable fluid** (`FluidInit`) — commented out.

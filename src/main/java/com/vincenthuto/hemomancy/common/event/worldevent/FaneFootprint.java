@@ -5,13 +5,13 @@ import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
 import java.util.List;
 
-public record SanctumFootprint(BlockPos heart, List<BlockPos> stakes, BlockPos legacyCenter) {
+public record FaneFootprint(BlockPos heart, List<BlockPos> stakes, BlockPos legacyCenter) {
 	public static final double HEART_RADIUS = 40.0D;
 	public static final double STAKE_RADIUS = 32.0D;
 	public static final int BASE_STAKE_BUDGET = 3;
 	public static final int MAX_STAKE_BUDGET = 12;
 
-	public SanctumFootprint {
+	public FaneFootprint {
 		stakes = List.copyOf(stakes);
 	}
 
@@ -56,26 +56,26 @@ public record SanctumFootprint(BlockPos heart, List<BlockPos> stakes, BlockPos l
 		return false;
 	}
 
-	public SanctumFootprint withHeart(BlockPos newHeart) {
-		return new SanctumFootprint(newHeart, stakes, legacyCenter);
+	public FaneFootprint withHeart(BlockPos newHeart) {
+		return new FaneFootprint(newHeart, stakes, legacyCenter);
 	}
 
-	public SanctumFootprint withoutHeart() {
-		return new SanctumFootprint(null, List.of(), legacyCenter);
+	public FaneFootprint withoutHeart() {
+		return new FaneFootprint(null, List.of(), legacyCenter);
 	}
 
-	public SanctumFootprint withStake(BlockPos pos) {
+	public FaneFootprint withStake(BlockPos pos) {
 		List<BlockPos> next = new ArrayList<>(stakes);
 		if (!next.contains(pos)) {
 			next.add(pos);
 		}
-		return new SanctumFootprint(heart, next, legacyCenter);
+		return new FaneFootprint(heart, next, legacyCenter);
 	}
 
-	public SanctumFootprint withoutStake(BlockPos pos) {
+	public FaneFootprint withoutStake(BlockPos pos) {
 		List<BlockPos> next = new ArrayList<>(stakes);
 		next.remove(pos);
-		return new SanctumFootprint(heart, next, legacyCenter);
+		return new FaneFootprint(heart, next, legacyCenter);
 	}
 
 	public boolean containsStake(BlockPos pos) {

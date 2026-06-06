@@ -11,10 +11,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.vincenthuto.hemomancy.client.data.SanctumBoundaryClientData;
+import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.common.event.worldevent.SanctumBoundaryRelation;
-import com.vincenthuto.hemomancy.common.event.worldevent.SanctumBoundaryVisibilityRules;
+import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
+import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryVisibilityRules;
 import com.vincenthuto.hemomancy.common.init.ShaderInit;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ import org.lwjgl.opengl.GL30;
 
 import java.util.List;
 
-public final class SanctumBoundaryRenderer {
+public final class FaneBoundaryRenderer {
 	private static final int DOME_SEGMENTS = 80;
 	private static final int DOME_RINGS = 64;
 	private static final double SPHERE_LATITUDE_END = Math.PI;
@@ -53,18 +53,18 @@ public final class SanctumBoundaryRenderer {
 
 	private static TextureTarget frameCopyTarget;
 	private static float insideAlpha;
-	private static SanctumBoundaryRelation insideRelation = SanctumBoundaryRelation.MEMBER;
+	private static FaneBoundaryRelation insideRelation = FaneBoundaryRelation.MEMBER;
 
-	private SanctumBoundaryRenderer() {
+	private FaneBoundaryRenderer() {
 	}
 
 	public static void renderWorldMask(PoseStack poseStack, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		if (!sanctumBoundaryRendererEnabled() || mc.level == null || mc.player == null) {
+		if (!faneBoundaryRendererEnabled() || mc.level == null || mc.player == null) {
 			return;
 		}
 
-		List<SanctumBoundaryClientData.Entry> entries = SanctumBoundaryClientData.entries();
+		List<FaneBoundaryClientData.Entry> entries = FaneBoundaryClientData.entries();
 		if (entries.isEmpty()) {
 			return;
 		}
@@ -74,8 +74,8 @@ public final class SanctumBoundaryRenderer {
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 
 		renderHostileWorldDomes(poseStack, entries, buffer, time, cam);
-		for (SanctumBoundaryClientData.Entry entry : entries) {
-			if (entry.relation() == SanctumBoundaryRelation.MEMBER) {
+		for (FaneBoundaryClientData.Entry entry : entries) {
+			if (entry.relation() == FaneBoundaryRelation.MEMBER) {
 				drawMemberShimmer(poseStack, cam, entry, time);
 			}
 		}
@@ -86,15 +86,15 @@ public final class SanctumBoundaryRenderer {
 
 	public static void renderPost(GuiGraphics graphics, int screenWidth, int screenHeight, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		if (!sanctumBoundaryRendererEnabled() || mc.level == null || mc.player == null || screenWidth <= 0
+		if (!faneBoundaryRendererEnabled() || mc.level == null || mc.player == null || screenWidth <= 0
 				|| screenHeight <= 0) {
 			insideAlpha = 0.0F;
 			return;
 		}
 
-		SanctumBoundaryRelation targetRelation = strongestContainingRelation(mc.player);
-		float targetAlpha = targetRelation == SanctumBoundaryRelation.MEMBER
-				|| targetRelation == SanctumBoundaryRelation.MUNDANE_OUTSIDER ? 0.0F : 1.0F;
+		FaneBoundaryRelation targetRelation = strongestContainingRelation(mc.player);
+		float targetAlpha = targetRelation == FaneBoundaryRelation.MEMBER
+				|| targetRelation == FaneBoundaryRelation.MUNDANE_OUTSIDER ? 0.0F : 1.0F;
 		insideRelation = targetRelation;
 		insideAlpha = approach(insideAlpha, targetAlpha, FADE_STEP);
 
@@ -108,26 +108,26 @@ public final class SanctumBoundaryRenderer {
 
 		float time = mc.level.getGameTime() + partialTick;
 		if (insideAlpha > 0.001F) {
-			if (insideRelation == SanctumBoundaryRelation.OUTSIDER) {
+			if (insideRelation == FaneBoundaryRelation.OUTSIDER) {
 				renderFullWorldGrade(graphics, screenWidth, screenHeight, time, 0.88F * insideAlpha);
-			} else if (insideRelation == SanctumBoundaryRelation.RIVAL_ELDER) {
+			} else if (insideRelation == FaneBoundaryRelation.RIVAL_ELDER) {
 				renderScreenFog(graphics, screenWidth, screenHeight, time, 0.42F * insideAlpha);
 			}
 		}
 	}
 
-	private static SanctumBoundaryRelation strongestContainingRelation(Player player) {
-		SanctumBoundaryRelation strongest = SanctumBoundaryRelation.MEMBER;
-		for (SanctumBoundaryClientData.Entry entry : SanctumBoundaryClientData.entries()) {
+	private static FaneBoundaryRelation strongestContainingRelation(Player player) {
+		FaneBoundaryRelation strongest = FaneBoundaryRelation.MEMBER;
+		for (FaneBoundaryClientData.Entry entry : FaneBoundaryClientData.entries()) {
 			if (contains(player.position(), entry.heart(), HEART_RADIUS) || containsAnyStake(player.position(), entry)) {
-				strongest = SanctumBoundaryVisibilityRules.strongerInsideEffect(strongest, entry.relation());
+				strongest = FaneBoundaryVisibilityRules.strongerInsideEffect(strongest, entry.relation());
 			}
 		}
 		return strongest;
 	}
 
-	private static boolean sanctumBoundaryRendererEnabled() {
-		return HemoClientConfig.RENDER_SANCTUM_BOUNDARY == null || HemoClientConfig.RENDER_SANCTUM_BOUNDARY.get();
+	private static boolean faneBoundaryRendererEnabled() {
+		return HemoClientConfig.RENDER_FANE_BOUNDARY == null || HemoClientConfig.RENDER_FANE_BOUNDARY.get();
 	}
 
 	private static boolean contains(Vec3 pos, BlockPos center, float radius) {
@@ -174,13 +174,13 @@ public final class SanctumBoundaryRenderer {
 		RenderSystem.disableBlend();
 	}
 
-	private static void renderHostileWorldDomes(PoseStack poseStack, List<SanctumBoundaryClientData.Entry> entries,
+	private static void renderHostileWorldDomes(PoseStack poseStack, List<FaneBoundaryClientData.Entry> entries,
 			MultiBufferSource.BufferSource buffer, float time, Vec3 cam) {
-		for (SanctumBoundaryClientData.Entry entry : entries) {
-			if (entry.relation() == SanctumBoundaryRelation.MEMBER) {
+		for (FaneBoundaryClientData.Entry entry : entries) {
+			if (entry.relation() == FaneBoundaryRelation.MEMBER) {
 				continue;
 			}
-			float seed = sanctumSeed(entry);
+			float seed = faneSeed(entry);
 			ShellStyle style = ShellStyle.forRelation(entry.relation(), time + seed);
 			drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed, style, false);
 			if (style.glowAlphaScale() > 0.0F) {
@@ -259,7 +259,7 @@ public final class SanctumBoundaryRenderer {
 		}
 	}
 
-	private static void drawMemberShimmer(PoseStack poseStack, Vec3 cam, SanctumBoundaryClientData.Entry entry,
+	private static void drawMemberShimmer(PoseStack poseStack, Vec3 cam, FaneBoundaryClientData.Entry entry,
 			float time) {
 		float alpha = MEMBER_SHIMMER_ALPHA * (0.70F + 0.30F * (float) Math.sin(time * 0.07F));
 		RenderSystem.enableBlend();
@@ -322,13 +322,13 @@ public final class SanctumBoundaryRenderer {
 		return 0.58F + 0.42F * (float) ((Math.sin(time * 0.045F) + 1.0D) * 0.5D);
 	}
 
-	private static float sanctumSeed(SanctumBoundaryClientData.Entry entry) {
+	private static float faneSeed(FaneBoundaryClientData.Entry entry) {
 		BlockPos center = entry.heart();
 		return (float) (center.getX() * 0.13D + center.getY() * 0.07D + center.getZ() * 0.17D
 				+ entry.radius() * 0.31D);
 	}
 
-	private static boolean containsAnyStake(Vec3 pos, SanctumBoundaryClientData.Entry entry) {
+	private static boolean containsAnyStake(Vec3 pos, FaneBoundaryClientData.Entry entry) {
 		for (BlockPos stake : entry.stakes()) {
 			if (contains(pos, stake, entry.radius())) {
 				return true;
@@ -356,13 +356,13 @@ public final class SanctumBoundaryRenderer {
 
 	private record ShellStyle(float alpha, float red, float green, float blue, float shellAlphaScale,
 			float glowRed, float glowGreen, float glowBlue, float glowAlphaScale) {
-		private static ShellStyle forRelation(SanctumBoundaryRelation relation, float pulseTime) {
-			if (relation == SanctumBoundaryRelation.MUNDANE_OUTSIDER) {
+		private static ShellStyle forRelation(FaneBoundaryRelation relation, float pulseTime) {
+			if (relation == FaneBoundaryRelation.MUNDANE_OUTSIDER) {
 				return new ShellStyle(MUNDANE_OUTSIDER_DOME_ALPHA, MUNDANE_OUTSIDER_SHELL_RED,
 						MUNDANE_OUTSIDER_SHELL_GREEN, MUNDANE_OUTSIDER_SHELL_BLUE,
 						MUNDANE_OUTSIDER_SHELL_ALPHA_SCALE, 0.55F, 0.04F, 0.03F, 0.0F);
 			}
-			float alpha = relation == SanctumBoundaryRelation.RIVAL_ELDER
+			float alpha = relation == FaneBoundaryRelation.RIVAL_ELDER
 					? RIVAL_DOME_ALPHA * rivalPulse(pulseTime)
 					: HOSTILE_DOME_ALPHA;
 			return new ShellStyle(alpha, 0.04F, 0.0F, 0.0F, HOSTILE_SHELL_ALPHA_SCALE,

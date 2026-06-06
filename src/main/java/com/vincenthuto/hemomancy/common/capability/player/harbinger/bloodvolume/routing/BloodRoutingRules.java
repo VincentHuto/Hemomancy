@@ -19,12 +19,12 @@ public final class BloodRoutingRules {
         return Math.min(maxRequest, missingReserve);
     }
 
-    public static double workingReserve(int sanctumSutureLevel) {
-        return DEFAULT_WORKING_RESERVE + Math.max(0, sanctumSutureLevel) * 80.0;
+    public static double workingReserve(int faneSutureLevel) {
+        return DEFAULT_WORKING_RESERVE + Math.max(0, faneSutureLevel) * 80.0;
     }
 
-    public static double routingRateMultiplier(int sanctumSutureLevel) {
-        return 1.0 + Math.max(0, sanctumSutureLevel) * 0.12;
+    public static double routingRateMultiplier(int faneSutureLevel) {
+        return 1.0 + Math.max(0, faneSutureLevel) * 0.12;
     }
 
     public static double bloodlineEfficiencyMultiplier(int bloodlineConcordLevel) {

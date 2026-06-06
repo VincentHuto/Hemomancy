@@ -32,8 +32,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumEvents;
-import com.vincenthuto.hemomancy.common.event.worldevent.SanctumBoundaryRelation;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
+import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
@@ -325,19 +325,19 @@ public class HemoCommand {
 								.executes(ctx -> cancelBloodMoon(ctx.getSource()))))
 
 				// ── Manipulation Slots ──
-				.then(Commands.literal("sanctum")
+				.then(Commands.literal("fane")
 						.then(Commands.literal("preview")
 								.then(Commands.literal("member")
-										.executes(ctx -> setSanctumPreview(ctx.getSource(), SanctumBoundaryRelation.MEMBER)))
+										.executes(ctx -> setFanePreview(ctx.getSource(), FaneBoundaryRelation.MEMBER)))
 								.then(Commands.literal("mundane")
-										.executes(ctx -> setSanctumPreview(ctx.getSource(),
-												SanctumBoundaryRelation.MUNDANE_OUTSIDER)))
+										.executes(ctx -> setFanePreview(ctx.getSource(),
+												FaneBoundaryRelation.MUNDANE_OUTSIDER)))
 								.then(Commands.literal("outsider")
-										.executes(ctx -> setSanctumPreview(ctx.getSource(), SanctumBoundaryRelation.OUTSIDER)))
+										.executes(ctx -> setFanePreview(ctx.getSource(), FaneBoundaryRelation.OUTSIDER)))
 								.then(Commands.literal("rival")
-										.executes(ctx -> setSanctumPreview(ctx.getSource(), SanctumBoundaryRelation.RIVAL_ELDER)))
+										.executes(ctx -> setFanePreview(ctx.getSource(), FaneBoundaryRelation.RIVAL_ELDER)))
 								.then(Commands.literal("clear")
-										.executes(ctx -> clearSanctumPreview(ctx.getSource())))))
+										.executes(ctx -> clearFanePreview(ctx.getSource())))))
 
 				.then(Commands.literal("slots")
 						.then(Commands.literal("get")
@@ -443,7 +443,7 @@ public class HemoCommand {
 		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 		Bloodline globalLine = savedData.getBloodline(localLine.getBloodlineUUID());
 		if (globalLine == null) {
-			BloodlineDisbandHelper.removeOwnedSanctums(source.getServer(), localLine);
+			BloodlineDisbandHelper.removeOwnedFanes(source.getServer(), localLine);
 			volume.setBloodLine(Bloodline.NOBLOODLINE);
 			BloodVolumeEvents.syncVolume(player, volume);
 			BloodlineDisbandHelper.burnBloodlineLedgers(player, localLine);
@@ -454,7 +454,7 @@ public class HemoCommand {
 
 		int playerCount = globalLine.getPlayerUUIDS().size();
 		int npcCount = globalLine.getNpcMemberCount();
-		BloodlineDisbandHelper.removeOwnedSanctums(source.getServer(), globalLine);
+		BloodlineDisbandHelper.removeOwnedFanes(source.getServer(), globalLine);
 		savedData.disbandBloodline(globalLine.getBloodlineUUID());
 		int onlineReset = BloodlineDisbandHelper.resetOnlineMembers(source.getServer(), globalLine,
 				member -> Component.literal("Your bloodline has been disbanded.")
@@ -1132,11 +1132,11 @@ public class HemoCommand {
 		return 1;
 	}
 
-	private static int setSanctumPreview(CommandSourceStack source, SanctumBoundaryRelation relation)
+	private static int setFanePreview(CommandSourceStack source, FaneBoundaryRelation relation)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
-		FoundingSanctumEvents.setPreviewRelation(player, relation);
-		source.sendSuccess(() -> Component.literal("Sanctum boundary preview set to ")
+		FoundingFaneEvents.setPreviewRelation(player, relation);
+		source.sendSuccess(() -> Component.literal("Fane boundary preview set to ")
 				.append(Component.literal(relation.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
 				.append(Component.literal(". Wait up to two seconds for the next boundary sync.")
 						.withStyle(ChatFormatting.GRAY)),
@@ -1144,11 +1144,11 @@ public class HemoCommand {
 		return 1;
 	}
 
-	private static int clearSanctumPreview(CommandSourceStack source)
+	private static int clearFanePreview(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
-		FoundingSanctumEvents.clearPreviewRelation(player);
-		source.sendSuccess(() -> Component.literal("Sanctum boundary preview cleared.").withStyle(ChatFormatting.GRAY),
+		FoundingFaneEvents.clearPreviewRelation(player);
+		source.sendSuccess(() -> Component.literal("Fane boundary preview cleared.").withStyle(ChatFormatting.GRAY),
 				false);
 		return 1;
 	}

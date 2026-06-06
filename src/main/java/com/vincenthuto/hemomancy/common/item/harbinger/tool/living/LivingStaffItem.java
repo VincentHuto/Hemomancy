@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
@@ -150,7 +150,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 									}
 
 									worldIn.addParticle(
-											AbsrobedBloodCellParticleFactory.createData(ParticleColor.genRandomColor()),
+											AbsorbedBloodCellParticleFactory.createData(ParticleColor.genRandomColor()),
 											vec.x(), vec.y() + 2D, vec.z(), i + rand.nextFloat() - 0.5D,
 											k - rand.nextFloat() - 1.0F, j + rand.nextFloat() - 0.5D);
 

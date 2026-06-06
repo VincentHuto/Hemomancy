@@ -5,10 +5,10 @@
       "id": "hemomancy:sanguine_formation"
     },
     "title": {
-      "translate": "advancements.hemomancy.founding_sanctum_established.title"
+      "translate": "advancements.hemomancy.founding_fane_established.title"
     },
     "description": {
-      "translate": "advancements.hemomancy.founding_sanctum_established.description"
+      "translate": "advancements.hemomancy.founding_fane_established.description"
     },
     "frame": "goal",
     "show_toast": true,

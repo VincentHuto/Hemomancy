@@ -570,11 +570,11 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
 			() -> new ConsecratedBloodwellBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-							.strength(3.0F, 8.0F).sound(SoundType.METAL).lightLevel(s -> 3)));
+							.strength(3.0F, 8.0F).sound(SoundType.METAL).noOcclusion().lightLevel(s -> 3)));
 
 	public static final DeferredHolder<Block, Block> hematic_stake = MODELEDBLOCKS.register("hematic_stake",
 			() -> new HematicStakeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
-					.requiresCorrectToolForDrops().strength(2.5F, 8.0F).sound(SoundType.METAL).noOcclusion()
+					.noCollission().instabreak().sound(SoundType.METAL).noOcclusion()
 					.lightLevel(s -> 2)));
 
 	public static final DeferredHolder<Block, Block> gourdvine_tap = MODELEDBLOCKS.register("gourdvine_tap",
@@ -757,6 +757,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.sanguine_monolith.get()) {
 			return Pair.of(block.getSecond(), new SanguineMonolithBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.hematic_stake.get()) {
+			return Pair.of(block.getSecond(), new HematicStakeBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.puppeteers_spindle.get()) {
 			return Pair.of(block.getSecond(), new PuppeteersSpindleBlockItem(b, new Item.Properties()));

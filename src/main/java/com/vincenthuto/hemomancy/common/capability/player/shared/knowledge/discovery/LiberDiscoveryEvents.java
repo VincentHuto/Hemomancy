@@ -128,7 +128,7 @@ public final class LiberDiscoveryEvents {
 		// Harbinger milestone advancements
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_BLOOD_IS_BOUND,                LiberEntryDefinitions.BLOOD_MEMORIES);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED,     LiberEntryDefinitions.BLOOD_MEMORIES);
-		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_FOUNDING_SANCTUM_ESTABLISHED,  LiberEntryDefinitions.BLOOD_MEMORIES);
+		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_FOUNDING_FANE_ESTABLISHED,  LiberEntryDefinitions.BLOOD_MEMORIES);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_VOICES_IN_THE_VEIN,            LiberEntryDefinitions.ENTITY);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED,       LiberEntryDefinitions.TRUTH);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_SANGUINE_DOMAIN,               LiberEntryDefinitions.BLOOD_MEMORIES);

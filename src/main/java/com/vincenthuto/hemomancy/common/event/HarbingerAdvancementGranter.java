@@ -42,8 +42,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/blood_is_bound");
 	public static final ResourceLocation ADV_CRIMSON_LODGE_CONSECRATED =
 			Hemomancy.rloc("hemomancy/crimson_lodge_consecrated");
-	public static final ResourceLocation ADV_FOUNDING_SANCTUM_ESTABLISHED =
-			Hemomancy.rloc("hemomancy/founding_sanctum_established");
+	public static final ResourceLocation ADV_FOUNDING_FANE_ESTABLISHED =
+			Hemomancy.rloc("hemomancy/founding_fane_established");
 
 	// ── Endgame milestones ─────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_VOICES_IN_THE_VEIN =

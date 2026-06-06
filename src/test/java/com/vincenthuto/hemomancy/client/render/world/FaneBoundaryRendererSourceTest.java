@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class SanctumBoundaryRendererSourceTest {
+public final class FaneBoundaryRendererSourceTest {
 	private static final Path RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/SanctumBoundaryRenderer.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/FaneBoundaryRenderer.java");
 	private static final Path SHADER_INIT = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
 	private static final Path CLIENT_CONFIG = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java");
 
-	private SanctumBoundaryRendererSourceTest() {
+	private FaneBoundaryRendererSourceTest() {
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -20,10 +20,10 @@ public final class SanctumBoundaryRendererSourceTest {
 		String shaderInit = Files.readString(SHADER_INIT).replace("\r\n", "\n");
 		String clientConfig = Files.readString(CLIENT_CONFIG).replace("\r\n", "\n");
 
-		assertContains("renderer respects client toggle", renderer, "sanctumBoundaryRendererEnabled()");
-		assertContains("client config defines sanctum border toggle", clientConfig, "RENDER_SANCTUM_BOUNDARY");
-		assertContains("client config defaults sanctum border toggle on", clientConfig,
-				"define(\"renderSanctumBoundary\", true)");
+		assertContains("renderer respects client toggle", renderer, "faneBoundaryRendererEnabled()");
+		assertContains("client config defines fane border toggle", clientConfig, "RENDER_FANE_BOUNDARY");
+		assertContains("client config defaults fane border toggle on", clientConfig,
+				"define(\"renderFaneBoundary\", true)");
 		assertContains("renderer copies main scene", renderer, "copyMainRenderTarget");
 		assertContains("renderer keeps inside post shader", renderer, "renderFullWorldGrade");
 		assertContains("renderer renders outsider dome in world", renderer, "renderHostileWorldDomes");
@@ -39,7 +39,7 @@ public final class SanctumBoundaryRendererSourceTest {
 		assertNotContains("renderer no longer renders projected distortion", renderer, "renderProjectedDomeDistortion");
 		assertNotContains("renderer no longer copies depth into visibility target", renderer,
 				"copyMainDepthToVisibilityTarget");
-		assertNotContains("renderer no longer applies outside post shader", renderer, "SANCTUM_BOUNDARY_DISTORTION");
+		assertNotContains("renderer no longer applies outside post shader", renderer, "FANE_BOUNDARY_DISTORTION");
 		assertContains("renderer draws member shimmer", renderer, "drawMemberShimmer");
 		assertContains("inside fullscreen check uses full sphere height", renderer, "double dy = pos.y -");
 		assertContains("inside fullscreen check uses sphere volume", renderer,
@@ -55,7 +55,7 @@ public final class SanctumBoundaryRendererSourceTest {
 		assertContains("mundane outsiders stay less drastic than clarity outsiders", renderer,
 				"MUNDANE_OUTSIDER_DOME_ALPHA = 0.52F");
 		assertContains("mundane outsiders do not receive screen omen post-pass", renderer,
-				"targetRelation == SanctumBoundaryRelation.MUNDANE_OUTSIDER");
+				"targetRelation == FaneBoundaryRelation.MUNDANE_OUTSIDER");
 		assertContains("hostile shells use flat alpha to avoid latitude banding", renderer,
 				"HOSTILE_SHELL_ALPHA_SCALE = 0.70F");
 		assertNotContains("renderer no longer uses per-ring member fade", renderer, "memberDomeFade");
@@ -65,7 +65,7 @@ public final class SanctumBoundaryRendererSourceTest {
 		assertNotContains("renderer no longer uses dome ground overrun", renderer, "HOSTILE_DOME_GROUND_OVERRUN");
 		assertContains("renderer avoids unnecessary frame copies", renderer, "requiresPostPass");
 		assertNotContains("shader init no longer registers outside post dome shader", shaderInit,
-				"SANCTUM_BOUNDARY_DISTORTION");
+				"FANE_BOUNDARY_DISTORTION");
 	}
 
 	private static void assertContains(String label, String text, String expected) {

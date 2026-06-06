@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 public enum BloodRoutingMode {
     NEARBY,
-    SANCTUM;
+    FANE;
 
     public BloodRoutingMode next() {
-        return this == NEARBY ? SANCTUM : NEARBY;
+        return this == NEARBY ? FANE : NEARBY;
     }
 }

@@ -54,7 +54,7 @@ public class ParticleInit {
 		Minecraft.getInstance().particleEngine.register(serpent.get(), SerpentParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_cell.get(), BloodCellParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_claw.get(), BloodClawParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(absorbed_blood_cell.get(), AbsrobedBloodCellParticleFactory::new);
+		Minecraft.getInstance().particleEngine.register(absorbed_blood_cell.get(), AbsorbedBloodCellParticleFactory::new);
 
 	}
 }

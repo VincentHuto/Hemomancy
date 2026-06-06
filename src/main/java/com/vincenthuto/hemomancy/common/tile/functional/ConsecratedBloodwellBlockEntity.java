@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <p>The server tick handles optional auto-draw: every
  * {@link #AUTO_DRAW_INTERVAL} ticks, any nearby {@link ServerPlayer} who is
- * standing inside their own Founding Sanctum and has
+ * standing inside their own Founding Fane and has
  * {@code autoDrawEnabled == true} receives blood from the well to top up
  * toward their configured threshold.</p>
  */
@@ -68,7 +68,7 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity implements IBlo
             te.setChanged();
         }
 
-        // Auto-draw: fill nearby sanctum-resident players from the well
+        // Auto-draw: fill nearby fane-resident players from the well
         if (level.getGameTime() % AUTO_DRAW_INTERVAL != 0) return;
 
         IBloodVolume storage = te.resolveVolume();
@@ -76,7 +76,8 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity implements IBlo
 
         for (ServerPlayer player : ((ServerLevel) level).players()) {
             if (!pos.closerThan(player.blockPosition(), 80)) continue;
-            if (!ConsecratedBloodwellBlock.isInOwnSanctum(player)) continue;
+            if (!ConsecratedBloodwellBlock.canUseBloodwell(player, pos)) continue;
+            if (!ConsecratedBloodwellBlock.isInOwnFane(player)) continue;
 
             var playerBloodOpt = HemoCapabilityAccess.getBloodVolume(player);
             if (playerBloodOpt.isEmpty() || !playerBloodOpt.get().isActive()) continue;

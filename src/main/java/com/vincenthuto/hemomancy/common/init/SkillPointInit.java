@@ -37,7 +37,7 @@ public class SkillPointInit {
 			skill_weapons_master, skill_hematic_focus, skill_vespers_refusal,
 			skill_thread_economy, skill_bound_command,
 			skill_deep_inscription, skill_fungal_symbiosis,
-			skill_sanctum_suture, skill_bloodline_concord, skill_servitor_tender,
+			skill_fane_suture, skill_bloodline_concord, skill_servitor_tender,
 			skill_ancestral_sovereignty,
 			skill_sporitic_attunement, skill_hyphal_cultivation, skill_qliphoth_gestation,
 			skill_primal_morphogenesis;

@@ -68,7 +68,7 @@ public final class DirectBloodLinkData {
     }
 
     public DirectBloodLinkData withMode(BloodRoutingMode newMode) {
-        return new DirectBloodLinkData(owner, newMode, newMode == BloodRoutingMode.SANCTUM && bloodlineEnabled, workingReserve);
+        return new DirectBloodLinkData(owner, newMode, newMode == BloodRoutingMode.FANE && bloodlineEnabled, workingReserve);
     }
 
     public DirectBloodLinkData withBloodlineEnabled(boolean enabled) {

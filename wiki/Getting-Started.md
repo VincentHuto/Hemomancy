@@ -105,7 +105,7 @@ If you wish to walk the path of the Hematic Order:
 1. Perform the **Sanguine Initiation** ritual using the **Cardinal Altar**
 2. You'll become **Pledged** (Degree 1) in the Hematic Order
 3. Progress through seven degrees, each unlocking more power
-4. Build a bloodline, recruit followers, establish sanctums
+4. Build a bloodline, recruit followers, establish fanes
 5. Eventually face a choice at Degree 7: resist or transcend
 
 **Pros:**
@@ -186,7 +186,7 @@ Choose carefully. This is not a system you can min-max by switching back and for
 - Complex but rewarding crafting system
 
 **Founding Stakes**
-- Extend your Founding Sanctum boundaries (Degree 5+)
+- Extend your Founding Fane boundaries (Degree 5+)
 - Place around your base for powerful buffs
 
 ### For Unstained

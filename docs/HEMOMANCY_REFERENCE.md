@@ -1,4 +1,4 @@
-﻿# Hemomancy - Developer Reference
+# Hemomancy - Developer Reference
 
 > **Last audited:** 2026-06-06
 > **Mod ID / package:** `hemomancy` / `com.vincenthuto.hemomancy`
@@ -11,7 +11,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Status legend:** `Implemented` means present in the current NeoForge 1.21.1 runtime path. `Partial` means a playable or compiled spine exists with explicit remaining work. `Dormant` means source/design is preserved but excluded or unregistered. `Planned` means design/lore intent without active runtime behavior.
 
-**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Flexible Founding Sanctum heart/stake footprints and boundary preview tooling, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, Mnemonic Whispers/Screams brewing effects and mob-effect icons, Harbinger outpost NPC recruitment and item-inquiry dialogue rules, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, puppeteer summon trials, morphling mutation rendering/sync, Flexible Founding Fane heart/stake footprints, bloodwell/stake permissions and cleanup, boundary preview tooling, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, Mnemonic Whispers/Screams brewing effects and mob-effect icons, Harbinger outpost NPC recruitment and item-inquiry dialogue rules, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -85,7 +85,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 1. **Find Gourd Seeds** ![Gourd Seeds](../src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) â€” obtained from breaking grass (advancement: *Strange Seeds*).
 2. **Discover a Blood Temple** â€” a naturally generating structure containing a **Mortal Display** pedestal.
 3. **Activate the Blood Temple** â€” click the Mortal Display to awaken your blood, enabling the mod's features (advancement: *The First Awakening*). This activates your `IBloodVolume` capability (`active = true`).
-4. **Obtain the Liber Sanguinum** ![Liber Sanguinum](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) â€” the mod's guide book (entity model: ![](../src/main/resources/assets/hemomancy/textures/entity/liber_sanguinum.png)), crafted using a structure recipe (bookshelf + Sanguine Formation ![Sanguine Formation](../src/main/resources/assets/hemomancy/textures/item/sanguine_formation.png)). (advancement: *Sanctum Sanguinium*).
+4. **Obtain the Liber Sanguinum** ![Liber Sanguinum](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) â€” the mod's guide book (entity model: ![](../src/main/resources/assets/hemomancy/textures/entity/liber_sanguinum.png)), crafted using a structure recipe (bookshelf + Sanguine Formation ![Sanguine Formation](../src/main/resources/assets/hemomancy/textures/item/sanguine_formation.png)). (advancement: *Fane Sanguinium*).
 5. **Craft Befouling Ash** ![Befouling Ash](../src/main/resources/assets/hemomancy/textures/item/befouling_ash_trail.png) â€” a key ingredient for blood structure recipes (advancement: *Ashen Beginnings*).
 
 From here the player can pursue the **Harbinger Path** (blood magic) or eventually diverge to the **Unstained Path** (anti-blood purification).
@@ -201,7 +201,7 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `bloodlineHealHealthThreshold` | Double | `0.5` | 0.05â€“1.0 | Health % below which healing activates |
 | `bloodlineHealRange` | Double | `32.0` | 1.0â€“256.0 | Max distance for bloodline healing |
 
-| `sanctumMaxStakeBudget` | Int | `12` | 3-64 | Maximum Hematic Stake anchors a Founding Sanctum can use after the base/member/NPC budget calculation |
+| `faneMaxStakeBudget` | Int | `12` | 3-64 | Maximum Hematic Stake anchors a Founding Fane can use after the base/member/NPC budget calculation |
 
 **Morphling** (`morphling`):
 
@@ -299,7 +299,7 @@ Notable packets:
 - `OpenDialoguePacket` / `DialogueOptionPacket` â€” Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Mnemonist, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)
 - `PlaceStructurePacket` â€” Debug structure spawner
 
-- `PacketSyncSanctumBoundaries` - Founding Sanctum boundary sync. Each entry carries the sanctum heart bloodwell position, Hematic Stake anchor list, lobe radius, owner UUID, and viewer relation (`MEMBER`, `MUNDANE_OUTSIDER`, `OUTSIDER`, `RIVAL_ELDER`) for client-side Soft Envelope rendering.
+- `PacketSyncFaneBoundaries` - Founding Fane boundary sync. Each entry carries the fane heart bloodwell position, Hematic Stake anchor list, lobe radius, owner UUID, and viewer relation (`MEMBER`, `MUNDANE_OUTSIDER`, `OUTSIDER`, `RIVAL_ELDER`) for client-side Soft Envelope rendering.
 
 Direct Blood Routing adds no dedicated payload. Link state persists in `BloodRoutingSavedData`, node visuals are server-tick/particle driven, and source drains reuse existing player volume sync (`BloodVolumeServerPacket`) after transfer.
 
@@ -319,7 +319,7 @@ The default/primary progression. The player embraces hemomancy and rises through
 - Stored in Blood Gourds for portable use; equipped gourds receive overflow blood from valid blooded kills after the player is topped off
 - Direct emergency restores (`blood_rock`, `bloody_flask`, `vitality_chalice`) apply **Blood Drunkenness** for 3 minutes, stacking to amplifier 3 and adding +15%/+30%/+45%/+60% manipulation blood cost; amplifier 3 also increases manipulation cooldowns by 25%
 - Has **trickle donation** and **auto-draw** settings for Bloodline pool interaction
-- Has a **blood routing opt-in** flag used by sanctum-only direct routing when a bloodline member allows their membership to authorize shared-pool machine links
+- Has a **blood routing opt-in** flag used by fane-only direct routing when a bloodline member allows their membership to authorize shared-pool machine links
 - Has **Blood Debt Tracking** for the Hemorath saint encounter: `addDamage(amount)`, `addBloodSpend(amount)`, `consumeDebt()`, `getBloodDebt()`, `resetBloodDebt()` â€” debt accumulates from manipulation casts and direct damage during the Hemorath fight, then is collected on fight resolution
 
 ### 5.2 Initiatory Degrees
@@ -331,7 +331,7 @@ Progression through **Cardinal Rites** â€” multiblock blood rituals. Each r
 | 0 | Uninitiated | *(starting state)* |
 | 1 | Neophyte of the Crimson Veil | `sanguine_initiation` |
 | 2 | Votary of the Hematic Covenant | `votary_rite` |
-| 3 | Initiate of the Scarlet Sanctum | `initiate_rite` |
+| 3 | Initiate of the Incarnadine Fane | `initiate_rite` |
 | 4 | Adept of the Sanguine Brotherhood | `sanguine_brotherhood` |
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
@@ -370,7 +370,7 @@ Four Harbinger NPC types provide lore and gameplay hints through the `DialogueTr
 | No blood (pre-initiation) | Offers lore about the Mortal Display, explains his duty as eternal keeper, presents the option to claim the heart and begin hemomancy |
 | Degree 0 (uninitiated) | Congratulates the player, offers guidance about the Rite of Sanguine Initiation, drops the Rite Hint item on farewell (triggering `hermit_farewell_die` â†’ kills the hermit) |
 | Degree 1 Neophyte | Acknowledges first step; hints toward Votary Rite and manipulation lore |
-| Degree 2 Votary | Guidance on blood tendencies and the Somatic Loom; hints toward Scarlet Sanctum |
+| Degree 2 Votary | Guidance on blood tendencies and the Somatic Loom; hints toward Incarnadine Fane |
 | Degree 3 Initiate | Points toward Sanguine Brotherhood rite |
 | Degree 4 Adept | **Scar lore branch** â€” explains scars as literal mind-maps of new venous/neural pathways, Cerebral Scarring Station usage; hints toward Crimson Lodge |
 | Degree 5 Illuminatus | Reveals Bloodline Covenant system; hints toward Bloodline Covenant rite |
@@ -401,9 +401,9 @@ Four Harbinger NPC types provide lore and gameplay hints through the `DialogueTr
 | Uninitiated | Who the Harbingers are; purpose of the Outpost |
 | Neophyte | The Hematic Covenant as a body of rites/wisdom; Votary degree hints |
 | Votary | Seven blood tendencies (Fungal, Umbral, Incandescent, Ferric, Vivacious, Ruinous, Neurotic) and their role |
-| Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age; **Saints lore branch** â€” directs player toward Trial Chambers and Hallowed Residuum extraction |
+| Initiate | History of the **Incarnadine Fane**, founded by Archon Erythravane in the Second Age; **Saints lore branch** â€” directs player toward Trial Chambers and Hallowed Residuum extraction |
 | Adept | History of the **Sanguine Brotherhood** â€” shared blood pools born from war necessity |
-| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently"; **Founding Sanctum branch** â€” explains Sanguine Quintessence as the founding catalyst and clarifies that sanctum consecration is a separate rite performed at a chosen site; degree hint toward Bloodline Covenant rite |
+| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently"; **Founding Fane branch** â€” explains Sanguine Quintessence as the founding catalyst and clarifies that fane consecration is a separate rite performed at a chosen site; degree hint toward Bloodline Covenant rite |
 | Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world"; degree hint toward Archon rite |
 | Archon | Hidden lore: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* |
 | Apotheos | Speechless reverence; the Covenant was "always meant to be outlived â€” it is a ladder; what you have become is what was always at the top of it" |
@@ -465,39 +465,49 @@ After completing Qliphoth Communion by eating all nine pomes from a single bloom
 
 > **Status: Partial.** Spawn placement, dimension-exclusive mob population, safe return placement, and the Archon first-exit choice fork are implemented. `FungalPodiumBlock.use()` fires `FungalWhisperDialogueTrees.coreWitnessDialogue()` on the first Degree-7 exit attempt, stamps `hemomancy:archon_choice_made`, and then delegates to `performReturnTravel()`. Remaining WIP is terrain feature population depth and broader dimension content.
 
-### 5.7 The Founding Sanctum (Degree 5)
+### 5.7 The Founding Fane (Degree 5)
 
-At **Degree 5 (Illuminatus)**, a Harbinger becomes eligible to perform the **Founding Sanctum ritual** - a distinct consecration ceremony separate from the `illuminatus_rite` rank-up. The rank-up rite admits the practitioner to the Crimson Lodge; the Founding Sanctum ritual anchors a chosen base as a bloodline-owned **Harbinger Sanctum**.
+At **Degree 5 (Illuminatus)**, a Harbinger becomes eligible to perform the **Founding Fane ritual** - a distinct consecration ceremony separate from the `illuminatus_rite` rank-up. The rank-up rite admits the practitioner to the Crimson Lodge; the Founding Fane ritual anchors a chosen base as a bloodline-owned **Harbinger Fane**.
 
-The sanctum is now modeled as a **Soft Envelope** instead of one fixed circular territory. Runtime checks go through `SanctumFootprint`, which tracks the bloodline owner, one heart bloodwell position, Hematic Stake anchor positions, and any migrated legacy center data. Old center-only sanctums load safely as heart-pending/migrated entries rather than crashing.
+The fane is now modeled as a **Soft Envelope** instead of one fixed circular territory. Runtime checks go through `FaneFootprint`, which tracks the bloodline owner, one heart bloodwell position, Hematic Stake anchor positions, and any migrated legacy center data. Old center-only fanes load safely as heart-pending/migrated entries rather than crashing.
 
 **Heart bloodwell:**
-- The sanctum heart is the existing `consecrated_bloodwell`.
-- Founding the sanctum requires performing the rite at a Consecrated Bloodwell and binds the founder's bloodline to that block position.
-- Only one Consecrated Bloodwell may exist inside an active sanctum boundary. Extra placement is blocked when the footprint already has a heart.
-- Breaking the heart bloodwell collapses the active sanctum state until the leader places and reattunes a new bloodwell.
+- The fane heart is the existing `consecrated_bloodwell`.
+- Founding the fane requires performing the rite at a Consecrated Bloodwell and binds the founder's bloodline to that block position. The rite validates up front that the caster already belongs to a valid bloodline, so unaffiliated players cannot even begin the 40-second activation.
+- Only one Consecrated Bloodwell may exist inside an active fane boundary. Extra placement is blocked when the footprint already has a heart.
+- The bloodwell is a non-occluding modeled block so its narrow pedestal shape does not cull supporting block faces underneath its empty corners.
+- Depositing, withdrawing, and auto-draw require the player to be a member of the bloodline bound to that heart. Withdrawal still additionally requires the player to be inside their own fane footprint.
+- Breaking the heart bloodwell collapses the active fane state until the leader places and reattunes a new bloodwell. The collapse also removes all saved Hematic Stake blocks associated with that bloodline.
 
 **Hematic Stake anchors:**
 - `hematic_stake` is a jagged hematic-metal spike block used as a visible anchor marker.
+- Stakes are not craftable normal construction blocks. A bloodline progenitor manifests them at will by crouch-right-clicking a valid block face with an empty hand while in/adjacent to their own fane envelope.
+- The block is passable, non-solid, light-friendly, and instant-mined; only the bloodline owner/progenitor authority may remove it.
 - Stakes extend the Soft Envelope by adding overlapping/chained footprint lobes around the heart and existing anchors; disconnected placement fails.
-- The default anchor budget is 3 stakes plus 1 per player member and recruited NPC type, capped by server config `bloodline.sanctumMaxStakeBudget` (default 12).
-- Removing a stake unregisters it from the saved footprint.
+- The default anchor budget is 3 stakes plus 1 per player member and recruited NPC type, capped by server config `bloodline.faneMaxStakeBudget` (default 12).
+- Removing a stake unregisters it from the saved footprint. Breaking the heart bloodwell, reconsecrating the fane heart, or disbanding the bloodline removes all associated stakes.
 
-**Sanctum-aware behavior:**
+**Fane-aware behavior:**
 - Bloodline ledger actions, direct blood routing, recall/summon logic, Blood Moon sealing, and Consecrated Bloodwell use now check the shared footprint rather than the old center/radius test.
-- Benefits taper by distance from the heart through `SanctumFootprint.effectStrength(...)`: strongest near the bloodwell centerpiece and weaker toward outer stake lobes.
-- Qualifying Harbingers inside the footprint receive sanctum buffs from `FoundingSanctumEvents`; Blood Moon hostile knockback/damage also uses the footprint.
-- Client visuals for sanctum boundaries and screen distortion are controlled by `world_rendering.renderSanctumBoundary`, defaulting to `true`.
+- Benefits taper by distance from the heart through `FaneFootprint.effectStrength(...)`: strongest near the bloodwell centerpiece and weaker toward outer stake lobes.
+- Qualifying Harbingers inside the footprint receive fane buffs from `FoundingFaneEvents`; Blood Moon hostile knockback/damage also uses the footprint.
+- Client visuals for fane boundaries and screen distortion are controlled by `world_rendering.renderFaneBoundary`, defaulting to `true`.
 
 **Boundary rendering and relations:**
-- `PacketSyncSanctumBoundaries` sends heart/stake envelope data to clients. The renderer draws full translucent sphere lobes for the heart and stakes, avoiding the earlier hemisphere silhouette.
+- `PacketSyncFaneBoundaries` sends heart/stake envelope data to clients. The renderer draws full translucent sphere lobes for the heart and stakes, avoiding the earlier hemisphere silhouette.
+- The full-sphere boundary pass is intentionally clearer and more visually present than the original subtle hemisphere veil. Earlier banding/segment artifacts were removed by avoiding overlapping sphere/spray strips where possible.
 - Member view is a subtle warm-red shimmer.
 - Mundane outsiders - players who are not Harbingers and have not begun the Unstained path - see a deeper red boundary than members, without the full hostile omen treatment.
 - Initiated non-member Harbingers and Unstained players who have begun purity/clarity see the stronger hostile red/black outsider treatment.
 - Degree-above-5 rival elders use the rival relation treatment.
-- Op-only preview commands allow single-player testing of each relation: `/hemo sanctum preview member|mundane|outsider|rival|clear`.
+- Op-only preview commands allow single-player testing of each relation: `/hemo fane preview member|mundane|outsider|rival|clear`.
 
-> **Status: Partial.** The heart/stake footprint model, duplicate bloodwell prevention, heart collapse behavior, stake placement validation, footprint-based gameplay checks, packet sync, relation-aware full-sphere boundary rendering, and preview commands are implemented. Remaining WIP is final balance/art polish and broader in-game tuning.
+**Bloodwell rendering:**
+- `ConsecratedBloodwellRenderer` draws a blood fountain on the heart when stored blood is present. The jet height, arc count, arc width, and particle density scale with stored blood fullness through the same pressure curve.
+- The main fountain streams are translucent ribbon geometry on `HemoRenderTypes.BLOODWELL_FOUNTAIN`; the small glow/blood flecks are real particle-engine effects using `HitGlowParticleFactory` and `BloodCellParticleFactory`, not renderer-built crossed quads.
+- The fountain renderer throttles particle spawning per bloodwell position and no longer pads stream segments into each other with overlap.
+
+> **Status: Partial.** The heart/stake footprint model, duplicate bloodwell prevention, heart collapse/reconsecration/disband stake cleanup, stake placement validation, progenitor stake manifestation, bloodline-gated bloodwell use, footprint-based gameplay checks, packet sync, relation-aware full-sphere boundary rendering, bloodwell fountain rendering, and preview commands are implemented. Remaining WIP is final balance/art polish and broader in-game tuning.
 
 ### 5.8 The Saints System (Degree 3â€“4)
 
@@ -1073,7 +1083,7 @@ A multiplayer social system where players form blood-bound groups.
 - **Shared Pool:** Each member contributes 5,000 blood to a communal pool
 - **Trickle Donation:** Optionally auto-donate blood to the shared pool at a configurable rate
 - **Auto-Draw:** Optionally auto-draw from the shared pool when personal blood falls below a threshold
-- **Direct Routing Contribution:** Sanctum-only routing can draw from the shared pool when the linked player enables bloodline mode. The current implementation requires the linked player to be the bloodline leader or to have their routing opt-in enabled before the pool is used.
+- **Direct Routing Contribution:** Fane-only routing can draw from the shared pool when the linked player enables bloodline mode. The current implementation requires the linked player to be the bloodline leader or to have their routing opt-in enabled before the pool is used.
 - **Member Expulsion:** Bloodline progenitors can expel member players through `BloodlinePoolScreen` (server-validated via `PacketKickBloodlinePlayer`)
 - **Harbinger NPC Recruitment:** Degree 5+ players with a valid bloodline can recruit outpost Harbingers through dialogue. Current recruitable NPCs are Vicar, Alchemist, and Mnemonist. Recruited NPCs are phantom bloodline members: they do not appear as online players but add 1,000 maximum shared blood each.
 - **Recruitment Limits:** A bloodline may contain only one recruited NPC of each entity type and only one recruited NPC from each Harbinger Outpost. `Bloodline` persists NPC UUIDs, entity type ids, and outpost keys; `DialogueEventHandler` enforces both limits when `recruit_harbinger` fires.
@@ -1760,19 +1770,19 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 **Hematic Suture Needle:**
 - Registry item: `hematic_suture_needle`; class: `HematicSutureNeedleItem`.
 - Degree 3+ can bind a blood-capable block entity or a `HematicSutureNodeBlockEntity` to the player in nearby mode.
-- Sneak-use on the player's own bound link cycles modes: nearby -> sanctum -> sanctum + bloodline -> nearby. Sanctum mode requires Degree 5 and the link position to be inside the owner's Founding Sanctum footprint.
+- Sneak-use on the player's own bound link cycles modes: nearby -> fane -> fane + bloodline -> nearby. Fane mode requires Degree 5 and the link position to be inside the owner's Founding Fane footprint.
 - Sneak-use in air toggles the player's `IBloodVolume#isBloodRoutingOptInEnabled()` flag for bloodline routing permission.
 
 **Source priority and limits:**
 - Nearby links require the bound player to be online, alive, active in `IBloodVolume`, Degree 3+, in the same level, and within `BloodRoutingHelper.NEARBY_RANGE` (16 blocks).
-- Sanctum links require Degree 5+ and a link position inside the owner's Founding Sanctum.
+- Fane links require Degree 5+ and a link position inside the owner's Founding Fane.
 - Routing ticks every 10 ticks with a default pass budget of 100 blood (`DEFAULT_MAX_RATE_PER_TICK` 10 x interval).
 - Source order is: open equipped Blood Gourd first (scar slot, main hand, then offhand, using that gourd's tier transfer rate), then owner blood at up to 80 blood per pass while staying above the 50% safety floor, then optional bloodline pool at up to 60 blood per pass.
-- Bloodline draw only works in sanctum mode with bloodline mode enabled. The linked player must belong to a valid bloodline, the shared pool must contain blood, and the linked player must be the bloodline leader or have their routing opt-in enabled.
+- Bloodline draw only works in fane mode with bloodline mode enabled. The linked player must belong to a valid bloodline, the shared pool must contain blood, and the linked player must be the bloodline leader or have their routing opt-in enabled.
 
 **Hematic Suture Node:**
 - Registry block: `hematic_suture_node`; block entity: `HematicSutureNodeBlockEntity`.
-- Optional visible anchor for longer or clearer sanctum infrastructure. Machines can still be bound directly for simple setups.
+- Optional visible anchor for longer or clearer fane infrastructure. Machines can still be bound directly for simple setups.
 - Holds no blood capability and no persistent reservoir; it emits subtle red dust routing particles when it moves blood.
 - Every routing interval it attempts to feed adjacent linked targets from the same saved link budget.
 
@@ -1806,7 +1816,7 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/foul_paste.png) Foul Paste | Crafting ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_rock.png) Blood Rock | Crafting ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient / covenant anchor. **Block form gated behind Degree 5 (Illuminatus).** Right-clicking a surface places the block only when `IInitiatoryDegree.getDegreeNumber() >= 5`; below that degree the item shows the locked placement message and fails placement. In-air right-click opens the Harbinger skill tree at any degree. **Right-clicking the placed block also opens the Harbinger skill tree.** The placed block has a minimal `SanguineConduitBlockEntity` whose BER (`SanguineConduitBlockRenderer`) draws a slow, dim pulsing crimson ring expanding outward â€” a quiet mark of covenant presence. Registered in `ItemInit` as `ItemSanguineConduit`, which extends `BlockItem` for `BlockInit.sanguine_conduit`; `BlockInit.shouldSkipAutoBlockItem()` skips the placed block so no duplicate generic `BlockItem` overwrites the custom item on reload. Tooltip changes at Degree 5 to reveal the planting mechanic. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Sanguine Quintessence | Rare Harbinger catalyst produced by the Exsanguination cardinal rite. Used as the placed catalyst for Founding Sanctum and as the held catalyst for puppeteer trial Blood Crafting recipes. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Sanguine Quintessence | Rare Harbinger catalyst produced by the Exsanguination cardinal rite. Used as the placed catalyst for Founding Fane and as the held catalyst for puppeteer trial Blood Crafting recipes. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/serpent_scale.png) Serpent Scale | Drops from Scarlet Serpents in desert/badlands, swamp, and jungle biome families |
 | ![](../src/main/resources/assets/hemomancy/textures/item/swollen_leech.png) Swollen / ![](../src/main/resources/assets/hemomancy/textures/item/dried_leech.png) Dried Leech | Mob drops |
 | ![](../src/main/resources/assets/hemomancy/textures/item/chitinous_husk.png) Chitinous Husk | Mob drop |
@@ -1927,7 +1937,7 @@ Living weapon memory weaving recipes keep a shared family identity without being
 | **Hematic Field Ink** | Harbinger Field Notes refill item crafted from Dicentra Sap, Hematic Iron Powder, a water bottle, and an ink sac. |
 | **Pale Field Ink** | Unstained Field Notes refill item crafted from Tears of Silthmere, Pale Distillate, a water bottle, and an ink sac. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/unsigned_ancestral_ledger.png) Unsigned Ancestral Ledger | Creates/joins bloodlines |
-| **Hematic Suture Needle** | Direct blood routing tool. Degree 3+ binds blood-capable machines or Hematic Suture Nodes to the player; sneak-use on a bound link cycles nearby/sanctum/bloodline modes, and sneak-use in air toggles the player's bloodline routing opt-in. |
+| **Hematic Suture Needle** | Direct blood routing tool. Degree 3+ binds blood-capable machines or Hematic Suture Nodes to the player; sneak-use on a bound link cycles nearby/fane/bloodline modes, and sneak-use in air toggles the player's bloodline routing opt-in. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/engram_stamp.png) Engram Stamp | Engram-related tool. Right-click on a solid surface (face-sturdy from above, empty block above) to place an engram block; right-click on an existing engram block to cycle its character. Consumes 1 durability per use. |
 | **Scratch-Engraving (no stamp)** | Emergency / early-game method. Hold a sharp shard â€” `hemomancy:vivianite_cluster`, `minecraft:flint`, `minecraft:quartz`, or `hutoslib:obsidian_flakes` â€” in the main hand and right-click any solid surface (face-sturdy from above, empty block above). Places a random-character engram block at the cost of **1 heart (2 HP)** of generic damage. Creative players receive the engram without taking damage. Handled by `ScratchEngramHandler` (`@EventBusSubscriber` on `PlayerInteractEvent.RightClickBlock`). |
 | ![](../src/main/resources/assets/hemomancy/textures/item/vivianite_scalpel.png) Vivianite Scalpel | Vivianite-based tool |
@@ -2220,8 +2230,8 @@ One-off armor pieces intentionally use distinct material holders so they break f
 | **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1Ã—1Ã—8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime â€” one per Qliphoth husk (Nahemoth â†’ Ghagiel), with owner whisper alerts on each drop. Registered and synced via `QliphothBloomSavedData`. Player breaking is canceled for the bloom and its filler shell; intended removal is the Rite of Cult Pruning. See Â§5.9.                                                                                                                                                                                                                       |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| **Consecrated Bloodwell**            | *(see block/entity class)*                 | Degree 5 bloodline reservoir and Founding Sanctum heart. The Founding Sanctum rite binds one bloodwell position to the owner's bloodline; only one bloodwell may exist inside an active sanctum footprint, and breaking the heart collapses the active sanctum until reattuned. Bloodwell use, withdrawal, and auto-draw now respect sanctum footprint membership. |
-| **Hematic Stake**                    | -                                          | Jagged hematic-metal spike block used as a Founding Sanctum anchor. Placement is accepted only when the stake connects to the existing Soft Envelope by overlap/chaining and the bloodline is under its stake budget; breaking the stake removes it from the saved footprint. |
+| **Consecrated Bloodwell**            | *(see block/entity class)*                 | Degree 5 bloodline reservoir and Founding Fane heart. The Founding Fane rite binds one bloodwell position to the owner's bloodline; only one bloodwell may exist inside an active fane footprint, and breaking the heart collapses the active fane until reattuned while removing all associated stakes. Bloodwell deposit/withdrawal/auto-draw require membership in the bound bloodline, and withdrawal still requires standing inside the owner's footprint. Rendered as a fullness-scaled blood fountain with real blood/glow particles; block properties use `noOcclusion()` so supporting blocks remain visible under its non-full model. |
+| **Hematic Stake**                    | -                                          | Jagged hematic-metal spike block used as a Founding Fane anchor. It is manifested by the bloodline progenitor with crouch + empty-hand right-click rather than crafted. Placement is accepted only when the stake connects to the existing Soft Envelope by overlap/chaining and the bloodline is under its stake budget. Stakes are passable, non-solid, light-friendly, instant-mined by the owner/progenitor, and removed automatically when the heart breaks, the fane is reconsecrated, or the bloodline is disbanded. |
 | **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Central interaction block for the Unstained path. Four recognized interaction modes (server-side only, degree-gated at > Illuminatus): **Hemolytic Solution** â€” first use begins purification (`begunPurification = true`, +5 purity, resets Harbinger degree); subsequent uses add +10 purity per flask while unpurified. **Consecrated Copper Ingot** â€” requires `isPurified() == true` and `!hasClarityUnlocked()`; performs the Rite of Clarity: sets `clarityUnlocked = true`, disables blood magic permanently (`IBloodVolume.active = false`), grants first Still Art (Silver Rebuke), runs `enforceHarbingerResetOnClarity()`, and syncs both capabilities. **Hemolytic Plating** â€” requires `hasClarityUnlocked()`; adds +15 clarity per plating while not yet enlightened. **Empty hand** â€” prints current purity stage + percent; if clarity is unlocked, also prints clarity stage + percent. Scrying Dish item converts the podium into a Scrying Podium. |
 | **Altar of Cleansing**               | `AltarOfCleansingBlockEntity`              | Sacred altar of Our Lady of Still Waters â€” grants one-time purity boost with Tears of Silthmere; accepts Lethean Poppy Wreaths and Silver Chalices for repeatable offerings                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Semi-Sentient Construct**          | `SemiSentientConstructBlockEntity`         | Blood construct-related block and Drudge home anchor; nearby Drudges can tend linked direct-routing machines around their SSC without creating blood                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -2440,7 +2450,7 @@ The Liber Sanguinum crafting sidebar and the debug Structure Spawner group Harbi
 | Vial Centrifuge / Mnemonic Reliquary | 2 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Votary machinery |
 | Somatic Loom / Mind Spike / Semi-Sentient Construct | 3 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Initiate machinery |
 | Runic Chisel Station / Visceral Mirror / Sporitic Thurible | 4 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Adept machinery and Harbinger support tools |
-| Dendritic Distributor / Consecrated Bloodwell / Hematic Stake / Morphling Incubator / Mycelial Lantern | 5 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Crimson Lodge machinery, including passive enzyme fruiting and Founding Sanctum heart/anchor tools |
+| Dendritic Distributor / Consecrated Bloodwell / Hematic Stake / Morphling Incubator / Mycelial Lantern | 5 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Crimson Lodge machinery, including passive enzyme fruiting and Founding Fane heart/anchor tools |
 | Covenant Throne / Vascular Effigy | 6 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Bloodline Covenant machinery |
 | Sanguine Monolith | 7 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Archon machinery |
 
@@ -2488,16 +2498,16 @@ Cardinal rite patterns now follow a function-first visual pass: Harbinger rites 
 |------|-----------|-----------|-----------------|----------|-------------|
 | Sanguine Initiation | 100 | Minor | 0 | 0 -> 1 | Basic initiation awakening hematic potential |
 | Rite of the Votary | 250 | Lesser | 1 | 1 -> 2 | Binds the practitioner deeper into the Covenant |
-| Rite of the Scarlet Sanctum | 500 | Lesser | 2 | 2 -> 3 | Grants formal entry into the Scarlet Sanctum |
+| Rite of the Incarnadine Fane | 500 | Lesser | 2 | 2 -> 3 | Grants formal entry into the Incarnadine Fane |
 | Adept Rite | *(see JSON)* | Lesser | 3 | 3 -> 4 | Fourth rite of the Hematic Order |
-| Rite of the Crimson Lodge | 2000 | Greater | 4 | 4 -> 5 | Degree-advancement rite admitting the practitioner as Illuminatus; it does **not** consecrate a Sanctum |
+| Rite of the Crimson Lodge | 2000 | Greater | 4 | 4 -> 5 | Degree-advancement rite admitting the practitioner as Illuminatus; it does **not** consecrate a Fane |
 | Rite of the Bloodline Covenant | 3000 | Greater | 5 | 5 -> 6 | Consecrates the practitioner to the Bloodline Covenant |
 | Rite of the Hematic Order | 5000 | Grand | 6 | 6 -> 7 | Crowns the practitioner as Archon |
 | Rite of Apotheos | 7000 | Grand | 7 | 7 -> 8 | Final ascension beyond Archon; requires completed Qliphoth Communion |
 
 **Utility Rites:**
 
-Utility rite `required_degree` values are authored per recipe rather than inferred from their form. For example, Vascular Mending is Degree 1, the Bloodline/Beacon/Hungering Earth cluster is Degree 2, Scarlet Summons and Sanguine Eclipse are Degree 3, Crimson Vessel is Degree 4, Founding Sanctum/Pallid Shadow/Sanguine Dominion are Degree 5, Eternal Covenant is Degree 6, and Ancestral Communion/Bloom of the Qliphoth are Degree 7.
+Utility rite `required_degree` values are authored per recipe rather than inferred from their form. For example, Vascular Mending is Degree 1, the Bloodline/Beacon/Hungering Earth cluster is Degree 2, Scarlet Summons and Sanguine Eclipse are Degree 3, Crimson Vessel is Degree 4, Founding Fane/Pallid Shadow/Sanguine Dominion are Degree 5, Eternal Covenant is Degree 6, and Ancestral Communion/Bloom of the Qliphoth are Degree 7.
 
 | Rite | Blood Cost | Rite Form | Description |
 |------|-----------|-----------|-------------|
@@ -2888,13 +2898,13 @@ Blood Moons are a world event distinct from normal nights, with their own moon t
 - Non-blood-magic players: **Weakness I** + **passive blood drain** (50 blood per effect interval, ~every 2 s) while their blood is active â€” the tide pulls at the uninitiated
 - Thirsters and Fargones spawn near players within the Blood Moon encounter cap via direct Blood Moon event spawns, not biome spawn lists; placement allows open night sky and non-colliding ground clutter, avoids bright block-lit areas, checks full mob clearance, and only counts successful world insertion
 - **Somatic Loom** ritual blood cost reduced by **25%** during a Blood Moon (applied in `SomaticLoomBlockEntity.startRitual()`; parallel to the manipulation discount in `BloodManipulation`)
-- **Founding Sanctum** barrier: hostile mobs (non-player `Monster`) that enter a consecrated sanctum footprint during a Blood Moon take 4 magic damage and are knocked outward every effect interval (handled in `FoundingSanctumEvents.onLevelTick()`).
+- **Founding Fane** barrier: hostile mobs (non-player `Monster`) that enter a consecrated fane footprint during a Blood Moon take 4 magic damage and are knocked outward every effect interval (handled in `FoundingFaneEvents.onLevelTick()`).
 - **Kidneys** organ (if extracted): regeneration amplifier increases by +1 during a Blood Moon (overclocked filtration under pressure) â€” see Â§20.8 Organ Echo Items
 - Clients render the red Blood Moon phase texture and the `BloodMoonVeinSkyRenderer` tendril overlay when `PacketSyncBloodMoon` marks the event active; the RGB-only Blood Moon phase sheet is drawn additively so its black background texels do not appear as a visible square at dawn/dusk
 
 **Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new â€” she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) Â§9 for the full cosmological explanation.
 
-> **Status: Implemented.** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, and client sync. Blood drain for uninitiated, loom discount, and sanctum mob-sealing are all implemented. Ritual trigger via the **Rite of the Sanguine Eclipse** is implemented.
+> **Status: Implemented.** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, and client sync. Blood drain for uninitiated, loom discount, and fane mob-sealing are all implemented. Ritual trigger via the **Rite of the Sanguine Eclipse** is implemented.
 
 ### 28.2 World Features
 
@@ -2935,7 +2945,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Bog-Body Ossuary Niche** | `BogBodyOssuaryNicheStructure` | Small Harbinger burial/cache niche intended for swamp biomes. Uses placeholder discovery inscriptions (`hemomancy:random/ossuary_memo`) which are replaced at generation time with one of the Ossuary Memo inscriptions. Placement is more tolerant of water depth than other overworld structures. |
 | **Crimson Lodge Annex** | `CrimsonLodgeAnnexStructure` | Rare Harbinger â€œhall-campâ€ structure that implies ongoing covenant life (bunks, table, lectern, pantry). Uses placeholder discovery inscriptions (`hemomancy:random/lodge_minutes`) which are replaced at generation time with one of the Lodge Minutes inscriptions. |
 | **Unstained Church** | `UnstainedChurchStructure` | Contains the Unstained Podium; gateway to the Unstained path |
-| **Qliphoth Sanctum** | NBT structure | Dark sanctum used for the Qliphoth-related endgame content; contains Engram Block |
+| **Qliphoth Fane** | NBT structure | Dark fane used for the Qliphoth-related endgame content; contains Engram Block |
 | **Qliphoth Bloom** | NBT structure | Qliphoth Bloom block structure placement |
 | **Blood Tower (Core)** | NBT structure | Core segment of the Blood Tower multi-piece structure |
 | **Blood Tower (Top 1)** | NBT structure | Top segment of the Blood Tower multi-piece structure |
@@ -3023,7 +3033,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | `SporeImplantScreen` | Fungal Implantation Pylon | Spore implantation GUI |
 | `StructureSpawnerScreen` | Structure Spawner item | Debug structure spawning |
 | Various radial menus | Living Staff / keybinds | Morphling/manipulation selection |
-| Guide/Codex screens | Liber Sanguinum | **Partially functional** â€” `HemoProgressionScreen.setupEntries()` is still commented out in Java (renderer), but the HutosLib JSON book framework is wired and the Liber Sanguinum's data folder (`data/hemomancy/books/sanctumsanguinium/`) now has a `manipulations/` chapter (ordinality 7) with 10 pages covering all 8 tendencies + overview + Canon Memories. |
+| Guide/Codex screens | Liber Sanguinum | **Partially functional** â€” `HemoProgressionScreen.setupEntries()` is still commented out in Java (renderer), but the HutosLib JSON book framework is wired and the Liber Sanguinum's data folder (`data/hemomancy/books/fanesanguinium/`) now has a `manipulations/` chapter (ordinality 7) with 10 pages covering all 8 tendencies + overview + Canon Memories. |
 | Guide/Codex screens | Liber Immaculatus (Unstained book) | **Populated** â€” `data/hemomancy/books/liberimmaculatus/` now has 4 chapters (intro, sacred_tools, our_lady, the_path), 3 pages each. Covers Hemolytic Solution mechanics, Our Lady of Still Waters lore, purity/clarity stage descriptions. |
 
 ---
@@ -3037,7 +3047,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Strange Seeds** | Find Gourd Seeds from grass |
 | **The First Awakening** | Activate a Blood Temple's Mortal Display (programmatic) |
 | **Ashen Beginnings** | Craft Befouling Ash |
-| **Sanctum Sanguinium** | Obtain the Liber Sanguinum |
+| **Fane Sanguinium** | Obtain the Liber Sanguinum |
 | **Iron in the Blood** | Create first Hematic Iron Block via blood structure recipe |
 | **Bottled Vitality** | Obtain a Blood Gourd |
 | **An Extension of Oneself** | Craft a Living Staff |
@@ -3059,7 +3069,7 @@ All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree
 |-------------|----------|-------|---------|
 | **Neophyte of the Crimson Veil** | `degree_1_neophyte` | task | Degree 1 rite (programmatic) |
 | **Votary of the Hematic Covenant** | `degree_2_votary` | task | Degree 2 rite (programmatic) |
-| **Initiate of the Scarlet Sanctum** | `degree_3_initiate` | task | Degree 3 rite (programmatic) |
+| **Initiate of the Incarnadine Fane** | `degree_3_initiate` | task | Degree 3 rite (programmatic) |
 | **Adept of the Sanguine Brotherhood** | `degree_4_adept` | goal | Degree 4 rite (programmatic) |
 | **Illuminatus of the Crimson Lodge** | `degree_5_illuminatus` | goal | Degree 5 rite (programmatic) |
 | **Sanctified of the Bloodline Covenant** | `degree_6_sanctified` | goal | Degree 6 rite (programmatic) |
@@ -3072,7 +3082,7 @@ All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree
 |-------------|----------|--------|---------|
 | **Blood Is Bound** | `blood_is_bound` | `degree_3_initiate` | Bloodline founding rite succeeds (programmatic) |
 | **A Lodge of Crimson** | `crimson_lodge_consecrated` | `degree_5_illuminatus` | Crimson Lodge rite completes (programmatic) |
-| **This Ground Is Ours** | `founding_sanctum_established` | `degree_5_illuminatus` | Founding Sanctum first consecration (programmatic) |
+| **This Ground Is Ours** | `founding_fane_established` | `degree_5_illuminatus` | Founding Fane first consecration (programmatic) |
 | **The Covenant Cannot Be Unmade** | `eternal_covenant_sealed` | `degree_6_sanctified` | Eternal Covenant rite completes (programmatic) |
 
 **Endgame / revelation milestones:**
@@ -3134,7 +3144,7 @@ All under the "Hemomancy" category:
 
 ## 34. Commands
 
-The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-game admin/debug surface for blood state, progression, morphlings, sanctum previewing, and manipulation loadouts. Most player-facing subcommands accept an optional trailing `[player]` target; if omitted they act on the command executor.
+The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-game admin/debug surface for blood state, progression, morphlings, fane previewing, and manipulation loadouts. Most player-facing subcommands accept an optional trailing `[player]` target; if omitted they act on the command executor.
 
 **Blood Volume:**
 - `blood get [player]` â€” show current and maximum blood, plus whether the blood capability is active
@@ -3144,7 +3154,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-
 - `blood activate [player]` â€” toggle the blood capability active state
 
 **Bloodline:**
-- `bloodline disband [player]` â€” disband the target's current bloodline, clear owned sanctums, reset linked members, and burn bloodline ledger state where relevant
+- `bloodline disband [player]` â€” disband the target's current bloodline, clear owned fanes, reset linked members, and burn bloodline ledger state where relevant
 
 **Initiatory Degree / Qliphoth:**
 - `degree get [player]` â€” show current initiatory degree and title
@@ -3189,12 +3199,13 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-
 - `bloodmoon summon` â€” start a Blood Moon in the overworld and sync the state to players
 - `bloodmoon cancel` â€” end the active Blood Moon and sync the shutdown to players
 
-**Sanctum Preview:**
-- `sanctum preview member` â€” preview sanctum boundaries as a member
-- `sanctum preview mundane` â€” preview sanctum boundaries as a mundane outsider
-- `sanctum preview outsider` â€” preview sanctum boundaries as a non-member outsider
-- `sanctum preview rival` â€” preview sanctum boundaries as a rival elder
-- `sanctum preview clear` â€” clear the preview override and return to normal relation evaluation
+**Fane Preview:**
+- `fane preview` commands are op-only single-player/debug aids for previewing relation-specific boundary rendering without needing a second account or live hostile bloodline.
+- `fane preview member` â€” preview fane boundaries as a member
+- `fane preview mundane` â€” preview fane boundaries as a mundane outsider
+- `fane preview outsider` â€” preview fane boundaries as a non-member outsider
+- `fane preview rival` â€” preview fane boundaries as a rival elder
+- `fane preview clear` â€” clear the preview override and return to normal relation evaluation
 
 **Manipulation Slots:**
 - `slots get [player]` â€” show equipped manipulation slots and current slot capacity
@@ -3228,11 +3239,11 @@ Registered in `ParticleInit`:
 | Particle | Registry Key | Data Class | Factory | Visual Purpose |
 |----------|-------------|------------|---------|---------------|
 | Serpent | `serpent` | `SerpentParticleData` | `SerpentParticleFactory` | Tracking Serpent projectile trail effect |
-| Hit Glow | `hit_glow` | `HitColorParticleData` | `HitGlowParticleFactory` | Colored glow effect on entity hits and manipulation impacts |
+| Hit Glow | `hit_glow` | `HitColorParticleData` | `HitGlowParticleFactory` | Colored glow effect on entity hits, manipulation impacts, and Consecrated Bloodwell ambient fountain motes |
 | Blood Avatar Hit | `blood_avatar_hit` | `BloodAvatarHitParticleData` | `BloodAvatarHitParticleFactory` | Blood Avatar melee hit splash effect |
-| Blood Cell | `blood_cell` | `BloodCellData` | `BloodCellParticleFactory` | Blood cell floating effect (used in blood volume visuals, gourds, rituals) |
+| Blood Cell | `blood_cell` | `BloodCellData` | `BloodCellParticleFactory` | Blood cell floating effect (used in blood volume visuals, gourds, rituals, and Consecrated Bloodwell fountain spray) |
 | Blood Claw | `blood_claw` | `BloodClawData` | `BloodClawParticleFactory` | Claw-slash blood effect (Deadly Gaze, melee manipulation hits) |
-| Absorbed Blood Cell | `absorbed_blood_cell` | `AbsorbedBloodCellData` | `AbsrobedBloodCellParticleFactory` | Blood being absorbed/drawn into the player (blood draw, gourd filling) |
+| Absorbed Blood Cell | `absorbed_blood_cell` | `AbsorbedBloodCellData` | `AbsorbedBloodCellParticleFactory` | Blood being absorbed/drawn into the player (blood draw, gourd filling) |
 | Sporitic Spore | `sporitic_spore` | `SporiticSporeParticleData` | `SporiticSporeParticleFactory` | Tinted thurible smoke/spore cloud; RGB is supplied by the burned aligned spore |
 
 - **Abocipher Structure Ambience** - Blood Temple and Harbinger Outpost generation places hidden `abocipher_emitter` technical blocks during `afterPlace`. These invisible, non-colliding block entities emit client-side Abocipher glyph particles with Blood Temple and Harbinger Outpost profiles. Harbinger Outposts spread their emitters across lower, middle, and upper ambience bands, and the glyph particles swim laterally for several blocks with slow organic turn/writhe motion instead of only rising and fading. Existing explored structures are not retroactively migrated.
@@ -3305,7 +3316,7 @@ Designed integration as a faction + spell system:
 - New spell shapes: Sanguine Pulse (dual mana+blood cost AoE), Hemomantic Tether (channeled tether draining blood per tick)
 - New MnA rituals: Sanguine Convergence (permanently links mana regen to blood volume), Arcane Crucible (transmutes MnA materials with blood sacrifice), Mana Wound (zone that adds Hemomancy effects to MnA spells)
 - Tendency â†” Affinity mapping: Hemomancy tendencies boost corresponding MnA spell affinities
-- Harbinger faction: Occulus tasks, sanctum structure, manaweaving recipes, raid mobs â€” all use MnA faction infrastructure
+- Harbinger faction: Occulus tasks, fane structure, manaweaving recipes, raid mobs â€” all use MnA faction infrastructure
 - Blood Construct: MnA Construct variant fueled by blood instead of mana, built at MnA's workbench
 - Blood-Infused Construct Capabilities: runeforged modules for MnA Constructs
 - Hemomantic Wand Core, Arcane Living Staff, Mote of Mana â€” crafted via MnA systems (manaweaving, runeforging)
@@ -3342,8 +3353,8 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, Flexible Founding Sanctum heart/stake footprint core, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, Mnemonic Whispers/Screams potion effects and mob-effect icons, Blood Drunkenness mob-effect icon, endgame Vesper/Mycophant entity-render-sound wiring, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
-| Partial | Progression/Liber Java renderer, Founding Sanctum balance/art tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Vesper/Mycophant summoning rituals, Annetta final animation/combat polish |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, Flexible Founding Fane heart/stake footprint core, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, Mnemonic Whispers/Screams potion effects and mob-effect icons, Blood Drunkenness mob-effect icon, endgame Vesper/Mycophant entity-render-sound wiring, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
+| Partial | Progression/Liber Java renderer, Founding Fane balance/art tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Vesper/Mycophant summoning rituals, Annetta final animation/combat polish |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, active Harbinger voyager trade/rumor/dialogue expansion, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |
 
@@ -3367,7 +3378,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Hematic Armature / Armor Upgrade Path** â€” **Implemented:** `HematicArmatureBlockEntity`, `ArmatureUpgradeRecipe`, custom renderer/model/item renderer, hidden restraint entity, no-GUI right-click bowl interaction, walk-on mounting, filler-block multiblock bounds, 5-second per-piece processing, bowl/player particle feedback, and JEI category/catalyst wiring are present. Recipes live in `data/hemomancy/recipe/armature_upgrade/`.
 - **Harbinger Armor Model and Texture Pass** â€” **Implemented:** Blood Lust mask variants, Silent Archon Vestments, Barbed, Chitinite, Unstained, Chalybeate Sclerite Sabatons, Covenant Mantle, Crimson Lacquer, Monolith Imbued Cloth, and the recent memory overlays all have item/model resource coverage. All custom 3D armor sets and one-off armor pieces except Hematic Iron now use model-backed 3D item-stack rendering where applicable.
 - **Sporitic Thurible** - **Implemented:** Degree 4 Harbinger offhand support item with aligned-spore ignition, 6,000-tick catalyst burn time, GUI burn meter computed from `BurnEndGameTime`, blood upkeep, server-derived swing intensity, spore-colored ambient particles, hostile infection aura, Sporitic Resonance manipulation discount/cooldown hooks, Blood Structure recipe, custom first-person renderer, third-person player layer, hidden vanilla held item, active catalyst miniature rendered inside the thurible head, and articulated client-side chain physics. The supplied thurible photo remains visual reference only and is not packaged as an asset.
-- **Direct Blood Routing** â€” **Implemented:** `HematicSutureNeedleItem`, `HematicSutureNodeBlockEntity`, `BloodRoutingSavedData`, `IBloodSourceContract`, `IBloodRoutingTarget`, and `BloodRoutingHelper` provide pull-based machine feeding without a basin, fluid, or bulk storage block. Current behavior supports nearby personal/gourd links, Degree 5 sanctum links, optional bloodline-pool draw with leader/opt-in checks, Blood Thrall courier draw/deposit, and Drudge tendering around an SSC.
+- **Direct Blood Routing** â€” **Implemented:** `HematicSutureNeedleItem`, `HematicSutureNodeBlockEntity`, `BloodRoutingSavedData`, `IBloodSourceContract`, `IBloodRoutingTarget`, and `BloodRoutingHelper` provide pull-based machine feeding without a basin, fluid, or bulk storage block. Current behavior supports nearby personal/gourd links, Degree 5 fane links, optional bloodline-pool draw with leader/opt-in checks, Blood Thrall courier draw/deposit, and Drudge tendering around an SSC.
 - **Puppeteer Spindle and Trial Unlocks** â€” **Implemented:** `PuppeteersSpindleBlockEntity`, `PuppeteersSpindleMenu`, `PuppeteersSpindleScreen`, `PacketPuppeteersSpindleAction`, `PuppeteersSpindleRenderer`, and `PuppeteersSpindleItemRenderer` provide the two-slot spindle workflow, persistent 512-thread buffer, slotted crossbar filling/binding, themed screen, custom block model, and facing-aware placement. `PuppeteerTrialRecipe`, `PuppeteerTrialRecipeSerializer`, and `PuppeteerSummonTrialEvents` provide the Sanguine Quintessence Blood Crafting trial unlock path for Veinwing Vulture, Marrow Spitter, and Gorebound Hulk.
 - **Mnemonic Reliquary** â€” New functional block with animated lid (open/close), custom 3D block entity renderer (`MnemonicReliquaryRenderer`), item renderer (`MnemonicReliquaryItemRenderer`), block model (`MnemonicReliquaryModel`), menu (`MnemonicReliquaryMenu`), and screen (`MnemonicReliquaryScreen`). Tracks open count and syncs lid angle via block events.
 - **Suspended Cleansed Blood Crystal** â€” Purified variant of the Suspended Blood Crystal with custom block, block entity (random time offset for desynchronized animations), block item with custom renderer, 3D model, and blockstate.
@@ -3388,8 +3399,8 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Scar Tier System** â€” All three standard tiers are registered through `ItemInit` with active gameplay effects. Current active set is Mind Spike + 24 standard scars (8 tendencies Ã— 3 tiers) + 9 fungal scars. The old unregistered Ichor scar resource stub has been removed.
 - **HemoItemModelProvider Enhancements** â€” Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System** â€” **Partial:** Four canon Saints exist: Hemorath, Seraphae the Chain Saint, Putriciel, and Velorum. The shared sarcophagus spine and boss dispatch are implemented, and Hemorath's trial is the first complete trial flow. Bespoke Trial Chamber rooms/world placement for Seraphae, Putriciel, and Velorum remain WIP. Boss models/textures/GeckoLib animations are stub/placeholder. See Â§5.8.
-- **Founding Sanctum** - **Partial:** The core Flexible Founding Sanctum model is implemented: Consecrated Bloodwell heart binding, one-heart-per-footprint prevention, heart-break collapse, Hematic Stake anchors, stake budget/connection validation, `SanctumFootprint` inside/outside and strength scaling, footprint-based routing/bloodwell/Blood Moon checks, full-sphere Soft Envelope rendering, viewer relation colors, and `/hemo sanctum preview` testing commands. Remaining work is final balance, art polish, and broader gameplay tuning. See §5.7.
-- **Blood Moon Mechanics** â€” **Implemented:** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, Somatic Loom discount, sanctum sealing, organ synergy, ritual trigger, and client sync/rendering. See Â§28.1.1.
+- **Founding Fane** - **Partial:** The core Flexible Founding Fane model is implemented: Consecrated Bloodwell heart binding, one-heart-per-footprint prevention, up-front bloodline validation for the rite, bloodline-gated bloodwell use, heart-break/reconsecration/disband stake cleanup, progenitor-manifested Hematic Stake anchors, stake budget/connection validation, `FaneFootprint` inside/outside and strength scaling, footprint-based routing/bloodwell/Blood Moon checks, full-sphere Soft Envelope rendering, viewer relation colors, bloodwell fountain renderer/particles, and `/hemo fane preview` testing commands. Remaining work is final balance, art polish, and broader gameplay tuning. See §5.7.
+- **Blood Moon Mechanics** â€” **Implemented:** `BloodMoonEvents` handles natural trigger, commands, gameplay effects, mob spawning, Somatic Loom discount, fane sealing, organ synergy, ritual trigger, and client sync/rendering. See Â§28.1.1.
 - **Fungal Dimension** â€” **Partial:** Fungal Spine access, safe travel placement, dimension mob spawning, and the Archon first-exit choice fork are implemented. Terrain feature population and broader dimension content remain WIP. See Â§5.6.
 - **Endgame Vesper / Mycophant Bosses** â€” **Partial:** `VesperTheCrownedRefusalEntity`, `VesperTheEveningStarEntity`, and `MycophantEntity` are registered with attributes, models, textures, renderers, render layers, boss bars, sound events, client boss music, legacy-inspired combat behaviors, and guaranteed final entity loot-table drops. Vesper phase 1 transitions into the Evening Star phase and has no final loot. Vesper phase 2 drops `memory_of_vesper`; The Mycophant drops `mycophant_tendril`, which fits the Charm of Vascularium slot and triggers full-body fungalization rendering. Remaining work is the summoning ritual layer. See Â§5.10 and Â§26.3.
 - **Annetta Knowles / Stained Priestess** â€” **Partial:** The two-route encounter is wired through `AnnettaKnowlesEntity`, `StainedPriestessEntity`, `LatentAnnettaInfectionEntity`, and `BrokenChurchStructure`. Dedicated encounter entity models/textures and Annetta's Sanguis Lancea held/item renderer are present. Remaining work is GeckoLib animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering. See Â§26.3 and LORE_REFERENCE Â§11.

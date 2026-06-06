@@ -55,7 +55,7 @@ public final class BloodRoutingRulesTest {
     }
 
     private static void covenantSkillsImproveRoutingBudgets() {
-        assertEquals(840.0, BloodRoutingRules.workingReserve(3), "sanctum suture raises working reserve");
+        assertEquals(840.0, BloodRoutingRules.workingReserve(3), "fane suture raises working reserve");
         assertEquals(1.30, BloodRoutingRules.bloodlineEfficiencyMultiplier(3),
                 "bloodline concord improves bloodline routing");
         assertEquals(1.45, BloodRoutingRules.servitorThroughputMultiplier(3),

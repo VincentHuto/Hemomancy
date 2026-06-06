@@ -3,8 +3,8 @@
   "bloodCost": 500,
   "riteType": "lesser",
   "required_degree": 2,
-  "riteName": "Rite of the Scarlet Sanctum",
-  "riteDescription": "The third rite of the Hematic Order, granting formal entry into the Scarlet Sanctum.",
+  "riteName": "Rite of the Incarnadine Fane",
+  "riteDescription": "The third rite of the Hematic Order, granting formal entry into the Incarnadine Fane.",
   "rankup": true,
   "pattern": [
     [

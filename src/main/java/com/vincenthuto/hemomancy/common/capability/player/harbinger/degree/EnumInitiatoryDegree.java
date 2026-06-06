@@ -14,7 +14,7 @@ public enum EnumInitiatoryDegree {
 	VOTARY(2, "Votary of the Hematic Covenant"),
 
 	/** Degree 3 */
-	INITIATE(3, "Initiate of the Scarlet Sanctum"),
+	INITIATE(3, "Initiate of the Incarnadine Fane"),
 
 	/** Degree 4 */
 	ADEPT(4, "Adept of the Sanguine Brotherhood"),

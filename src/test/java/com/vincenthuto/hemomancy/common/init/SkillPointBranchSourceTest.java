@@ -152,7 +152,7 @@ public final class SkillPointBranchSourceTest {
 		assertContains("summon branch adds bound command", summons, "SkillPointInit.skill_bound_command");
 		assertContains("scar branch adds deep inscription", scars, "SkillPointInit.skill_deep_inscription");
 		assertContains("scar branch adds fungal symbiosis", scars, "SkillPointInit.skill_fungal_symbiosis");
-		assertContains("covenant branch adds sanctum suture", covenant, "SkillPointInit.skill_sanctum_suture");
+		assertContains("covenant branch adds fane suture", covenant, "SkillPointInit.skill_fane_suture");
 		assertContains("covenant deep skills depend on deep base", covenant, "addParents(SkillPointInit.deep_base_skill)");
 		assertContains("mycelial branch adds sporitic attunement", mycelial, "SkillPointInit.skill_sporitic_attunement");
 		assertContains("mycelial deep skills depend on deep base", mycelial, "addParents(SkillPointInit.deep_base_skill)");
@@ -181,7 +181,7 @@ public final class SkillPointBranchSourceTest {
 		assertContains("skill helper exposes thread economy", skillPointHelper, "getThreadEconomyLevel");
 		assertContains("skill helper exposes bound command", skillPointHelper, "getBoundCommandLevel");
 		assertContains("skill helper exposes deep inscription", skillPointHelper, "hasDeepInscription");
-		assertContains("skill helper exposes covenant routing", skillPointHelper, "getSanctumSutureLevel");
+		assertContains("skill helper exposes covenant routing", skillPointHelper, "getFaneSutureLevel");
 		assertContains("skill helper exposes mycelial capstone", skillPointHelper, "getPrimalMorphogenesisLevel");
 		assertContains("scar crafting checks deep inscription for tier three scars", scarCraftPacket,
 				"SkillPointHelper.isUnlocked(player, SkillPointInit.skill_deep_inscription)");

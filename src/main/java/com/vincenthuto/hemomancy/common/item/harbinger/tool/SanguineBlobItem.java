@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * A cosmetic blood orb unlocked at Initiatory Degree 3 (Initiate of the Scarlet Sanctum).
+ * A cosmetic blood orb unlocked at Initiatory Degree 3 (Initiate of the Incarnadine Fane).
  * While held, a liquid blood sphere floats in the air at the player's look-target point.
  * The player can press the "Drop Blood Ball" keybind to release it, watching it fall and fade away.
  * All visual effects are rendered client-side via {@link com.vincenthuto.hemomancy.client.render.world.BloodBallRenderer}.

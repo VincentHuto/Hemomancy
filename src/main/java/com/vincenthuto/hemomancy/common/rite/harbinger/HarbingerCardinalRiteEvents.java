@@ -30,7 +30,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
-import com.vincenthuto.hemomancy.common.event.worldevent.FoundingSanctumSavedData;
+import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
@@ -440,7 +440,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
 	private static final String SANGUINE_ECLIPSE_RITE = "cardinal_rite/sanguine_eclipse";
-	private static final String FOUNDING_SANCTUM_RITE = "cardinal_rite/founding_sanctum";
+	private static final String FOUNDING_FANE_RITE = "cardinal_rite/founding_fane";
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
 	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
@@ -476,7 +476,7 @@ public class HarbingerCardinalRiteEvents {
 	static {
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_initiation", 1); // Neophyte of the Crimson Veil
 		DEGREE_RITE_PATHS.put("cardinal_rite/votary_rite", 2);          // Votary of the Hematic Covenant
-		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Scarlet Sanctum
+		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Incarnadine Fane
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_brotherhood", 4); // Adept of the Sanguine Brotherhood
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant
@@ -735,7 +735,7 @@ public class HarbingerCardinalRiteEvents {
 			completeSanguineFervor(sLevel, caster, center);
 		}
 
-		// Rite of the Crimson Lodge: degree advancement only; territorial consecration belongs to Founding Sanctum
+		// Rite of the Crimson Lodge: degree advancement only; territorial consecration belongs to Founding Fane
 		if (ILLUMINATUS_RITE.equals(ritePath)) {
 			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED);
 		}
@@ -749,9 +749,9 @@ public class HarbingerCardinalRiteEvents {
 			completeSanguineEclipse(sLevel, caster);
 		}
 
-		// Rite of the Founding Sanctum: consecrate the surrounding area as a Harbinger Sanctum
-		if (FOUNDING_SANCTUM_RITE.equals(ritePath)) {
-			completeFoundingSanctum(sLevel, caster, center);
+		// Rite of the Founding Fane: consecrate the surrounding area as a Harbinger Fane
+		if (FOUNDING_FANE_RITE.equals(ritePath)) {
+			completeFoundingFane(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -1242,8 +1242,8 @@ public class HarbingerCardinalRiteEvents {
 			}
 		}
 
-		// Remove the bloodline and any sanctums owned by its members from world data.
-		BloodlineDisbandHelper.removeOwnedSanctums(sLevel.getServer(), bloodline);
+		// Remove the bloodline and any fanes owned by its members from world data.
+		BloodlineDisbandHelper.removeOwnedFanes(sLevel.getServer(), bloodline);
 		bloodlineData.disbandBloodline(bloodline.getBloodlineUUID());
 
 		caster.displayClientMessage(
@@ -1718,43 +1718,61 @@ public class HarbingerCardinalRiteEvents {
 	}
 
 
-	private static void completeFoundingSanctum(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+	private static void completeFoundingFane(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		if (!sLevel.getBlockState(center).is(BlockInit.consecrated_bloodwell.get())) {
 			caster.displayClientMessage(
-					Component.literal("The Founding Sanctum requires a Consecrated Bloodwell at its heart.")
+					Component.literal("The Founding Fane requires a Consecrated Bloodwell at its heart.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
-		UUID sanctumOwner = HemoCapabilityAccess.getBloodVolume(caster)
-				.map(volume -> {
-					Bloodline bloodline = volume.getBloodLine();
-					return bloodline != null && bloodline.isValid() ? bloodline.getLeaderUUID() : caster.getUUID();
-				})
-				.orElse(caster.getUUID());
-		FoundingSanctumSavedData sanctumData = FoundingSanctumSavedData.get(sLevel);
-		boolean isReconsecrating = sanctumData.hasSanctum(sanctumOwner);
-		sanctumData.consecrateHeart(sanctumOwner, center);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster)
+				.map(volume -> volume.getBloodLine())
+				.orElse(Bloodline.NOBLOODLINE);
+		if (bloodline == null || !bloodline.isValid()) {
+			caster.displayClientMessage(
+					Component.literal("The Founding Fane requires an established bloodline.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
+			caster.displayClientMessage(
+					Component.literal("Only the bloodline Progenitor may consecrate a Founding Fane.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+		UUID faneOwner = bloodline.getLeaderUUID();
+		FoundingFaneSavedData faneData = FoundingFaneSavedData.get(sLevel);
+		boolean isReconsecrating = faneData.hasFane(faneOwner);
+		List<BlockPos> oldStakes = isReconsecrating ? faneData.removeStakesAndGet(faneOwner) : List.of();
+		for (BlockPos stakePos : oldStakes) {
+			if (sLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+				sLevel.removeBlock(stakePos, false);
+			}
+		}
+		faneData.consecrateHeart(faneOwner, center);
 		if (isReconsecrating) {
 			caster.displayClientMessage(
-					Component.literal("Your Founding Sanctum has been moved to this location.")
+					Component.literal("Your Founding Fane has been moved to this location.")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
 		} else {
 			for (ServerPlayer p : sLevel.getPlayers(ServerPlayer::isAlive)) {
 				p.sendSystemMessage(Component.literal(caster.getDisplayName().getString()
-						+ " has consecrated a Founding Sanctum.")
+						+ " has consecrated a Founding Fane.")
 						.withStyle(ChatFormatting.DARK_RED));
 			}
 			caster.displayClientMessage(
 					Component.literal("This ground is now consecrated. All Harbingers within will feel its power.")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
-			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_FOUNDING_SANCTUM_ESTABLISHED);
+			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_FOUNDING_FANE_ESTABLISHED);
 		}
 		sLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
 				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
-				300, FoundingSanctumSavedData.SANCTUM_RADIUS * 0.3, 3.0, FoundingSanctumSavedData.SANCTUM_RADIUS * 0.3, 0.01);
+				300, FoundingFaneSavedData.FANE_RADIUS * 0.3, 3.0, FoundingFaneSavedData.FANE_RADIUS * 0.3, 0.01);
 	}
 
 }

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Historical Record",
+  "subtitle": "How the Order was built",
+  "text": "The Incarnadine Fane was founded by Archon Erythravane — the first organized gathering of Hemomancers. The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle, which became the origin of the Bloodline covenant. The Crimson Lodge later documented the link between hemomancy and the mycelial network — and promptly sealed that knowledge, deciding it must be arrived at independently to be understood correctly. Those who found it without being told say the same thing: that it cannot be unlearned.",
+  "icon": "hemomancy:blood_stained_stone"
+}
