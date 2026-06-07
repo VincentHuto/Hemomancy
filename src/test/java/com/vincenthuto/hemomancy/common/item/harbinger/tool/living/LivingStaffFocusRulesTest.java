@@ -66,10 +66,17 @@ public final class LivingStaffFocusRulesTest {
 
 	private static void staffBlockAbsorptionPerTickScalesWithFocus() {
 		LivingStaffFocusProfile none = LivingStaffFocusProfile.NONE;
+		LivingStaffFocusProfile maxDraw = new LivingStaffFocusProfile(0, 3, 0, false);
 		LivingStaffFocusProfile focused = new LivingStaffFocusProfile(3, 3, 3, 3, 0, false);
-		assertDouble("bare block absorption uses the bare per-tick rule",
-				LivingStaffFocusRules.bareAbsorptionPerSecond() / 20.0D,
+		assertDouble("bare block absorption uses the dedicated bare tile rate",
+				LivingStaffFocusRules.bloodTileProjectionRate(false, LivingStaffFocusProfile.NONE),
 				LivingStaffFocusRules.bareBlockAbsorptionPerTick());
+		assertTrue("staff block absorption is much faster than entity pulse absorption",
+				LivingStaffFocusRules.blockAbsorptionPerTick(none)
+						> LivingStaffFocusRules.staffAbsorptionPerSecond(none, 1) / 20.0D);
+		assertTrue("vascular draw strongly increases staff block absorption",
+				LivingStaffFocusRules.blockAbsorptionPerTick(maxDraw)
+						> LivingStaffFocusRules.blockAbsorptionPerTick(none));
 		assertTrue("staff block absorption scales with focus",
 				LivingStaffFocusRules.blockAbsorptionPerTick(focused)
 						> LivingStaffFocusRules.blockAbsorptionPerTick(none));

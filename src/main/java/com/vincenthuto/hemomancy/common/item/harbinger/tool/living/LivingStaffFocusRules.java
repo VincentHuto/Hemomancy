@@ -23,6 +23,13 @@ public final class LivingStaffFocusRules {
 	private static final int STAFF_BASE_ABSORPTION_PULSE_INTERVAL = 4;
 	private static final int VESPER_ABSORPTION_PULSE_INTERVAL_BONUS = 1;
 
+	private static final double BARE_TILE_ABSORPTION_RATE = 100.0D;
+	private static final double STAFF_TILE_ABSORPTION_RATE = 150.0D;
+	private static final double STAFF_TILE_ABSORPTION_RATE_PER_DRAW_LEVEL = 75.0D;
+	private static final double STAFF_TILE_ABSORPTION_RATE_PER_FOCUS_LEVEL = 35.0D;
+	private static final double VESPER_TILE_ABSORPTION_RATE_BONUS = 75.0D;
+	private static final double VESPER_REFUSAL_TILE_ABSORPTION_RATE_BONUS = 50.0D;
+
 	private static final double BARE_STRUCTURE_PROJECTION_RATE = 5.0D;
 	private static final double STAFF_STRUCTURE_PROJECTION_RATE = 8.0D;
 	private static final double STAFF_STRUCTURE_PROJECTION_RATE_PER_LEVEL = 3.0D;
@@ -66,7 +73,7 @@ public final class LivingStaffFocusRules {
 	}
 
 	public static double bareBlockAbsorptionPerTick() {
-		return bareAbsorptionPerSecond() / 20.0D;
+		return BARE_TILE_ABSORPTION_RATE;
 	}
 
 	public static double staffAbsorptionPerSecond(LivingStaffFocusProfile focus, int availableTargets) {
@@ -78,7 +85,15 @@ public final class LivingStaffFocusRules {
 	}
 
 	public static double blockAbsorptionPerTick(LivingStaffFocusProfile focus) {
-		return staffAbsorptionPerSecond(focus, 1) / 20.0D;
+		LivingStaffFocusProfile safeFocus = safeFocus(focus);
+		double rate = STAFF_TILE_ABSORPTION_RATE
+				+ safeFocus.vascularDrawLevel() * STAFF_TILE_ABSORPTION_RATE_PER_DRAW_LEVEL
+				+ safeFocus.hematicFocusLevel() * STAFF_TILE_ABSORPTION_RATE_PER_FOCUS_LEVEL;
+		if (safeFocus.vesperMemoryAwakened()) {
+			rate += VESPER_TILE_ABSORPTION_RATE_BONUS;
+			rate += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_TILE_ABSORPTION_RATE_BONUS;
+		}
+		return rate;
 	}
 
 	public static double absorptionRange(LivingStaffFocusProfile focus) {
