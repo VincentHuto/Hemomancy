@@ -75,7 +75,7 @@ public final class FaneBoundaryRenderer {
 
 		renderHostileWorldDomes(poseStack, entries, buffer, time, cam);
 		for (FaneBoundaryClientData.Entry entry : entries) {
-			if (entry.relation() == FaneBoundaryRelation.MEMBER) {
+			if (effectiveRelation(entry) == FaneBoundaryRelation.MEMBER) {
 				drawMemberShimmer(poseStack, cam, entry, time);
 			}
 		}
@@ -120,14 +120,26 @@ public final class FaneBoundaryRenderer {
 		FaneBoundaryRelation strongest = FaneBoundaryRelation.MEMBER;
 		for (FaneBoundaryClientData.Entry entry : FaneBoundaryClientData.entries()) {
 			if (contains(player.position(), entry.heart(), HEART_RADIUS) || containsAnyStake(player.position(), entry)) {
-				strongest = FaneBoundaryVisibilityRules.strongerInsideEffect(strongest, entry.relation());
+				strongest = FaneBoundaryVisibilityRules.strongerInsideEffect(strongest, effectiveRelation(entry));
 			}
 		}
 		return strongest;
 	}
 
 	private static boolean faneBoundaryRendererEnabled() {
-		return HemoClientConfig.RENDER_FANE_BOUNDARY == null || HemoClientConfig.RENDER_FANE_BOUNDARY.get();
+		FaneBoundaryClientData.ViewMode viewMode = FaneBoundaryClientData.viewMode();
+		return viewMode != FaneBoundaryClientData.ViewMode.HIDDEN
+				&& (viewMode == FaneBoundaryClientData.ViewMode.MUNDANE
+				|| viewMode == FaneBoundaryClientData.ViewMode.REVEALED
+				|| HemoClientConfig.RENDER_FANE_BOUNDARY == null || HemoClientConfig.RENDER_FANE_BOUNDARY.get());
+	}
+
+	private static FaneBoundaryRelation effectiveRelation(FaneBoundaryClientData.Entry entry) {
+		FaneBoundaryClientData.ViewMode viewMode = FaneBoundaryClientData.viewMode();
+		if (viewMode == FaneBoundaryClientData.ViewMode.MUNDANE) {
+			return FaneBoundaryRelation.MUNDANE_OUTSIDER;
+		}
+		return viewMode == FaneBoundaryClientData.ViewMode.REVEALED ? FaneBoundaryRelation.OUTSIDER : entry.relation();
 	}
 
 	private static boolean contains(Vec3 pos, BlockPos center, float radius) {
@@ -177,11 +189,12 @@ public final class FaneBoundaryRenderer {
 	private static void renderHostileWorldDomes(PoseStack poseStack, List<FaneBoundaryClientData.Entry> entries,
 			MultiBufferSource.BufferSource buffer, float time, Vec3 cam) {
 		for (FaneBoundaryClientData.Entry entry : entries) {
-			if (entry.relation() == FaneBoundaryRelation.MEMBER) {
+			FaneBoundaryRelation relation = effectiveRelation(entry);
+			if (relation == FaneBoundaryRelation.MEMBER) {
 				continue;
 			}
 			float seed = faneSeed(entry);
-			ShellStyle style = ShellStyle.forRelation(entry.relation(), time + seed);
+			ShellStyle style = ShellStyle.forRelation(relation, time + seed);
 			drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed, style, false);
 			if (style.glowAlphaScale() > 0.0F) {
 				drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS * 1.025F, time,

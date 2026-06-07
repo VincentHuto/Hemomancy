@@ -2,14 +2,16 @@ package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
+import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
+import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * A standalone screen that lets the player view their bloodline's shared blood pool,
@@ -28,8 +31,8 @@ import java.util.UUID;
  */
 public class BloodlinePoolScreen extends Screen {
 
-	private static final int GUI_WIDTH = 220;
-	private static final int GUI_HEIGHT = 320;
+	private static final int GUI_WIDTH = 340;
+	private static final int GUI_HEIGHT = 336;
 	private static final int SCREEN_PADDING = 8;
 	private static final int VEIN_COUNT = 28;
 
@@ -39,15 +42,16 @@ public class BloodlinePoolScreen extends Screen {
 	private int currentGuiHeight = GUI_HEIGHT;
 	private int guiLeft;
 	private int guiTop;
+	private BloodVolumeBarWidget.Bounds vesselBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
 	// Widgets
 	private EditBox donateAmountField;
 	private Button donateButton;
-	private Checkbox trickleCheckbox;
+	private Button trickleToggleButton;
 	private EditBox trickleRateField;
-	private Checkbox autoDrawCheckbox;
+	private Button autoDrawToggleButton;
 	private EditBox autoDrawThresholdField;
-	private Button applySettingsButton;
+	private Button faneSightButton;
 	private EditBox messageField;
 	private Button sendMessageButton;
 	private Button kickPrevButton;
@@ -102,21 +106,23 @@ public class BloodlinePoolScreen extends Screen {
 			});
 		}
 
-		int widgetX = guiLeft + scaled(12);
-		int widgetW = Math.max(80, currentGuiWidth - scaled(24));
-		int y = guiTop + scaled(100);
+		int widgetX = guiLeft + scaled(16);
+		int widgetW = Math.max(120, currentGuiWidth - scaled(32));
+		int y = guiTop + scaled(156);
 
 		// ── Lump Donate Section ──
-		int donateButtonW = Math.max(54, scaled(58));
-		int fieldGap = scaled(4);
-		donateAmountField = new EditBox(this.font, widgetX, y, Math.max(48, widgetW - donateButtonW - fieldGap),
-				widgetHeight(18), Component.literal("Amount"));
+		int donateButtonW = Math.max(64, scaled(70));
+		int fieldGap = scaled(6);
+		donateAmountField = new CenteredEditBox(this.font, widgetX, y, Math.max(48, widgetW - donateButtonW - fieldGap),
+				widgetHeight(20), Component.literal("Amount"));
+		styleEditBox(donateAmountField);
 		donateAmountField.setMaxLength(7);
 		donateAmountField.setValue("100");
 		donateAmountField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
 		addRenderableWidget(donateAmountField);
 
-		donateButton = Button.builder(Component.literal("Donate"), btn -> {
+		donateButton = new RitualButton(widgetX + widgetW - donateButtonW, y, donateButtonW, widgetHeight(18),
+				Component.literal("Donate"), btn -> {
 			try {
 				double amount = Double.parseDouble(donateAmountField.getValue());
 				if (amount > 0) {
@@ -126,87 +132,76 @@ public class BloodlinePoolScreen extends Screen {
 				}
 			} catch (NumberFormatException ignored) {
 			}
-		}).bounds(widgetX + widgetW - donateButtonW, y, donateButtonW, widgetHeight(18)).build();
+		});
 		addRenderableWidget(donateButton);
 
-		y += scaled(32);
+		y += scaled(30);
 
 		// ── Trickle Donation Section ──
-		trickleCheckbox = Checkbox.builder(Component.literal("Trickle Donate"), this.font)
-				.pos(widgetX, y)
-				.selected(trickleEnabled)
-				.onValueChange((checkbox, selected) -> {
-				})
-				.build();
-		addRenderableWidget(trickleCheckbox);
+		trickleToggleButton = new ToggleRitualButton(widgetX, y, scaled(126), widgetHeight(18),
+				"Trickle Tithe", trickleEnabled, selected -> {
+			trickleEnabled = selected;
+			sendPoolSettings();
+		});
+		addRenderableWidget(trickleToggleButton);
 
-		y += scaled(22);
-
-		trickleRateField = new EditBox(this.font, widgetX + scaled(50), y, scaled(60), widgetHeight(16),
+		trickleRateField = new CenteredEditBox(this.font, widgetX + scaled(226), y, scaled(58), widgetHeight(18),
 				Component.literal("Rate"));
+		styleEditBox(trickleRateField);
 		trickleRateField.setMaxLength(6);
 		trickleRateField.setValue(String.format("%.2f", trickleRate));
 		trickleRateField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
+		trickleRateField.setResponder(value -> sendPoolSettings());
 		addRenderableWidget(trickleRateField);
 
 		y += scaled(26);
 
 		// ── Auto-Draw Section ──
-		autoDrawCheckbox = Checkbox.builder(Component.literal("Auto-Draw"), this.font)
-				.pos(widgetX, y)
-				.selected(autoDrawEnabled)
-				.onValueChange((checkbox, selected) -> {
-				})
-				.build();
-		addRenderableWidget(autoDrawCheckbox);
+		autoDrawToggleButton = new ToggleRitualButton(widgetX, y, scaled(126), widgetHeight(18),
+				"Blood Recall", autoDrawEnabled, selected -> {
+			autoDrawEnabled = selected;
+			sendPoolSettings();
+		});
+		addRenderableWidget(autoDrawToggleButton);
 
-		y += scaled(22);
-
-		autoDrawThresholdField = new EditBox(this.font, widgetX + scaled(70), y, scaled(50), widgetHeight(16),
+		autoDrawThresholdField = new CenteredEditBox(this.font, widgetX + scaled(226), y, scaled(58), widgetHeight(18),
 				Component.literal("Threshold"));
+		styleEditBox(autoDrawThresholdField);
 		autoDrawThresholdField.setMaxLength(4);
 		autoDrawThresholdField.setValue(String.format("%.0f", autoDrawThreshold * 100));
 		autoDrawThresholdField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
+		autoDrawThresholdField.setResponder(value -> sendPoolSettings());
 		addRenderableWidget(autoDrawThresholdField);
 
 		y += scaled(26);
 
-		// ── Apply Settings Button ──
-		applySettingsButton = Button.builder(Component.literal("Apply Settings"), btn -> {
-			boolean trickle = trickleCheckbox.selected();
-			double rate = 0.5;
-			try {
-				rate = Double.parseDouble(trickleRateField.getValue());
-			} catch (NumberFormatException ignored) {
-			}
-			boolean autoDraw = autoDrawCheckbox.selected();
-			double threshold = 0.25;
-			try {
-				threshold = Double.parseDouble(autoDrawThresholdField.getValue()) / 100.0;
-			} catch (NumberFormatException ignored) {
-			}
-			PacketHandler.sendToServer(
-					new PacketUpdatePoolSettings(trickle, rate, autoDraw, threshold));
-		}).bounds(widgetX, y, widgetW, widgetHeight(20)).build();
-		addRenderableWidget(applySettingsButton);
+		// ── Fane Sight Button ──
+		faneSightButton = new RitualButton(widgetX, y, widgetW, widgetHeight(20),
+				Component.literal(FaneBoundaryClientData.viewMode().label()), btn -> {
+			FaneBoundaryClientData.ViewMode mode = FaneBoundaryClientData.cycleViewMode();
+			btn.setMessage(Component.literal(mode.label()));
+		});
+		addRenderableWidget(faneSightButton);
 
-		y += scaled(34);
+		y += scaled(36);
 
 		// ── Bloodline Message Section ──
 		int sendButtonW = Math.max(48, scaled(54));
-		messageField = new EditBox(this.font, widgetX, y, Math.max(58, widgetW - sendButtonW - fieldGap),
-				widgetHeight(18), Component.literal("Message"));
+		messageField = new CenteredEditBox(this.font, widgetX, y, Math.max(58, widgetW - sendButtonW - fieldGap),
+				widgetHeight(20), Component.literal("Message"));
+		styleEditBox(messageField);
 		messageField.setMaxLength(256);
-		messageField.setHint(Component.literal("Send to bloodline...").withStyle(s -> s.withColor(0xFF664444)));
+		messageField.setHint(Component.empty());
 		addRenderableWidget(messageField);
 
-		sendMessageButton = Button.builder(Component.literal("Send"), btn -> {
+		sendMessageButton = new RitualButton(widgetX + widgetW - sendButtonW, y, sendButtonW, widgetHeight(18),
+				Component.literal("Send"), btn -> {
 			String msg = messageField.getValue().trim();
 			if (!msg.isEmpty()) {
 				PacketHandler.sendToServer(new PacketBloodlineMessage(msg));
 				messageField.setValue("");
 			}
-		}).bounds(widgetX + widgetW - sendButtonW, y, sendButtonW, widgetHeight(18)).build();
+		});
 		addRenderableWidget(sendMessageButton);
 
 		y += scaled(28);
@@ -216,29 +211,31 @@ public class BloodlinePoolScreen extends Screen {
 			final LocalPlayer localPlayer = player;
 			final int kickRowY = y;
 			final int kickPrevX = widgetX;
-			final int kickNextX = widgetX + scaled(98);
-			final int kickButtonX = widgetX + scaled(122);
-			final int kickButtonW = Math.max(42, widgetW - scaled(122));
+			final int kickButtonX = widgetX + widgetW - scaled(66);
+			final int kickButtonW = scaled(66);
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
 				Bloodline line = vol.getBloodLine();
 				if (line.isValid() && localPlayer.getUUID().equals(line.getLeaderUUID())) {
-					kickPrevButton = Button.builder(Component.literal("<"), btn -> {
+					kickPrevButton = new RitualButton(kickPrevX, kickRowY, widgetHeight(18), widgetHeight(18),
+							Component.literal("<"), btn -> {
 						int size = getKickableMembers(localPlayer).size();
 						if (size > 0) {
 							kickTargetIndex = (kickTargetIndex - 1 + size) % size;
 						}
-					}).bounds(kickPrevX, kickRowY, widgetHeight(18), widgetHeight(18)).build();
+					});
 					addRenderableWidget(kickPrevButton);
 
-					kickNextButton = Button.builder(Component.literal(">"), btn -> {
+					kickNextButton = new RitualButton(widgetX + scaled(34), kickRowY, widgetHeight(18), widgetHeight(18),
+							Component.literal(">"), btn -> {
 						int size = getKickableMembers(localPlayer).size();
 						if (size > 0) {
 							kickTargetIndex = (kickTargetIndex + 1) % size;
 						}
-					}).bounds(kickNextX, kickRowY, widgetHeight(18), widgetHeight(18)).build();
+					});
 					addRenderableWidget(kickNextButton);
 
-					kickMemberButton = Button.builder(Component.literal("Kick"), btn -> {
+					kickMemberButton = new RitualButton(kickButtonX, kickRowY, kickButtonW, widgetHeight(18),
+							Component.literal("Banish"), btn -> {
 						List<UUID> kickable = getKickableMembers(localPlayer);
 						if (!kickable.isEmpty()) {
 							int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
@@ -246,11 +243,37 @@ public class BloodlinePoolScreen extends Screen {
 							PacketHandler.sendToServer(new PacketRequestPoolData());
 							kickTargetIndex = 0;
 						}
-					}).bounds(kickButtonX, kickRowY, kickButtonW, widgetHeight(18)).build();
+					});
 					addRenderableWidget(kickMemberButton);
 				}
 			});
 		}
+	}
+
+	private void styleEditBox(EditBox editBox) {
+		editBox.setBordered(false);
+		editBox.setTextColor(0x00FFFFFF);
+		editBox.setTextColorUneditable(0x00FFFFFF);
+	}
+
+	private void sendPoolSettings() {
+		double rate = 0.5;
+		if (trickleRateField != null && !trickleRateField.getValue().isBlank()) {
+			try {
+				rate = Double.parseDouble(trickleRateField.getValue());
+			} catch (NumberFormatException ignored) {
+			}
+		}
+
+		double threshold = 0.25;
+		if (autoDrawThresholdField != null && !autoDrawThresholdField.getValue().isBlank()) {
+			try {
+				threshold = Double.parseDouble(autoDrawThresholdField.getValue()) / 100.0;
+			} catch (NumberFormatException ignored) {
+			}
+		}
+
+		PacketHandler.sendToServer(new PacketUpdatePoolSettings(trickleEnabled, rate, autoDrawEnabled, threshold));
 	}
 
 	private void updateScaledLayout() {
@@ -298,9 +321,10 @@ public class BloodlinePoolScreen extends Screen {
 
 		// Border
 		drawBorder(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight);
+		drawCornerSigils(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight);
 
 		// Title
-		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + scaled(6), 0xFFCC3344);
+		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + scaled(6), 0xFFFF6A75);
 
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
@@ -329,58 +353,45 @@ public class BloodlinePoolScreen extends Screen {
 					centerX, y, 0xFFAAAAAA);
 			y += scaled(14);
 
-			// Pool volume bar
+			// Pool volume reservoir
 			float poolVol = BloodlinePoolClientData.getPoolVolume();
 			float poolMax = BloodlinePoolClientData.getPoolMax();
 			float ratio = poolMax > 0 ? Mth.clamp(poolVol / poolMax, 0f, 1f) : 0f;
 
-			int barX = guiLeft + scaled(12);
-			int barW = Math.max(1, currentGuiWidth - scaled(24));
-			int barH = scaled(14);
-
-			// Bar background
-			graphics.fill(barX, y, barX + barW, y + barH, 0xFF1A0505);
-			// Bar fill
-			int fillW = (int) (barW * ratio);
-			int barColor = lerpColor(ratio);
-			graphics.fill(barX, y, barX + fillW, y + barH, barColor);
-			// Bar border
-			graphics.fill(barX, y, barX + barW, y + 1, 0xFF440808);
-			graphics.fill(barX, y + barH - 1, barX + barW, y + barH, 0xFF440808);
-			graphics.fill(barX, y, barX + 1, y + barH, 0xFF440808);
-			graphics.fill(barX + barW - 1, y, barX + barW, y + barH, 0xFF440808);
-
-			// Pool text
 			String poolText = String.format("%s / %.0f ml", formatPoolVolume(poolVol), poolMax);
-			graphics.drawCenteredString(this.font, poolText, centerX, y + 3, 0xFFFFFFFF);
-			y += barH + scaled(8);
+			int reservoirCenterX = centerX + scaled(18);
+			int reservoirCenterY = guiTop + scaled(92);
+			renderBloodSphere(graphics, reservoirCenterX, reservoirCenterY, scaled(44), ratio, poolText, partialTick);
 
-			// Your blood bar
-			String yourBlood = String.format("Your Blood: %.0f / %.0f ml",
+			renderVesselBloodBar(graphics, reservoirCenterX - scaled(86), reservoirCenterY - scaled(26),
 					volume.getBloodVolume(), volume.getMaxBloodVolume());
-			graphics.drawCenteredString(this.font, yourBlood, centerX, y, 0xFFCC8888);
 
 			// Label for donate field
-			graphics.drawString(this.font, "Donate (ml):", guiLeft + scaled(12), guiTop + scaled(89), 0xFFCC6666,
+			graphics.drawString(this.font, "Offer (ml):", donateAmountField.getX(), donateAmountField.getY() - scaled(14),
+					0xFFFF8A8A,
 					true);
 
 			// Trickle rate label
-			graphics.drawString(this.font, "Rate:", guiLeft + scaled(12),
-					trickleRateField.getY() + 4, 0xFFCC6666, true);
+			graphics.drawString(this.font, "Rate:", trickleRateField.getX() - scaled(42),
+					trickleRateField.getY() + scaled(5), 0xFFFF8A8A, true);
 
 			// Auto-draw threshold label
-			graphics.drawString(this.font, "Threshold %:", guiLeft + scaled(12),
-					autoDrawThresholdField.getY() + 4, 0xFFCC6666, true);
+			graphics.drawString(this.font, "Threshold %:", autoDrawThresholdField.getX() - scaled(86),
+					autoDrawThresholdField.getY() + scaled(5), 0xFFFF8A8A, true);
 
 			// Bloodline message label
-			graphics.drawString(this.font, "Bloodline Message:", guiLeft + scaled(12),
-					messageField.getY() - 11, 0xFFCC6666, true);
+			graphics.drawString(this.font, "Bloodline Message:", messageField.getX(),
+					messageField.getY() - scaled(14), 0xFFFF8A8A, true);
 
 			if (kickMemberButton != null) {
 				List<UUID> kickable = getKickableMembers(player);
+				int targetX = kickNextButton.getX() + kickNextButton.getWidth() + scaled(6);
+				int targetW = Math.max(48, kickMemberButton.getX() - targetX - scaled(6));
+				renderRitualPanel(graphics, targetX, kickMemberButton.getY(), targetW, kickMemberButton.getHeight(),
+						0xFF050101, 0xFF6A1218);
 				if (kickable.isEmpty()) {
-					graphics.drawString(this.font, "No player members to expel.", guiLeft + scaled(22),
-							kickMemberButton.getY() + 5, 0xFFAA6666, false);
+					drawCenteredFittingString(graphics, this.font, "No player members", targetX + targetW / 2,
+							kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFAA6666, false);
 					kickMemberButton.active = false;
 					kickPrevButton.active = false;
 					kickNextButton.active = false;
@@ -390,26 +401,174 @@ public class BloodlinePoolScreen extends Screen {
 					kickNextButton.active = true;
 					kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
 					String shortTarget = resolvePlayerName(kickable.get(kickTargetIndex));
-					graphics.drawString(this.font, "Expel Player:", guiLeft + scaled(22),
-							kickMemberButton.getY() + 1, 0xFFCC6666, true);
-					graphics.drawString(this.font, shortTarget, guiLeft + scaled(22),
-							kickMemberButton.getY() + 10, 0xFFCC8888, false);
+					drawCenteredFittingString(graphics, this.font, shortTarget, targetX + targetW / 2,
+							kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFFFC8C8, false);
 				}
 			}
 		});
 
 		// Render widgets on top
+		renderEditBoxFrame(graphics, donateAmountField);
+		renderEditBoxFrame(graphics, trickleRateField);
+		renderEditBoxFrame(graphics, autoDrawThresholdField);
+		renderEditBoxFrame(graphics, messageField);
 		super.render(graphics, mouseX, mouseY, partialTick);
+		renderCenteredEditBoxText(graphics, donateAmountField, "100");
+		renderCenteredEditBoxText(graphics, trickleRateField, "0.00");
+		renderCenteredEditBoxText(graphics, autoDrawThresholdField, "0");
+		renderCenteredEditBoxText(graphics, messageField, "Send to bloodline...");
+		renderVesselTooltip(graphics, mouseX, mouseY);
 	}
 
 	// ───── Color Lerp for Pool Bar ─────
 
-	private int lerpColor(float ratio) {
-		// Empty = dark red, full = bright red/gold
-		int r = (int) Mth.lerp(ratio, 100, 220);
-		int g = (int) Mth.lerp(ratio, 10, 60);
-		int b = (int) Mth.lerp(ratio, 10, 20);
-		return 0xFF000000 | (r << 16) | (g << 8) | b;
+	private static int blendColor(int from, int to, float ratio) {
+		float t = Mth.clamp(ratio, 0.0F, 1.0F);
+		int a = (int) Mth.lerp(t, (from >>> 24) & 0xFF, (to >>> 24) & 0xFF);
+		int r = (int) Mth.lerp(t, (from >>> 16) & 0xFF, (to >>> 16) & 0xFF);
+		int g = (int) Mth.lerp(t, (from >>> 8) & 0xFF, (to >>> 8) & 0xFF);
+		int b = (int) Mth.lerp(t, from & 0xFF, to & 0xFF);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	private static int multiplyColor(int color, float multiplier) {
+		float m = Mth.clamp(multiplier, 0.0F, 1.5F);
+		int a = (color >>> 24) & 0xFF;
+		int r = (int) Mth.clamp(((color >>> 16) & 0xFF) * m, 0, 255);
+		int g = (int) Mth.clamp(((color >>> 8) & 0xFF) * m, 0, 255);
+		int b = (int) Mth.clamp((color & 0xFF) * m, 0, 255);
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	private void renderBloodSphere(GuiGraphics graphics, int centerX, int centerY, int radius, float ratio,
+			String label, float partialTick) {
+		float time = animTime + partialTick;
+		int outerRadius = radius + scaled(5);
+		for (int row = -outerRadius; row <= outerRadius; row++) {
+			int outerHalf = (int) Math.sqrt(Math.max(0, outerRadius * outerRadius - row * row));
+			int innerHalf = (int) Math.sqrt(Math.max(0, Math.max(0, outerRadius - scaled(3))
+					* Math.max(0, outerRadius - scaled(3)) - row * row));
+			int y = centerY + row;
+			int rim = Math.abs(row) > outerRadius - scaled(3) ? 0xAA9E1F2A : 0x775D1218;
+			graphics.fill(centerX - outerHalf, y, centerX - innerHalf, y + 1, rim);
+			graphics.fill(centerX + innerHalf + 1, y, centerX + outerHalf + 1, y + 1, rim);
+		}
+		int glass = 0xAA5D1218;
+		for (int row = -radius; row <= radius; row++) {
+			int half = (int) Math.sqrt(Math.max(0, radius * radius - row * row));
+			float shade = 1.0F - Math.abs(row) / (float) Math.max(1, radius);
+			int alpha = (int) (30 + 34 * shade);
+			graphics.fill(centerX - half, centerY + row, centerX + half + 1, centerY + row + 1,
+					(alpha << 24) | 0x00210A0D);
+			if (row == -radius || row == radius || half <= 2) {
+				graphics.fill(centerX - half, centerY + row, centerX + half + 1, centerY + row + 1, glass);
+			}
+		}
+
+		int fillTop = centerY + radius - Math.round((radius * 2.0F) * ratio);
+		for (int row = Math.max(centerY - radius, fillTop); row <= centerY + radius; row++) {
+			int local = row - centerY;
+			int half = (int) Math.sqrt(Math.max(0, radius * radius - local * local));
+			float depth = Mth.clamp((row - fillTop) / (float) Math.max(1, centerY + radius - fillTop), 0.0F, 1.0F);
+			float pulse = 0.82F + 0.18F * Mth.sin(time * 2.4F + row * 0.12F);
+			int wave = row == fillTop ? Math.round(Mth.sin(time * 5.0F) * scaled(2)) : 0;
+			int color = multiplyColor(blendColor(0xEED32327, 0xEE520507, depth), pulse);
+			graphics.fill(centerX - half + scaled(2) + wave, row, centerX + half - scaled(1) + wave, row + 1, color);
+			if (row == fillTop) {
+				graphics.fill(centerX - half + scaled(2) + wave, row, centerX + half - scaled(1) + wave, row + 1,
+						0xDDFF5A52);
+			}
+		}
+
+		drawCenteredFittingString(graphics, this.font, label, centerX, centerY + scaled(2),
+				radius * 2 - scaled(12), 0xFFFFA0A0, false);
+	}
+
+	private void renderVesselBloodBar(GuiGraphics graphics, int x, int y, double volume, double maxVolume) {
+		vesselBarBounds = BloodVolumeBarWidget.render(graphics, x, y, scaled(8), scaled(52),
+				volume, maxVolume, animTime, 0xFF330808, 0xFF220606);
+	}
+
+	private void renderVesselTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null) {
+			return;
+		}
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume ->
+				BloodVolumeBarWidget.renderTooltip(graphics, this.font, vesselBarBounds,
+						volume.getBloodVolume(), volume.getMaxBloodVolume(), mouseX, mouseY));
+	}
+
+	private void renderEditBoxFrame(GuiGraphics graphics, EditBox editBox) {
+		if (editBox == null) {
+			return;
+		}
+		renderRitualPanel(graphics, editBox.getX() - 2, editBox.getY() - 2,
+				editBox.getWidth() + 4, editBox.getHeight() + 4, 0xFF050101,
+				editBox.isFocused() ? 0xFFFF6570 : 0xFF6A1218);
+	}
+
+	private void renderCenteredEditBoxText(GuiGraphics graphics, EditBox editBox, String hint) {
+		if (editBox == null) {
+			return;
+		}
+		String value = editBox.getValue();
+		boolean showingHint = value.isEmpty() && !editBox.isFocused();
+		String text = showingHint ? hint : value;
+		int color = showingHint ? 0xFF7A4C4C : 0xFFFFD9D0;
+		drawCenteredFittingString(graphics, this.font, text, editBox.getX() + editBox.getWidth() / 2,
+				editBox.getY() + (editBox.getHeight() - 8) / 2, editBox.getWidth() - scaled(8), color, true);
+		if (editBox.isFocused() && (int) (animTime * 2.0F) % 2 == 0) {
+			int cursorX = editBox.getX() + editBox.getWidth() / 2 + Math.min(this.font.width(text) / 2,
+					Math.max(0, editBox.getWidth() / 2 - scaled(5)));
+			graphics.fill(cursorX + scaled(1), editBox.getY() + scaled(4), cursorX + scaled(2),
+					editBox.getY() + editBox.getHeight() - scaled(4), 0xFFFFD9D0);
+		}
+	}
+
+	private static void drawCenteredFittingString(GuiGraphics graphics, Font font, String text, int centerX, int y,
+			int maxWidth, int color, boolean shadow) {
+		if (text == null || text.isEmpty()) {
+			return;
+		}
+		int textWidth = font.width(text);
+		if (textWidth <= maxWidth) {
+			graphics.drawCenteredString(font, text, centerX, y, color);
+			return;
+		}
+		float scale = Mth.clamp(maxWidth / (float) Math.max(1, textWidth), 0.55F, 1.0F);
+		graphics.pose().pushPose();
+		graphics.pose().translate(centerX, y, 0);
+		graphics.pose().scale(scale, scale, 1.0F);
+		graphics.drawString(font, text, -font.width(text) / 2, 0, color, shadow);
+		graphics.pose().popPose();
+	}
+
+	private void renderRitualPanel(GuiGraphics graphics, int x, int y, int width, int height, int fill, int edge) {
+		graphics.fill(x, y, x + width, y + height, fill);
+		graphics.fill(x, y, x + width, y + 1, edge);
+		graphics.fill(x, y + height - 1, x + width, y + height, 0xFF210407);
+		graphics.fill(x, y, x + 1, y + height, edge);
+		graphics.fill(x + width - 1, y, x + width, y + height, edge);
+		graphics.fill(x + 2, y + 2, x + width - 2, y + 3, 0x663D090D);
+	}
+
+	private void drawCornerSigils(GuiGraphics graphics, int x, int y, int width, int height) {
+		int color = 0xAA9E1F2A;
+		int s = scaled(8);
+		drawSigil(graphics, x + scaled(6), y + scaled(6), s, color);
+		drawSigil(graphics, x + width - scaled(6) - s, y + scaled(6), s, color);
+		drawSigil(graphics, x + scaled(6), y + height - scaled(6) - s, s, color);
+		drawSigil(graphics, x + width - scaled(6) - s, y + height - scaled(6) - s, s, color);
+	}
+
+	private void drawSigil(GuiGraphics graphics, int x, int y, int size, int color) {
+		int cx = x + size / 2;
+		int cy = y + size / 2;
+		graphics.fill(cx, y, cx + 1, y + size, color);
+		graphics.fill(x, cy, x + size, cy + 1, color);
+		graphics.fill(x + 2, y + 2, x + size - 2, y + 3, color);
+		graphics.fill(x + 2, y + size - 3, x + size - 2, y + size - 2, color);
 	}
 
 	// ───── Border (same style as VascularStatusScreen / TendencyViewScreen) ─────
@@ -547,5 +706,69 @@ public class BloodlinePoolScreen extends Screen {
 		return Math.abs(amount - Math.round(amount)) < 0.05f
 				? String.format("%.0f", amount)
 				: String.format("%.1f", amount);
+	}
+
+	private static final class CenteredEditBox extends EditBox {
+		private CenteredEditBox(Font font, int x, int y, int width, int height, Component message) {
+			super(font, x, y, width, height, message);
+		}
+
+		@Override
+		public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+			// BloodlinePoolScreen draws centered field text after all widgets render.
+		}
+	}
+
+	private static class RitualButton extends Button {
+		protected RitualButton(int x, int y, int width, int height, Component message, OnPress onPress) {
+			super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
+		}
+
+		@Override
+		protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+			Minecraft minecraft = Minecraft.getInstance();
+			boolean hot = isHoveredOrFocused();
+			int fill = active ? (hot ? 0xFF68141D : 0xFF2B070B) : 0xFF160507;
+			int edge = active ? (hot ? 0xFFFF7580 : 0xFF8A1A24) : 0xFF3A1114;
+			graphics.fill(getX(), getY(), getX() + width, getY() + height, 0xFF050101);
+			graphics.fill(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1, fill);
+			graphics.fill(getX(), getY(), getX() + width, getY() + 1, edge);
+			graphics.fill(getX(), getY() + height - 1, getX() + width, getY() + height, 0xFF210407);
+			graphics.fill(getX(), getY(), getX() + 1, getY() + height, edge);
+			graphics.fill(getX() + width - 1, getY(), getX() + width, getY() + height, edge);
+			if (hot && active) {
+				graphics.fill(getX() + 2, getY() + 2, getX() + width - 2, getY() + height - 2, 0x22FF9098);
+			}
+			drawCenteredFittingString(graphics, minecraft.font, getMessage().getString(), getX() + width / 2,
+					getY() + (height - 8) / 2, Math.max(1, width - 8), active ? 0xFFFFE2DC : 0xFF8A6868,
+					false);
+		}
+	}
+
+	private static final class ToggleRitualButton extends RitualButton {
+		private final String label;
+		private final Consumer<Boolean> onToggle;
+		private boolean selected;
+
+		private ToggleRitualButton(int x, int y, int width, int height, String label, boolean selected,
+				Consumer<Boolean> onToggle) {
+			super(x, y, width, height, Component.empty(), btn -> {
+			});
+			this.label = label;
+			this.selected = selected;
+			this.onToggle = onToggle;
+			updateLabel();
+		}
+
+		@Override
+		public void onPress() {
+			selected = !selected;
+			onToggle.accept(selected);
+			updateLabel();
+		}
+
+		private void updateLabel() {
+			setMessage(Component.literal((selected ? "[x] " : "[ ] ") + label));
+		}
 	}
 }

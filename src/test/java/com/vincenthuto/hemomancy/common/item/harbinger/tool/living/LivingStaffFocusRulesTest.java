@@ -10,6 +10,7 @@ public final class LivingStaffFocusRulesTest {
 		unskilledStaffAbsorptionMatchesBareHandOnOneTargetAndBeatsItWithTwo();
 		livingConduitIncreasesAbsorptionTargetsAndRange();
 		vascularDrawIncreasesAbsorptionAmountAndPulseSpeed();
+		staffBlockAbsorptionPerTickScalesWithFocus();
 		crimsonProjectionIncreasesProjectionRates();
 		vesperMemoryIsTheHighestFocusTier();
 		hematicFocusImprovesMidgameStaffFocus();
@@ -61,6 +62,17 @@ public final class LivingStaffFocusRulesTest {
 		assertTrue("vascular draw makes absorption pulse faster",
 				LivingStaffFocusRules.absorptionPulseIntervalTicks(maxDraw)
 						< LivingStaffFocusRules.absorptionPulseIntervalTicks(none));
+	}
+
+	private static void staffBlockAbsorptionPerTickScalesWithFocus() {
+		LivingStaffFocusProfile none = LivingStaffFocusProfile.NONE;
+		LivingStaffFocusProfile focused = new LivingStaffFocusProfile(3, 3, 3, 3, 0, false);
+		assertDouble("bare block absorption uses the bare per-tick rule",
+				LivingStaffFocusRules.bareAbsorptionPerSecond() / 20.0D,
+				LivingStaffFocusRules.bareBlockAbsorptionPerTick());
+		assertTrue("staff block absorption scales with focus",
+				LivingStaffFocusRules.blockAbsorptionPerTick(focused)
+						> LivingStaffFocusRules.blockAbsorptionPerTick(none));
 	}
 
 	private static void crimsonProjectionIncreasesProjectionRates() {

@@ -11,6 +11,8 @@ public final class FaneBoundaryRendererSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
 	private static final Path CLIENT_CONFIG = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java");
+	private static final Path CLIENT_DATA = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/data/FaneBoundaryClientData.java");
 
 	private FaneBoundaryRendererSourceTest() {
 	}
@@ -19,8 +21,17 @@ public final class FaneBoundaryRendererSourceTest {
 		String renderer = Files.readString(RENDERER).replace("\r\n", "\n");
 		String shaderInit = Files.readString(SHADER_INIT).replace("\r\n", "\n");
 		String clientConfig = Files.readString(CLIENT_CONFIG).replace("\r\n", "\n");
+		String clientData = Files.readString(CLIENT_DATA).replace("\r\n", "\n");
 
 		assertContains("renderer respects client toggle", renderer, "faneBoundaryRendererEnabled()");
+		assertContains("renderer respects per-player fane sight mode", renderer, "FaneBoundaryClientData.viewMode()");
+		assertContains("renderer can force outsider sight intensity", renderer, "effectiveRelation");
+		assertContains("renderer can force mundane outsider sight", renderer, "ViewMode.MUNDANE");
+		assertContains("renderer hidden mode disables all fane visuals", renderer, "ViewMode.HIDDEN");
+		assertContains("client fane data stores view mode locally", clientData, "private static ViewMode viewMode");
+		assertContains("client fane data cycles fane sight modes", clientData, "cycleViewMode()");
+		assertContains("client fane data offers mundane outsider view", clientData, "MUNDANE(\"Fane Sight: Mundane\")");
+		assertContains("client fane data offers revealed outsider view", clientData, "REVEALED(\"Fane Sight: Revealed\")");
 		assertContains("client config defines fane border toggle", clientConfig, "RENDER_FANE_BOUNDARY");
 		assertContains("client config defaults fane border toggle on", clientConfig,
 				"define(\"renderFaneBoundary\", true)");

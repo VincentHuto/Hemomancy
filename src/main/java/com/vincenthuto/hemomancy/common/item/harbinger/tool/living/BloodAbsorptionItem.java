@@ -110,7 +110,8 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			return;
 		}
 		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(worldIn, player,
-				LivingStaffFocusRules.bareAbsorptionDamagePerTick());
+				LivingStaffFocusRules.bareAbsorptionRange(),
+				LivingStaffFocusRules.bareBlockAbsorptionPerTick());
 		if (blockHandled > 0.0D) {
 			return;
 		}

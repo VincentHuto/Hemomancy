@@ -52,6 +52,27 @@ public final class BloodlineScreenRegressionSourceTest {
 		assertContains("bloodline pool screen calculates fit scale", poolScreen, "fitScale");
 		assertContains("bloodline pool screen stores scaled panel width", poolScreen, "currentGuiWidth");
 		assertContains("bloodline pool screen scales widget positions", poolScreen, "scaled(");
+		assertContains("bloodline pool screen renders central shared pool sphere", poolScreen, "renderBloodSphere");
+		assertContains("bloodline pool screen reuses machine blood volume widget for vessel bar", poolScreen,
+				"BloodVolumeBarWidget.render");
+		assertContains("bloodline pool screen reuses machine blood volume tooltip", poolScreen,
+				"BloodVolumeBarWidget.renderTooltip");
+		assertNotContains("bloodline pool screen removes the redundant seal settings button", poolScreen,
+				"Seal Pool Settings");
+		assertContains("bloodline pool screen uses themed ritual buttons", poolScreen, "RitualButton");
+		assertContains("bloodline pool screen uses themed toggles instead of vanilla checkboxes", poolScreen,
+				"ToggleRitualButton");
+		assertContains("bloodline pool screen centers input field text", poolScreen, "renderCenteredEditBoxText");
+		assertContains("bloodline pool screen suppresses vanilla edit box text", poolScreen, "CenteredEditBox");
+		assertContains("bloodline pool screen suppresses vanilla edit box widget rendering", poolScreen,
+				"public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)");
+		assertContains("bloodline pool screen fits long button labels", poolScreen, "drawCenteredFittingString");
+		assertContains("bloodline pool screen exposes fane sight cycle", poolScreen,
+				"FaneBoundaryClientData.cycleViewMode()");
+		assertNotContains("bloodline pool screen no longer uses vanilla checkbox widgets", poolScreen,
+				"Checkbox.builder");
+		assertNotContains("bloodline pool screen avoids normal edit box construction", poolScreen,
+				"new EditBox(");
 	}
 
 	private static void assertContains(String label, String text, String expected) {

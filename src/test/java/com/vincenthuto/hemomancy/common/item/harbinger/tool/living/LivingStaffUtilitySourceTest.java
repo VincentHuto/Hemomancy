@@ -34,8 +34,10 @@ public final class LivingStaffUtilitySourceTest {
 				projectWithStaff, "LivingStaffFocusRules.addBloodHandled");
 		assertBefore("staff block absorption streams every tick before entity pulse gating",
 				onUseTick, "tryAbsorbFromLookedAtBlockWithStaff", "absorptionPulseIntervalTicks");
-		assertContains("staff block absorption uses the same per-tick standard as bare absorption",
-				absorbBlockWithStaff, "LivingStaffFocusRules.staffAbsorptionPerSecond(focus, 1) / 20.0D");
+		assertContains("staff block absorption uses the shared focus-derived reach",
+				absorbBlockWithStaff, "LivingStaffFocusRules.absorptionRange(focus)");
+		assertContains("staff block absorption uses the shared focus-derived block tick rate",
+				absorbBlockWithStaff, "LivingStaffFocusRules.blockAbsorptionPerTick(focus)");
 		assertNotContains("staff entity absorption no longer hides block draw behind pulse intervals",
 				absorbWithStaff, "tryAbsorbFromLookedAtBlock");
 		assertContains("staff records handled blood away from the held item during utility use",

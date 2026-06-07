@@ -293,7 +293,8 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	private static boolean tryAbsorbFromLookedAtBlockWithStaff(Level level, Player player,
 			LivingStaffFocusProfile focus) {
 		double blockHandled = BlockBloodInteractions.tryAbsorbFromLookedAtBlock(level, player,
-				LivingStaffFocusRules.staffAbsorptionPerSecond(focus, 1) / 20.0D);
+				LivingStaffFocusRules.absorptionRange(focus),
+				LivingStaffFocusRules.blockAbsorptionPerTick(focus));
 		if (blockHandled <= 0.0D) {
 			return false;
 		}

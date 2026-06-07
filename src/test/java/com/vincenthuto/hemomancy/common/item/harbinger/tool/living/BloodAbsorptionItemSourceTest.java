@@ -19,6 +19,10 @@ public final class BloodAbsorptionItemSourceTest {
 
 		assertBefore("bare absorption skips client drain ticks",
 				onUseTick, "if (worldIn.isClientSide)", "absorbFromTarget");
+		assertContains("bare block absorption uses the bare absorption reach",
+				onUseTick, "LivingStaffFocusRules.bareAbsorptionRange()");
+		assertContains("bare block absorption uses the shared bare per-tick helper",
+				onUseTick, "LivingStaffFocusRules.bareBlockAbsorptionPerTick()");
 		assertBefore("absorbing from a target only hurts entities on the server",
 				absorbFromTarget, "if (level.isClientSide)", "target.hurt");
 		assertContains("absorption tracks target health before damage",

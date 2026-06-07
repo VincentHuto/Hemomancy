@@ -27,14 +27,18 @@ public final class BlockBloodInteractions {
 	}
 
 	public static double tryAbsorbFromLookedAtBlock(Level level, LivingEntity user, double maxAmount) {
+		return tryAbsorbFromLookedAtBlock(level, user, BLOCK_REACH, maxAmount);
+	}
+
+	public static double tryAbsorbFromLookedAtBlock(Level level, LivingEntity user, double reach, double maxAmount) {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
-		BlockTarget target = findLookedAtEndpoint(serverLevel, player);
+		BlockTarget target = findLookedAtEndpoint(serverLevel, player, reach);
 		if (target != null) {
 			return target.endpoint().absorbBloodFromBlock(serverLevel, target.pos(), target.state(), player, maxAmount);
 		}
-		BlockPos pos = findLookedAtBlockPos(player);
+		BlockPos pos = findLookedAtBlockPos(player, reach);
 		return pos == null ? 0.0D : tryAbsorbFromBloodTile(serverLevel, pos, player, maxAmount);
 	}
 
@@ -42,7 +46,7 @@ public final class BlockBloodInteractions {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
-		BlockTarget target = findLookedAtEndpoint(serverLevel, player);
+		BlockTarget target = findLookedAtEndpoint(serverLevel, player, BLOCK_REACH);
 		return target == null ? 0.0D
 				: target.endpoint().projectBloodIntoBlock(serverLevel, target.pos(), target.state(), player, maxAmount);
 	}
@@ -64,8 +68,8 @@ public final class BlockBloodInteractions {
 		return resolveBloodTile(level, pos) != null;
 	}
 
-	private static BlockTarget findLookedAtEndpoint(ServerLevel level, ServerPlayer player) {
-		BlockPos pos = findLookedAtBlockPos(player);
+	private static BlockTarget findLookedAtEndpoint(ServerLevel level, ServerPlayer player, double reach) {
+		BlockPos pos = findLookedAtBlockPos(player, reach);
 		if (pos == null) {
 			return null;
 		}
@@ -77,7 +81,11 @@ public final class BlockBloodInteractions {
 	}
 
 	private static BlockPos findLookedAtBlockPos(ServerPlayer player) {
-		HitResult trace = player.pick(BLOCK_REACH, 0, true);
+		return findLookedAtBlockPos(player, BLOCK_REACH);
+	}
+
+	private static BlockPos findLookedAtBlockPos(ServerPlayer player, double reach) {
+		HitResult trace = player.pick(reach, 0, true);
 		return trace.getType() == HitResult.Type.BLOCK ? ((BlockHitResult) trace).getBlockPos() : null;
 	}
 
