@@ -489,8 +489,8 @@ As you progress, your body accumulates **Fungal Scars** — visible marks of cor
 
 ### Tools and Utilities
 
-**Charm of Vascularium** (Curios Integration)
-- Curio item worn in dedicated slot
+**Charm of Vascularium** (Curios integration dormant)
+- Hemomancy bloodline/equipment item; dedicated Curios slot support is dormant on the NeoForge 1.21.1 branch
 - Permanent blood regeneration buff
 - Enhanced tendency alignment
 - Protects against blood loss
@@ -651,10 +651,10 @@ A: Not easily. Starting the Unstained path will zero your degree, but it's traum
 A: The ritual fails and you lose the consumed materials. Make sure you're prepared.
 
 **Q: Can I be Harbinger and use non-blood magic?**
-A: Yes! Especially with Mana and Artifice installed, there's synergy between blood and mana.
+A: Yes, but the current NeoForge 1.21.1 alpha does not have active Mana and Artifice compatibility. The blood/mana synergy design is preserved as dormant compat until MnA has a compatible build.
 
 **Q: Is there a max degree?**
-A: Degree 7 (Apotheos) is the cap, but staying at Degree 6 (Archon) is a valid endpoint.
+A: Degree 8 is the Apotheos endpoint in the current reference docs. Staying at Archon after the revelation fork is also a valid endpoint, and the late-game boss/summoning layer remains partial for alpha.
 
 **Q: What happens to my bloodline if I reach Apotheos?**
 A: Your choice (Mycophant or Vesper) affects your bloodline's fate. Choose wisely.

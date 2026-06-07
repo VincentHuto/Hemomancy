@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import javax.annotation.Nonnull;
@@ -23,9 +24,10 @@ import java.util.*;
  *   <li>Enhanced blood regeneration rate</li>
  * </ul>
  * <p>
- * Each bloom tracks how many Qliphoth Pomes have been dropped from it.
- * A tree's lifecycle produces exactly nine pomes (one per Qliphoth husk);
- * after the ninth drop the tree ceases producing fruit until re-summoned.
+ * Each bloom tracks how many Qliphoth Pomes have ripened from it and whether
+ * one ripe pome is still waiting to be consumed. A tree's lifecycle produces
+ * exactly nine pomes (one per Qliphoth husk); after the ninth ripening the
+ * tree ceases producing fruit until re-summoned.
  */
 public class QliphothBloomSavedData extends SavedData {
 
@@ -43,6 +45,16 @@ public class QliphothBloomSavedData extends SavedData {
 	 * pruned or removed.
 	 */
 	private final Map<Long, Integer> pomesDroppedByBloom = new HashMap<>();
+
+	/**
+	 * Tracks the currently ripe or claimed-but-unconsumed pome by bloom center.
+	 * The value is the husk index (0-8). A bloom may not ripen another pome
+	 * while this entry exists.
+	 */
+	private final Map<Long, Integer> pendingPomeByBloom = new HashMap<>();
+	private final Set<Long> claimedPendingPomes = new HashSet<>();
+	private final Map<UUID, List<ItemStack>> pendingBoundPomeReturns = new HashMap<>();
+	private final Map<UUID, Set<Long>> pendingPrunedBloomResets = new HashMap<>();
 
 	public QliphothBloomSavedData() {}
 
@@ -73,6 +85,49 @@ public class QliphothBloomSavedData extends SavedData {
 				data.pomesDroppedByBloom.put(centerLong, count);
 			}
 		}
+		if (tag.contains("pendingPomes", Tag.TAG_LIST)) {
+			ListTag pendingList = tag.getList("pendingPomes", Tag.TAG_COMPOUND);
+			for (int i = 0; i < pendingList.size(); i++) {
+				CompoundTag entry = pendingList.getCompound(i);
+				data.pendingPomeByBloom.put(entry.getLong("Center"), entry.getInt("HuskIndex"));
+				if (entry.getBoolean("Claimed")) {
+					data.claimedPendingPomes.add(entry.getLong("Center"));
+				}
+			}
+		}
+		if (tag.contains("pendingBoundPomeReturns", Tag.TAG_LIST)) {
+			ListTag owners = tag.getList("pendingBoundPomeReturns", Tag.TAG_COMPOUND);
+			for (int i = 0; i < owners.size(); i++) {
+				CompoundTag ownerTag = owners.getCompound(i);
+				UUID ownerUUID = ownerTag.getUUID("Owner");
+				ListTag stacks = ownerTag.getList("Stacks", Tag.TAG_COMPOUND);
+				List<ItemStack> owedStacks = new ArrayList<>();
+				for (int stackIndex = 0; stackIndex < stacks.size(); stackIndex++) {
+					ItemStack stack = ItemStack.parseOptional(provider, stacks.getCompound(stackIndex));
+					if (!stack.isEmpty()) {
+						owedStacks.add(stack);
+					}
+				}
+				if (!owedStacks.isEmpty()) {
+					data.pendingBoundPomeReturns.put(ownerUUID, owedStacks);
+				}
+			}
+		}
+		if (tag.contains("pendingPrunedBloomResets", Tag.TAG_LIST)) {
+			ListTag owners = tag.getList("pendingPrunedBloomResets", Tag.TAG_COMPOUND);
+			for (int i = 0; i < owners.size(); i++) {
+				CompoundTag ownerTag = owners.getCompound(i);
+				UUID ownerUUID = ownerTag.getUUID("Owner");
+				ListTag origins = ownerTag.getList("Origins", Tag.TAG_LONG);
+				Set<Long> bloomOrigins = new HashSet<>();
+				for (int originIndex = 0; originIndex < origins.size(); originIndex++) {
+					bloomOrigins.add(((net.minecraft.nbt.LongTag) origins.get(originIndex)).getAsLong());
+				}
+				if (!bloomOrigins.isEmpty()) {
+					data.pendingPrunedBloomResets.put(ownerUUID, bloomOrigins);
+				}
+			}
+		}
 		return data;
 	}
 
@@ -99,6 +154,49 @@ public class QliphothBloomSavedData extends SavedData {
 			pdList.add(pdTag);
 		}
 		tag.put("pomesDropped", pdList);
+
+		ListTag pendingList = new ListTag();
+		for (Map.Entry<Long, Integer> pending : pendingPomeByBloom.entrySet()) {
+			CompoundTag pendingTag = new CompoundTag();
+			pendingTag.putLong("Center", pending.getKey());
+			pendingTag.putInt("HuskIndex", pending.getValue());
+			pendingTag.putBoolean("Claimed", claimedPendingPomes.contains(pending.getKey()));
+			pendingList.add(pendingTag);
+		}
+		tag.put("pendingPomes", pendingList);
+
+		ListTag pendingReturnList = new ListTag();
+		for (Map.Entry<UUID, List<ItemStack>> pendingReturn : pendingBoundPomeReturns.entrySet()) {
+			ListTag stacks = new ListTag();
+			for (ItemStack stack : pendingReturn.getValue()) {
+				if (!stack.isEmpty()) {
+					stacks.add(stack.save(provider));
+				}
+			}
+			if (!stacks.isEmpty()) {
+				CompoundTag ownerTag = new CompoundTag();
+				ownerTag.putUUID("Owner", pendingReturn.getKey());
+				ownerTag.put("Stacks", stacks);
+				pendingReturnList.add(ownerTag);
+			}
+		}
+		tag.put("pendingBoundPomeReturns", pendingReturnList);
+
+		ListTag pendingResetList = new ListTag();
+		for (Map.Entry<UUID, Set<Long>> pendingReset : pendingPrunedBloomResets.entrySet()) {
+			if (pendingReset.getValue().isEmpty()) {
+				continue;
+			}
+			ListTag origins = new ListTag();
+			for (Long origin : pendingReset.getValue()) {
+				origins.add(net.minecraft.nbt.LongTag.valueOf(origin));
+			}
+			CompoundTag ownerTag = new CompoundTag();
+			ownerTag.putUUID("Owner", pendingReset.getKey());
+			ownerTag.put("Origins", origins);
+			pendingResetList.add(ownerTag);
+		}
+		tag.put("pendingPrunedBloomResets", pendingResetList);
 
 		return tag;
 	}
@@ -130,6 +228,73 @@ public class QliphothBloomSavedData extends SavedData {
 		pomesDroppedByBloom.put(key, next);
 		setDirty();
 		return next;
+	}
+
+	public boolean hasPendingPome(BlockPos center) {
+		return pendingPomeByBloom.containsKey(center.asLong());
+	}
+
+	public int getPendingPomeHuskIndex(BlockPos center) {
+		return pendingPomeByBloom.getOrDefault(center.asLong(), -1);
+	}
+
+	public void setPendingPome(BlockPos center, int huskIndex) {
+		long key = center.asLong();
+		pendingPomeByBloom.put(key, huskIndex);
+		claimedPendingPomes.remove(key);
+		setDirty();
+	}
+
+	public void clearPendingPome(long bloomOrigin) {
+		if (pendingPomeByBloom.remove(bloomOrigin) != null) {
+			claimedPendingPomes.remove(bloomOrigin);
+			setDirty();
+		}
+	}
+
+	public boolean isPendingPomeClaimed(BlockPos center) {
+		return claimedPendingPomes.contains(center.asLong());
+	}
+
+	public void markPendingPomeClaimed(BlockPos center) {
+		if (pendingPomeByBloom.containsKey(center.asLong())) {
+			claimedPendingPomes.add(center.asLong());
+			setDirty();
+		}
+	}
+
+	public void queueBoundPomeReturn(UUID ownerUUID, ItemStack stack) {
+		if (ownerUUID == null || stack.isEmpty()) {
+			return;
+		}
+		pendingBoundPomeReturns.computeIfAbsent(ownerUUID, ignored -> new ArrayList<>()).add(stack.copy());
+		setDirty();
+	}
+
+	public List<ItemStack> takePendingBoundPomeReturns(UUID ownerUUID) {
+		List<ItemStack> stacks = pendingBoundPomeReturns.remove(ownerUUID);
+		if (stacks != null) {
+			setDirty();
+			return stacks;
+		}
+		return List.of();
+	}
+
+	public void queuePrunedBloomReset(UUID ownerUUID, long bloomOrigin) {
+		if (ownerUUID == null) {
+			return;
+		}
+		pendingPrunedBloomResets.computeIfAbsent(ownerUUID, ignored -> new HashSet<>()).add(bloomOrigin);
+		setDirty();
+	}
+
+	public Set<Long> takePrunedBloomResetOrigins(UUID ownerUUID) {
+		Set<Long> origins = pendingPrunedBloomResets.remove(ownerUUID);
+		if (origins != null) {
+			setDirty();
+			return origins;
+		}
+		return Set.of();
 	}
 
 	/**
@@ -205,6 +370,8 @@ public class QliphothBloomSavedData extends SavedData {
 			if (bloomChunkX == chunkX && bloomChunkZ == chunkZ) {
 				blooms.remove(i);
 				pomesDroppedByBloom.remove(entry.center().asLong());
+				pendingPomeByBloom.remove(entry.center().asLong());
+				claimedPendingPomes.remove(entry.center().asLong());
 				setDirty();
 				return entry;
 			}

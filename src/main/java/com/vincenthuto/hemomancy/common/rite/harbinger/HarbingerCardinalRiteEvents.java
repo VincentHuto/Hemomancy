@@ -34,6 +34,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites;
@@ -73,12 +74,14 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -1444,15 +1447,15 @@ public class HarbingerCardinalRiteEvents {
 			// Sync updated bloom list to all clients
 			syncQliphothBlooms(sLevel.getServer());
 
-			// Harbinger pome communion reset — pruning severs the void's claim and scars the pruner
-			if (!prunerIsUnstained[0]) {
-				HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
-					if (degree.getTotalPomesConsumed() > 0) {
-						degree.resetPomeCommunion();
-						PacketHandler.sendToPlayer(caster, new PacketSyncPomeProgress(0));
-						grantScarOnPruning(caster);
-					}
-				});
+			boolean casterReset = resetPomeProgressAfterPrune(caster, removed.center().asLong());
+			ServerPlayer bloomOwner = sLevel.getServer().getPlayerList().getPlayer(removed.ownerUUID());
+			if (bloomOwner != null && bloomOwner != caster) {
+				resetPomeProgressAfterPrune(bloomOwner, removed.center().asLong());
+			} else if (bloomOwner == null && !removed.ownerUUID().equals(caster.getUUID())) {
+				data.queuePrunedBloomReset(removed.ownerUUID(), removed.center().asLong());
+			}
+			if (casterReset && !prunerIsUnstained[0]) {
+				grantScarOnPruning(caster);
 			}
 
 			caster.displayClientMessage(
@@ -1464,7 +1467,27 @@ public class HarbingerCardinalRiteEvents {
 			caster.displayClientMessage(
 					Component.literal("There is no Qliphoth bloom rooted in this chunk to prune.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-					false);
+			false);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) {
+			return;
+		}
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(player.server.overworld());
+		Set<Long> prunedBloomOrigins = data.takePrunedBloomResetOrigins(player.getUUID());
+		if (prunedBloomOrigins.isEmpty()) {
+			return;
+		}
+		boolean reset = false;
+		for (Long bloomOrigin : prunedBloomOrigins) {
+			reset |= resetPomeProgressAfterPrune(player, bloomOrigin);
+		}
+		if (reset) {
+			player.displayClientMessage(Component.literal("A severed Qliphoth communion unthreads itself from your blood.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
 		}
 	}
 
@@ -1472,6 +1495,32 @@ public class HarbingerCardinalRiteEvents {
 	 * Grants a Scar of Transcendence to a Harbinger player who pruned their own bloom.
 	 * Places it in the first empty SCAR slot (1–4); otherwise drops it at the player's feet.
 	 */
+	private static boolean resetPomeProgressAfterPrune(ServerPlayer player, long bloomOrigin) {
+		removeBoundPomesFromBloom(player, bloomOrigin);
+		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
+			if (!QliphothPomeRules.shouldResetProgressOnPrune(true, degree.getTotalPomesConsumed())) {
+				return false;
+			}
+			degree.resetPomeCommunion();
+			PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
+			return true;
+		}).orElse(false);
+	}
+
+	private static void removeBoundPomesFromBloom(ServerPlayer player, long bloomOrigin) {
+		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+			ItemStack stack = player.getInventory().getItem(slot);
+			if (QliphothPomeItem.isBoundPomeFromBloom(stack, bloomOrigin)) {
+				player.getInventory().setItem(slot, ItemStack.EMPTY);
+			}
+		}
+		if (QliphothPomeItem.isBoundPomeFromBloom(player.containerMenu.getCarried(), bloomOrigin)) {
+			player.containerMenu.setCarried(ItemStack.EMPTY);
+		}
+		player.getInventory().setChanged();
+		player.containerMenu.broadcastChanges();
+	}
+
 	private static void grantScarOnPruning(ServerPlayer player) {
 		ItemStack scar = new ItemStack(ItemInit.scar_transcendence.get());
 		boolean placed = false;

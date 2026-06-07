@@ -28,8 +28,13 @@ This page provides links and guidance for developers, contributors, and those wh
 **[MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/MNA_COMPATIBILITY_BRAINSTORM.md)**
 - Mana and Artifice integration design
 - Each feature includes "MnA Justification"
-- Planned and implemented status
+- Dormant runtime status for the NeoForge 1.21.1 branch
 - Design philosophy for cross-mod features
+
+**[PUBLIC_ALPHA_READINESS.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/PUBLIC_ALPHA_READINESS.md)**
+- Public alpha release bar
+- P0/P1/P2 readiness checklist
+- Known alpha limitations and recommended tester path
 
 ### Additional Documentation
 
@@ -61,7 +66,7 @@ This page provides links and guidance for developers, contributors, and those wh
 **Entrypoint:** `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`
 - Registers all DeferredRegisters
 - Sets up configs
-- Handles optional mod integration (MnA, Curios)
+- Handles active wiring; MnA and Curios registration is dormant/excluded on the NeoForge 1.21.1 branch
 - Wires capabilities and packets
 - Populates creative tabs
 
@@ -84,8 +89,8 @@ com.vincenthuto.hemomancy/
 │   ├── menu/            # Container menus
 │   └── worldgen/        # Features, biomes, structures
 ├── compat/
-│   ├── mna/             # Mana and Artifice integration
-│   ├── curios/          # Curios integration
+│   ├── mna/             # Dormant Mana and Artifice integration target
+│   ├── curios/          # Dormant Curios integration target
 │   └── jei/             # JEI recipe categories
 ├── config/              # Config classes
 └── mixin/               # Mixins

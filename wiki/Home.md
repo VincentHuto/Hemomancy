@@ -28,6 +28,7 @@ Players face a fundamental choice:
 
 ### For Players
 - **[[Getting Started]]** — Installation, first steps, and the Mortal Display
+- **[[Public Alpha Readiness]]** - Current alpha status, known limitations, and tester path
 - **[[Harbinger Path]]** — Blood magic progression, degrees, and manipulations
 - **[[Unstained Path]]** — Purification mechanics and guardian powers
 - **[[Blood Systems]]** — Understanding manipulations, tendencies, and the vascular system
@@ -41,7 +42,7 @@ Players face a fundamental choice:
 - **[[Saints and Encounters]]** — Hemorath, the Chain Saint, Annetta Knowles, and trial chambers
 
 ### For Modpack Creators
-- **[[Mod Compatibility]]** — Integration with Mana and Artifice, Curios, and JEI
+- **[[Mod Compatibility]]** — Required dependencies, JEI support, and dormant MnA/Curios notes
 - **[[Configuration]]** — Server and client config options
 
 ### For Developers
@@ -101,7 +102,8 @@ This mod intentionally avoids "good vs evil" framing. Neither path is objectivel
 - Requires **NeoForge 21.1.x** (not legacy Forge)
 - Minecraft version **1.21.1**
 - Java **21** required
-- Optional integrations with Mana and Artifice, Curios, and JEI
+- JEI support is alpha-ready through the current local NeoForge JEI jar
+- Mana and Artifice and Curios integrations are dormant on the NeoForge 1.21.1 branch until compatible dependencies are available
 - Depends on **HutosLib** (required library mod)
 
 ---
@@ -124,9 +126,9 @@ This mod intentionally avoids "good vs evil" framing. Neither path is objectivel
 - [TerraBlender](https://github.com/Glitchfiend/TerraBlender) — Biome integration
 
 **Optional Integrations:**
-- [Mana and Artifice](https://www.curseforge.com/minecraft/mc-mods/mana-and-artifice) — Magic synergy
-- [Curios API](https://www.curseforge.com/minecraft/mc-mods/curios) — Charm slot
-- [Just Enough Items (JEI)](https://www.curseforge.com/minecraft/mc-mods/jei) — Recipe viewing
+- [Just Enough Items (JEI)](https://www.curseforge.com/minecraft/mc-mods/jei) — Recipe viewing, alpha-ready in the current branch
+- [Mana and Artifice](https://www.curseforge.com/minecraft/mc-mods/mana-and-artifice) — Dormant design/source target until a compatible NeoForge 1.21.1 build exists
+- [Curios API](https://www.curseforge.com/minecraft/mc-mods/curios) — Dormant design/source target until a compatible NeoForge 1.21.1 build exists
 
 ---
 

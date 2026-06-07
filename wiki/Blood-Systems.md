@@ -20,7 +20,7 @@ This page provides a comprehensive overview of Hemomancy's blood mechanics, from
   - Animus-aligned manipulations
   - Blood Lust armor
   - Founding Fane buffs
-  - Charm of Vascularium (Curios)
+  - Charm of Vascularium through Hemomancy's current equipment surfaces
   - Certain foods and potions
 - **Reduced by:**
   - Combat damage
@@ -453,9 +453,9 @@ The **Skill Tree** provides passive bonuses and unlocks. See the full tree in Fi
 - Multi-target capabilities
 
 **Scar Branch**
-- **Scar Affinity** — Reduce scar application pain (WIP wiring)
-- **Scar Resonance** — Scars boost manipulations more (WIP wiring)
-- **Scar Mastery** — Wear additional scars (WIP wiring)
+- **Scar Affinity** — Reduce scar application pain
+- **Scar Resonance** — Scars boost manipulations more
+- **Scar Mastery** — Extend scar-focused progression and mastery behavior
 
 ### Skill Points
 
@@ -631,20 +631,12 @@ Teach your Drudges specific manipulations:
 ## Integration with Other Systems
 
 ### With Mana and Artifice
-If MnA installed:
-- Blood and mana can convert between each other
-- Spells can cost blood instead of mana (Blood Tithe)
-- Arcane Resonance and Sanguine Clarity combo effects
-- Harbinger faction gains mana resource bar
+Mana and Artifice compatibility is dormant in the NeoForge 1.21.1 branch. The design target includes blood/mana conversion, Blood Tithe, resonance combo effects, and Harbinger faction support, but those features are not active until a compatible MnA dependency exists and the excluded compat source is re-enabled.
 
 See: **[[Mod Compatibility]]**
 
 ### With Curios
-If Curios installed:
-- Charm of Vascularium fits in Curio slot
-- Provides passive blood regeneration
-- Doesn't take armor slot
-- Essential for high-blood builds
+Curios compatibility is dormant in the NeoForge 1.21.1 branch. The Charm of Vascularium remains a Hemomancy item, but the dedicated Curios slot integration is not active until compatible Curios support is restored.
 
 ---
 

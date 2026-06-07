@@ -22,9 +22,11 @@ This guide will walk you through your first steps into the world of blood magic 
 4. Launch Minecraft with the NeoForge profile
 
 ### Optional Mods
-- **Mana and Artifice** — Enables spell-blood synergy and the Harbinger faction
-- **Curios API** — Adds a dedicated curio slot for the Charm of Vascularium
-- **Just Enough Items (JEI)** — Adds recipe viewing for custom crafting stations
+- **Just Enough Items (JEI)** - Adds recipe viewing for custom crafting stations and is the recommended alpha companion mod
+- **Mana and Artifice** - Dormant on the NeoForge 1.21.1 branch; integration design/source is preserved but not active
+- **Curios API** - Dormant on the NeoForge 1.21.1 branch; Charm of Vascularium behavior currently uses Hemomancy's own equipment surfaces instead of a Curios slot
+
+See **[[Public Alpha Readiness]]** for the current alpha status and known limitations.
 
 ---
 
@@ -279,6 +281,9 @@ Your in-game journal with tabs for:
 - **Manipulations** — Known abilities and their details
 - **Progression** — Degree/purity status, next steps
 - **Discoveries** — Lore entries, item codex, creatures
+
+### Alpha Guidebook Note
+The HutosLib JSON book data for the Liber Sanguinum and Liber Immaculatus is present, and Field Notes/Liber knowledge is wired into player state. The Harbinger-side Java progression renderer is still partially wired, so alpha testers should treat guidebook access as a smoke-test priority and report any missing pages, dead tabs, or unclear first steps.
 
 ---
 

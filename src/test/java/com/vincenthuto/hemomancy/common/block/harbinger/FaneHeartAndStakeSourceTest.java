@@ -144,6 +144,13 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("stake block item uses custom renderer", blockInit, "new HematicStakeBlockItem");
 		assertContains("stake authority event handles empty-hand placement", stakeAuthorityEvents,
 				"PlayerInteractEvent.RightClickBlock");
+		assertContains("stake authority respects block entity interactions before manifesting", stakeAuthorityEvents,
+				"shouldRespectClickedBlockInteraction(level, event.getPos())");
+		assertContains("stake authority yields to interactive block entity surfaces", stakeAuthorityEvents,
+				"state.hasBlockEntity()");
+		assertBefore("stake authority checks clicked block interaction before manifesting stake", stakeAuthorityEvents,
+				"shouldRespectClickedBlockInteraction(level, event.getPos())",
+				"HematicStakeBlock.manifestStake");
 		assertContains("stake authority event handles break protection", stakeAuthorityEvents,
 				"BlockEvent.BreakEvent");
 		assertContains("stake authority cancels non-owner breaks", stakeAuthorityEvents, "event.setCanceled(true)");
@@ -212,6 +219,14 @@ public final class FaneHeartAndStakeSourceTest {
 	private static void assertNotContains(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + ": unexpected " + unexpected);
+		}
+	}
+
+	private static void assertBefore(String label, String text, String first, String second) {
+		int firstIndex = text.indexOf(first);
+		int secondIndex = text.indexOf(second);
+		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
+			throw new AssertionError(label + ": expected " + first + " before " + second);
 		}
 	}
 

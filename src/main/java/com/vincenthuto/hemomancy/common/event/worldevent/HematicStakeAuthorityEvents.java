@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -34,6 +35,9 @@ public final class HematicStakeAuthorityEvents {
 		if (level.getBlockState(event.getPos()).is(BlockInit.consecrated_bloodwell.get())) {
 			return;
 		}
+		if (shouldRespectClickedBlockInteraction(level, event.getPos())) {
+			return;
+		}
 
 		BlockPos placePos = event.getPos().relative(event.getFace());
 		if (HematicStakeBlock.manifestStake(level, player, placePos, event.getFace())) {
@@ -42,6 +46,11 @@ public final class HematicStakeAuthorityEvents {
 			event.setCancellationResult(InteractionResult.SUCCESS);
 			event.setCanceled(true);
 		}
+	}
+
+	private static boolean shouldRespectClickedBlockInteraction(ServerLevel level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		return state.hasBlockEntity();
 	}
 
 	@SubscribeEvent

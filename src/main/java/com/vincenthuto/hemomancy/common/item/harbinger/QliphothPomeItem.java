@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Edible reagent fruit dropped by Qliphoth Bloom trees. Renders as a dark
@@ -78,6 +80,15 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	 */
 	public static final String TAINTED_KEY = "hemomancy:tainted_pome";
 
+	/**
+	 * Boolean: set when a pome was picked directly from its Qliphoth Bloom.
+	 * Bound pomes resist leaving the player's inventory until consumed.
+	 */
+	public static final String BOUND_KEY = "hemomancy:bound_pome";
+
+	/** UUID: the player who grew and claimed the bloom fruit. */
+	public static final String OWNER_KEY = "hemomancy:pome_owner";
+
 	// Pome communion and empowerment data is stored in IInitiatoryDegree capability.
 
 	// ── Effect constants ──
@@ -108,6 +119,31 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 
 	private static CompoundTag getCustomData(ItemStack stack) {
 		return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+	}
+
+	public static ItemStack createPickedPomeStack(long bloomOrigin, int huskIndex, UUID ownerUUID) {
+		ItemStack pomeStack = new ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.qliphoth_pome.get());
+		CompoundTag tag = getCustomData(pomeStack);
+		tag.putLong(BLOOM_ORIGIN_KEY, bloomOrigin);
+		tag.putInt(HUSK_INDEX_KEY, huskIndex);
+		tag.putBoolean(BOUND_KEY, true);
+		tag.putUUID(OWNER_KEY, ownerUUID);
+		pomeStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		return pomeStack;
+	}
+
+	public static boolean isBoundPome(ItemStack stack) {
+		return !stack.isEmpty()
+				&& stack.is(com.vincenthuto.hemomancy.common.init.ItemInit.qliphoth_pome.get())
+				&& getCustomData(stack).getBoolean(BOUND_KEY);
+	}
+
+	public static boolean isBoundPomeFromBloom(ItemStack stack, long bloomOrigin) {
+		if (!isBoundPome(stack)) {
+			return false;
+		}
+		CompoundTag tag = getCustomData(stack);
+		return tag.contains(BLOOM_ORIGIN_KEY) && tag.getLong(BLOOM_ORIGIN_KEY) == bloomOrigin;
 	}
 
 	// ── Tooltip ──
@@ -157,6 +193,12 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+		if (!level.isClientSide && entity instanceof Player player && !canPlayerConsumeStack(stack, player)) {
+			player.displayClientMessage(Component.literal("The pome resists your mouth. It belongs to the one who grew it.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			return stack;
+		}
+
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide && entity instanceof Player player) {
@@ -173,6 +215,20 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		}
 
 		return result;
+	}
+
+	private static boolean canPlayerConsumeStack(ItemStack stack, Player player) {
+		CompoundTag tag = getCustomData(stack);
+		boolean boundPome = tag.getBoolean(BOUND_KEY);
+		boolean hasOwnerData = tag.hasUUID(OWNER_KEY);
+		boolean ownerMatchesPlayer = hasOwnerData && tag.getUUID(OWNER_KEY).equals(player.getUUID());
+		return QliphothPomeRules.canConsumePickedPome(boundPome, hasOwnerData, ownerMatchesPlayer,
+				player.getAbilities().instabuild);
+	}
+
+	@Override
+	public boolean canFitInsideContainerItems() {
+		return false;
 	}
 
 	private static void spawnPomePulse(Player player) {
@@ -250,8 +306,16 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 				? itemTag.getLong(BLOOM_ORIGIN_KEY)
 				: CREATIVE_TEST_BLOOM_ORIGIN;
 		boolean completedCommunion = trackCommunionProgress((ServerPlayer) player, bloomOrigin);
+		clearPendingPome(level, bloomOrigin);
 		playPomeSound(player, completedCommunion);
 		syncPomeProgress((ServerPlayer) player);
+	}
+
+	private static void clearPendingPome(Level level, long bloomOrigin) {
+		if (bloomOrigin == CREATIVE_TEST_BLOOM_ORIGIN || !(level instanceof ServerLevel serverLevel)) {
+			return;
+		}
+		QliphothBloomSavedData.get(serverLevel.getServer().overworld()).clearPendingPome(bloomOrigin);
 	}
 
 	private static int resolveHuskIndex(Player player, CompoundTag itemTag) {

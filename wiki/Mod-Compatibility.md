@@ -1,6 +1,6 @@
 # Mod Compatibility
 
-Hemomancy integrates with several popular mods to enhance gameplay. All integrations are **optional** — the mod works standalone.
+Hemomancy works standalone with its required libraries. For the NeoForge 1.21.1 public alpha, **JEI is alpha-ready**, while **Mana and Artifice** and **Curios** compatibility are dormant until compatible upstream dependencies are available.
 
 ---
 
@@ -45,9 +45,11 @@ Hemomancy integrates with several popular mods to enhance gameplay. All integrat
 
 ### Mana and Artifice
 
-**Status:** Planned, partially implemented (dormant in NeoForge 1.21.1 build)
+**Status:** Dormant in the NeoForge 1.21.1 build
 
-When both mods are installed, Hemomancy adds deep integration:
+Design and source are preserved for a future compatible MnA build, but this integration is not compiled or registered in the current alpha. `build.gradle` excludes the MnA compat package, the dependency is commented out, and `Hemomancy.java` does not register the MnA hooks on this branch.
+
+The intended integration includes:
 
 #### Harbinger Faction
 - Harbingers become a custom MnA faction
@@ -103,7 +105,7 @@ When both mods are installed, Hemomancy adds deep integration:
 - Rewards resource management
 
 #### Configuration
-All MnA integration features are tunable in `HemoMnAConfig`:
+The dormant `HemoMnAConfig` design covers:
 - Enable/disable individual components
 - Adjust conversion rates
 - Tune Blood Tithe costs
@@ -112,20 +114,20 @@ All MnA integration features are tunable in `HemoMnAConfig`:
 #### Why This Integration?
 Each MnA feature has specific design justification documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/MNA_COMPATIBILITY_BRAINSTORM.md). The integration aims to create meaningful mechanical and narrative synergy, not just "cross-mod recipes."
 
-**Note:** This integration is currently dormant because Mana and Artifice hasn't updated to NeoForge 1.21.1 yet. Code exists but is excluded from build.
+**Alpha note:** Installing Mana and Artifice alongside this NeoForge 1.21.1 alpha should not be expected to enable these features.
 
 ---
 
 ### Curios API
 
-**Status:** Planned, partially implemented (dormant in NeoForge 1.21.1 build)
+**Status:** Dormant in the NeoForge 1.21.1 build
 
-When Curios is installed:
+Curios source is preserved as a future compatibility target, but it is not compiled or registered in the current alpha. `build.gradle` excludes the Curios compat package and the Curios dependency is commented out pending compatible NeoForge 1.21.1 support.
 
 #### Charm of Vascularium
-- Unique curio item
-- Fits in dedicated Curios slot
-- Doesn't use armor/accessory slot
+- Hemomancy bloodline/equipment item in the current branch
+- Future target: dedicated Curios slot when Curios compatibility is restored
+- Current alpha: use Hemomancy's own equipment and vanity surfaces
 
 **Effects:**
 - Passive blood regeneration boost
@@ -141,15 +143,15 @@ When Curios is installed:
 **Why Curios?**
 Provides a non-armor slot for hemomancy enhancement, freeing up equipment choices while still offering blood-specific benefits.
 
-**Note:** Currently dormant until Curios updates to NeoForge 1.21.1.
+**Alpha note:** Installing Curios alongside this NeoForge 1.21.1 alpha should not be expected to add a dedicated Hemomancy slot.
 
 ---
 
 ### Just Enough Items (JEI)
 
-**Status:** Integrated (via local JAR)
+**Status:** Alpha-ready through a local NeoForge JEI jar
 
-Hemomancy provides JEI integration for custom crafting systems:
+Hemomancy provides JEI integration for custom crafting systems. The development branch currently uses `libs/jei-1.21.1-neoforge-19.27.0.340.jar` rather than Maven dependency lines.
 
 #### Recipe Categories
 

@@ -6,6 +6,7 @@ This directory contains the GitHub Wiki pages for the Hemomancy mod.
 
 ### Core Pages
 - **Home.md** — Main landing page with overview and navigation
+- **Public-Alpha-Readiness.md** - Alpha status, known limitations, and tester path
 - **Getting-Started.md** — Installation and first steps guide
 - **Harbinger-Path.md** — Complete guide to the blood magic progression path
 - **Unstained-Path.md** — Complete guide to the purification path
@@ -80,6 +81,14 @@ For new players:
 - UI and controls
 - Troubleshooting
 
+### Public Alpha Readiness (Public-Alpha-Readiness.md)
+For testers and release prep:
+- Implemented/Partial/Dormant/Planned status legend
+- Current alpha-ready systems
+- Known alpha limitations
+- Compatibility status for JEI, MnA, and Curios
+- Recommended tester path and report guidance
+
 ### Harbinger Path (Harbinger-Path.md)
 Complete Harbinger guide:
 - Seven degrees explained
@@ -131,9 +140,9 @@ Narrative and worldbuilding:
 ### Mod Compatibility (Mod-Compatibility.md)
 Integration guide:
 - Required dependencies
-- Mana and Artifice integration (when available)
-- Curios integration (when available)
 - JEI recipe viewing
+- Dormant Mana and Artifice integration target
+- Dormant Curios integration target
 - Modpack creation tips
 - Config recommendations
 - Planned future integrations
