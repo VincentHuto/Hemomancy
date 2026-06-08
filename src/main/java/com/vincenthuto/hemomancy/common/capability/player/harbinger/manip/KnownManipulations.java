@@ -22,6 +22,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	VeinLocation selectedVein = VeinLocation.BLANK;
 	boolean avatarActive = false;
 	List<String> equippedManipNames = new ArrayList<>();
+	List<ManipulationLoadout> loadouts = new ArrayList<>();
 
 	@Override
 	public BlockPos getLastVeinMineStart() {
@@ -169,6 +170,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		this.veinList = old.getVeinList();
 		this.avatarActive = old.isAvatarActive();
 		this.equippedManipNames = new ArrayList<>(old.getEquippedManipNames());
+		this.loadouts = new ArrayList<>(old.getLoadouts());
 	}
 
 	// ── Equipped manipulation slots ──
@@ -181,7 +183,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setEquippedManipNames(List<String> names) {
-		this.equippedManipNames = names != null ? names : new ArrayList<>();
+		this.equippedManipNames = names != null ? new ArrayList<>(names) : new ArrayList<>();
 		ManipulationEquipHelper.normalizeEquippedNames(this.equippedManipNames);
 	}
 
@@ -200,6 +202,35 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public boolean unequipManip(String manipName) {
 		return ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, manipName);
+	}
+
+	@Override
+	public List<ManipulationLoadout> getLoadouts() {
+		return loadouts;
+	}
+
+	@Override
+	public void setLoadouts(List<ManipulationLoadout> loadouts) {
+		this.loadouts = loadouts != null ? new ArrayList<>(loadouts) : new ArrayList<>();
+	}
+
+	@Override
+	public ManipulationLoadout getLoadout(int slotIndex) {
+		if (slotIndex < 0 || slotIndex >= loadouts.size() || loadouts.get(slotIndex) == null) {
+			return ManipulationLoadout.empty(slotIndex);
+		}
+		return loadouts.get(slotIndex);
+	}
+
+	@Override
+	public void setLoadout(int slotIndex, ManipulationLoadout loadout) {
+		if (slotIndex < 0) {
+			return;
+		}
+		while (loadouts.size() <= slotIndex) {
+			loadouts.add(ManipulationLoadout.empty(loadouts.size()));
+		}
+		loadouts.set(slotIndex, loadout != null ? loadout : ManipulationLoadout.empty(slotIndex));
 	}
 
 	@Override
@@ -245,6 +276,14 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		}
 		equippedEntry.put("equippedManips", equippedTag);
 		list.add(equippedEntry);
+
+		CompoundTag loadoutsEntry = new CompoundTag();
+		ListTag loadoutsTag = new ListTag();
+		for (int i = 0; i < getLoadouts().size(); i++) {
+			loadoutsTag.add(getLoadout(i).toTag());
+		}
+		loadoutsEntry.put("synapticLoadouts", loadoutsTag);
+		list.add(loadoutsEntry);
 
 		return list;
 	}
@@ -294,6 +333,14 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 						equipped.add(equippedTag.getString(j));
 					}
 					setEquippedManipNames(equipped);
+				}
+				if (parsedNbt.contains("synapticLoadouts")) {
+					ListTag loadoutsTag = parsedNbt.getList("synapticLoadouts", Tag.TAG_COMPOUND);
+					List<ManipulationLoadout> parsedLoadouts = new ArrayList<>();
+					for (int j = 0; j < loadoutsTag.size(); j++) {
+						parsedLoadouts.add(ManipulationLoadout.fromTag(loadoutsTag.getCompound(j), j));
+					}
+					setLoadouts(parsedLoadouts);
 				}
 			}
 		}

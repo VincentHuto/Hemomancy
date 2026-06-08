@@ -965,6 +965,12 @@ Somatic Loom memory weaving is now an in-world ritual rather than a passive slot
 
 Manipulations are organized in a visual **Manipulation Tree** (displayed on the Skill Tree screen alongside the skill tree). Entries are defined in `ManipulationTreeInit` with parent-child relationships. Each node shows whether the player has learned it.
 
+### 8.5 Synaptic Memory Loadouts
+
+The **Dendritic Distributor** is now the Degree 5 Synaptic Loadout station rather than the Harbinger progress-screen entry point. A blood-active Degree 5+ player within interaction range can save the currently equipped normal manipulations as a named neural pattern, apply a saved pattern, rename it, or overwrite it. Saving and overwriting cost **100 blood + 25 raw XP** after validation; applying and renaming are free.
+
+Loadouts persist on `IKnownManipulations` as `ManipulationLoadout` records containing a display name, ordered normal manipulation IDs, and a preferred selected manipulation. Fixed mechanical manipulations (`blood_absorption`, `blood_projection`) are intentionally excluded from saved lists and restored by the existing equip normalization path. Players start with **3** remembered patterns. The Degree 5 `skill_synaptic_memory` skill has 4 levels and adds one remembered slot per level, for a maximum of **7**.
+
 ---
 
 ## 9. Blood Tendency (Kinship) System
@@ -1011,7 +1017,7 @@ The player's vascular system has **7 sections** that take strain from manipulati
 
 ## 11. Skill Tree
 
-Opened from the **Dendritic Distributor** block. Has six tabs:
+Opened from the **Sanguine Conduit** item/block. Has six tabs:
 - **Skills** â€” panning/zoomable blood skill tree with skill nodes
 - **Manipulations** â€” panning/zoomable manipulation tree with manipulation nodes
 - **Crafting** â€” sidebar listing blood structure recipes grouped by tier (Basic/Advanced/Expert) with degree gating (0/2/4)
@@ -1030,6 +1036,7 @@ Skill definitions are Java-owned. `SkillPointInit` keeps the public static field
 | Capacity | 1 | 5 | 1 | â€” | +500 max blood volume per level | Base |
 | Efficiency | 2 | 5 | 1 | â€” | -8% manipulation cost per level (multiplicative, ~34% at max) | Base |
 | Manip Slots | 14 | 5 | 2 | 1 | +1 active manipulation slot per level | Base |
+| Synaptic Memory | 40 | 4 | 3 | 5 | +1 remembered Synaptic Loadout slot per level; raises Dendritic Distributor loadout storage from 3 to 7 | Manip Slots + Deep Base |
 | Living Conduit | 21 | 3 | 2 | 1 | Living Staff absorption target cap and absorption range increase per level | Manip Slots |
 | Last Wind | 3 | 3 | 2 | 2 | +2 blood regen/tick when below 10% blood | Capacity |
 | Sanguine Surge | 7 | 3 | 2 | 2 | +1 passive blood regen/tick per level | Capacity |
@@ -1052,6 +1059,8 @@ Skill definitions are Java-owned. `SkillPointInit` keeps the public static field
 | Scar Mastery | 17 | 3 | 4 | 5 | Scarred pathways fully colonised; scar effects last 20% longer per level | Scar Resonance |
 
 Skill bonuses are computed in `SkillPointHelper`.
+
+`skill_synaptic_memory` is wired through `SynapticLoadoutSlotHelper` and `SynapticLoadoutActionPacket`: it expands remembered Dendritic Distributor loadout slots from the base 3 to the maximum 7.
 
 **Skill Wiring Status** (which skills are actually hooked into gameplay events):
 
@@ -2239,7 +2248,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 | **Sanguine Monolith** (*The Crimson Lodestone*) | `SanguineMonolithBlockEntity` | 1Ã—2 multiblock (base + filler above) available to Degree 5+ players. Provides degree-gated guidance (degrees 4â€“7) via `SanguineMonolithDialogueTrees`. The dialogue speaker is displayed as **"The Crimson Lodestone"** (`hemomancy.monolith.lodestone_name`). Each degree includes a `what_are_you` branch that progressively discloses the Monolith's nature: a sealed incubation vessel containing a dormant mycelial fragment built by the Crimson Lodge. At Degree 7 the player can press further for the pre-shatter warning (`press_again` node). At Degree 7 an Archon may interact with it **twice** to shatter it â€” rendering black shards plus a black orb blast client-side, dropping a **Qliphoth Seed** plus 5-8 **Monolith Fragments**, and firing `FungalWhisperDialogueTrees.postMonolithShatter()`. The first step of Qliphoth Communion. Custom animated model (`SanguineMonolithModel`). See Â§5.9 and LORE_REFERENCE Â§6.5a. |
 | **Qliphoth Bloom**                   | `QliphothBloomBlockEntity`                 | 1Ã—1Ã—8 multiblock tree (base + 7 filler blocks) placed by the Bloom of the Qliphoth rite. Stores owner UUID and chunk radius. Effects (Regeneration I, +5 blood/tick) are tick-driven via `QliphothBloomEvents`. Slowly drops 9 Qliphoth Pomes over its lifetime â€” one per Qliphoth husk (Nahemoth â†’ Ghagiel), with owner whisper alerts on each drop. Registered and synced via `QliphothBloomSavedData`. Player breaking is canceled for the bloom and its filler shell; intended removal is the Rite of Cult Pruning. See Â§5.9.                                                                                                                                                                                                                       |
 | **Fungal Implantation Pylon**        | `FungalImplantationPylonBlockEntity`       | Sporic implantation station ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/fungal_implant.png)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Opens the Skill Tree / Manipulation Tree screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **Dendritic Distributor**            | `DendriticDistributorBlockEntity`          | Degree 5 Synaptic Loadout station. Opens `SynapticLoadoutScreen`, where blood-active Degree 5+ players can save, rename, overwrite, and apply remembered manipulation patterns. Base storage is 3 patterns; `skill_synaptic_memory` adds one slot per level up to 7. Save/overwrite costs 100 blood and 25 raw XP; apply/rename are free. Fixed mechanical manipulations remain automatic and are not stored in patterns. |
 | **Consecrated Bloodwell**            | *(see block/entity class)*                 | Degree 5 Founding Fane heart and bloodline-pool conduit. The Founding Fane rite binds one bloodwell position to the owner's bloodline; only one bloodwell may exist inside an active fane footprint, and breaking the heart collapses the active fane until reattuned while removing all associated stakes. Right-click opens the Bloodline Pool Monitor screen. Blood Projection contributes directly from the player to the shared bloodline pool, and Blood Absorption draws directly from that pool into the player; both require membership in the bound bloodline. The block entity only syncs linked pool fullness for the renderer. Rendered as a fullness-scaled blood fountain with real blood/glow particles; block properties use `noOcclusion()` so supporting blocks remain visible under its non-full model. |
 | **Hematic Stake**                    | -                                          | Jagged hematic-metal spike block used as a Founding Fane anchor. It is manifested by the bloodline progenitor with crouch + empty-hand right-click rather than crafted. Placement is accepted only when the stake connects to the existing Soft Envelope by overlap/chaining and the bloodline is under its stake budget. Stakes are passable, non-solid, light-friendly, instant-mined by the owner/progenitor, and removed automatically when the heart breaks, the fane is reconsecrated, or the bloodline is disbanded. |
 | **Unstained Podium**                 | `UnstainedPodiumBlockEntity`               | Central interaction block for the Unstained path. Four recognized interaction modes (server-side only, degree-gated at > Illuminatus): **Hemolytic Solution** â€” first use begins purification (`begunPurification = true`, +5 purity, resets Harbinger degree); subsequent uses add +10 purity per flask while unpurified. **Consecrated Copper Ingot** â€” requires `isPurified() == true` and `!hasClarityUnlocked()`; performs the Rite of Clarity: sets `clarityUnlocked = true`, disables blood magic permanently (`IBloodVolume.active = false`), grants first Still Art (Silver Rebuke), runs `enforceHarbingerResetOnClarity()`, and syncs both capabilities. **Hemolytic Plating** â€” requires `hasClarityUnlocked()`; adds +15 clarity per plating while not yet enlightened. **Empty hand** â€” prints current purity stage + percent; if clarity is unlocked, also prints clarity stage + percent. Scrying Dish item converts the podium into a Scrying Podium. |
@@ -3027,7 +3036,8 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | Screen | Opened From | Purpose |
 |--------|------------|---------|
 | `CharmGourdScreen` | Scarlet Vanity | Equip Charm of Vascularium, Blood Gourds, and Morphling Jar |
-| `HarbingerProgressScreen` | Dendritic Distributor | Harbinger progress suite (Skills/Manipulations/Crafting/Scars/Rites/Materials), now tab-controller modularized; Skills overlay includes rank title text |
+| `HarbingerProgressScreen` | Sanguine Conduit | Harbinger progress suite (Skills/Manipulations/Crafting/Scars/Rites/Materials), now tab-controller modularized; Skills overlay includes rank title text |
+| `SynapticLoadoutScreen` | Dendritic Distributor | Carousel UI for remembered manipulation loadouts. Empty slots save the current normal manipulation set for 100 blood + 25 raw XP; existing patterns can be applied, renamed, or overwritten. |
 | `TendencyViewScreen` | Blood Tendency Gauge | View blood tendency alignments |
 | `VascularViewScreen` | Vascular Status Gauge | View vein section health |
 | `VascularStatusScreen` | â€” | Detailed vascular status |

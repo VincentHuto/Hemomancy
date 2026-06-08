@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	private boolean avatarActive;
 
 	private List<String> equippedManipNames = new ArrayList<>();
+	private List<ManipulationLoadout> loadouts = new ArrayList<>();
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
 		this.known = known.getKnownManips();
@@ -43,11 +45,12 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		this.avatarActive = known.isAvatarActive();
 		this.lastVeinMineStart = known.getLastVeinMineStart();
 		this.equippedManipNames = new ArrayList<>(known.getEquippedManipNames());
+		this.loadouts = new ArrayList<>(known.getLoadouts());
 	}
 
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
 			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive, BlockPos lastVeinMineStart,
-			List<String> equippedManipNames) {
+			List<String> equippedManipNames, List<ManipulationLoadout> loadouts) {
 
 		this.known = list;
 		this.selected = selected;
@@ -56,6 +59,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		this.avatarActive = avatarActive;
 		this.lastVeinMineStart = lastVeinMineStart;
 		this.equippedManipNames = equippedManipNames != null ? equippedManipNames : new ArrayList<>();
+		this.loadouts = loadouts != null ? loadouts : new ArrayList<>();
 	}
 	
 	
@@ -80,7 +84,13 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		for (int i = 0; i < equippedCount; ++i) {
 			equippedManipNames.add(buf.readUtf());
 		}
-		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart, equippedManipNames);
+		int loadoutCount = buf.readInt();
+		List<ManipulationLoadout> loadouts = new ArrayList<>();
+		for (int i = 0; i < loadoutCount; ++i) {
+			loadouts.add(ManipulationLoadout.readFromBuf(buf, i));
+		}
+		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart,
+				equippedManipNames, loadouts);
 	}
 	public static void encode(final FriendlyByteBuf buf, final KnownManipulationServerPacket msg) {
 		if (msg.selected != null) {
@@ -109,6 +119,10 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 		for (String name : msg.equippedManipNames) {
 			buf.writeUtf(name);
 		}
+		buf.writeInt(msg.loadouts.size());
+		for (ManipulationLoadout loadout : msg.loadouts) {
+			loadout.writeToBuf(buf);
+		}
 
 	}
 	public static void handle(final KnownManipulationServerPacket msg, final IPayloadContext ctx) {
@@ -125,6 +139,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			known.setAvatarActive(msg.avatarActive);
 			known.setLastVeinMineStart(msg.lastVeinMineStart);
 			known.setEquippedManipNames(msg.equippedManipNames);
+			known.setLoadouts(msg.loadouts);
 
 	
 		});

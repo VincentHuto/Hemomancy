@@ -521,6 +521,20 @@ public final class SkillPointHelper {
 		return progress.getLevel(sp);
 	}
 
+	public static int getSynapticMemoryLevel(Player player) {
+		return getSynapticMemoryLevel(progress(player));
+	}
+
+	public static int getSynapticMemoryLevel() {
+		return getSynapticMemoryLevel(progress(null));
+	}
+
+	private static int getSynapticMemoryLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_synaptic_memory;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
 	public static int getSporiticAttunementLevel(Player player) {
 		return getSporiticAttunementLevel(progress(player));
 	}

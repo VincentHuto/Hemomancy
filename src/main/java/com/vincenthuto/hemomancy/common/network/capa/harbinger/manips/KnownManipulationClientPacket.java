@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -30,6 +31,8 @@ public class KnownManipulationClientPacket implements CustomPacketPayload {
 			if (player instanceof ServerPlayer sender) {
 				IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(sender)
 						.orElseThrow(IllegalStateException::new);
+				PacketHandler.sendToPlayer(sender,
+						new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(sender).toSyncTag()));
 				PacketHandler.sendToPlayer(sender, new KnownManipulationServerPacket(manips));
 			}
 		});

@@ -75,4 +75,14 @@ public interface IKnownManipulations {
 	/** Removes a manipulation from the equipped slots. */
 	public boolean unequipManip(String manipName);
 
+	// Synaptic memory loadouts
+
+	public List<ManipulationLoadout> getLoadouts();
+
+	public void setLoadouts(List<ManipulationLoadout> loadouts);
+
+	public ManipulationLoadout getLoadout(int slotIndex);
+
+	public void setLoadout(int slotIndex, ManipulationLoadout loadout);
+
 }
