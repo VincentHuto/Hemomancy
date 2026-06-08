@@ -22,60 +22,49 @@ public class HematicBurrowerModel extends HierarchicalModel<HematicBurrowerEntit
 	private final ModelPart root;
 	private final ModelPart body;
 	private final ModelPart head;
-	private final ModelPart leftForeClaw;
-	private final ModelPart rightForeClaw;
-	private final ModelPart leftHindClaw;
-	private final ModelPart rightHindClaw;
 	private final ModelPart whiskers;
+	private final ModelPart left_fore_claw;
+	private final ModelPart right_fore_claw;
+	private final ModelPart left_hind_claw;
+	private final ModelPart right_hind_claw;
+
 
 	public HematicBurrowerModel(ModelPart root) {
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		this.head = this.root.getChild("head");
-		this.leftForeClaw = this.root.getChild("left_fore_claw");
-		this.rightForeClaw = this.root.getChild("right_fore_claw");
-		this.leftHindClaw = this.root.getChild("left_hind_claw");
-		this.rightHindClaw = this.root.getChild("right_hind_claw");
 		this.whiskers = this.head.getChild("whiskers");
+		this.left_fore_claw = this.root.getChild("left_fore_claw");
+		this.right_fore_claw = this.root.getChild("right_fore_claw");
+		this.left_hind_claw = this.root.getChild("left_hind_claw");
+		this.right_hind_claw = this.root.getChild("right_hind_claw");
+
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition rootPart = mesh.getRoot();
-		PartDefinition root = rootPart.addOrReplaceChild("root", CubeListBuilder.create(),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		root.addOrReplaceChild("body", CubeListBuilder.create()
-						.texOffs(0, 0).addBox(-4.5F, -4.0F, -6.0F, 9.0F, 5.0F, 12.0F, new CubeDeformation(0.1F))
-						.texOffs(0, 18).addBox(-3.5F, -5.0F, -4.0F, 7.0F, 2.0F, 8.0F, new CubeDeformation(0.0F))
-						.texOffs(38, 0).addBox(-2.5F, -5.8F, -2.0F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, -1.0F, 1.0F));
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
-						.texOffs(0, 30).addBox(-3.5F, -3.0F, -5.0F, 7.0F, 4.0F, 5.0F, new CubeDeformation(0.0F))
-						.texOffs(24, 30).addBox(-1.5F, -1.5F, -7.0F, 3.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-						.texOffs(38, 8).addBox(-0.5F, -1.0F, -8.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, -1.5F, -5.5F));
-		head.addOrReplaceChild("whiskers", CubeListBuilder.create()
-						.texOffs(44, 18).addBox(-4.5F, -1.0F, -6.0F, 9.0F, 0.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-4.5F, -2.0F, -6.0F, 9.0F, 3.0F, 12.0F, new CubeDeformation(0.1F))
+				.texOffs(0, 16).addBox(-3.5F, -3.0F, -4.0F, 7.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, 1.0F));
 
-		root.addOrReplaceChild("left_fore_claw", CubeListBuilder.create()
-						.texOffs(0, 42).addBox(0.0F, -0.75F, -1.0F, 5.0F, 1.5F, 3.0F, new CubeDeformation(0.0F))
-						.texOffs(16, 42).addBox(3.5F, -1.0F, -2.5F, 2.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(3.2F, -0.7F, -4.2F));
-		root.addOrReplaceChild("right_fore_claw", CubeListBuilder.create()
-						.texOffs(0, 48).addBox(-5.0F, -0.75F, -1.0F, 5.0F, 1.5F, 3.0F, new CubeDeformation(0.0F))
-						.texOffs(16, 48).addBox(-5.5F, -1.0F, -2.5F, 2.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-3.2F, -0.7F, -4.2F));
-		root.addOrReplaceChild("left_hind_claw", CubeListBuilder.create()
-						.texOffs(32, 42).addBox(0.0F, -0.5F, -1.0F, 3.5F, 1.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(3.5F, -0.2F, 4.2F));
-		root.addOrReplaceChild("right_hind_claw", CubeListBuilder.create()
-						.texOffs(32, 46).addBox(-3.5F, -0.5F, -1.0F, 3.5F, 1.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-3.5F, -0.2F, 4.2F));
+		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 26).addBox(-3.5F, -1.0F, -5.0F, 7.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.5F, -4.5F));
 
-		return LayerDefinition.create(mesh, 64, 64);
+		PartDefinition whiskers = head.addOrReplaceChild("whiskers", CubeListBuilder.create().texOffs(25, 26).addBox(-4.5F, 0.0F, -6.0F, 9.0F, 0.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		PartDefinition left_fore_claw = root.addOrReplaceChild("left_fore_claw", CubeListBuilder.create().texOffs(0, 34).addBox(-5.0F, -0.75F, -1.0F, 5.0F, 1.5F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(31, 16).addBox(-8.5F, 0.0F, -2.0F, 5.0F, 0.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-3.2F, -0.7F, -4.2F));
+
+		PartDefinition right_fore_claw = root.addOrReplaceChild("right_fore_claw", CubeListBuilder.create().texOffs(17, 37).addBox(0.0F, -0.75F, -1.0F, 5.0F, 1.5F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(25, 31).addBox(3.5F, 0.0F, -2.0F, 5.0F, 0.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(3.2F, -0.7F, -4.2F));
+
+		PartDefinition left_hind_claw = root.addOrReplaceChild("left_hind_claw", CubeListBuilder.create().texOffs(31, 22).addBox(-3.5F, 0.25F, 0.0F, 4.0F, 0.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-3.5F, -0.2F, 4.2F));
+
+		PartDefinition right_hind_claw = root.addOrReplaceChild("right_hind_claw", CubeListBuilder.create().texOffs(33, 37).addBox(-0.5F, 0.25F, 0.0F, 4.0F, 0.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(3.5F, -0.2F, 4.2F));
+
+		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
 	@Override
@@ -92,10 +81,10 @@ public class HematicBurrowerModel extends HierarchicalModel<HematicBurrowerEntit
 		this.head.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.35F;
 		this.head.xRot = headPitch * Mth.DEG_TO_RAD * 0.25F;
 		this.body.y += Mth.sin(ageInTicks * 0.25F) * 0.08F;
-		this.leftForeClaw.zRot = -0.25F + Mth.sin(swing) * 0.5F * scurry;
-		this.rightForeClaw.zRot = 0.25F - Mth.sin(swing) * 0.5F * scurry;
-		this.leftHindClaw.zRot = Mth.sin(swing + Mth.PI) * 0.25F * scurry;
-		this.rightHindClaw.zRot = -Mth.sin(swing + Mth.PI) * 0.25F * scurry;
+		this.left_fore_claw.zRot = -0.25F + Mth.sin(swing) * 0.5F * scurry;
+		this.right_fore_claw.zRot = 0.25F - Mth.sin(swing) * 0.5F * scurry;
+		this.left_hind_claw.zRot = Mth.sin(swing + Mth.PI) * 0.25F * scurry;
+		this.right_hind_claw.zRot = -Mth.sin(swing + Mth.PI) * 0.25F * scurry;
 		this.whiskers.yRot = Mth.sin(ageInTicks * 0.18F) * 0.08F;
 	}
 

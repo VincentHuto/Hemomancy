@@ -44,28 +44,24 @@ public class VenomRibCentipedeModel extends EntityModel<VenomRibCentipedeEntity>
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition root = mesh.getRoot();
-		root.addOrReplaceChild("head", CubeListBuilder.create()
-						.texOffs(0, 0).addBox(-2.5F, -1.85F, -4.2F, 5.0F, 2.75F, 4.2F, new CubeDeformation(0.0F))
-						.texOffs(22, 0).addBox(-1.5F, -0.9F, -6.2F, 3.0F, 0.9F, 2.4F, new CubeDeformation(0.0F))
-						.texOffs(34, 0).addBox(-2.2F, -3.1F, -1.7F, 4.4F, 1.6F, 2.4F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 21.6F, -9.0F));
-
+		root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-2.5F, -0.85F, -1.2F, 5.0F, 2.75F, 4.2F, new CubeDeformation(0.0F))
+				.texOffs(22, 0).addBox(-2.2F, -1.1F, -0.7F, 4.4F, 1.6F, 2.4F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 21.6F, -9.0F));
 		PartDefinition parent = root;
 		for (int i = 0; i < SEGMENT_COUNT; i++) {
 			float width = i < 3 ? 6.0F : i < 6 ? 5.2F : 4.4F;
 			float height = i < 4 ? 3.0F : 2.5F;
 			PartDefinition segment = parent.addOrReplaceChild("segment_" + i, CubeListBuilder.create()
-							.texOffs(0, 12 + (i % 4) * 8).addBox(-width / 2.0F, -height / 2.0F, -1.5F,
+							.texOffs(0, 12).addBox(-width / 2.0F, -height / 2.0F, -1.5F,
 									width, height, 3.5F, new CubeDeformation(0.0F)),
 					i == 0 ? PartPose.offset(0.0F, 22.0F, -5.5F)
 							: PartPose.offset(0.0F, 0.0F, VenomRibCentipedeSlitherRules.BODY_SEGMENT_SPACING));
 			segment.addOrReplaceChild("rib_" + i, CubeListBuilder.create()
-							.texOffs(52, 0 + (i % 4) * 4).addBox(-width / 2.0F - 0.4F, -2.4F, -1.2F,
+							.texOffs(52, 0 ).addBox(-width / 2.0F - 0.4F, -2.4F, -1.2F,
 									width + 0.8F, 1.0F, 2.4F, new CubeDeformation(0.0F)),
 					PartPose.offset(0.0F, 0.0F, 0.0F));
 			segment.addOrReplaceChild("left_legs_" + i, CubeListBuilder.create()
-							.texOffs(40, 22).addBox(0.0F, -0.25F, -1.3F, 6.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
-							.texOffs(40, 25).addBox(0.0F, -0.25F, 0.9F, 6.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)),
+							.texOffs(46, 33).addBox(0.0F, -0.25F, -1.3F, 6.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))
+							.texOffs(46, 33).addBox(0.0F, -0.25F, 0.9F, 6.0F, 0.5F, 0.5F, new CubeDeformation(0.0F)),
 					PartPose.offset(width / 2.0F - 0.2F, 0.8F, 0.0F));
 			segment.addOrReplaceChild("right_legs_" + i, CubeListBuilder.create()
 							.texOffs(40, 28).addBox(-6.0F, -0.25F, -1.3F, 6.0F, 0.5F, 0.5F, new CubeDeformation(0.0F))

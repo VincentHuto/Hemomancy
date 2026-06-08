@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 public final class VenomRibCentipedeSlitherRules {
-	public static final int BODY_SEGMENT_COUNT = 11;
+	public static final int BODY_SEGMENT_COUNT = 15;
 	public static final int LEG_PAIRS_PER_SEGMENT = 1;
 	public static final float BODY_SEGMENT_SPACING = 3.0F;
 
 	private static final float PHASE_STEP = 0.58F;
-	private static final float BASE_YAW_AMPLITUDE = 0.18F;
+	private static final float BASE_YAW_AMPLITUDE = 0.48F;
 	private static final float LEG_SWING_FREQUENCY = 3.35F;
 	private static final float LEG_SWING_AMPLITUDE = 0.78F;
 	private static final float LEG_LIFT_AMPLITUDE = 0.22F;
