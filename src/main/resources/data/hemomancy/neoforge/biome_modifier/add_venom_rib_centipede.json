@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#hemomancy:venom_rib_centipede_spawnlist",
+  "spawners": {
+    "type": "hemomancy:venom_rib_centipede",
+    "weight": 4,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

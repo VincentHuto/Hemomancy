@@ -281,16 +281,20 @@ function parseJavaModel(source, model) {
     }
 
     const loopContext = innermostLoopContextFor(loopContexts, callAt);
-    const iterationLocals = loopContext?.iterations ?? [new Map()];
+    const iterationLocals = loopContext
+      ? loopContext.iterations.map((locals) => localsWithDeclarationsBefore(source, loopContext, callAt, numericConstants, locals))
+      : [new Map()];
     for (const locals of iterationLocals) {
       const parseNumeric = (value) => parseNumber(value, numericConstants, locals);
       const name = parseNameExpression(callArgs[0], parseNumeric);
       const cubes = parseCubes(callArgs[1], parseNumeric);
       const pose = parsePose(callArgs.slice(2).join(","), parseNumeric);
+      const varName = modelPartVariableName(assignedVar, name, loopContext, parts.length);
+      const resolvedParentVar = modelPartParentVariable(parentVar, loopContext, locals);
       parts.push({
         name,
-        varName: assignedVar ?? `${name}_${parts.length}`,
-        parentVar,
+        varName,
+        parentVar: resolvedParentVar,
         cubes,
         pose,
       });
@@ -346,6 +350,14 @@ function parseCubes(builderExpression, parseNumeric = parseNumber) {
 
 function parsePose(poseExpression, parseNumeric = parseNumber) {
   const pose = poseExpression.trim();
+  const conditional = splitTopLevelConditional(pose);
+  if (conditional && evaluateNumericCondition(conditional.condition, parseNumeric)) {
+    return parsePose(conditional.whenTrue, parseNumeric);
+  }
+  if (conditional) {
+    return parsePose(conditional.whenFalse, parseNumeric);
+  }
+
   if (pose === "PartPose.ZERO") {
     return { offset: [0, 0, 0], rotation: [0, 0, 0] };
   }
@@ -933,8 +945,6 @@ function collectNumericConstants(source, sourcePath) {
   const resolvedSourcePath = resolveFromRoot(sourcePath);
   const modelClassName = path.basename(resolvedSourcePath, path.extname(resolvedSourcePath));
 
-  addNumericConstantsFromSource(source, modelClassName, constants, true);
-
   for (const importMatch of source.matchAll(/^\s*import\s+(?!static\b)([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+)\s*;/gm)) {
     const importName = importMatch[1];
     const className = importName.slice(importName.lastIndexOf(".") + 1);
@@ -974,6 +984,8 @@ function collectNumericConstants(source, sourcePath) {
     addNumericConstantsFromSource(importedSource, className, constants, memberName === "*", memberName);
   }
 
+  addNumericConstantsFromSource(source, modelClassName, constants, true);
+
   return constants;
 }
 
@@ -989,7 +1001,14 @@ function addNumericConstantsFromSource(source, className, constants, exposeSimpl
       continue;
     }
 
-    const value = parseNumberLiteral(match[2]);
+    let value = parseNumberLiteral(match[2]);
+    if (value === null) {
+      try {
+        value = parseNumber(match[2], constants);
+      } catch {
+        value = null;
+      }
+    }
     if (value === null) {
       continue;
     }
@@ -1013,18 +1032,106 @@ function collectSimpleForLoopContexts(source, constants) {
   while ((match = forPattern.exec(source)) !== null) {
     const openBrace = source.indexOf("{", match.index);
     const closeBrace = findMatching(source, openBrace, "{", "}");
-    const loop = parseSimpleForLoop(match[1], constants);
+    let loop = null;
+    try {
+      loop = parseSimpleForLoop(match[1], constants);
+    } catch {
+      loop = null;
+    }
     if (loop) {
+      const body = source.slice(openBrace + 1, closeBrace);
       contexts.push({
         start: openBrace,
         end: closeBrace,
-        iterations: loop.values.map((value) => new Map([[loop.varName, value]])),
+        varName: loop.varName,
+        values: loop.values,
+        partVars: collectLoopPartDefinitionVariables(body),
+        reassignedPartAliases: collectLoopPartAliasReassignments(source, openBrace, body),
+        iterations: loop.values.map((value, index) => new Map([
+          [loop.varName, value],
+          ["__loop_index", index],
+        ])),
       });
     }
     forPattern.lastIndex = closeBrace + 1;
   }
 
   return contexts;
+}
+
+function collectLoopPartDefinitionVariables(loopBody) {
+  const partVars = new Set();
+  const assignmentPattern = /\bPartDefinition\s+([A-Za-z_$][\w$]*)\s*=\s*[\s\S]*?\.addOrReplaceChild\s*\(/g;
+  let match;
+  while ((match = assignmentPattern.exec(loopBody)) !== null) {
+    partVars.add(match[1]);
+  }
+  return partVars;
+}
+
+function collectLoopPartAliasReassignments(source, loopStart, loopBody) {
+  const aliases = new Map();
+  const reassignmentPattern = /^\s*([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\s*;/gm;
+  let match;
+  while ((match = reassignmentPattern.exec(loopBody)) !== null) {
+    const aliasName = match[1];
+    const reassignedVar = match[2];
+    const beforeLoop = source.slice(0, loopStart);
+    const declarationMatch = beforeLoop.match(
+      new RegExp(`\\bPartDefinition\\s+${escapeRegExp(aliasName)}\\s*=\\s*([A-Za-z_$][\\w$]*)\\s*;[\\s\\S]*$`)
+    );
+    if (declarationMatch) {
+      aliases.set(aliasName, {
+        initialVar: declarationMatch[1],
+        reassignedVar,
+      });
+    }
+  }
+  return aliases;
+}
+
+function localsWithDeclarationsBefore(source, loopContext, callAt, constants, baseLocals) {
+  const locals = new Map(baseLocals);
+  const declarations = source.slice(loopContext.start + 1, callAt);
+  const declarationPattern =
+    /\b(?:float|double|int|short|byte|long)\s+([A-Za-z_$][\w$]*)\s*=\s*([^;]+);/g;
+  let match;
+  while ((match = declarationPattern.exec(declarations)) !== null) {
+    try {
+      locals.set(match[1], parseNumber(match[2], constants, locals));
+    } catch {
+      // Runtime-only declarations are irrelevant to static model geometry.
+    }
+  }
+  return locals;
+}
+
+function modelPartVariableName(assignedVar, name, loopContext, partIndex) {
+  if (assignedVar && loopContext?.partVars.has(assignedVar)) {
+    return name;
+  }
+  return assignedVar ?? `${name}_${partIndex}`;
+}
+
+function modelPartParentVariable(parentVar, loopContext, locals) {
+  if (!loopContext) {
+    return parentVar;
+  }
+
+  if (loopContext.partVars.has(parentVar)) {
+    return `${parentVar}_${locals.get(loopContext.varName)}`;
+  }
+
+  const alias = loopContext.reassignedPartAliases.get(parentVar);
+  if (alias) {
+    const loopIndex = locals.get("__loop_index");
+    if (loopIndex <= 0) {
+      return alias.initialVar;
+    }
+    return `${alias.reassignedVar}_${loopContext.values[loopIndex - 1]}`;
+  }
+
+  return parentVar;
 }
 
 function parseSimpleForLoop(header, constants) {
@@ -1308,12 +1415,171 @@ function parseNumber(value, constants = new Map(), locals = new Map()) {
     return local;
   }
 
+  const conditional = splitTopLevelConditional(normalized);
+  if (conditional) {
+    return parseNumber(
+      evaluateNumericCondition(conditional.condition, (part) => parseNumber(part, constants, locals))
+        ? conditional.whenTrue
+        : conditional.whenFalse,
+      constants,
+      locals
+    );
+  }
+
   const expression = parseNumericExpression(normalized, constants, locals);
   if (expression !== null) {
     return expression;
   }
 
   throw new Error(`Expected numeric literal or resolvable numeric constant, got ${value}`);
+}
+
+function splitTopLevelConditional(value) {
+  const questionAt = findTopLevelSymbol(value, "?");
+  if (questionAt === -1) {
+    return null;
+  }
+
+  let nestedConditionals = 0;
+  let parenDepth = 0;
+  let bracketDepth = 0;
+  let inString = false;
+  let escape = false;
+  for (let index = questionAt + 1; index < value.length; index++) {
+    const char = value[index];
+    if (inString) {
+      if (escape) {
+        escape = false;
+      } else if (char === "\\") {
+        escape = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+    if (char === "\"") {
+      inString = true;
+    } else if (char === "(") {
+      parenDepth++;
+    } else if (char === ")") {
+      parenDepth--;
+    } else if (char === "[") {
+      bracketDepth++;
+    } else if (char === "]") {
+      bracketDepth--;
+    } else if (parenDepth === 0 && bracketDepth === 0 && char === "?") {
+      nestedConditionals++;
+    } else if (parenDepth === 0 && bracketDepth === 0 && char === ":") {
+      if (nestedConditionals === 0) {
+        return {
+          condition: value.slice(0, questionAt).trim(),
+          whenTrue: value.slice(questionAt + 1, index).trim(),
+          whenFalse: value.slice(index + 1).trim(),
+        };
+      }
+      nestedConditionals--;
+    }
+  }
+
+  return null;
+}
+
+function findTopLevelSymbol(value, symbol) {
+  let parenDepth = 0;
+  let bracketDepth = 0;
+  let inString = false;
+  let escape = false;
+  for (let index = 0; index < value.length; index++) {
+    const char = value[index];
+    if (inString) {
+      if (escape) {
+        escape = false;
+      } else if (char === "\\") {
+        escape = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+    if (char === "\"") {
+      inString = true;
+    } else if (char === "(") {
+      parenDepth++;
+    } else if (char === ")") {
+      parenDepth--;
+    } else if (char === "[") {
+      bracketDepth++;
+    } else if (char === "]") {
+      bracketDepth--;
+    } else if (parenDepth === 0 && bracketDepth === 0 && char === symbol) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+function evaluateNumericCondition(condition, parseNumeric) {
+  const operators = ["<=", ">=", "==", "!=", "<", ">"];
+  for (const operator of operators) {
+    const parts = splitTopLevelByOperator(condition, operator);
+    if (!parts) {
+      continue;
+    }
+    const left = parseNumeric(parts[0]);
+    const right = parseNumeric(parts[1]);
+    if (operator === "<=") {
+      return left <= right;
+    }
+    if (operator === ">=") {
+      return left >= right;
+    }
+    if (operator === "==") {
+      return left === right;
+    }
+    if (operator === "!=") {
+      return left !== right;
+    }
+    if (operator === "<") {
+      return left < right;
+    }
+    return left > right;
+  }
+
+  return parseNumeric(condition) !== 0;
+}
+
+function splitTopLevelByOperator(value, operator) {
+  let parenDepth = 0;
+  let bracketDepth = 0;
+  let inString = false;
+  let escape = false;
+  for (let index = 0; index <= value.length - operator.length; index++) {
+    const char = value[index];
+    if (inString) {
+      if (escape) {
+        escape = false;
+      } else if (char === "\\") {
+        escape = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+    if (char === "\"") {
+      inString = true;
+    } else if (char === "(") {
+      parenDepth++;
+    } else if (char === ")") {
+      parenDepth--;
+    } else if (char === "[") {
+      bracketDepth++;
+    } else if (char === "]") {
+      bracketDepth--;
+    } else if (parenDepth === 0 && bracketDepth === 0 && value.slice(index, index + operator.length) === operator) {
+      return [value.slice(0, index).trim(), value.slice(index + operator.length).trim()];
+    }
+  }
+  return null;
 }
 
 function parseNumberLiteral(value) {
@@ -1346,10 +1612,16 @@ function parseNumericExpression(value, constants, locals) {
 
   function parseTerm() {
     let result = parseFactor();
-    while (matchSymbol("*") || matchSymbol("/")) {
+    while (matchSymbol("*") || matchSymbol("/") || matchSymbol("%")) {
       const operator = tokens[index - 1].value;
       const right = parseFactor();
-      result = operator === "*" ? result * right : result / right;
+      if (operator === "*") {
+        result *= right;
+      } else if (operator === "/") {
+        result /= right;
+      } else {
+        result %= right;
+      }
     }
     return result;
   }
@@ -1430,7 +1702,7 @@ function tokenizeNumericExpression(value) {
       continue;
     }
 
-    if ("+-*/()".includes(value[index])) {
+    if ("+-*/%()".includes(value[index])) {
       tokens.push({ type: "symbol", value: value[index] });
       index++;
       continue;

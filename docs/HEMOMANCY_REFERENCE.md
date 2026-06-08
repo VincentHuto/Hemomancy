@@ -2761,10 +2761,13 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Chitinite** | ![](../src/main/resources/assets/hemomancy/textures/entity/chitinite/model_chitinite.png) | Creature | Iron-shelled Isopod insect (1.0Ã—0.3) |
 | **Fervent Chitinite** | ![](../src/main/resources/assets/hemomancy/textures/entity/fervent_chitinite/model_fervent_chitinite.png) | Creature | Fire variant of Chitinite |
 | **Hemolymphopoda** | ![](../src/main/resources/assets/hemomancy/textures/entity/hemolymphopoda/model_hemolymphopoda.png) | Ambient | Small (0.9Ã—0.3), Horseshoe crab drops Cleansing Hemolymph |
+| **Hematic Burrower** | ![](../src/main/resources/assets/hemomancy/textures/entity/hematic_burrower/model_hematic_burrower.png) | Creature | Mole-like Hematic Field counterpart found in shallow, dark caves under forest-like biomes. It flees nearby living mobs; sustained pursuit triggers a particle-only dig-away despawn with a rare coal/raw copper/raw iron escape drop and no real block damage. Editable source: `assets/hemomancy/models/entity/bbmodel/HematicBurrowerModel.bbmodel`. |
 | **Barbed Urchin** | ![](../src/main/resources/assets/hemomancy/textures/entity/barbed_urchin/model_barbed_urchin.png) | Water Ambient | Underwater iron-barbed urchin |
 | **Chalybeate Snail** | ![](../src/main/resources/assets/hemomancy/textures/entity/chalybeate_snail/model_chalybeate_snail.png) | Water Ambient | Slow vent-field grazer with defensive retraction. Does not use ordinary biome spawning; `DeepOceanVentFeature` places persistent 2-5 clusters around valid hydrothermal vent floors. Retracted, off-cooldown snails can be nonlethally harvested with any HutosLib `ItemKnapper` for Chalybeate Sclerites. |
+| **Prism Cuttle** | ![](../src/main/resources/assets/hemomancy/textures/entity/prism_cuttle/model_prism_cuttle_deep.png) | Water Ambient | Warm-ocean Hematic Field counterpart that samples nearby block colors into synced camouflage variants. Approaching non-creative, non-spectator players trigger a bright defensive flash, particles, brief Blindness/Nausea, and a flee cooldown. Editable source: `assets/hemomancy/models/entity/bbmodel/PrismCuttleModel.bbmodel`. |
 | **Crimson Doe** | | Creature | Blood-touched deer (ON_GROUND spawn) |
 | **Scarlet Serpent** | ![](../src/main/resources/assets/hemomancy/textures/entity/scarlet_serpent/model_scarlet_serpent.png) | Creature | Territorial cobra-like wildlife in desert/badlands, swamp, and jungle biome families. Flares its hood near non-creative, non-spectator players at 8 blocks, then strikes within 5 blocks. Desert/badlands spawns use the redder texture variant, swamp/mangrove swamp spawns use the darker brown variant, and jungle spawns use the base black/red/yellow texture. Melee hits apply Poison I (100t) and Blood Binding (60t). Drops `serpent_scale` (1-2 plus Looting bonus). Its editable Blockbench source is `assets/hemomancy/models/entity/bbmodel/ScarletSerpentModel.bbmodel`. Neurotic/Fervent-aligned for sampling, but not included in `hemomancy_mob` so Unstained purity systems do not treat ordinary territorial wildlife as a factional blood-mob kill. |
+| **Venom-Rib Centipede** | ![](../src/main/resources/assets/hemomancy/textures/entity/venom_rib_centipede/model_venom_rib_centipede.png) | Monster | Rare damp-temperate armored arthropod with segmented body and leg animation rules inspired by Scarlet Serpent's linked-body approach. It preferentially hunts arthropods and can menace nearby players; melee hits apply venom/Poison and Blood Binding. Ferric-aligned and specimen-jar capturable. Editable source: `assets/hemomancy/models/entity/bbmodel/VenomRibCentipedeModel.bbmodel`. |
 | **Hemojelly** | | Ambient | Blood jelly creature (ON_GROUND spawn) |
 | **Venous Strider** | | Ambient | Vein-walking strider (ON_GROUND spawn) |
 
@@ -2795,7 +2798,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 
 ### 26.4 Entity Tags
 
-Mobs are tagged by tendency: `FUNGAL_TAG`, `UMBRAL_TAG`, `INCANDESCENT_TAG`, `FERRIC_TAG`, `VIVACIOUS_TAG`, `RUINOUS_TAG`, `NEUROTIC_TAG`, `FERVENT_TAG`, `FRIGID_TAG`. Chalybeate Snails are Ferric-aligned and included in `specimen_jar_capturable`; Blood Lantern Jellies are Vivacious-aligned and also specimen-jar capturable. Scarlet Serpents are Neurotic/Fervent-aligned, reflecting serpent morphling affinity without adding them to `hemomancy_mob`.
+Mobs are tagged by tendency: `FUNGAL_TAG`, `UMBRAL_TAG`, `INCANDESCENT_TAG`, `FERRIC_TAG`, `VIVACIOUS_TAG`, `RUINOUS_TAG`, `NEUROTIC_TAG`, `FERVENT_TAG`, `FRIGID_TAG`. Chalybeate Snails, Hematic Burrowers, and Venom-Rib Centipedes are Ferric-aligned and included in `specimen_jar_capturable`; Blood Lantern Jellies are Vivacious-aligned and also specimen-jar capturable. Prism Cuttles are Neurotic-aligned and specimen-jar capturable. Scarlet Serpents are Neurotic/Fervent-aligned, reflecting serpent morphling affinity without adding them to `hemomancy_mob`.
 
 ### 26.5 Spawn Placements
 
@@ -2803,6 +2806,9 @@ Registered in `EntityInit.commonSetup`:
 - Scarlet Serpent -> `ON_GROUND`
 - Barbed Urchin â†’ `IN_WATER`
 - Hemolymphopoda â†’ `ON_GROUND`
+- Hematic Burrower -> `ON_GROUND`, shallow-cave placement under forest-like biome tags with low light and sky occlusion checks
+- Prism Cuttle -> `IN_WATER`, warm/lukewarm ocean biome tag only
+- Venom-Rib Centipede -> `ON_GROUND`, rare damp temperate biome tag with low-light ground checks
 - Fargone â†’ `ON_GROUND` (monster rules)
 - Abhorent Thought â†’ `ON_GROUND` (monster rules)
 - Dessicant â†’ `ON_GROUND` (monster rules)
@@ -2823,7 +2829,7 @@ Registered in `EntityInit.commonSetup`:
 
 ### 26.6 Entity Loot Tables
 
-> **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **46 entity loot tables**. Standard material-bearing mobs now guarantee at least one base drop of their associated material on valid kills, and all looting bonuses use the 1.21 `minecraft:enchanted_count_increase` function rather than the removed `minecraft:looting_enchant` id.
+> **Status: Implemented in resources.** Entity drops are hand-authored JSON now. The disabled `HemoEntityLootProvider` generator remains stale/commented, but the live loot tables are the JSON files under `src/main/resources/data/hemomancy/loot_table/entities/` (1.21 singular `loot_table` path). Current count: **49 entity loot tables**. Standard material-bearing mobs now guarantee at least one base drop of their associated material on valid kills, and all looting bonuses use the 1.21 `minecraft:enchanted_count_increase` function rather than the removed `minecraft:looting_enchant` id.
 
 Notable implemented drop families:
 
@@ -2835,7 +2841,10 @@ Notable implemented drop families:
 | Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob; Morphling Polyps drop the base Morphling Polyp item and can roll a small layer-hint item from their active appendages |
 | Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread from the puppeteer; puppeteer-summoned dolls are support minions and do not create extra loot |
 | Chalybeate Snail | Killing gives only a rare small Hematic Iron Scrap fallback; reliable Chalybeate Sclerites come from knapper harvesting while retracted |
+| Hematic Burrower | Ordinary death loot is clay-only; the rare coal/raw copper/raw iron reward is emitted only during the panic dig-away escape behavior |
 | Blood Lantern Jelly | Empty/no meaningful combat drops; its value is ambient reef life and specimen preservation |
+| Prism Cuttle | Small glow-ink fallback; intended value is observation, specimen capture, and its defensive flash ecology |
+| Venom-Rib Centipede | Spider-eye fallback from a dangerous damp-biome predator; venom pressure and bug predation are the primary encounter identity |
 | Mnemonic Whale | Empty/no meaningful combat drops; intended interaction is nonlethal Mnemonic Ambergris sampling and observation |
 | Brined Votary | Minimal salvage only: rare paper/book/scrap/spore material. It is a tragic wreck guardian, not a farming target. |
 | Saint and boss entities | Direct/special boss rewards are handled in entity code or matching loot JSON depending on encounter |

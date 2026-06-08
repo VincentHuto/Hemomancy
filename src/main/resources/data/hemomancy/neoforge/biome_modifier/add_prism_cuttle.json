@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#hemomancy:prism_cuttle_spawnlist",
+  "spawners": {
+    "type": "hemomancy:prism_cuttle",
+    "weight": 14,
+    "minCount": 1,
+    "maxCount": 3
+  }
+}

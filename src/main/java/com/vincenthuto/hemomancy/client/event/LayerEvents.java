@@ -153,6 +153,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(MnemonicWhaleModel.LAYER_LOCATION, MnemonicWhaleModel::createBodyLayer);
 		event.registerLayerDefinition(BrinedVotaryModel.LAYER_LOCATION, BrinedVotaryModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
+		event.registerLayerDefinition(PrismCuttleModel.LAYER_LOCATION, PrismCuttleModel::createBodyLayer);
+		event.registerLayerDefinition(HematicBurrowerModel.LAYER_LOCATION, HematicBurrowerModel::createBodyLayer);
+		event.registerLayerDefinition(VenomRibCentipedeModel.LAYER_LOCATION, VenomRibCentipedeModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedGuardianModel.LAYER_LOCATION, UnstainedGuardianModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedAcolyteModel.LAYER_LOCATION, UnstainedAcolyteModel::createBodyLayer);

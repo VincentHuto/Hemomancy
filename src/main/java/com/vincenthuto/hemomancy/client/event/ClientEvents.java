@@ -27,6 +27,7 @@ import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeRend
 import com.vincenthuto.hemomancy.client.render.entity.boss.velorum.VelorumRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.CrimsonDoeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.animal.HematicBurrowerRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.ScarletSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
@@ -37,6 +38,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.BrinedVotaryRe
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.ChalybeateSnailRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.MnemonicWhaleRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PrismCuttleRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.ArmatureRestraintRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.misc.CovenantThroneSeatRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.*;
@@ -575,6 +577,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyRenderer::new);
             event.registerEntityRenderer(EntityInit.mnemonic_whale.get(), MnemonicWhaleRenderer::new);
             event.registerEntityRenderer(EntityInit.brined_votary.get(), BrinedVotaryRenderer::new);
+            event.registerEntityRenderer(EntityInit.prism_cuttle.get(), PrismCuttleRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
             event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
             event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
@@ -616,9 +619,11 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.myelin_borer.get(), MyelinBorerRenderer::new);
             event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
             event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
+            event.registerEntityRenderer(EntityInit.hematic_burrower.get(), HematicBurrowerRenderer::new);
             event.registerEntityRenderer(EntityInit.scarlet_serpent.get(), ScarletSerpentRenderer::new);
             event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);
             event.registerEntityRenderer(EntityInit.venous_strider.get(), VenousStriderRenderer::new);
+            event.registerEntityRenderer(EntityInit.venom_rib_centipede.get(), VenomRibCentipedeRenderer::new);
             event.registerEntityRenderer(EntityInit.covenant_throne_seat.get(), CovenantThroneSeatRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_armature_restraint.get(), ArmatureRestraintRenderer::new);
 

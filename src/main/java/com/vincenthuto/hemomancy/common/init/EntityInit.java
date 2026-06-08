@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.ChalybeateSnailEntity
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.MnemonicWhaleEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.MnemonicWhaleTuning;
+import com.vincenthuto.hemomancy.common.entity.mob.aquatic.PrismCuttleEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
@@ -361,6 +362,14 @@ public class EntityInit {
                     .clientTrackingRange(8)
                     .build(Hemomancy.rloc("brined_votary").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<PrismCuttleEntity>> prism_cuttle = ENTITY_TYPES.register(
+            "prism_cuttle",
+            () -> EntityType.Builder.of(PrismCuttleEntity::new, MobCategory.WATER_CREATURE)
+                    .sized(0.7F, 0.55F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3)
+                    .build(Hemomancy.rloc("prism_cuttle").toString()));
+
 
     public static final DeferredHolder<EntityType<?>, EntityType<LumpOfThoughtEntity>> lump_of_thought = ENTITY_TYPES.register(
             "lump_of_thought",
@@ -391,6 +400,13 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<FerventChitiniteEntity>> fervent_chitinite = ENTITY_TYPES.register("fervent_chitinite",
             () -> EntityType.Builder.of(FerventChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
                     .build(Hemomancy.rloc("fervent_chitinite").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VenomRibCentipedeEntity>> venom_rib_centipede = ENTITY_TYPES.register(
+            "venom_rib_centipede",
+            () -> EntityType.Builder.of(VenomRibCentipedeEntity::new, MobCategory.MONSTER)
+                    .sized(1.15F, 0.55F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("venom_rib_centipede").toString()));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChthonianEntity>> chthonian = ENTITY_TYPES.register("chthonian",
@@ -450,6 +466,14 @@ public class EntityInit {
                     .clientTrackingRange(8)
                     .updateInterval(3)
                     .build(Hemomancy.rloc("verdigris_moth").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HematicBurrowerEntity>> hematic_burrower = ENTITY_TYPES.register(
+            "hematic_burrower",
+            () -> EntityType.Builder.of(HematicBurrowerEntity::new, MobCategory.CREATURE)
+                    .sized(0.65F, 0.35F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3)
+                    .build(Hemomancy.rloc("hematic_burrower").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ScarletSerpentEntity>> scarlet_serpent = ENTITY_TYPES.register(
             "scarlet_serpent",
@@ -592,6 +616,9 @@ public class EntityInit {
         event.register(EntityInit.blood_lantern_jelly.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BloodLanternJellyEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.prism_cuttle.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PrismCuttleEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.mnemonic_whale.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MnemonicWhaleEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -631,6 +658,9 @@ public class EntityInit {
         event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.hematic_burrower.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HematicBurrowerEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.morphling_polyp.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MorphlingPolypEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -662,6 +692,9 @@ public class EntityInit {
         event.register(EntityInit.chthonian_queen.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChthonianQueenEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.venom_rib_centipede.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenomRibCentipedeEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.fungling.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FunglingEntity::checkMobSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -690,6 +723,7 @@ public class EntityInit {
         event.put(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyEntity.setAttributes().build());
         event.put(EntityInit.mnemonic_whale.get(), MnemonicWhaleEntity.setAttributes().build());
         event.put(EntityInit.brined_votary.get(), BrinedVotaryEntity.setAttributes().build());
+        event.put(EntityInit.prism_cuttle.get(), PrismCuttleEntity.setAttributes().build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());
@@ -732,10 +766,12 @@ public class EntityInit {
         event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
+        event.put(EntityInit.hematic_burrower.get(), HematicBurrowerEntity.setAttributes().build());
         event.put(EntityInit.scarlet_serpent.get(), ScarletSerpentEntity.setAttributes().build());
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
         event.put(EntityInit.tooth_pecks.get(), ToothPecksEntity.setAttributes().build());
+        event.put(EntityInit.venom_rib_centipede.get(), VenomRibCentipedeEntity.setAttributes().build());
     }
 
     @SubscribeEvent

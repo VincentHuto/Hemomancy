@@ -6,7 +6,9 @@
     "minecraft:ravager",
     "minecraft:shulker",
     "minecraft:vindicator",
+    "hemomancy:hematic_burrower",
     "hemomancy:chalybeate_snail",
+    "hemomancy:venom_rib_centipede",
     "minecraft:warden"
   ]
 }

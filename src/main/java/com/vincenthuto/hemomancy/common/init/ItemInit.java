@@ -1057,6 +1057,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hematic_burrower = SPAWNEGGS.register(
+            "spawn_egg_hematic_burrower",
+            () -> new DeferredSpawnEggItem(EntityInit.hematic_burrower, 0x3A2520, 0x8A1020, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
             "spawn_egg_dessicant",
             () -> new DeferredSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
@@ -1084,6 +1087,10 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_verdigris_moth = SPAWNEGGS.register(
             "spawn_egg_verdigris_moth",
             () -> new DeferredSpawnEggItem(EntityInit.verdigris_moth, 0xBEE8A8, 0xB04475, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_venom_rib_centipede = SPAWNEGGS.register(
+            "spawn_egg_venom_rib_centipede",
+            () -> new DeferredSpawnEggItem(EntityInit.venom_rib_centipede, 0x2A1412, 0x8E1F2B,
+                    new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_scarlet_serpent = SPAWNEGGS.register(
             "spawn_egg_scarlet_serpent",
             () -> new DeferredSpawnEggItem(EntityInit.scarlet_serpent, 0x090506, 0x8B0000, new Item.Properties()));
@@ -1099,6 +1106,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_brined_votary = SPAWNEGGS.register(
             "spawn_egg_brined_votary",
             () -> new DeferredSpawnEggItem(EntityInit.brined_votary, 0x2B3F45, 0x8A1F2C, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_prism_cuttle = SPAWNEGGS.register(
+            "spawn_egg_prism_cuttle",
+            () -> new DeferredSpawnEggItem(EntityInit.prism_cuttle, 0x254C7B, 0xF05AE8, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_voyager = SPAWNEGGS.register(
             "spawn_egg_harbinger_voyager",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_voyager, 0x4A1F27, 0xC29A68, new Item.Properties()));

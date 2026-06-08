@@ -252,6 +252,65 @@ async function testChalybeateSnailForLoopPartsConvert() {
   }
 }
 
+async function testPrismCuttleLoopGeneratedArmsConvert() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const outputFile = path.join(outputDir, "PrismCuttleModel.bbmodel");
+
+  try {
+    await runConverter([
+      "--source",
+      "src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/aquatic/PrismCuttleModel.java",
+      "--texture",
+      "textures/entity/prism_cuttle/model_prism_cuttle_deep.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+
+    assert.equal(bbmodel.name, "PrismCuttleModel");
+    assert.ok(groupNames.includes("root"), "root group should export");
+    assert.ok(groupNames.includes("mantle"), "mantle child should export");
+    assert.ok(groupNames.includes("arm_0"), "loop should expand first arm");
+    assert.ok(groupNames.includes("arm_7"), "loop should expand last arm");
+    assert.equal(bbmodel.elements.length, 13);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
+async function testVenomRibCentipedeNestedSegmentsConvert() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const outputFile = path.join(outputDir, "VenomRibCentipedeModel.bbmodel");
+
+  try {
+    await runConverter([
+      "--source",
+      "src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/arthropod/VenomRibCentipedeModel.java",
+      "--texture",
+      "textures/entity/venom_rib_centipede/model_venom_rib_centipede.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+    const segment0 = bbmodel.outliner.find((node) => node.name === "segment_0");
+    const segment1 = segment0.children.find((node) => node.name === "segment_1");
+
+    assert.equal(bbmodel.name, "VenomRibCentipedeModel");
+    assert.ok(groupNames.includes("segment_10"), "loop should resolve imported segment count alias");
+    assert.ok(groupNames.includes("left_legs_10"), "nested loop child parts should export");
+    assert.ok(segment1, "segment_1 should be nested under segment_0");
+    assert.equal(bbmodel.elements.length, 69);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
 async function testLegacyObfuscatedModelRendererArmorConverts() {
   const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
   const sourceFile = path.join(outputDir, "LegacyArmorModel.java");
@@ -464,6 +523,8 @@ const tests = [
   ["converts PartPose.rotation without an offset", testPartPoseRotationConverts],
   ["keeps CubeDeformation in inflate instead of baking it into position and size", testCubeDeformationDoesNotBakeIntoPositionAndSize],
   ["converts ChalybeateSnailModel parts declared inside a simple for loop", testChalybeateSnailForLoopPartsConvert],
+  ["converts PrismCuttleModel loop-generated arms and rule constants", testPrismCuttleLoopGeneratedArmsConvert],
+  ["converts VenomRibCentipedeModel nested loop-generated segments", testVenomRibCentipedeNestedSegmentsConvert],
   ["converts obfuscated legacy ModelRenderer armor parts", testLegacyObfuscatedModelRendererArmorConverts],
   ["converts named legacy ModelRenderer methods", testLegacyNamedModelRendererMethodsConvert],
   ["ignores legacy runtime rotation assignments that are not static model data", testLegacyRuntimeRotationAssignmentsAreIgnored],
