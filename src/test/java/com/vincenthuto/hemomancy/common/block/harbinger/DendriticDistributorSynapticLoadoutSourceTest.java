@@ -54,9 +54,17 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Synaptic neural arcs are jagged lightning-like segments", screen, "drawJaggedNeuralArc");
 		assertContains("Synaptic neural arcs use straight line segments", screen, "drawNeuralLine");
 		assertDoesNotContain("Synaptic neural arcs avoid organic sine tendrils", screen, "microSquiggle");
+		assertContains("Synaptic controls use custom yellow buttons", screen, "SynapticButton");
+		assertDoesNotContain("Synaptic screen does not use vanilla button builders", screen, "Button.builder");
+		assertDoesNotContain("Synaptic radial icons do not have individual amber backing boxes", screen, "ix - 2, iy - 2");
 		assertContains("Synaptic name field is placed in rail", screen, "controlX + 8");
 		assertContains("Synaptic action buttons stack vertically", screen, "controlY + 74");
 		assertContains("Synaptic screen reads client skill sync cache for slot count", screen, "getClientUnlockedSlots");
+		assertContains("Synaptic screen tracks synced slot count changes", screen, "lastRenderedSlots");
+		assertContains("Synaptic screen refreshes controls when slot count changes", screen, "lastRenderedSlots != slots");
+		assertContains("Synaptic unlocked slots beyond saved data display empty", screen,
+				"slotIndex >= known.getLoadouts().size()");
+		assertContains("Synaptic render uses display loadouts for missing slots", screen, "displayLoadout");
 		assertContains("Synaptic screen open refreshes skill sync", clientSync, "PacketSyncSkills");
 		assertContains("Synaptic skill sync is sent with manipulation sync", clientSync, "requireSkillProgress(sender).toSyncTag()");
 		assertContains("Synaptic save captures memorized wheel entries", action, "memorizedEquippedNames");

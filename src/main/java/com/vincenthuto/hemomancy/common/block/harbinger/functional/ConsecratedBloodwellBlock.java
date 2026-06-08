@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
-import com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen;
 import com.vincenthuto.hemomancy.common.block.shared.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -15,6 +14,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorpti
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketOpenBloodlinePoolScreen;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.tile.functional.ConsecratedBloodwellBlockEntity;
 
@@ -76,15 +76,10 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		if (context.getLevel() instanceof ServerLevel level
-				&& context.getPlayer() instanceof ServerPlayer player
-				&& !FoundingFaneSavedData.get(level).canPlaceBloodwell(context.getClickedPos())) {
-			player.displayClientMessage(Component.translatable(
-					"block.hemomancy.consecrated_bloodwell.duplicate_heart")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
-			return null;
+		if (context.getPlayer() instanceof ServerPlayer player) {
+			player.displayClientMessage(riteOnlyPlacementMessage(), true);
 		}
-		return super.getStateForPlacement(context);
+		return null;
 	}
 
 	@Nullable
@@ -111,7 +106,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
 		if (!state.is(newState.getBlock()) && level instanceof ServerLevel serverLevel) {
 			FoundingFaneSavedData data = FoundingFaneSavedData.get(serverLevel);
-			UUID owner = data.findOwnerContaining(pos);
+			UUID owner = data.findOwnerForHeart(pos);
 			if (owner != null) {
 				List<BlockPos> stakes = data.removeHeartAndGetStakes(owner, pos);
 				for (BlockPos stakePos : stakes) {
@@ -138,15 +133,28 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 				|| stack.getItem() instanceof LivingStaffItem) {
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		}
-		handleInteraction(level, pos, player);
-		return ItemInteractionResult.SUCCESS;
+		return handleInteraction(level, pos, player) == InteractionResult.FAIL
+				? ItemInteractionResult.FAIL
+				: ItemInteractionResult.SUCCESS;
 	}
 
 	private InteractionResult handleInteraction(Level level, BlockPos pos, Player player) {
 		if (level.isClientSide) {
-			BloodlinePoolScreen.openScreen();
-		} else if (player instanceof ServerPlayer serverPlayer) {
+			return InteractionResult.SUCCESS;
+		}
+		if (level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
+			if (!isRegisteredBloodwell(serverLevel, pos)) {
+				serverPlayer.displayClientMessage(invalidBloodwellMessage(), true);
+				return InteractionResult.FAIL;
+			}
+			if (!canUseBloodwell(serverPlayer, pos)) {
+				serverPlayer.displayClientMessage(Component.translatable(
+						"block.hemomancy.consecrated_bloodwell.not_bloodline")
+						.withStyle(ChatFormatting.DARK_RED), true);
+				return InteractionResult.FAIL;
+			}
 			syncLinkedPool(serverPlayer, pos);
+			PacketHandler.sendToPlayer(serverPlayer, new PacketOpenBloodlinePoolScreen());
 		}
 		return InteractionResult.SUCCESS;
 	}
@@ -154,6 +162,10 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	@Override
 	public double absorbBloodFromBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
+		if (!isRegisteredBloodwell(level, pos)) {
+			player.displayClientMessage(invalidBloodwellMessage(), true);
+			return 0.0D;
+		}
 		if (!canUseBloodwell(player, pos)) {
 			player.displayClientMessage(Component.translatable(
 					"block.hemomancy.consecrated_bloodwell.not_bloodline")
@@ -196,6 +208,10 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	@Override
 	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
+		if (!isRegisteredBloodwell(level, pos)) {
+			player.displayClientMessage(invalidBloodwellMessage(), true);
+			return 0.0D;
+		}
 		if (!canUseBloodwell(player, pos)) {
 			player.displayClientMessage(Component.translatable(
 					"block.hemomancy.consecrated_bloodwell.not_bloodline")
@@ -249,12 +265,23 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 				.map(owner -> {
 					FoundingFaneSavedData data = FoundingFaneSavedData.get((ServerLevel) player.level());
 					BlockPos heart = data.getHeart(owner);
-					if (heart != null) {
-						return heart.equals(bloodwellPos);
-					}
-					return data.isWithinFane(owner, bloodwellPos);
+					return heart != null && heart.equals(bloodwellPos);
 				})
 				.orElse(false);
+	}
+
+	private static boolean isRegisteredBloodwell(ServerLevel level, BlockPos pos) {
+		return FoundingFaneSavedData.get(level).findOwnerForHeart(pos) != null;
+	}
+
+	private static Component riteOnlyPlacementMessage() {
+		return Component.literal("Consecrated Bloodwells may only be manifested by the Rite of the Founding Fane.")
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
+	}
+
+	private static Component invalidBloodwellMessage() {
+		return Component.literal("This bloodwell is not bound to an active Founding Fane.")
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
 	}
 
 	private static void syncLinkedPool(ServerPlayer player, BlockPos pos) {

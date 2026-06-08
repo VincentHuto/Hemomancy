@@ -1768,9 +1768,10 @@ public class HarbingerCardinalRiteEvents {
 
 
 	private static void completeFoundingFane(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		if (!sLevel.getBlockState(center).is(BlockInit.consecrated_bloodwell.get())) {
+		BlockState centerState = sLevel.getBlockState(center);
+		if (!centerState.is(BlockInit.consecrated_bloodwell.get()) && !centerState.isAir() && !centerState.canBeReplaced()) {
 			caster.displayClientMessage(
-					Component.literal("The Founding Fane requires a Consecrated Bloodwell at its heart.")
+					Component.literal("The rite's heart was obstructed before the Consecrated Bloodwell could be manifested.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
@@ -1800,6 +1801,14 @@ public class HarbingerCardinalRiteEvents {
 			if (sLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
 				sLevel.removeBlock(stakePos, false);
 			}
+		}
+		if (!sLevel.getBlockState(center).is(BlockInit.consecrated_bloodwell.get())
+				&& !sLevel.setBlock(center, BlockInit.consecrated_bloodwell.get().defaultBlockState(), 3)) {
+			caster.displayClientMessage(
+					Component.literal("The rite falters before the Consecrated Bloodwell can take form.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
 		}
 		faneData.consecrateHeart(faneOwner, center);
 		if (isReconsecrating) {

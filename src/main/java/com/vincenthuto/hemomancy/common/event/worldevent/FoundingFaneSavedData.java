@@ -206,6 +206,15 @@ public class FoundingFaneSavedData extends SavedData {
 		return null;
 	}
 
+	public UUID findOwnerForHeart(BlockPos pos) {
+		for (Map.Entry<UUID, FaneEntry> entry : fanes.entrySet()) {
+			if (pos.equals(entry.getValue().heart())) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	public UUID findOwnerContaining(BlockPos pos) {
 		for (Map.Entry<UUID, FaneEntry> entry : fanes.entrySet()) {
 			if (entry.getValue().footprint().contains(pos)) {

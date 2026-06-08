@@ -92,6 +92,15 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				for (BloodStructureRecipe targetPattern : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
 						BloodStructureRecipe.getAllRecipes(player.level()),
 						recipe -> recipe.getPattern().getPatternArray())) {
+					if (BloodStructureCraftingHelper.isRiteExclusive(targetPattern)) {
+						BlockPattern.BlockPatternMatch forbiddenMatch = findStructurePatternAtHit(targetPattern, sLevel, hitPos);
+						if (forbiddenMatch != null) {
+							player.displayClientMessage(BloodStructureCraftingHelper.riteExclusiveMessage(), false);
+							handled = true;
+							break;
+						}
+						continue;
+					}
 					if (!targetPattern.isUnstained()) {
 						BlockPattern.BlockPatternMatch projectionMatch = findStructurePatternAtHit(targetPattern, sLevel, hitPos);
 						if (projectionMatch != null) {
@@ -208,6 +217,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							BloodStructureRecipe.getAllRecipes(player.level()),
 							targetPattern -> targetPattern.getPattern().getPatternArray())) {
 						BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
+						if (match != null && BloodStructureCraftingHelper.isRiteExclusive(recipe)) {
+							player.displayClientMessage(BloodStructureCraftingHelper.riteExclusiveMessage(), false);
+							handled = true;
+							break;
+						}
 						if (match != null && !recipe.isUnstained()) {
 							showProjectionHint(player);
 							handled = true;
@@ -507,11 +521,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					if (!canStartFoundingFane(serverPlayer)) {
 						return;
 					}
-					if (!sLevel.getBlockState(centerPos).is(BlockInit.consecrated_bloodwell.get())) {
+					if (!canManifestFoundingFaneHeart(sLevel, centerPos)) {
 						player.displayClientMessage(
-								Component.literal("The Founding Fane must be centered on a Consecrated Bloodwell.")
+								Component.literal("The rite's heart must remain clear so a Consecrated Bloodwell can be manifested there.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-								false);
+							false);
 						return;
 					}
 					if (!consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.sanguine_quintessence.get())) {
@@ -583,6 +597,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			}
 		}
 		return false;
+	}
+
+	private static boolean canManifestFoundingFaneHeart(ServerLevel level, BlockPos centerPos) {
+		var state = level.getBlockState(centerPos);
+		return state.is(BlockInit.consecrated_bloodwell.get()) || state.isAir() || state.canBeReplaced();
 	}
 
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import net.minecraft.ChatFormatting;
@@ -36,6 +37,10 @@ public final class BloodStructureCraftingHelper {
 			BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, level, hitPos);
 			if (match == null) {
 				continue;
+			}
+
+			if (isRiteExclusive(recipe)) {
+				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, riteExclusiveMessage()));
 			}
 
 			if (!offhandCatalyst.is(recipe.getHeldItem().getItem())) {
@@ -188,6 +193,15 @@ public final class BloodStructureCraftingHelper {
 	public static Component projectionHintMessage() {
 		return Component.literal("Use Blood Projection on this formation with its catalyst in your offhand.")
 				.withStyle(ChatFormatting.DARK_RED);
+	}
+
+	public static boolean isRiteExclusive(BloodStructureRecipe recipe) {
+		return recipe.getResult().is(BlockInit.consecrated_bloodwell.get().asItem());
+	}
+
+	public static Component riteExclusiveMessage() {
+		return Component.literal("Consecrated Bloodwells may only be manifested by the Rite of the Founding Fane.")
+				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
 	}
 
 	private static Component missingOffhandCatalystMessage(BloodStructureRecipe recipe) {

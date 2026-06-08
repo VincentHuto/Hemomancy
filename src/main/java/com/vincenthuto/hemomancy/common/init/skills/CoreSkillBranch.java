@@ -66,7 +66,7 @@ public final class CoreSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.hematic_memory.get())));
 			SkillPointInit.skill_vital_link = SkillPointInit.registerSkill(branch,
 					new SkillPoint(9, "skill_vital_link", 600, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_feeding_frenzy)
-							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(384, 342).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
+							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(400, 326).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.bleeding_bulb.get())));
 			SkillPointInit.skill_iron_will = SkillPointInit.registerSkill(branch,
 					new SkillPoint(10, "skill_iron_will", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_last_wind)
@@ -90,8 +90,7 @@ public final class CoreSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
 			SkillPointInit.skill_synaptic_memory = SkillPointInit.registerSkill(branch,
 					new SkillPoint(40, "skill_synaptic_memory", 450, 4, EnumSkillStates.LOCKED, SkillPointInit.skill_manip_slots)
-							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(430, 526).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
-							.setIconItem(() -> new ItemStack(BlockInit.dendritic_distributor.get())));
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(382, 398).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill));
 		// </skill-editor>
 	}
 }

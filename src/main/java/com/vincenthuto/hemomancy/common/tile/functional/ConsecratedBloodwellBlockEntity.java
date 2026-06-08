@@ -39,7 +39,7 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity {
 		if (!(level instanceof ServerLevel serverLevel) || level.getGameTime() % POOL_SYNC_INTERVAL != 0) {
 			return;
 		}
-		UUID owner = FoundingFaneSavedData.get(serverLevel).findOwnerContaining(pos);
+		UUID owner = FoundingFaneSavedData.get(serverLevel).findOwnerForHeart(pos);
 		if (owner == null) {
 			te.syncPoolValues(0.0D, 0.0D);
 			return;

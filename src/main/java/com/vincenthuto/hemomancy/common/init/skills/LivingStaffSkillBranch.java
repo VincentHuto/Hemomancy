@@ -32,11 +32,11 @@ public final class LivingStaffSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.living_blade.get())));
 			SkillPointInit.skill_hematic_focus = SkillPointInit.registerSkill(branch,
 					new SkillPoint(24, "skill_hematic_focus", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_crimson_projection)
-							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(376, 432).setBranch("living_staff").setBranchColor(0xFFD9AD28).addParents(SkillPointInit.skill_vascular_draw, SkillPointInit.deep_base_skill)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(360, 464).setBranch("living_staff").setBranchColor(0xFFD9AD28).addParents(SkillPointInit.skill_vascular_draw, SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.living_staff.get())));
 			SkillPointInit.skill_vespers_refusal = SkillPointInit.registerSkill(branch,
 					new SkillPoint(25, "skill_vespers_refusal", 700, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_hematic_focus)
-							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(260, 400).setBranch("living_staff").setBranchColor(0xFFD9AD28)
+							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(260, 448).setBranch("living_staff").setBranchColor(0xFFD9AD28)
 							.setIconItem(() -> new ItemStack(ItemInit.memory_of_vesper.get())));
 		// </skill-editor>
 	}

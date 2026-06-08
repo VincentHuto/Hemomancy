@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManip
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -52,6 +53,7 @@ public class SynapticLoadoutScreen extends Screen {
 
 	private final BlockPos distributorPos;
 	private int selectedIndex;
+	private int lastRenderedSlots = -1;
 	private boolean confirmOverwrite;
 	private float animTime;
 	private float[][] neuralVeinParams;
@@ -82,20 +84,20 @@ public class SynapticLoadoutScreen extends Screen {
 		int carouselX = boundedCarouselCenter(frameX, frameW);
 		int sidePanel = sidePanelSize(frameW);
 		int gap = sideGap(frameW);
-		addRenderableWidget(Button.builder(Component.literal("<"), button -> cycle(-1))
-				.bounds(leftArrowX(carouselX, sidePanel, gap), carouselCenterY(frameY) - 10, 22, 20).build());
-		addRenderableWidget(Button.builder(Component.literal(">"), button -> cycle(1))
-				.bounds(rightArrowX(carouselX, sidePanel, gap), carouselCenterY(frameY) - 10, 22, 20).build());
+		addRenderableWidget(new SynapticButton(leftArrowX(carouselX, sidePanel, gap), carouselCenterY(frameY) - 10,
+				22, 20, Component.literal("<"), button -> cycle(-1)));
+		addRenderableWidget(new SynapticButton(rightArrowX(carouselX, sidePanel, gap), carouselCenterY(frameY) - 10,
+				22, 20, Component.literal(">"), button -> cycle(1)));
 		nameField = new EditBox(font, controlX + 8, controlY + 24, CONTROL_RAIL_W - 16, 18,
 				Component.translatable("screen.hemomancy.synaptic_loadouts.name"));
 		nameField.setMaxLength(ManipulationLoadout.MAX_NAME_LENGTH);
 		addRenderableWidget(nameField);
-		applyButton = addRenderableWidget(Button.builder(Component.literal("Apply"), button -> sendApply())
-				.bounds(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2, controlY + 50, CONTROL_BUTTON_W, 20).build());
-		renameButton = addRenderableWidget(Button.builder(Component.literal("Rename"), button -> sendRename())
-				.bounds(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2, controlY + 74, CONTROL_BUTTON_W, 20).build());
-		saveButton = addRenderableWidget(Button.builder(Component.literal("Save"), button -> sendSaveOrOverwrite())
-				.bounds(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2, controlY + 98, CONTROL_BUTTON_W, 20).build());
+		applyButton = addRenderableWidget(new SynapticButton(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2,
+				controlY + 50, CONTROL_BUTTON_W, 20, Component.literal("Apply"), button -> sendApply()));
+		renameButton = addRenderableWidget(new SynapticButton(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2,
+				controlY + 74, CONTROL_BUTTON_W, 20, Component.literal("Rename"), button -> sendRename()));
+		saveButton = addRenderableWidget(new SynapticButton(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2,
+				controlY + 98, CONTROL_BUTTON_W, 20, Component.literal("Save"), button -> sendSaveOrOverwrite()));
 		updateNameField();
 		updateButtons();
 	}
@@ -127,7 +129,7 @@ public class SynapticLoadoutScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		IKnownManipulations known = known();
 		if (known != null && unlockedSlots() > 0 && centerPanelContains(mouseX, mouseY)
-				&& known.getLoadout(selectedIndex).isEmpty()) {
+				&& displayLoadout(known, selectedIndex).isEmpty()) {
 			sendSaveOrOverwrite();
 			return true;
 		}
@@ -152,6 +154,11 @@ public class SynapticLoadoutScreen extends Screen {
 		} else if (selectedIndex >= slots) {
 			selectedIndex = slots - 1;
 		}
+		if (lastRenderedSlots != slots) {
+			lastRenderedSlots = slots;
+			updateNameField();
+			updateButtons();
+		}
 		Component title = Component.translatable("screen.hemomancy.synaptic_loadouts");
 		gfx.drawString(font, title, (width - font.width(title)) / 2, frameY + 12, NEURAL_TEXT, false);
 		String count = slots + " / " + SynapticLoadoutSlotHelper.MAX_LOADOUT_SLOTS + " Synaptic Patterns";
@@ -167,15 +174,16 @@ public class SynapticLoadoutScreen extends Screen {
 		int centerY = carouselCenterY(frameY);
 		int sidePanel = sidePanelSize(frameW);
 		int gap = sideGap(frameW);
+		ManipulationLoadout selectedLoadout = displayLoadout(known, selectedIndex);
 		if (slots > 1) {
-			drawLoadoutPanel(gfx, known.getLoadout(previousIndex(slots)), leftSidePanelX(centerX, sidePanel, gap),
+			drawLoadoutPanel(gfx, displayLoadout(known, previousIndex(slots)), leftSidePanelX(centerX, sidePanel, gap),
 					centerY - sidePanel / 2, sidePanel, false);
-			drawLoadoutPanel(gfx, known.getLoadout(nextIndex(slots)), rightSidePanelX(centerX, gap),
+			drawLoadoutPanel(gfx, displayLoadout(known, nextIndex(slots)), rightSidePanelX(centerX, gap),
 					centerY - sidePanel / 2, sidePanel, false);
 		}
-		drawLoadoutPanel(gfx, known.getLoadout(selectedIndex), centerX - PANEL / 2, centerY - PANEL / 2,
+		drawLoadoutPanel(gfx, selectedLoadout, centerX - PANEL / 2, centerY - PANEL / 2,
 				PANEL, true);
-		drawFooterText(gfx, known.getLoadout(selectedIndex), frameX + CONTROL_RAIL_W + 26,
+		drawFooterText(gfx, selectedLoadout, frameX + CONTROL_RAIL_W + 26,
 				frameW - CONTROL_RAIL_W - 38, frameY + frameH - 54);
 		updateButtons();
 		super.render(gfx, mouseX, mouseY, partialTick);
@@ -304,7 +312,6 @@ public class SynapticLoadoutScreen extends Screen {
 			double angle = start + i * (Math.PI * 2.0D / names.size());
 			int ix = cx + (int) Math.round(Math.cos(angle) * radius) - 8;
 			int iy = cy + (int) Math.round(Math.sin(angle) * radius) - 8;
-			gfx.fill(ix - 2, iy - 2, ix + 18, iy + 18, 0xAA765719);
 			gfx.blit(MEMORY_BASE, ix, iy, 0, 0, 16, 16, 16, 16);
 			gfx.blit(memoryOverlayTexture(names.get(i)), ix, iy, 0, 0, 16, 16, 16, 16);
 		}
@@ -578,7 +585,15 @@ public class SynapticLoadoutScreen extends Screen {
 
 	private ManipulationLoadout currentLoadout() {
 		IKnownManipulations known = known();
-		return known != null ? known.getLoadout(selectedIndex) : ManipulationLoadout.empty(selectedIndex);
+		return displayLoadout(known, selectedIndex);
+	}
+
+	private ManipulationLoadout displayLoadout(IKnownManipulations known, int slotIndex) {
+		if (known == null || slotIndex < 0 || slotIndex >= unlockedSlots()
+				|| slotIndex >= known.getLoadouts().size()) {
+			return ManipulationLoadout.empty(slotIndex);
+		}
+		return known.getLoadout(slotIndex);
 	}
 
 	private IKnownManipulations known() {
@@ -624,5 +639,42 @@ public class SynapticLoadoutScreen extends Screen {
 			return text;
 		}
 		return font.plainSubstrByWidth(text, Math.max(0, maxWidth - font.width("..."))) + "...";
+	}
+
+	private static void drawCenteredFittingString(GuiGraphics gfx, Font font, String text, int centerX, int y,
+			int maxWidth, int color, boolean shadow) {
+		String drawn = text;
+		if (font.width(drawn) > maxWidth) {
+			drawn = font.plainSubstrByWidth(drawn, Math.max(0, maxWidth - font.width("..."))) + "...";
+		}
+		gfx.drawString(font, drawn, centerX - font.width(drawn) / 2, y, color, shadow);
+	}
+
+	private static class SynapticButton extends Button {
+		protected SynapticButton(int x, int y, int width, int height, Component message, OnPress onPress) {
+			super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
+		}
+
+		@Override
+		protected void renderWidget(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
+			Minecraft minecraft = Minecraft.getInstance();
+			boolean hot = isHoveredOrFocused();
+			int fill = active ? (hot ? 0xFF5E4310 : 0xFF221707) : 0xFF100B04;
+			int edge = active ? (hot ? 0xFFFFD66E : 0xFFC79A24) : 0xFF4E3710;
+			int bottom = active ? 0xFF6C4D12 : 0xFF231808;
+			int text = active ? 0xFFFFE8B2 : 0xFF8E7A4E;
+
+			gfx.fill(getX(), getY(), getX() + width, getY() + height, 0xFF050301);
+			gfx.fill(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1, fill);
+			gfx.fill(getX(), getY(), getX() + width, getY() + 1, edge);
+			gfx.fill(getX(), getY() + height - 1, getX() + width, getY() + height, bottom);
+			gfx.fill(getX(), getY(), getX() + 1, getY() + height, edge);
+			gfx.fill(getX() + width - 1, getY(), getX() + width, getY() + height, edge);
+			if (hot && active) {
+				gfx.fill(getX() + 2, getY() + 2, getX() + width - 2, getY() + height - 2, 0x22FFE08A);
+			}
+			drawCenteredFittingString(gfx, minecraft.font, getMessage().getString(), getX() + width / 2,
+					getY() + (height - 8) / 2, Math.max(1, width - 8), text, false);
+		}
 	}
 }
