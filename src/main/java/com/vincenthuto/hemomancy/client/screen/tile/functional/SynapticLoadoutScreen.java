@@ -382,7 +382,7 @@ public class SynapticLoadoutScreen extends Screen {
 
 		if (neuralVeinParams != null) {
 			for (int i = 0; i < NEURAL_VEIN_COUNT; i++) {
-				drawNeuralTendril(gfx, i, animTime, x, y, w, h);
+				drawJaggedNeuralArc(gfx, i, animTime, x, y, w, h);
 			}
 		}
 
@@ -401,52 +401,90 @@ public class SynapticLoadoutScreen extends Screen {
 		gfx.disableScissor();
 	}
 
-	private void drawNeuralTendril(GuiGraphics gfx, int index, float time, int x, int y, int w, int h) {
+	private void drawJaggedNeuralArc(GuiGraphics gfx, int index, float time, int x, int y, int w, int h) {
 		float[] p = neuralVeinParams[index];
 		float startX = x + p[0] * w;
 		float startY = y + p[1] * h;
 		float baseAngle = p[2];
 		float speed = p[3];
 		float amplitude = p[4];
-		float frequency = p[5];
 		int length = (int) p[6];
 		int thickness = (int) p[7];
 		float brightness = p[8];
 
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
+		float angleDrift = baseAngle + 0.08f * Mth.sin(time * speed * 0.5f + index);
 		float cosA = Mth.cos(angleDrift);
 		float sinA = Mth.sin(angleDrift);
-		float timeOffset = time * speed * 2.0f;
 
 		int baseRed = (int) (120 + 80 * brightness);
 		int baseGreen = (int) (82 + 76 * brightness);
 		int baseBlue = (int) (8 + 24 * brightness);
+		int segments = Math.max(5, length / 14);
+		float segmentLength = (float) length / segments;
+		float lastX = startX;
+		float lastY = startY;
 
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float microSquiggle = amplitude * 0.3f
-					* Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-			int ix = (int) (startX + step * cosA * 1.5f - displacement * sinA);
-			int iy = (int) (startY + step * sinA * 1.5f + displacement * cosA);
-
-			if (ix + thickness < x || ix >= x + w || iy + thickness < y || iy >= y + h) {
-				continue;
-			}
-
-			float tipFade = 1f;
-			if (step < 10) {
-				tipFade = step / 10f;
-			} else if (step > length - 10) {
-				tipFade = (length - step) / 10f;
-			}
-			float pulse = 0.72f + 0.28f * Mth.sin(time * 1.7f + index * 0.5f + step * 0.02f);
-			int a = (int) Mth.clamp(tipFade * pulse * 165, 18, 185);
+		for (int segment = 1; segment <= segments; segment++) {
+			float progress = (float) segment / segments;
+			float previousProgress = (float) (segment - 1) / segments;
+			float side = jaggedOffset(index, segment, time, amplitude);
+			float endX = startX + segment * segmentLength * cosA * 1.5f - side * sinA;
+			float endY = startY + segment * segmentLength * sinA * 1.5f + side * cosA;
+			float pulse = 0.72f + 0.28f * Mth.sin(time * 2.8f + index * 0.7f + segment * 0.45f);
+			float tipFade = Math.min(progress * 3f, (1f - previousProgress) * 3f);
+			int a = (int) Mth.clamp(tipFade * pulse * 172, 18, 190);
 			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
 			int g = (int) Mth.clamp(baseGreen * pulse, 0, 255);
 			int b = (int) Mth.clamp(baseBlue * pulse, 0, 255);
-			gfx.fill(ix, iy, ix + thickness, iy + thickness, (a << 24) | (r << 16) | (g << 8) | b);
+			int color = (a << 24) | (r << 16) | (g << 8) | b;
+			drawNeuralLine(gfx, Math.round(lastX), Math.round(lastY), Math.round(endX), Math.round(endY),
+					thickness, color, x, y, w, h);
+
+			if (segment > 1 && segment < segments && segment % 3 == 0) {
+				float branchLength = segmentLength * (0.8f + 0.3f * ((index + segment) % 3));
+				float branchSign = ((index + segment) & 1) == 0 ? 1f : -1f;
+				float branchX = endX - branchSign * sinA * branchLength + cosA * branchLength * 0.35f;
+				float branchY = endY + branchSign * cosA * branchLength + sinA * branchLength * 0.35f;
+				drawNeuralLine(gfx, Math.round(endX), Math.round(endY), Math.round(branchX), Math.round(branchY),
+						Math.max(1, thickness - 1), color & 0x99FFFFFF, x, y, w, h);
+			}
+			lastX = endX;
+			lastY = endY;
 		}
+	}
+
+	private float jaggedOffset(int index, int segment, float time, float amplitude) {
+		int hash = index * 73471 + segment * 19349663;
+		hash ^= hash >>> 13;
+		hash *= 1274126177;
+		float base = ((hash & 0xFF) / 255f - 0.5f) * 2f;
+		float flicker = Mth.sin(time * 1.2f + index * 1.7f + segment * 2.1f) * 0.18f;
+		return (base + flicker) * amplitude;
+	}
+
+	private void drawNeuralLine(GuiGraphics gfx, int x0, int y0, int x1, int y1,
+			int thickness, int color, int clipX, int clipY, int clipW, int clipH) {
+		int dx = x1 - x0;
+		int dy = y1 - y0;
+		int steps = Math.max(Math.abs(dx), Math.abs(dy));
+		if (steps == 0) {
+			drawNeuralPoint(gfx, x0, y0, thickness, color, clipX, clipY, clipW, clipH);
+			return;
+		}
+		for (int step = 0; step <= steps; step++) {
+			float t = (float) step / steps;
+			int px = Math.round(x0 + dx * t);
+			int py = Math.round(y0 + dy * t);
+			drawNeuralPoint(gfx, px, py, thickness, color, clipX, clipY, clipW, clipH);
+		}
+	}
+
+	private void drawNeuralPoint(GuiGraphics gfx, int px, int py, int thickness,
+			int color, int clipX, int clipY, int clipW, int clipH) {
+		if (px + thickness < clipX || px >= clipX + clipW || py + thickness < clipY || py >= clipY + clipH) {
+			return;
+		}
+		gfx.fill(px, py, px + thickness, py + thickness, color);
 	}
 
 	private void drawNeuralBorder(GuiGraphics gfx, int x, int y, int w, int h, boolean bright) {

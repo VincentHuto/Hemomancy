@@ -51,6 +51,9 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Synaptic screen uses a neuronal yellow vein background", screen, "renderNeuralVeinBackground");
 		assertContains("Synaptic screen seeds animated neural veins", screen, "NEURAL_VEIN_COUNT");
 		assertContains("Synaptic screen has neuronal yellow border accents", screen, "NEURAL_BORDER_OUTER");
+		assertContains("Synaptic neural arcs are jagged lightning-like segments", screen, "drawJaggedNeuralArc");
+		assertContains("Synaptic neural arcs use straight line segments", screen, "drawNeuralLine");
+		assertDoesNotContain("Synaptic neural arcs avoid organic sine tendrils", screen, "microSquiggle");
 		assertContains("Synaptic name field is placed in rail", screen, "controlX + 8");
 		assertContains("Synaptic action buttons stack vertically", screen, "controlY + 74");
 		assertContains("Synaptic screen reads client skill sync cache for slot count", screen, "getClientUnlockedSlots");
