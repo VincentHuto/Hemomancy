@@ -123,6 +123,7 @@ public class PacketHandler {
         net.playBidirectional(StartCentrifugeButtonPacket.TYPE, StartCentrifugeButtonPacket.STREAM_CODEC, StartCentrifugeButtonPacket::handle);
         net.playToServer(ClearLoomStatePacket.TYPE, ClearLoomStatePacket.STREAM_CODEC, ClearLoomStatePacket::handle);
         net.playBidirectional(EquipManipulationPacket.TYPE, EquipManipulationPacket.STREAM_CODEC, EquipManipulationPacket::handle);
+        net.playToServer(SynapticLoadoutActionPacket.TYPE, SynapticLoadoutActionPacket.STREAM_CODEC, SynapticLoadoutActionPacket::handle);
         net.playBidirectional(PacketOpenTendencyView.TYPE, PacketOpenTendencyView.STREAM_CODEC, PacketOpenTendencyView::handle);
         net.playBidirectional(PacketOpenVascularView.TYPE, PacketOpenVascularView.STREAM_CODEC, PacketOpenVascularView::handle);
         net.playBidirectional(PacketOpenScryingDiagnostics.TYPE, PacketOpenScryingDiagnostics.STREAM_CODEC, PacketOpenScryingDiagnostics::handle);

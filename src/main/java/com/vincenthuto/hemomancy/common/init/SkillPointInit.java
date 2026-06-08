@@ -30,7 +30,7 @@ public class SkillPointInit {
 	public static SkillPoint base_skill, deep_base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
 			skill_feeding_frenzy, skill_hemostasis, skill_sanguine_surge, skill_crimson_mastery,
 			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach,
-			skill_manip_slots,
+			skill_manip_slots, skill_synaptic_memory,
 			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery,
 			skill_puppet_skein, skill_living_sinew, skill_far_tether,
 			skill_living_conduit, skill_vascular_draw, skill_crimson_projection,

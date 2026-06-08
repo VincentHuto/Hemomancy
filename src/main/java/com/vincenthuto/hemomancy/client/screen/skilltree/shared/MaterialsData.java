@@ -46,7 +46,7 @@ public final class MaterialsData {
 
         // ── Functional Blocks ──
         list.add(new MaterialEntry("dendritic_distributor", "Dendritic Distributor",
-                "Opens the Skill Tree. Used to unlock and manage blood skills.",
+                "Synaptic Loadout station for saving and applying remembered manipulation patterns.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.dendritic_distributor.get()),
                 true, UnlockPredicate.minDegree(4)));
 
@@ -531,7 +531,7 @@ public final class MaterialsData {
         list.add(new MaterialEntry("living_torch", "Living Torch",
                 "A living brand that keeps fervent blood burning at its crown.",
                 "Equipment", () -> new ItemStack(ItemInit.living_torch.get()),
-                true, UnlockPredicate.minDegree(4)));
+                true, UnlockPredicate.minDegree(5)));
 
         list.add(new MaterialEntry("living_flail", "Living Flail",
                 "A cold chained head of living tissue that drags heat from whatever it strikes.",

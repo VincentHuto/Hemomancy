@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.DendriticDistributorBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -111,10 +111,9 @@ public class DendriticDistributorBlock extends BaseEntityBlock implements Simple
 						: DendriticDistributorBlockEntity::serverTick);
 	}
 
-	private InteractionResult handleUse(Level worldIn) {
-		// Opens the Skill Tree screen (client-only)
+	private InteractionResult handleUse(Level worldIn, BlockPos pos) {
 		if (worldIn.isClientSide) {
-			HarbingerProgressScreen.openScreen();
+			SynapticLoadoutScreen.openScreen(pos);
 		}
 		return InteractionResult.SUCCESS;
 	}
@@ -122,13 +121,13 @@ public class DendriticDistributorBlock extends BaseEntityBlock implements Simple
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleUse(worldIn);
+		return handleUse(worldIn, pos);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		handleUse(worldIn);
+		handleUse(worldIn, pos);
 		return ItemInteractionResult.SUCCESS;
 	}
 

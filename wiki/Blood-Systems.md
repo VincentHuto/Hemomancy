@@ -135,6 +135,18 @@ Manipulations are organized into four power tiers:
 - Organize by tendency or frequency of use
 - Monitor cooldowns via HUD
 
+### Synaptic Loadouts
+
+At Degree 5, the **Dendritic Distributor** becomes a Synaptic Loadout station. It stores whole manipulation arrangements as named neural patterns:
+
+- 3 remembered patterns by default
+- `skill_synaptic_memory` adds 1 pattern per level, up to 7 total
+- Saving or overwriting costs 100 blood and 25 raw XP
+- Applying and renaming are free
+- Fixed mechanical utilities such as blood absorption and blood projection stay automatic and are not saved inside patterns
+
+Use this for combat, travel, ritual, and fane-work presets without relearning manipulations.
+
 ---
 
 ## The Eight Tendencies

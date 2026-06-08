@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init.skills;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import net.minecraft.world.item.ItemStack;
@@ -87,6 +88,10 @@ public final class CoreSkillBranch {
 					new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
 							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(384, 424).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
+			SkillPointInit.skill_synaptic_memory = SkillPointInit.registerSkill(branch,
+					new SkillPoint(40, "skill_synaptic_memory", 450, 4, EnumSkillStates.LOCKED, SkillPointInit.skill_manip_slots)
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(430, 526).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(BlockInit.dendritic_distributor.get())));
 		// </skill-editor>
 	}
 }
