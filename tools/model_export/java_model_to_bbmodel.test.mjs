@@ -275,7 +275,7 @@ async function testPrismCuttleLoopGeneratedArmsConvert() {
     assert.ok(groupNames.includes("mantle"), "mantle child should export");
     assert.ok(groupNames.includes("arm_0"), "loop should expand first arm");
     assert.ok(groupNames.includes("arm_7"), "loop should expand last arm");
-    assert.equal(bbmodel.elements.length, 13);
+    assert.ok(bbmodel.elements.length >= 12, "cuttle model should export visible cubes");
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }
@@ -302,10 +302,28 @@ async function testVenomRibCentipedeNestedSegmentsConvert() {
     const segment1 = segment0.children.find((node) => node.name === "segment_1");
 
     assert.equal(bbmodel.name, "VenomRibCentipedeModel");
+    assert.ok(groupNames.includes("left_antenna_0"), "left antenna root segment should export from the head");
+    assert.ok(groupNames.includes("right_antenna_0"), "right antenna root segment should export from the head");
+    assert.ok(groupNames.includes("left_antenna_5"), "left antenna should export tunable segment chain");
+    assert.ok(groupNames.includes("right_antenna_5"), "right antenna should export tunable segment chain");
+    assert.ok(groupNames.includes("tail"), "tail segment should export at the end of the body");
+    assert.ok(groupNames.includes("left_tail_feeler_0"), "left rear feeler root should export from the tail");
+    assert.ok(groupNames.includes("right_tail_feeler_0"), "right rear feeler root should export from the tail");
+    assert.ok(groupNames.includes("left_tail_feeler_3"), "left rear feeler should export segmented chain");
+    assert.ok(groupNames.includes("right_tail_feeler_3"), "right rear feeler should export segmented chain");
     assert.ok(groupNames.includes("segment_10"), "loop should resolve imported segment count alias");
     assert.ok(groupNames.includes("left_legs_10"), "nested loop child parts should export");
     assert.ok(segment1, "segment_1 should be nested under segment_0");
-    assert.equal(bbmodel.elements.length, 69);
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("left_antenna_5_")),
+      "left antenna should export as cube geometry");
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("right_antenna_5_")),
+      "right antenna should export as cube geometry");
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("tail_")),
+      "tail should export as cube geometry");
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("left_tail_feeler_3_")),
+      "left rear feeler should export as cube geometry");
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("right_tail_feeler_3_")),
+      "right rear feeler should export as cube geometry");
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }

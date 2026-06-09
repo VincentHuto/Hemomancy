@@ -404,7 +404,7 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<VenomRibCentipedeEntity>> venom_rib_centipede = ENTITY_TYPES.register(
             "venom_rib_centipede",
             () -> EntityType.Builder.of(VenomRibCentipedeEntity::new, MobCategory.MONSTER)
-                    .sized(1.15F, 0.55F)
+                    .sized(1.85F, 0.55F)
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("venom_rib_centipede").toString()));
 

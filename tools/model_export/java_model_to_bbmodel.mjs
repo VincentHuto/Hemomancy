@@ -257,6 +257,7 @@ async function checkGeneratedModels({ outDir, models }) {
 function parseJavaModel(source, model) {
   const numericConstants = collectNumericConstants(source, model.source);
   const loopContexts = collectSimpleForLoopContexts(source, numericConstants);
+  const loopExitPartAliases = collectLoopExitPartAliases(loopContexts);
   const resolutionMatch = source.match(/LayerDefinition\.create\s*\(\s*[^,]+,\s*(\d+)\s*,\s*(\d+)\s*\)/);
   if (!resolutionMatch) {
     return parseLegacyModelRendererModel(source, model, numericConstants);
@@ -289,8 +290,8 @@ function parseJavaModel(source, model) {
       const name = parseNameExpression(callArgs[0], parseNumeric);
       const cubes = parseCubes(callArgs[1], parseNumeric);
       const pose = parsePose(callArgs.slice(2).join(","), parseNumeric);
-      const varName = modelPartVariableName(assignedVar, name, loopContext, parts.length);
-      const resolvedParentVar = modelPartParentVariable(parentVar, loopContext, locals);
+      const varName = modelPartVariableName(assignedVar, name, loopContext, parts.length, parentVar);
+      const resolvedParentVar = modelPartParentVariable(parentVar, loopContext, locals, name, loopExitPartAliases, callAt);
       parts.push({
         name,
         varName,
@@ -1059,6 +1060,27 @@ function collectSimpleForLoopContexts(source, constants) {
   return contexts;
 }
 
+function collectLoopExitPartAliases(loopContexts) {
+  const exitAliases = [];
+  for (const context of loopContexts) {
+    const lastValue = context.values.at(-1);
+    if (typeof lastValue !== "number") {
+      continue;
+    }
+    for (const [aliasName, alias] of context.reassignedPartAliases) {
+      if (alias.selfReassignedAddChild) {
+        continue;
+      }
+      exitAliases.push({
+        aliasName,
+        end: context.end,
+        finalPartVar: `${alias.reassignedVar}_${lastValue}`,
+      });
+    }
+  }
+  return exitAliases;
+}
+
 function collectLoopPartDefinitionVariables(loopBody) {
   const partVars = new Set();
   const assignmentPattern = /\bPartDefinition\s+([A-Za-z_$][\w$]*)\s*=\s*[\s\S]*?\.addOrReplaceChild\s*\(/g;
@@ -1084,6 +1106,23 @@ function collectLoopPartAliasReassignments(source, loopStart, loopBody) {
       aliases.set(aliasName, {
         initialVar: declarationMatch[1],
         reassignedVar,
+        selfReassignedAddChild: false,
+      });
+    }
+  }
+  const addChildReassignmentPattern =
+    /^\s*([A-Za-z_$][\w$]*)\s*=\s*\1\s*\.\s*addOrReplaceChild\s*\(/gm;
+  while ((match = addChildReassignmentPattern.exec(loopBody)) !== null) {
+    const aliasName = match[1];
+    const beforeLoop = source.slice(0, loopStart);
+    const declarationMatch = beforeLoop.match(
+      new RegExp(`\\bPartDefinition\\s+${escapeRegExp(aliasName)}\\s*=\\s*([A-Za-z_$][\\w$]*)\\s*;[\\s\\S]*$`)
+    );
+    if (declarationMatch) {
+      aliases.set(aliasName, {
+        initialVar: declarationMatch[1],
+        reassignedVar: aliasName,
+        selfReassignedAddChild: true,
       });
     }
   }
@@ -1106,16 +1145,22 @@ function localsWithDeclarationsBefore(source, loopContext, callAt, constants, ba
   return locals;
 }
 
-function modelPartVariableName(assignedVar, name, loopContext, partIndex) {
+function modelPartVariableName(assignedVar, name, loopContext, partIndex, parentVar) {
   if (assignedVar && loopContext?.partVars.has(assignedVar)) {
+    return name;
+  }
+  if (loopContext?.reassignedPartAliases.has(parentVar)) {
     return name;
   }
   return assignedVar ?? `${name}_${partIndex}`;
 }
 
-function modelPartParentVariable(parentVar, loopContext, locals) {
+function modelPartParentVariable(parentVar, loopContext, locals, name, loopExitPartAliases = [], callAt = -1) {
   if (!loopContext) {
-    return parentVar;
+    const exitAlias = loopExitPartAliases
+      .filter((alias) => alias.aliasName === parentVar && alias.end < callAt)
+      .sort((left, right) => right.end - left.end)[0];
+    return exitAlias?.finalPartVar ?? parentVar;
   }
 
   if (loopContext.partVars.has(parentVar)) {
@@ -1127,6 +1172,13 @@ function modelPartParentVariable(parentVar, loopContext, locals) {
     const loopIndex = locals.get("__loop_index");
     if (loopIndex <= 0) {
       return alias.initialVar;
+    }
+    if (alias.selfReassignedAddChild) {
+      const currentValue = String(locals.get(loopContext.varName));
+      const previousValue = String(loopContext.values[loopIndex - 1]);
+      return name.endsWith(currentValue)
+        ? `${name.slice(0, -currentValue.length)}${previousValue}`
+        : `${name}_${previousValue}`;
     }
     return `${alias.reassignedVar}_${loopContext.values[loopIndex - 1]}`;
   }
