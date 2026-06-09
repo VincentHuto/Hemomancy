@@ -21,6 +21,7 @@ public class HematicBurrowerModel extends HierarchicalModel<HematicBurrowerEntit
 
 	private final ModelPart root;
 	private final ModelPart body;
+	private final ModelPart tail;
 	private final ModelPart head;
 	private final ModelPart whiskers;
 	private final ModelPart left_fore_claw;
@@ -32,6 +33,7 @@ public class HematicBurrowerModel extends HierarchicalModel<HematicBurrowerEntit
 	public HematicBurrowerModel(ModelPart root) {
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
+		this.tail = this.body.getChild("tail");
 		this.head = this.root.getChild("head");
 		this.whiskers = this.head.getChild("whiskers");
 		this.left_fore_claw = this.root.getChild("left_fore_claw");
@@ -49,6 +51,8 @@ public class HematicBurrowerModel extends HierarchicalModel<HematicBurrowerEntit
 
 		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-4.5F, -2.0F, -6.0F, 9.0F, 3.0F, 12.0F, new CubeDeformation(0.1F))
 				.texOffs(0, 16).addBox(-3.5F, -3.0F, -4.0F, 7.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, 1.0F));
+
+		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(19, 3).addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 6.0F));
 
 		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 26).addBox(-3.5F, -1.0F, -5.0F, 7.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.5F, -4.5F));
 
@@ -86,6 +90,7 @@ public class HematicBurrowerModel extends HierarchicalModel<HematicBurrowerEntit
 		this.left_hind_claw.zRot = Mth.sin(swing + Mth.PI) * 0.25F * scurry;
 		this.right_hind_claw.zRot = -Mth.sin(swing + Mth.PI) * 0.25F * scurry;
 		this.whiskers.yRot = Mth.sin(ageInTicks * 0.18F) * 0.08F;
+
 	}
 
 	@Override
