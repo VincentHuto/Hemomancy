@@ -290,7 +290,7 @@ function parseJavaModel(source, model) {
       const name = parseNameExpression(callArgs[0], parseNumeric);
       const cubes = parseCubes(callArgs[1], parseNumeric);
       const pose = parsePose(callArgs.slice(2).join(","), parseNumeric);
-      const varName = modelPartVariableName(assignedVar, name, loopContext, parts.length, parentVar);
+      const varName = modelPartVariableName(assignedVar, name, loopContext, locals, parts.length, parentVar);
       const resolvedParentVar = modelPartParentVariable(parentVar, loopContext, locals, name, loopExitPartAliases, callAt);
       parts.push({
         name,
@@ -1145,9 +1145,9 @@ function localsWithDeclarationsBefore(source, loopContext, callAt, constants, ba
   return locals;
 }
 
-function modelPartVariableName(assignedVar, name, loopContext, partIndex, parentVar) {
+function modelPartVariableName(assignedVar, name, loopContext, locals, partIndex, parentVar) {
   if (assignedVar && loopContext?.partVars.has(assignedVar)) {
-    return name;
+    return `${assignedVar}_${locals.get(loopContext.varName)}`;
   }
   if (loopContext?.reassignedPartAliases.has(parentVar)) {
     return name;

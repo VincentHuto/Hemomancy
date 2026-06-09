@@ -49,6 +49,12 @@ final class PrismCuttleRulesTest {
 				"defensive blindness should stay brief");
 		assertTrue(PrismCuttleRules.FLASH_COOLDOWN_TICKS > PrismCuttleRules.BLINDNESS_DURATION_TICKS,
 				"flash cooldown should be longer than the status effect");
+		assertTrue(PrismCuttleRules.FACE_TENTACLE_SEGMENT_COUNT >= 5,
+				"face tentacles should be split into enough segments to curl smoothly");
+		assertTrue(PrismCuttleRules.TENTACLE_REST_X_ROT > 0.0F,
+				"face tentacles should curl downward from the cuttle face");
+		assertTrue(PrismCuttleRules.FIN_SEGMENT_COUNT >= 4,
+				"side fins should be split into panels so they can undulate");
 	}
 
 	private static void blockColorsQuantizeToCamouflageVariants() {
@@ -82,6 +88,12 @@ final class PrismCuttleRulesTest {
 		assertContains("cuttlefish uses aquatic base", entity, "extends WaterAnimal");
 		assertContains("cuttlefish imports water animal", entity, "net.minecraft.world.entity.animal.WaterAnimal");
 		assertContains("tentacles angle downward", model, "PrismCuttleRules.TENTACLE_REST_X_ROT");
+		assertContains("segmented face tentacle count", model, "PrismCuttleRules.FACE_TENTACLE_SEGMENT_COUNT");
+		assertContains("first face tentacle segment", model, "\"arm_\" + i");
+		assertContains("nested face tentacle segment", model, "\"_segment_\" + j");
+		assertContains("split fin count", model, "PrismCuttleRules.FIN_SEGMENT_COUNT");
+		assertContains("left fin panels", model, "\"left_fin_\" + i");
+		assertContains("right fin panels", model, "\"right_fin_\" + i");
 		assertTrue(Files.exists(Path.of(
 				"src/main/resources/data/hemomancy/neoforge/biome_modifier/add_prism_cuttle.json")),
 				"prism cuttle biome modifier should exist");

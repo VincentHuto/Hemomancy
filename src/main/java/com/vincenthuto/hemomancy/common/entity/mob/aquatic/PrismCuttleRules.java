@@ -12,7 +12,11 @@ public final class PrismCuttleRules {
 	public static final int MAX_COMFORT_DEPTH_BELOW_SEA_LEVEL = 20;
 	public static final double MAX_DOWNWARD_DEPTH_CORRECTION = -0.018D;
 	public static final double MAX_UPWARD_DEPTH_CORRECTION = 0.006D;
-	public static final float TENTACLE_REST_X_ROT = -0.35F;
+	public static final int FACE_TENTACLE_COUNT = 8;
+	public static final int FACE_TENTACLE_SEGMENT_COUNT = 5;
+	public static final float TENTACLE_SEGMENT_LENGTH = 1.15F;
+	public static final int FIN_SEGMENT_COUNT = 5;
+	public static final float TENTACLE_REST_X_ROT = 0.14F;
 
 	private PrismCuttleRules() {
 	}

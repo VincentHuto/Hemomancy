@@ -269,13 +269,19 @@ async function testPrismCuttleLoopGeneratedArmsConvert() {
     const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
     const groupNames = [];
     collectGroupNames(bbmodel.outliner, groupNames);
+    const segment4 = findGroup(bbmodel.outliner, "arm_0_segment_4");
 
     assert.equal(bbmodel.name, "PrismCuttleModel");
     assert.ok(groupNames.includes("root"), "root group should export");
     assert.ok(groupNames.includes("mantle"), "mantle child should export");
     assert.ok(groupNames.includes("arm_0"), "loop should expand first arm");
     assert.ok(groupNames.includes("arm_7"), "loop should expand last arm");
-    assert.ok(bbmodel.elements.length >= 12, "cuttle model should export visible cubes");
+    assert.ok(groupNames.includes("arm_0_segment_4"), "nested arm segments should export");
+    assert.ok(groupNames.includes("arm_7_segment_4"), "last nested arm segments should export");
+    assert.ok(groupNames.includes("left_fin_4"), "split left fin panels should export");
+    assert.ok(groupNames.includes("right_fin_4"), "split right fin panels should export");
+    assert.ok(segment4.origin[1] < 6, "nested arm segment origins should remain attached to the face");
+    assert.ok(bbmodel.elements.length >= 50, "cuttle model should export segmented tentacles and fins");
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }
@@ -516,6 +522,27 @@ public class LegacyAnimatedModel extends ModelBiped {
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }
+}
+
+function findGroup(nodes, name) {
+  for (const node of nodes) {
+    if (!node || typeof node !== "object") {
+      continue;
+    }
+    if (node.name === name) {
+      return node;
+    }
+    if (Array.isArray(node.children)) {
+      const child = findGroup(
+        node.children.filter((candidate) => candidate && typeof candidate === "object"),
+        name
+      );
+      if (child) {
+        return child;
+      }
+    }
+  }
+  return null;
 }
 
 function collectGroupNames(nodes, names) {
