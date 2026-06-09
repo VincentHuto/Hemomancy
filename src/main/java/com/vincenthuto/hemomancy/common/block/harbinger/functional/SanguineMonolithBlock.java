@@ -197,7 +197,8 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		};
 	}
 
-	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player) {
+	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
+			ItemStack heldItem) {
 		if (worldIn.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
@@ -226,7 +227,9 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 			DialogueTree tree = degreeNumber < MIN_DEGREE
 					? SanguineMonolithDialogueTrees.unworthy()
-					: SanguineMonolithDialogueTrees.forDegree(degreeNumber);
+					: (heldItem.isEmpty()
+					? SanguineMonolithDialogueTrees.forDegree(degreeNumber)
+					: SanguineMonolithDialogueTrees.itemInquiry(heldItem, degreeNumber));
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 		});
@@ -237,13 +240,13 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleInteraction(state, worldIn, pos, player);
+		return handleInteraction(state, worldIn, pos, player, ItemStack.EMPTY);
 	}
 
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
-		handleInteraction(state, worldIn, pos, player);
+		handleInteraction(state, worldIn, pos, player, stack);
 		return ItemInteractionResult.SUCCESS;
 	}
 
