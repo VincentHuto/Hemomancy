@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -122,6 +125,22 @@ public final class SanguineMonolithDialogueTrees {
 				.addNode(new DialogueNode("press_again", List.of(
 						"hemomancy.monolith.archon.press_again"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	public static DialogueTree itemInquiry(ItemStack item, int degree) {
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
+		return ItemInquiryRegistry.INSTANCE
+				.resolve("monolith", itemId, degree, 0f)
+				.map(lines -> basicItemInquiry(lines.toArray(String[]::new)))
+				.orElseGet(() -> basicItemInquiry("hemomancy.monolith.item_inquiry.unknown"));
+	}
+
+	private static DialogueTree basicItemInquiry(String... lines) {
+		return DialogueTree.builder(SPEAKER, MONOLITH_ICON, BLOCK_ENTITY_ID)
+				.addNode(new DialogueNode("root", List.of(lines), List.of(
 						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
 				)))
 				.build();
