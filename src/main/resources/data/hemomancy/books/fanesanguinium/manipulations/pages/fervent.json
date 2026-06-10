@@ -3,7 +3,7 @@
   "ordinality": 2,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Fervent Manipulations",
-  "subtitle": "Flammeus — blood remembers burning",
-  "text": "The Fervent tendency belongs to blood that has absorbed the violence of fire — things that burn, things that are burned. Sanguine Ignition (QUICK, 125): set a target alight using the heat stored in your blood. Pyretic Forge (QUICK, 350): superheat your blood to smelt and craft where no furnace stands. Vitric Combustion (QUICK, ?): crystallize blood heat into a short-range explosive burst. These are not gentle manipulations. Blood that carries Flammeus does not cool easily.",
+  "subtitle": "Flammeus - blood remembers burning",
+  "text": "The Fervent tendency belongs to blood that has absorbed the violence of fire: things that burn, things that are burned. Sanguine Ignition (QUICK, 125) bursts heat from your body, igniting nearby living targets. Scalding Updraft (QUICK, 225) superheats the air underfoot to launch you upward. Pyretic Forge (QUICK, 350) superheats held items to smelt where no furnace stands. Cauterizing Rebuke (QUICK, 275) burns away poison and wither while scorching nearby enemies. Vitric Combustion (QUICK, 500) projects blood heat into a distant non-destructive blast.",
   "icon": "hemomancy:fervent_enzyme"
 }

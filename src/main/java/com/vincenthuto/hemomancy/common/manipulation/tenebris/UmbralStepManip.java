@@ -72,7 +72,7 @@ public class UmbralStepManip extends BloodManipulation {
 
 		// Umbral Step requires darkness at the destination
 		int lightAtDest = world.getMaxLocalRawBrightness(landingPos);
-		if (lightAtDest > MAX_LIGHT_LEVEL) {
+		if (!BlackVeilCovenantManager.isDarkEnough(world, landingPos, MAX_LIGHT_LEVEL)) {
 			player.displayClientMessage(
 					Component.literal("§5The shadows there are too thin... (light level " + lightAtDest + ")"),
 					true);

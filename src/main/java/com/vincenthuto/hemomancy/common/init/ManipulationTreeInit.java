@@ -109,9 +109,12 @@ public class ManipulationTreeInit {
 
 		// Row 0 (top) — SUMMA
 		register("unclosing_eye",1260,70, "crimson_sight");
+		register("prismatic_reproof",1340,60, "crimson_sight");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("crimson_sight",1270,160, "hemosynthesis", "blood_lamp");
+		register("hematic_beacon",1190,180, "blood_lamp");
+		register("lumen_suture",1350,180, "hemosynthesis");
 
 		// Row 2 (bottom) — HUMILIS
 		register("hemosynthesis",1200,110);
@@ -131,7 +134,8 @@ public class ManipulationTreeInit {
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("glacial_bastion",1510,110, "glacial_grasp", "cryogenic_pulse");
-		register("conjure_flail",1510,200, "glacial_bastion")
+		register("glacial_rampart",1440,110, "glacial_bastion");
+		register("conjure_flail",1510,200, "glacial_bastion", "glacial_rampart")
 				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
@@ -146,6 +150,7 @@ public class ManipulationTreeInit {
 		register("vitric_combustion",1830,50, "pyretic_forge");
 
 		// Row 1 (middle) — MEDIOCRITAS
+		register("cauterizing_rebuke",1720,110, "sanguine_ignition");
 		register("pyretic_forge",1800,110, "sanguine_ignition");
 		register("crimson_flame_conjuration",1870,180, "sanguine_ignition");
 		register("conjure_torch",1860,110, "crimson_flame_conjuration")
@@ -153,16 +158,20 @@ public class ManipulationTreeInit {
 
 		// Row 2 (bottom) — HUMILIS
 		register("sanguine_ignition",1790,180);
+		register("scalding_updraft",1720,180, "sanguine_ignition");
 
 		// ── TENEBRIS (dark purple / shadow) ──
 		int tx = fmx + COL_GAP + 80;  // gap after FLAMMEUS
 
 		// Row 0 (top) — MEDIOCRITAS
 		register("umbral_step",1990,40, "void_shroud", "blood_eclipse");
+		register("black_veil_covenant",1910,40, "void_shroud");
+		register("umbral_reversal",2070,40, "umbral_step", "black_veil_covenant");
 
 		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
 		register("void_shroud",1950,110);
 		register("blood_eclipse",2030,110);
+		register("blood_eclipse_mantle",2070,160, "blood_eclipse");
 		register("conjure_claws",1990,190, "void_shroud")
 				.setSoftParents("conjure_staff");
 

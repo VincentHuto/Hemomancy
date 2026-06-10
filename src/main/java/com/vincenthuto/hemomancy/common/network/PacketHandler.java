@@ -152,6 +152,7 @@ public class PacketHandler {
         net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
         net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
         net.playToClient(SpawnSanguineOmenEffectPacket.TYPE, SpawnSanguineOmenEffectPacket.STREAM_CODEC, SpawnSanguineOmenEffectPacket::handle);
+        net.playToClient(SpawnBlackVeilPacket.TYPE, SpawnBlackVeilPacket.STREAM_CODEC, SpawnBlackVeilPacket::handle);
         net.playToClient(SpawnPomePulsePacket.TYPE, SpawnPomePulsePacket.STREAM_CODEC, SpawnPomePulsePacket::handle);
         // HutosLib registers this payload in HLPacketHandler; re-registering here causes
         // "already registered" crashes for hutoslib:packet_spawn_lightning.
@@ -263,6 +264,11 @@ public class PacketHandler {
     public static void sendPomePulse(Vec3 pos, double radius, ServerLevel level) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
                 new SpawnPomePulsePacket(pos));
+    }
+
+    public static void sendBlackVeil(Vec3 pos, double radius, ServerLevel level, int durationTicks) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius + 48.0,
+                new SpawnBlackVeilPacket(pos, (float) radius, durationTicks, level.random.nextInt()));
     }
 
     public static void sendClientElytraPacket() {

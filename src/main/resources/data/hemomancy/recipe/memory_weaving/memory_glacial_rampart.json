@@ -1,0 +1,21 @@
+{
+    "type":  "hemomancy:memory_weaving",
+    "catalysts":  [
+                      {
+                          "item":  "minecraft:blue_ice"
+                      }
+                  ],
+    "enzymes":  {
+                    "animus":  0,
+                    "flammeus":  0,
+                    "ductilis":  1,
+                    "lux":  0,
+                    "mortem":  0,
+                    "congeatio":  1,
+                    "ferric":  0,
+                    "tenebris":  0
+                },
+    "blood":  100,
+    "result":  "hemomancy:memory_glacial_rampart",
+    "count":  1
+}

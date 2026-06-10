@@ -890,14 +890,20 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 | `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t | Places Crimson Flames on the targeted block face (range 16, scales with Sanguine Reach) |
 | `blood_lamp` | 75 | Quick | Humilis | Lux | Left Arm | 10t | Places an invisible light block (level 15) at the targeted surface (range 16, scales with Sanguine Reach) |
 | `crimson_sight` | 250 | Quick | Mediocritas | Lux | Head | 60t | Grants Night Vision (60s) and applies Glowing to all mobs within 32 blocks (30s) |
+| `prismatic_reproof` | 325 | Quick | Mediocritas | Lux | Head | 80t | Cone of refracted Lux: blinds and weakens targets; marked/glowing targets also take magic damage |
+| `hematic_beacon` | 350 | Quick | Mediocritas | Lux | Body | 160t | Aimed blood-light rally point: grants brief Regeneration/Resistance to players and Glowing to mobs in an 8-block radius |
+| `lumen_suture` | 250 | Quick | Mediocritas | Lux | Right Arm | 120t | Supports the nearest wounded player: heals 1 heart, grants Absorption II, clears Blindness and Wither |
 | `crimson_harvest` | 200 | Quick | Humilis | Ductilis | Left Leg | 60t | Bone-meals all growable blocks in a 5Ã—5 area around the caster |
 | `hemosynthesis` | 200 | Quick | Humilis | Lux | Body | 40t | Converts blood into food â€” restores 4 hunger and 4.0 saturation |
 | `pyretic_forge` | 350 | Quick | Mediocritas | Flammeus | Body | 30t | Smelts held items in-hand using blood heat (base 8 items, scales with Crimson Mastery) |
 | `sanguine_ignition` | 125 | Quick | Humilis | Flammeus | Body | 25t | AoE fire pulse in 5-block radius: sets targets alight for 4s and deals 1 heart ignition damage |
+| `scalding_updraft` | 225 | Quick | Humilis | Flammeus | Left Leg | 80t | Superheats air underfoot to launch the caster upward/forward, grants brief Slow Falling, and scorches nearby enemies |
+| `cauterizing_rebuke` | 275 | Quick | Mediocritas | Flammeus | Body | 90t | Clears Poison and Wither from the caster, then burns and damages nearby living enemies |
 | `vitric_combustion` | 500 | Quick | Summa | Flammeus | Body | 60t | Long-range (22 blocks) targeted blood explosion (8 hearts damage, 8s fire, knockback) â€” range scales with Sanguine Reach |
 | `glacial_grasp` | 125 | Quick | Humilis | Congeatio | Left Arm | 20t | Freezes water in a 7Ã—7 area into Frosted Ice (on-demand Frost Walker) |
 | `cryogenic_pulse` | 150 | Quick | Humilis | Congeatio | Body | 30t | AoE cryo burst in 5-block radius: 1.5 hearts damage + Slowness III (3s) + Mining Fatigue I (4s) |
-| `glacial_bastion` | 350 | Quick | Mediocritas | Congeatio | Left Arm | 50t | Projects a 3-wide Ã— 3-high ice wall at the targeted location (range 20, scales with Sanguine Reach) |
+| `glacial_bastion` | 350 | Quick | Mediocritas | Congeatio | Left Arm | 50t | Raises a compact temporary iceberg shell around the caster while leaving the caster's own space open |
+| `glacial_rampart` | 350 | Quick | Mediocritas | Congeatio | Left Arm | 50t | Projects a temporary 3-wide x 3-high ice wall at the targeted location (range 20, scales with Sanguine Reach) |
 | `glacial_circulation` | 175 | Quick | Humilis | Congeatio | Body | 100t | Chills blood for 90s: grants Fire Resistance + Slowness I. Works everywhere (unlike GlacialGrasp's water dependency). The tradeoff: fire immunity at the cost of movement speed. |
 | `osseous_bloom` | 600 | Quick | Summa | Congeatio | Body | 60t | Crystallisation burst in 6-block radius: deals 25% of each target's **current** HP as freeze damage (punishes full-health targets hardest) + Slowness IV for 4s. Scales with Crimson Mastery. Best as an opener, not a finisher. |
 | `sanguine_mending` | 150 | Quick | Humilis | Ferric | Right Arm | 30t | Repairs the held item by 50 durability using blood |
@@ -906,9 +912,12 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 | `exsanguinate` | 300 | Quick | Mediocritas | Mortem | Right Arm | 50t | Executes a weakened target (â‰¤30% HP) within 10 blocks: deals 1.5Ã— their current HP as damage and restores 600 blood to the caster |
 | `void_shroud` | 100 | Quick | Humilis | Tenebris | Body | 20t | **Dash-stealth** â€” grants Invisibility + Speed II + Night Vision for 5 seconds. Designed as a repositioning tool; pairs with `umbral_step` (shroud first, then teleport through shadow). |
 | `blood_eclipse` | 300 | Quick | Mediocritas | Tenebris | Head | 45t | Forward cone attack (18 blocks, 30Â° half-angle): applies Blindness II (5s) + Weakness I (6s) + 0.5 heart shadow damage |
+| `black_veil_covenant` | 425 | Quick | Mediocritas | Tenebris | Body | 220t | Raises a temporary black-veined sphere around the caster; the zone counts as synthetic darkness for `umbral_step` and other darkness checks |
+| `umbral_reversal` | 375 | Quick | Mediocritas | Tenebris | Left Leg | 100t | Slips backward into a nearby safe dark space (natural or Black Veil darkness) and blinds pursuers left near the origin |
+| `blood_eclipse_mantle` | 325 | Quick | Mediocritas | Tenebris | Body | 180t | Defensive eclipse stance: Resistance II + Fire Resistance with Weakness as the tradeoff |
 | `sanguine_excavation` | 400 | Quick | Mediocritas | Ferric | Right Arm | 40t | Flood-fill mines a cluster of matching blocks at look target (base 9 blocks, scales with Sanguine Reach) |
 | `vascular_dowsing` | 500 | Quick | Humilis | Ferric | Right Arm | 20t | Scans nearby ore blocks and reveals them to the caster with ore-colored dust particles |
-| `ferric_resonance` | 600 | Quick | Mediocritas | Ferric | Right Arm | 20t | Repairs the damaged held tool or weapon by 50 durability using blood |
+| `ferric_resonance` | 600 | Quick | Mediocritas | Ferric | Right Arm | 200t | Ferric self-buff for 30s: grants Haste II, Strength I, and Resistance I |
 | `umbral_step` | 300 | Quick | Mediocritas | Tenebris | Left Leg | 40t | Teleports to the targeted block (range 24, scales with Sanguine Reach) â€” destination must be dark (light â‰¤ 7) |
 | `crimson_tithe` | 400 | Quick | Summa | Mortem | Heart | 100t | **Canon Memory (Hemorath)** â€” stores 500 blood as a debt; if not repaid within 30s, the caster is charged double and takes 6 magic damage. Gambling mechanic: high-risk short-term power. |
 | `unclosing_eye` | 350 | Quick | Summa | Lux | Head | 120t | **Canon Memory (Seraphae)** â€” applies Glowing to ALL living entities in 32 blocks (including the caster), strips Invisibility from any target that has it, grants Night Vision 30s. Anti-stealth weapon; total mutual exposure. Feedback reports concealments dissolved. |
@@ -1671,7 +1680,7 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `ferric_transmutation` | Spawns one iron ingot at the Drudge's position |
 | `activation_potential` | Grants Regeneration II to nearby player allies for 5 seconds |
 | `sanguine_ward` | Grants Resistance I to nearby player allies for 10 seconds |
-| `hemolymphal_pulse` | Applies Glowing to all nearby living entities |
+| `hemolymphal_pulse` | Applies short-duration Glowing to nearby living entities |
 | `conjure_blade` | Unsupported; cannot be used by Drudges |
 | `conjure_axe` | Unsupported; cannot be used by Drudges |
 | `conjure_spear` | Unsupported; cannot be used by Drudges |
@@ -1692,13 +1701,13 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `sanguine_excavation` | Mines the block the Drudge is facing, dropping normal block drops |
 | `vascular_dowsing` | Unsupported; cannot be used by Drudges |
 | `ferric_resonance` | Unsupported; cannot be used by Drudges |
-| `pyretic_forge` | Ignites and damages all hostiles in the work radius |
+| `pyretic_forge` | Utility smelting for held items |
 | `umbral_step` | Teleports the Drudge to a random dark valid spot within the work radius |
 | `crimson_sight` | Applies Glowing to nearby hostiles |
 | `vital_reservoir` | Damages the nearest hostile for 2 magic damage and refills 200 Drudge blood charge, unless near full |
 | `cryogenic_pulse` | Slows all hostiles in the work radius |
 | `glacial_circulation` | No registered Drudge action; currently does not fire |
-| `glacial_bastion` | Raises a ring of packed ice around the Drudge |
+| `glacial_bastion` | Raises a temporary ring of packed ice around the Drudge |
 | `osseous_bloom` | No registered Drudge action; currently does not fire |
 | `sanguine_ignition` | Ignites and damages the nearest hostile |
 | `vitric_combustion` | Ignites and heavily fire-damages all hostiles in the work radius |

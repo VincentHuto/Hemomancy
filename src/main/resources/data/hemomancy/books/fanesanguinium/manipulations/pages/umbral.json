@@ -3,7 +3,7 @@
   "ordinality": 8,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Umbral Manipulations",
-  "subtitle": "Tenebris — blood remembers shadow",
-  "text": "Umbral blood has absorbed long hours in darkness — caves, long nights, the specific quality of shadow that lies behind things. Void Shroud (QUICK, ?): bend light around the blood in your skin, becoming invisible for several seconds. Any aggressive act dispels the shroud. Umbral Step (QUICK, 300): compress your body through shadow, teleporting a short distance in the direction you are looking. Blood Eclipse (QUICK, ?): flood an area with blood-shadow, blinding every target within range and disorienting them. Tenebris rewards patience and positioning.",
+  "subtitle": "Tenebris - blood remembers shadow",
+  "text": "Umbral blood has absorbed long hours in darkness. Void Shroud (QUICK, 100) cloaks you with invisibility. Umbral Step (QUICK, 300) teleports to a safe dark target space, and Black Veil Covenant can satisfy that darkness. Blood Eclipse (QUICK, 300) blinds and harms enemies in a cone. Black Veil Covenant (QUICK, 425) raises a temporary black-veined sphere that behaves as synthetic darkness. Umbral Reversal (QUICK, 375) slips backward into nearby darkness and blinds pursuers. Blood Eclipse Mantle (QUICK, 325) grants resistance and fire protection while weakening your attacks.",
   "icon": "hemomancy:umbral_enzyme"
 }
