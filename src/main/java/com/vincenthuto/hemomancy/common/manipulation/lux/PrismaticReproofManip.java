@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -50,7 +51,8 @@ public class PrismaticReproofManip extends BloodManipulation {
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 140, 0, false, true));
 			if (target.hasEffect(MobEffects.GLOWING)) {
-				target.hurt(world.damageSources().magic(), damage);
+				target.hurt(world.damageSources().magic(),
+						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			}
 			struck++;
 		}

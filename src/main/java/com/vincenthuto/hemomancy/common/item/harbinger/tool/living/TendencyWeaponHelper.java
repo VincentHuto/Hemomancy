@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -12,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -42,6 +46,23 @@ public final class TendencyWeaponHelper {
 		return Optional.empty();
 	}
 
+	public static Optional<EnumBloodTendency> getWeaponSecondaryTendency(ItemStack stack) {
+		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+		if (data == null) {
+			return Optional.empty();
+		}
+		CompoundTag root = data.copyTag();
+		String secondaryName = root.getString(LivingStaffWeaponFormHelper.SECONDARY_TENDENCY_KEY);
+		if (secondaryName.isBlank()) {
+			return Optional.empty();
+		}
+		try {
+			return Optional.of(EnumBloodTendency.valueOf(secondaryName));
+		} catch (IllegalArgumentException ignored) {
+			return Optional.empty();
+		}
+	}
+
 	public static float getAlignmentValue(Player player, EnumBloodTendency weaponTendency) {
 		return HemoCapabilityAccess.getBloodTendency(player)
 				.map(tendency -> Math.max(0.0f, tendency.getAlignmentByTendency(weaponTendency)))
@@ -54,6 +75,11 @@ public final class TendencyWeaponHelper {
 
 	public static float getDamageMultiplier(Player player, EnumBloodTendency weaponTendency) {
 		return BASE_DAMAGE_MULTIPLIER + (MAX_ALIGNMENT_BONUS * getAlignmentProgress(player, weaponTendency));
+	}
+
+	public static float getDamageMultiplier(Player player, LivingEntity target, EnumBloodTendency weaponTendency,
+			@Nullable EnumBloodTendency secondaryTendency) {
+		return TendencyAffinityRules.damageMultiplier(player, target, weaponTendency, secondaryTendency);
 	}
 
 	public static boolean isOpposingTarget(LivingEntity target, EnumBloodTendency weaponTendency) {
@@ -136,6 +162,9 @@ public final class TendencyWeaponHelper {
 		String opposingTendencyName = getTendencyDisplayName(opposingTendency);
 		tooltip.add(Component.literal("Aligned Tendency: " + getTendencyDisplayName(weaponTendency))
 				.withStyle(ChatFormatting.DARK_RED));
+		getWeaponSecondaryTendency(stack).ifPresent(secondaryTendency ->
+				tooltip.add(Component.literal("Secondary Tendency: " + getTendencyDisplayName(secondaryTendency))
+						.withStyle(ChatFormatting.DARK_PURPLE)));
 		tooltip.add(Component.literal("Opposes: " + opposingTagName + " / " + opposingTendencyName + " entities")
 				.withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.literal(String.format(Locale.ROOT, "Opposing damage: x%.2f - x%.2f",

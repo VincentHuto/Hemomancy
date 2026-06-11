@@ -842,7 +842,8 @@ Each manipulation has:
 - **Alignment level** â€” required tendency alignment
 - **Type** â€” `QUICK`, `CHARGED`, `PASSIVE`, or `CONTINUOUS`
 - **Rank** â€” `HUMILIS`, `MEDIOCRITAS`, `SUMMA`, `MAGISTER`, `PERFECTUS`
-- **Tendency** â€” which of the 8 blood tendencies it belongs to
+- **Tendency** â€” the primary blood tendency used for unlocks, tree placement, rendering color, and organization
+- **Secondary tendency** â€” optional mixed affinity used for tendency gain, detail-panel display, and combat damage composition
 - **Vein Section** â€” which vein section takes strain when cast
 - **Cooldown** â€” tick-based cooldown between uses
 - **ManipLevel** â€” manipulations level up with use
@@ -857,9 +858,11 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 | `MAGISTER` | 5 |
 | `PERFECTUS` | 6 |
 
+Secondary tendencies do not change a manipulation's required alignment, tree cluster, primary color, Dynamic Use match, or Sporitic Thurible cost/cooldown affinity. On cast, the primary tendency gains the configured manipulation-use amount and the secondary tendency, when present, gains half that amount. For direct manipulation damage and Living Staff weapon-form combat, mixed-tendency damage is composition-based rather than additive: pure manipulations use the full primary affinity multiplier, while mixed manipulations use 75% primary affinity plus 25% secondary affinity.
+
 ### 8.2 Registered Manipulations
 
-`ManipulationInit` currently registers 51 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role.
+`ManipulationInit` currently registers 60 blood manipulations. The catalog below tracks active registry entries and their developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
 
 | Name | Cost | Type | Rank | Tendency | Vein Section | Cooldown | Description |
 |------|------|------|------|----------|-------------|----------|-------------|
@@ -928,7 +931,7 @@ Shared degree gates for manipulation ranks are centralized in `ManipulationRankG
 
 The Living Staff is now the central living-weapon platform rather than a parallel conjured tool. `conjure_blade`, `conjure_axe`, `conjure_spear`, `conjure_claws`, `conjure_crossbow`, `conjure_torch`, and `conjure_flail` are `StaffWeaponFormManip` entries: selecting or using one while holding a Living Staff reshapes the staff into that weapon form and stores the original staff stack in custom item data. Switching to another staff weapon form restores the stored staff first, then applies the new form.
 
-Each living weapon form now has its own gameplay tendency, giving tendency-specialized players a reason to favor a matching form: blade is Animus, axe is Mortem, spear is Lux, claws are Tenebris, crossbow is Ductilis, torch is Flammeus, and flail is Congeatio. The Manipulations tab treats `conjure_staff` as a soft parent for these forms: each weapon appears in its own tendency tree, while a soft staff connection still communicates that the form can only be used through the Living Staff.
+Each living weapon form now has its own primary gameplay tendency, giving tendency-specialized players a reason to favor a matching form: blade is Animus, axe is Mortem, spear is Lux, claws are Tenebris, crossbow is Ductilis, torch is Flammeus, and flail is Congeatio. Staff forms also carry the selected form manipulation's secondary tendency in item custom data, so transformed-staff combat can use the same 75/25 mixed-affinity damage rule as direct manipulation damage. The Manipulations tab treats `conjure_staff` as a soft parent for these forms: each weapon appears in its own tendency tree, while a soft staff connection still communicates that the form can only be used through the Living Staff.
 
 Hot-swapping into a staff weapon form costs 250mL by default. `Weapons Master` has 4 levels and reduces that cost by 50mL per level, down to a 50mL minimum. Running out of blood while using a transformed staff weapon causes it to recoil back into the stored Living Staff instead of breaking into a separate living weapon.
 

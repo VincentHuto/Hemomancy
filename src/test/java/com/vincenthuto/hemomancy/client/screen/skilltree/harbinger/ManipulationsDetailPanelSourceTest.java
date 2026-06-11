@@ -26,12 +26,29 @@ public final class ManipulationsDetailPanelSourceTest {
 				controller, "private record ManipStatCell");
 		assertContains("detail panel should include cooldown even when the value is zero",
 				controller, "cooldownText(manip.getCooldownTicks())");
+		assertContains("detail panel should display secondary tendency when present",
+				controller, "secondaryTendencyText(manip)");
+		assertContains("detail panel should split mixed tendencies across compact lines",
+				controller, "drawMixedTendencyValue(gfx, ctx");
+		assertContains("detail panel should know which stat cell is the tendency cell",
+				controller, "cell.mixedTendency()");
+		assertContains("detail panel should color the secondary tendency independently",
+				controller, "cell.secondaryValueColor()");
+		assertContains("detail panel should compute the secondary tendency color",
+				controller, "tendencyColor(secondaryTend)");
+		assertContains("detail panel should reserve less dead space below compact recipes",
+				controller, "recipeH + 4");
+		assertContains("detail panel should use a compact final bottom pad",
+				controller, "MANIP_PANEL_BOTTOM_PAD = 3");
+		assertContains("manipulations should serialize secondary tendency when present",
+				read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java"),
+				"secondary_tendency");
 		assertContains("detail panel should use translatable manipulation descriptions",
 				controller, "Component.translatable(manipDescriptionKey(manip))");
 		assertContains("detail panel should keep descriptions compact",
 				controller, "MANIP_DESCRIPTION_MAX_LINES = 2");
-		assertContains("detail panel stat cells should be tall enough for descenders",
-				controller, "MANIP_STAT_CELL_H = 20");
+		assertContains("detail panel stat cells should fit stacked mixed-tendency text",
+				controller, "MANIP_STAT_CELL_H = 28");
 		assertContains("detail panel should compute a bottom limit from the GUI frame",
 				controller, "int panelBottomLimit = ctx.guiTop() + ctx.guiHeight() - INFO_PANEL_MARGIN");
 		assertDoesNotContain("detail panel should keep the recipe section visible when compacting",

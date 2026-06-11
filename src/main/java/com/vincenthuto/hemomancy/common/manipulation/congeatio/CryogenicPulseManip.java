@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -66,7 +67,9 @@ public class CryogenicPulseManip extends BloodManipulation {
 						SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
 						FATIGUE_DURATION, FATIGUE_AMPLIFIER, false, true));
-				target.hurt(world.damageSources().freeze(), (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
+				float damage = (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+				target.hurt(world.damageSources().freeze(),
+						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			}
 		}
 

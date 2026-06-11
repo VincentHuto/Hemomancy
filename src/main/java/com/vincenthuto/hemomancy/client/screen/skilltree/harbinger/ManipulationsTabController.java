@@ -34,10 +34,11 @@ public class ManipulationsTabController implements IProgressTab {
     private static final float INFO_PANEL_Z = 400.0F;
     private static final int INFO_PANEL_SHADOW = 0xAA000000;
     private static final int INFO_PANEL_MARGIN = 8;
+    private static final int MANIP_PANEL_BOTTOM_PAD = 3;
     private static final int MANIP_DESCRIPTION_MAX_LINES = 2;
     private static final int MANIP_STAT_COLUMNS = 2;
     private static final int MANIP_STAT_ROWS = 3;
-    private static final int MANIP_STAT_CELL_H = 20;
+    private static final int MANIP_STAT_CELL_H = 28;
     private static final int MANIP_STAT_COL_GAP = 6;
     private static final int MANIP_STAT_ROW_GAP = 2;
 
@@ -425,6 +426,13 @@ public class ManipulationsTabController implements IProgressTab {
                             ? "Tendency: " + tendTipName + " (" + (int)alignReq + ")"
                             : "Tendency: " + tendTipName;
                     tip.add(Component.literal(tendTipText).withStyle(s -> s.withColor(tendCol)));
+                    EnumBloodTendency secondaryTend = manip.getSecondaryTend();
+                    if (secondaryTend != null) {
+                        ParticleColor secPc = secondaryTend.getColor();
+                        int secCol = (int)secPc.getRed() << 16 | (int)secPc.getGreen() << 8 | (int)secPc.getBlue();
+                        tip.add(Component.literal("Secondary: " + HLTextUtils.toProperCase(secondaryTend.name()))
+                                .withStyle(s -> s.withColor(secCol)));
+                    }
                     tip.add(Component.literal("Blood Cost: " + (int)manip.getCost() + " mL")
                             .withStyle(s -> s.withColor(0xAA4444)));
                     tip.add(Component.literal("Vein Section: " + HLTextUtils.toProperCase(manip.getSection().name()))
@@ -481,7 +489,7 @@ public class ManipulationsTabController implements IProgressTab {
         RecipeLookup.FoundRecipe foundRecipe = (!rankLocked && memoryStack != null && !memoryStack.isEmpty())
                 ? RecipeLookup.find(memoryStack) : null;
         int recipeH = MiniRecipeRenderer.estimateHeight(foundRecipe);
-        int recipeSection = recipeH > 0 ? recipeH + 12 : 0;
+        int recipeSection = recipeH > 0 ? recipeH + 4 : 0;
 
         int statsH = 0;
         if (!rankLocked) {
@@ -491,11 +499,11 @@ public class ManipulationsTabController implements IProgressTab {
         } else {
             statsH += lineH * 2;
         }
-        int panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + 8;
+        int panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + MANIP_PANEL_BOTTOM_PAD;
         if (panelH > fitPanelH && !rankLocked && descriptionLines.size() > 1) {
             descriptionLines = manipDescriptionLines(ctx, manip, maxW - 8, 1);
             descriptionH = descriptionHeight(descriptionLines);
-            panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + 8;
+            panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + MANIP_PANEL_BOTTOM_PAD;
         }
         float panelScale = panelH > fitPanelH ? Math.min(1.0F, fitPanelH / (float) panelH) : 1.0F;
         int scaledPanelW = Mth.ceil(panelW * panelScale);
@@ -551,9 +559,9 @@ public class ManipulationsTabController implements IProgressTab {
         }
 
         if (foundRecipe != null) {
-            ty += 3;
+            ty += 1;
             gfx.fill(tx, ty, panelW - 6, ty + 1, 0xFF442222);
-            ty += 4;
+            ty += 2;
             MiniRecipeRenderer.draw(gfx, ctx.font(), foundRecipe, tx, ty, maxW, tendCol, MiniRecipeRenderer.BLOOD);
         }
         pose.popPose();
@@ -614,14 +622,25 @@ public class ManipulationsTabController implements IProgressTab {
         String tendName = HLTextUtils.toProperCase(manip.getTend().name());
         double alignReq = manip.getAlignLevel();
         String tendText = alignReq > 0 ? tendName + " (" + (int)alignReq + ")" : tendName;
+        tendText += secondaryTendencyText(manip);
+        EnumBloodTendency secondaryTend = manip.getSecondaryTend();
+        int secondaryColor = secondaryTend != null ? tendencyColor(secondaryTend) : tendCol;
         return List.of(
-                new ManipStatCell("Type", HLTextUtils.toProperCase(manip.getType().name()), 0xFFCCCCCC),
-                new ManipStatCell("Rank", HLTextUtils.toProperCase(manip.getRank().name()), 0xFFCCCCCC),
-                new ManipStatCell("Tendency", tendText, tendCol),
-                new ManipStatCell("Cost", (int)manip.getCost() + " mL", 0xFFAA4444),
-                new ManipStatCell("Section", HLTextUtils.toProperCase(manip.getSection().name()), 0xFFAAAAAA),
-                new ManipStatCell("Cooldown", cooldownText(manip.getCooldownTicks()), 0xFFAAAA88)
+                new ManipStatCell("Type", HLTextUtils.toProperCase(manip.getType().name()), 0xFFCCCCCC, 0xFFCCCCCC, false),
+                new ManipStatCell("Rank", HLTextUtils.toProperCase(manip.getRank().name()), 0xFFCCCCCC, 0xFFCCCCCC, false),
+                new ManipStatCell("Tendency", tendText, tendCol, secondaryColor, secondaryTend != null),
+                new ManipStatCell("Cost", (int)manip.getCost() + " mL", 0xFFAA4444, 0xFFAA4444, false),
+                new ManipStatCell("Section", HLTextUtils.toProperCase(manip.getSection().name()), 0xFFAAAAAA, 0xFFAAAAAA, false),
+                new ManipStatCell("Cooldown", cooldownText(manip.getCooldownTicks()), 0xFFAAAA88, 0xFFAAAA88, false)
         );
+    }
+
+    private static String secondaryTendencyText(BloodManipulation manip) {
+        EnumBloodTendency secondaryTend = manip.getSecondaryTend();
+        if (secondaryTend == null) {
+            return "";
+        }
+        return " / " + HLTextUtils.toProperCase(secondaryTend.name());
     }
 
     private void drawManipStatCell(GuiGraphics gfx, ProgressScreenContext ctx, ManipStatCell cell,
@@ -629,8 +648,28 @@ public class ManipulationsTabController implements IProgressTab {
         gfx.fill(x, y, x + width, y + MANIP_STAT_CELL_H, 0x66180505);
         ScreenDrawUtils.drawSimpleBorder(gfx, x, y, width, MANIP_STAT_CELL_H, 0xFF442222);
         gfx.drawString(ctx.font(), cell.label(), x + 4, y + 2, 0xFF888888, false);
+        if (cell.mixedTendency()) {
+            drawMixedTendencyValue(gfx, ctx, cell.value(), x + 4, y + 10, width - 8, cell.valueColor(), cell.secondaryValueColor());
+            return;
+        }
         String value = ScreenDrawUtils.truncateText(ctx.font(), cell.value(), width - 8);
         gfx.drawString(ctx.font(), value, x + 4, y + 10, cell.valueColor(), false);
+    }
+
+    private void drawMixedTendencyValue(GuiGraphics gfx, ProgressScreenContext ctx, String value,
+                                        int x, int y, int width, int color, int secondaryColor) {
+        String[] parts = value.split(" / ", 2);
+        String primary = ScreenDrawUtils.truncateText(ctx.font(), parts[0], width);
+        gfx.drawString(ctx.font(), primary, x, y, color, false);
+        if (parts.length > 1) {
+            String secondary = ScreenDrawUtils.truncateText(ctx.font(), parts[1], width);
+            gfx.drawString(ctx.font(), secondary, x, y + 8, secondaryColor, false);
+        }
+    }
+
+    private static int tendencyColor(EnumBloodTendency tendency) {
+        ParticleColor pc = tendency.getColor();
+        return 0xFF000000 | ((int) pc.getRed() << 16) | ((int) pc.getGreen() << 8) | (int) pc.getBlue();
     }
 
     private static String cooldownText(int cooldownTicks) {
@@ -640,7 +679,7 @@ public class ManipulationsTabController implements IProgressTab {
         return String.format(Locale.ROOT, "%.1fs", cooldownTicks / 20.0F);
     }
 
-    private record ManipStatCell(String label, String value, int valueColor) {
+    private record ManipStatCell(String label, String value, int valueColor, int secondaryValueColor, boolean mixedTendency) {
     }
 
     private ManipulationTreeEntry manipNodeUnder(ProgressScreenContext ctx, double mx, double my) {

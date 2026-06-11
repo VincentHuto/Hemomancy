@@ -77,6 +77,7 @@ export interface ManipulationNodeModel {
   softParents: string[];
   nodeShape: string;
   tendency: string | null;
+  secondaryTendency: string | null;
   color: string;
 }
 

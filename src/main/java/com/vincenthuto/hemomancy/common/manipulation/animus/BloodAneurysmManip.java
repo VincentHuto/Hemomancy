@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -67,7 +68,8 @@ public class BloodAneurysmManip extends BloodManipulation {
 		LivingEntity target = targetOpt.get();
 		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 
-		target.hurt(world.damageSources().magic(), DIRECT_DAMAGE * masteryMult);
+		target.hurt(world.damageSources().magic(),
+				TendencyAffinityRules.adjustManipulationDamage(player, target, this, DIRECT_DAMAGE * masteryMult));
 		Vec3 current = target.getDeltaMovement();
 		target.setDeltaMovement(current.x, LAUNCH_FORCE, current.z);
 		target.hurtMarked = true;
@@ -78,7 +80,8 @@ public class BloodAneurysmManip extends BloodManipulation {
 		world.getEntitiesOfClass(LivingEntity.class, burstBox,
 				e -> e != player && e != target && e.isAlive()
 						&& e.position().distanceTo(tPos) <= BURST_RADIUS)
-				.forEach(e -> e.hurt(world.damageSources().magic(), BURST_DAMAGE * masteryMult));
+				.forEach(e -> e.hurt(world.damageSources().magic(),
+						TendencyAffinityRules.adjustManipulationDamage(player, e, this, BURST_DAMAGE * masteryMult)));
 
 		RandomSource random = world.random;
 		for (int i = 0; i < 50; i++) {

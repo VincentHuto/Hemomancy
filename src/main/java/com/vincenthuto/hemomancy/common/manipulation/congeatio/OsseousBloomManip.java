@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -69,7 +70,8 @@ public class OsseousBloomManip extends BloodManipulation {
 
 		for (LivingEntity target : targets) {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;
-			target.hurt(world.damageSources().freeze(), damage);
+			target.hurt(world.damageSources().freeze(),
+					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
 					SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 		}

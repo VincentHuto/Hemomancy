@@ -22,6 +22,7 @@ public class ManipulationInit {
   public static final DeferredHolder<BloodManipulation, BloodManipulation> venous_travel = MANIPS.register("venous_travel",
       () -> new BloodManipulation("venous_travel", 1000, 0, 0, EnumManipulationType.CONTINUOUS,
           EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
+          .setSecondaryTend(EnumBloodTendency.DUCTILIS)
           .setCooldownTicks(20));
 }
 `;
@@ -45,6 +46,45 @@ test('previews manipulation tendency edits in ManipulationInit.java', async () =
   const initDiff = preview.diffs.find(diff => diff.path.endsWith('ManipulationInit.java'));
   expect(initDiff?.after).toContain('EnumBloodTendency.TENEBRIS');
   expect(initDiff?.after).not.toContain('EnumBloodTendency.FERRIC');
+});
+
+test('previews manipulation secondary tendency edits in ManipulationInit.java', async () => {
+  const root = makeRepo();
+  writeManipulationTree(root, treeSource);
+  writeManipulationInit(root, initSource);
+  const workspace = await loadManipulationWorkspace(root);
+  const node = workspace.tree.nodes.find(item => item.name === 'venous_travel');
+  expect(node).toEqual(expect.objectContaining({ secondaryTendency: 'DUCTILIS' }));
+  node!.secondaryTendency = 'TENEBRIS';
+
+  const preview = await previewManipulationWorkspaceChanges(root, {
+    nodes: workspace.tree.nodes
+  });
+
+  expect(preview.canApply).toBe(true);
+  const initDiff = preview.diffs.find(diff => diff.path.endsWith('ManipulationInit.java'));
+  expect(initDiff?.after).toContain('.setSecondaryTend(EnumBloodTendency.TENEBRIS)');
+  expect(initDiff?.after).not.toContain('.setSecondaryTend(EnumBloodTendency.DUCTILIS)');
+});
+
+test('previews inserting manipulation secondary tendency before cooldown chains', async () => {
+  const root = makeRepo();
+  writeManipulationTree(root, treeSource);
+  writeManipulationInit(root, initSource.replace(/\n {10}\.setSecondaryTend\(EnumBloodTendency\.DUCTILIS\)/, ''));
+  const workspace = await loadManipulationWorkspace(root);
+  const node = workspace.tree.nodes.find(item => item.name === 'venous_travel');
+  expect(node).toEqual(expect.objectContaining({ secondaryTendency: null }));
+  node!.secondaryTendency = 'TENEBRIS';
+
+  const preview = await previewManipulationWorkspaceChanges(root, {
+    nodes: workspace.tree.nodes
+  });
+
+  const initDiff = preview.diffs.find(diff => diff.path.endsWith('ManipulationInit.java'));
+  expect(initDiff?.after).toContain([
+    '          .setSecondaryTend(EnumBloodTendency.TENEBRIS)',
+    '          .setCooldownTicks(20)'
+  ].join('\n'));
 });
 
 function makeRepo(): string {

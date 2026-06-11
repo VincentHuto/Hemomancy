@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 
 public class BloodManipulation  {
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
@@ -57,6 +58,9 @@ public class BloodManipulation  {
 				if (nbt.contains("cooldown")) {
 					manip.cooldownTicks = nbt.getInt("cooldown");
 				}
+				if (nbt.contains("secondary_tendency")) {
+					manip.secondaryTend = EnumBloodTendency.valueOf(nbt.getString("secondary_tendency"));
+				}
 
 				return manip;
 			}
@@ -66,6 +70,8 @@ public class BloodManipulation  {
 	String name;
 	double cost, alignLevel, xpCost;
 	EnumBloodTendency tend;
+	@Nullable
+	EnumBloodTendency secondaryTend;
 	EnumManipulationRank rank;
 	EnumVeinSections section;
 
@@ -129,6 +135,11 @@ public class BloodManipulation  {
 		return tend;
 	}
 
+	@Nullable
+	public EnumBloodTendency getSecondaryTend() {
+		return secondaryTend;
+	}
+
 	public EnumManipulationType getType() {
 		return type;
 	}
@@ -143,6 +154,11 @@ public class BloodManipulation  {
 
 	public BloodManipulation setCooldownTicks(int cooldownTicks) {
 		this.cooldownTicks = cooldownTicks;
+		return this;
+	}
+
+	public BloodManipulation setSecondaryTend(@Nullable EnumBloodTendency secondaryTend) {
+		this.secondaryTend = secondaryTend != tend ? secondaryTend : null;
 		return this;
 	}
 
@@ -432,6 +448,9 @@ public class BloodManipulation  {
 		nbt.putString("type", type.name());
 		nbt.putString("rank", rank.name());
 		nbt.putString("tendency", tend.name());
+		if (secondaryTend != null) {
+			nbt.putString("secondary_tendency", secondaryTend.name());
+		}
 		nbt.putString("section", section.name());
 		nbt.putInt("cooldown", cooldownTicks);
 		return nbt;
@@ -459,6 +478,9 @@ public class BloodManipulation  {
 
 	public void setTend(EnumBloodTendency tend) {
 		this.tend = tend;
+		if (secondaryTend == tend) {
+			secondaryTend = null;
+		}
 	}
 
 	public void setType(EnumManipulationType type) {

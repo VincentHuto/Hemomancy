@@ -38,11 +38,17 @@ public final class TendencyWeaponCombatEvents {
 		}
 
 		EnumBloodTendency weaponTendency = TendencyWeaponHelper.getWeaponTendency(weaponStack).orElse(null);
-		if (weaponTendency == null || !TendencyWeaponHelper.isOpposingTarget(target, weaponTendency)) {
+		if (weaponTendency == null) {
 			return;
 		}
 
-		event.setAmount(event.getAmount() * TendencyWeaponHelper.getDamageMultiplier(player, weaponTendency));
+		EnumBloodTendency secondaryTendency = TendencyWeaponHelper.getWeaponSecondaryTendency(weaponStack).orElse(null);
+		float multiplier = TendencyWeaponHelper.getDamageMultiplier(player, target, weaponTendency, secondaryTendency);
+		if (multiplier <= 1.0f) {
+			return;
+		}
+
+		event.setAmount(event.getAmount() * multiplier);
 	}
 
 	private static ItemStack resolveWeaponStack(Entity directEntity, Player player) {

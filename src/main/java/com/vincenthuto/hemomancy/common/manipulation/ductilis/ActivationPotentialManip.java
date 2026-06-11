@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import net.minecraft.core.BlockPos;
@@ -44,7 +45,9 @@ public class ActivationPotentialManip extends BloodManipulation {
 							player.level().dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
 					HLPacketHandler.sendLightningSpawn(player.position().add(translation), speedVec, 64.0f,
 							player.level().dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
-					target.hurt(player.damageSources().playerAttack(player), (float) (5.0f * SkillPointHelper.getCrimsonMasteryMultiplier(player)));
+					float damage = (float) (5.0f * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+					target.hurt(player.damageSources().playerAttack(player),
+							TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 				}
 			}
 		}

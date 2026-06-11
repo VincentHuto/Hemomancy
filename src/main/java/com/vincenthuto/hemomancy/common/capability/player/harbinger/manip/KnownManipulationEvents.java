@@ -149,7 +149,7 @@ public class KnownManipulationEvents {	@SubscribeEvent
 		VascularSystemEvents.applyManipStrain(player, manip.getSection());
 
 		// 2. Tendency shift toward the manip's tendency
-		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend());
+		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend(), manip.getSecondaryTend());
 
 		// 3. Skill: Vital Link â€” chance to heal when using a manipulation
 		double vitalLinkChance = SkillPointHelper.getVitalLinkChance(player);

@@ -227,7 +227,7 @@ function renderNodeButton(node: ManipulationNodeModel): string {
       <b style="color: ${escapeAttr(node.color)}">${escapeHtml(node.name)}</b><br/>
       <small>${escapeHtml(coords)}</small>
     </span>
-    <small>${escapeHtml(node.tendency ?? '')}</small>
+    <small>${escapeHtml(tendencySummary(node))}</small>
   </button>`;
 }
 
@@ -293,18 +293,26 @@ function renderInspector(): string {
   const tendencyOptions = tendencyOrder
     .map(tendency => `<option value="${escapeAttr(tendency)}" ${node.tendency === tendency ? 'selected' : ''}>${escapeHtml(tendency)}</option>`)
     .join('');
+  const secondaryTendencyOptions = [
+    `<option value="" ${node.secondaryTendency ? '' : 'selected'}>None</option>`,
+    ...tendencyOrder.map(tendency => `<option value="${escapeAttr(tendency)}" ${node.secondaryTendency === tendency ? 'selected' : ''}>${escapeHtml(tendency)}</option>`)
+  ].join('');
 
   return `<form class="editor-form">
     <div class="form-heading">
       <div>
         <h2>${escapeHtml(node.name)}</h2>
-        <p>${escapeHtml(node.tendency ?? 'Unaligned')} - ${escapeHtml(node.nodeShape)}</p>
+        <p>${escapeHtml(tendencySummary(node) || 'Unaligned')} - ${escapeHtml(node.nodeShape)}</p>
       </div>
       <div class="icon-chip">${escapeHtml(node.color)}</div>
     </div>
     <label>
       <span>Tendency</span>
       <select data-edit="tendency">${tendencyOptions}</select>
+    </label>
+    <label>
+      <span>Secondary Tendency</span>
+      <select data-edit="secondaryTendency">${secondaryTendencyOptions}</select>
     </label>
     <div class="grid2">
       <label>
@@ -394,7 +402,7 @@ function renderNode(node: ManipulationNodeModel, x: number, y: number): string {
   const memoryBaseUrl = '/asset/item/memory_blank.png';
   const memoryOverlayUrl = `/asset/item/${encodeURIComponent(memoryOverlayName(node.name))}.png`;
   return `<g class="skill-node ${selected}" data-node="${escapeAttr(node.name)}" transform="translate(${x} ${y})">
-    <rect class="node-glow" x="-22" y="-22" width="44" height="44" style="stroke: ${escapeAttr(node.color)}"></rect>
+    <rect class="node-glow" x="-22" y="-22" width="44" height="44" style="stroke: ${escapeAttr(secondaryTendencyColor(node))}"></rect>
     <rect class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke: ${escapeAttr(node.color)}"></rect>
     <rect class="node-core" x="-12" y="-12" width="24" height="24"></rect>
     <image class="memory-base" href="${escapeAttr(memoryBaseUrl)}" x="-11" y="-11" width="22" height="22" preserveAspectRatio="xMidYMid meet"></image>
@@ -609,6 +617,10 @@ function wireInspectorEvents(): void {
   if (tendency) {
     tendency.addEventListener('change', () => updateSelectedNodeTendency(tendency));
   }
+  const secondaryTendency = app.querySelector<HTMLSelectElement>('select[data-edit="secondaryTendency"]');
+  if (secondaryTendency) {
+    secondaryTendency.addEventListener('change', () => updateSelectedNodeSecondaryTendency(secondaryTendency));
+  }
 
   for (const button of app.querySelectorAll<HTMLButtonElement>('button[data-action="remove-parent"]')) {
     button.addEventListener('click', () => {
@@ -664,9 +676,40 @@ function updateSelectedNodeTendency(select: HTMLSelectElement): void {
   }
   node.tendency = nextTendency;
   node.color = tendencyColors.get(nextTendency) ?? node.color;
+  if (node.secondaryTendency === nextTendency) node.secondaryTendency = null;
   preview = null;
   statusText = `Updated ${node.name} tendency to ${nextTendency}.`;
   render();
+}
+
+function updateSelectedNodeSecondaryTendency(select: HTMLSelectElement): void {
+  const node = findNode(selectedName);
+  if (!node) return;
+  const nextTendency = select.value || null;
+  if (nextTendency !== null && !tendencyColors.has(nextTendency)) {
+    render();
+    return;
+  }
+  const normalized = nextTendency === node.tendency ? null : nextTendency;
+  if (node.secondaryTendency === normalized) {
+    render();
+    return;
+  }
+  node.secondaryTendency = normalized;
+  preview = null;
+  statusText = normalized
+    ? `Updated ${node.name} secondary tendency to ${normalized}.`
+    : `Cleared ${node.name} secondary tendency.`;
+  render();
+}
+
+function tendencySummary(node: ManipulationNodeModel): string {
+  if (!node.tendency) return node.secondaryTendency ?? '';
+  return node.secondaryTendency ? `${node.tendency} / ${node.secondaryTendency}` : node.tendency;
+}
+
+function secondaryTendencyColor(node: ManipulationNodeModel): string {
+  return node.secondaryTendency ? (tendencyColors.get(node.secondaryTendency) ?? node.color) : node.color;
 }
 
 function addParentToSelectedNode(kind: 'hard' | 'soft', parentName: string): void {

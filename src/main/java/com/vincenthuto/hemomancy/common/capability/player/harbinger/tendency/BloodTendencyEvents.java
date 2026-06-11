@@ -24,6 +24,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimen
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 
 import java.util.Map;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodTendencyEvents {
@@ -113,12 +114,21 @@ public class BloodTendencyEvents {
 	 * tendency alignment when the player uses a manipulation of a given tendency.
 	 */
 	public static void shiftTendencyFromManipUse(ServerPlayer player, EnumBloodTendency tendency) {
+		shiftTendencyFromManipUse(player, tendency, null);
+	}
+
+	public static void shiftTendencyFromManipUse(ServerPlayer player, EnumBloodTendency tendency,
+			@Nullable EnumBloodTendency secondaryTendency) {
 		if (!HemoServerConfig.TENDENCY_SHIFT_ON_KILL_ENABLED.get()) return;
 		float amount = HemoServerConfig.TENDENCY_SHIFT_ON_MANIP_USE.get().floatValue();
 		if (amount <= 0) return;
 
 		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
 			cap.addTendencyAlignment(tendency, amount);
+			if (secondaryTendency != null && secondaryTendency != tendency) {
+				cap.addTendencyAlignment(secondaryTendency,
+						com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules.secondaryTendencyGain(amount));
+			}
 			syncTendency(player, cap);
 		});
 	}

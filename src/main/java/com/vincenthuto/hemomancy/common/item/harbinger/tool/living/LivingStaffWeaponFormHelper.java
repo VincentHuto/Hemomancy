@@ -2,8 +2,10 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.component.CustomData;
 public final class LivingStaffWeaponFormHelper {
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
 	public static final String FORM_KEY = "HemomancyStaffWeaponForm";
+	public static final String SECONDARY_TENDENCY_KEY = "HemomancyStaffWeaponSecondaryTendency";
 
 	private LivingStaffWeaponFormHelper() {
 	}
@@ -162,6 +165,11 @@ public final class LivingStaffWeaponFormHelper {
 			root.put(STORED_STAFF_KEY, staffTag);
 		}
 		root.putString(FORM_KEY, formName);
+		BloodManipulation formManip = ManipulationInit.getByName(formName);
+		EnumBloodTendency secondaryTendency = formManip != null ? formManip.getSecondaryTend() : null;
+		if (secondaryTendency != null) {
+			root.putString(SECONDARY_TENDENCY_KEY, secondaryTendency.name());
+		}
 		weapon.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
 		return weapon;
 	}

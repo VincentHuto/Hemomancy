@@ -1,43 +1,38 @@
 # AGENTS.md — Hemomancy
 
-## Project snapshot
-- Hemomancy is a Minecraft **NeoForge mod, not legacy Forge**: Minecraft `1.21.1`, NeoForge `21.1.219` (`21.1.x` range), Java `21` (`mod_id=hemomancy`, package `com.vincenthuto.hemomancy`).
-- Entrypoint: `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`; build/version source of truth: `gradle.properties` and `build.gradle`.
-- Source-of-truth docs: `docs/HEMOMANCY_REFERENCE.md` for implementation/status, `docs/LORE_REFERENCE.md` for tone/worldbuilding, `docs/MNA_COMPATIBILITY_BRAINSTORM.md` for Mana and Artifice ideas. Prefer current code when docs disagree.
-- Full portable agent profile: `docs/agents/hemomancy-mod-agent.md`. Use it for Codex, Copilot, Claude, or other harness sessions that need the complete Hemomancy operating checklist, especially docs/wiki update obligations.
-- Theme matters: morally gray blood magic + fungal cosmic horror. Do not frame Harbingers as simple villains or Unstained as simple heroes.
+## Snapshot
+- Hemomancy is a Minecraft **NeoForge** mod for `1.21.1` / `21.1.219`, Java `21`, mod id `hemomancy`, package `com.vincenthuto.hemomancy`.
+- Start with `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`, then verify versions and dependency gates in `gradle.properties`, `build.gradle`, and `settings.gradle`.
+- Treat current code/resources as authoritative when docs drift; use `docs/HEMOMANCY_REFERENCE.md` for mechanics/status and `docs/LORE_REFERENCE.md` for tone.
+- For the longer contributor checklist, see `docs/agents/hemomancy-mod-agent.md`.
 
-## Lore guardrails
-- Blood magic is publicly a sacred inheritance of the Hematic Order, but biologically it is fungal blood-memory/infection tied to a slow cosmic reproductive cycle.
-- Harbingers are taboo, shunned, and sometimes dangerous, but not evil; they value found-family covenant language (`Hematic Order`, `Sanguine Brotherhood`, `Crimson Lodge`).
-- The Unstained began as former Harbingers; they see blood magic as infection that can be painfully shed, not as absolute sin. Their imagery is white/silver/oxidized copper, Lethean water, antiseptic ritual, and blunt weapons.
-- The Fungal Entity and Pale Lady are amoral forces of nature, not Satan/God analogues: one is alien sporulation, the other a defensive immune response that can drift toward autoimmune danger.
-- Common society mostly sees hemomancy as eerie and taboo, like vultures/fungi cleaning nature, not as an apocalypse cult.
+## Architecture map
+- `Hemomancy.java` is the wiring hub: it registers `common/init/*Init.java` registries, configs, `HemoCapabilityRegistrar`, `PacketHandler`, reload listeners like `ItemInquiryLoader`, and the HutosLib `BookPlaceboReloadListener` serializer.
+- Package split is strict: `client/` = renderers/screens/particles, `common/` = gameplay/content/networking/worldgen, `compat/` = optional integrations, `config/` = NeoForge config specs, `mixin/` = `hemomancy.mixins.json` support.
+- Player state is attachment/capability-driven. Define/register through `HemoAttachmentTypes`, `HemoCapabilityKeys`, and `HemoCapabilityRegistrar`; read/write through `HemoCapabilityAccess` only.
+- Important state is always present on players, especially `IBloodVolume`; use `volume.isActive()` as the blood-magic opt-in gate instead of capability presence.
+- Harbinger and Unstained are mutually exclusive progression paths; changes to degree/purity logic must preserve the reset rules documented in `docs/HEMOMANCY_REFERENCE.md`.
+- Networking is NeoForge 1.21 payload-based. Follow `common/network/PacketHandler.java`: each packet uses `CustomPacketPayload`, static `TYPE`, `STREAM_CODEC`, and `playToClient` / `playToServer` registration. Do **not** add legacy `SimpleChannel` code.
+- Datagen lives in `common/data/gen/DataGeneration.java`; `runData` currently generates blockstates, item models, and language only. Server recipe/tag/loot providers are intentionally commented out.
 
-## Architecture to understand first
-- `Hemomancy.java` wires nearly everything: `DeferredRegister`s from `common/init/*Init.java`, configs, capability registration, packet payload registration, creative tab population, reload listeners (`ItemInquiryLoader`), and HutosLib book serializer setup.
-- Main packages: `client/` is client-only rendering/screens/particles; `common/` holds gameplay systems; `compat/` holds optional integrations; `config/` registers NeoForge config specs; `mixin/` backs `hemomancy.mixins.json`.
-- Player state uses NeoForge attachments/capabilities: definitions in `HemoAttachmentTypes`/`HemoCapabilityKeys`, registration in `HemoCapabilityRegistrar`, access through `HemoCapabilityAccess`. Do not revive old provider patterns.
-- Core progression state includes `IBloodVolume`, `IBloodTendency`, `IVascularSystem`, `IKnownManipulations`, `IInitiatoryDegree`, `IUnstainedProgress`, `IVisceralOrgans`, and scar/morphling capabilities.
-- Networking is NeoForge 1.21 payload-based: add packets to `common/network/PacketHandler.java` with `CustomPacketPayload`, static `TYPE`, `STREAM_CODEC`, and the appropriate `playToClient`/`playToServer` registration. Do not use old `SimpleChannel` patterns.
+## Workflows that matter
+- Windows/PowerShell commands from project root: `./gradlew.bat build`, `./gradlew.bat test`, `./gradlew.bat runClient`, `./gradlew.bat runServer`, `./gradlew.bat runData`, `./gradlew.bat gameTestServer`.
+- `settings.gradle` pulls `../HutosLib` as a composite build when present; otherwise Hemomancy resolves `com.vincenthuto.hutoslib:hutoslib` normally.
+- `build.gradle` relies on local jars in `libs/` for TerraBlender, JEI, Create, Building Gadgets 2, WorldEdit, and other dev/runtime integrations; do not assume Maven coordinates exist for every dependency.
+- `src/generated/resources` is included as a resource source, but `processResources` excludes duplicates so `src/main/resources` stays authoritative.
 
-## Workflows
-- From the project root on Windows/PowerShell: `./gradlew.bat build`, `./gradlew.bat runClient`, `./gradlew.bat runServer`, `./gradlew.bat runData`.
-- `settings.gradle` includes `../HutosLib` as a composite build; Hemomancy also relies on local jars in `libs/` for TerraBlender, GeckoLib, and JEI.
-- `runData` writes `src/generated/resources`; `build.gradle` includes that directory but lets `src/main/resources` win on duplicates. `DataGeneration.java` currently only enables blockstates, item models, and language; server recipe/tag/loot providers are intentionally commented out.
-- Focused tests exist under `src/test`; validate code changes with `build` or the relevant NeoForge run config.
+## Project-specific patterns
+- Use NeoForge imports (`net.neoforged.*`), `DeferredHolder`, and `Hemomancy.rloc("snake_case_id")`; do not introduce `net.minecraftforge.*` or Forge-era provider/registration patterns.
+- Registries live in `common/init/*Init.java`. Example: `ManipulationInit` holds the blood-manipulation registry and registers entries like `blood_shot` and `vital_effusion` with cost/rank/tendency metadata.
+- Manipulation implementations live under `common/manipulation/<tendency>/`; many also define Drudge AI helpers with `setDrudgeAction(...)`. New manipulations usually need the class, a `ManipulationInit` entry, lang/model assets, and related docs.
+- Current resource paths are singular 1.21-style paths already used by this repo: `data/hemomancy/recipe/`, `data/hemomancy/loot_table/`, and `data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json`. Do not “fix” them to older plural conventions.
+- HutosLib owns part of the dialogue/book pipeline, so check library-backed serializers and reload listeners before inventing local replacements.
 
-## Project conventions
-- Use NeoForge 1.21 APIs/imports (`net.neoforged.*`, `DeferredHolder`, payload networking, attachments); do not add old `net.minecraftforge.*` imports or Forge-era registration/networking patterns.
-- Registries live in `common/init/*Init.java` and use `snake_case` IDs with `DeferredHolder`s; Java classes are `PascalCase`. Use `Hemomancy.rloc("path")` for mod resource locations.
-- Blood manipulations are registered in `ManipulationInit` and implemented under `common/manipulation/<tendency>/`; each records cost, align level, XP cost, type, rank, tendency, vein section, cooldown, and optional Drudge behavior via `setDrudgeAction(...)`.
-- Internal tendencies are `ANIMUS`, `FLAMMEUS`, `DUCTILIS`, `LUX`, `MORTEM`, `CONGEATIO`, `FERRIC`, `TENEBRIS`; enzyme item names use different vocabulary (Vivacious/Fervent/Neurotic/etc.), so do not “normalize” them.
-- Data paths are current 1.21-style in this repo: main recipes under `data/hemomancy/recipe/`, entity loot under `data/hemomancy/loot_table/entities/`, item inquiry dialogue under `data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json`.
-- Lore text should match existing vocabulary: Latinate/ecclesiastical for Harbinger content (`Liber Sanguinum`, `Crimson Lodge`), cleaner sacramental language for Unstained content (`Lethean Dew`, `Our Lady of Still Waters`).
+## Integration and lore guardrails
+- `build.gradle` excludes `compat/mna/**` and `compat/curios/**`; do not reference those packages from core code unless the dependency and source-set gate are explicitly re-enabled.
+- JEI compat is live via the local jar; HutosLib is required infrastructure, not optional sugar.
+- Keep the existing tone: fungal blood-memory/cosmic infection, morally gray Harbingers, non-saintly Unstained, and no God/Satan framing for the Fungal Entity or Pale Lady.
+- Preserve established vocabulary: Harbinger content uses terms like `Hematic Order`, `Sanguine Brotherhood`, `Crimson Lodge`; Unstained content uses `Lethean` / still-water language; enzyme item names intentionally do **not** mirror tendency enum names.
 
-## Integration and safety notes
-- `build.gradle` excludes `compat/mna/**` and `compat/curios/**` because those NeoForge 1.21.1 deps are not available; do not import those compat classes from core code or remove exclusions without adding real deps.
-- JEI compat code can compile because a local JEI jar is present; HutosLib is required and supplies shared book/dialogue/particle utilities such as `BookPlaceboReloadListener`.
-- Harbinger and Unstained paths are mutually exclusive; new degree/purity code must preserve the reset behavior described in `HEMOMANCY_REFERENCE.md` §5.
-- `IBloodVolume` exists on every player, but `volume.isActive()` is the opt-in gate for blood magic; do not treat capability presence as initiation.
-- Memory/manipulation additions often require multiple files: manipulation class + `ManipulationInit`, language/model/datagen (`HemoItemModelProvider`), memory overlay texture, and any relevant progression/recipe docs.
+## Documentation contract
+- If mechanics, progression, recipes, lore, or player-facing behavior change, check whether `docs/HEMOMANCY_REFERENCE.md`, `docs/LORE_REFERENCE.md`, `docs/MNA_COMPATIBILITY_BRAINSTORM.md`, or the relevant `wiki/*.md` pages also need updates before calling the work done.

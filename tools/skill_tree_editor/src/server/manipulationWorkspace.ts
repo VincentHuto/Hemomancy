@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { ManipulationPreviewRequest, ManipulationWorkspace, PreviewResult } from '../shared/types';
+import type { ManipulationNodeModel, ManipulationPreviewRequest, ManipulationWorkspace, PreviewResult } from '../shared/types';
 import { makeFileDiff } from './diff';
 import { parseManipulationTreeJava, renderManipulationTreeJava } from './manipulationParser';
 import { hasBlockingDiagnostics } from './validation';
@@ -10,9 +10,11 @@ export async function loadManipulationWorkspace(repoRoot: string): Promise<Manip
   const treePath = 'src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java';
   const treeAbs = safeResolve(repoRoot, treePath);
   const source = existsSync(treeAbs) ? readFileSync(treeAbs, 'utf8') : '';
-  const tendencyByManip = loadManipulationTendencies(repoRoot);
+  const tendencyInfoByManip = loadManipulationTendencies(repoRoot);
+  const tendencyByManip = new Map([...tendencyInfoByManip.entries()].map(([name, info]) => [name, info.primary]));
   const colorByTendency = defaultTendencyColors();
   const parsed = parseManipulationTreeJava(treePath, source, tendencyByManip, colorByTendency);
+  applySecondaryTendencies(parsed.tree.nodes, tendencyInfoByManip);
 
   return {
     repoRoot,
@@ -25,18 +27,21 @@ export async function previewManipulationWorkspaceChanges(repoRoot: string, requ
   const treePath = 'src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java';
   const treeAbs = safeResolve(repoRoot, treePath);
   const before = existsSync(treeAbs) ? readFileSync(treeAbs, 'utf8') : '';
-  const tendencyByManip = loadManipulationTendencies(repoRoot);
+  const tendencyInfoByManip = loadManipulationTendencies(repoRoot);
+  const tendencyByManip = new Map([...tendencyInfoByManip.entries()].map(([name, info]) => [name, info.primary]));
   const colorByTendency = defaultTendencyColors();
   const parsed = parseManipulationTreeJava(treePath, before, tendencyByManip, colorByTendency);
+  applySecondaryTendencies(parsed.tree.nodes, tendencyInfoByManip);
 
-  const updates = new Map<string, { treeX: number; treeY: number; parents: string[]; softParents: string[]; tendency: string | null }>();
+  const updates = new Map<string, { treeX: number; treeY: number; parents: string[]; softParents: string[]; tendency: string | null; secondaryTendency: string | null }>();
   for (const node of request.nodes ?? []) {
     updates.set(node.name, {
       treeX: node.treeX,
       treeY: node.treeY,
       parents: node.parents ?? [],
       softParents: node.softParents ?? [],
-      tendency: node.tendency ?? null
+      tendency: node.tendency ?? null,
+      secondaryTendency: node.secondaryTendency ?? null
     });
   }
 
@@ -70,24 +75,54 @@ export async function previewManipulationWorkspaceChanges(repoRoot: string, requ
 
 function renderManipulationInitTendencies(
   source: string,
-  updates: Map<string, { tendency: string | null }>
+  updates: Map<string, { tendency: string | null; secondaryTendency: string | null }>
 ): string {
   const replacements: Array<{ start: number; end: number; value: string }> = [];
-  const pattern = /MANIPS\.register\("([^"]+)"[\s\S]*?EnumBloodTendency\.(ANIMUS|FLAMMEUS|DUCTILIS|LUX|MORTEM|CONGEATIO|FERRIC|TENEBRIS)/g;
+  const pattern = /MANIPS\.register\("([^"]+)"[\s\S]*?\);/g;
   for (const match of source.matchAll(pattern)) {
     const name = match[1];
-    const tendency = updates.get(name)?.tendency;
-    if (!tendency || !defaultTendencyColors().has(tendency)) continue;
+    const update = updates.get(name);
+    if (!update || match.index == null) continue;
     const matchedText = match[0];
-    const existing = match[2];
-    if (existing === tendency) continue;
-    const enumOffset = matchedText.lastIndexOf(existing);
-    if (enumOffset < 0 || match.index == null) continue;
-    replacements.push({
-      start: match.index + enumOffset,
-      end: match.index + enumOffset + existing.length,
-      value: tendency
-    });
+    const primaryMatch = /EnumBloodTendency\.(ANIMUS|FLAMMEUS|DUCTILIS|LUX|MORTEM|CONGEATIO|FERRIC|TENEBRIS)/.exec(matchedText);
+    if (update.tendency && defaultTendencyColors().has(update.tendency) && primaryMatch && primaryMatch[1] !== update.tendency) {
+      const enumOffset = primaryMatch.index + 'EnumBloodTendency.'.length;
+      replacements.push({
+        start: match.index + enumOffset,
+        end: match.index + enumOffset + primaryMatch[1].length,
+        value: update.tendency
+      });
+    }
+
+    const secondary = update.secondaryTendency;
+    const secondaryMatch = /\.setSecondaryTend\(\s*EnumBloodTendency\.(ANIMUS|FLAMMEUS|DUCTILIS|LUX|MORTEM|CONGEATIO|FERRIC|TENEBRIS)\s*\)/.exec(matchedText);
+    if (secondary && defaultTendencyColors().has(secondary)) {
+      if (secondaryMatch) {
+        if (secondaryMatch[1] === secondary) continue;
+        const enumOffset = secondaryMatch.index + secondaryMatch[0].lastIndexOf(secondaryMatch[1]);
+        replacements.push({
+          start: match.index + enumOffset,
+          end: match.index + enumOffset + secondaryMatch[1].length,
+          value: secondary
+        });
+      } else {
+        const insertion = secondaryTendencyInsertion(matchedText);
+        replacements.push({
+          start: match.index + insertion.offset,
+          end: match.index + insertion.offset,
+          value: `\n${insertion.indent}.setSecondaryTend(EnumBloodTendency.${secondary})`
+        });
+      }
+    } else if (secondaryMatch) {
+      const lineStart = matchedText.lastIndexOf('\n', secondaryMatch.index);
+      const removeStart = lineStart >= 0 ? lineStart : secondaryMatch.index;
+      const removeEnd = secondaryMatch.index + secondaryMatch[0].length;
+      replacements.push({
+        start: match.index + removeStart,
+        end: match.index + removeEnd,
+        value: ''
+      });
+    }
   }
 
   replacements.sort((a, b) => b.start - a.start);
@@ -98,12 +133,26 @@ function renderManipulationInitTendencies(
   return next;
 }
 
-function loadManipulationTendencies(repoRoot: string): Map<string, string> {
+function secondaryTendencyInsertion(statement: string): { offset: number; indent: string } {
+  const target = /\n([ \t]*)\.(?:setCooldownTicks|setDrudgeAction)\(/.exec(statement);
+  if (target) return { offset: target.index, indent: target[1] };
+
+  const chainIndent = /\n([ \t]*)\./.exec(statement)?.[1] ?? '\t\t\t\t\t';
+  return { offset: statement.lastIndexOf(');'), indent: chainIndent };
+}
+
+function applySecondaryTendencies(nodes: ManipulationNodeModel[], tendencyInfoByManip: Map<string, { primary: string; secondary: string | null }>): void {
+  for (const node of nodes) {
+    node.secondaryTendency = tendencyInfoByManip.get(node.name)?.secondary ?? null;
+  }
+}
+
+function loadManipulationTendencies(repoRoot: string): Map<string, { primary: string; secondary: string | null }> {
   const filePath = 'src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java';
   const abs = resolve(repoRoot, filePath);
   if (!existsSync(abs)) return new Map();
   const lines = readFileSync(abs, 'utf8').split(/\r?\n/);
-  const map = new Map<string, string>();
+  const map = new Map<string, { primary: string; secondary: string | null }>();
 
   let currentName: string | null = null;
   let buffer = '';
@@ -119,7 +168,8 @@ function loadManipulationTendencies(repoRoot: string): Map<string, string> {
     const end = line.includes(');');
     if (end) {
       const tend = /EnumBloodTendency\.(ANIMUS|FLAMMEUS|DUCTILIS|LUX|MORTEM|CONGEATIO|FERRIC|TENEBRIS)/.exec(buffer)?.[1];
-      if (tend) map.set(currentName, tend);
+      const secondary = /\.setSecondaryTend\(\s*EnumBloodTendency\.(ANIMUS|FLAMMEUS|DUCTILIS|LUX|MORTEM|CONGEATIO|FERRIC|TENEBRIS)\s*\)/.exec(buffer)?.[1] ?? null;
+      if (tend) map.set(currentName, { primary: tend, secondary });
       currentName = null;
       buffer = '';
     }

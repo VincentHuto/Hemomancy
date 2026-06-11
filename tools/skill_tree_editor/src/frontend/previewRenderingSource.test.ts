@@ -115,6 +115,15 @@ test('manipulation nodes render layered memory item textures', () => {
   expect(manipulations).toContain('class="memory-overlay"');
 });
 
+test('manipulation node outer glow uses secondary tendency color when present', () => {
+  const manipulations = read('manipulations.ts');
+
+  expect(manipulations).toContain('secondaryTendencyColor(node)');
+  expect(manipulations).toContain('class="node-glow"');
+  expect(manipulations).toContain('style="stroke: ${escapeAttr(secondaryTendencyColor(node))}"');
+  expect(manipulations).toContain('class="node-frame" x="-18" y="-18" width="36" height="36" style="stroke: ${escapeAttr(node.color)}"');
+});
+
 function read(path: string): string {
   return readFileSync(resolve(sourceRoot, path), 'utf8');
 }

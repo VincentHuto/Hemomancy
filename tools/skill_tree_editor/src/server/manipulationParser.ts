@@ -61,6 +61,7 @@ export function parseManipulationTreeJava(path: string, source: string, tendency
       softParents: register.softParents,
       nodeShape: register.nodeShape,
       tendency,
+      secondaryTendency: null,
       color
     };
 
