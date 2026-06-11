@@ -26,6 +26,16 @@ public final class ManipulationsDetailPanelSourceTest {
 				controller, "private record ManipStatCell");
 		assertContains("detail panel should include cooldown even when the value is zero",
 				controller, "cooldownText(manip.getCooldownTicks())");
+		assertDoesNotContain("hover tooltip should not repeat the detail panel type",
+				controller, "\"Type: \"");
+		assertDoesNotContain("hover tooltip should not repeat the detail panel blood cost",
+				controller, "\"Blood Cost: \"");
+		assertDoesNotContain("hover tooltip should not repeat the detail panel vein section",
+				controller, "\"Vein Section: \"");
+		assertContains("hover tooltip should render above item icons from the detail panel",
+				controller, "MANIP_TOOLTIP_Z");
+		assertContains("hover tooltip should raise the pose before drawing",
+				controller, "pose.translate(0, 0, MANIP_TOOLTIP_Z)");
 		assertContains("detail panel should display secondary tendency when present",
 				controller, "secondaryTendencyText(manip)");
 		assertContains("detail panel should split mixed tendencies across compact lines",
@@ -40,6 +50,10 @@ public final class ManipulationsDetailPanelSourceTest {
 				controller, "recipeH + 4");
 		assertContains("detail panel should use a compact final bottom pad",
 				controller, "MANIP_PANEL_BOTTOM_PAD = 3");
+		assertContains("detail panel should keep its top border below the tab strip",
+				controller, "MANIP_PANEL_TOP_CLEARANCE = 24");
+		assertContains("detail panel should use the tab-aware top clearance as its minimum y",
+				controller, "int minPanelY = ctx.guiTop() + MANIP_PANEL_TOP_CLEARANCE");
 		assertContains("manipulations should serialize secondary tendency when present",
 				read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java"),
 				"secondary_tendency");

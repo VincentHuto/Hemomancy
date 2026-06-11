@@ -32,8 +32,10 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int COL_NODE_BORDER_LOCK = 0xFF333333;
     private static final int ALPHA_OPAQUE_MASK = 0xFF000000;
     private static final float INFO_PANEL_Z = 400.0F;
+    private static final float MANIP_TOOLTIP_Z = INFO_PANEL_Z + 500.0F;
     private static final int INFO_PANEL_SHADOW = 0xAA000000;
     private static final int INFO_PANEL_MARGIN = 8;
+    private static final int MANIP_PANEL_TOP_CLEARANCE = 24;
     private static final int MANIP_PANEL_BOTTOM_PAD = 3;
     private static final int MANIP_DESCRIPTION_MAX_LINES = 2;
     private static final int MANIP_STAT_COLUMNS = 2;
@@ -414,8 +416,6 @@ public class ManipulationsTabController implements IProgressTab {
                         .withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
 
                 if (manip != null) {
-                    tip.add(Component.literal("Type: " + HLTextUtils.toProperCase(manip.getType().name()))
-                            .withStyle(s -> s.withColor(0x888888)));
                     tip.add(Component.literal("Rank: " + HLTextUtils.toProperCase(manip.getRank().name()))
                             .withStyle(s -> s.withColor(0x888888)));
                     ParticleColor pc = manip.getTend().getColor();
@@ -433,10 +433,6 @@ public class ManipulationsTabController implements IProgressTab {
                         tip.add(Component.literal("Secondary: " + HLTextUtils.toProperCase(secondaryTend.name()))
                                 .withStyle(s -> s.withColor(secCol)));
                     }
-                    tip.add(Component.literal("Blood Cost: " + (int)manip.getCost() + " mL")
-                            .withStyle(s -> s.withColor(0xAA4444)));
-                    tip.add(Component.literal("Vein Section: " + HLTextUtils.toProperCase(manip.getSection().name()))
-                            .withStyle(s -> s.withColor(0x666666)));
                 }
 
                 if (!entry.getParentNames().isEmpty()) {
@@ -450,7 +446,11 @@ public class ManipulationsTabController implements IProgressTab {
                     tip.add(veilUnknown ? AbocipherText.veil(relationText) : relationText);
                 }
             }
+            var pose = gfx.pose();
+            pose.pushPose();
+            pose.translate(0, 0, MANIP_TOOLTIP_Z);
             gfx.renderTooltip(ctx.font(), tip, Optional.empty(), mouseX, mouseY);
+            pose.popPose();
             break;
         }
     }
@@ -472,7 +472,7 @@ public class ManipulationsTabController implements IProgressTab {
         int panelW = 188;
         int panelYTarget = ctx.guiTop() + 30;
         int panelBottomLimit = ctx.guiTop() + ctx.guiHeight() - INFO_PANEL_MARGIN;
-        int minPanelY = ctx.guiTop() + INFO_PANEL_MARGIN;
+        int minPanelY = ctx.guiTop() + MANIP_PANEL_TOP_CLEARANCE;
         int availablePanelH = panelBottomLimit - minPanelY;
         int fitPanelH = Math.max(1, availablePanelH);
         int maxW = panelW - 16;
