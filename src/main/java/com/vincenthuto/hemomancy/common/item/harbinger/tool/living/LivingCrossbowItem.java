@@ -119,7 +119,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 				Projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + projectileAngle, 0.0F,
 						velocity, inaccuracy);
 			}
-			if (projectile.getItem() == ItemInit.blood_bolt.get()) {
+			if (!isCreativeMode && projectile.getItem() == ItemInit.blood_bolt.get()) {
 				if (shooter.level().random.nextBoolean()) {
 					if (shooter instanceof Player) {
 						Player playerIn = (Player) shooter;
@@ -266,6 +266,9 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 		int j = i == 0 ? 1 : 3;
 		boolean flag = entityIn instanceof Player && ((Player) entityIn).getAbilities().instabuild;
 		ItemStack itemstack = entityIn.getProjectile(stack);
+		if (flag) {
+			itemstack = creativeProjectile(itemstack);
+		}
 		ItemStack itemstack1 = itemstack.copy();
 
 		for (int k = 0; k < j; ++k) {
@@ -274,7 +277,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 			}
 			if (itemstack.isEmpty()) {
 				if (flag) {
-					itemstack = new ItemStack(Items.ARROW);
+					itemstack = new ItemStack(ItemInit.blood_bolt.get());
 					itemstack1 = itemstack.copy();
 				} else {
 					Player playerIn = (Player) entityIn;
@@ -292,6 +295,13 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 		}
 
 		return true;
+	}
+
+	private static ItemStack creativeProjectile(ItemStack projectile) {
+		if (projectile.isEmpty() || projectile.getItem() == Items.ARROW) {
+			return new ItemStack(ItemInit.blood_bolt.get());
+		}
+		return projectile;
 	}
 
 	public static boolean hasChargedProjectile(ItemStack stack, Item ammoItem) {

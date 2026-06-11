@@ -1,12 +1,20 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.google.common.collect.Sets;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hutoslib.client.HlClientTickHandler;
+import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
+import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData;
+import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.FadeFunction;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
+import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -18,6 +26,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,7 +38,9 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -43,6 +54,8 @@ import java.util.stream.Stream;
 public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
 	private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(BloodBoltEntity.class,
 			EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> DUCTILIS_TRAIL = SynchedEntityData.defineId(BloodBoltEntity.class,
+			EntityDataSerializers.BOOLEAN);
 
 	public static int getCustomColor(ItemStack p_191508_0_) {
 		CustomData customData = p_191508_0_.get(DataComponents.CUSTOM_DATA);
@@ -74,6 +87,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		super(EntityInit.blood_bolt.get(), shooter, worldIn, new ItemStack(ItemInit.blood_bolt.get()),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+		this.entityData.set(DUCTILIS_TRAIL, isDuctilisWeapon(firedFromWeapon));
 	}
 
 	@Override
@@ -83,6 +97,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (!this.combatWeaponItem.isEmpty()) {
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
+		compound.putBoolean("DuctilisTrail", this.entityData.get(DUCTILIS_TRAIL));
 
 		if (this.fixedColor) {
 			compound.putInt("Color", this.getColor());
@@ -117,6 +132,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		builder.define(COLOR, -1);
+		builder.define(DUCTILIS_TRAIL, false);
 	}
 
 	@Override
@@ -179,6 +195,9 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 
 	@Override
 	protected void onHitEntity(EntityHitResult p_213868_1_) {
+		if (this.isDuctilisProjectile()) {
+			this.spawnDuctilisImpactArcs(p_213868_1_.getLocation(), p_213868_1_.getEntity());
+		}
 		super.onHitEntity(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
@@ -186,6 +205,15 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 
 		}
 
+	}
+
+	@Override
+	protected void onHitBlock(BlockHitResult result) {
+		if (this.isDuctilisProjectile()) {
+			Vec3 normal = Vec3.atLowerCornerOf(result.getDirection().getNormal());
+			this.spawnDuctilisImpactArcs(result.getLocation().add(normal.scale(0.05D)), null);
+		}
+		super.onHitBlock(result);
 	}
 
 	/**
@@ -197,6 +225,9 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
+		this.entityData.set(DUCTILIS_TRAIL,
+				compound.contains("DuctilisTrail") ? compound.getBoolean("DuctilisTrail")
+						: isDuctilisWeapon(this.combatWeaponItem));
 		if (compound.contains("Potion", 8)) {
 			String potionId = compound.getString("Potion");
 			this.potion = potionId.isEmpty() ? null : BuiltInRegistries.POTION.getHolder(ResourceLocation.parse(potionId)).orElse(null);
@@ -277,6 +308,73 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		}
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	private void spawnDuctilisTrailArc() {
+		Vec3 motion = this.getDeltaMovement();
+		if (motion.lengthSqr() < 1.0E-4D) {
+			return;
+		}
+
+		Vec3 current = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+		Vec3 trailStart = current.subtract(motion.normalize().scale(0.62D + this.level().random.nextDouble() * 0.24D))
+				.add(randomSigned(0.08D), randomSigned(0.08D), randomSigned(0.08D));
+		Vec3 trailEnd = current.add(randomSigned(0.16D), randomSigned(0.16D), randomSigned(0.16D));
+		long seed = this.level().random.nextLong() ^ this.getId() ^ ((long) this.tickCount << 32);
+
+		BoltRenderer.INSTANCE.add(new BoltParticleData(trailStart, trailEnd, seed, 0xE8FFE84A)
+				.size(0.034F).lifespan(6).fade(FadeFunction.fade(0.3F)), HlClientTickHandler.partialTicks);
+		BoltRenderer.INSTANCE.add(new BoltParticleData(trailStart, trailEnd, seed, 0xFFFFFFFF)
+				.size(0.016F).lifespan(6).fade(FadeFunction.fade(0.3F)), HlClientTickHandler.partialTicks);
+	}
+
+	private boolean isDuctilisProjectile() {
+		return this.entityData.get(DUCTILIS_TRAIL);
+	}
+
+	private void spawnDuctilisImpactArcs(Vec3 impact, @Nullable Entity hitEntity) {
+		if (!(this.level() instanceof ServerLevel serverLevel)) {
+			return;
+		}
+
+		int arcCount = hitEntity != null ? 8 : 7;
+		Vec3 motion = this.getDeltaMovement();
+		Vec3 fallbackDirection = motion.lengthSqr() > 1.0E-4D ? motion.normalize() : new Vec3(0.0D, 1.0D, 0.0D);
+		for (int i = 0; i < arcCount; i++) {
+			Vec3 end = hitEntity != null
+					? entityImpactEndpoint(impact, hitEntity, i, arcCount)
+					: blockImpactEndpoint(impact, fallbackDirection, i, arcCount);
+			long seed = serverLevel.random.nextLong() ^ this.getId() ^ ((long) i << 32);
+			LightningTesterSpawner.spawn(serverLevel, impact, end,
+					new LightningTestConfig(LightningTestConfig.Backend.BOLT, 0xE8FFE84A, 0xE8FFE84A, 0xFFFFFFFF,
+							12.0F, 0.0F, 0.0F, 0.0F, 44.0F, 1.8F, 8, 6, 0.12F, 0.045F, true, seed, false, 20));
+		}
+	}
+
+	private Vec3 entityImpactEndpoint(Vec3 impact, Entity hitEntity, int index, int count) {
+		double angle = index * Math.PI * 2.0D / count + this.level().random.nextDouble() * 0.35D;
+		double radius = Math.max(0.35D, hitEntity.getBbWidth() * 0.65D) + this.level().random.nextDouble() * 0.45D;
+		double yOffset = (this.level().random.nextDouble() - 0.35D) * Math.max(0.6D, hitEntity.getBbHeight() * 0.55D);
+		return impact.add(Math.cos(angle) * radius, yOffset, Math.sin(angle) * radius);
+	}
+
+	private Vec3 blockImpactEndpoint(Vec3 impact, Vec3 fallbackDirection, int index, int count) {
+		double angle = index * Math.PI * 2.0D / count + this.level().random.nextDouble() * 0.4D;
+		double radius = 0.45D + this.level().random.nextDouble() * 0.55D;
+		Vec3 tangent = new Vec3(Math.cos(angle) * radius, (this.level().random.nextDouble() - 0.5D) * 0.25D,
+				Math.sin(angle) * radius);
+		return impact.add(tangent).add(fallbackDirection.scale(0.08D + this.level().random.nextDouble() * 0.18D));
+	}
+
+	private double randomSigned(double amount) {
+		return (this.level().random.nextDouble() * 2.0D - 1.0D) * amount;
+	}
+
+	private static boolean isDuctilisWeapon(@Nullable ItemStack weaponStack) {
+		return weaponStack != null && TendencyWeaponHelper.getWeaponTendency(weaponStack)
+				.filter(EnumBloodTendency.DUCTILIS::equals)
+				.isPresent();
+	}
+
 	/**
 	 * Called to update the entity's position/logic.
 	 */
@@ -297,6 +395,9 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 				}
 			} else {
 				this.spawnPotionParticles(2);
+				if (this.tickCount % 2 == 0 && this.isDuctilisProjectile()) {
+					this.spawnDuctilisTrailArc();
+				}
 			}
 		} else if (this.inGround && this.inGroundTime != 0 && !this.customPotionEffects.isEmpty()
 				&& this.inGroundTime >= 600) {

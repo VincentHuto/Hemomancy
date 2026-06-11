@@ -19,6 +19,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Crimson Harvest — a T1 (HUMILIS) quick manipulation that accelerates
  * crop growth in a 5x5 area around the player, similar to bone meal.
@@ -45,6 +48,7 @@ public class CrimsonHarvestManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		RandomSource random = world.random;
 		int grownCount = 0;
+		List<BlockPos> grownTargets = new ArrayList<>();
 
 		for (int dx = -RADIUS; dx <= RADIUS; dx++) {
 			for (int dz = -RADIUS; dz <= RADIUS; dz++) {
@@ -57,6 +61,7 @@ public class CrimsonHarvestManip extends BloodManipulation {
 							if (growable.isBonemealSuccess(world, random, target, state)) {
 								growable.performBonemeal(sLevel, random, target, state);
 								grownCount++;
+								grownTargets.add(target.immutable());
 
 								sLevel.sendParticles(
 										GlowParticleFactory.createData(
@@ -71,6 +76,12 @@ public class CrimsonHarvestManip extends BloodManipulation {
 		}
 
 		if (grownCount > 0) {
+			int boltCount = Math.min(8, grownTargets.size());
+			for (int i = 0; i < boltCount; i++) {
+				int targetIndex = (int) Math.floor(i * grownTargets.size() / (double) boltCount);
+				DuctilisLightningEffects.crimsonHarvest(player, grownTargets.get(targetIndex), i);
+			}
+
 			world.playSound(null, center, SoundEvents.BONE_MEAL_USE, SoundSource.PLAYERS, 0.8f, 1.0f);
 
 			for (int i = 0; i < 10; i++) {

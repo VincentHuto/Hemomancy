@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -52,13 +53,16 @@ public class HemolymphalPulseManip extends BloodManipulation {
 		for (int i = 0; i < steps; i++) {
 			double angle = i * (Math.PI * 2.0 / steps);
 			for (double r : new double[]{4.0, 10.0, 18.0}) {
-				world.addParticle(ParticleTypes.CRIMSON_SPORE,
-						player.getX() + Math.cos(angle) * r,
-						player.getY() + 1.0,
-						player.getZ() + Math.sin(angle) * r,
-						0, 0.15, 0);
+				if (world instanceof ServerLevel serverLevel) {
+					serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
+							player.getX() + Math.cos(angle) * r,
+							player.getY() + 1.0,
+							player.getZ() + Math.sin(angle) * r,
+							1, 0, 0, 0, 0.15);
+				}
 			}
 		}
+		DuctilisLightningEffects.hemolymphalPulse(player);
 
 		if (tagged > 0) {
 			world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT,

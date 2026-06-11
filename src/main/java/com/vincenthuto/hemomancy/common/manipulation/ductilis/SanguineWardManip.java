@@ -20,7 +20,7 @@ public class SanguineWardManip extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		// Moved to Manip Events for acsess to on player damage
+		DuctilisLightningEffects.sanguineWard(player);
 	}
 
 }

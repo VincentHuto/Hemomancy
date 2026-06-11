@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
+import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData;
+import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.FadeFunction;
+import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.SpawnFunction;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -12,57 +13,38 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class DendriticDistributorBlockEntity extends BlockEntity {
+	private static final int BOLT_CADENCE_TICKS = 4;
+	private static final int BOLTS_PER_PULSE = 7;
+	private static final double EFFECT_VIEW_DISTANCE = 48.0D;
+	private static final double ANTENNA_HEIGHT = 1.12D;
+	private static final double MIN_RADIUS = 0.15D;
+	private static final double MAX_RADIUS = 0.85D;
+	private static final double GOLDEN_ANGLE = Math.PI * (3.0D - Math.sqrt(5.0D));
+	private static final int OUTER_YELLOW = 0xE8FFE84A;
+	private static final int INNER_WHITE = 0xFFFFFFFF;
 
 	public DendriticDistributorBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.dendritic_distributor.get(), pos, state);
 	}
 
 	public static void clientTick(Level level, BlockPos pos, BlockState state, DendriticDistributorBlockEntity te) {
-		double globalTime = 0.02;
-		int globalPartCount = 128;
-		Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5);
-		Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.55);
-		Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5,
-				false);
-		Vec3[] earth = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.1);
-		Vec3[] mars = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.08);
+		if (level.getGameTime() % BOLT_CADENCE_TICKS != 0) {
+			return;
+		}
+		Vec3 origin = Vec3.atLowerCornerOf(pos).add(0.5D, ANTENNA_HEIGHT, 0.5D);
+		if (level.getNearestPlayer(origin.x, origin.y, origin.z, EFFECT_VIEW_DISTANCE, false) == null) {
+			return;
+		}
 
-		Vec3[] randomSwim = HLParticleUtils.randomSwimming(globalPartCount, -level.getGameTime() * 0.005, 1, false);
-
-		for (int i = 0; i < globalPartCount; i++) {
-
-//			level.addParticle(
-//					GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
-//							(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-//					pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
-//					pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
-
-//			level.addParticle(
-//					GlowParticleFactory.createData(new ParticleColor((int) (inversedSphere[i].x * 255),
-//							(int) (inversedSphere[i].y * 255), (int) (inversedSphere[i].z * 255))),
-//					pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 + inversedSphere[i].y,
-//					pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
-
-//			level.addParticle(
-//					GlowParticleFactory.createData(new ParticleColor((int) (randomSwim[i].x * 255),
-//							(int) (randomSwim[i].y * 255), (int) (randomSwim[i].z * 255))),
-//					pos.getX() + randomSwim[i].x + .5, pos.getY() + 1.1 + randomSwim[i].y,
-//					pos.getZ() + randomSwim[i].z + .5, 0, 0.00, 0);
-
-//			// This creates a Star like effect
-//			level.addParticle(GlowParticleFactory.createData(new ParticleColor(255, (level.random.nextInt()), 0)),
-//					pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
-//					pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
-//
-//			if (i % 2 == 0) {
-//				level.addParticle(GlowParticleFactory.createData(new ParticleColor(100, 80, 10)),
-//						pos.getX() + corona[i].x + .5, pos.getY() + 1.5 + corona[i].y, pos.getZ() + corona[i].z + .5,
-//						0.0, -0.00, 0.0);
-//			}
-//			level.addParticle(GlowParticleFactory.createData(new ParticleColor(255, 0, 0)),
-//					pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 + inversedSphere[i].y,
-//					pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
-
+		double pulseProgress = (level.getGameTime() % 24L) / 24.0D;
+		double shellRadius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * pulseProgress;
+		double rotation = level.getGameTime() * 0.23D + pos.asLong() * 0.00001D;
+		for (int i = 0; i < BOLTS_PER_PULSE; i++) {
+			Vec3 direction = sphericalDirection(i, BOLTS_PER_PULSE, rotation);
+			double jitter = 0.85D + level.random.nextDouble() * 0.3D;
+			Vec3 end = origin.add(direction.scale(shellRadius * jitter));
+			long seed = level.random.nextLong() ^ pos.asLong() ^ (level.getGameTime() << 16) ^ i;
+			spawnBolt(origin, end, seed);
 		}
 	}
 
@@ -71,30 +53,25 @@ public class DendriticDistributorBlockEntity extends BlockEntity {
 
 	}
 
-	public void tick() {
-		if (level.isClientSide) {
-			int globalPartCount = 128;
-			double time = -level.getGameTime() * 0.21;
-			Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, time, 0.5);
-			double sizeMod = 2;
-			double sinX = Math.abs(Math.pow(Math.sin(time), 9)) * sizeMod;
-			double sinZ = Math.cos(time) * sizeMod;
+	private static Vec3 sphericalDirection(int index, int count, double rotation) {
+		double y = 1.0D - (index + 0.5D) * 2.0D / count;
+		double horizontalRadius = Math.sqrt(Math.max(0.0D, 1.0D - y * y));
+		double theta = index * GOLDEN_ANGLE + rotation;
+		return new Vec3(Math.cos(theta) * horizontalRadius, y, Math.sin(theta) * horizontalRadius);
+	}
 
-			for (int i = 0; i < globalPartCount; i++) {
-				level.addParticle(
-						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
-								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-						worldPosition.getX() + .5 + sinZ, worldPosition.getY() + 1 + sinX, worldPosition.getZ() + .5, 0,
-						0, 0);
+	private static void spawnBolt(Vec3 origin, Vec3 end, long seed) {
+		BoltRenderer.INSTANCE.add(createBolt(origin, end, seed, OUTER_YELLOW, 0.055F), 0.0F);
+		BoltRenderer.INSTANCE.add(createBolt(origin, end, seed, INNER_WHITE, 0.024F), 0.0F);
+	}
 
-				level.addParticle(
-						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
-								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-						worldPosition.getX() + .5, worldPosition.getY() + 1 + sinX, worldPosition.getZ() + .5 + sinZ, 0,
-						0, 0);
-
-			}
-		}
-
+	private static BoltParticleData createBolt(Vec3 origin, Vec3 end, long seed, int color, float size) {
+		BoltParticleData base = new BoltParticleData(origin, end, seed, color);
+		BoltParticleData.BoltRenderInfo info = base.getRenderInfo()
+				.noise(0.2F, 0.18F)
+				.branching(0.12F, 0.45F)
+				.spreader(BoltParticleData.SegmentSpreader.memory(0.35F));
+		return new BoltParticleData(info, origin, end, 8, 1, size, 10, SpawnFunction.NO_DELAY,
+				FadeFunction.fade(0.45F), seed);
 	}
 }
