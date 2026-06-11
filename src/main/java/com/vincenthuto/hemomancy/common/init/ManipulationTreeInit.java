@@ -147,13 +147,13 @@ public class ManipulationTreeInit {
 		int fmx = ex + COL_GAP * 3 + 80;  // gap after CONGEATIO (now wider)
 
 		// Row 0 (top) — SUMMA
-		register("vitric_combustion",1830,50, "pyretic_forge");
+		register("vitric_combustion",1790,50, "pyretic_forge");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("cauterizing_rebuke",1720,110, "sanguine_ignition");
-		register("pyretic_forge",1800,110, "sanguine_ignition");
+		register("cauterizing_rebuke",1730,110, "sanguine_ignition");
+		register("pyretic_forge",1790,110, "sanguine_ignition");
 		register("crimson_flame_conjuration",1870,180, "sanguine_ignition");
-		register("conjure_torch",1860,110, "crimson_flame_conjuration")
+		register("conjure_torch",1850,110, "crimson_flame_conjuration")
 				.setSoftParents("conjure_staff");
 
 		// Row 2 (bottom) — HUMILIS
