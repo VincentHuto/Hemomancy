@@ -16,7 +16,7 @@ public class DendriticDistributorBlockEntity extends BlockEntity {
 	private static final int BOLT_CADENCE_TICKS = 4;
 	private static final int BOLTS_PER_PULSE = 7;
 	private static final double EFFECT_VIEW_DISTANCE = 48.0D;
-	private static final double ANTENNA_HEIGHT = 1.12D;
+	private static final double ANTENNA_HEIGHT = 0.9D;
 	private static final double MIN_RADIUS = 0.15D;
 	private static final double MAX_RADIUS = 0.85D;
 	private static final double GOLDEN_ANGLE = Math.PI * (3.0D - Math.sqrt(5.0D));
@@ -74,4 +74,5 @@ public class DendriticDistributorBlockEntity extends BlockEntity {
 		return new BoltParticleData(info, origin, end, 8, 1, size, 10, SpawnFunction.NO_DELAY,
 				FadeFunction.fade(0.45F), seed);
 	}
+
 }

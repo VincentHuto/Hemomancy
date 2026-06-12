@@ -43,6 +43,8 @@ public class HemoLanguageProvider extends LanguageProvider {
 
         add("fluid.hemomancy.blood", "Blood");
 
+        add("item.hemomancy.qliphoth_seed.tooltip.use",
+                "Plant within the Bloom of the Qliphoth rite; when dropped, it reaches for soil.");
         add("item.hemomancy.scout_field_notes.tooltip", "A dying scout's final observations.");
         add("item.hemomancy.scout_field_notes.tooltip.use", "Right-click to tuck the memo into your notes.");
         add("item.hemomancy.field_notes.tooltip.curio", "A worn notebook kept for marginalia and fieldwork.");

@@ -59,8 +59,20 @@ public final class ManipulationsDetailPanelSourceTest {
 				"secondary_tendency");
 		assertContains("detail panel should use translatable manipulation descriptions",
 				controller, "Component.translatable(manipDescriptionKey(manip))");
-		assertContains("detail panel should keep descriptions compact",
+		assertDoesNotContain("detail panel should not hard-cap descriptions to two lines",
 				controller, "MANIP_DESCRIPTION_MAX_LINES = 2");
+		assertDoesNotContain("detail panel should not ellipsis-truncate wrapped descriptions",
+				controller, "lastLine + \"...\"");
+		assertContains("detail panel should let descriptions use their wrapped line count",
+				controller, "manipDescriptionLines(ctx, manip, maxW - 8)");
+		assertContains("detail panel should reserve top padding for italic descriptions",
+				controller, "MANIP_DESCRIPTION_TOP_PAD");
+		assertContains("detail panel should reserve bottom padding for italic descriptions",
+				controller, "MANIP_DESCRIPTION_BOTTOM_PAD");
+		assertContains("detail panel should draw description text below its padded top",
+				controller, "y + MANIP_DESCRIPTION_TOP_PAD");
+		assertDoesNotContain("detail panel should not squeeze descriptions into one clipped line",
+				controller, "manipDescriptionLines(ctx, manip, maxW - 8, 1)");
 		assertContains("detail panel stat cells should fit stacked mixed-tendency text",
 				controller, "MANIP_STAT_CELL_H = 28");
 		assertContains("detail panel should compute a bottom limit from the GUI frame",

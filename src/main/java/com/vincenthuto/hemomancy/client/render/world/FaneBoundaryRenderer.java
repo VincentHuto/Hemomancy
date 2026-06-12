@@ -194,6 +194,15 @@ public final class FaneBoundaryRenderer {
 				continue;
 			}
 			float seed = faneSeed(entry);
+			if (relation == FaneBoundaryRelation.OUTSIDER) {
+				drawRevealedFaneStyleDome(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed);
+				for (BlockPos stake : entry.stakes()) {
+					ShellStyle style = ShellStyle.forRelation(relation, time + seed);
+					drawHostileDomeShell(poseStack, buffer, cam, stake, entry.radius(), time, seed + stake.getX(),
+							style.withAlpha(style.alpha() * 0.65F), false);
+				}
+				continue;
+			}
 			ShellStyle style = ShellStyle.forRelation(relation, time + seed);
 			drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed, style, false);
 			if (style.glowAlphaScale() > 0.0F) {
@@ -205,6 +214,21 @@ public final class FaneBoundaryRenderer {
 						style.withAlpha(style.alpha() * 0.65F), false);
 			}
 		}
+	}
+
+	public static void drawRevealedFaneStyleDome(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
+			Vec3 cam, BlockPos center, float radius, float time, float seed) {
+		ShellStyle style = ShellStyle.forRelation(FaneBoundaryRelation.OUTSIDER, time + seed);
+		drawHostileDomeShell(poseStack, buffer, cam, center, radius, time, seed, style, false);
+		if (style.glowAlphaScale() > 0.0F) {
+			drawHostileDomeShell(poseStack, buffer, cam, center, radius * 1.025F, time, seed + 19.0F,
+					style.withAlpha(style.alpha() * 0.34F), true);
+		}
+	}
+
+	public static float revealedFaneStyleSeed(BlockPos center, float radius) {
+		return (float) (center.getX() * 0.13D + center.getY() * 0.07D + center.getZ() * 0.17D
+				+ radius * 0.31D);
 	}
 
 	private static void drawHostileDomeShell(PoseStack poseStack, MultiBufferSource.BufferSource buffer, Vec3 cam,
@@ -336,9 +360,7 @@ public final class FaneBoundaryRenderer {
 	}
 
 	private static float faneSeed(FaneBoundaryClientData.Entry entry) {
-		BlockPos center = entry.heart();
-		return (float) (center.getX() * 0.13D + center.getY() * 0.07D + center.getZ() * 0.17D
-				+ entry.radius() * 0.31D);
+		return revealedFaneStyleSeed(entry.heart(), entry.radius());
 	}
 
 	private static boolean containsAnyStake(Vec3 pos, FaneBoundaryClientData.Entry entry) {

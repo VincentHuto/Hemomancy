@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -83,6 +84,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		target.hurt(world.damageSources().magic(),
 				TendencyAffinityRules.adjustManipulationDamage(player, target, this, drainDamage));
+		HemomancyTendrilEffects.exsanguinate(player, target);
 
 		// Restore blood to caster
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -75,6 +76,7 @@ public class OsseousBloomManip extends BloodManipulation {
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
 					SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 		}
+		HemomancyTendrilEffects.osseousBloom(player, targets);
 
 		RandomSource random = world.random;
 		// Icy crystallisation burst — blue-white with flecks of red (blood)

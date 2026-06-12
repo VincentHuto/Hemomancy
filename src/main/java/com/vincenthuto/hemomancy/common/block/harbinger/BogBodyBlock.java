@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -12,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -32,6 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
+    private static final float BOG_REVENANT_BREAK_SPAWN_CHANCE = 0.05F;
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty HARVESTED = BooleanProperty.create("harvested");
@@ -167,6 +170,28 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
       }
+
+    @Override
+    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
+                              net.minecraft.world.level.block.entity.BlockEntity blockEntity, ItemStack tool) {
+        super.playerDestroy(level, player, pos, state, blockEntity, tool);
+        if (!(level instanceof ServerLevel serverLevel) || player.isCreative()) {
+            return;
+        }
+        if (serverLevel.getRandom().nextFloat() >= BOG_REVENANT_BREAK_SPAWN_CHANCE) {
+            return;
+        }
+
+        var bogRevenant = EntityInit.bog_revenant.get().create(serverLevel);
+        if (bogRevenant == null) {
+            return;
+        }
+
+        bogRevenant.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D,
+                serverLevel.getRandom().nextFloat() * 360.0F, 0.0F);
+        bogRevenant.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
+        serverLevel.addFreshEntityWithPassengers(bogRevenant);
+    }
 
     @Override
     public BlockState updateShape(

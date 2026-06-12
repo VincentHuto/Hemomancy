@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -45,6 +46,7 @@ public class LumenSutureManip extends BloodManipulation {
 		world.playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.7F, 1.8F);
 
 		if (world instanceof ServerLevel sLevel) {
+			HemomancyTendrilEffects.lumenSuture(player, target);
 			RandomSource random = world.random;
 			for (int i = 0; i < 36; i++) {
 				sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(

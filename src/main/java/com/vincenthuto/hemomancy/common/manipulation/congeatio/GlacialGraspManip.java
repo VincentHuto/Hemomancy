@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -19,6 +20,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Glacial Grasp — a T1 (HUMILIS) quick manipulation that freezes water
@@ -50,6 +54,7 @@ public class GlacialGraspManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		RandomSource random = world.random;
 		int frozenCount = 0;
+		List<BlockPos> frozenTargets = new ArrayList<>();
 
 		for (int dx = -RADIUS; dx <= RADIUS; dx++) {
 			for (int dz = -RADIUS; dz <= RADIUS; dz++) {
@@ -68,12 +73,14 @@ public class GlacialGraspManip extends BloodManipulation {
 						// Schedule the ice to start melting via normal tick
 						world.scheduleTick(target, Blocks.FROSTED_ICE, 60 + random.nextInt(40));
 						frozenCount++;
+						frozenTargets.add(target.immutable());
 					}
 				}
 			}
 		}
 
 		if (frozenCount > 0) {
+			HemomancyTendrilEffects.glacialGrasp(player, center, frozenTargets);
 			world.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 0.8f, 1.3f);
 
 			for (int i = 0; i < 25; i++) {

@@ -37,7 +37,9 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int INFO_PANEL_MARGIN = 8;
     private static final int MANIP_PANEL_TOP_CLEARANCE = 24;
     private static final int MANIP_PANEL_BOTTOM_PAD = 3;
-    private static final int MANIP_DESCRIPTION_MAX_LINES = 2;
+    private static final int MANIP_DESCRIPTION_LINE_H = 10;
+    private static final int MANIP_DESCRIPTION_TOP_PAD = 3;
+    private static final int MANIP_DESCRIPTION_BOTTOM_PAD = 6;
     private static final int MANIP_STAT_COLUMNS = 2;
     private static final int MANIP_STAT_ROWS = 3;
     private static final int MANIP_STAT_CELL_H = 28;
@@ -482,7 +484,7 @@ public class ManipulationsTabController implements IProgressTab {
         List<String> nameLines = ScreenDrawUtils.wrapText(ctx.font(), name, maxW - 20);
         int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
         List<String> descriptionLines = rankLocked ? List.of()
-                : manipDescriptionLines(ctx, manip, maxW - 8, MANIP_DESCRIPTION_MAX_LINES);
+                : manipDescriptionLines(ctx, manip, maxW - 8);
         int descriptionH = descriptionHeight(descriptionLines);
 
         ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
@@ -500,11 +502,6 @@ public class ManipulationsTabController implements IProgressTab {
             statsH += lineH * 2;
         }
         int panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + MANIP_PANEL_BOTTOM_PAD;
-        if (panelH > fitPanelH && !rankLocked && descriptionLines.size() > 1) {
-            descriptionLines = manipDescriptionLines(ctx, manip, maxW - 8, 1);
-            descriptionH = descriptionHeight(descriptionLines);
-            panelH = 6 + nameRowH + descriptionH + 1 + 5 + statsH + recipeSection + MANIP_PANEL_BOTTOM_PAD;
-        }
         float panelScale = panelH > fitPanelH ? Math.min(1.0F, fitPanelH / (float) panelH) : 1.0F;
         int scaledPanelW = Mth.ceil(panelW * panelScale);
         int scaledPanelH = Mth.ceil(panelH * panelScale);
@@ -567,32 +564,22 @@ public class ManipulationsTabController implements IProgressTab {
         pose.popPose();
     }
 
-    private List<String> manipDescriptionLines(ProgressScreenContext ctx, BloodManipulation manip, int maxW,
-                                               int maxLines) {
+    private List<String> manipDescriptionLines(ProgressScreenContext ctx, BloodManipulation manip, int maxW) {
         Component description = Component.translatable(manipDescriptionKey(manip));
-        List<String> lines = ScreenDrawUtils.wrapText(ctx.font(), description.getString(), maxW);
-        if (lines.size() <= maxLines) {
-            return lines;
-        }
-        List<String> compact = new ArrayList<>(lines.subList(0, maxLines));
-        int lastIndex = compact.size() - 1;
-        String lastLine = compact.get(lastIndex);
-        while (!lastLine.isEmpty() && ctx.font().width(lastLine + "...") > maxW) {
-            lastLine = lastLine.substring(0, lastLine.length() - 1);
-        }
-        compact.set(lastIndex, lastLine + "...");
-        return compact;
+        return ScreenDrawUtils.wrapText(ctx.font(), description.getString(), maxW);
     }
 
     private static int descriptionHeight(List<String> lines) {
-        return lines.isEmpty() ? 0 : lines.size() * 10 + 4;
+        return lines.isEmpty() ? 0
+                : MANIP_DESCRIPTION_TOP_PAD + lines.size() * MANIP_DESCRIPTION_LINE_H + MANIP_DESCRIPTION_BOTTOM_PAD;
     }
 
     private int drawManipDescription(GuiGraphics gfx, ProgressScreenContext ctx, List<String> lines,
                                      int x, int y, boolean veilUnknown) {
         for (int i = 0; i < lines.size(); i++) {
             Component line = Component.literal(lines.get(i)).withStyle(s -> s.withColor(0xFFB88A8A).withItalic(true));
-            gfx.drawString(ctx.font(), veilUnknown ? AbocipherText.veil(line) : line, x, y + i * 10, 0, false);
+            gfx.drawString(ctx.font(), veilUnknown ? AbocipherText.veil(line) : line,
+                    x, y + MANIP_DESCRIPTION_TOP_PAD + i * MANIP_DESCRIPTION_LINE_H, 0, false);
         }
         return descriptionHeight(lines);
     }

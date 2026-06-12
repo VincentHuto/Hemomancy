@@ -106,6 +106,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(DrudgeModel.LAYER_LOCATION, DrudgeModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.mob.monster.RougeDrudgeModel.LAYER_LOCATION,
 				com.vincenthuto.hemomancy.client.model.entity.mob.monster.RougeDrudgeModel::createBodyLayer);
+		event.registerLayerDefinition(ModelBogRevenant.LAYER_LOCATION, ModelBogRevenant::createBodyLayer);
 		event.registerLayerDefinition(FargoneModel.LAYER_LOCATION, FargoneModel::createBodyLayer);
 		event.registerLayerDefinition(FunglingModel.LAYER_LOCATION, FunglingModel::createBodyLayer);
 		event.registerLayerDefinition(LeechModel.LAYER_LOCATION, LeechModel::createBodyLayer);

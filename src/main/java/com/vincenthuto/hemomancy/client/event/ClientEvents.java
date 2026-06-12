@@ -48,7 +48,7 @@ import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
 import com.vincenthuto.hemomancy.client.render.item.MorphicNectarItemDecorator;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
-import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemEntityRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
@@ -548,7 +548,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
             event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), MorphlingPolypItemRenderer::new);
-            event.registerEntityRenderer(EntityInit.qliphoth_seed_item.get(), QliphothSeedItemRenderer::new);
+            event.registerEntityRenderer(EntityInit.qliphoth_seed_item.get(), QliphothSeedItemEntityRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
@@ -557,6 +557,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
             event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
+            event.registerEntityRenderer(EntityInit.bog_revenant.get(), BogRevenantRenderer::new);
             event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
             event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
             event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -86,6 +87,9 @@ public class BloodEclipseManip extends BloodManipulation {
 			float damage = (float) (SHADOW_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			target.hurt(world.damageSources().magic(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
+			if (hit < 6) {
+				HemomancyTendrilEffects.bloodEclipse(player, target, hit);
+			}
 			hit++;
 		}
 

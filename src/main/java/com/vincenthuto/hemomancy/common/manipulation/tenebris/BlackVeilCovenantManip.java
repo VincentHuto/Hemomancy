@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -39,6 +40,7 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 		BlockPos center = player.blockPosition();
 		BlackVeilCovenantManager.addVeil(sLevel, center, RADIUS, DURATION_TICKS);
 		PacketHandler.sendBlackVeil(Vec3.atCenterOf(center), RADIUS, sLevel, DURATION_TICKS);
+		HemomancyTendrilEffects.blackVeil(sLevel, player, center, RADIUS);
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(RADIUS),
 				e -> e != player && e.isAlive())) {

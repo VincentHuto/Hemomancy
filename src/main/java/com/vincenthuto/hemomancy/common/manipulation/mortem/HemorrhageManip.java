@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -69,6 +70,7 @@ public class HemorrhageManip extends BloodManipulation {
 		LivingEntity target = closest.get();
 		target.addEffect(new MobEffectInstance(MobEffects.WITHER,
 				WITHER_TICKS, WITHER_AMP, false, true));
+		HemomancyTendrilEffects.hemorrhage(player, target);
 
 		world.playSound(null, center, SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.7f, 1.6f);
 

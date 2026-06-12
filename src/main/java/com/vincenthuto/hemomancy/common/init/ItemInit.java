@@ -155,8 +155,6 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> salt_stained_voyager_log = BASEITEMS.register("salt_stained_voyager_log",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
-            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_powder = BASEITEMS.register("hematic_iron_powder",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> enzyme_primer = BASEITEMS.register("enzyme_primer",
@@ -243,13 +241,7 @@ public class ItemInit {
                     .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
             () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
-    // Anti blood
-    public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> hemolytic_plating = BASEITEMS.register("hemolytic_plating",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
-            () -> new Item(new Item.Properties()));
+
     // Enzymes
     public static final DeferredHolder<Item, Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
             () -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));
@@ -269,7 +261,7 @@ public class ItemInit {
             () -> new EnzymeItem(EnumBloodTendency.TENEBRIS, 10));
     public static final DeferredHolder<Item, Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
             () -> new RecycledEnzymeItem());
-    // Hallowed Residuum â€" Saint-Enzymes (hybridized, extracted from Preserved Corpus)
+    // Hallowed Residuum  Saint-Enzymes (hybridized, extracted from Preserved Corpus)
     public static final DeferredHolder<Item, Item> hallowed_residuum_hemorath = BASEITEMS.register("hallowed_residuum_hemorath",
             () -> new HallowedResiduumItem(EnumSaintType.HEMORATH, 20));
     public static final DeferredHolder<Item, Item> hallowed_residuum_seraphae = BASEITEMS.register("hallowed_residuum_seraphae",
@@ -287,7 +279,7 @@ public class ItemInit {
             () -> new SaintRelicItem(EnumSaintType.PUTRICIEL));
     public static final DeferredHolder<Item, Item> saint_relic_velorum = BASEITEMS.register("saint_relic_velorum",
             () -> new SaintRelicItem(EnumSaintType.VELORUM));
-    // Consecrated Syringe â€" extraction tool for Saint Sarcophagus
+    // Consecrated Syringe  extraction tool for Saint Sarcophagus
     public static final DeferredHolder<Item, Item> consecrated_syringe = SPECIALITEMS.register("consecrated_syringe",
             () -> new ConsecratedSyringeItem(new Item.Properties().stacksTo(1)));
     // Blood Tendency Gauge
@@ -299,7 +291,19 @@ public class ItemInit {
     // Bloodline Pool Monitor
     public static final DeferredHolder<Item, Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
             () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
-    // Unstained â€" Our Lady of Still Waters materials
+    // Unstained Our Lady of Still Waters materials
+    public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> hemolytic_plating = BASEITEMS.register("hemolytic_plating",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> pale_humor_flask = BASEITEMS.register("pale_humor_flask",
+            () -> new PaleHumorFlaskItem(new Item.Properties(), 500));
+    public static final DeferredHolder<Item, Item> hemolytic_vial = BASEITEMS.register("hemolytic_vial",
+            () -> new HemolyticVialItem(new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> draught_of_still_waters = BASEITEMS.register("draught_of_still_waters",
             () -> new DraughtOfStillWatersItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> draught_of_still_mercy = BASEITEMS.register("draught_of_still_mercy",
@@ -495,7 +499,7 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
     public static final DeferredHolder<Item, Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
-    // Saint Canon Memories â€" imprinted from Sainted Mausoleums via Hallowed Residuum
+    // Saint Canon Memories  imprinted from Sainted Mausoleums via Hallowed Residuum
     public static final DeferredHolder<Item, Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
     public static final DeferredHolder<Item, Item> memory_unclosing_eye = BASEITEMS.register("memory_unclosing_eye",
@@ -509,6 +513,8 @@ public class ItemInit {
             () -> new BloodAbsorptionItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> blood_projection = SPECIALITEMS.register("blood_projection",
             () -> new BloodProjectionItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> sporitic_thurible = SPECIALITEMS.register("sporitic_thurible",
+            () -> new SporiticThuribleItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> sanguis_lancea = SPECIALITEMS.register("sanguis_lancea",
             () -> new SanguisLanceaItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> annettas_sanguis_lancea = SPECIALITEMS.register("annettas_sanguis_lancea",
@@ -533,7 +539,7 @@ public class ItemInit {
             () -> new LivingFlailItem(25f, 2, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> blood_bolt = BASEITEMS.register("blood_bolt",
             () -> new BloodBoltItem(new Item.Properties()));
-    // Blood Thrall â€" creature-based blood transport
+    // Blood Thrall  creature-based blood transport
     public static final DeferredHolder<Item, Item> blood_thrall_effigy = BASEITEMS.register("blood_thrall_effigy",
             () -> new BloodThrallItem(new Item.Properties().stacksTo(16)));
     // Morphlings
@@ -585,10 +591,6 @@ public class ItemInit {
             () -> new BloodyFlaskItem(new Item.Properties(), 2500));
     public static final DeferredHolder<Item, Item> bloody_jug = BASEITEMS.register("bloody_jug",
             () -> new BloodyFlaskItem(new Item.Properties(), 5000));
-    public static final DeferredHolder<Item, Item> pale_humor_flask = BASEITEMS.register("pale_humor_flask",
-            () -> new PaleHumorFlaskItem(new Item.Properties(), 500));
-    public static final DeferredHolder<Item, Item> hemolytic_vial = BASEITEMS.register("hemolytic_vial",
-            () -> new HemolyticVialItem(new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
             () -> new BloodVialItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> vial_rack = SPECIALITEMS.register("vial_rack",
@@ -722,8 +724,7 @@ public class ItemInit {
 //            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 //    public static final DeferredHolder<Item, Item> verdigris_censer = SPECIALITEMS.register("verdigris_censer",
 //            () -> new VerdigrisCenserItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-    public static final DeferredHolder<Item, Item> sporitic_thurible = SPECIALITEMS.register("sporitic_thurible",
-            () -> new SporiticThuribleItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
     // Scars
     public static final DeferredHolder<Item, Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
             () -> new ItemSelfReflectionMirror(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
@@ -1022,6 +1023,8 @@ public class ItemInit {
     // Spawn Eggs
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
             () -> new DeferredSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_bog_revenant = SPAWNEGGS.register("spawn_egg_bog_revenant",
+            () -> new DeferredSpawnEggItem(EntityInit.bog_revenant, 0x314032, 0xC4B48A, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
             () -> new DeferredSpawnEggItem(EntityInit.fargone, 7352833, 7958646, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",

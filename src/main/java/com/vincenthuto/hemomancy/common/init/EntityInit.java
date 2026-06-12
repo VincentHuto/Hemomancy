@@ -263,6 +263,10 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
                     .build(Hemomancy.rloc("leech").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<BogRevenantEntity>> bog_revenant = ENTITY_TYPES.register("bog_revenant",
+            () -> EntityType.Builder.of(BogRevenantEntity::new, MobCategory.MONSTER).sized(0.6F, 1.95F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("bog_revenant").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<FargoneEntity>> fargone = ENTITY_TYPES.register("fargone",
             () -> EntityType.Builder.of(FargoneEntity::new, MobCategory.MONSTER).sized(1F, 1.8F)
                     .build(Hemomancy.rloc("fargone").toString()));
@@ -625,6 +629,9 @@ public class EntityInit {
         event.register(EntityInit.hemolymphopoda.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.bog_revenant.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BogRevenantEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.fargone.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -710,6 +717,7 @@ public class EntityInit {
         event.put(EntityInit.iron_spike.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.wretched_will.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.leech.get(), LeechEntity.setAttributes().build());
+        event.put(EntityInit.bog_revenant.get(), BogRevenantEntity.setAttributes().build());
         event.put(EntityInit.fargone.get(), FargoneEntity.setAttributes().build());
         event.put(EntityInit.fungling.get(), FargoneEntity.setAttributes().build());
         event.put(EntityInit.thirster.get(), ThirsterEntity.setAttributes().build());
