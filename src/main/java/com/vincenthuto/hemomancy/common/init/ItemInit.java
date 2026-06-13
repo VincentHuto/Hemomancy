@@ -163,6 +163,10 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> serpent_scale = BASEITEMS.register("serpent_scale",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> constrictor_cord = BASEITEMS.register("constrictor_cord",
+            () -> new ConstrictorCordItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> scale_grip = BASEITEMS.register("scale_grip",
+            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> swollen_leech = BASEITEMS.register("swollen_leech",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> dried_leech = BASEITEMS.register("dried_leech",
@@ -175,6 +179,8 @@ public class ItemInit {
             () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> curor_lens = BASEITEMS.register("curor_lens",
+            () -> new CurorLensItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> vitality_chalice = BASEITEMS.register("vitality_chalice",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",
@@ -187,8 +193,12 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> blood_chum = BASEITEMS.register("blood_chum",
+            () -> new BloodChumItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> puppeteering_thread = BASEITEMS.register("puppeteering_thread",
             () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> tendon_line = BASEITEMS.register("tendon_line",
+            () -> new TendonLineItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguine_quintessence = BASEITEMS.register("sanguine_quintessence",
@@ -282,15 +292,15 @@ public class ItemInit {
     // Consecrated Syringe  extraction tool for Saint Sarcophagus
     public static final DeferredHolder<Item, Item> consecrated_syringe = SPECIALITEMS.register("consecrated_syringe",
             () -> new ConsecratedSyringeItem(new Item.Properties().stacksTo(1)));
-    // Blood Tendency Gauge
-    public static final DeferredHolder<Item, Item> blood_tendency_gauge = BASEITEMS.register("blood_tendency_gauge",
-            () -> new BloodTendencyGaugeItem(new Item.Properties().stacksTo(1)));
+    // Blood Tendency Gauge -- now part of sanguine conduit
+//    public static final DeferredHolder<Item, Item> blood_tendency_gauge = BASEITEMS.register("blood_tendency_gauge",
+//            () -> new BloodTendencyGaugeItem(new Item.mProperties().stacksTo(1)));
     // Vascular Status Gauge
     public static final DeferredHolder<Item, Item> vascular_status_gauge = BASEITEMS.register("vascular_status_gauge",
             () -> new VascularStatusGaugeItem(new Item.Properties().stacksTo(1)));
-    // Bloodline Pool Monitor
-    public static final DeferredHolder<Item, Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
-            () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
+    // Bloodline Pool Monitor - Now part of the bloodwell
+//    public static final DeferredHolder<Item, Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
+//            () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
     // Unstained Our Lady of Still Waters materials
     public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
             () -> new Item(new Item.Properties()));
@@ -317,7 +327,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> tears_of_silthmere = BASEITEMS.register("tears_of_silthmere",
             () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
-            () -> new Item(new Item.Properties().stacksTo(16)));
+            () -> new BlockItem(BlockInit.lethean_poppy_wreath.get(), new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> silver_chalice = BASEITEMS.register("silver_chalice",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
@@ -605,6 +615,8 @@ public class ItemInit {
     );
     public static final DeferredHolder<Item, Item> hemolymphopoda_headpiece = BASEITEMS.register("hemolymphopoda_headpiece",
             () -> new HemolymphopodaHeadpieceArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> lantern_tick_helmet = BASEITEMS.register("lantern_tick_helmet",
+            () -> new LanternTickHelmetArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.HELMET));
     // Hematic
     public static final DeferredHolder<Item, Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
             () -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON.holder(), ArmorItem.Type.HELMET));
@@ -1078,6 +1090,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_lantern_tick = SPAWNEGGS.register(
+            "spawn_egg_lantern_tick",
+            () -> new DeferredSpawnEggItem(EntityInit.lantern_tick, 0x261315, 0xE1F58A, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hematic_burrower = SPAWNEGGS.register(
             "spawn_egg_hematic_burrower",
             () -> new DeferredSpawnEggItem(EntityInit.hematic_burrower, 0x3A2520, 0x8A1020, new Item.Properties()));

@@ -47,7 +47,7 @@ public final class CoreSkillBranch {
 			SkillPointInit.skill_dynamic_use = SkillPointInit.registerSkill(branch,
 					new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_efficiency)
 							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(505, 310).setBranch("core").setBranchColor(0xFFD00000)
-							.setIconItem(() -> new ItemStack(ItemInit.blood_tendency_gauge.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.abyssal_ichor.get())));
 			SkillPointInit.skill_feeding_frenzy = SkillPointInit.registerSkill(branch,
 					new SkillPoint(5, "skill_feeding_frenzy", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_last_wind)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(391, 210).setBranch("core").setBranchColor(0xFFD00000)
@@ -75,7 +75,7 @@ public final class CoreSkillBranch {
 			SkillPointInit.skill_blood_flow = SkillPointInit.registerSkill(branch,
 					new SkillPoint(11, "skill_blood_flow", 300, 5, EnumSkillStates.LOCKED, SkillPointInit.skill_hemostasis)
 							.setSkillPointCost(2).setRequiredDegree(3).setTreePosition(649, 340).setBranch("core").setBranchColor(0xFFD00000)
-							.setIconItem(() -> new ItemStack(ItemInit.dicentra_sap.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.bleeding_bulb.get())));
 			SkillPointInit.skill_coagulation = SkillPointInit.registerSkill(branch,
 					new SkillPoint(12, "skill_coagulation", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_hemostasis)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(569, 274).setBranch("core").setBranchColor(0xFFD00000)

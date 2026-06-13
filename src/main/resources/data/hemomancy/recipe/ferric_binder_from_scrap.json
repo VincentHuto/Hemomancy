@@ -4,7 +4,7 @@
     { "item": "hemomancy:hematic_iron_scrap" },
     { "item": "minecraft:clay_ball" },
     { "item": "minecraft:slime_ball" },
-    { "item": "hemomancy:dicentra_sap" }
+    { "item": "hemomancy:bleeding_bulb" }
   ],
   "result": {
     "id": "hemomancy:ferric_binder",

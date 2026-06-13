@@ -440,6 +440,7 @@ public class ClientEvents {
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
+            TendonLineRenderer.render(event.getPoseStack(), partialTick);
         }
     }
 
@@ -581,10 +582,13 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.brined_votary.get(), BrinedVotaryRenderer::new);
             event.registerEntityRenderer(EntityInit.prism_cuttle.get(), PrismCuttleRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
+            event.registerEntityRenderer(EntityInit.lantern_tick.get(), LanternTickRenderer::new);
             event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
             event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
             event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolytic_vial_projectile.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(EntityInit.constrictor_cord_projectile.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(EntityInit.blood_chum_projectile.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
             event.registerEntityRenderer(EntityInit.unstained_zealot.get(), UnstainedZealotRenderer::new);
             event.registerEntityRenderer(EntityInit.unstained_guardian.get(), UnstainedGuardianRenderer::new);
@@ -648,6 +652,7 @@ public class ClientEvents {
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.pale_silver_bars.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_door.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_trapdoor.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlockInit.lethean_poppy_wreath.get(), RenderType.cutout());
             });
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();
@@ -657,6 +662,7 @@ public class ClientEvents {
             UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
             FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
             SanguineOmenOverlay.instance = new SanguineOmenOverlay();
+            CurorLensOverlay.instance = new CurorLensOverlay();
             // Tiles
             BlockEntityRenderers.register(BlockEntityInit.discovery_inscription.get(),
                     DiscoveryInscriptionBlockRenderer::new);
@@ -665,7 +671,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.pallid_retort.get(), PallidRetortRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.puppeteers_spindle.get(), PuppeteersSpindleRenderer::new);
-            BlockEntityRenderers.register(BlockEntityInit.mycelial_crucible.get(), MycelialCrucibleRenderer::new);
+           BlockEntityRenderers.register(BlockEntityInit.mycelial_crucible.get(), MycelialCrucibleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mycelial_lantern.get(), MycelialLanternRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_cradle.get(), MorphlingCradleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.gourdvine_tap.get(), GourdvineTapRenderer::new);
@@ -986,6 +992,12 @@ public class ClientEvents {
                 if (SanguineOmenOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
                     SanguineOmenOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
+                }
+            });
+            event.registerAboveAll(Hemomancy.rloc("curor_lens"), (graphics, deltaTracker) -> {
+                if (CurorLensOverlay.instance != null) {
+                    float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);
+                    CurorLensOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);
                 }
             });
         }

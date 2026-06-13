@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "lit=false,waterlogged=false": {
+      "model": "hemomancy:block/mnemonic_candle"
+    },
+    "lit=false,waterlogged=true": {
+      "model": "hemomancy:block/mnemonic_candle"
+    },
+    "lit=true,waterlogged=false": {
+      "model": "hemomancy:block/mnemonic_candle"
+    },
+    "lit=true,waterlogged=true": {
+      "model": "hemomancy:block/mnemonic_candle"
+    }
+  }
+}

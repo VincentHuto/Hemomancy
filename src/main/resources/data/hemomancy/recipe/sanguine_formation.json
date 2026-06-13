@@ -1,11 +1,11 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "hemomancy:foul_paste"
     },
     {
-      "item": "hemomancy:dicentra_sap"
+      "item": "hemomancy:bleeding_bulb"
     },
     {
       "item": "minecraft:redstone"

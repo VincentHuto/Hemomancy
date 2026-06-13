@@ -209,6 +209,7 @@ public class Hemomancy {
                 && block != BlockInit.active_befouling_ash_trail.get()
                 && block != BlockInit.active_smouldering_ash_trail.get()
                 && block != BlockInit.sanguine_conduit.get()
+                && block != BlockInit.lethean_poppy_wreath.get()
                 && block != BlockInit.filler_block.get()
                 && block != BlockInit.engram_block.get()
                 && block != BlockInit.abocipher_emitter.get()

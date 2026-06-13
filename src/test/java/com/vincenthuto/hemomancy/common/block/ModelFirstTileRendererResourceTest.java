@@ -46,6 +46,9 @@ public final class ModelFirstTileRendererResourceTest {
 		assertContains("scar station should disable baked-model AO to match the old entity renderer lighting",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/scar_station.json")),
 				"\"ambientocclusion\": false");
+		assertDoesNotContain("scar station should keep normal directional face shading",
+				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/scar_station.json")),
+				"\"shade\": false");
 		assertContains("scar station block model should expose GUI transforms for Blockbench editing",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/scar_station.json")),
 				"\"display\"");

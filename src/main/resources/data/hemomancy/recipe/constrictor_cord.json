@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "tools",
+  "key": {
+    "D": {
+      "item": "hemomancy:bleeding_bulb"
+    },
+    "S": {
+      "item": "hemomancy:serpent_scale"
+    },
+    "T": {
+      "item": "hemomancy:puppeteering_thread"
+    }
+  },
+  "pattern": [
+    "TST",
+    "SDS",
+    "TST"
+  ],
+  "result": {
+    "count": 4,
+    "id": "hemomancy:constrictor_cord"
+  }
+}

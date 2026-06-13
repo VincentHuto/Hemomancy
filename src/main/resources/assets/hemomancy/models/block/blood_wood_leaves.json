@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "hemomancy:block/blood_wood_leaves"
+  }
+}

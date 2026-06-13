@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "hemomancy:void_ichor"
   },
-  "result": "hemomancy:dicentra_sap",
+  "result": "hemomancy:bleeding_bulb",
   "count": 2,
   "experience": 0.8,
   "cookingtime": 250,

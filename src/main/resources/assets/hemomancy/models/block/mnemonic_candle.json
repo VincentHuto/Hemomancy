@@ -1,0 +1,69 @@
+{
+  "textures": {
+    "candle": "hemomancy:block/mnemonic_candle",
+    "metal": "minecraft:block/copper_block",
+    "particle": "hemomancy:block/mnemonic_candle"
+  },
+  "elements": [
+    {
+      "from": [3, 0, 3],
+      "to": [13, 1.5, 13],
+      "faces": {
+        "down": { "texture": "#metal" },
+        "up": { "texture": "#metal" },
+        "north": { "texture": "#metal" },
+        "south": { "texture": "#metal" },
+        "west": { "texture": "#metal" },
+        "east": { "texture": "#metal" }
+      }
+    },
+    {
+      "from": [2.5, 1, 2.5],
+      "to": [13.5, 2.25, 13.5],
+      "faces": {
+        "down": { "texture": "#metal" },
+        "up": { "texture": "#metal" },
+        "north": { "texture": "#metal" },
+        "south": { "texture": "#metal" },
+        "west": { "texture": "#metal" },
+        "east": { "texture": "#metal" }
+      }
+    },
+    {
+      "from": [4.5, 1.5, 4.5],
+      "to": [11.5, 10.5, 11.5],
+      "faces": {
+        "down": { "texture": "#candle" },
+        "up": { "texture": "#candle" },
+        "north": { "texture": "#candle" },
+        "south": { "texture": "#candle" },
+        "west": { "texture": "#candle" },
+        "east": { "texture": "#candle" }
+      }
+    },
+    {
+      "from": [4, 10, 4],
+      "to": [12, 11, 12],
+      "faces": {
+        "down": { "texture": "#candle" },
+        "up": { "texture": "#candle" },
+        "north": { "texture": "#candle" },
+        "south": { "texture": "#candle" },
+        "west": { "texture": "#candle" },
+        "east": { "texture": "#candle" }
+      }
+    },
+    {
+      "from": [7, 10.5, 7],
+      "to": [9, 13, 9],
+      "faces": {
+        "down": { "texture": "#candle" },
+        "up": { "texture": "#candle" },
+        "north": { "texture": "#candle" },
+        "south": { "texture": "#candle" },
+        "west": { "texture": "#candle" },
+        "east": { "texture": "#candle" }
+      }
+    }
+  ]
+}

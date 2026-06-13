@@ -154,6 +154,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(MnemonicWhaleModel.LAYER_LOCATION, MnemonicWhaleModel::createBodyLayer);
 		event.registerLayerDefinition(BrinedVotaryModel.LAYER_LOCATION, BrinedVotaryModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
+		event.registerLayerDefinition(LanternTickModel.LAYER_LOCATION, LanternTickModel::createBodyLayer);
 		event.registerLayerDefinition(PrismCuttleModel.LAYER_LOCATION, PrismCuttleModel::createBodyLayer);
 		event.registerLayerDefinition(HematicBurrowerModel.LAYER_LOCATION, HematicBurrowerModel::createBodyLayer);
 		event.registerLayerDefinition(VenomRibCentipedeModel.LAYER_LOCATION, VenomRibCentipedeModel::createBodyLayer);
@@ -198,6 +199,8 @@ public class LayerEvents {
 
 		event.registerLayerDefinition(HemolymphopodaHeadArmorModel.LAYER_LOCATION,
 				HemolymphopodaHeadArmorModel::createHeadLayer);
+		event.registerLayerDefinition(LanternTickHeadArmorModel.LAYER_LOCATION,
+				LanternTickHeadArmorModel::createHeadLayer);
 
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_LAYER,
 				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
@@ -266,6 +269,7 @@ public class LayerEvents {
 //			renderer.addLayer(new RenderScarsLayer(renderer));
 //			renderer.addLayer(new VascCharmLayer<>(renderer));
 			renderer.addLayer(new HemolymphopodaHeadpieceLayer(renderer));
+			renderer.addLayer(new LanternTickHelmetLayer(renderer));
 		}
 	}
 
@@ -283,6 +287,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new MorphlingMutationLayer<>(livingRenderer));
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
+			livingRenderer.addLayer(new LanternTickHelmetLayer(livingRenderer));
 			livingRenderer.addLayer(new MorphlingJarLayer<>(livingRenderer));
 			livingRenderer.addLayer(new SporiticThuribleLayer<>(livingRenderer));
 			livingRenderer.addLayer(new LivingFlailLayer<>(livingRenderer));

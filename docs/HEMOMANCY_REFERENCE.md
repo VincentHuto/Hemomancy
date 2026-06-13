@@ -513,7 +513,7 @@ The fane is now modeled as a **Soft Envelope** instead of one fixed circular ter
 - The fountain renderer throttles particle spawning per bloodwell position and no longer pads stream segments into each other with overlap.
 
 **Block blood endpoints:**
-- `BlockBloodEndpoint` and `BlockBloodInteractions` provide the reusable hook for Blood Absorption / Blood Projection against blocks. Tools first ask the looked-at block whether it can absorb/project blood, then fall back to legacy living-entity, blood-structure, or blood-tile behavior.
+- `BlockBloodEndpoint` and `BlockBloodInteractions` provide the reusable hook for Blood Absorption / Blood Projection against blocks. Blood Projection first checks the looked-at block for direct world reactions such as feeding a vanilla Dead Bush into a Bloodwood tree, then asks endpoint blocks whether they can absorb/project blood before falling back to legacy living-entity, blood-structure, or blood-tile behavior.
 - Blood Absorption also works against legacy blood-volume tile machines that Blood Projection can fill. When aimed at a blood tile, it removes blood from the tile, fills the player up to their personal capacity, sends tile updates, and syncs the player's blood volume.
 - `ConsecratedBloodwellBlock` is the first endpoint implementation: absorption draws from the bound bloodline pool and projection contributes to it. Future blocks can implement the same contract for other "drawing blood out of a block" interactions without becoming blood tanks.
 
@@ -549,7 +549,7 @@ At around **Degree 3â€“4**, the Harbinger Vicar and/or the player's own res
 | **Putriciel** | MORTEM + FLAMMEUS | `hallowed_residuum_putriciel` + `flammeus: 1`, `mortem: 1`, `blood: 100` | Bloom of Rot | Respergillus / Sanguiflora cadens / Saprovitta vestigium |
 | **Velorum** | CONGEATIO + TENEBRIS | `hallowed_residuum_velorum` + `congeatio: 1`, `tenebris: 1`, `blood: 100` | Endless Hour | Lumina Devorans / Thanomyces resurgens |
 
-> The older saint-residuum + vanilla-catalyst incubator recipes for fungal scars have been replaced by Mycelial Crucible cultivation recipes. Hallowed Residuum still matters for Canon Memories and Saint rewards; scar growth now keys off the recipe tendency, blood cost, and aligned enzymes.
+> The older saint-residuum + vanilla-catalyst incubator recipes for fungal scars have been replaced by Mycelial Crucible cultivation recipes. Hallowed Residuum still matters for Canon Memories and Saint rewards; scar growth now keys off the recipe tendency, blood cost, and aligned enzymes. Phase 1 cleanup removed the last duplicate Incubator holdovers for `respergillus`, `talaromyces_minus`, `noctifly_agaric`, and `lumina_devorans`.
 
 There are **four Saints** in total; which one a player encounters first is partially randomized.
 
@@ -1278,6 +1278,8 @@ The **Mycelial Crucible** (`MycelialCrucibleBlockEntity`) is the current fungal-
 - Blood input (6): Bloody Flask or Blood Gourd
 - Flask output (7): empty/cured flask return
 
+When placed, the crucible reserves a rotating 3x2x1 footprint: the main block is the lower center, with filler blocks on both lower sides and across the upper row. Its width follows the block's horizontal facing.
+
 **Phase 1 â€” Implantation:** The center scar plus aligned enzymes start a timed cultivation run. The crucible deducts the recipe's flat blood cost, then drains 1.5 blood/tick for the recipe duration. On completion it consumes the center/enzymes and outputs the single consolidated `immature_fungal_scar`.
 
 **Phase 2 â€” Maturation:** The immature culture stores `Tendency`, `MatureThreshold`, `MatureProgress`, and `TargetScarId` in `DataComponents.CUSTOM_DATA`. Feeding aligned enzymes advances `MatureProgress`; when progress reaches the threshold, the crucible converts it into the target `ItemFungalScar`. Progress is preserved on the item stack, and blood shortages pause the process rather than resetting it.
@@ -1870,25 +1872,35 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_rock.png) Blood Rock | Crafting ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_conduit.png) Sanguine Conduit | Crafting ingredient / covenant anchor. **Block form gated behind Degree 5 (Illuminatus).** Right-clicking a surface places the block only when `IInitiatoryDegree.getDegreeNumber() >= 5`; below that degree the item shows the locked placement message and fails placement. In-air right-click opens the Harbinger skill tree at any degree. **Right-clicking the placed block also opens the Harbinger skill tree.** The placed block has a minimal `SanguineConduitBlockEntity` whose BER (`SanguineConduitBlockRenderer`) draws a slow, dim pulsing crimson ring expanding outward â€” a quiet mark of covenant presence. It intentionally does not spawn HutosLib tendrils from its renderer. Registered in `ItemInit` as `ItemSanguineConduit`, which extends `BlockItem` for `BlockInit.sanguine_conduit`; `BlockInit.shouldSkipAutoBlockItem()` skips the placed block so no duplicate generic `BlockItem` overwrites the custom item on reload. Tooltip changes at Degree 5 to reveal the planting mechanic. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Sanguine Quintessence | Rare Harbinger catalyst produced by the Exsanguination cardinal rite. Used as the placed catalyst for Founding Fane and as the held catalyst for puppeteer trial Blood Crafting recipes. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/serpent_scale.png) Serpent Scale | Drops from Scarlet Serpents in desert/badlands, swamp, and jungle biome families |
+| ![](../src/main/resources/assets/hemomancy/textures/item/serpent_scale.png) Serpent Scale | Drops from Scarlet Serpents in desert/badlands, swamp, and jungle biome families; used for serpent utility items such as Constrictor Cords and Scale Grip |
 | ![](../src/main/resources/assets/hemomancy/textures/item/swollen_leech.png) Swollen / ![](../src/main/resources/assets/hemomancy/textures/item/dried_leech.png) Dried Leech | Mob drops |
 | ![](../src/main/resources/assets/hemomancy/textures/item/chitinous_husk.png) Chitinous Husk | Mob drop |
-| ![](../src/main/resources/assets/hemomancy/textures/item/puppeteering_thread.png) Puppeteering Thread | Mob drop and puppeteer fuel. The Puppeteer's Spindle consumes it into its 512-thread internal buffer at 1 item count = 1 buffer point, then transfers that thread into slotted Marionette Crossbars up to their 256-thread cap. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/bleeding_bulb.png) Bleeding Bulb | Plant-based ingredient |
-| ![](../src/main/resources/assets/hemomancy/textures/item/dicentra_sap.png) Dicentra Sap | Plant-based ingredient |
+| ![](../src/main/resources/assets/hemomancy/textures/item/puppeteering_thread.png) Puppeteering Thread | Mob drop, puppeteer fuel, and living-line material. The Puppeteer's Spindle consumes it into its 512-thread internal buffer at 1 item count = 1 buffer point, then transfers that thread into slotted Marionette Crossbars up to their 256-thread cap. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/bleeding_bulb.png) Bleeding Bulb | Primary bleeding-heart plant ingredient; normal loot, recipes, and plant acquisition use this item. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/dicentra_sap.png) Dicentra Sap | Legacy compatibility material. Existing stacks remain registered and can be distilled into Bleeding Bulbs, but new loot/recipes should not depend on it as a separate reagent. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/spore_sac.png) Spore Sac | Fungal ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hyphal_substrate.png) Hyphal Substrate | Mycelial Crucible support ingredient for fungal scar cultivation |
 | ![](../src/main/resources/assets/hemomancy/textures/item/blood_crystal_shard.png) Blood Crystal Shard / ![](../src/main/resources/assets/hemomancy/textures/item/cleansed_blood_crystal_shard.png) Cleansed Blood Crystal Shard | Crystal materials |
 | ![](../src/main/resources/assets/hemomancy/textures/item/vivianite_cluster.png) Vivianite Cluster | Mineral material |
 | ![](../src/main/resources/assets/hemomancy/textures/item/gourd_seeds.png) Gourd Seeds | Plantable, grows gourds |
 | ![](../src/main/resources/assets/hemomancy/textures/item/dried_gourd.png) Dried Gourd | Gourd processing product |
-| ![](../src/main/resources/assets/hemomancy/textures/item/desiccated_membrane.png) Desiccated Membrane | Drops from Dessicants; used for `sanguine_formation_from_membrane`, distills to Dicentra Sap, and serves as the `antiphonomyces_resonans` fungal-scar substrate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/desiccated_membrane.png) Desiccated Membrane | Drops from Dessicants; used for `sanguine_formation_from_membrane`, distills to Bleeding Bulb, and serves as the `antiphonomyces_resonans` fungal-scar substrate. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/molten_scab.png) Molten Scab | Drops from Cruor Fiends; smelts/crafts into Hematic Iron Scrap through `hematic_iron_scrap_from_molten_clot` and has a Ghastly Alembic distillation route. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/void_ichor.png) Void Ichor | Drops from Void Drinkers; converts into Sanguine Quintessence through `sanguine_quintessence_from_void_ichor`, distills to Dicentra Sap, and serves as the `lumina_devorans` fungal-scar substrate. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/frozen_clot.png) Frozen Clot | Drops from Frozen Clot mobs; used in `sanguine_salve_from_frozen_cruor`, distills to Dicentra Sap, and serves as the `thanomyces_resurgens` fungal-scar substrate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/void_ichor.png) Void Ichor | Drops from Void Drinkers; converts into Sanguine Quintessence through `sanguine_quintessence_from_void_ichor`, distills to Bleeding Bulb, and serves as the `lumina_devorans` fungal-scar substrate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/frozen_clot.png) Frozen Clot | Drops from Frozen Clot mobs; used in `sanguine_salve_from_frozen_cruor`, distills to Bleeding Bulb, and serves as the `thanomyces_resurgens` fungal-scar substrate. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/abyssal_ichor.png) Abyssal Ichor | Drops from Abyssal Siphons; present in the Ghastly Alembic distillation lane and exposed as a Materials-tab entity reagent. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/nerve_bundle.png) Nerve Bundle | Drops from Myelin Borers; crafts the alternate `sanguine_conduit_from_nerve_bundle` recipe with Puppeteering Thread and has a Ghastly Alembic distillation route. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/mnemonic_ambergris.png) Mnemonic Ambergris | Nonlethal Mnemonic Whale sample/shed material; used as reef-memory ambience and future-facing Mnemonist material rather than a standard combat drop. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/mnemonic_ambergris.png) Mnemonic Ambergris | Nonlethal Mnemonic Whale sample/shed material; used as reef-memory ambience, Mnemonic Whispers brewing input, Mnemonic Candle crafting, and household utility material for Ossuary Clock / Humoral Barometer recipes. |
+
+**Phase 1 utility additions:** `blood_chum` is a throwable bait mass crafted from Bleeding Bulb, cod, and rotten flesh; throwing it into water temporarily chums that area, reducing fishing bite wait time for hooks in the radius without improving loot quality. Active chum patches emit red dust flecks and bubbles so the fishing area remains visible after the initial splash. `ossuary_clock` is a no-GUI two-block-tall grandfather-clock-style placeable block made from bones, a clock, and Mnemonic Ambergris; it places as one continuous 1x2x1 model facing the player and right-clicking either half reports the current time band and moon phase. `humoral_barometer` is a no-GUI wall-mounted block made from copper, glass, Bleeding Bulb, and Mnemonic Ambergris; right-click reports rain/thunder state and active Blood Moon remaining duration, but does not predict future random Blood Moons.
+
+**Phase 2 world/ritual additions:** Active Harbingers can grow Bloodwood directly by aiming Blood Projection at a vanilla Dead Bush. The bush stores projected blood at its position; once it has drunk 900 blood and the tree volume is clear, it immediately becomes a jagged Bloodwood tree using `blood_wood_log` and `blood_wood_leaves`. There is intentionally no sapling, seed, or intermediate block path. `mnemonic_candle` is crafted from Mnemonic Ambergris, a vanilla candle, and Desiccated Membrane wrapping. When lit, nearby active Harbingers receive `mnemonic_candle_aura`; the aura adds +1.5 blood/tick passive regeneration while not full and reduces started manipulation cooldowns by 10% (`0.90x`).
+
+**Phase 3 serpent utility additions:** `constrictor_cord` is a throwable Serpent Scale utility that applies short Blood Binding plus the `constricted` marker, rooting targets without damage. Boss targets receive half duration. `scale_grip` is a single-use token that consumes itself on death to preserve one non-Scale-Grip main-inventory stack for respawn when `keepInventory` is false.
+
+**Phase 4 traversal utility addition:** `tendon_line` is a reusable biological climbing line crafted from Puppeteering Thread, Chitinous Husk, Bleeding Bulb, and Serpent Scale. Right-clicking a sturdy block face within 18 blocks stores an anchor; right-clicking air while anchored pulls the player toward it with controlled climbing motion rather than a hookshot launch. While held with a valid anchor, a red tendon tether renders from the player to the anchor. Sneak-right-click clears the anchor. The line detaches if the anchor becomes invalid, the player changes dimension, moves beyond 24 blocks, or reaches the anchor.
+
+**Phase 5 diagnostic utility addition:** `curor_lens` is a reusable held-up diagnostic instrument crafted from a Scrying Dish, glass, copper, Bleeding Bulb, and Blood Crystal Shard. Holding right-click raises the 3D lens with a spyglass-style use pose and renders a translucent curor overlay. The overlay raycasts living entities up to 16 blocks and displays client-visible health, blood volume, bloodline mark, dominant tendency, and scar information when those systems are readable.
 
 ### 20.2 Blood Storage Items
 
@@ -1987,7 +1999,7 @@ Living weapon memory weaving recipes keep a shared family identity without being
 | **Mycophant Tendril** | Mycophant boss drop and Charm of Vascularium slot variant. Extends `VasculariumCharmItem`, opens the usual manipulation radial because it is still charm-compatible, and triggers `MycophantTendrilFungalizationLayer` for the full-body fungalized appearance. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/liber_sanguinum.png) Liber Sanguinum | Guide book |
 | **Field Notes** | Stack-local memo notebook. Captures fleeting dialogue/memo events into `DataComponents.CUSTOM_DATA` (`Memos`, `RemainingMemos`, `InkPath`). Fresh notes have no prepared pages until filled with field ink. Hematic Field Ink binds the notes to Harbinger memos and Liber Sanguinum dictation; Pale Field Ink binds them to Unstained memos and Liber Immaculatus dictation. Each refill prepares 15 memo captures. Field Notes do not become their own Liber chapter; dictation unlocks normal book pages in the player's `LiberKnowledge` attachment. |
-| **Hematic Field Ink** | Harbinger Field Notes refill item crafted from Dicentra Sap, Hematic Iron Powder, a water bottle, and an ink sac. |
+| **Hematic Field Ink** | Harbinger Field Notes refill item crafted from Bleeding Bulb, Hematic Iron Powder, a water bottle, and an ink sac. |
 | **Pale Field Ink** | Unstained Field Notes refill item crafted from Tears of Silthmere, Pale Distillate, a water bottle, and an ink sac. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/unsigned_ancestral_ledger.png) Unsigned Ancestral Ledger | Creates/joins bloodlines |
 | **Hematic Suture Needle** | Direct blood routing tool. Degree 3+ binds blood-capable machines or Hematic Suture Nodes to the player; sneak-use on a bound link cycles nearby/fane/bloodline modes, and sneak-use in air toggles the player's bloodline routing opt-in. |
@@ -2009,7 +2021,7 @@ Living weapon memory weaving recipes keep a shared family identity without being
 | Item | Purpose |
 |------|---------|
 | Tears of Silthmere | Distilled from Lethean Dew â€” used at the Altar of Cleansing for a one-time purity boost (+25) |
-| ![](../src/main/resources/assets/hemomancy/textures/item/lethean_poppy_wreath.png) Lethean Poppy Wreath | Woven from Lethean Poppies â€” repeatable altar offering (+5 purity) |
+| ![](../src/main/resources/assets/hemomancy/textures/item/lethean_poppy_wreath.png) Lethean Poppy Wreath | Woven from Lethean Poppies â€” repeatable altar offering (+5 purity) and wall-mounted Unstained decoration |
 | ![](../src/main/resources/assets/hemomancy/textures/item/silver_chalice.png) Silver Chalice | A ritual vessel of the Unstained â€” offered at the Altar of Cleansing for clarity (+5) |
 | Pale Silver Bell | Handheld Unstained support equipment. Use grants short Silver Ward and weakens/slows nearby hostiles. |
 | Lethean Chalice | Reusable still-water vessel. Use clears one harmful effect, extinguishes fire, grants brief regeneration, and adds Verdigris Aura after Clarity. |
@@ -2041,7 +2053,7 @@ Produced by the **Visceral Mirror** ritual (requires Degree 3+). Spectral imprin
 | Echo of Kidneys | `KIDNEYS` | 3 | Filters impurities and maintains humoral balance |
 | Echo of Heart | `HEART` | 4 | The seat of circulation and will â€” highest risk, requires Degree 4+ |
 
-> **Status: Implemented.** Organ extraction ritual (Visceral Mirror â†’ cycle organs â†’ confirm â†’ produce Echo items) and all per-organ gameplay effects are fully implemented in `VisceralOrgansEvents` (player tick + capability check): **Spleen** +1000 max blood per organ level (announces expansion on first reach); **Liver** removes Poison (level 2+) and Wither (level 3+) on tick; **Lungs** grants Water Breathing (100Ã—level ticks) while underwater; **Kidneys** grants Regeneration at (level-1) amplifier normally, **level amplifier** during a Blood Moon (overclocked filtration); **Heart** grants Damage Resistance (capped at Resistance II), **Wither immunity at level 3** (Cardiac Autonomy mastered), and drains 10Ã·level blood per 2 s tick. **Iron Brazier reagent system is organ-specific:** each organ requires its own reagent type â€” Heart=`blood_crystal_shard`, Spleen=`vivianite_cluster`, Lungs=`fervent_husk`, Kidneys=`consecrated_copper_ingot`, Liver=`dicentra_sap`. The three reagents must all be the same type; the brazier records the locked organ and validates the echo matches before consuming it. See Â§20.8 and `IronBrazierBlockEntity`.
+> **Status: Implemented.** Organ extraction ritual (Visceral Mirror â†’ cycle organs â†’ confirm â†’ produce Echo items) and all per-organ gameplay effects are fully implemented in `VisceralOrgansEvents` (player tick + capability check): **Spleen** +1000 max blood per organ level (announces expansion on first reach); **Liver** removes Poison (level 2+) and Wither (level 3+) on tick; **Lungs** grants Water Breathing (100Ã—level ticks) while underwater; **Kidneys** grants Regeneration at (level-1) amplifier normally, **level amplifier** during a Blood Moon (overclocked filtration); **Heart** grants Damage Resistance (capped at Resistance II), **Wither immunity at level 3** (Cardiac Autonomy mastered), and drains 10Ã·level blood per 2 s tick. **Iron Brazier reagent system is organ-specific:** each organ requires its own reagent type â€” Heart=`blood_crystal_shard`, Spleen=`vivianite_cluster`, Lungs=`fervent_husk`, Kidneys=`consecrated_copper_ingot`, Liver=`bleeding_bulb`. The three reagents must all be the same type; the brazier records the locked organ and validates the echo matches before consuming it. See Â§20.8 and `IronBrazierBlockEntity`.
 
 ### 20.9 Banner Patterns
 
@@ -2251,6 +2263,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 One-off armor pieces intentionally use distinct material holders so they break full-set bonuses:
 - **Hemolymphopoda Headpiece:** existing D3 aquatic/organic helmet.
+- **Lantern Tick Helmet:** rare underground arthropod helmet dropped by Lantern Ticks. It renders as a large latched tick on the wearer's head and maintains a temporary moving light source around the wearer until removed.
 - **Crown of Sacred Marrow:** D5/D6 artifact helmet with high-blood melee bonus.
 - **Chalybeate Sclerite Sabatons:** D3/D4 boots from nonlethally knapped Chalybeate Sclerite; reduce projectile/fall damage and brace long falls. Uses the imported Fortress armor model/texture for worn and item-stack 3D boot renders.
 - **Covenant Mantle:** D6 chest piece tied to bloodline covenant play; spends wearer blood to grant nearby initiated allies brief resistance. Uses the imported cultist leader armor model/texture for worn and item-stack 3D chest renders.
@@ -2327,8 +2340,8 @@ A full block family with variants:
 
 ### 24.2 Hematic Iron Family
 
-| | | |
-|---|---|---|
+| | | | |
+|---|---|---|---|
 | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_block.png) Hematic Iron Block | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_pillar.png) Hematic Iron Pillar | ![](../src/main/resources/assets/hemomancy/textures/block/chiseled_hematic_iron_block.png) Chiseled Hematic Iron |
 | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_bars.png) Hematic Iron Bars | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_chain.png) Hematic Iron Chain | ![](../src/main/resources/assets/hemomancy/textures/block/hematic_iron_trapdoor.png) Hematic Iron Trapdoor |
 
@@ -2364,9 +2377,10 @@ The alpha building pass intentionally favors vanilla behavior for compatibility:
 
 | | | |
 |---|---|---|
-| ![](../src/main/resources/assets/hemomancy/textures/block/blood_wood_log.png) Blood Wood Log | ![](../src/main/resources/assets/hemomancy/textures/block/blood_wood_planks.png) Blood Wood Planks | ![](../src/main/resources/assets/hemomancy/textures/block/conscious_mass.png) Conscious Mass |
+| ![](../src/main/resources/assets/hemomancy/textures/block/blood_wood_log.png) Blood Wood Log | ![](../src/main/resources/assets/hemomancy/textures/block/blood_wood_leaves.png) Blood Wood Leaves | ![](../src/main/resources/assets/hemomancy/textures/block/blood_wood_planks.png) Blood Wood Planks | ![](../src/main/resources/assets/hemomancy/textures/block/conscious_mass.png) Conscious Mass |
 
 - Blood Wood Log (rotatable pillar)
+- Blood Wood Leaves (direct Blood Projection growth from Dead Bushes)
 - Blood Wood Planks
 - Conscious Mass (wart-block sound)
 
@@ -2384,13 +2398,13 @@ The alpha building pass intentionally favors vanilla behavior for compatibility:
 - Infected Cap / Fruiting Infected Cap
 - Erythrocytic Dirt
 - Erythrocytic Mycelium (spreads, random ticks)
-- Bleeding Heart (flower, Absorption effect â€” crafts Dicentra Sap, brews Potion of Sanguine Siphon)
+- Bleeding Heart (flower, Absorption effect â€” crafts Bleeding Bulb, brews Potion of Sanguine Siphon)
 - Infected Fungus (flower, Confusion effect â€” ghastly_alembic â†’ Foul Paste, brews Potion of Mycorrhizal Mending, incubator catalyst for Fungal Morphling)
 - Stinkhorn Fungus (Confusion effect â€” ghastly_alembic â†’ Foul Paste, brews Potion of Blood Binding)
 - Puffball Fungus (Saturation effect, **Unstained** â€” ghastly_alembic â†’ Spore Sac, incubator catalyst for Fungal Morphling)
 - Lethean Poppy (Regeneration effect, random ticks, **Unstained** â€” ghastly_alembic â†’ Lethean Dew, crafts Lethean Poppy Wreath)
 - Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** â€” ghastly_alembic â†’ The Pale Distillate)
-- Sarcodes (myco-heterotrophic, Regeneration effect â€” ghastly_alembic â†’ Dicentra Sap, brews Potion of Blood Rush)
+- Sarcodes (myco-heterotrophic, Regeneration effect â€” ghastly_alembic â†’ Bleeding Bulb, brews Potion of Blood Rush)
 - Rafflesia (parasitic, Confusion effect â€” ghastly_alembic â†’ Spore Sac, brews Potion of Hemolysis)
 
 All applicable flowers have **potted** variants.
@@ -2599,7 +2613,7 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 | Infected Fungus | Foul Paste | 2 | 100 |
 | Stinkhorn Fungus | Foul Paste | 2 | 100 |
 | Ghost Pipe | The Pale Distillate | 1 | 150 |
-| Sarcodes | Dicentra Sap | 2 | 120 |
+| Sarcodes | Bleeding Bulb | 2 | 120 |
 | Rafflesia | Spore Sac | 2 | 120 |
 | Puffball Fungus | Spore Sac | 2 | 120 |
 | Lethean Poppy | Lethean Dew | 2 | 150 |
@@ -2785,6 +2799,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Brined Votary** | ![](../src/main/resources/assets/hemomancy/textures/entity/brined_votary/brined_votary.png) | Monster | Structure-only drowned Harbinger remnant placed by Harbinger Voyager Wrecks. Slow aquatic humanoid in corroded diving/ritual gear; wakes only at close range, is persistent when structure-placed, and has modest loot. |
 | **Synapse Hound** | | Monster | Neural creature (ON_GROUND spawn) |
 | **Myelin Borer** | | Monster | Burrowing neural parasite (ON_GROUND spawn) |
+| **Lantern Tick** | ![](../src/main/resources/assets/hemomancy/textures/entity/lantern_tick/model_lantern_tick.png) | Monster | Rare underground parasite in cave biomes. It glows as a lure when no player is nearby, leaps at close players, latches onto their head, and periodically drains active blood volume; if no active blood pool is available, it deals small fallback damage. Drops the Lantern Tick Helmet. |
 
 ### 26.2 Creature / Ambient Mobs
 
@@ -2879,6 +2894,7 @@ Notable implemented drop families:
 | Blood Lantern Jelly | Empty/no meaningful combat drops; its value is ambient reef life and specimen preservation |
 | Prism Cuttle | Small glow-ink fallback; intended value is observation, specimen capture, and its defensive flash ecology |
 | Venom-Rib Centipede | Spider-eye fallback from a dangerous damp-biome predator; venom pressure and bug predation are the primary encounter identity |
+| Lantern Tick | Drops the Lantern Tick Helmet; encounter value is the latch parasite behavior and mobile-light artifact, not material farming |
 | Mnemonic Whale | Empty/no meaningful combat drops; intended interaction is nonlethal Mnemonic Ambergris sampling and observation |
 | Brined Votary | Minimal salvage only: rare paper/book/scrap/spore material. It is a tragic wreck guardian, not a farming target. |
 | Saint and boss entities | Direct/special boss rewards are handled in entity code or matching loot JSON depending on encounter |

@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.HemolymphopodaModel;
-import com.vincenthuto.hutoslib.math.Quaternion;
-import com.vincenthuto.hutoslib.math.Vector3;
+import com.vincenthuto.hemomancy.client.render.armor.ArmorItemDisplayTransformHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -15,18 +15,17 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/hemolymphopoda/model_hemolymphopoda.png");
-
-	// Dome pivot in the entity model is at (0, 23, -5.5) in pixel units.
-	// This translate (applied first to vertices) centres the dome at the origin
-	// before rotation and scale are applied.
-	private static final float DOME_CENTER_Y = -23.0f / 16.0f;
-	private static final float DOME_CENTER_Z = 5.5f / 16.0f;
+	private static final float DOME_CENTER_Y = -23.0F / 16.0F;
+	private static final float DOME_CENTER_Z = 5.5F / 16.0F;
+	private static final float GUI_HEADPIECE_SCALE = 0.64F;
+	private static final float HELD_HEADPIECE_SCALE = 0.44F;
 
 	private HemolymphopodaModel<?> model;
 
@@ -45,32 +44,28 @@ public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevel
 					Minecraft.getInstance().getEntityModels().bakeLayer(HemolymphopodaModel.LAYER_LOCATION));
 		}
 
-		float scale;
-		switch (context) {
-		case GUI -> scale = 0.6f;
-		case GROUND -> scale = 0.4f;
-		case FIXED -> scale = 0.5f;
-		default -> scale = 0.5f;
-		}
-
 		poseStack.pushPose();
-
-		// (5) Place into item display space
-		poseStack.translate(0.5, 0.5, 0.5);
-		// (4) Scale down to fit the 1×1×1 item space
-		poseStack.scale(scale, scale, scale);
-		// (3) Flip entity-model Y convention so the shell faces up
-		poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-		// (2) Rotate to an isometric angle so the shell shape is clearly visible
-		poseStack.mulPose(new Quaternion(Vector3.YP, 135, true).toMoj());
-		// (1) Centre the dome pivot at the local origin (applied first to vertices)
-		poseStack.translate(0.0f, DOME_CENTER_Y, DOME_CENTER_Z);
+		applyHeadpieceItemTransform(context, poseStack);
+		poseStack.translate(0.0F, DOME_CENTER_Y, DOME_CENTER_Z);
 
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		model.renderToBuffer(poseStack, consumer, light, OverlayTexture.NO_OVERLAY, -1);
 
 		poseStack.popPose();
 	}
+
+	private static void applyHeadpieceItemTransform(ItemDisplayContext context, PoseStack poseStack) {
+		ArmorItemDisplayTransformHelper.apply(context, EquipmentSlot.HEAD, poseStack);
+		if (context == ItemDisplayContext.GUI) {
+			poseStack.mulPose(Axis.YP.rotationDegrees(-20.0F));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(-15.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(25.0F));
+			poseStack.scale(GUI_HEADPIECE_SCALE, GUI_HEADPIECE_SCALE, GUI_HEADPIECE_SCALE);
+			poseStack.translate(0.0D, -0.18D, -0.1D);
+		} else {
+			poseStack.mulPose(Axis.YP.rotationDegrees(-12.0F));
+			poseStack.scale(HELD_HEADPIECE_SCALE, HELD_HEADPIECE_SCALE, HELD_HEADPIECE_SCALE);
+			poseStack.translate(-0.5D, 0.40D, 0.14D);
+		}
+	}
 }
-
-

@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+      "model": "hemomancy:block/blood_wood_leaves"
+      }
+    }
+  ]
+}

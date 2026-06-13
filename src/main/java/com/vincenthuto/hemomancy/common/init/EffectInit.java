@@ -221,6 +221,15 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> morphic_strain = EFFECTS.register("morphic_strain",
             () -> new MorphicStrainEffect(MobEffectCategory.HARMFUL, 0x5A2A65));
 
+    public static final DeferredHolder<MobEffect, MobEffect> chummed_waters = EFFECTS.register("chummed_waters",
+            () -> new ChummedWatersEffect(MobEffectCategory.BENEFICIAL, 0x7A1E2A));
+
+    public static final DeferredHolder<MobEffect, MobEffect> constricted = EFFECTS.register("constricted",
+            () -> new ConstrictedEffect(MobEffectCategory.HARMFUL, 0x6D4731));
+
+    public static final DeferredHolder<MobEffect, MobEffect> mnemonic_candle_aura = EFFECTS.register("mnemonic_candle_aura",
+            () -> new MnemonicCandleAuraEffect(MobEffectCategory.BENEFICIAL, 0xB45A3C));
+
     public static final DeferredHolder<MobEffect, MobEffect> mnemonic_whispers = EFFECTS.register("mnemonic_whispers",
             () -> new MnemonicWhispersEffect(MobEffectCategory.BENEFICIAL, 0x7A5C91));
     public static final DeferredHolder<Potion, Potion> potion_of_mnemonic_whispers = POTION_TYPES.register(

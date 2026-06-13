@@ -21,7 +21,7 @@ public final class CovenantSkillBranch {
 			SkillPointInit.skill_bloodline_concord = SkillPointInit.registerSkill(branch,
 					new SkillPoint(31, "skill_bloodline_concord", 650, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(568, 328).setBranch("covenant").setBranchColor(0xFFA54569)
-							.setIconItem(() -> new ItemStack(ItemInit.bloodline_pool_monitor.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.abyssal_ichor.get())));
 			SkillPointInit.skill_servitor_tender = SkillPointInit.registerSkill(branch,
 					new SkillPoint(32, "skill_servitor_tender", 650, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(642, 434).setBranch("covenant").setBranchColor(0xFFA54569)

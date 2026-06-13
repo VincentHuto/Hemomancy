@@ -20,7 +20,7 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("chitinite", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian_queen", "hemomancy:chitinous_husk"),
-			new GuaranteedDrop("crimson_doe", "hemomancy:dicentra_sap"),
+			new GuaranteedDrop("crimson_doe", "hemomancy:bleeding_bulb"),
 			new GuaranteedDrop("cruor_fiend", "hemomancy:molten_scab"),
 			new GuaranteedDrop("dessicant", "hemomancy:desiccated_membrane"),
 			new GuaranteedDrop("enthralled_doll", "hemomancy:bleeding_bulb"),
@@ -46,9 +46,6 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("synapse_hound", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("thirster", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("tooth_pecks", "minecraft:bone_meal"),
-			new GuaranteedDrop("unstained_acolyte", "hemomancy:sanguine_blob"),
-			new GuaranteedDrop("unstained_guardian", "hemomancy:sanguine_blob"),
-			new GuaranteedDrop("unstained_zealot", "hemomancy:sanguine_blob"),
 			new GuaranteedDrop("venous_strider", "hemomancy:vivacious_spores"),
 			new GuaranteedDrop("vesper_evening_star", "hemomancy:memory_of_vesper"),
 			new GuaranteedDrop("void_drinker", "hemomancy:void_ichor") };

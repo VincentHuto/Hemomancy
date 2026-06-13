@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "hemomancy:desiccated_membrane"
   },
-  "result": "hemomancy:dicentra_sap",
+  "result": "hemomancy:bleeding_bulb",
   "count": 2,
   "experience": 0.5,
   "cookingtime": 150,

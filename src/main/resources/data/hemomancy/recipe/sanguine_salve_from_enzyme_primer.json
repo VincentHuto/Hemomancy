@@ -3,7 +3,7 @@
   "ingredients": [
     { "item": "hemomancy:enzyme_primer" },
     { "item": "hemomancy:frozen_clot" },
-    { "item": "hemomancy:dicentra_sap" }
+    { "item": "hemomancy:bleeding_bulb" }
   ],
   "result": {
     "id": "hemomancy:sanguine_salve",

@@ -214,6 +214,34 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType mycelialCrucibleBasin(float gameTime, float basinSeed, float swirlIntensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"mycelial_crucible_basin_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MYCELIAL_CRUCIBLE_BASIN.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "BasinSeed", basinSeed);
+					setUniform(shader, "SwirlIntensity", swirlIntensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MYCELIAL_CRUCIBLE_BASIN.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("mycelial_crucible_basin",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 4096, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MYCELIAL_CRUCIBLE_BASIN.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	private static void setUniform(ShaderInstance shader, String name, float value) {
 		if (shader == null) {
 			return;

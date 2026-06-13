@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "hemomancy:mnemonic_ambergris"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "S": {
+      "item": "hemomancy:bleeding_bulb"
+    }
+  },
+  "pattern": [
+    "CGC",
+    "GSG",
+    "CAC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:humoral_barometer"
+  }
+}

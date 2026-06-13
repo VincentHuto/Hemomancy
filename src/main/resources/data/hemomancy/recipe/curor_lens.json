@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "tools",
+  "key": {
+    "B": {
+      "item": "hemomancy:blood_crystal_shard"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "D": {
+      "item": "hemomancy:bleeding_bulb"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "S": {
+      "item": "hemomancy:scrying_dish"
+    }
+  },
+  "pattern": [
+    "CGC",
+    "BDS",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:curor_lens"
+  }
+}

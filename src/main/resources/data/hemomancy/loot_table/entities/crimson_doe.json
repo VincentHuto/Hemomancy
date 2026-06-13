@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:dicentra_sap",
+          "name": "hemomancy:bleeding_bulb",
           "functions": [
             {
               "function": "minecraft:set_count",

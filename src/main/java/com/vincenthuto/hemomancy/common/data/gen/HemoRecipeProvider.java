@@ -36,7 +36,7 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.unlockedBy("has_polished_venous_stone_bricks", has(BlockInit.polished_venous_stone_bricks.get()))
 				.save(consumer);
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,ItemInit.dicentra_sap.get(), 3).requires(BlockInit.bleeding_heart.get())
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.bleeding_bulb.get(), 3).requires(BlockInit.bleeding_heart.get())
 				.unlockedBy("has_bleeding_heart", has(BlockInit.bleeding_heart.get())).save(consumer);
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,ItemInit.foul_paste.get(), 3).requires(Items.NETHER_WART)

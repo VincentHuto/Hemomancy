@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEv
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
+import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -255,6 +256,9 @@ public class BloodManipulation  {
 					* SporiticThuribleResonanceState.getCooldownMultiplier(player, tend));
 			effectiveCooldown = (long) (effectiveCooldown
 					* MnemonicPotionRules.manipulationCooldownMultiplier(player.hasEffect(EffectInit.mnemonic_whispers)));
+			effectiveCooldown = (long) (effectiveCooldown
+					* MnemonicCandleRules.manipulationCooldownMultiplier(
+							player.hasEffect(EffectInit.mnemonic_candle_aura)));
 
 			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
 			return effectiveCooldown;

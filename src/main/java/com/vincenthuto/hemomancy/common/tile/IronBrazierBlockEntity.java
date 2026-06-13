@@ -191,7 +191,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	 *   <li>Spleen    → vivianite_cluster      (mineral, blood-volume filtration)</li>
 	 *   <li>Lungs     → fervent_husk           (breath, combustion)</li>
 	 *   <li>Kidneys   → consecrated_copper_ingot (copper-salt filtration)</li>
-	 *   <li>Liver     → dicentra_sap           (fluid, alchemical cleansing)</li>
+	 *   <li>Liver     → bleeding_bulb          (fluid, alchemical cleansing)</li>
 	 * </ul>
 	 */
 	@Nullable
@@ -200,7 +200,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (stack.getItem() == ItemInit.vivianite_cluster.get())       return EnumOrgan.SPLEEN;
 		if (stack.getItem() == ItemInit.fervent_husk.get())            return EnumOrgan.LUNGS;
 		if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) return EnumOrgan.KIDNEYS;
-		if (stack.getItem() == ItemInit.dicentra_sap.get())            return EnumOrgan.LIVER;
+		if (stack.getItem() == ItemInit.bleeding_bulb.get())           return EnumOrgan.LIVER;
 		return null;
 	}
 

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/lethean_poppy_wreath",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "hemomancy:block/lethean_poppy_wreath"
+    },
+    "facing=west": {
+      "model": "hemomancy:block/lethean_poppy_wreath",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "hemomancy:block/lethean_poppy_wreath",
+      "y": 270
+    }
+  }
+}

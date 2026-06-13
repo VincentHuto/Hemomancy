@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "minecraft:crafting_shaped",
   "pattern": [
     " S ",
@@ -10,7 +10,7 @@
       "item": "hemomancy:sanguine_formation"
     },
     "D": {
-      "item": "hemomancy:dicentra_sap"
+      "item": "hemomancy:bleeding_bulb"
     }
   },
   "result": {

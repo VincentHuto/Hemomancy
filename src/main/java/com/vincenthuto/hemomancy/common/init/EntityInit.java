@@ -397,6 +397,12 @@ public class EntityInit {
             () -> EntityType.Builder.of(HemolymphopodaEntity::new, MobCategory.AMBIENT).sized(0.9F, 0.3F)
                     .build(Hemomancy.rloc("hemolymphopoda").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<LanternTickEntity>> lantern_tick = ENTITY_TYPES.register(
+            "lantern_tick",
+            () -> EntityType.Builder.of(LanternTickEntity::new, MobCategory.MONSTER).sized(0.55F, 0.35F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("lantern_tick").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
             () -> EntityType.Builder.of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
                     .build(Hemomancy.rloc("chitinite").toString()));
@@ -529,6 +535,20 @@ public class EntityInit {
             () -> EntityType.Builder.<TrackingSerpentEntity>of(TrackingSerpentEntity::new, MobCategory.MISC)
                     .setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true)
                     .sized(0.25F, 0.25F).build(Hemomancy.rloc("tracking_snake").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<ConstrictorCordEntity>> constrictor_cord_projectile =
+            ENTITY_TYPES.register("constrictor_cord_projectile",
+                    () -> EntityType.Builder.<ConstrictorCordEntity>of(ConstrictorCordEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(4)
+                            .build(Hemomancy.rloc("constrictor_cord_projectile").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<BloodChumEntity>> blood_chum_projectile =
+            ENTITY_TYPES.register("blood_chum_projectile",
+                    () -> EntityType.Builder.<BloodChumEntity>of(BloodChumEntity::new, MobCategory.MISC)
+                            .sized(0.25F, 0.25F)
+                            .clientTrackingRange(4)
+                            .updateInterval(4)
+                            .build(Hemomancy.rloc("blood_chum_projectile").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<TrackingPestsEntity>> tracking_pests = ENTITY_TYPES.register(
             "tracking_pests",
             () -> EntityType.Builder.<TrackingPestsEntity>of(TrackingPestsEntity::new, MobCategory.MISC)
@@ -680,6 +700,9 @@ public class EntityInit {
         event.register(EntityInit.venous_strider.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.lantern_tick.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LanternTickEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         // Dimension-biome mobs — wired in BiomeInit but need SpawnPlacements so the engine can place them.
         event.register(EntityInit.thirster.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ThirsterEntity::checkMonsterSpawnRules,
@@ -733,6 +756,7 @@ public class EntityInit {
         event.put(EntityInit.brined_votary.get(), BrinedVotaryEntity.setAttributes().build());
         event.put(EntityInit.prism_cuttle.get(), PrismCuttleEntity.setAttributes().build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
+        event.put(EntityInit.lantern_tick.get(), LanternTickEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());
         event.put(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerEntity.setAttributes().build());

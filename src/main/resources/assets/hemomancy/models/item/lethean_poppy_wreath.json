@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "hemomancy:item/lethean_poppy_wreath"
-  }
+  "parent": "hemomancy:block/lethean_poppy_wreath"
 }

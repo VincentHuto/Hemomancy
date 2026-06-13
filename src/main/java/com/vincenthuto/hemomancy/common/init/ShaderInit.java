@@ -46,6 +46,9 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_COLOR, "HemoTime", "OrbSeed", "OrbCenter", "OrbRadius", "WritheStrength",
 			"ThreadScale", "GlowLayer");
 
+	public static ShaderHolder MYCELIAL_CRUCIBLE_BASIN = new ShaderHolder(Hemomancy.rloc("world/mycelial_crucible_basin"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "BasinSeed", "SwirlIntensity");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -66,6 +69,7 @@ public class ShaderInit {
         registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
+        registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

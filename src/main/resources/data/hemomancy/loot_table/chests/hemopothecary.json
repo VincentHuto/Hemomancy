@@ -112,7 +112,7 @@
         {
           "type": "minecraft:item",
           "weight": 20,
-          "name": "hemomancy:dicentra_sap"
+          "name": "hemomancy:bleeding_bulb"
         },
         {
           "type": "minecraft:item",

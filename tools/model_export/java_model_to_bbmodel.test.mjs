@@ -335,6 +335,38 @@ async function testVenomRibCentipedeNestedSegmentsConvert() {
   }
 }
 
+async function testLanternTickHelperGeneratedLegsConvert() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const outputFile = path.join(outputDir, "LanternTickModel.bbmodel");
+
+  try {
+    await runConverter([
+      "--source",
+      "src/main/java/com/vincenthuto/hemomancy/client/model/entity/mob/arthropod/LanternTickModel.java",
+      "--texture",
+      "textures/entity/lantern_tick.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+
+    assert.equal(bbmodel.name, "LanternTickModel");
+    assert.ok(groupNames.includes("left_leg_0"), "helper-generated first left leg should export");
+    assert.ok(groupNames.includes("left_leg_3"), "helper-generated last left leg should export");
+    assert.ok(groupNames.includes("right_leg_0"), "helper-generated first right leg should export");
+    assert.ok(groupNames.includes("right_leg_3"), "helper-generated last right leg should export");
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("left_leg_0_")),
+      "helper-generated left leg should export cube geometry");
+    assert.ok(bbmodel.elements.some((element) => element.name.startsWith("right_leg_0_")),
+      "helper-generated right leg should export cube geometry");
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
 async function testLegacyObfuscatedModelRendererArmorConverts() {
   const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
   const sourceFile = path.join(outputDir, "LegacyArmorModel.java");
@@ -570,6 +602,7 @@ const tests = [
   ["converts ChalybeateSnailModel parts declared inside a simple for loop", testChalybeateSnailForLoopPartsConvert],
   ["converts PrismCuttleModel loop-generated arms and rule constants", testPrismCuttleLoopGeneratedArmsConvert],
   ["converts VenomRibCentipedeModel nested loop-generated segments", testVenomRibCentipedeNestedSegmentsConvert],
+  ["converts LanternTickModel helper-generated angled legs", testLanternTickHelperGeneratedLegsConvert],
   ["converts obfuscated legacy ModelRenderer armor parts", testLegacyObfuscatedModelRendererArmorConverts],
   ["converts named legacy ModelRenderer methods", testLegacyNamedModelRendererMethodsConvert],
   ["ignores legacy runtime rotation assignments that are not static model data", testLegacyRuntimeRotationAssignmentsAreIgnored],

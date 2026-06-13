@@ -5,7 +5,9 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -66,6 +68,13 @@ public class BloodVolumeEvents {
 			}
 
 			// â”€â”€ Skill: Last Wind â€” emergency regen when blood is critically low â”€â”€
+			double candleRegen = MnemonicCandleRules.bonusBloodRegenPerTick(
+					player.hasEffect(EffectInit.mnemonic_candle_aura));
+			if (candleRegen > 0 && !volume.isFull()) {
+				volume.fill(candleRegen);
+				syncVolume((ServerPlayer) player, volume);
+			}
+
 			double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick(player);
 			if (lastWindRegen > 0) {
 				double threshold = volume.getMaxBloodVolume() * SkillPointHelper.getLastWindThreshold();

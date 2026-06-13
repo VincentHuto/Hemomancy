@@ -256,6 +256,7 @@ async function checkGeneratedModels({ outDir, models }) {
 
 function parseJavaModel(source, model) {
   const numericConstants = collectNumericConstants(source, model.source);
+  const helperMethods = collectPartDefinitionHelperMethods(source);
   const loopContexts = collectSimpleForLoopContexts(source, numericConstants);
   const loopExitPartAliases = collectLoopExitPartAliases(loopContexts);
   const resolutionMatch = source.match(/LayerDefinition\.create\s*\(\s*[^,]+,\s*(\d+)\s*,\s*(\d+)\s*\)/);
@@ -264,34 +265,37 @@ function parseJavaModel(source, model) {
   }
 
   const parts = [];
-  let searchAt = 0;
-  while (true) {
-    const callAt = source.indexOf(".addOrReplaceChild", searchAt);
-    if (callAt === -1) {
-      break;
-    }
 
-    const parentVar = parseParentVariable(source, callAt);
-    const assignedVar = parseAssignedVariable(source, callAt);
-    const openParen = source.indexOf("(", callAt);
-    const closeParen = findMatching(source, openParen, "(", ")");
-    const callBody = source.slice(openParen + 1, closeParen);
+  const addPartFromCall = (callSource, callAt, baseLocals = new Map(), declarationStart = null, callSiteAt = callAt) => {
+    const parentVar = parseParentVariable(callSource, callAt);
+    const assignedVar = parseAssignedVariable(callSource, callAt);
+    const openParen = callSource.indexOf("(", callAt);
+    const closeParen = findMatching(callSource, openParen, "(", ")");
+    const callBody = callSource.slice(openParen + 1, closeParen);
     const callArgs = splitTopLevel(callBody, ",");
     if (callArgs.length < 3) {
       throw new Error(`Could not parse addOrReplaceChild call in ${model.source} near ${callAt}`);
     }
 
-    const loopContext = innermostLoopContextFor(loopContexts, callAt);
+    const loopContext = innermostLoopContextFor(loopContexts, callSiteAt);
     const iterationLocals = loopContext
-      ? loopContext.iterations.map((locals) => localsWithDeclarationsBefore(source, loopContext, callAt, numericConstants, locals))
+      ? loopContext.iterations.map((locals) => {
+          const merged = new Map([...locals, ...baseLocals]);
+          return localsWithDeclarationsBefore(source, loopContext, callSiteAt, numericConstants, merged);
+        })
       : [new Map()];
     for (const locals of iterationLocals) {
+      const scopedLocals = declarationStart === null
+        ? new Map([...locals, ...baseLocals])
+        : localsWithDeclarationsInRange(callSource, declarationStart, callAt, numericConstants, new Map([...locals, ...baseLocals]));
       const parseNumeric = (value) => parseNumber(value, numericConstants, locals);
-      const name = parseNameExpression(callArgs[0], parseNumeric);
-      const cubes = parseCubes(callArgs[1], parseNumeric);
-      const pose = parsePose(callArgs.slice(2).join(","), parseNumeric);
+      const parseScopedNumeric = (value) => parseNumber(value, numericConstants, scopedLocals);
+      const parent = resolvePartDefinitionVariable(parentVar, scopedLocals);
+      const name = parseNameExpression(callArgs[0], parseScopedNumeric, scopedLocals);
+      const cubes = parseCubes(callArgs[1], parseScopedNumeric);
+      const pose = parsePose(callArgs.slice(2).join(","), parseScopedNumeric);
       const varName = modelPartVariableName(assignedVar, name, loopContext, locals, parts.length, parentVar);
-      const resolvedParentVar = modelPartParentVariable(parentVar, loopContext, locals, name, loopExitPartAliases, callAt);
+      const resolvedParentVar = modelPartParentVariable(parent, loopContext, locals, name, loopExitPartAliases, callSiteAt);
       parts.push({
         name,
         varName,
@@ -300,7 +304,35 @@ function parseJavaModel(source, model) {
         pose,
       });
     }
+    return closeParen;
+  };
+
+  let searchAt = 0;
+  while (true) {
+    const callAt = source.indexOf(".addOrReplaceChild", searchAt);
+    if (callAt === -1) {
+      break;
+    }
+    const openParen = source.indexOf("(", callAt);
+    const closeParen = findMatching(source, openParen, "(", ")");
+    if (!isInsideAnyHelperMethod(callAt, helperMethods)) {
+      addPartFromCall(source, callAt);
+    }
     searchAt = closeParen + 1;
+  }
+
+  for (const helper of helperMethods) {
+    expandPartDefinitionHelperCalls(source, helper, loopContexts, numericConstants, (callAt, callArgs, callLocals) => {
+      const helperLocals = helperLocalsForCall(helper, callArgs, numericConstants, callLocals);
+      let helperSearchAt = helper.bodyStart;
+      while (true) {
+        const helperCallAt = source.indexOf(".addOrReplaceChild", helperSearchAt);
+        if (helperCallAt === -1 || helper.bodyEnd < helperCallAt) {
+          break;
+        }
+        helperSearchAt = addPartFromCall(source, helperCallAt, helperLocals, helper.bodyStart, callAt) + 1;
+      }
+    });
   }
 
   if (parts.length === 0) {
@@ -912,9 +944,13 @@ function parseQuoted(value) {
   return match[1];
 }
 
-function parseNameExpression(value, parseNumeric) {
+function parseNameExpression(value, parseNumeric, locals = new Map()) {
   const terms = splitTopLevel(value, "+");
   if (terms.length === 1) {
+    const local = locals.get(value.trim());
+    if (typeof local === "string") {
+      return local;
+    }
     return parseQuoted(value);
   }
 
@@ -924,9 +960,129 @@ function parseNameExpression(value, parseNumeric) {
       if (stringMatch) {
         return stringMatch[1];
       }
+      const local = locals.get(term.trim());
+      if (typeof local === "string") {
+        return local;
+      }
       return String(parseNumeric(term));
     })
     .join("");
+}
+
+function collectPartDefinitionHelperMethods(source) {
+  const helpers = [];
+  const methodPattern = /\b(?:private|protected|public)?\s*static\s+void\s+([A-Za-z_$][\w$]*)\s*\(/g;
+  let match;
+
+  while ((match = methodPattern.exec(source)) !== null) {
+    const name = match[1];
+    const openParen = source.indexOf("(", match.index);
+    const closeParen = findMatching(source, openParen, "(", ")");
+    const openBrace = source.indexOf("{", closeParen);
+    if (openBrace === -1) {
+      methodPattern.lastIndex = closeParen + 1;
+      continue;
+    }
+    const closeBrace = findMatching(source, openBrace, "{", "}");
+    const body = source.slice(openBrace + 1, closeBrace);
+    if (!body.includes(".addOrReplaceChild")) {
+      methodPattern.lastIndex = closeBrace + 1;
+      continue;
+    }
+
+    helpers.push({
+      name,
+      start: match.index,
+      end: closeBrace,
+      bodyStart: openBrace + 1,
+      bodyEnd: closeBrace,
+      params: parseJavaParameters(source.slice(openParen + 1, closeParen)),
+    });
+    methodPattern.lastIndex = closeBrace + 1;
+  }
+
+  return helpers;
+}
+
+function parseJavaParameters(params) {
+  if (params.trim() === "") {
+    return [];
+  }
+
+  return splitTopLevel(params, ",")
+    .map((param) => {
+      const match = param.trim().match(/^(?:final\s+)?([\w$.<>?\[\]]+)\s+([A-Za-z_$][\w$]*)$/);
+      if (!match) {
+        throw new Error(`Could not parse helper method parameter '${param}'`);
+      }
+      return { type: match[1], name: match[2] };
+    });
+}
+
+function isInsideAnyHelperMethod(index, helperMethods) {
+  return helperMethods.some((helper) => helper.start <= index && index <= helper.end);
+}
+
+function expandPartDefinitionHelperCalls(source, helper, loopContexts, numericConstants, visitCall) {
+  const callPattern = new RegExp(`\\b${escapeRegExp(helper.name)}\\s*\\(`, "g");
+  let match;
+
+  while ((match = callPattern.exec(source)) !== null) {
+    if (isInsideAnyHelperMethod(match.index, [helper])) {
+      callPattern.lastIndex = helper.end + 1;
+      continue;
+    }
+
+    const openParen = source.indexOf("(", match.index);
+    const closeParen = findMatching(source, openParen, "(", ")");
+    const args = splitTopLevel(source.slice(openParen + 1, closeParen), ",");
+    if (args.length !== helper.params.length) {
+      callPattern.lastIndex = closeParen + 1;
+      continue;
+    }
+
+    const loopContext = innermostLoopContextFor(loopContexts, match.index);
+    const iterationLocals = loopContext
+      ? loopContext.iterations.map((locals) => localsWithDeclarationsBefore(source, loopContext, match.index, numericConstants, locals))
+      : [new Map()];
+    for (const locals of iterationLocals) {
+      visitCall(match.index, args, locals);
+    }
+
+    callPattern.lastIndex = closeParen + 1;
+  }
+}
+
+function helperLocalsForCall(helper, callArgs, numericConstants, callLocals) {
+  const locals = new Map(callLocals);
+
+  for (let index = 0; index < helper.params.length; index++) {
+    const param = helper.params[index];
+    const arg = callArgs[index];
+    const type = param.type.replace(/\s+/g, "");
+
+    if (type.endsWith("PartDefinition")) {
+      locals.set(param.name, arg.trim());
+      continue;
+    }
+    if (type === "String") {
+      locals.set(param.name, parseNameExpression(arg, (value) => parseNumber(value, numericConstants, locals), locals));
+      continue;
+    }
+    if (type === "boolean") {
+      locals.set(param.name, parseBoolean(arg, numericConstants, locals));
+      continue;
+    }
+
+    locals.set(param.name, parseNumber(arg, numericConstants, locals));
+  }
+
+  return locals;
+}
+
+function resolvePartDefinitionVariable(name, locals) {
+  const value = locals.get(name);
+  return typeof value === "string" ? value : name;
 }
 
 function parseCubeDeformation(value, parseNumeric = parseNumber) {
@@ -1130,8 +1286,12 @@ function collectLoopPartAliasReassignments(source, loopStart, loopBody) {
 }
 
 function localsWithDeclarationsBefore(source, loopContext, callAt, constants, baseLocals) {
+  return localsWithDeclarationsInRange(source, loopContext.start + 1, callAt, constants, baseLocals);
+}
+
+function localsWithDeclarationsInRange(source, start, end, constants, baseLocals = new Map()) {
   const locals = new Map(baseLocals);
-  const declarations = source.slice(loopContext.start + 1, callAt);
+  const declarations = source.slice(start, end);
   const declarationPattern =
     /\b(?:float|double|int|short|byte|long)\s+([A-Za-z_$][\w$]*)\s*=\s*([^;]+);/g;
   let match;
@@ -1142,6 +1302,16 @@ function localsWithDeclarationsBefore(source, loopContext, callAt, constants, ba
       // Runtime-only declarations are irrelevant to static model geometry.
     }
   }
+
+  const booleanDeclarationPattern = /\bboolean\s+([A-Za-z_$][\w$]*)\s*=\s*([^;]+);/g;
+  while ((match = booleanDeclarationPattern.exec(declarations)) !== null) {
+    try {
+      locals.set(match[1], parseBoolean(match[2], constants, locals));
+    } catch {
+      // Runtime-only declarations are irrelevant to static model geometry.
+    }
+  }
+
   return locals;
 }
 
@@ -1466,6 +1636,9 @@ function parseNumber(value, constants = new Map(), locals = new Map()) {
   if (typeof local === "number") {
     return local;
   }
+  if (typeof local === "boolean") {
+    return local ? 1 : 0;
+  }
 
   const conditional = splitTopLevelConditional(normalized);
   if (conditional) {
@@ -1702,7 +1875,8 @@ function parseNumericExpression(value, constants, locals) {
     }
     if (token.type === "identifier") {
       if (locals.has(token.value)) {
-        return locals.get(token.value);
+        const local = locals.get(token.value);
+        return typeof local === "boolean" ? local ? 1 : 0 : local;
       }
       if (constants.has(token.value)) {
         return constants.get(token.value);
@@ -1764,6 +1938,23 @@ function tokenizeNumericExpression(value) {
   }
 
   return tokens.length > 0 ? tokens : null;
+}
+
+function parseBoolean(value, constants = new Map(), locals = new Map()) {
+  const normalized = value.trim();
+  if (normalized === "true") {
+    return true;
+  }
+  if (normalized === "false") {
+    return false;
+  }
+
+  const local = locals.get(normalized);
+  if (typeof local === "boolean") {
+    return local;
+  }
+
+  return evaluateNumericCondition(normalized, (part) => parseNumber(part, constants, locals));
 }
 
 function radToDeg(value) {

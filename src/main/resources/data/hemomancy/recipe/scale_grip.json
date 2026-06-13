@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "tools",
+  "key": {
+    "D": {
+      "item": "hemomancy:bleeding_bulb"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "S": {
+      "item": "hemomancy:serpent_scale"
+    }
+  },
+  "pattern": [
+    " S ",
+    "SDS",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:scale_grip"
+  }
+}

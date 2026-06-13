@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "key": {
+    "A": {
+      "item": "hemomancy:mnemonic_ambergris"
+    },
+    "C": {
+      "item": "minecraft:candle"
+    },
+    "D": {
+      "item": "hemomancy:desiccated_membrane"
+    }
+  },
+  "pattern": [
+    " A ",
+    "DCD",
+    " D "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:mnemonic_candle"
+  }
+}

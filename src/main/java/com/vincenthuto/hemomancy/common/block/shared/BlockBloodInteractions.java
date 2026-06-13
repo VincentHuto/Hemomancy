@@ -46,7 +46,15 @@ public final class BlockBloodInteractions {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
-		BlockTarget target = findLookedAtEndpoint(serverLevel, player, BLOCK_REACH);
+		BlockPos pos = findLookedAtBlockPos(player, BLOCK_REACH);
+		if (pos == null) {
+			return 0.0D;
+		}
+		double bloodwoodHandled = BloodwoodGrowthHandler.tryGrowFromProjection(serverLevel, pos, player, maxAmount);
+		if (bloodwoodHandled > 0.0D) {
+			return bloodwoodHandled;
+		}
+		BlockTarget target = findEndpoint(serverLevel, pos);
 		return target == null ? 0.0D
 				: target.endpoint().projectBloodIntoBlock(serverLevel, target.pos(), target.state(), player, maxAmount);
 	}
@@ -73,6 +81,10 @@ public final class BlockBloodInteractions {
 		if (pos == null) {
 			return null;
 		}
+		return findEndpoint(level, pos);
+	}
+
+	private static BlockTarget findEndpoint(ServerLevel level, BlockPos pos) {
 		BlockState state = level.getBlockState(pos);
 		if (state.getBlock() instanceof BlockBloodEndpoint endpoint) {
 			return new BlockTarget(pos, state, endpoint);

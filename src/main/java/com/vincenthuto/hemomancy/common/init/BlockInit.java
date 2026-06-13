@@ -3,12 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.*;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.PuppeteersSpindleBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.*;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.*;
 import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.harbinger.idol.BlockSerpentineIdol;
@@ -21,10 +16,14 @@ import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBl
 import com.vincenthuto.hemomancy.common.block.inscription.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HemoWallBlock;
+import com.vincenthuto.hemomancy.common.block.shared.HumoralBarometerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.MnemonicCandleBlock;
+import com.vincenthuto.hemomancy.common.block.shared.OssuaryClockBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedDoorBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
+import com.vincenthuto.hemomancy.common.block.unstained.decor.LetheanPoppyWreathBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.functional.AltarOfCleansingBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.functional.PaleSilverBellsBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.GhostPipeBlock;
@@ -269,6 +268,21 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> conscious_mass = BASEBLOCKS.register("conscious_mass",
 			() -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WART_BLOCK).strength(0.2F, 1.0F)));
 
+	public static final DeferredHolder<Block, Block> ossuary_clock = MODELEDBLOCKS.register("ossuary_clock",
+			() -> new OssuaryClockBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BROWN)
+					.requiresCorrectToolForDrops()
+					.noOcclusion()
+					.strength(1.5F, 6.0F)
+					.sound(SoundType.BONE_BLOCK)));
+
+	public static final DeferredHolder<Block, Block> humoral_barometer = MODELEDBLOCKS.register("humoral_barometer",
+			() -> new HumoralBarometerBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
+
 	// Fungal dimension ores
 	public static final DeferredHolder<Block, Block> hematic_iron_ore = BASEBLOCKS.register("hematic_iron_ore",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
@@ -352,6 +366,9 @@ public class BlockInit {
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final DeferredHolder<Block, Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
 			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+	public static final DeferredHolder<Block, Block> blood_wood_leaves = BASEBLOCKS.register("blood_wood_leaves",
+			() -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_LEAVES)
+					.mapColor(MapColor.COLOR_RED)));
 
 	public static final DeferredHolder<Block, Block> hyphae = CROSSBLOCKS.register("hyphae",
 			() -> new HyphaeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).replaceable().noCollission()
@@ -397,6 +414,13 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> lethean_poppy = CROSSBLOCKS.register("lethean_poppy",
 			() -> new LetheanPoppyBlock(MobEffects.REGENERATION, 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
+
+	public static final DeferredHolder<Block, Block> lethean_poppy_wreath = MODELEDBLOCKS.register("lethean_poppy_wreath",
+			() -> new LetheanPoppyWreathBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.SNOW)
+					.noOcclusion()
+					.strength(0.2F)
+					.sound(SoundType.AZALEA_LEAVES)));
 
 	public static final DeferredHolder<Block, Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
 			() -> new Block(
@@ -498,6 +522,13 @@ public class BlockInit {
 			() -> new MycelialLanternBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(2.5F, 8.0F).sound(SoundType.LANTERN).lightLevel(s -> 8).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> mnemonic_candle = MODELEDBLOCKS.register("mnemonic_candle",
+			() -> new MnemonicCandleBlock(BlockBehaviour.Properties.of()
+					.strength(0.2F, 1.0F)
+					.sound(SoundType.CANDLE)
+					.lightLevel(state -> state.getValue(MnemonicCandleBlock.LIT) ? 12 : 0)
+					.noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()
@@ -793,6 +824,7 @@ public class BlockInit {
 				|| block == BlockInit.filler_block.get()
 				|| block == BlockInit.abocipher_emitter.get()
 				|| block == BlockInit.qliphoth_bloom.get()
+				|| block == BlockInit.lethean_poppy_wreath.get()
 				|| block == BlockInit.sanguine_conduit.get();
 	}
 

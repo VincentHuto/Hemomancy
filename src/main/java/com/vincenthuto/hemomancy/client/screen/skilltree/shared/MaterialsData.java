@@ -315,12 +315,16 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(2)));
 
         list.add(new MaterialEntry("dicentra_sap", "Dicentra Sap",
-                "Sap from the bleeding heart plant. Alchemical reagent.",
+                "Legacy plant sap. Distill old stacks into Bleeding Bulbs.",
                 "Materials", () -> new ItemStack(ItemInit.dicentra_sap.get())));
 
         list.add(new MaterialEntry("bleeding_bulb", "Bleeding Bulb",
-                "Bulb from hemomantic flora; used in juicing recipes.",
+                "Primary bleeding-heart flora reagent for hemomantic recipes.",
                 "Materials", () -> new ItemStack(ItemInit.bleeding_bulb.get())));
+
+        list.add(new MaterialEntry("blood_chum", "Blood Chum",
+                "Bloody bait mass that briefly chums nearby fishing waters without improving treasure quality.",
+                "Materials", () -> new ItemStack(ItemInit.blood_chum.get())));
 
         list.add(new MaterialEntry("vivianite_cluster", "Vivianite Cluster",
                 "A mineral cluster with faint sanguine resonance.",

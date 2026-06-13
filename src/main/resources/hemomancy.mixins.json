@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "hemomancy.refmap.json",
   "mixins": [
+    "MixinFishingHook",
     "MixinLivingEntity"
   ],
   "client": [

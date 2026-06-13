@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.particle.LetheanDripParticle;
 import com.vincenthuto.hemomancy.client.particle.data.*;
 import com.vincenthuto.hemomancy.client.particle.factory.*;
 import com.vincenthuto.hemomancy.client.particle.type.*;
@@ -44,10 +45,13 @@ public class ParticleInit {
 
 	public static final DeferredHolder<ParticleType<?>, SimpleParticleType> abocipher = PARTICLE_TYPES.register("abocipher",
 			() -> new SimpleParticleType(false));
+	public static final DeferredHolder<ParticleType<?>, SimpleParticleType> lethean_drip = PARTICLE_TYPES.register(
+			"lethean_drip", () -> new SimpleParticleType(false));
 
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
 		Minecraft.getInstance().particleEngine.register(abocipher.get(), AbocipherParticleFactory::new);
+		Minecraft.getInstance().particleEngine.register(lethean_drip.get(), LetheanDripParticle.Provider::new);
 		Minecraft.getInstance().particleEngine.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(hit_glow.get(), HitGlowParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(sporitic_spore.get(), SporiticSporeParticleFactory::new);
