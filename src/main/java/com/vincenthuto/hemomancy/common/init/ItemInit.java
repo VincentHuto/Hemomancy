@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.BloodlinePoolMo
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.MycophantTendrilItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.memory.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.*;
@@ -191,14 +192,28 @@ public class ItemInit {
             () -> new VascularPoulticeItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
-            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
+//            () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> blood_chum = BASEITEMS.register("blood_chum",
             () -> new BloodChumItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> puppeteering_thread = BASEITEMS.register("puppeteering_thread",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> tendon_line = BASEITEMS.register("tendon_line",
             () -> new TendonLineItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> hearty_compass = BASEITEMS.register("hearty_compass",
+            () -> new HeartyCompassItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> memory_thread = BASEITEMS.register("memory_thread",
+            () -> new MemoryThreadItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> void_eye_organ = BASEITEMS.register("void_eye_organ",
+            () -> new VoidEyeOrganItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> vein_spider = BASEITEMS.register("vein_spider",
+            () -> new VeinSpiderItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> zombie_husk_effigy = BASEITEMS.register("zombie_husk_effigy",
+            () -> new HuskEffigyItem(new Item.Properties().rarity(Rarity.UNCOMMON), HuskEffigyRules.Profile.ZOMBIE));
+    public static final DeferredHolder<Item, Item> desert_husk_effigy = BASEITEMS.register("desert_husk_effigy",
+            () -> new HuskEffigyItem(new Item.Properties().rarity(Rarity.UNCOMMON), HuskEffigyRules.Profile.HUSK));
+    public static final DeferredHolder<Item, Item> spider_husk_effigy = BASEITEMS.register("spider_husk_effigy",
+            () -> new HuskEffigyItem(new Item.Properties().rarity(Rarity.UNCOMMON), HuskEffigyRules.Profile.SPIDER));
     public static final DeferredHolder<Item, Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> sanguine_quintessence = BASEITEMS.register("sanguine_quintessence",
@@ -242,13 +257,13 @@ public class ItemInit {
     // Qliphoth Reagent
     public static final DeferredHolder<Item, Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
             () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
+            () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
+                    .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
     public static final DeferredHolder<Item, Item> monolith_fragment = BASEITEMS.register("monolith_fragment",
             () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
             () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
-    public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
-            () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
-                    .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
             () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
 
@@ -1087,6 +1102,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_gorebound_hulk = SPAWNEGGS.register(
             "spawn_egg_gorebound_hulk",
             () -> new DeferredSpawnEggItem(EntityInit.gorebound_hulk, 0x3A0508, 0xAA1A22, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_mnemonist_puppet = SPAWNEGGS.register(
+            "spawn_egg_mnemonist_puppet",
+            () -> new DeferredSpawnEggItem(EntityInit.mnemonist_puppet, 0x2B2028, 0xA64C5C, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));

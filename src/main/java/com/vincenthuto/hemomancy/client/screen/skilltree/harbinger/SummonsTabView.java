@@ -271,6 +271,7 @@ public final class SummonsTabView {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(mc.level);
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(mc.level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(mc.level);
+			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(mc.level);
 			default -> null;
 		};
 		if (entity != null) {
@@ -417,12 +418,19 @@ public final class SummonsTabView {
 					&& my >= clipTop && my <= clipBottom) {
 				return degree;
 			}
-			sy += rowH + 2;
-			if (entry.getKey().equals(state.selectedDegree)) {
-				sy += entry.getValue().size() * 18;
-			}
+			sy += degreeEntryHeight(entry, state);
 		}
 		return null;
+	}
+
+	private static int degreeEntryHeight(Map.Entry<Integer, List<PuppeteerSummonDefinition>> entry,
+										 SummonsTabState state) {
+		int rowH = 22;
+		int height = rowH + 2;
+		if (entry.getKey().equals(state.selectedDegree)) {
+			height += entry.getValue().size() * 18 + rowH + 2;
+		}
+		return height;
 	}
 
 	public static int summonUnder(ProgressScreenContext ctx, SummonsTabState state, double mx, double my) {

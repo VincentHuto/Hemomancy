@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "hemomancy:item/mnemonic_ambergris",
+    "up": "hemomancy:item/mnemonic_ambergris",
+    "north": "hemomancy:item/mnemonic_ambergris",
+    "south": "hemomancy:item/mnemonic_ambergris",
+    "east": "hemomancy:item/mnemonic_ambergris",
+    "west": "hemomancy:item/mnemonic_ambergris",
+    "particle": "hemomancy:item/mnemonic_ambergris"
+  }
+}

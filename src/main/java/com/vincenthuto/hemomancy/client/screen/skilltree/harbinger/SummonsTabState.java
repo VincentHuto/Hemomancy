@@ -66,6 +66,7 @@ public class SummonsTabState {
 			total += rowH + 2;
 			if (entry.getKey().equals(selectedDegree)) {
 				total += entry.getValue().size() * 18;
+				total += rowH + 2;
 			}
 		}
 		return total;

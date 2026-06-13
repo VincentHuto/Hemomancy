@@ -530,6 +530,14 @@ public class BlockInit {
 					.lightLevel(state -> state.getValue(MnemonicCandleBlock.LIT) ? 12 : 0)
 					.noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> witness_organ = MODELEDBLOCKS.register("witness_organ",
+			() -> new WitnessOrganBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED)
+					.requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));

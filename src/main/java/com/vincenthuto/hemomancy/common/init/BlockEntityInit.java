@@ -189,6 +189,9 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MycelialLanternBlockEntity>> mycelial_lantern = TILES
 			.register("mycelial_lantern", () -> BlockEntityType.Builder
 					.of(MycelialLanternBlockEntity::new, BlockInit.mycelial_lantern.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WitnessOrganBlockEntity>> witness_organ = TILES
+			.register("witness_organ", () -> BlockEntityType.Builder
+					.of(WitnessOrganBlockEntity::new, BlockInit.witness_organ.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodBasinBlockEntity>> blood_basin = TILES
 			.register("blood_basin", () -> BlockEntityType.Builder
 					.of(BloodBasinBlockEntity::new, BlockInit.blood_basin.get()).build(null));

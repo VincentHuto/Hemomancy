@@ -61,7 +61,6 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("blood_rock"),            LiberEntryDefinitions.HEMOMANCY);
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("bleeding_bulb"),         LiberEntryDefinitions.ERYTHROMYCELIUM);
-		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("dicentra_sap"),          LiberEntryDefinitions.ERYTHROMYCELIUM);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("talaromyces_minus"),     LiberEntryDefinitions.ERYTHROMYCELIUM);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("blood_gourd_red"),       LiberEntryDefinitions.ERYTHROMYCELIUM);
 

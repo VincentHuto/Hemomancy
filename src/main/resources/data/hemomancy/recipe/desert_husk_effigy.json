@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:rotten_flesh" },
+    { "item": "minecraft:sand" },
+    { "item": "hemomancy:sanguine_formation" }
+  ],
+  "result": {
+    "id": "hemomancy:desert_husk_effigy",
+    "count": 2
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:spider_eye" },
+    { "item": "minecraft:string" },
+    { "item": "hemomancy:chitinous_husk" },
+    { "item": "hemomancy:sanguine_formation" }
+  ],
+  "result": {
+    "id": "hemomancy:spider_husk_effigy",
+    "count": 2
+  }
+}

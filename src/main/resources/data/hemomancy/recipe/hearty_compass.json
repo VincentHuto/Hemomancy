@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "SCS",
+    " F "
+  ],
+  "key": {
+    "B": { "item": "hemomancy:sanguine_blob" },
+    "S": { "item": "hemomancy:sanguine_formation" },
+    "C": { "item": "minecraft:compass" },
+    "F": { "item": "hemomancy:mnemonic_ambergris" }
+  },
+  "result": {
+    "id": "hemomancy:hearty_compass"
+  }
+}

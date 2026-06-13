@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/witness_organ" },
+    "facing=south": { "model": "hemomancy:block/witness_organ", "y": 180 },
+    "facing=west": { "model": "hemomancy:block/witness_organ", "y": 270 },
+    "facing=east": { "model": "hemomancy:block/witness_organ", "y": 90 }
+  }
+}
