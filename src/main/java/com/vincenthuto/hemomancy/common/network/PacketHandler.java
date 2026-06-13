@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyP
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.*;
+import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCourier;
 import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
@@ -136,7 +137,10 @@ public class PacketHandler {
         net.playToServer(KnownSummonsRequestPacket.TYPE, KnownSummonsRequestPacket.STREAM_CODEC, KnownSummonsRequestPacket::handle);
         net.playToClient(KnownSummonsServerPacket.TYPE, KnownSummonsServerPacket.STREAM_CODEC, KnownSummonsServerPacket::handle);
         net.playToServer(PacketPuppeteersSpindleAction.TYPE, PacketPuppeteersSpindleAction.STREAM_CODEC, PacketPuppeteersSpindleAction::handle);
+        net.playToClient(PacketSyncLastDeathMemory.TYPE, PacketSyncLastDeathMemory.STREAM_CODEC, PacketSyncLastDeathMemory::handle);
         net.playToClient(PacketSyncSutureLinks.TYPE, PacketSyncSutureLinks.STREAM_CODEC, PacketSyncSutureLinks::handle);
+        net.playToClient(PacketSpawnVeinSpiderCourier.TYPE,
+                PacketSpawnVeinSpiderCourier.STREAM_CODEC, PacketSpawnVeinSpiderCourier::handle);
 
         // ── Key-bind packets ──────────────────────────────────────────────────
         net.playToServer(BloodFormationKeyPressPacket.TYPE, BloodFormationKeyPressPacket.STREAM_CODEC, BloodFormationKeyPressPacket::handle);

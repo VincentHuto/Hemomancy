@@ -271,6 +271,7 @@ public final class SummonsTabView {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(mc.level);
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(mc.level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(mc.level);
+			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(mc.level);
 			default -> null;
 		};
 		if (entity != null) {

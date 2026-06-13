@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Vas
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.VisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.WhiteHumorVolume;
+import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemoryAttachment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -87,6 +88,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ScarsContainer>> SCARS =
             ATTACHMENT_TYPES.register("scars",
                     () -> AttachmentType.serializable(() -> new ScarsContainer()).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LastDeathMemoryAttachment>> LAST_DEATH_MEMORY =
+            ATTACHMENT_TYPES.register("last_death_memory",
+                    () -> AttachmentType.serializable(LastDeathMemoryAttachment::new).copyOnDeath().build());
 
     // ── Block-entity attachments (no copyOnDeath) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOCK_BLOOD_VOLUME =

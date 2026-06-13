@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:void_ichor" },
+    { "item": "hemomancy:sanguine_formation" },
+    { "item": "minecraft:ender_eye" }
+  ],
+  "result": {
+    "id": "hemomancy:void_eye_organ"
+  }
+}

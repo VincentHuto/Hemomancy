@@ -27,6 +27,7 @@ public final class PuppeteerSummonFactory {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(level);
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(level);
+			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(level);
 			default -> null;
 		};
 		if (mob instanceof BoundPuppeteerSummon bound) {
@@ -49,6 +50,7 @@ public final class PuppeteerSummonFactory {
 			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(level);
 			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(level);
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(level);
+			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(level);
 			default -> null;
 		};
 		if (mob instanceof BoundPuppeteerSummon bound) {

@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVa
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
+import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemory;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;
 import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
@@ -352,5 +353,9 @@ public static IScarsItemHandler requireScars(Player player) {
 
 public static Optional<IScar> getScar(ItemStack stack) {
     return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_SCAR));
+}
+
+public static LastDeathMemory getLastDeathMemory(Player player) {
+    return player.getData(HemoAttachmentTypes.LAST_DEATH_MEMORY);
 }
 }

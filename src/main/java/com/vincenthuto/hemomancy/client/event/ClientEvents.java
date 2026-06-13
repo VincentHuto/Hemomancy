@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
+import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
@@ -202,6 +203,7 @@ public class ClientEvents {
         ActiveBloodStructureFeedClientData.tick();
         BloodStructureFeedSpiralParticles.tick();
         BloodBallClientData.tick();
+        VeinSpiderCourierClientData.tick();
         SanguineMonolithShatterRenderer.tick();
         if (SanguineOmenOverlay.instance != null) {
             SanguineOmenOverlay.instance.tick();
@@ -441,6 +443,9 @@ public class ClientEvents {
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
             TendonLineRenderer.render(event.getPoseStack(), partialTick);
+            MemoryThreadLineRenderer.render(event.getPoseStack(), partialTick);
+            HeartyCompassTendrilRenderer.render(event.getPoseStack(), partialTick);
+            VeinSpiderCourierRenderer.render(event.getPoseStack(), partialTick);
         }
     }
 
@@ -572,6 +577,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.veinwing_vulture.get(), VeinwingVultureRenderer::new);
             event.registerEntityRenderer(EntityInit.marrow_spitter.get(), MarrowSpitterRenderer::new);
             event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), GoreboundHulkRenderer::new);
+            event.registerEntityRenderer(EntityInit.mnemonist_puppet.get(), MnemonistPuppetRenderer::new);
             event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
             event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
             event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);

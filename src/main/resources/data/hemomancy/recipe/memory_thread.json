@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:tendon_line" },
+    { "item": "hemomancy:puppeteering_thread" },
+    { "item": "hemomancy:mnemonic_ambergris" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": {
+    "id": "hemomancy:memory_thread"
+  }
+}

@@ -314,10 +314,6 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.puppeteering_thread.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-        list.add(new MaterialEntry("dicentra_sap", "Dicentra Sap",
-                "Legacy plant sap. Distill old stacks into Bleeding Bulbs.",
-                "Materials", () -> new ItemStack(ItemInit.dicentra_sap.get())));
-
         list.add(new MaterialEntry("bleeding_bulb", "Bleeding Bulb",
                 "Primary bleeding-heart flora reagent for hemomantic recipes.",
                 "Materials", () -> new ItemStack(ItemInit.bleeding_bulb.get())));

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:spider_eye" },
+    { "item": "hemomancy:chitinous_husk" },
+    { "item": "hemomancy:puppeteering_thread" },
+    { "item": "hemomancy:sanguine_conduit" }
+  ],
+  "result": {
+    "id": "hemomancy:vein_spider"
+  }
+}

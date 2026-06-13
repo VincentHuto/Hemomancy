@@ -29,6 +29,7 @@ import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.model.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.layer.player.*;
+import com.vincenthuto.hemomancy.client.render.layer.mob.HuskEffigyControlGlowLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -122,6 +123,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(VeinwingVultureModel.LAYER_LOCATION, VeinwingVultureModel::createBodyLayer);
 		event.registerLayerDefinition(MarrowSpitterModel.LAYER_LOCATION, MarrowSpitterModel::createBodyLayer);
 		event.registerLayerDefinition(GoreboundHulkModel.LAYER_LOCATION, GoreboundHulkModel::createBodyLayer);
+		event.registerLayerDefinition(MnemonistPuppetModel.LAYER_LOCATION, MnemonistPuppetModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
@@ -274,6 +276,15 @@ public class LayerEvents {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static <T extends LivingEntity> void addEffigyGlowLayer(EntityRenderersEvent.AddLayers event,
+			EntityType<? extends T> entityType) {
+		EntityRenderer<? extends T> renderer = event.getRenderer(entityType);
+		if (renderer instanceof LivingEntityRenderer livingRenderer) {
+			livingRenderer.addLayer(new HuskEffigyControlGlowLayer(livingRenderer));
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, PlayerSkin.Model skinModel) {
 		EntityRenderer<? extends Player> render = event.getSkin(skinModel);
 		if (render instanceof LivingEntityRenderer livingRenderer) {
@@ -304,6 +315,9 @@ public class LayerEvents {
 		addLayerToEntity(event, EntityType.HUSK);
 		addLayerToEntity(event, EntityType.DROWNED);
 		addLayerToEntity(event, EntityType.STRAY);
+		addEffigyGlowLayer(event, EntityType.ZOMBIE);
+		addEffigyGlowLayer(event, EntityType.HUSK);
+		addEffigyGlowLayer(event, EntityType.SPIDER);
 		addLayerToPlayerSkin(event, PlayerSkin.Model.WIDE);
 		addLayerToPlayerSkin(event, PlayerSkin.Model.SLIM);
 

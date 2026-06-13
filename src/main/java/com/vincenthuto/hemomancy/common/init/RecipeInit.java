@@ -100,4 +100,7 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ArmatureUpgradeRecipe>> armature_upgrade_serializer =
 			SERIALIZERS.register("armature_upgrade", ArmatureUpgradeRecipeSerializer::new);
 
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> scale_grip_binding_serializer = SERIALIZERS
+			.register("scale_grip_binding", ScaleGripBindingRecipe.Serializer::new);
+
 }

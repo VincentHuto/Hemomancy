@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:note_block" },
+    { "item": "hemomancy:mnemonic_ambergris" },
+    { "item": "hemomancy:sanguine_formation" }
+  ],
+  "result": {
+    "id": "hemomancy:witness_organ"
+  }
+}

@@ -320,6 +320,13 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .build(Hemomancy.rloc("gorebound_hulk").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<MnemonistPuppetEntity>> mnemonist_puppet = ENTITY_TYPES
+            .register("mnemonist_puppet",
+                    () -> EntityType.Builder.<MnemonistPuppetEntity>of(MnemonistPuppetEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.8F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("mnemonist_puppet").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<DrudgeEntity>> drudge = ENTITY_TYPES
             .register("drudge",
                     () -> EntityType.Builder.<DrudgeEntity>of(DrudgeEntity::new, MobCategory.CREATURE)
@@ -766,6 +773,7 @@ public class EntityInit {
         event.put(EntityInit.veinwing_vulture.get(), VeinwingVultureEntity.setAttributes().build());
         event.put(EntityInit.marrow_spitter.get(), MarrowSpitterEntity.setAttributes().build());
         event.put(EntityInit.gorebound_hulk.get(), GoreboundHulkEntity.setAttributes().build());
+        event.put(EntityInit.mnemonist_puppet.get(), MnemonistPuppetEntity.setAttributes().build());
         event.put(EntityInit.drudge.get(), DrudgeEntity.setAttributes().build());
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.unstained_guardian.get(), UnstainedGuardianEntity.setAttributes().build());
