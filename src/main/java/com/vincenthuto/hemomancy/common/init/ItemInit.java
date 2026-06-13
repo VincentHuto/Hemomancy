@@ -257,13 +257,13 @@ public class ItemInit {
     // Qliphoth Reagent
     public static final DeferredHolder<Item, Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
             () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
+            () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
+                    .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
     public static final DeferredHolder<Item, Item> monolith_fragment = BASEITEMS.register("monolith_fragment",
             () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
             () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
-    public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
-            () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
-                    .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
             () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
 

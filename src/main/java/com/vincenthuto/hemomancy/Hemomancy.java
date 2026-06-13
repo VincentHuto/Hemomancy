@@ -49,7 +49,14 @@ public class Hemomancy {
             "hemomancytab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
-                    .icon(() -> new ItemStack(ItemInit.sanguine_formation.get()))
+                    .icon(() -> new ItemStack(ItemInit.charm_of_vascularium.get()))
+                    .build());
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> hemomancywiptab = CREATIVETABS.register(
+            "hemomancywip",
+            () -> CreativeModeTab.builder()
+                    .title(Component.translatable("item_group." + MOD_ID + ".hemomancywip"))
+                    .withTabsBefore(hemomancytab.getKey())
+                    .icon(() -> new ItemStack(ItemInit.sanguine_blob.get()))
                     .build());
     public static Hemomancy instance;
     public static boolean forcesLoaded = false;
@@ -187,9 +194,7 @@ public class Hemomancy {
         if (populator.getTabKey() == hemomancytab.getKey()) {
             var i = ItemInit.getAllItemEntriesAsStream();
             i.forEach(item -> {
-                if (item.get() != ItemInit.active_befouling_ash.get()
-                        && item.get() != ItemInit.active_smouldering_ash.get()
-                        && item.get() != ItemInit.memory_conjure_living_staff.get()) {
+                if (shouldShowItemInCreativeTab(item.get())) {
                     populator.accept(item.get());
                 }
             });
@@ -199,7 +204,106 @@ public class Hemomancy {
                     populator.accept(block.get());
                 }
             });
+        } else if (populator.getTabKey() == hemomancywiptab.getKey()) {
+            acceptWipCreativeTabContents(populator);
         }
+    }
+
+    private static void acceptWipCreativeTabContents(BuildCreativeModeTabContentsEvent populator) {
+        populator.accept(ItemInit.hematic_suture_needle.get());
+        populator.accept(ItemInit.unsigned_ancestral_ledger.get());
+        populator.accept(ItemInit.sanguine_blob.get());
+        populator.accept(ItemInit.fervent_husk.get());
+        populator.accept(ItemInit.curor_lens.get());
+        populator.accept(ItemInit.vascular_poultice.get());
+        populator.accept(ItemInit.memory_thread.get());
+        populator.accept(ItemInit.hearty_compass.get());
+        populator.accept(ItemInit.void_eye_organ.get());
+        populator.accept(ItemInit.zombie_husk_effigy.get());
+        populator.accept(ItemInit.desert_husk_effigy.get());
+        populator.accept(ItemInit.spider_husk_effigy.get());
+        populator.accept(ItemInit.vitality_chalice.get());
+        populator.accept(ItemInit.vein_spider.get());
+        populator.accept(ItemInit.constrictor_cord.get());
+        populator.accept(ItemInit.blood_thrall_effigy.get());
+        populator.accept(ItemInit.blood_bolt.get());
+        populator.accept(ItemInit.vascular_status_gauge.get());
+        populator.accept(ItemInit.hallowed_residuum_hemorath.get());
+        populator.accept(ItemInit.hallowed_residuum_seraphae.get());
+        populator.accept(ItemInit.hallowed_residuum_putriciel.get());
+        populator.accept(ItemInit.hallowed_residuum_velorum.get());
+        populator.accept(ItemInit.saint_relic_hemorath.get());
+        populator.accept(ItemInit.saint_relic_seraphae.get());
+        populator.accept(ItemInit.saint_relic_putriciel.get());
+        populator.accept(ItemInit.saint_relic_velorum.get());
+        populator.accept(ItemInit.echo_of_spleen.get());
+        populator.accept(ItemInit.echo_of_liver.get());
+        populator.accept(ItemInit.echo_of_heart.get());
+        populator.accept(ItemInit.echo_of_lungs.get());
+        populator.accept(ItemInit.echo_of_kidneys.get());
+        populator.accept(ItemInit.draught_of_still_mercy.get());
+        populator.accept(ItemInit.lethean_brew.get());
+        populator.accept(ItemInit.tome_of_the_unstained.get());
+        populator.accept(BlockInit.humane_idol.get());
+        populator.accept(BlockInit.serpentine_idol.get());
+        populator.accept(BlockInit.morphling_cradle.get());
+        populator.accept(BlockInit.witness_organ.get());
+        populator.accept(BlockInit.saint_sarcophagus.get());
+        populator.accept(BlockInit.gourdvine_tap.get());
+        populator.accept(BlockInit.infested_wood.get());
+        populator.accept(BlockInit.covenant_throne.get());
+        populator.accept(BlockInit.sanguine_vigil.get());
+        populator.accept(BlockInit.visceral_mirror.get());
+        populator.accept(BlockInit.blood_basin.get());
+        populator.accept(BlockInit.blood_pylon.get());
+        populator.accept(BlockInit.blood_trial_altar.get());
+        populator.accept(BlockInit.offering_gate.get());
+        populator.accept(BlockInit.crucible_of_nether_ichor.get());
+        populator.accept(BlockInit.voidtouched_vessel.get());
+    }
+
+    private static boolean shouldShowItemInCreativeTab(Item item) {
+        return item != ItemInit.active_befouling_ash.get()
+                && item != ItemInit.active_smouldering_ash.get()
+                && item != ItemInit.memory_conjure_living_staff.get()
+                && !isWipItem(item);
+    }
+
+    private static boolean isWipItem(Item item) {
+        return item == ItemInit.hematic_suture_needle.get()
+                || item == ItemInit.unsigned_ancestral_ledger.get()
+                || item == ItemInit.sanguine_blob.get()
+                || item == ItemInit.fervent_husk.get()
+                || item == ItemInit.curor_lens.get()
+                || item == ItemInit.vascular_poultice.get()
+                || item == ItemInit.memory_thread.get()
+                || item == ItemInit.hearty_compass.get()
+                || item == ItemInit.void_eye_organ.get()
+                || item == ItemInit.zombie_husk_effigy.get()
+                || item == ItemInit.desert_husk_effigy.get()
+                || item == ItemInit.spider_husk_effigy.get()
+                || item == ItemInit.vitality_chalice.get()
+                || item == ItemInit.vein_spider.get()
+                || item == ItemInit.constrictor_cord.get()
+                || item == ItemInit.blood_thrall_effigy.get()
+                || item == ItemInit.blood_bolt.get()
+                || item == ItemInit.vascular_status_gauge.get()
+                || item == ItemInit.hallowed_residuum_hemorath.get()
+                || item == ItemInit.hallowed_residuum_seraphae.get()
+                || item == ItemInit.hallowed_residuum_putriciel.get()
+                || item == ItemInit.hallowed_residuum_velorum.get()
+                || item == ItemInit.saint_relic_hemorath.get()
+                || item == ItemInit.saint_relic_seraphae.get()
+                || item == ItemInit.saint_relic_putriciel.get()
+                || item == ItemInit.saint_relic_velorum.get()
+                || item == ItemInit.echo_of_spleen.get()
+                || item == ItemInit.echo_of_liver.get()
+                || item == ItemInit.echo_of_heart.get()
+                || item == ItemInit.echo_of_lungs.get()
+                || item == ItemInit.echo_of_kidneys.get()
+                || item == ItemInit.draught_of_still_mercy.get()
+                || item == ItemInit.lethean_brew.get()
+                || item == ItemInit.tome_of_the_unstained.get();
     }
 
     private static boolean shouldShowBlockInCreativeTab(Block block) {
@@ -213,7 +317,27 @@ public class Hemomancy {
                 && block != BlockInit.filler_block.get()
                 && block != BlockInit.engram_block.get()
                 && block != BlockInit.abocipher_emitter.get()
-                && block != BlockInit.qliphoth_bloom.get();
+                && block != BlockInit.qliphoth_bloom.get()
+                && !isWipBlock(block);
+    }
+
+    private static boolean isWipBlock(Block block) {
+        return block == BlockInit.humane_idol.get()
+                || block == BlockInit.serpentine_idol.get()
+                || block == BlockInit.morphling_cradle.get()
+                || block == BlockInit.witness_organ.get()
+                || block == BlockInit.saint_sarcophagus.get()
+                || block == BlockInit.gourdvine_tap.get()
+                || block == BlockInit.covenant_throne.get()
+                || block == BlockInit.infested_wood.get()
+                || block == BlockInit.sanguine_vigil.get()
+                || block == BlockInit.visceral_mirror.get()
+                || block == BlockInit.blood_basin.get()
+                || block == BlockInit.blood_pylon.get()
+                || block == BlockInit.blood_trial_altar.get()
+                || block == BlockInit.offering_gate.get()
+                || block == BlockInit.crucible_of_nether_ichor.get()
+                || block == BlockInit.voidtouched_vessel.get();
     }
 
     @SubscribeEvent

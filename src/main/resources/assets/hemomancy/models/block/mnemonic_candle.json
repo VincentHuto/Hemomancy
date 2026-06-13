@@ -1,69 +1,98 @@
 {
-  "textures": {
-    "candle": "hemomancy:block/mnemonic_candle",
-    "metal": "minecraft:block/copper_block",
-    "particle": "hemomancy:block/mnemonic_candle"
-  },
-  "elements": [
-    {
-      "from": [3, 0, 3],
-      "to": [13, 1.5, 13],
-      "faces": {
-        "down": { "texture": "#metal" },
-        "up": { "texture": "#metal" },
-        "north": { "texture": "#metal" },
-        "south": { "texture": "#metal" },
-        "west": { "texture": "#metal" },
-        "east": { "texture": "#metal" }
-      }
-    },
-    {
-      "from": [2.5, 1, 2.5],
-      "to": [13.5, 2.25, 13.5],
-      "faces": {
-        "down": { "texture": "#metal" },
-        "up": { "texture": "#metal" },
-        "north": { "texture": "#metal" },
-        "south": { "texture": "#metal" },
-        "west": { "texture": "#metal" },
-        "east": { "texture": "#metal" }
-      }
-    },
-    {
-      "from": [4.5, 1.5, 4.5],
-      "to": [11.5, 10.5, 11.5],
-      "faces": {
-        "down": { "texture": "#candle" },
-        "up": { "texture": "#candle" },
-        "north": { "texture": "#candle" },
-        "south": { "texture": "#candle" },
-        "west": { "texture": "#candle" },
-        "east": { "texture": "#candle" }
-      }
-    },
-    {
-      "from": [4, 10, 4],
-      "to": [12, 11, 12],
-      "faces": {
-        "down": { "texture": "#candle" },
-        "up": { "texture": "#candle" },
-        "north": { "texture": "#candle" },
-        "south": { "texture": "#candle" },
-        "west": { "texture": "#candle" },
-        "east": { "texture": "#candle" }
-      }
-    },
-    {
-      "from": [7, 10.5, 7],
-      "to": [9, 13, 9],
-      "faces": {
-        "down": { "texture": "#candle" },
-        "up": { "texture": "#candle" },
-        "north": { "texture": "#candle" },
-        "south": { "texture": "#candle" },
-        "west": { "texture": "#candle" },
-        "east": { "texture": "#candle" }
-      }
-    }
-  ]
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "hemomancy:block/mnemonic_candle",
+		"candle": "hemomancy:block/mnemonic_candle",
+		"metal": "hemomancy:block/hematic_iron_block_old"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 3],
+			"to": [13, 1.5, 13],
+			"faces": {
+				"north": {"uv": [3, 14.5, 13, 16], "texture": "#metal"},
+				"east": {"uv": [3, 14.5, 13, 16], "texture": "#metal"},
+				"south": {"uv": [3, 14.5, 13, 16], "texture": "#metal"},
+				"west": {"uv": [3, 14.5, 13, 16], "texture": "#metal"},
+				"up": {"uv": [3, 3, 13, 13], "texture": "#metal"},
+				"down": {"uv": [3, 3, 13, 13], "texture": "#metal"}
+			}
+		},
+		{
+			"from": [2.5, 1, 2.5],
+			"to": [13.5, 2.25, 13.5],
+			"faces": {
+				"north": {"uv": [2.5, 13.75, 13.5, 15], "texture": "#metal"},
+				"east": {"uv": [2.5, 13.75, 13.5, 15], "texture": "#metal"},
+				"south": {"uv": [2.5, 13.75, 13.5, 15], "texture": "#metal"},
+				"west": {"uv": [2.5, 13.75, 13.5, 15], "texture": "#metal"},
+				"up": {"uv": [2.5, 2.5, 13.5, 13.5], "texture": "#metal"},
+				"down": {"uv": [2.5, 2.5, 13.5, 13.5], "texture": "#metal"}
+			}
+		},
+		{
+			"from": [4.5, 1.5, 4.5],
+			"to": [11.5, 10.5, 11.5],
+			"faces": {
+				"north": {"uv": [4.5, 5.5, 11.5, 14.5], "texture": "#candle"},
+				"east": {"uv": [4.5, 5.5, 11.5, 14.5], "texture": "#candle"},
+				"south": {"uv": [4.5, 5.5, 11.5, 14.5], "texture": "#candle"},
+				"west": {"uv": [4.5, 5.5, 11.5, 14.5], "texture": "#candle"},
+				"up": {"uv": [4.5, 4.5, 11.5, 11.5], "texture": "#candle"},
+				"down": {"uv": [4.5, 4.5, 11.5, 11.5], "texture": "#candle"}
+			}
+		},
+		{
+			"from": [4, 10, 4],
+			"to": [12, 11, 12],
+			"faces": {
+				"north": {"uv": [4, 5, 12, 6], "texture": "#candle"},
+				"east": {"uv": [4, 5, 12, 6], "texture": "#candle"},
+				"south": {"uv": [4, 5, 12, 6], "texture": "#candle"},
+				"west": {"uv": [4, 5, 12, 6], "texture": "#candle"},
+				"up": {"uv": [4, 4, 12, 12], "texture": "#candle"},
+				"down": {"uv": [4, 4, 12, 12], "texture": "#candle"}
+			}
+		},
+		{
+			"from": [7, 10.5, 7],
+			"to": [9, 13, 9],
+			"faces": {
+				"north": {"uv": [7, 3, 9, 5.5], "texture": "#candle"},
+				"east": {"uv": [7, 3, 9, 5.5], "texture": "#candle"},
+				"south": {"uv": [7, 3, 9, 5.5], "texture": "#candle"},
+				"west": {"uv": [7, 3, 9, 5.5], "texture": "#candle"},
+				"up": {"uv": [7, 1, 9, 2], "texture": "#candle"},
+				"down": {"uv": [7, 7, 9, 9], "texture": "#candle"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"thirdperson_lefthand": {
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"firstperson_righthand": {
+			"translation": [0, 2, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"firstperson_lefthand": {
+			"translation": [0, 2, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"ground": {
+			"translation": [0, 2.75, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [26, -35, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		}
+	}
 }
