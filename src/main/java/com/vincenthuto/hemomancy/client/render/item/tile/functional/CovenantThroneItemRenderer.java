@@ -4,7 +4,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.tile.functional.CovenantThroneModel;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.tile.functional.CovenantThroneRenderer;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -13,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -66,10 +67,11 @@ public class CovenantThroneItemRenderer extends BlockEntityWithoutLevelRenderer 
 		poseStack.pushPose();
 
 		if (isGui) {
-			poseStack.translate(0.5, 0.35, 0.5);
+			poseStack.translate(0.5, 0.4, 0.5);
 			poseStack.scale(GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.YP, 28, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.YP, 220, true).toMoj());
+			poseStack.mulPose(Axis.ZP .rotationDegrees(-10));
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			poseStack.translate(0.5, 0.65, 0.5);
 			poseStack.scale(WORLD_MODEL_SCALE, WORLD_MODEL_SCALE, WORLD_MODEL_SCALE);
@@ -82,7 +84,10 @@ public class CovenantThroneItemRenderer extends BlockEntityWithoutLevelRenderer 
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		}
 
-		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
+		float timeSeconds = (System.currentTimeMillis() % 240000L) / 1000.0f;
+		float shaderSeed = Math.floorMod(System.identityHashCode(stack), 10007) / 10007.0f + stack.getCount() * 0.011f;
+		VertexConsumer vertexConsumer = buffer.getBuffer(
+				HemoRenderTypes.monolithEntitySurface(timeSeconds, shaderSeed, 0.45f, 0.88f, isGui ? 6.5f : 7.5f));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
 				OverlayTexture.NO_OVERLAY, packColor(0.05F, 0.02F, 0.02F, 1F));
 

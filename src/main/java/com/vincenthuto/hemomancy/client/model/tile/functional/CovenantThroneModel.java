@@ -52,66 +52,32 @@ public class CovenantThroneModel extends Model {
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition root = mesh.getRoot();
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		root.addOrReplaceChild("rearWall",
-				CubeListBuilder.create()
-						.texOffs(0, 0)
-						.addBox(-14.0F, -48.0F, 6.0F, 28.0F, 48.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("leftPylon",
-				CubeListBuilder.create()
-						.texOffs(0, 54)
-						.addBox(-24.0F, -32.0F, -6.0F, 6.0F, 32.0F, 14.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("rightPylon",
-				CubeListBuilder.create()
-						.texOffs(60, 54)
-						.addBox(18.0F, -32.0F, -6.0F, 6.0F, 32.0F, 14.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("seatWound",
-				CubeListBuilder.create()
-						.texOffs(88, 0)
-						.addBox(-8.0F, -8.0F, -7.0F, 16.0F, 8.0F, 14.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("leftArm",
-				CubeListBuilder.create()
-						.texOffs(88, 28)
-						.addBox(-18.0F, -18.0F, -7.0F, 8.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("rightArm",
-				CubeListBuilder.create()
-						.texOffs(88, 60)
-						.addBox(10.0F, -18.0F, -7.0F, 8.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("centerCrown",
-				CubeListBuilder.create()
-						.texOffs(0, 122)
-						.addBox(-5.0F, -58.0F, 6.0F, 10.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("leftCrown",
-				CubeListBuilder.create()
-						.texOffs(30, 122)
-						.addBox(-22.0F, -40.0F, 6.0F, 8.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("rightCrown",
-				CubeListBuilder.create()
-						.texOffs(56, 122)
-						.addBox(14.0F, -40.0F, 6.0F, 8.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("leftRib",
-				CubeListBuilder.create()
-						.texOffs(84, 92)
-						.addBox(-11.0F, -38.0F, 4.0F, 4.0F, 30.0F, 3.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-		root.addOrReplaceChild("rightRib",
-				CubeListBuilder.create()
-						.texOffs(104, 92)
-						.addBox(7.0F, -38.0F, 4.0F, 4.0F, 30.0F, 3.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition rearWall = partdefinition.addOrReplaceChild("rearWall", CubeListBuilder.create().texOffs(0, 0).addBox(-14.0F, -48.0F, 7.0F, 28.0F, 48.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		return LayerDefinition.create(mesh, 128, 128);
+		PartDefinition leftPylon = partdefinition.addOrReplaceChild("leftPylon", CubeListBuilder.create().texOffs(0, 54).addBox(14.0F, -29.0F, -6.0F, 6.0F, 29.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition rightPylon = partdefinition.addOrReplaceChild("rightPylon", CubeListBuilder.create().texOffs(60, 54).addBox(-20.0F, -28.0F, -6.0F, 6.0F, 28.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition seatWound = partdefinition.addOrReplaceChild("seatWound", CubeListBuilder.create().texOffs(88, 0).addBox(-8.0F, -8.0F, -7.0F, 16.0F, 8.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition leftArm = partdefinition.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(89, 29).addBox(8.0F, -14.0F, -4.0F, 8.0F, 9.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition rightArm = partdefinition.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(89, 61).addBox(-16.0F, -14.0F, -4.0F, 8.0F, 9.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition centerCrown = partdefinition.addOrReplaceChild("centerCrown", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition leftCrown = partdefinition.addOrReplaceChild("leftCrown", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition rightCrown = partdefinition.addOrReplaceChild("rightCrown", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition leftRib = partdefinition.addOrReplaceChild("leftRib", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition rightRib = partdefinition.addOrReplaceChild("rightRib", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		return LayerDefinition.create(meshdefinition, 128, 128);
 	}
 
 	@Override

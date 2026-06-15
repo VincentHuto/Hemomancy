@@ -296,6 +296,7 @@ public class VesperTheEveningStarModel extends EntityModel<VesperTheEveningStarE
         this.leftLeg.xRot = Mth.cos(limbSwing * 0.9662F + (float) Math.PI) * 1.4F * limbSwingAmount / 2;
         this.leftLeg2.xRot = Math
                 .abs(Mth.sin(limbSwing * 0.1662F + (float) Math.PI) * 1.4F * limbSwingAmount);
+
         // Cape
         this.cape.xRot = (float) Math.sin((frame) * 0.3f) * 0.05f + 05.75f;
         this.bone3.xRot = (float) Math.sin((frame) * 0.5f) * 0.1f + 25.25f;

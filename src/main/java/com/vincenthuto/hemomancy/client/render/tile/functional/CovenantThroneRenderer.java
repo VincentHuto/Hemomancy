@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.CovenantThroneModel;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.CovenantThroneBlockEntity;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -26,9 +28,9 @@ import org.joml.Matrix4f;
  * blood-drip tendrils and a watching blood-eye on the backrest.
  *
  * <h3>Pass 1 – Black geometry</h3>
- * Four {@link CovenantThroneModel} parts drawn via
- * {@link RenderType#entityTranslucentCull} at near-black {@code 0xFF0D0505},
- * identical to the Sanguine Monolith technique.
+ * Four {@link CovenantThroneModel} parts drawn through the same animated
+ * monolith surface shader as the Sanguine Monolith, tinted near-black at
+ * {@code 0xFF0D0505}.
  *
  * <h3>Pass 2 – Spooky effects</h3>
  * Uses the same world-aligned coordinate system as
@@ -56,7 +58,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 
 	/** Z coordinate of the backrest's visible front face in effect-pass local space. */
 	private static final float BK_FRONT_Z   = -0.350f;
-	private static final float BK_REAR_Z    = -0.505f;
+	private static final float BK_REAR_Z    = -0.6f;
 	private static final float BK_X_HALF    = 0.82f;
 	private static final float BK_Y_BOTTOM  = 0.45f;
 	private static final float BK_Y_TOP     = 2.95f;
@@ -79,6 +81,13 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	private static final float PYLON_Y_TOP = 1.98f;
 	private static final float PYLON_Z_MIN = -0.34f;
 	private static final float PYLON_Z_MAX = 0.44f;
+	private static final float OVERLAY_OUTSET = 0.026f;
+	private static final float FRONT_OVERLAY_Z = BK_FRONT_Z + OVERLAY_OUTSET;
+	private static final float REAR_OVERLAY_Z = BK_REAR_Z - OVERLAY_OUTSET;
+	private static final float SEAT_OVERLAY_Y = SEAT_Y + OVERLAY_OUTSET;
+	private static final float ARM_TOP_OVERLAY_Y = ARM_Y_TOP + OVERLAY_OUTSET;
+	private static final double RENDER_BOUNDS_RADIUS = 2.0D;
+	private static final double RENDER_BOUNDS_HEIGHT = 3.75D;
 
 	// ── Vein tendril parameters ───────────────────────────────────────────────
 	private static final int TENDRIL_COUNT = 16;
@@ -130,7 +139,9 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		ms.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
 		ms.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
-		VertexConsumer geomVC = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
+		float shaderSeed = Math.floorMod(te.getBlockPos().asLong(), 10007L) / 10007.0f;
+		VertexConsumer geomVC = bufferIn.getBuffer(
+				HemoRenderTypes.monolithEntitySurface(time / 20.0f, shaderSeed, 0.45f, 0.88f, 7.5f));
 		model.renderToBuffer(ms, geomVC, combinedLightIn, OverlayTexture.NO_OVERLAY, BLACK_COLOR);
 		ms.popPose();
 
@@ -196,7 +207,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		// ── Backrest front-face glow (fades toward the top) ──
 		float bPulse = 0.5f + 0.5f * Mth.sin(time * 0.048f);
 		float bAlpha = 0.09f + 0.06f * bPulse;
-		float bZ = BK_FRONT_Z;
+		float bZ = FRONT_OVERLAY_Z;
 		// Bottom strip (full opacity)
 		vc.addVertex(mat, -BK_X_HALF, BK_Y_BOTTOM,        bZ).setColor(0.80f, 0.04f, 0.04f, bAlpha);
 		vc.addVertex(mat, -BK_X_HALF, BK_Y_BOTTOM + 0.45f, bZ).setColor(0.55f, 0.02f, 0.02f, bAlpha * 0.5f);
@@ -211,7 +222,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		// ── Seat top glow ──
 		float sPulse = 0.5f + 0.5f * Mth.sin(time * 0.038f + 1.3f);
 		float sAlpha = 0.06f + 0.04f * sPulse;
-		float sY = SEAT_Y + 0.002f;
+		float sY = SEAT_OVERLAY_Y;
 		vc.addVertex(mat, -SEAT_X_HALF, sY, -SEAT_Z_HALF).setColor(0.70f, 0.03f, 0.03f, sAlpha);
 		vc.addVertex(mat, -SEAT_X_HALF, sY,  SEAT_Z_HALF).setColor(0.50f, 0.02f, 0.02f, sAlpha * 0.5f);
 		vc.addVertex(mat,  SEAT_X_HALF, sY,  SEAT_Z_HALF).setColor(0.50f, 0.02f, 0.02f, sAlpha * 0.5f);
@@ -220,7 +231,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		// ── Armrest inner-face glow ──
 		float aPulse = 0.5f + 0.5f * Mth.sin(time * 0.055f + 2.7f);
 		float aAlpha = 0.05f + 0.04f * aPulse;
-		for (float armX : new float[]{ -ARM_X_INNER - 0.001f, ARM_X_INNER + 0.001f }) {
+		for (float armX : new float[]{ -ARM_X_INNER + OVERLAY_OUTSET, ARM_X_INNER - OVERLAY_OUTSET }) {
 			vc.addVertex(mat, armX, ARM_Y_BOTTOM, -0.3125f).setColor(0.65f, 0.03f, 0.03f, aAlpha);
 			vc.addVertex(mat, armX, ARM_Y_TOP,   -0.3125f).setColor(0.35f, 0.01f, 0.01f, 0f);
 			vc.addVertex(mat, armX, ARM_Y_TOP,    0.3125f).setColor(0.35f, 0.01f, 0.01f, 0f);
@@ -278,7 +289,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 				int b = (int) Mth.clamp( 5 +  8 * pulse, 0, 255);
 
 				float sz = 0.013f;
-				float pz = BK_FRONT_Z;
+				float pz = FRONT_OVERLAY_Z;
 				vc.addVertex(mat, px - sz, py - sz, pz).setColor(r, g, b, alpha);
 				vc.addVertex(mat, px - sz, py + sz, pz).setColor(r, g, b, alpha);
 				vc.addVertex(mat, px + sz, py + sz, pz).setColor(r, g, b, alpha);
@@ -298,7 +309,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 			float tOff    = (float)(i * 3.7f) + time * speed * 0.09f;
 
 			for (int side = -1; side <= 1; side += 2) { // left=-1, right=+1
-				float px = side * ARM_X_INNER - side * 0.003f;
+				float px = side * (ARM_X_INNER - OVERLAY_OUTSET);
 
 				for (int step = 0; step < steps; step++) {
 					float t  = step * 0.014f;
@@ -343,7 +354,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	 */
 	private static void renderSeatTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
 		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
-		float y = SEAT_Y + 0.006f;
+		float y = SEAT_OVERLAY_Y;
 		for (int i = 0; i < 7; i++) {
 			float phase = i * 1.37f;
 			float x0 = -SEAT_X_HALF + 0.08f + i * (SEAT_X_HALF * 2.0f - 0.16f) / 6.0f;
@@ -366,7 +377,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	private static void renderPylonTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
 		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 		for (int side = -1; side <= 1; side += 2) {
-			float x = side * (PYLON_X_INNER + 0.055f);
+			float x = side * (PYLON_X_INNER + OVERLAY_OUTSET);
 			for (int i = 0; i < 5; i++) {
 				float phase = side * 0.8f + i * 1.11f;
 				float zBase = -0.32f + i * 0.16f;
@@ -402,7 +413,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 
 	private static void renderSidePanelFaceTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
 		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
-		float z = BK_FRONT_Z + 0.001f;
+		float z = FRONT_OVERLAY_Z;
 		for (int side = -1; side <= 1; side += 2) {
 			for (int i = 0; i < 5; i++) {
 				float phase = i * 1.29f + side * 0.6f;
@@ -430,7 +441,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 
 	private static void renderArmTopTendrils(MultiBufferSource buf, Matrix4f mat, float time, float wakeIntensity) {
 		VertexConsumer vc = buf.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
-		float y = ARM_Y_TOP + 0.006f;
+		float y = ARM_TOP_OVERLAY_Y;
 		for (int side = -1; side <= 1; side += 2) {
 			float xCenter = side * 0.88f;
 			for (int i = 0; i < 4; i++) {
@@ -470,7 +481,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		float pulse = 0.62f + 0.38f * Mth.sin(time * 0.062f);
 		int glowAlpha = (int) Mth.clamp(26f + 45f * wakeIntensity + 18f * pulse, 24f, 95f);
 		int coreAlpha = (int) Mth.clamp(56f + 78f * wakeIntensity + 24f * pulse, 58f, 170f);
-		float z = BK_REAR_Z;
+		float z = REAR_OVERLAY_Z;
 		float cx = 0.0f;
 		float cy = 1.76f;
 		float rx = 0.50f;
@@ -611,7 +622,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		// Eye centre: upper third of backrest, dead centre horizontally
 		float cx = 0f;
 		float cy = 1.78f;
-		float cz = BK_FRONT_Z + 0.008f;
+		float cz = FRONT_OVERLAY_Z;
 
 		float pulse = 0.70f + 0.30f * Mth.sin(time * 0.052f);
 		float beat  = 0.55f + 0.45f * Mth.sin(time * 0.11f + 0.8f);
@@ -709,7 +720,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 		float[] dripX = { -0.18f, 0.0f, 0.18f };
 		float[] dripPhase = { 0f, 1.9f, 3.5f };
 		for (int d = 0; d < 3; d++) {
-			renderOneDrip(vc, mat, time, dripX[d], BK_Y_BOTTOM, BK_FRONT_Z, dripPhase[d], true);
+			renderOneDrip(vc, mat, time, dripX[d], BK_Y_BOTTOM, FRONT_OVERLAY_Z, dripPhase[d], true);
 		}
 		// Armrest drips
 		float[] armDripX = { -ARM_X_INNER + 0.04f, ARM_X_INNER - 0.04f };
@@ -786,5 +797,12 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 	@Override
 	public boolean shouldRenderOffScreen(CovenantThroneBlockEntity te) {
 		return true;
+	}
+
+	@Override
+	public AABB getRenderBoundingBox(CovenantThroneBlockEntity te) {
+		return new AABB(te.getBlockPos())
+				.inflate(RENDER_BOUNDS_RADIUS, 0.0D, RENDER_BOUNDS_RADIUS)
+				.expandTowards(0.0D, RENDER_BOUNDS_HEIGHT, 0.0D);
 	}
 }

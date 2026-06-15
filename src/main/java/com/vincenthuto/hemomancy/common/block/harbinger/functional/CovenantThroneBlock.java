@@ -288,8 +288,9 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
         if (isSeatedOnThisThrone(player, pos)) {
             triggerCovenantTrance(level, pos, serverPlayer);
         } else {
-            claimRespawn(level, pos, serverPlayer);
-            seatPlayer(level, pos, level.getBlockState(pos), serverPlayer);
+            BlockState state = level.getBlockState(pos);
+            claimRespawn(level, pos, state, serverPlayer);
+            seatPlayer(level, pos, state, serverPlayer);
         }
         return InteractionResult.SUCCESS;
     }
@@ -298,11 +299,22 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
         return player.getVehicle() instanceof CovenantThroneSeatEntity seat && seat.isForThrone(pos);
     }
 
-    private static void claimRespawn(Level level, BlockPos pos, ServerPlayer player) {
-        player.setRespawnPosition(level.dimension(), pos, 0.0f, false, false);
+    private static void claimRespawn(Level level, BlockPos pos, BlockState state, ServerPlayer player) {
+        Direction facing = state.hasProperty(FACING) ? state.getValue(FACING) : Direction.SOUTH;
+        BlockPos returnPos = pos.relative(facing);
+        player.setRespawnPosition(level.dimension(), returnPos, respawnAngle(facing), true, false);
         player.sendSystemMessage(Component.translatable(
                 "block.hemomancy.covenant_throne.respawn_set")
                 .withStyle(ChatFormatting.DARK_RED));
+    }
+
+    private static float respawnAngle(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 180.0F;
+            case EAST -> 270.0F;
+            case WEST -> 90.0F;
+            default -> 0.0F;
+        };
     }
 
     private static void seatPlayer(Level level, BlockPos pos, BlockState state, ServerPlayer player) {

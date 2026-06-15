@@ -2531,6 +2531,7 @@ The Liber Sanguinum crafting sidebar and the debug Structure Spawner group Harbi
 | Sanguine Monolith | 7 | *(see JSON)* | *(see JSON)* | *(see JSON)* | Archon machinery |
 
 > Harbinger recipes are in `data/hemomancy/recipe/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, `required_degree`, and `result`. Unstained entries in the same folder use `unstained: true` and are documented in Â§15.3.
+> **Covenant Throne:** Degree 6 Bloodline Covenant machinery. Only the active bloodline Progenitor can bind to it. Sitting on the throne sets a forced return point at the block in front of the throne, facing back toward it; using the throne again while seated triggers the Covenant Trance if the cooldown and blood cost checks pass.
 > **Mycelial Lantern blood structure:** `blood_structure/mycelial_lantern.json` is Degree 5, costs 2,500 blood, uses `spore_sac` on a `hematic_iron_block`, and builds from Sanguine Glass, brown mushroom blocks, Hematic Iron, Polished Venous Stone, and Copper Block.
 > **Sporitic Thurible blood structure:** `blood_structure/sporitic_thurible.json` is Degree 4, costs 1,000 blood, uses `spore_sac` on a `hematic_iron_block`, and builds from `minecraft:chain`, `minecraft:iron_bars`, `minecraft:copper_block`, `minecraft:brown_mushroom_block`, and `hemomancy:hematic_iron_block`.
 

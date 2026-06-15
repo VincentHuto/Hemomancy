@@ -251,8 +251,8 @@ public class Hemomancy {
         populator.accept(BlockInit.saint_sarcophagus.get());
         populator.accept(BlockInit.gourdvine_tap.get());
         populator.accept(BlockInit.infested_wood.get());
-        populator.accept(BlockInit.covenant_throne.get());
         populator.accept(BlockInit.sanguine_vigil.get());
+        populator.accept(BlockInit.sanguine_omen.get());
         populator.accept(BlockInit.visceral_mirror.get());
         populator.accept(BlockInit.blood_basin.get());
         populator.accept(BlockInit.blood_pylon.get());
@@ -328,9 +328,9 @@ public class Hemomancy {
                 || block == BlockInit.witness_organ.get()
                 || block == BlockInit.saint_sarcophagus.get()
                 || block == BlockInit.gourdvine_tap.get()
-                || block == BlockInit.covenant_throne.get()
                 || block == BlockInit.infested_wood.get()
                 || block == BlockInit.sanguine_vigil.get()
+                || block == BlockInit.sanguine_omen.get()
                 || block == BlockInit.visceral_mirror.get()
                 || block == BlockInit.blood_basin.get()
                 || block == BlockInit.blood_pylon.get()

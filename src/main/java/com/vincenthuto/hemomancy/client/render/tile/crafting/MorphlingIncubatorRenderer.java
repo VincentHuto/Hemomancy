@@ -54,11 +54,11 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 	public void render(MorphlingIncubatorBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
 
+		renderCreature(ms, bufferIn, te, combinedLightIn, partialTicks);
 		renderFluidLevel(ms, bufferIn, te);
 		if (bufferIn instanceof MultiBufferSource.BufferSource source) {
-			source.endBatch(RenderTypeInit.FLASK_FLUID);
+			source.endBatch(RenderTypeInit.INCUBATOR_FLUID);
 		}
-		renderCreature(ms, bufferIn, te, combinedLightIn, partialTicks);
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 
@@ -349,7 +349,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			MorphlingIncubatorBlockEntity te, int combinedLightIn, float partialTicks) {
 		poseStack.pushPose();
 
-		poseStack.translate(0.5D, 1.5D, 0.5D);
+		poseStack.translate(0.5D, 0D, 0.5D);
 		poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
 
 		Direction facing = te.getBlockState().getValue(FACING);
@@ -396,7 +396,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		// Blood colour: dark red, semi-transparent
 		int r = 153, g = 13, b = 13, a = 191;
 
-		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
+		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.INCUBATOR_FLUID);
 		Matrix4f mat = poseStack.last().pose();
 
 		renderColorBox(vc, mat, -halfW, 0, -halfD, halfW, fluidHeight, halfD, r, g, b, a);
