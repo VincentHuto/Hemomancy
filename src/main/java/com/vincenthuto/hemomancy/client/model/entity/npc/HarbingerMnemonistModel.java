@@ -21,7 +21,6 @@ import net.minecraft.util.Mth;
 public class HarbingerMnemonistModel<T extends HarbingerMnemonistEntity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Hemomancy.rloc("harbinger_mnemonist"), "main");
-
     private final ModelPart whole;
     private final ModelPart body;
     private final ModelPart Book;
@@ -93,17 +92,13 @@ public class HarbingerMnemonistModel<T extends HarbingerMnemonistEntity> extends
         PartDefinition whole = partdefinition.addOrReplaceChild("whole", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition body = whole.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 28).addBox(-4.0F, -1.0F, -2.0F, 8.0F, 13.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(54, 0).addBox(3.3498F, -0.6865F, -2.5F, 1.0F, 13.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(54, 0).addBox(3.3497F, -0.6865F, -2.5F, 1.0F, 13.0F, 5.0F, new CubeDeformation(0.0F))
                 .texOffs(57, 53).addBox(-4.2998F, -0.6865F, -2.5F, 1.0F, 13.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(70, 50).addBox(-3.9F, -0.5F, -3.25F, 8.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(21, 67).addBox(-3.9F, -0.5F, 2.5F, 8.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(21, 61).addBox(-3.4F, 4.5F, -3.25F, 7.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(68, 79).addBox(-3.4F, 4.5F, 2.8F, 7.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 46).addBox(-4.1F, -0.5F, 1.4F, 8.0F, 13.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition ClothchestR_108_38_cf815bb5_r1 = body.addOrReplaceChild("ClothchestR_108_38_cf815bb5_r1", CubeListBuilder.create().texOffs(68, 79).addBox(-2.9F, 0.5F, -3.5F, 7.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 4.0F, 6.3F, 0.0F, 0.0F, 0.0F));
-
-        PartDefinition ClothchestR_108_38_cf815bb5_r2 = body.addOrReplaceChild("ClothchestR_108_38_cf815bb5_r2", CubeListBuilder.create().texOffs(21, 61).addBox(-2.9F, 0.5F, -3.5F, 7.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 4.0F, 0.25F, 0.0F, 0.0F, 0.0F));
-
-        PartDefinition ClothchestR_108_38_cf815bb5_r3 = body.addOrReplaceChild("ClothchestR_108_38_cf815bb5_r3", CubeListBuilder.create().texOffs(21, 67).addBox(-3.9F, 0.5F, -3.5F, 8.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.0F, 6.0F, 0.0F, 0.0F, 0.0F));
-
-        PartDefinition ClothchestR_108_38_cf815bb5_r4 = body.addOrReplaceChild("ClothchestR_108_38_cf815bb5_r4", CubeListBuilder.create().texOffs(70, 50).addBox(-3.9F, 0.5F, -3.5F, 8.0F, 5.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.0F, 0.25F, 0.0F, 0.0F, 0.0F));
 
         PartDefinition Book = body.addOrReplaceChild("Book", CubeListBuilder.create().texOffs(42, 67).addBox(-2.5F, -3.5F, -1.0F, 5.0F, 7.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.0448F, 13.7332F, 0.0F, 1.5708F, 0.0F, -1.2915F));
 
@@ -133,11 +128,11 @@ public class HarbingerMnemonistModel<T extends HarbingerMnemonistEntity> extends
 
         PartDefinition SideclothR5 = SideclothR4.addOrReplaceChild("SideclothR5", CubeListBuilder.create().texOffs(96, 56).mirror().addBox(-0.291F, -0.6426F, -2.5F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-0.9076F, 5.4763F, 0.0F, 0.0F, 0.0F, 0.2967F));
 
-        PartDefinition SideclothR6 = SideclothR5.addOrReplaceChild("SideclothR6", CubeListBuilder.create().texOffs(93, 62).mirror().addBox(-0.866F, -0.134F, -2.5F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.526F, 2.4064F, 0.0F, 0.0F, 0.0F, 0.5236F));
+        PartDefinition SideclothR6 = SideclothR5.addOrReplaceChild("SideclothR6", CubeListBuilder.create().texOffs(106, 86).mirror().addBox(-0.866F, -0.134F, -2.5F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.526F, 2.4064F, 0.0F, 0.0F, 0.0F, 0.5236F));
 
         PartDefinition SideclothL = body.addOrReplaceChild("SideclothL", CubeListBuilder.create(), PartPose.offset(3.8F, 12.25F, 0.0F));
 
-        PartDefinition SideclothR1 = SideclothL.addOrReplaceChild("SideclothR1", CubeListBuilder.create().texOffs(94, 64).addBox(0.0416F, 0.0691F, -2.5F, 1.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1222F));
+        PartDefinition SideclothR1 = SideclothL.addOrReplaceChild("SideclothR1", CubeListBuilder.create().texOffs(109, 64).addBox(0.0417F, 0.0691F, -2.5F, 1.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1222F));
 
         PartDefinition SideclothR2 = SideclothR1.addOrReplaceChild("SideclothR2", CubeListBuilder.create().texOffs(100, 31).addBox(-0.709F, -0.6426F, -2.5F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.9076F, 5.4763F, 0.0F, 0.0F, 0.0F, -0.2967F));
 
@@ -145,27 +140,21 @@ public class HarbingerMnemonistModel<T extends HarbingerMnemonistEntity> extends
 
         PartDefinition leftArm = whole.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(19, 47).addBox(-0.5F, 2.5F, -2.5F, 4.0F, 8.0F, 5.0F, new CubeDeformation(0.0F))
                 .texOffs(82, 39).addBox(-0.5F, 5.5F, 2.5F, 4.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(83, 65).addBox(0.0F, 3.5F, 2.5F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, 2.0F, 0.0F, 0.0F, 0.0F, 0.0F));
+                .texOffs(83, 65).addBox(0.0F, 3.5F, 2.5F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(63, 19).addBox(-1.4841F, -0.8979F, -2.5125F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.0625F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
         PartDefinition ShoulderR_16_45_0eedefc6_r1 = leftArm.addOrReplaceChild("ShoulderR_16_45_0eedefc6_r1", CubeListBuilder.create().texOffs(63, 39).addBox(-0.5F, -2.5F, -2.5F, 4.0F, 5.0F, 5.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(-0.4363F, 1.2136F, 0.0125F, 0.0F, 0.0F, -1.1345F));
 
-        PartDefinition ShoulderR_16_45_0eedefc6_r2 = leftArm.addOrReplaceChild("ShoulderR_16_45_0eedefc6_r2", CubeListBuilder.create().texOffs(63, 19).addBox(-1.5F, -3.5F, -2.4875F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.0625F)), PartPose.offsetAndRotation(0.0159F, 2.6021F, -0.025F, 0.0F, 0.0F, 0.0F));
-
-        PartDefinition rightArm = whole.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(38, 53).addBox(-3.5F, 2.5F, -2.5F, 4.0F, 8.0F, 5.0F, new CubeDeformation(0.0F))
+        PartDefinition rightArm = whole.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(63, 29).addBox(-3.5159F, -0.8979F, -2.5125F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.0625F))
+                .texOffs(38, 53).addBox(-3.5F, 2.5F, -2.5F, 4.0F, 8.0F, 5.0F, new CubeDeformation(0.0F))
                 .texOffs(83, 57).addBox(-3.5F, 5.5F, 2.5F, 4.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(83, 70).addBox(-3.0F, 3.5F, 2.5F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
-        PartDefinition ShoulderR_16_45_0eedefc6_r3 = rightArm.addOrReplaceChild("ShoulderR_16_45_0eedefc6_r3", CubeListBuilder.create().texOffs(67, 0).addBox(-3.5F, -2.5F, -2.5F, 4.0F, 5.0F, 5.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.5363F, 1.2136F, 0.0125F, 0.0F, 0.0F, 1.1345F));
+        PartDefinition ShoulderR_16_45_0eedefc6_r2 = rightArm.addOrReplaceChild("ShoulderR_16_45_0eedefc6_r2", CubeListBuilder.create().texOffs(67, 0).addBox(-3.5F, -2.5F, -2.5F, 4.0F, 5.0F, 5.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.5363F, 1.2136F, 0.0125F, 0.0F, 0.0F, 1.1345F));
 
-        PartDefinition ShoulderR_16_45_0eedefc6_r4 = rightArm.addOrReplaceChild("ShoulderR_16_45_0eedefc6_r4", CubeListBuilder.create().texOffs(63, 29).addBox(-3.5F, -3.5F, -2.4875F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.0625F)), PartPose.offsetAndRotation(-0.0159F, 2.6021F, -0.025F, 0.0F, 0.0F, 0.0F));
+        PartDefinition leftLeg = whole.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(46, 19).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
-        PartDefinition leftLeg = whole.addOrReplaceChild("leftLeg", CubeListBuilder.create(), PartPose.offset(1.9F, 12.0F, 0.0F));
-
-        PartDefinition right_leg_0_16_c9b3f04f_r1 = leftLeg.addOrReplaceChild("right_leg_0_16_c9b3f04f_r1", CubeListBuilder.create().texOffs(46, 19).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F));
-
-        PartDefinition rightLeg = whole.addOrReplaceChild("rightLeg", CubeListBuilder.create(), PartPose.offset(-1.9F, 12.0F, 0.0F));
-
-        PartDefinition left_leg_0_16_90ee26c7_r1 = rightLeg.addOrReplaceChild("left_leg_0_16_90ee26c7_r1", CubeListBuilder.create().texOffs(46, 36).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F));
+        PartDefinition rightLeg = whole.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(46, 36).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
 
         PartDefinition head = whole.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.1F, -3.5F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -182,6 +171,7 @@ public class HarbingerMnemonistModel<T extends HarbingerMnemonistEntity> extends
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
+
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
