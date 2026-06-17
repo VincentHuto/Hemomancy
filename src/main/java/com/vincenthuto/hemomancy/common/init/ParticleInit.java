@@ -29,6 +29,9 @@ public class ParticleInit {
 	public static final DeferredHolder<ParticleType<?>, ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
 			.register("hit_glow", HitGlowParticleType::new);
 
+	public static final DeferredHolder<ParticleType<?>, ParticleType<HermitEdgeGlowParticleData>> hermit_edge_glow =
+			PARTICLE_TYPES.register("hermit_edge_glow", HermitEdgeGlowParticleType::new);
+
 	public static final DeferredHolder<ParticleType<?>, ParticleType<SporiticSporeParticleData>> sporitic_spore =
 			PARTICLE_TYPES.register("sporitic_spore", SporiticSporeParticleType::new);
 	
@@ -54,6 +57,7 @@ public class ParticleInit {
 		Minecraft.getInstance().particleEngine.register(lethean_drip.get(), LetheanDripParticle.Provider::new);
 		Minecraft.getInstance().particleEngine.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(hit_glow.get(), HitGlowParticleFactory::new);
+		Minecraft.getInstance().particleEngine.register(hermit_edge_glow.get(), HermitEdgeGlowParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(sporitic_spore.get(), SporiticSporeParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(serpent.get(), SerpentParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_cell.get(), BloodCellParticleFactory::new);

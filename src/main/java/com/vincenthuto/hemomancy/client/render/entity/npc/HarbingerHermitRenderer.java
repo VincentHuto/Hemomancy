@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerHermitModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
@@ -20,11 +21,12 @@ import javax.annotation.Nullable;
 public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, HarbingerHermitModel<HarbingerHermitEntity>> {
 
     protected static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/harbinger_hermit/harbinger_hermit.png");
-    private static final float CHEST_BEAM_Y = 1.18F;
-    private static final float CHEST_FLARE_Z = -0.36F;
+    private static final float CHEST_BEAM_Y = 1.28F;
+    private static final float CHEST_FLARE_Z = -0.16F;
     private static final float FAREWELL_MIN_BEAM_WIDTH = 0.048F;
     private static final float FAREWELL_BEAM_ALPHA = 0.76F;
     private static final int FAREWELL_BEAM_COUNT = 9;
+    private static final boolean DEBUG_LOOP_FAREWELL_DEATH = false;
 
     public HarbingerHermitRenderer(Context context) {
         super(context, new HarbingerHermitModel<>(context.bakeLayer(HarbingerHermitModel.LAYER_LOCATION)), 0.5F);
@@ -33,7 +35,7 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
     @Override
     public void render(HarbingerHermitEntity entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight) {
-        float progress = entity.getFarewellDeathProgress(partialTick);
+        float progress = getFarewellDeathRenderProgress(entity, partialTick);
         float originalShadow = this.shadowRadius;
         if (progress > 0.0F) {
             this.shadowRadius = originalShadow * (1.0F - progress);
@@ -42,10 +44,13 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
         this.shadowRadius = originalShadow;
 
         if (progress > 0.0F) {
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - getFarewellBodyYaw(entity, partialTick)));
             VertexConsumer visibleRays = buffer.getBuffer(RenderType.dragonRays());
             renderFarewellDeathBeams(entity, partialTick, poseStack, visibleRays, 1.0F);
             renderFarewellChestFlare(entity, partialTick, poseStack, visibleRays, 1.0F);
             renderFarewellDeathBeams(entity, partialTick, poseStack, buffer.getBuffer(RenderType.dragonRaysDepth()), 0.65F);
+            poseStack.popPose();
         }
     }
 
@@ -58,8 +63,8 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
     @Override
     protected RenderType getRenderType(HarbingerHermitEntity entity, boolean bodyVisible, boolean translucent,
                                        boolean glowing) {
-        if (bodyVisible && entity.isFarewellDying()) {
-            float progress = entity.getFarewellDeathProgress(0.0F);
+        if (bodyVisible && shouldRenderFarewellDeath(entity)) {
+            float progress = getFarewellDeathRenderProgress(entity, 0.0F);
             return HemoRenderTypes.hermitFarewellDissolve(
                     getTextureLocation(entity),
                     entity.tickCount + progress,
@@ -69,9 +74,25 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
         return super.getRenderType(entity, bodyVisible, translucent, glowing);
     }
 
+    private static boolean shouldRenderFarewellDeath(HarbingerHermitEntity entity) {
+        return DEBUG_LOOP_FAREWELL_DEATH || entity.isFarewellDying();
+    }
+
+    private static float getFarewellDeathRenderProgress(HarbingerHermitEntity entity, float partialTick) {
+        if (DEBUG_LOOP_FAREWELL_DEATH) {
+            return ((entity.tickCount % HarbingerHermitEntity.FAREWELL_DEATH_DURATION) + partialTick)
+                    / (float) HarbingerHermitEntity.FAREWELL_DEATH_DURATION;
+        }
+        return entity.getFarewellDeathProgress(partialTick);
+    }
+
+    private static float getFarewellBodyYaw(HarbingerHermitEntity entity, float partialTick) {
+        return Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot);
+    }
+
     private void renderFarewellDeathBeams(HarbingerHermitEntity entity, float partialTick, PoseStack poseStack,
                                           VertexConsumer vertexConsumer, float alphaScale) {
-        float progress = entity.getFarewellDeathProgress(partialTick);
+        float progress = getFarewellDeathRenderProgress(entity, partialTick);
         float pulse = Mth.sin(progress * Mth.PI);
         if (pulse <= 0.015F) return;
 
@@ -83,7 +104,7 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
             float flare = pulse * (0.62F + 0.38F * Mth.sin(age * 0.24F + i * 1.73F));
             float dirX = Mth.cos(phase) * 0.72F;
             float dirY = 0.14F + Math.abs(Mth.sin(phase * 1.47F)) * 0.68F;
-            float dirZ = Mth.sin(phase) * 0.48F - 0.42F;
+            float dirZ = Mth.sin(phase) * 0.38F - 0.58F;
             float invLength = Mth.invSqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
             dirX *= invLength;
             dirY *= invLength;
@@ -108,7 +129,7 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
 
     private void renderFarewellChestFlare(HarbingerHermitEntity entity, float partialTick, PoseStack poseStack,
                                           VertexConsumer vertexConsumer, float alphaScale) {
-        float progress = entity.getFarewellDeathProgress(partialTick);
+        float progress = getFarewellDeathRenderProgress(entity, partialTick);
         float pulse = Mth.sin(progress * Mth.PI);
         if (pulse <= 0.015F) return;
 

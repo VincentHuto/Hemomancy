@@ -26,10 +26,15 @@ float hash21(vec2 p) {
     return fract(p.x * p.y);
 }
 
-float spotCell(vec2 p) {
+float spotGrowthForProgress(float progress) {
+    return mix(0.24, 1.12, smoothstep(0.04, 0.86, clamp(progress, 0.0, 1.0)));
+}
+
+float spotCell(vec2 p, float progress) {
     vec2 cell = floor(p);
     vec2 f = fract(p) - vec2(0.5);
     float best = 0.0;
+    float growth = spotGrowthForProgress(progress);
 
     for (int y = -1; y <= 1; y++) {
         for (int x = -1; x <= 1; x++) {
@@ -40,29 +45,35 @@ float spotCell(vec2 p) {
                 hash21(id + vec2(3.77, 9.41))
             ) - vec2(0.5);
             center *= 0.56;
-            float radius = 0.13 + hash21(id + vec2(11.7, 5.2)) * 0.22;
-            float d = length(f - neighbor - center);
-            best = max(best, smoothstep(radius + 0.035, radius - 0.065, d));
+            float radius = (0.11 + hash21(id + vec2(11.7, 5.2)) * 0.24) * growth;
+            vec2 delta = f - neighbor - center;
+            float angle = atan(delta.y, delta.x);
+            float angularWobble = sin(angle * 5.0 + hash21(id + vec2(13.7, 4.9)) * 6.28318)
+                    + sin(angle * 11.0 + hash21(id + vec2(1.7, 14.9)) * 6.28318) * 0.55;
+            float tornNoise = hash21(floor((delta + id) * 19.0) + id * 1.37) - 0.5;
+            float d = length(delta) * (1.0 + angularWobble * 0.075) + tornNoise * 0.018;
+            float softness = mix(0.022, 0.070, growth);
+            best = max(best, smoothstep(radius + softness * 0.55, radius - softness, d));
         }
     }
 
     return best;
 }
 
-float holeField(vec2 uv, vec3 p) {
+float holeField(vec2 uv, vec3 p, float progress) {
     vec2 bodyDrift = vec2(
         sin(HemoTime * 0.017 + HermitDissolveSeed * 6.1),
         cos(HemoTime * 0.013 + HermitDissolveSeed * 4.7)
     ) * 0.12;
     vec2 bodyUv = uv + p.xz * 0.018 + vec2(p.y * 0.006, -p.y * 0.004) + bodyDrift;
-    float fine = spotCell(bodyUv * 17.0 + HermitDissolveSeed * 9.0);
-    float broad = spotCell(bodyUv * 8.5 + vec2(2.4, -1.7) + HermitDissolveSeed * 5.0);
-    float torn = spotCell((uv.yx + p.xy * 0.012) * 12.0 + vec2(-3.1, 1.8));
+    float fine = spotCell(bodyUv * 17.0 + HermitDissolveSeed * 9.0, progress);
+    float broad = spotCell(bodyUv * 8.5 + vec2(2.4, -1.7) + HermitDissolveSeed * 5.0, progress);
+    float torn = spotCell((uv.yx + p.xy * 0.012) * 12.0 + vec2(-3.1, 1.8), progress);
     return max(max(fine, broad * 0.92), torn * 0.72);
 }
 
 float cutForProgress(float progress) {
-    return mix(1.10, 0.16, smoothstep(0.12, 0.92, clamp(progress, 0.0, 1.0)));
+    return mix(1.08, 0.14, smoothstep(0.08, 0.94, clamp(progress, 0.0, 1.0)));
 }
 
 void main() {
@@ -75,14 +86,15 @@ void main() {
     color *= lightMapColor;
 
     float progress = clamp(HermitDissolveProgress, 0.0, 1.0);
-    float field = holeField(texCoord0, localPosition);
+    float field = holeField(texCoord0, localPosition, progress);
     float cut = cutForProgress(progress);
     float bodyVisible = 1.0 - step(cut, field);
     if (bodyVisible < 0.5) {
         discard;
     }
 
-    float edge = 1.0 - smoothstep(0.018, 0.13, abs(field - cut));
+    float edgeBand = mix(0.070, 0.145, smoothstep(0.18, 0.82, progress));
+    float edge = 1.0 - smoothstep(0.014, edgeBand, abs(field - cut));
     float finalFade = 1.0 - smoothstep(0.90, 1.0, progress);
 
     vec3 dissolveColor = color.rgb;

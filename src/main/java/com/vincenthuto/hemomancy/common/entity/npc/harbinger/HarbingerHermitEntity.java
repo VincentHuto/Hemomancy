@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.HermitEdgeGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.nbt.CompoundTag;
@@ -40,13 +40,18 @@ import net.minecraft.world.phys.Vec3;
  */
 public class HarbingerHermitEntity extends PathfinderMob {
 
-    public static final int FAREWELL_DEATH_DURATION = 104;
+    public static final int FAREWELL_DEATH_DURATION = 250;
     private static final String TAG_FAREWELL_DEATH_TICKS = "FarewellDeathTicks";
     private static final EntityDataAccessor<Integer> DATA_FAREWELL_DEATH_TICKS =
             SynchedEntityData.defineId(HarbingerHermitEntity.class, EntityDataSerializers.INT);
     private static final ParticleColor FAREWELL_EDGE_GLOW = new ParticleColor(235, 6, 4);
     private static final ParticleColor FAREWELL_HOT_EDGE_GLOW = new ParticleColor(255, 74, 18);
     private static final ParticleColor FAREWELL_DEEP_EDGE_GLOW = new ParticleColor(156, 0, 0);
+    private static final double FAREWELL_FRONT_SURFACE_Z = -0.46D;
+    private static final double FAREWELL_BACK_SURFACE_Z = 0.28D;
+    private static final double FAREWELL_SIDE_SURFACE_X = 0.38D;
+    private static final double FAREWELL_FRONT_SURFACE_VARIANCE = 0.020D;
+    private static final double FAREWELL_SIDE_SURFACE_VARIANCE = 0.025D;
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -156,42 +161,68 @@ public class HarbingerHermitEntity extends PathfinderMob {
     private void spawnFarewellDissolveEdgeParticles(int ticks, float progress) {
         if (progress < 0.08F) return;
 
-        int targetCount = 18 + (int) (progress * 46.0F);
+        int targetCount = 10 + (int) (progress * 28.0F);
         if (ticks % 2 == 0) {
-            targetCount += 6;
+            targetCount += 3;
         }
 
         int emitted = 0;
-        int attempts = targetCount * 28;
+        int attempts = targetCount * 32;
         double time = this.tickCount + progress;
         double seed = this.getId() * 0.137D;
 
         for (int i = 0; i < attempts && emitted < targetCount; i++) {
-            double localY = 0.58D + this.random.nextDouble() * 1.03D;
-            double yNorm = clamp01((localY - 0.58D) / 1.03D);
-            double torsoBias = 0.78D + Math.sin(yNorm * Math.PI) * 0.22D;
-            double localX = (this.random.nextDouble() - 0.5D) * 0.62D * torsoBias;
-            double localZ = -0.245D + (this.random.nextDouble() - 0.5D) * 0.050D;
-            double uvX = 0.50D + localX * 1.16D + localZ * 0.18D;
-            double uvY = 1.00D - yNorm + localZ * 0.12D;
-            double field = farewellHoleField(uvX, uvY, localX, localY, localZ, time, seed);
+            FarewellSurfaceSample sample = sampleFarewellDissolveSurface();
+            double field = farewellHoleField(sample.uvX(), sample.uvY(), sample.localX(), sample.localY(), sample.localZ(),
+                    time, seed, progress);
             if (!isNearFarewellDissolveEdge(field, progress)) {
                 continue;
             }
 
-            Vec3 position = transformFarewellLocalToWorld(localX, localY, localZ);
-            Vec3 outward = transformFarewellDirectionToWorld(localX * 0.28D, 0.0D, localZ).normalize();
-            Vec3 tangent = transformFarewellDirectionToWorld(1.0D, 0.0D, 0.0D).normalize();
-            double outwardSpeed = 0.003D + this.random.nextDouble() * 0.007D + progress * 0.005D;
-            double riseSpeed = (this.random.nextDouble() - 0.42D) * (0.004D + progress * 0.004D);
-            double tangentSpeed = (this.random.nextDouble() - 0.5D) * (0.006D + progress * 0.006D);
+            Vec3 position = transformFarewellLocalToWorld(sample.localX(), sample.localY(), sample.localZ());
+            Vec3 outward = transformFarewellDirectionToWorld(sample.normalX(), 0.0D, sample.normalZ()).normalize();
+            Vec3 tangent = transformFarewellDirectionToWorld(sample.tangentX(), 0.0D, sample.tangentZ()).normalize();
+            double outwardSpeed = 0.001D + this.random.nextDouble() * 0.002D + progress * 0.001D;
+            double tangentSpeed = (this.random.nextDouble() - 0.5D) * (0.002D + progress * 0.002D);
             Vec3 velocity = outward.scale(outwardSpeed)
-                    .add(tangent.scale(tangentSpeed))
-                    .add(0.0D, riseSpeed, 0.0D);
+                    .add(tangent.scale(tangentSpeed));
 
             spawnFarewellEdgeGlowParticle(position, velocity, progress);
             emitted++;
         }
+    }
+
+    private FarewellSurfaceSample sampleFarewellDissolveSurface() {
+        double localY = 0.58D + this.random.nextDouble() * 1.03D;
+        double yNorm = clamp01((localY - 0.58D) / 1.03D);
+        double torsoBias = 0.78D + Math.sin(yNorm * Math.PI) * 0.22D;
+        double roll = this.random.nextDouble();
+
+        if (roll < 0.45D) {
+            double localX = (this.random.nextDouble() - 0.5D) * 0.62D * torsoBias;
+            double localZ = FAREWELL_FRONT_SURFACE_Z
+                    + (this.random.nextDouble() - 0.5D) * FAREWELL_FRONT_SURFACE_VARIANCE;
+            double uvX = 0.50D + localX * 1.16D;
+            return new FarewellSurfaceSample(localX, localY, localZ, uvX, 1.00D - yNorm,
+                    localX * 0.16D, -1.0D, 1.0D, 0.0D);
+        }
+
+        if (roll < 0.68D) {
+            double localX = (this.random.nextDouble() - 0.5D) * 0.62D * torsoBias;
+            double localZ = FAREWELL_BACK_SURFACE_Z
+                    + (this.random.nextDouble() - 0.5D) * FAREWELL_SIDE_SURFACE_VARIANCE;
+            double uvX = 0.50D - localX * 0.92D;
+            return new FarewellSurfaceSample(localX, localY, localZ, uvX, 1.00D - yNorm,
+                    localX * 0.12D, 1.0D, 1.0D, 0.0D);
+        }
+
+        double side = roll < 0.84D ? -1.0D : 1.0D;
+        double localX = side * FAREWELL_SIDE_SURFACE_X
+                + (this.random.nextDouble() - 0.5D) * FAREWELL_SIDE_SURFACE_VARIANCE;
+        double localZ = -0.16D + (this.random.nextDouble() - 0.5D) * 0.58D * torsoBias;
+        double uvX = 0.50D + localZ * 0.95D * side;
+        return new FarewellSurfaceSample(localX, localY, localZ, uvX, 1.00D - yNorm,
+                side, localZ * 0.12D, 0.0D, 1.0D);
     }
 
     private void spawnFarewellEdgeGlowParticle(Vec3 position, Vec3 velocity, float progress) {
@@ -204,11 +235,11 @@ public class HarbingerHermitEntity extends PathfinderMob {
         }
 
         double jitter = 0.008D + progress * 0.010D;
-        this.level().addParticle(GlowParticleFactory.createData(color),
+        this.level().addParticle(HermitEdgeGlowParticleFactory.createData(color),
                 position.x() + (this.random.nextDouble() - 0.5D) * jitter,
                 position.y() + (this.random.nextDouble() - 0.5D) * jitter,
                 position.z() + (this.random.nextDouble() - 0.5D) * jitter,
-                velocity.x() * 0.24D, velocity.y() * 0.18D, velocity.z() * 0.24D);
+                velocity.x() * 0.08D, 0.0D, velocity.z() * 0.08D);
     }
 
     private boolean isNearFarewellDissolveEdge(double field, float progress) {
@@ -218,25 +249,26 @@ public class HarbingerHermitEntity extends PathfinderMob {
     }
 
     private double farewellHoleField(double uvX, double uvY, double localX, double localY, double localZ,
-                                     double time, double seed) {
+                                     double time, double seed, double progress) {
         double driftX = Math.sin(time * 0.017D + seed * 6.1D) * 0.12D;
         double driftY = Math.cos(time * 0.013D + seed * 4.7D) * 0.12D;
         double bodyUvX = uvX + localX * 0.018D + localY * 0.006D + driftX;
         double bodyUvY = uvY + localZ * 0.018D - localY * 0.004D + driftY;
-        double fine = farewellSpotCell(bodyUvX * 17.0D + seed * 9.0D, bodyUvY * 17.0D + seed * 9.0D, seed);
+        double fine = farewellSpotCell(bodyUvX * 17.0D + seed * 9.0D, bodyUvY * 17.0D + seed * 9.0D, seed, progress);
         double broad = farewellSpotCell(bodyUvX * 8.5D + 2.4D + seed * 5.0D,
-                bodyUvY * 8.5D - 1.7D + seed * 5.0D, seed);
+                bodyUvY * 8.5D - 1.7D + seed * 5.0D, seed, progress);
         double torn = farewellSpotCell((uvY + localX * 0.012D) * 12.0D - 3.1D,
-                (uvX + localY * 0.012D) * 12.0D + 1.8D, seed);
+                (uvX + localY * 0.012D) * 12.0D + 1.8D, seed, progress);
         return Math.max(Math.max(fine, broad * 0.92D), torn * 0.72D);
     }
 
-    private static double farewellSpotCell(double xCoord, double yCoord, double seed) {
+    private static double farewellSpotCell(double xCoord, double yCoord, double seed, double progress) {
         double cellX = Math.floor(xCoord);
         double cellY = Math.floor(yCoord);
         double fracX = fract(xCoord) - 0.5D;
         double fracY = fract(yCoord) - 0.5D;
         double best = 0.0D;
+        double growth = farewellSpotGrowthForProgress(progress);
 
         for (int y = -1; y <= 1; y++) {
             for (int x = -1; x <= 1; x++) {
@@ -244,13 +276,25 @@ public class HarbingerHermitEntity extends PathfinderMob {
                 double idY = cellY + y;
                 double centerX = (farewellHash21(idX + 7.13D, idY + 2.91D, seed) - 0.5D) * 0.56D;
                 double centerY = (farewellHash21(idX + 3.77D, idY + 9.41D, seed) - 0.5D) * 0.56D;
-                double radius = 0.13D + farewellHash21(idX + 11.7D, idY + 5.2D, seed) * 0.22D;
-                double distance = Math.hypot(fracX - x - centerX, fracY - y - centerY);
-                best = Math.max(best, smoothstep(radius + 0.035D, radius - 0.065D, distance));
+                double radius = (0.11D + farewellHash21(idX + 11.7D, idY + 5.2D, seed) * 0.24D) * growth;
+                double deltaX = fracX - x - centerX;
+                double deltaY = fracY - y - centerY;
+                double angle = Math.atan2(deltaY, deltaX);
+                double angularWobble = Math.sin(angle * 5.0D + farewellHash21(idX + 13.7D, idY + 4.9D, seed) * Math.PI * 2.0D)
+                        + Math.sin(angle * 11.0D + farewellHash21(idX + 1.7D, idY + 14.9D, seed) * Math.PI * 2.0D) * 0.55D;
+                double tornNoise = farewellHash21(Math.floor((deltaX + idX) * 19.0D) + idX * 1.37D,
+                        Math.floor((deltaY + idY) * 19.0D) + idY * 1.37D, seed) - 0.5D;
+                double distance = Math.hypot(deltaX, deltaY) * (1.0D + angularWobble * 0.075D) + tornNoise * 0.018D;
+                double softness = lerp(0.022D, 0.070D, growth);
+                best = Math.max(best, smoothstep(radius + softness * 0.55D, radius - softness, distance));
             }
         }
 
         return best;
+    }
+
+    private static double farewellSpotGrowthForProgress(double progress) {
+        return lerp(0.24D, 1.12D, smoothstep(0.04D, 0.86D, clamp01(progress)));
     }
 
     private static double farewellHash21(double x, double y, double seed) {
@@ -263,7 +307,7 @@ public class HarbingerHermitEntity extends PathfinderMob {
     }
 
     private static double farewellCutForProgress(double progress) {
-        return lerp(1.10D, 0.16D, smoothstep(0.12D, 0.92D, clamp01(progress)));
+        return lerp(1.08D, 0.14D, smoothstep(0.08D, 0.94D, clamp01(progress)));
     }
 
     private Vec3 transformFarewellLocalToWorld(double localX, double localY, double localZ) {
@@ -272,12 +316,18 @@ public class HarbingerHermitEntity extends PathfinderMob {
     }
 
     private Vec3 transformFarewellDirectionToWorld(double localX, double localY, double localZ) {
-        double yaw = Math.toRadians(-this.getYRot());
+        double yaw = Math.toRadians(180.0D - this.yBodyRot);
         double cos = Math.cos(yaw);
         double sin = Math.sin(yaw);
-        double worldX = localX * cos - localZ * sin;
-        double worldZ = localX * sin + localZ * cos;
+        double worldX = localX * cos + localZ * sin;
+        double worldZ = localZ * cos - localX * sin;
         return new Vec3(worldX, localY, worldZ);
+    }
+
+    private record FarewellSurfaceSample(double localX, double localY, double localZ,
+                                         double uvX, double uvY,
+                                         double normalX, double normalZ,
+                                         double tangentX, double tangentZ) {
     }
 
     private static double smoothstep(double edge0, double edge1, double value) {
