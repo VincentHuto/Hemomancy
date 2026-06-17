@@ -92,6 +92,10 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 From here the player can pursue the **Harbinger Path** (blood magic) or eventually diverge to the **Unstained Path** (anti-blood purification).
 
+After reaching Degree 1, the Harbinger Vicar introduces the **Hermit Road**: the player is told to seek abandoned hermitage remnants and blood-stained stones in a similar state to their own first invitation. Natural Hermitage Remnants now generate as sparse surface rubble with venous stone, blackstone bricks, crimson flame accents, a placed Blood Stained Stone, and the `hermitage_remnant/first_invitation_stone` blood echo. Reading that echo grants the hidden `hermit_road_first_remnant` milestone; the player's first report to a Vicar grants a **Harbinger Assignment Ledger** plus `hermit_road_ledger_granted`. After the ledger is granted, the Vicar acknowledges subsequent remnant reports as evidence to keep recording rather than granting another ledger. The same Degree 1 dialogue also hints that new Harbinger assignments may open after the player completes the next degree rank-up rite and returns as Votary. The ledger is a separate guidebook-rendered item, not the dormant Field Notes item, and opens its own assignment/progress GUI.
+
+At Degree 2, the Harbinger Alchemist introduces **The Red Taxonomy**, a field-assay assignment for cataloguing hemomantic fungal and near-fungal flora. Bringing distinct samples such as Infected Fungus, Stinkhorn Fungus, Sarcodes, Bleeding Heart, Rafflesia, Devil's Tooth, or Puffball Fungus to the Alchemist grants hidden specimen records; four distinct records complete `red_taxonomy_complete`. Each sample has a unique diagnostic response, while reward handling is intentionally placeholder-only until final assignment rewards are designed. The Harbinger Assignment Ledger displays Red Taxonomy progress as a D2 assignment.
+
 ---
 
 ## 2. Core Architecture & Player Capabilities
@@ -370,7 +374,7 @@ Four Harbinger NPC types provide lore and gameplay hints through the `DialogueTr
 | Degree State | Content |
 |---|---|
 | No blood (pre-initiation) | Offers lore about the Mortal Display, explains his duty as eternal keeper, presents the option to claim the heart and begin hemomancy |
-| Degree 0 (uninitiated) | Congratulates the player, offers guidance about the Rite of Sanguine Initiation, drops the Rite Hint item on farewell (triggering `hermit_farewell_die` â†’ kills the hermit) |
+| Degree 0 (uninitiated) | Congratulates the player, offers guidance about the Rite of Sanguine Initiation, drops the Rite Hint item on farewell (triggering `hermit_farewell_die` -> starts the Hermit's ritual farewell death animation with crimson chest flares, shader-cut dissolve holes, and a slow dust crumble) |
 | Degree 1 Neophyte | Acknowledges first step; hints toward Votary Rite and manipulation lore |
 | Degree 2 Votary | Guidance on blood tendencies and the Somatic Loom; hints toward Incarnadine Fane |
 | Degree 3 Initiate | Points toward Sanguine Brotherhood rite |
@@ -2840,7 +2844,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Unstained Zealot** | ![](../src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
 | **Unstained Guardian** | | Creature | NPC that guards Unstained sacred sites |
 | **Unstained Acolyte** | | Creature | NPC acolyte of the Unstained faction |
-| **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0â€“7 dialogue (`HarbingerHermitDialogueTrees`). Drops Rite Hint item on farewell. Invulnerable until player chooses "Farewell" option. |
+| **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0-7 dialogue (`HarbingerHermitDialogueTrees`). Drops Rite Hint item on farewell, then plays the ritual farewell death animation: crimson chest rays, irregular dissolve holes through the body, and ash-colored dust. Invulnerable until player chooses "Farewell" option. |
 | **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0â€“7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
 | **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0â€“7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
 | **Harbinger Mnemonist** | ![](../src/main/resources/assets/hemomancy/textures/entity/harbinger_mnemonist/harbinger_mnemonist.png) | Creature | NPC blood-memory mentor found at Harbinger Outposts; full degree-gated dialogue (`HarbingerMnemonistDialogueTrees`). Teaches crude memories, active manipulation slots, the Mnemonic Reliquary, and Somatic Loom progression. Gives eligible Degree 1+ Harbingers one starter crude memory item; purifying/Clarity players may inquire but cannot claim. |

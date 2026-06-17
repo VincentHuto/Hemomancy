@@ -113,6 +113,10 @@ public class ItemInit {
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
+    public static final DeferredHolder<Item, Item> harbinger_assignment_ledger = SPECIALITEMS.register("harbinger_assignment_ledger",
+            () -> new HarbingerAssignmentLedgerItem(new Item.Properties().stacksTo(1),
+                    Hemomancy.rloc("textures/entity/field_notes.png")));
+
 //    public static final DeferredHolder<Item, Item> field_notes = SPECIALITEMS.register("field_notes",
 //            () -> new FieldNotesBookItem(new Item.Properties().stacksTo(1),
 //                    Hemomancy.rloc("textures/entity/field_notes.png")));

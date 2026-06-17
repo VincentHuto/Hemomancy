@@ -6,7 +6,13 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerHermitDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,6 +28,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * A reclusive hermit of the Harbinger order, found dwelling within blood temple
@@ -32,6 +39,14 @@ import net.minecraft.world.level.Level;
  * the Harbinger Hermit encourages deeper exploration of hemomancy.
  */
 public class HarbingerHermitEntity extends PathfinderMob {
+
+    public static final int FAREWELL_DEATH_DURATION = 104;
+    private static final String TAG_FAREWELL_DEATH_TICKS = "FarewellDeathTicks";
+    private static final EntityDataAccessor<Integer> DATA_FAREWELL_DEATH_TICKS =
+            SynchedEntityData.defineId(HarbingerHermitEntity.class, EntityDataSerializers.INT);
+    private static final ParticleColor FAREWELL_EDGE_GLOW = new ParticleColor(235, 6, 4);
+    private static final ParticleColor FAREWELL_HOT_EDGE_GLOW = new ParticleColor(255, 74, 18);
+    private static final ParticleColor FAREWELL_DEEP_EDGE_GLOW = new ParticleColor(156, 0, 0);
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -55,7 +70,38 @@ public class HarbingerHermitEntity extends PathfinderMob {
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_FAREWELL_DEATH_TICKS, 0);
+    }
+
+    public int getFarewellDeathTicks() {
+        return this.entityData.get(DATA_FAREWELL_DEATH_TICKS);
+    }
+
+    public boolean isFarewellDying() {
+        return getFarewellDeathTicks() > 0;
+    }
+
+    public float getFarewellDeathProgress(float partialTick) {
+        int ticks = getFarewellDeathTicks();
+        if (ticks <= 0) return 0.0F;
+        return Math.min(1.0F, (ticks + partialTick) / (float) FAREWELL_DEATH_DURATION);
+    }
+
+    public void beginFarewellDeath() {
+        if (isFarewellDying()) return;
+        this.setInvulnerable(true);
+        this.setNoAi(true);
+        this.setDeltaMovement(Vec3.ZERO);
+        this.entityData.set(DATA_FAREWELL_DEATH_TICKS, 1);
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (isFarewellDying()) {
+            return false;
+        }
         // Allow damage when invulnerability has been explicitly cleared (e.g. farewell sequence)
         if (!this.isInvulnerable()) {
             return super.hurt(source, amount);
@@ -76,11 +122,205 @@ public class HarbingerHermitEntity extends PathfinderMob {
         if (this.level().isClientSide()) {
             this.idleAnimationState.startIfStopped(this.tickCount);
         }
+        if (isFarewellDying()) {
+            this.setDeltaMovement(Vec3.ZERO);
+        }
         super.tick();
+        if (isFarewellDying()) {
+            tickFarewellDeath();
+        }
+    }
+
+    private void tickFarewellDeath() {
+        int ticks = getFarewellDeathTicks();
+        if (this.level().isClientSide()) {
+            tickFarewellDeathClient(ticks);
+            return;
+        }
+
+        if (ticks >= FAREWELL_DEATH_DURATION) {
+            this.remove(RemovalReason.KILLED);
+            return;
+        }
+
+        this.entityData.set(DATA_FAREWELL_DEATH_TICKS, ticks + 1);
+    }
+
+    private void tickFarewellDeathClient(int ticks) {
+        if (ticks <= 0) return;
+
+        float progress = getFarewellDeathProgress(0.0F);
+        spawnFarewellDissolveEdgeParticles(ticks, progress);
+    }
+
+    private void spawnFarewellDissolveEdgeParticles(int ticks, float progress) {
+        if (progress < 0.08F) return;
+
+        int targetCount = 18 + (int) (progress * 46.0F);
+        if (ticks % 2 == 0) {
+            targetCount += 6;
+        }
+
+        int emitted = 0;
+        int attempts = targetCount * 28;
+        double time = this.tickCount + progress;
+        double seed = this.getId() * 0.137D;
+
+        for (int i = 0; i < attempts && emitted < targetCount; i++) {
+            double localY = 0.58D + this.random.nextDouble() * 1.03D;
+            double yNorm = clamp01((localY - 0.58D) / 1.03D);
+            double torsoBias = 0.78D + Math.sin(yNorm * Math.PI) * 0.22D;
+            double localX = (this.random.nextDouble() - 0.5D) * 0.62D * torsoBias;
+            double localZ = -0.245D + (this.random.nextDouble() - 0.5D) * 0.050D;
+            double uvX = 0.50D + localX * 1.16D + localZ * 0.18D;
+            double uvY = 1.00D - yNorm + localZ * 0.12D;
+            double field = farewellHoleField(uvX, uvY, localX, localY, localZ, time, seed);
+            if (!isNearFarewellDissolveEdge(field, progress)) {
+                continue;
+            }
+
+            Vec3 position = transformFarewellLocalToWorld(localX, localY, localZ);
+            Vec3 outward = transformFarewellDirectionToWorld(localX * 0.28D, 0.0D, localZ).normalize();
+            Vec3 tangent = transformFarewellDirectionToWorld(1.0D, 0.0D, 0.0D).normalize();
+            double outwardSpeed = 0.003D + this.random.nextDouble() * 0.007D + progress * 0.005D;
+            double riseSpeed = (this.random.nextDouble() - 0.42D) * (0.004D + progress * 0.004D);
+            double tangentSpeed = (this.random.nextDouble() - 0.5D) * (0.006D + progress * 0.006D);
+            Vec3 velocity = outward.scale(outwardSpeed)
+                    .add(tangent.scale(tangentSpeed))
+                    .add(0.0D, riseSpeed, 0.0D);
+
+            spawnFarewellEdgeGlowParticle(position, velocity, progress);
+            emitted++;
+        }
+    }
+
+    private void spawnFarewellEdgeGlowParticle(Vec3 position, Vec3 velocity, float progress) {
+        ParticleColor color = FAREWELL_EDGE_GLOW;
+        float roll = this.random.nextFloat();
+        if (roll < 0.20F + progress * 0.12F) {
+            color = FAREWELL_HOT_EDGE_GLOW;
+        } else if (roll < 0.43F) {
+            color = FAREWELL_DEEP_EDGE_GLOW;
+        }
+
+        double jitter = 0.008D + progress * 0.010D;
+        this.level().addParticle(GlowParticleFactory.createData(color),
+                position.x() + (this.random.nextDouble() - 0.5D) * jitter,
+                position.y() + (this.random.nextDouble() - 0.5D) * jitter,
+                position.z() + (this.random.nextDouble() - 0.5D) * jitter,
+                velocity.x() * 0.24D, velocity.y() * 0.18D, velocity.z() * 0.24D);
+    }
+
+    private boolean isNearFarewellDissolveEdge(double field, float progress) {
+        double cut = farewellCutForProgress(progress);
+        double edgeBand = 0.046D + progress * 0.034D;
+        return field > 0.13D && field < 1.12D && Math.abs(field - cut) <= edgeBand;
+    }
+
+    private double farewellHoleField(double uvX, double uvY, double localX, double localY, double localZ,
+                                     double time, double seed) {
+        double driftX = Math.sin(time * 0.017D + seed * 6.1D) * 0.12D;
+        double driftY = Math.cos(time * 0.013D + seed * 4.7D) * 0.12D;
+        double bodyUvX = uvX + localX * 0.018D + localY * 0.006D + driftX;
+        double bodyUvY = uvY + localZ * 0.018D - localY * 0.004D + driftY;
+        double fine = farewellSpotCell(bodyUvX * 17.0D + seed * 9.0D, bodyUvY * 17.0D + seed * 9.0D, seed);
+        double broad = farewellSpotCell(bodyUvX * 8.5D + 2.4D + seed * 5.0D,
+                bodyUvY * 8.5D - 1.7D + seed * 5.0D, seed);
+        double torn = farewellSpotCell((uvY + localX * 0.012D) * 12.0D - 3.1D,
+                (uvX + localY * 0.012D) * 12.0D + 1.8D, seed);
+        return Math.max(Math.max(fine, broad * 0.92D), torn * 0.72D);
+    }
+
+    private static double farewellSpotCell(double xCoord, double yCoord, double seed) {
+        double cellX = Math.floor(xCoord);
+        double cellY = Math.floor(yCoord);
+        double fracX = fract(xCoord) - 0.5D;
+        double fracY = fract(yCoord) - 0.5D;
+        double best = 0.0D;
+
+        for (int y = -1; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                double idX = cellX + x;
+                double idY = cellY + y;
+                double centerX = (farewellHash21(idX + 7.13D, idY + 2.91D, seed) - 0.5D) * 0.56D;
+                double centerY = (farewellHash21(idX + 3.77D, idY + 9.41D, seed) - 0.5D) * 0.56D;
+                double radius = 0.13D + farewellHash21(idX + 11.7D, idY + 5.2D, seed) * 0.22D;
+                double distance = Math.hypot(fracX - x - centerX, fracY - y - centerY);
+                best = Math.max(best, smoothstep(radius + 0.035D, radius - 0.065D, distance));
+            }
+        }
+
+        return best;
+    }
+
+    private static double farewellHash21(double x, double y, double seed) {
+        double px = fract(x * 123.34D);
+        double py = fract(y * 456.21D);
+        double dot = px * (px + 45.32D + seed) + py * (py + 45.32D + seed);
+        px += dot;
+        py += dot;
+        return fract(px * py);
+    }
+
+    private static double farewellCutForProgress(double progress) {
+        return lerp(1.10D, 0.16D, smoothstep(0.12D, 0.92D, clamp01(progress)));
+    }
+
+    private Vec3 transformFarewellLocalToWorld(double localX, double localY, double localZ) {
+        Vec3 rotated = transformFarewellDirectionToWorld(localX, localY, localZ);
+        return new Vec3(this.getX() + rotated.x(), this.getY() + rotated.y(), this.getZ() + rotated.z());
+    }
+
+    private Vec3 transformFarewellDirectionToWorld(double localX, double localY, double localZ) {
+        double yaw = Math.toRadians(-this.getYRot());
+        double cos = Math.cos(yaw);
+        double sin = Math.sin(yaw);
+        double worldX = localX * cos - localZ * sin;
+        double worldZ = localX * sin + localZ * cos;
+        return new Vec3(worldX, localY, worldZ);
+    }
+
+    private static double smoothstep(double edge0, double edge1, double value) {
+        double t = clamp01((value - edge0) / (edge1 - edge0));
+        return t * t * (3.0D - 2.0D * t);
+    }
+
+    private static double lerp(double from, double to, double amount) {
+        return from + (to - from) * amount;
+    }
+
+    private static double clamp01(double value) {
+        return Math.max(0.0D, Math.min(1.0D, value));
+    }
+
+    private static double fract(double value) {
+        return value - Math.floor(value);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        if (isFarewellDying()) {
+            compound.putInt(TAG_FAREWELL_DEATH_TICKS, getFarewellDeathTicks());
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        int ticks = compound.getInt(TAG_FAREWELL_DEATH_TICKS);
+        if (ticks > 0) {
+            this.setInvulnerable(true);
+            this.setNoAi(true);
+            this.entityData.set(DATA_FAREWELL_DEATH_TICKS, Math.min(ticks, FAREWELL_DEATH_DURATION));
+        }
     }
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (isFarewellDying()) {
+            return InteractionResult.sidedSuccess(player.level().isClientSide);
+        }
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
             IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);

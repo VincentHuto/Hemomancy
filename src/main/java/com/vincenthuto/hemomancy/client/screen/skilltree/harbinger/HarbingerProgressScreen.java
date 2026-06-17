@@ -35,9 +35,9 @@ public class HarbingerProgressScreen extends Screen {
     private static final int TAB_PAD = 4;
     private static final int HOME_BTN_SIZE = 16;
     private static final int HOME_BTN_PAD  = 4;
-    private static final int SKILL_POINT_BADGE_X_PAD = 4;
-    private static final int SKILL_POINT_BADGE_Y_PAD = 3;
-    private static final int SKILL_POINT_BADGE_FRAME_INSET = 2;
+    private static final int SKILL_POINT_BADGE_X_PAD = 2;
+    private static final int SKILL_POINT_BADGE_Y_PAD = 2;
+    private static final int SKILL_POINT_BADGE_GAP = 5;
     private static final float SCREEN_CHROME_Z = 400.0F;
 
     private int guiLeft, guiTop, guiWidth, guiHeight;
@@ -53,7 +53,6 @@ public class HarbingerProgressScreen extends Screen {
     private final MaterialsTabController materials = new MaterialsTabController();
 
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
-    private final MilestoneDrawerState milestoneState = new MilestoneDrawerState();
 
     private int playerDegree = 0;
 
@@ -159,12 +158,6 @@ public class HarbingerProgressScreen extends Screen {
             Tab clicked = tabUnder(mx, my);
             if (clicked != null) { switchTab(clicked); return true; }
 
-            if (activeTab == Tab.SKILLS && MilestoneDrawerView.isOverToggle(makeContext(), milestoneState, mx, my)) {
-                milestoneState.open = !milestoneState.open;
-                milestoneState.scrollOffset = 0;
-                return true;
-            }
-
             if (insideGui(mx, my)) {
                 if (activeController().mouseClicked(makeContext(), mx, my, btn)) return true;
                 if (activeController().getPanZoomState() != null) isDragging = true;
@@ -195,13 +188,8 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     @Override
-      public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
         ProgressScreenContext ctx = makeContext();
-
-            if (activeTab == Tab.SKILLS && milestoneState.open && MilestoneDrawerView.isOverDrawer(ctx, milestoneState, mx, my)) {
-              milestoneState.scrollOffset = Math.max(0, milestoneState.scrollOffset - (int)(scrollY * 12));
-            return true;
-        }
 
             if (activeController().mouseScrolled(ctx, mx, my, scrollY)) return true;
 
@@ -236,28 +224,14 @@ public class HarbingerProgressScreen extends Screen {
         }
 
         if (activeTab == Tab.SKILLS) {
-            MilestoneDrawerView.draw(gfx, ctx, milestoneState, mouseX, mouseY);
-        }
-
-        if (activeTab == Tab.SKILLS) {
             drawSkillPointsAboveCanvas(gfx);
         }
 
         if (activeController().getPanZoomState() != null) {
-            if (!(activeTab == Tab.SKILLS && milestoneState.open)) {
-                gfx.drawString(font, String.format("%.0f%%", view.zoom * 100),
-                        guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
-            }
+            drawZoomPercentage(gfx);
         }
 
         activeController().renderTooltip(gfx, ctx, mouseX, mouseY);
-
-        if (activeTab == Tab.SKILLS) {
-            if (MilestoneDrawerView.isOverToggle(ctx, milestoneState, mouseX, mouseY)) {
-                String tipText = milestoneState.open ? "Hide Milestones" : "Show Milestones";
-                gfx.renderTooltip(font, Component.literal(tipText), mouseX, mouseY);
-            }
-        }
 
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.defaultBlendFunc();
@@ -294,25 +268,33 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private void drawSkillPointsAboveCanvas(GuiGraphics gfx) {
-        Component spComponent = Component.literal("Skill Points: " + SkillProgressClientCache.current().getSkillPoints())
-                .withStyle(s -> s.withColor(0xFFBB8833).withBold(true));
+        Component spComponent = skillPointBadgeComponent();
         int textW = font.width(spComponent);
-        int badgeRight = guiLeft + guiWidth - SKILL_POINT_BADGE_FRAME_INSET;
-        int badgeBottom = guiTop + guiHeight - SKILL_POINT_BADGE_FRAME_INSET;
-        int textX = badgeRight - SKILL_POINT_BADGE_X_PAD - textW;
-        int textY = badgeBottom - SKILL_POINT_BADGE_Y_PAD - font.lineHeight;
+        int badgeLeft = guiLeft + HOME_BTN_PAD;
+        int badgeTop = guiTop + HOME_BTN_PAD;
+        int badgeW = textW + SKILL_POINT_BADGE_X_PAD * 2;
+        int badgeH = font.lineHeight + SKILL_POINT_BADGE_Y_PAD * 2;
+        int textX = badgeLeft + SKILL_POINT_BADGE_X_PAD;
+        int textY = badgeTop + SKILL_POINT_BADGE_Y_PAD;
 
         var pose = gfx.pose();
         pose.pushPose();
         pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z);
-        gfx.fill(textX - SKILL_POINT_BADGE_X_PAD, textY - SKILL_POINT_BADGE_Y_PAD,
-                textX + textW + SKILL_POINT_BADGE_X_PAD, textY + font.lineHeight + SKILL_POINT_BADGE_Y_PAD,
-                0xFF120303);
-        ScreenDrawUtils.drawSimpleBorder(gfx, textX - SKILL_POINT_BADGE_X_PAD, textY - SKILL_POINT_BADGE_Y_PAD,
-                textW + SKILL_POINT_BADGE_X_PAD * 2, font.lineHeight + SKILL_POINT_BADGE_Y_PAD * 2,
-                0xFF442222);
+        gfx.fill(badgeLeft, badgeTop, badgeLeft + badgeW, badgeTop + badgeH, 0xFF120303);
+        ScreenDrawUtils.drawSimpleBorder(gfx, badgeLeft, badgeTop, badgeW, badgeH, 0xFF442222);
         gfx.drawString(font, spComponent, textX, textY, 0, false);
         pose.popPose();
+    }
+
+    private Component skillPointBadgeComponent() {
+        return Component.literal("SP:" + SkillProgressClientCache.current().getSkillPoints())
+                .withStyle(s -> s.withColor(0xFFBB8833));
+    }
+
+    private void drawZoomPercentage(GuiGraphics gfx) {
+        int x = homeButtonX() + HOME_BTN_SIZE + SKILL_POINT_BADGE_GAP;
+        int y = homeButtonY() + (HOME_BTN_SIZE - font.lineHeight) / 2;
+        gfx.drawString(font, String.format("%.0f%%", view.zoom * 100), x, y, 0x55888888, false);
     }
 
     private Tab tabUnder(double mx, double my) {
@@ -321,15 +303,23 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private boolean isOverHomeButton(double mx, double my) {
-        int bx = guiLeft + HOME_BTN_PAD, by = guiTop + HOME_BTN_PAD;
+        int bx = homeButtonX(), by = homeButtonY();
         return mx >= bx && mx <= bx + HOME_BTN_SIZE && my >= by && my <= by + HOME_BTN_SIZE;
     }
 
     private void drawHomeButton(GuiGraphics gfx, int mouseX, int mouseY) {
         boolean hovered = isOverHomeButton(mouseX, mouseY);
-        ScreenDrawUtils.drawHomeButton(gfx, font, guiLeft + HOME_BTN_PAD, guiTop + HOME_BTN_PAD, HOME_BTN_SIZE, hovered,
+        ScreenDrawUtils.drawHomeButton(gfx, font, homeButtonX(), homeButtonY(), HOME_BTN_SIZE, hovered,
                 0xDD1A0505, 0x99120303, 0xFFCC3333, 0xFF444444, 0xFFFFAAAA, 0xFF888888);
         if (hovered) gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
+    }
+
+    private int homeButtonX() {
+        return guiLeft + HOME_BTN_PAD;
+    }
+
+    private int homeButtonY() {
+        return guiTop + guiHeight - HOME_BTN_PAD - HOME_BTN_SIZE;
     }
 
     @Override

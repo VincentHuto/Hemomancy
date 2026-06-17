@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,7 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/harbinger_alchemist/harbinger_alchemist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
+	public static final String EVENT_RED_TAXONOMY_PREFIX = "alchemist_red_taxonomy_";
 
 	private HarbingerAlchemistDialogueTrees() {}
 
@@ -31,10 +35,18 @@ public final class HarbingerAlchemistDialogueTrees {
 	 * @param isNpcRecruited Whether this alchemist has already pledged to the player's bloodline.
 	 */
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, null);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			RedTaxonomySample heldRedTaxonomySample) {
+		if (degree >= 2 && heldRedTaxonomySample != null) {
+			return votary(entityId, heldRedTaxonomySample);
+		}
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
-			case 2 -> votary(entityId);
+			case 2 -> votary(entityId, heldRedTaxonomySample);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
@@ -42,6 +54,75 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited);
 			default -> apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
 		};
+	}
+
+	public enum RedTaxonomySample {
+		INFECTED_FUNGUS("infected_fungus", BlockInit.infected_fungus.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_INFECTED_FUNGUS),
+		STINKHORN_FUNGUS("stinkhorn_fungus", BlockInit.stinkhorn_fungus.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_STINKHORN_FUNGUS),
+		SARCODES("sarcodes", BlockInit.sarcodes.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_SARCODES),
+		BLEEDING_HEART("bleeding_heart", BlockInit.bleeding_heart.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_BLEEDING_HEART),
+		RAFFLESIA("rafflesia", BlockInit.rafflesia.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_RAFFLESIA),
+		DEVILS_TOOTH("devils_tooth", BlockInit.devils_tooth.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_DEVILS_TOOTH),
+		PUFFBALL_FUNGUS("puffball_fungus", BlockInit.puffball_fungus.get(),
+				HarbingerAdvancementGranter.ADV_RED_TAXONOMY_PUFFBALL_FUNGUS);
+
+		private final String key;
+		private final Block block;
+		private final ResourceLocation advancement;
+
+		RedTaxonomySample(String key, Block block, ResourceLocation advancement) {
+			this.key = key;
+			this.block = block;
+			this.advancement = advancement;
+		}
+
+		public String key() {
+			return key;
+		}
+
+		public Block block() {
+			return block;
+		}
+
+		public ResourceLocation advancement() {
+			return advancement;
+		}
+
+		public boolean matches(ItemStack stack) {
+			return stack.is(block.asItem());
+		}
+
+		public String eventId() {
+			return EVENT_RED_TAXONOMY_PREFIX + key;
+		}
+
+		public static RedTaxonomySample fromStack(ItemStack stack) {
+			for (RedTaxonomySample sample : values()) {
+				if (sample.matches(stack)) {
+					return sample;
+				}
+			}
+			return null;
+		}
+
+		public static RedTaxonomySample fromEventId(String eventId) {
+			if (eventId == null || !eventId.startsWith(EVENT_RED_TAXONOMY_PREFIX)) {
+				return null;
+			}
+			String key = eventId.substring(EVENT_RED_TAXONOMY_PREFIX.length());
+			for (RedTaxonomySample sample : values()) {
+				if (sample.key.equals(key)) {
+					return sample;
+				}
+			}
+			return null;
+		}
 	}
 
 	private static void addRecruitmentOption(List<DialogueOption> options, boolean hasBloodline,
@@ -164,6 +245,112 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
 								null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("item_hint", List.of(
+						"hemomancy.alchemist.item_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		if (heldRedTaxonomySample != null) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.submit_red_taxonomy_sample",
+					"red_taxonomy_" + heldRedTaxonomySample.key(), heldRedTaxonomySample.eventId()));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_red_taxonomy",
+				"red_taxonomy_intro", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
+				"centrifuge_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
+				"gourd_upgrades", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic",
+				"alembic_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_structures",
+				"blood_structure_intro", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item",
+				"item_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
+
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.votary.line1"
+				), greetingOptions))
+				.addNode(new DialogueNode("red_taxonomy_intro", List.of(
+						"hemomancy.alchemist.red_taxonomy.intro.line1",
+						"hemomancy.alchemist.red_taxonomy.intro.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
+								"centrifuge_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_infected_fungus", List.of(
+						"hemomancy.alchemist.red_taxonomy.infected_fungus.line1",
+						"hemomancy.alchemist.red_taxonomy.infected_fungus.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_stinkhorn_fungus", List.of(
+						"hemomancy.alchemist.red_taxonomy.stinkhorn_fungus.line1",
+						"hemomancy.alchemist.red_taxonomy.stinkhorn_fungus.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_sarcodes", List.of(
+						"hemomancy.alchemist.red_taxonomy.sarcodes.line1",
+						"hemomancy.alchemist.red_taxonomy.sarcodes.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_bleeding_heart", List.of(
+						"hemomancy.alchemist.red_taxonomy.bleeding_heart.line1",
+						"hemomancy.alchemist.red_taxonomy.bleeding_heart.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_rafflesia", List.of(
+						"hemomancy.alchemist.red_taxonomy.rafflesia.line1",
+						"hemomancy.alchemist.red_taxonomy.rafflesia.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_devils_tooth", List.of(
+						"hemomancy.alchemist.red_taxonomy.devils_tooth.line1",
+						"hemomancy.alchemist.red_taxonomy.devils_tooth.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("red_taxonomy_puffball_fungus", List.of(
+						"hemomancy.alchemist.red_taxonomy.puffball_fungus.line1",
+						"hemomancy.alchemist.red_taxonomy.puffball_fungus.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("centrifuge_lore", List.of(
+						"hemomancy.alchemist.votary.centrifuge_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
+								"gourd_upgrades", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("gourd_upgrades", List.of(
+						"hemomancy.alchemist.votary.gourd_upgrades"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("alembic_lore", List.of(
+						"hemomancy.alchemist.neophyte.alembic_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd",
+								"gourd_upgrades", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("blood_structure_intro", List.of(
+						"hemomancy.alchemist.votary.blood_structure_intro"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("item_hint", List.of(

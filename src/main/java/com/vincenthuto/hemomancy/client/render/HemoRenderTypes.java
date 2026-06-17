@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ShaderInit;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Client-local render types used by animated item renderers.
@@ -175,6 +176,37 @@ public final class HemoRenderTypes {
 						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.OVERLAY)
+						.createCompositeState(false));
+	}
+
+	public static RenderType hermitFarewellDissolve(ResourceLocation texture, float gameTime, float progress,
+			float seed) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"hermit_farewell_dissolve_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.HERMIT_FAREWELL_DISSOLVE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "HermitDissolveProgress", progress);
+					setUniform(shader, "HermitDissolveSeed", seed);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.HERMIT_FAREWELL_DISSOLVE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("hermit_farewell_dissolve",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.HERMIT_FAREWELL_DISSOLVE.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.LIGHTMAP)
 						.setOverlayState(RenderType.OVERLAY)
 						.createCompositeState(false));
 	}

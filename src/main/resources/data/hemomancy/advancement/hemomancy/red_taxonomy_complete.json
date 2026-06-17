@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:harbinger_assignment_ledger"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.red_taxonomy_complete.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.red_taxonomy_complete.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/degree_2_votary",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

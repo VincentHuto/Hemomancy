@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.tile.DiscoveryInscriptionBlockEntity;
@@ -204,6 +205,9 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 				? HemomancyDiscoverySource.BLOOD_ECHO
 				: HemomancyDiscoverySource.RITE_FRAGMENT;
 		LiberKnowledgeHelper.unlockEntries(player, definition.liberEntries(), source);
+		for (var advancement : definition.advancements()) {
+			HarbingerAdvancementGranter.grantIfNotDone(player, advancement);
+		}
 		PacketHandler.sendToPlayer(player, new OpenInscriptionPacket(
 				definition.title(), revealedText(definition), true, definition.riteId(), requiresAbocipherLiteracy));
 	}

@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyP
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.*;
+import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCourier;
 import com.vincenthuto.hemomancy.common.network.particle.*;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
@@ -202,6 +203,8 @@ public class PacketHandler {
         net.playToClient(OpenDialoguePacket.TYPE, OpenDialoguePacket.STREAM_CODEC, OpenDialoguePacket::handle);
         net.playToServer(DialogueOptionPacket.TYPE, DialogueOptionPacket.STREAM_CODEC, DialogueOptionPacket::handle);
         net.playToClient(OpenInscriptionPacket.TYPE, OpenInscriptionPacket.STREAM_CODEC, OpenInscriptionPacket::handle);
+        net.playToClient(OpenHarbingerAssignmentLedgerPacket.TYPE,
+                OpenHarbingerAssignmentLedgerPacket.STREAM_CODEC, OpenHarbingerAssignmentLedgerPacket::handle);
 
         // ── World events ──────────────────────────────────────────────────────
         net.playToClient(PacketSyncQliphothBlooms.TYPE, PacketSyncQliphothBlooms.STREAM_CODEC, PacketSyncQliphothBlooms::handle);

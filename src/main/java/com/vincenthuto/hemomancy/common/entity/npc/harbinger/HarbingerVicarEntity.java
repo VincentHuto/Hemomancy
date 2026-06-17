@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryN
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -116,6 +117,10 @@ public class HarbingerVicarEntity extends PathfinderMob {
         return LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.ABOCIPHER_LITERACY);
     }
 
+    private static boolean hasAdvancement(ServerPlayer player, net.minecraft.resources.ResourceLocation advancement) {
+        return HarbingerAdvancementGranter.hasAdvancement(player, advancement);
+    }
+
     /**
      * Returns true if the player has an active Qliphoth Pome empowerment
      * (the 3-minute manipulation-cost-reduction window from eating a pome).
@@ -173,7 +178,9 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
             } else {
                 tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-                        isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player));
+                        isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player),
+                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
+                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED));
             }
             tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "vicar",
                     "hemomancy.vicar.item_inquiry.unknown", degree, 0f);

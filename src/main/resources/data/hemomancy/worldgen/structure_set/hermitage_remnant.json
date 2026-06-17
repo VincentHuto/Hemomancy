@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:hermitage_remnant",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 738192246,
+    "spacing": 36,
+    "separation": 12,
+    "type": "minecraft:random_spread"
+  }
+}

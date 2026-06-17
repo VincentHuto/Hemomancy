@@ -14,6 +14,7 @@ public record DiscoveryInscriptionDefinition(
 		List<String> obscuredText,
 		List<String> revealedText,
 		List<ResourceLocation> liberEntries,
+		List<ResourceLocation> advancements,
 		@Nullable ResourceLocation riteId) {
 
 	public enum Kind {

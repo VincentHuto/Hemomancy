@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:devils_tooth"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.red_taxonomy_devils_tooth.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.red_taxonomy_devils_tooth.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/degree_2_votary",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

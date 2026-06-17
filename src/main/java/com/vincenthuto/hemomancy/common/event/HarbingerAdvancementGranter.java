@@ -44,6 +44,26 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/crimson_lodge_consecrated");
 	public static final ResourceLocation ADV_FOUNDING_FANE_ESTABLISHED =
 			Hemomancy.rloc("hemomancy/founding_fane_established");
+	public static final ResourceLocation ADV_HERMIT_ROAD_FIRST_REMNANT =
+			Hemomancy.rloc("hemomancy/hermit_road_first_remnant");
+	public static final ResourceLocation ADV_HERMIT_ROAD_LEDGER_GRANTED =
+			Hemomancy.rloc("hemomancy/hermit_road_ledger_granted");
+	public static final ResourceLocation ADV_RED_TAXONOMY_INFECTED_FUNGUS =
+			Hemomancy.rloc("hemomancy/red_taxonomy_infected_fungus");
+	public static final ResourceLocation ADV_RED_TAXONOMY_STINKHORN_FUNGUS =
+			Hemomancy.rloc("hemomancy/red_taxonomy_stinkhorn_fungus");
+	public static final ResourceLocation ADV_RED_TAXONOMY_SARCODES =
+			Hemomancy.rloc("hemomancy/red_taxonomy_sarcodes");
+	public static final ResourceLocation ADV_RED_TAXONOMY_BLEEDING_HEART =
+			Hemomancy.rloc("hemomancy/red_taxonomy_bleeding_heart");
+	public static final ResourceLocation ADV_RED_TAXONOMY_RAFFLESIA =
+			Hemomancy.rloc("hemomancy/red_taxonomy_rafflesia");
+	public static final ResourceLocation ADV_RED_TAXONOMY_DEVILS_TOOTH =
+			Hemomancy.rloc("hemomancy/red_taxonomy_devils_tooth");
+	public static final ResourceLocation ADV_RED_TAXONOMY_PUFFBALL_FUNGUS =
+			Hemomancy.rloc("hemomancy/red_taxonomy_puffball_fungus");
+	public static final ResourceLocation ADV_RED_TAXONOMY_COMPLETE =
+			Hemomancy.rloc("hemomancy/red_taxonomy_complete");
 
 	// ── Endgame milestones ─────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_VOICES_IN_THE_VEIN =
@@ -65,6 +85,16 @@ public final class HarbingerAdvancementGranter {
 		ADV_DEGREE_6_SANCTIFIED,
 		ADV_DEGREE_7_ARCHON,
 		ADV_DEGREE_8_APOTHEOS,
+	};
+
+	private static final ResourceLocation[] RED_TAXONOMY_SPECIMENS = {
+		ADV_RED_TAXONOMY_INFECTED_FUNGUS,
+		ADV_RED_TAXONOMY_STINKHORN_FUNGUS,
+		ADV_RED_TAXONOMY_SARCODES,
+		ADV_RED_TAXONOMY_BLEEDING_HEART,
+		ADV_RED_TAXONOMY_RAFFLESIA,
+		ADV_RED_TAXONOMY_DEVILS_TOOTH,
+		ADV_RED_TAXONOMY_PUFFBALL_FUNGUS,
 	};
 
 	private HarbingerAdvancementGranter() {}
@@ -107,5 +137,24 @@ public final class HarbingerAdvancementGranter {
 		for (String criterion : progress.getRemainingCriteria()) {
 			player.getAdvancements().award(advancement, criterion);
 		}
+	}
+
+	public static boolean hasAdvancement(ServerPlayer player, ResourceLocation id) {
+		AdvancementHolder advancement = player.server.getAdvancements().get(id);
+		return advancement != null && player.getAdvancements().getOrStartProgress(advancement).isDone();
+	}
+
+	public static int getRedTaxonomySpecimenCount(ServerPlayer player) {
+		int count = 0;
+		for (ResourceLocation specimen : RED_TAXONOMY_SPECIMENS) {
+			if (hasAdvancement(player, specimen)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public static boolean isRedTaxonomyComplete(ServerPlayer player) {
+		return hasAdvancement(player, ADV_RED_TAXONOMY_COMPLETE);
 	}
 }

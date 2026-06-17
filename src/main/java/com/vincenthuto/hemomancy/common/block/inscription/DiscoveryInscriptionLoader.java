@@ -75,6 +75,7 @@ public class DiscoveryInscriptionLoader
 				getStringList(root.getAsJsonArray("obscured_text")),
 				getStringList(root.getAsJsonArray("revealed_text")),
 				getResourceList(root.getAsJsonArray("liber_entries")),
+				getResourceList(root.getAsJsonArray("advancements")),
 				riteId);
 	}
 

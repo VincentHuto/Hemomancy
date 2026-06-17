@@ -10,12 +10,16 @@ import net.minecraft.network.chat.Component;
 public final class MilestoneDrawerView {
     private MilestoneDrawerView() {}
 
-    static final int DRAWER_W      = 180;
+    static final int DRAWER_W      = 140;
     static final int TAB_W         = 14;
     static final int TAB_H         = 50;
     private static final int HOME_BTN_SIZE = 16;
     private static final int HOME_BTN_PAD  = 4;
     private static final int DRAWER_SHADOW = 0xAA000000;
+    private static final int PANEL_BG = 0xD0140505;
+    private static final int BORDER_OUTER = 0xFF552020;
+    private static final int BORDER_INNER = 0xFF3B2420;
+    private static final int MILESTONE_SCROLLBAR_WIDTH = 6;
     private static final float DRAWER_Z = 700.0F;
 
     public static void draw(GuiGraphics gfx, ProgressScreenContext ctx, MilestoneDrawerState state, int mouseX, int mouseY) {
@@ -36,17 +40,13 @@ public final class MilestoneDrawerView {
         int drawerH = ctx.guiHeight() - (drawerY - ctx.guiTop()) - 4;
 
         gfx.fill(drawerX - 2, drawerY - 2, drawerX + drawerW + 2, drawerY + drawerH + 2, DRAWER_SHADOW);
-        gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + drawerH, 0xFF1A0505);
-
-        int borderCol = 0xFF332222;
-        gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + 1, borderCol);
-        gfx.fill(drawerX, drawerY + drawerH - 1, drawerX + drawerW, drawerY + drawerH, borderCol);
-        gfx.fill(drawerX, drawerY, drawerX + 1, drawerY + drawerH, borderCol);
-        gfx.fill(drawerX + drawerW - 1, drawerY, drawerX + drawerW, drawerY + drawerH, borderCol);
+        gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + drawerH, PANEL_BG);
+        ScreenDrawUtils.drawBorder(gfx, drawerX, drawerY, drawerW, drawerH, BORDER_OUTER, BORDER_INNER);
 
         drawToggleTab(gfx, ctx, drawerX + drawerW, drawerY, true, tabHovered);
 
-        gfx.enableScissor(drawerX + 1, drawerY + 1, drawerX + drawerW - 1, drawerY + drawerH - 1);
+        gfx.enableScissor(drawerX + 1, drawerY + 1,
+                drawerX + drawerW - MILESTONE_SCROLLBAR_WIDTH - 2, drawerY + drawerH - 1);
 
         int x = drawerX + 6;
         int y = drawerY + 6 - state.scrollOffset;
@@ -86,9 +86,11 @@ public final class MilestoneDrawerView {
             String icon = complete ? "\u2713" : "\u2717";
             int iconCol = complete ? 0xFF60CC60 : 0xFF605050;
             int labelCol = complete ? 0xFFBBAAAA : 0xFF776666;
+            String label = ScreenDrawUtils.truncateText(ctx.font(), Component.translatable(m.getLangKey()).getString(),
+                    drawerW - MILESTONE_SCROLLBAR_WIDTH - 30);
 
             gfx.drawString(ctx.font(), icon, x + 4, y, iconCol, false);
-            gfx.drawString(ctx.font(), Component.translatable(m.getLangKey()), x + 14, y, labelCol, false);
+            gfx.drawString(ctx.font(), Component.literal(label), x + 14, y, labelCol, false);
             y += 10;
 
             String rewardStr = "  +" + m.getSkillPointReward() + " SP";
@@ -102,7 +104,23 @@ public final class MilestoneDrawerView {
         if (state.scrollOffset > maxScroll) state.scrollOffset = maxScroll;
 
         gfx.disableScissor();
+        drawMilestoneScrollbar(gfx, drawerX + drawerW - MILESTONE_SCROLLBAR_WIDTH - 2, drawerY + 2,
+                MILESTONE_SCROLLBAR_WIDTH, drawerH - 4, state.scrollOffset, maxScroll, totalContentH);
         pose.popPose();
+    }
+
+    private static void drawMilestoneScrollbar(GuiGraphics gfx, int x, int y, int w, int h,
+            int scrollOffset, int maxScroll, int totalContentH) {
+        gfx.fill(x, y, x + w, y + h, 0xAA100504);
+        ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, BORDER_INNER);
+        if (maxScroll <= 0 || totalContentH <= 0) {
+            gfx.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0x663B2420);
+            return;
+        }
+        int thumbH = Math.max(14, h * h / totalContentH);
+        int travel = Math.max(1, h - thumbH - 2);
+        int thumbY = y + 1 + (int) (travel * (scrollOffset / (float) maxScroll));
+        gfx.fill(x + 1, thumbY, x + w - 1, thumbY + thumbH, 0xFF8D2323);
     }
 
     private static void drawToggleTab(GuiGraphics gfx, ProgressScreenContext ctx, int tabX, int tabY, boolean expanded, boolean hovered) {

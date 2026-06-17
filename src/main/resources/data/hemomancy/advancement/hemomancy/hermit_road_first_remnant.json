@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:blood_stained_stone"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.hermit_road_first_remnant.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.hermit_road_first_remnant.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/degree_1_neophyte",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

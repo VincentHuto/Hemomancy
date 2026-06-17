@@ -21,6 +21,7 @@ public final class HarbingerVicarDialogueTrees {
 	private static final ResourceLocation VICAR_ICON = Hemomancy.rloc("textures/entity/harbinger_vicar/harbinger_vicar.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_vicar";
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
+	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";
 
 	private HarbingerVicarDialogueTrees() {}
 
@@ -36,9 +37,14 @@ public final class HarbingerVicarDialogueTrees {
 	 */
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy, false, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy, boolean hasFoundHermitRoadRemnant, boolean hasHermitRoadLedger) {
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
-			case 1 -> neophyte(entityId);
+			case 1 -> neophyte(entityId, hasFoundHermitRoadRemnant, hasHermitRoadLedger);
 			case 2 -> votary(entityId);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId, hasAbocipherLiteracy);
@@ -154,24 +160,62 @@ public final class HarbingerVicarDialogueTrees {
 
 	/** Degree 1 — Neophyte. The vicar introduces the Hematic Covenant and the degree path. */
 	public static DialogueTree neophyte(int entityId) {
+		return neophyte(entityId, false, false);
+	}
+
+	public static DialogueTree neophyte(int entityId, boolean hasFoundHermitRoadRemnant,
+			boolean hasHermitRoadLedger) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_covenant",
+				"covenant_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next",
+				"degree_hint", null));
+		if (hasFoundHermitRoadRemnant && !hasHermitRoadLedger) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.report_hermit_road",
+					"hermit_road_report", EVENT_HERMIT_ROAD_REPORT));
+		} else if (hasHermitRoadLedger) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.report_hermit_road",
+					"hermit_road_followup", null));
+		} else {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_hermit_road",
+					"hermit_road_intro", null));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item",
+				"item_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.neophyte.line1",
 						"hemomancy.vicar.neophyte.line2"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_covenant", "covenant_lore", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
+				), greetingOptions))
 				.addNode(new DialogueNode("covenant_lore", List.of(
 						"hemomancy.vicar.covenant_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("hermit_road_intro", List.of(
+						"hemomancy.vicar.hermit_road.intro.line1",
+						"hemomancy.vicar.hermit_road.intro.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("hermit_road_report", List.of(
+						"hemomancy.vicar.hermit_road.report.line1",
+						"hemomancy.vicar.hermit_road.report.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("hermit_road_followup", List.of(
+						"hemomancy.vicar.hermit_road.followup.line1",
+						"hemomancy.vicar.hermit_road.followup.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
-						"hemomancy.vicar.neophyte.degree_hint"
+						"hemomancy.vicar.neophyte.degree_hint",
+						"hemomancy.vicar.neophyte.degree_hint.assignment"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))

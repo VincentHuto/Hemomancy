@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:harbinger_assignment_ledger"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.hermit_road_ledger_granted.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.hermit_road_ledger_granted.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/hermit_road_first_remnant",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

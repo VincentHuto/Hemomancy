@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.Hemom
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
@@ -49,6 +50,12 @@ public class DialogueEventHandler {
 		var mnemonistChoice = MnemonistStarterMemoryChoice.fromEventId(event.getEventId());
 		if (mnemonistChoice.isPresent()) {
 			handleMnemonistStarterMemory(player, event.getEntityId(), mnemonistChoice.get());
+			return;
+		}
+		HarbingerAlchemistDialogueTrees.RedTaxonomySample redTaxonomySample =
+				HarbingerAlchemistDialogueTrees.RedTaxonomySample.fromEventId(event.getEventId());
+		if (redTaxonomySample != null) {
+			handleAlchemistRedTaxonomy(player, redTaxonomySample);
 			return;
 		}
 		switch (event.getEventId()) {
@@ -112,10 +119,7 @@ public class DialogueEventHandler {
 								64.0f, hermit.level().dimension(),
 								ParticleColor.BLOOD, 2, 15, 6, 0.8f);
 					}
-					// The hermit is invulnerable by default (see HarbingerHermitEntity constructor),
-					// so clear the flag before ending it. Its duty is fulfilled.
-					hermit.setInvulnerable(false);
-					hermit.kill();
+					hermit.beginFarewellDeath();
 				}
 			}
 			case "hermit_archon_wisdom" -> {
@@ -132,6 +136,9 @@ public class DialogueEventHandler {
 			}
 			case HarbingerVicarDialogueTrees.EVENT_BLOOD_SHOTTING -> {
 				handleVicarBloodShotting(player);
+			}
+			case HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT -> {
+				handleVicarHermitRoadReport(player, event.getEntityId());
 			}
 			case "qliphoth_communion_done" -> {
 				// Player completed the full Qliphoth Communion — nine pomes consumed.
@@ -198,7 +205,83 @@ public class DialogueEventHandler {
 				Component.translatable(changed
 								? "hemomancy.dialogue.event.vicar_blood_shotting"
 								: "hemomancy.dialogue.event.vicar_blood_shotting_known")
+				.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleVicarHermitRoadReport(ServerPlayer player, int entityId) {
+		if (!HarbingerAdvancementGranter.hasAdvancement(player,
+				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_unproven")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (HarbingerAdvancementGranter.hasAdvancement(player,
+				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.harbinger_assignment_ledger.get()));
+		HarbingerAdvancementGranter.grantIfNotDone(player,
+				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_ledger")
 						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleAlchemistRedTaxonomy(ServerPlayer player,
+			HarbingerAlchemistDialogueTrees.RedTaxonomySample sample) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 2) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		ItemStack held = player.getMainHandItem();
+		if (!sample.matches(held)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_missing_sample")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		if (HarbingerAdvancementGranter.hasAdvancement(player, sample.advancement())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_known",
+									held.getHoverName())
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		if (!player.isCreative()) {
+			held.shrink(1);
+		}
+		HarbingerAdvancementGranter.grantIfNotDone(player, sample.advancement());
+		int count = HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(player);
+		if (count >= 4) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_RED_TAXONOMY_COMPLETE);
+		}
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_recorded",
+								held.getHoverName(), count)
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_placeholder_reward")
+						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 				false);
 	}
 

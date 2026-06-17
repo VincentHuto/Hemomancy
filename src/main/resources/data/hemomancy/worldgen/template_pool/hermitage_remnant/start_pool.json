@@ -1,0 +1,15 @@
+{
+  "name": "hemomancy:hermitage_remnant/start_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "hemomancy:hermitage_remnant",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

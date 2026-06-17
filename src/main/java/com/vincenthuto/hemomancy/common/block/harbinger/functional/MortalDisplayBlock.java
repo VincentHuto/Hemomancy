@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.tile.functional.MortalDisplayBlockEntity;
@@ -24,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -100,8 +100,8 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
-		worldIn.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
 		if (!volume.isActive()) {
+			worldIn.setBlockAndUpdate(pos, BlockInit.placed_blood_stained_stone.get().defaultBlockState());
 			volume.setActive(true);
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer, Hemomancy.rloc("hemomancy/the_first_awakening"));
@@ -138,10 +138,12 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 			}
 
 		} else {
-			ItemEntity drops = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
-					new ItemStack(ItemInit.bloody_flask.get(), worldIn.random.nextInt(4)));
-			worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, ExplosionInteraction.BLOCK);
-			worldIn.addFreshEntity(drops);
+			if (!worldIn.isClientSide) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.mortal_display.already_invited")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						false);
+			}
 		}
 
 		return InteractionResult.SUCCESS;

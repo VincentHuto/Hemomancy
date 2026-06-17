@@ -1,0 +1,21 @@
+{
+  "kind": "blood_echo",
+  "path": "harbinger",
+  "required_level": 1,
+  "title": "The Hermit Road: First Remnant",
+  "obscured_text": [
+    "The stone is stained through, but the marks recoil from your attention.",
+    "It remembers an invitation, but not enough of you."
+  ],
+  "revealed_text": [
+    "This remnant was once a hermit's cell. The display is gone, the witness is gone, and only the blood-stained stone remains to hold the shape of the invitation.",
+    "The echo is not yours, but it rhymes with your own beginning. Someone else was called here. Someone did not return to answer."
+  ],
+  "liber_entries": [
+    "hemomancy:fanesanguinium/intro/pages/the_harbingers",
+    "hemomancy:fanesanguinium/the_hematic_order/pages/first_rite_notes"
+  ],
+  "advancements": [
+    "hemomancy:hemomancy/hermit_road_first_remnant"
+  ]
+}
