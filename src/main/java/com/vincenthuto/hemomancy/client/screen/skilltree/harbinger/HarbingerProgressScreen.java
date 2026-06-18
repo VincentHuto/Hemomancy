@@ -17,17 +17,26 @@ public class HarbingerProgressScreen extends Screen {
 
     // ── Tabs ──
     private enum Tab {
-        SKILLS("Skills", 0xFFCC3333),
-        MANIPULATIONS("Manipulations", 0xFFCC8833),
-        CRAFTING("Crafting", 0xFFAA2222),
-        SCARS("Scars", 0xFF44AACC),
-        SUMMONS("Summons", 0xFFBB3355),
-        RITES("Rites", 0xFF8844CC),
-        MATERIALS("Materials", 0xFFCC6644);
+        SKILLS("Skills", 0xFFCC3333, 0),
+        MANIPULATIONS("Manipulations", 0xFFCC8833, 3),
+        CRAFTING("Crafting", 0xFFAA2222, 0),
+        SCARS("Scars", 0xFF44AACC, 4),
+        SUMMONS("Summons", 0xFFBB3355, 2),
+        RITES("Rites", 0xFF8844CC, 0),
+        MATERIALS("Materials", 0xFFCC6644, 0);
 
         final String label;
         final int color;
-        Tab(String label, int color) { this.label = label; this.color = color; }
+        final int requiredDegree;
+        Tab(String label, int color, int requiredDegree) {
+            this.label = label;
+            this.color = color;
+            this.requiredDegree = requiredDegree;
+        }
+
+        boolean visibleAtDegree(int degree) {
+            return degree >= requiredDegree;
+        }
     }
 
     private Tab activeTab = Tab.SKILLS;
@@ -94,6 +103,9 @@ public class HarbingerProgressScreen extends Screen {
             playerDegree = HemoCapabilityAccess.getInitiatoryDegree(Minecraft.getInstance().player)
                     .map(d -> d.getDegreeNumber()).orElse(0);
         }
+        if (!activeTab.visibleAtDegree(playerDegree)) {
+            activeTab = firstVisibleTab(playerDegree);
+        }
 
         ProgressScreenContext ctx = makeContext();
         for (IProgressTab tab : allTabs()) tab.onInit(ctx);
@@ -111,6 +123,7 @@ public class HarbingerProgressScreen extends Screen {
 
     private void switchTab(Tab tab) {
         if (tab == activeTab) return;
+        if (!tab.visibleAtDegree(playerDegree)) return;
         if (view != null && activeController(activeTab).getPanZoomState() != null) {
             view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
         }
@@ -251,7 +264,9 @@ public class HarbingerProgressScreen extends Screen {
 
     private List<ScreenDrawUtils.TabDesc> buildTabDescs() {
         List<ScreenDrawUtils.TabDesc> descs = new ArrayList<>();
-        for (Tab tab : Tab.values()) descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));
+        for (Tab tab : visibleTabs(playerDegree)) {
+            descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));
+        }
         return descs;
     }
 
@@ -298,8 +313,23 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private Tab tabUnder(double mx, double my) {
+        List<Tab> visibleTabs = visibleTabs(playerDegree);
         int idx = ScreenDrawUtils.tabIndexUnder(font, buildTabDescs(), guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mx, my);
-        return idx >= 0 ? Tab.values()[idx] : null;
+        return idx >= 0 ? visibleTabs.get(idx) : null;
+    }
+
+    private static Tab firstVisibleTab(int degree) {
+        return visibleTabs(degree).getFirst();
+    }
+
+    private static List<Tab> visibleTabs(int degree) {
+        List<Tab> visible = new ArrayList<>();
+        for (Tab tab : Tab.values()) {
+            if (tab.visibleAtDegree(degree)) {
+                visible.add(tab);
+            }
+        }
+        return visible;
     }
 
     private boolean isOverHomeButton(double mx, double my) {

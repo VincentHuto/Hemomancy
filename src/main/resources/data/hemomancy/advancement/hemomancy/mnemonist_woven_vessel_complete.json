@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:hematic_memory"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.mnemonist_woven_vessel_complete.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.mnemonist_woven_vessel_complete.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "parent": "hemomancy:hemomancy/red_taxonomy_complete",
+  "criteria": {
+    "completed": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "completed"
+    ]
+  ]
+}

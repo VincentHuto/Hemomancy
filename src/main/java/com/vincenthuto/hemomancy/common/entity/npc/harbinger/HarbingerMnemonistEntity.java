@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -91,7 +92,9 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 				tree = HarbingerMnemonistDialogueTrees.purifying(this.getId());
 			} else {
 				tree = HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-						isNpcInPlayerBloodline(player, this), canClaimStarter);
+						isNpcInPlayerBloodline(player, this), canClaimStarter,
+						HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
+						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer));
 			}
 			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "mnemonist",
 					"hemomancy.mnemonist.item_inquiry.unknown", degree, 0f);

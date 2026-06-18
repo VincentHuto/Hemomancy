@@ -96,6 +96,8 @@ After reaching Degree 1, the Harbinger Vicar introduces the **Hermit Road**: the
 
 At Degree 2, the Harbinger Alchemist introduces **The Red Taxonomy**, a field-assay assignment for cataloguing hemomantic fungal and near-fungal flora. Bringing distinct samples such as Infected Fungus, Stinkhorn Fungus, Sarcodes, Bleeding Heart, Rafflesia, Devil's Tooth, or Puffball Fungus to the Alchemist grants hidden specimen records; four distinct records complete `red_taxonomy_complete`. Each sample has a unique diagnostic response, while reward handling is intentionally placeholder-only until final assignment rewards are designed. The Harbinger Assignment Ledger displays Red Taxonomy progress as a D2 assignment.
 
+At Degree 3, once **The Red Taxonomy** is complete, the Alchemist points the player to the Harbinger Mnemonist for **The Woven Vessel**. This assignment introduces deliberate blank-memory preparation: a blank `hematic_memory` is crafted from a piece of yourself (`sanguine_formation`), a piece of history (`blood_stained_stone`), and a piece of living nervous tissue (`neurotic_enzyme`). Bringing the blank memory to the Mnemonist with a book, an ink sac, and three paper lets the Mnemonist index the vessel, grants hidden `mnemonist_woven_vessel_complete`, and currently rewards a Blood Shot Loom starter kit (`bleeding_bulb` plus `vivacious_enzyme`). The Harbinger Assignment Ledger displays this as the D3 assignment.
+
 ---
 
 ## 2. Core Architecture & Player Capabilities
@@ -997,7 +999,7 @@ Current crude memory shard items:
 
 Harbinger outpost loot now favors these crude starter memories in early danger/exploration rewards instead of over-granting full memory items. The Mnemonic Reliquary remains the Degree 2 deliberate loadout-management tool, and the Somatic Loom remains the Degree 3 refined memory-weaving station.
 
-Somatic Loom memory weaving is now an in-world ritual rather than a passive slot check. A valid recipe begins with one blank `hematic_memory`, one or more catalyst candidates, stored enzyme reservoirs inside the loom, and a recipe-specific `blood` cost. Once the exact recipe is ready, the loom glows in its awaiting-blood phase; the player projects blood into it, then uses a Living Staff to drag scattered tendency-colored memory-orbs back into the block. Only the orb-weaving phase locks the inputs. See Â§25.7 for the recipe schema and ritual flow.
+Somatic Loom memory weaving is now an in-world ritual rather than a passive slot check. A valid recipe begins with one blank `hematic_memory`, one or more catalyst candidates, stored enzyme reservoirs inside the loom, and a recipe-specific `blood` cost. Blank Hematic Memories are prepared from `sanguine_formation`, `blood_stained_stone`, and `neurotic_enzyme`: a piece of the practitioner, a piece of recorded history, and a piece of living nervous tissue. Once the exact recipe is ready, the loom glows in its awaiting-blood phase; the player projects blood into it, then uses a Living Staff to drag scattered tendency-colored memory-orbs back into the block. Only the orb-weaving phase locks the inputs. See Â§25.7 for the recipe schema and ritual flow.
 
 ### 8.4 Manipulation Tree
 
@@ -1937,7 +1939,7 @@ Acquisition: Venous Stone has a rare 2.5% global loot modifier chance to shed a 
 
 | Item | Purpose |
 |------|---------|
-| ![](../src/main/resources/assets/hemomancy/textures/item/hematic_memory.png) Hematic Memory | Base blank memory item |
+| ![](../src/main/resources/assets/hemomancy/textures/item/hematic_memory.png) Hematic Memory | Base blank memory item, crafted from Sanguine Formation, Blood Stained Stone, and Neurotic Enzyme |
 | ![](../src/main/resources/assets/hemomancy/textures/item/lethean_dew.png) Lethean Dew | Memory processing ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/lethean_brew.png) Lethean Brew | Cursed clay jar from the River Lethe â€” enables forgetting memories |
 | ![](../src/main/resources/assets/hemomancy/textures/item/fervent_husk.png) Fervent Husk | Memory processing ingredient |

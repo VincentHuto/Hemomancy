@@ -17,16 +17,23 @@ public final class HarbingerMnemonistDialogueTrees {
 	private static final ResourceLocation MNEMONIST_ICON = Hemomancy.rloc(
 			"textures/entity/harbinger_mnemonist/harbinger_mnemonist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_mnemonist";
+	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
 
 	private HarbingerMnemonistDialogueTrees() {
 	}
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter, false, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean canClaimStarter, boolean redTaxonomyComplete, boolean wovenVesselComplete) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
-		return woven(entityId, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter);
+		return woven(entityId, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
+				redTaxonomyComplete && !wovenVesselComplete);
 	}
 
 	public static DialogueTree purifying(int entityId) {
@@ -101,8 +108,12 @@ public final class HarbingerMnemonistDialogueTrees {
 	}
 
 	private static DialogueTree woven(int entityId, boolean hasBloodline, boolean isNpcRecruited,
-			boolean canClaimStarter) {
+			boolean canClaimStarter, boolean canCompleteWovenVessel) {
 		List<DialogueOption> options = new ArrayList<>();
+		if (canCompleteWovenVessel) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.woven_vessel",
+					"woven_vessel", null));
+		}
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_loom", "loom", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
@@ -122,6 +133,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(slotsNode())
 				.addNode(reliquaryNode())
 				.addNode(loomNode())
+				.addNode(wovenVesselNode())
 				.addNode(starterChoiceNode())
 				.addNode(recruitOfferNode())
 				.addNode(itemHintNode())
@@ -190,6 +202,18 @@ public final class HarbingerMnemonistDialogueTrees {
 				"hemomancy.mnemonist.loom.line1",
 				"hemomancy.mnemonist.loom.line2"
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode wovenVesselNode() {
+		return new DialogueNode("woven_vessel", List.of(
+				"hemomancy.mnemonist.woven_vessel.recipe.line1",
+				"hemomancy.mnemonist.woven_vessel.recipe.line2",
+				"hemomancy.mnemonist.woven_vessel.archive.line1"
+		), List.of(
+				new DialogueOption("hemomancy.dialogue.mnemonist.option.turn_in_woven_vessel", null,
+						EVENT_WOVEN_VESSEL_TURN_IN),
+				new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)
+		));
 	}
 
 	private static DialogueNode starterChoiceNode() {

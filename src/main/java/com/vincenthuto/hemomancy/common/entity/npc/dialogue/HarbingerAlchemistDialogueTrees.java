@@ -40,6 +40,11 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			RedTaxonomySample heldRedTaxonomySample) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, heldRedTaxonomySample, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			RedTaxonomySample heldRedTaxonomySample, boolean redTaxonomyComplete) {
 		if (degree >= 2 && heldRedTaxonomySample != null) {
 			return votary(entityId, heldRedTaxonomySample);
 		}
@@ -47,7 +52,7 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
 			case 2 -> votary(entityId, heldRedTaxonomySample);
-			case 3 -> initiate(entityId);
+			case 3 -> initiate(entityId, redTaxonomyComplete);
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
 			case 6 -> sanctified(entityId, hasBloodline, isNpcRecruited);
@@ -406,13 +411,27 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	/** Degree 3 — Initiate. Reveals the Somatic Loom and memory weaving. */
 	public static DialogueTree initiate(int entityId) {
+		return initiate(entityId, false);
+	}
+
+	public static DialogueTree initiate(int entityId, boolean redTaxonomyComplete) {
+		List<DialogueOption> greetingOptions = new ArrayList<>();
+		if (redTaxonomyComplete) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_mnemonist_work",
+					"mnemonist_breadcrumb", null));
+		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_loom", "loom_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_is_memory_weaving", "memory_weaving", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
+
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.alchemist.initiate.line1"
+				), greetingOptions))
+				.addNode(new DialogueNode("mnemonist_breadcrumb", List.of(
+						"hemomancy.alchemist.initiate.mnemonist_breadcrumb"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_loom", "loom_lore", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.what_is_memory_weaving", "memory_weaving", null),
-      new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("loom_lore", List.of(

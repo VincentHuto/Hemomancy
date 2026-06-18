@@ -64,6 +64,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/red_taxonomy_puffball_fungus");
 	public static final ResourceLocation ADV_RED_TAXONOMY_COMPLETE =
 			Hemomancy.rloc("hemomancy/red_taxonomy_complete");
+	public static final ResourceLocation ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE =
+			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_complete");
 
 	// ── Endgame milestones ─────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_VOICES_IN_THE_VEIN =
@@ -156,5 +158,9 @@ public final class HarbingerAdvancementGranter {
 
 	public static boolean isRedTaxonomyComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_RED_TAXONOMY_COMPLETE);
+	}
+
+	public static boolean isMnemonistWovenVesselComplete(ServerPlayer player) {
+		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
 	}
 }

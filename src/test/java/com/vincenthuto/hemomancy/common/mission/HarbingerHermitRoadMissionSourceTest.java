@@ -19,6 +19,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		ledgerIsSeparateFromFieldNotesAndUsesGuideRenderer();
 		vicarGrantsLedgerAfterFirstWildHermitageReport();
 		alchemistRedTaxonomyAssignmentExists();
+		mnemonistWovenVesselAssignmentExists();
 		firstHermitageRemnantEvidenceExists();
 		hermitageRemnantWorldgenTemplateExists();
 	}
@@ -231,6 +232,70 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		assertContains("red taxonomy completion advancement exists", read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/advancement/hemomancy/red_taxonomy_complete.json")),
 				"advancements.hemomancy.red_taxonomy_complete.title");
+	}
+
+	private static void mnemonistWovenVesselAssignmentExists() throws IOException {
+		String alchemistTrees = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java"));
+		String alchemistEntity = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerAlchemistEntity.java"));
+		String mnemonistTrees = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerMnemonistDialogueTrees.java"));
+		String mnemonistEntity = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java"));
+		String eventHandler = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String advancementGranter = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
+		String ledgerItem = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/item/harbinger/HarbingerAssignmentLedgerItem.java"));
+		String ledgerPacket = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/network/mission/OpenHarbingerAssignmentLedgerPacket.java"));
+		String ledgerScreen = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/screen/item/HarbingerAssignmentLedgerScreen.java"));
+		String recipe = read(RESOURCE_ROOT.resolve("data/hemomancy/recipe/hematic_memory.json"));
+		String language = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
+		String docs = read(Path.of("docs/HEMOMANCY_REFERENCE.md"));
+
+		assertContains("hematic memory recipe uses neurotic enzyme", recipe, "\"item\": \"hemomancy:neurotic_enzyme\"");
+		assertDoesNotContain("hematic memory recipe no longer uses redstone", recipe, "\"item\": \"minecraft:redstone\"");
+		assertContains("advancement constant exists for woven vessel", advancementGranter,
+				"ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE");
+		assertContains("advancement helper checks woven vessel completion", advancementGranter,
+				"isMnemonistWovenVesselComplete");
+		assertContains("alchemist receives red taxonomy completion state", alchemistEntity,
+				"isRedTaxonomyComplete(serverPlayer)");
+		assertContains("alchemist breadcrumb option is gated behind taxonomy completion", alchemistTrees,
+				"redTaxonomyComplete");
+		assertContains("alchemist breadcrumb points to mnemonist", alchemistTrees,
+				"hemomancy.alchemist.initiate.mnemonist_breadcrumb");
+		assertContains("mnemonist receives assignment state", mnemonistEntity,
+				"isMnemonistWovenVesselComplete(serverPlayer)");
+		assertContains("mnemonist has woven vessel event id", mnemonistTrees,
+				"EVENT_WOVEN_VESSEL_TURN_IN");
+		assertContains("mnemonist explains blank memory recipe", mnemonistTrees,
+				"hemomancy.mnemonist.woven_vessel.recipe.line1");
+		assertContains("event handler handles woven vessel turn-in", eventHandler,
+				"handleMnemonistWovenVessel");
+		assertContains("woven vessel requires a blank hematic memory", eventHandler,
+				"ItemInit.hematic_memory.get()");
+		assertContains("woven vessel consumes archive book", eventHandler, "Items.BOOK");
+		assertContains("woven vessel consumes archive ink", eventHandler, "Items.INK_SAC");
+		assertContains("woven vessel consumes archive paper", eventHandler, "Items.PAPER");
+		assertContains("woven vessel rewards bleeding bulb", eventHandler, "ItemInit.bleeding_bulb.get()");
+		assertContains("woven vessel rewards vivacious enzyme", eventHandler, "ItemInit.vivacious_enzyme.get()");
+		assertContains("ledger item sends blank memory state", ledgerItem, "hasBlankHematicMemory");
+		assertContains("ledger packet carries woven vessel completion", ledgerPacket, "mnemonistWovenVesselComplete");
+		assertContains("ledger screen renders woven vessel assignment", ledgerScreen, "renderWovenVessel");
+		assertContains("woven vessel language title exists", language,
+				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title");
+		assertContains("mnemonist recipe dialogue names self", language, "a piece of yourself");
+		assertContains("mnemonist recipe dialogue names history", language, "a piece of history");
+		assertContains("mnemonist recipe dialogue names nervous tissue", language, "a piece of living nervous tissue");
+		assertContains("woven vessel completion advancement exists", read(RESOURCE_ROOT.resolve(
+				"data/hemomancy/advancement/hemomancy/mnemonist_woven_vessel_complete.json")),
+				"advancements.hemomancy.mnemonist_woven_vessel_complete.title");
+		assertContains("docs mention woven vessel assignment", docs, "The Woven Vessel");
 	}
 
 	private static void firstHermitageRemnantEvidenceExists() throws IOException {

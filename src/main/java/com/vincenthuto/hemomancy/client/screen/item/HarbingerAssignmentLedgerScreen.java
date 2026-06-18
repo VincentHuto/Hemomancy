@@ -23,6 +23,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int CARD_GAP = 5;
 	private static final int ASSIGNMENT_CARD_HEIGHT = 30;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
+	private static final int WOVEN_VESSEL_HEIGHT = 68;
 	private static final int SCROLLBAR_WIDTH = 6;
 	private static final int SCROLL_STEP = 18;
 	private static final int PANEL = 0xD0140505;
@@ -49,6 +50,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean ledgerGranted;
 	private final int redTaxonomyCount;
 	private final boolean redTaxonomyComplete;
+	private final boolean hasBlankHematicMemory;
+	private final boolean mnemonistWovenVesselComplete;
 	private final MilestoneDrawerState milestoneState = new MilestoneDrawerState();
 	private final VeinBackgroundRenderer veinBg = new VeinBackgroundRenderer();
 	private int left;
@@ -60,7 +63,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private Component hoveredAssignmentDescription;
 
 	private HarbingerAssignmentLedgerScreen(int degree, boolean firstAwakening, boolean degreeOne,
-			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete) {
+			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete,
+			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete) {
 		super(Component.translatable("screen.hemomancy.harbinger_assignment_ledger.title"));
 		this.degree = degree;
 		this.firstAwakening = firstAwakening;
@@ -69,13 +73,17 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.ledgerGranted = ledgerGranted;
 		this.redTaxonomyCount = redTaxonomyCount;
 		this.redTaxonomyComplete = redTaxonomyComplete;
+		this.hasBlankHematicMemory = hasBlankHematicMemory;
+		this.mnemonistWovenVesselComplete = mnemonistWovenVesselComplete;
 	}
 
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
-			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete) {
+			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete,
+			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
 				degree, firstAwakening, degreeOne, firstRemnant, ledgerGranted,
-				redTaxonomyCount, redTaxonomyComplete));
+				redTaxonomyCount, redTaxonomyComplete, hasBlankHematicMemory,
+				mnemonistWovenVesselComplete));
 	}
 
 	@Override
@@ -199,7 +207,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				"screen.hemomancy.harbinger_assignment_ledger.step.ledger",
 				"screen.hemomancy.harbinger_assignment_ledger.step.ledger.desc", mouseX, mouseY);
 
-		renderRedTaxonomy(gfx, x, cardY + ASSIGNMENT_CARD_HEIGHT + SECTION_GAP, w, mouseX, mouseY);
+		int taxonomyY = cardY + ASSIGNMENT_CARD_HEIGHT + SECTION_GAP;
+		renderRedTaxonomy(gfx, x, taxonomyY, w, mouseX, mouseY);
+		renderWovenVessel(gfx, x, taxonomyY + RED_TAXONOMY_HEIGHT + SECTION_GAP, w, mouseX, mouseY);
 		return totalAssignmentContentHeight();
 	}
 
@@ -234,6 +244,38 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.progress",
 						redTaxonomyCount, 4),
 				x, y + 12, redTaxonomyComplete ? DONE : CURRENT, false);
+	}
+
+	private void renderWovenVessel(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		gfx.fill(x, y, x + w, y + WOVEN_VESSEL_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, WOVEN_VESSEL_HEIGHT, BORDER, BORDER_MUTED);
+		renderWovenVesselHeader(gfx, x + 8, y + 6, w - 16);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, wovenVesselProgress(), 4);
+		renderTruncatedDescription(gfx, Component.translatable(mnemonistWovenVesselComplete
+						? "screen.hemomancy.harbinger_assignment_ledger.woven_vessel.complete"
+						: "screen.hemomancy.harbinger_assignment_ledger.woven_vessel.desc"),
+				x + 8, y + 42, w - 16, mnemonistWovenVesselComplete ? TEXT : MUTED, mouseX, mouseY);
+	}
+
+	private void renderWovenVesselHeader(GuiGraphics gfx, int x, int y, int w) {
+		List<FormattedCharSequence> wrapped = font.split(
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title"), w);
+		if (!wrapped.isEmpty()) {
+			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
+		}
+		gfx.drawString(font,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.woven_vessel.progress",
+						wovenVesselProgress(), 4),
+				x, y + 12, mnemonistWovenVesselComplete ? DONE : CURRENT, false);
+	}
+
+	private int wovenVesselProgress() {
+		int completed = 0;
+		if (redTaxonomyComplete) completed++;
+		if (degree >= 3) completed++;
+		if (hasBlankHematicMemory) completed++;
+		if (mnemonistWovenVesselComplete) completed++;
+		return completed;
 	}
 
 	private void drawAssignmentScrollbar(GuiGraphics gfx, int x, int y, int w, int h, int totalH) {
@@ -327,7 +369,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private int totalAssignmentContentHeight() {
-		return ASSIGNMENT_CARD_HEIGHT * 4 + CARD_GAP * 3 + SECTION_GAP + RED_TAXONOMY_HEIGHT;
+		return ASSIGNMENT_CARD_HEIGHT * 4 + CARD_GAP * 3 + SECTION_GAP + RED_TAXONOMY_HEIGHT
+				+ SECTION_GAP + WOVEN_VESSEL_HEIGHT;
 	}
 
 	private int clampAssignmentScroll(int scroll) {

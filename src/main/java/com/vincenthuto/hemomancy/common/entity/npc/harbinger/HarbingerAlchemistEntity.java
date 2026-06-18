@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.RedTaxonomySample;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -102,7 +103,8 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
             } else {
                 RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample);
+                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample,
+                        HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer));
             }
             tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "alchemist",
                     "hemomancy.alchemist.item_inquiry.unknown", degree, 0f);

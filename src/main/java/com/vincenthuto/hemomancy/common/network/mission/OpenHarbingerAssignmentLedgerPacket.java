@@ -14,7 +14,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean firstRemnant,
 		boolean ledgerGranted,
 		int redTaxonomyCount,
-		boolean redTaxonomyComplete) implements CustomPacketPayload {
+		boolean redTaxonomyComplete,
+		boolean hasBlankHematicMemory,
+		boolean mnemonistWovenVesselComplete) implements CustomPacketPayload {
 	public static final Type<OpenHarbingerAssignmentLedgerPacket> TYPE =
 			new Type<>(Hemomancy.rloc("open_harbinger_assignment_ledger"));
 	public static final StreamCodec<FriendlyByteBuf, OpenHarbingerAssignmentLedgerPacket> STREAM_CODEC =
@@ -28,6 +30,8 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.ledgerGranted);
 		buf.writeVarInt(msg.redTaxonomyCount);
 		buf.writeBoolean(msg.redTaxonomyComplete);
+		buf.writeBoolean(msg.hasBlankHematicMemory);
+		buf.writeBoolean(msg.mnemonistWovenVesselComplete);
 	}
 
 	public static OpenHarbingerAssignmentLedgerPacket decode(FriendlyByteBuf buf) {
@@ -38,13 +42,16 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readVarInt(),
+				buf.readBoolean(),
+				buf.readBoolean(),
 				buf.readBoolean());
 	}
 
 	public static void handle(final OpenHarbingerAssignmentLedgerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> HarbingerAssignmentLedgerScreen.open(
 				msg.degree, msg.firstAwakening, msg.degreeOne, msg.firstRemnant, msg.ledgerGranted,
-				msg.redTaxonomyCount, msg.redTaxonomyComplete));
+				msg.redTaxonomyCount, msg.redTaxonomyComplete, msg.hasBlankHematicMemory,
+				msg.mnemonistWovenVesselComplete));
 	}
 
 	@Override

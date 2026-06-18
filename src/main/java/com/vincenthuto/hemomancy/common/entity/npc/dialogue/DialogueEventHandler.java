@@ -29,7 +29,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -188,6 +190,8 @@ public class DialogueEventHandler {
 								.withStyle(ChatFormatting.DARK_GREEN),
 						false);
 			}
+			case HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN ->
+					handleMnemonistWovenVessel(player, event.getEntityId());
 			default -> {
 				// Unknown event — log for development
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
@@ -335,6 +339,89 @@ public class DialogueEventHandler {
 			case BLOOD_RUSH -> new ItemStack(ItemInit.crude_memory_blood_rush.get());
 			case DEADLY_GAZE -> new ItemStack(ItemInit.crude_memory_deadly_gaze.get());
 		};
+	}
+
+	private static void handleMnemonistWovenVessel(ServerPlayer player, int entityId) {
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> progress.hasBegunPurification())
+				.orElse(false);
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> progress.hasClarityUnlocked())
+				.orElse(false);
+
+		if (degree < 3 || purifying || clarity
+				|| !HarbingerAdvancementGranter.isRedTaxonomyComplete(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (!hasItemCount(player, ItemInit.hematic_memory.get(), 1)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_missing_memory")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (!hasItemCount(player, Items.BOOK, 1)
+				|| !hasItemCount(player, Items.INK_SAC, 1)
+				|| !hasItemCount(player, Items.PAPER, 3)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_missing_archive")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		if (!player.isCreative()) {
+			consumeItemCount(player, Items.BOOK, 1);
+			consumeItemCount(player, Items.INK_SAC, 1);
+			consumeItemCount(player, Items.PAPER, 3);
+		}
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.bleeding_bulb.get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vivacious_enzyme.get()));
+		HarbingerAdvancementGranter.grantIfNotDone(player,
+				HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_complete")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static boolean hasItemCount(ServerPlayer player, Item item, int needed) {
+		int count = 0;
+		for (ItemStack stack : player.getInventory().items) {
+			if (stack.is(item)) {
+				count += stack.getCount();
+				if (count >= needed) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private static void consumeItemCount(ServerPlayer player, Item item, int amount) {
+		int remaining = amount;
+		for (ItemStack stack : player.getInventory().items) {
+			if (remaining <= 0) {
+				return;
+			}
+			if (stack.is(item)) {
+				int consumed = Math.min(remaining, stack.getCount());
+				stack.shrink(consumed);
+				remaining -= consumed;
+			}
+		}
 	}
 
 	private static void giveOrDropAtEntity(ServerPlayer player, int entityId, ItemStack stack) {

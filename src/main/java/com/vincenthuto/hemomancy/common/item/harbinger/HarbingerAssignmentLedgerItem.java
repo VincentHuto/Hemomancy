@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
@@ -39,9 +40,16 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
-					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer)));
+					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
+					hasBlankHematicMemory(serverPlayer),
+					HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer)));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+	}
+
+	private static boolean hasBlankHematicMemory(ServerPlayer player) {
+		return player.getInventory().items.stream()
+				.anyMatch(stack -> stack.is(ItemInit.hematic_memory.get()));
 	}
 
 	@Override

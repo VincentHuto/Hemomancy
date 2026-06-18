@@ -65,9 +65,9 @@ The backend tests cover Java parsing, private helper tree discovery, memo event
 expression preservation, validation diagnostics, event/memo catalogs, and
 preview/apply safety.
 
-## Legacy JSON Tool
+## Legacy JSON Scripts
 
-The original self-contained editor is still available as `index.html`, with
-`export_to_json.py` and `import_from_json.py`. It is useful for quick visual
-checks or older JSON snapshots, but the workspace app is now the safer authoring
-flow for live repo files.
+The old self-contained `index.html` editor has been removed so the workspace
+app is the only browser entry point. The `export_to_json.py` and
+`import_from_json.py` scripts remain only for older JSON snapshots and migration
+work; live dialogue authoring should use `workspace.html`.

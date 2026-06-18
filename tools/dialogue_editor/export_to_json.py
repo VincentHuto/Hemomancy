@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 export_to_json.py — Parse a Hemomancy *DialogueTrees.java file and write
-all public static DialogueTree methods to a JSON file suitable for loading
-in the visual editor (index.html).
+all public static DialogueTree methods to a JSON file suitable for older
+snapshot/migration workflows.
 
 Usage
 -----
