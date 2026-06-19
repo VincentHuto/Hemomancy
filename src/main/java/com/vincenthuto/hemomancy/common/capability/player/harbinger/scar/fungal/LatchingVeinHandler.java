@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal;
 
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AnastocordycepsNexusItem;
 import net.minecraft.nbt.CompoundTag;

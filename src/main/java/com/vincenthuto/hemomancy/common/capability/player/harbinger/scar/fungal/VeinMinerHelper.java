@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.core.BlockPos;
