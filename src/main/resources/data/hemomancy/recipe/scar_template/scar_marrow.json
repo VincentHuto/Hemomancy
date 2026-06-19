@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:runic_motif_paper"
+    },
+    {
+      "item": "minecraft:bone"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:scar_pattern",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": {
+        "ScarIds": [
+          "hemomancy:scar_marrow"
+        ]
+      }
+    }
+  }
+}

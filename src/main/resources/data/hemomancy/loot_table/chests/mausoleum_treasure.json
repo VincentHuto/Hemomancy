@@ -70,7 +70,19 @@
         {
           "type": "minecraft:item",
           "weight": 10,
-          "name": "hemomancy:scar_pattern_marrow"
+          "name": "hemomancy:scar_pattern",
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "minecraft:custom_data": {
+                  "ScarIds": [
+                    "hemomancy:scar_marrow"
+                  ]
+                }
+              }
+            }
+          ]
         },
         {
           "type": "minecraft:item",

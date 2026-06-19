@@ -56,15 +56,17 @@ public final class VeinMasonMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 
-		assertContains("lesson maps ANIMUS", lesson, "EnumBloodTendency.ANIMUS, lesson(ItemInit.scar_pattern_heart");
-		assertContains("lesson maps FLAMMEUS", lesson, "EnumBloodTendency.FLAMMEUS, lesson(ItemInit.scar_pattern_pyre");
-		assertContains("lesson maps DUCTILIS", lesson, "EnumBloodTendency.DUCTILIS, lesson(ItemInit.scar_pattern_feral");
-		assertContains("lesson maps LUX", lesson, "EnumBloodTendency.LUX, lesson(ItemInit.scar_pattern_halo");
-		assertContains("lesson maps MORTEM", lesson, "EnumBloodTendency.MORTEM, lesson(ItemInit.scar_pattern_blight");
-		assertContains("lesson maps CONGEATIO", lesson, "EnumBloodTendency.CONGEATIO, lesson(ItemInit.scar_pattern_rime");
-		assertContains("lesson maps FERRIC", lesson, "EnumBloodTendency.FERRIC, lesson(ItemInit.scar_pattern_thorn");
-		assertContains("lesson maps TENEBRIS", lesson, "EnumBloodTendency.TENEBRIS, lesson(ItemInit.scar_pattern_shade");
+		assertContains("lesson maps ANIMUS", lesson, "EnumBloodTendency.ANIMUS, lesson(\"scar_heart\"");
+		assertContains("lesson maps FLAMMEUS", lesson, "EnumBloodTendency.FLAMMEUS, lesson(\"scar_pyre\"");
+		assertContains("lesson maps DUCTILIS", lesson, "EnumBloodTendency.DUCTILIS, lesson(\"scar_feral\"");
+		assertContains("lesson maps LUX", lesson, "EnumBloodTendency.LUX, lesson(\"scar_halo\"");
+		assertContains("lesson maps MORTEM", lesson, "EnumBloodTendency.MORTEM, lesson(\"scar_blight\"");
+		assertContains("lesson maps CONGEATIO", lesson, "EnumBloodTendency.CONGEATIO, lesson(\"scar_rime\"");
+		assertContains("lesson maps FERRIC", lesson, "EnumBloodTendency.FERRIC, lesson(\"scar_thorn\"");
+		assertContains("lesson maps TENEBRIS", lesson, "EnumBloodTendency.TENEBRIS, lesson(\"scar_shade\"");
+		assertContains("lesson creates dynamic pattern stack", lesson, "ItemScarPattern.createTemplatePattern(patternScarId)");
 		assertContains("event handler grants blank scar", eventHandler, "ItemInit.scar_blank.get()");
+		assertContains("event handler grants dynamic scar pattern", eventHandler, "lesson.patternStack()");
 		assertContains("event handler grants knapper when missing", eventHandler, "ItemInit.hematic_iron_knapper.get()");
 		assertContains("event handler grants continuation reward", eventHandler, "handleVeinMasonContinuationReward");
 		assertContains("reward grants second strongest tendency pattern", lesson, "continuationForPlayer");

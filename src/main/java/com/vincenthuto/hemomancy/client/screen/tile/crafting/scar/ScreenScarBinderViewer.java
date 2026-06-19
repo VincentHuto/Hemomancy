@@ -13,19 +13,15 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,11 +102,9 @@ public class ScreenScarBinderViewer extends Screen {
 	 */
 	private record PatternEntry(
 			int slotIndex,
-			ItemScarPattern patternItem,
 			ItemStack resultIcon,
 			String displayName,
 			byte[][] pattern,
-			DeferredHolder<Item, Item> scarRef,
 			ScarRecipe recipe
 	) {}
 
@@ -158,13 +152,10 @@ public class ScreenScarBinderViewer extends Screen {
 
 		for (int i = 0; i < binderHandler.getSlots(); i++) {
 			ItemStack slotStack = binderHandler.getStackInSlot(i);
-			if (slotStack.getItem() instanceof ItemScarPattern pat) {
-				ScarRecipe recipe = pat.getRecipe();
-				ItemStack resultIcon = recipe != null ? recipe.getResultItem() : slotStack.copyWithCount(1);
-				String name = resultIcon.getHoverName().getString();
-				byte[][] pattern = recipe != null ? recipe.getPattern() : null;
-
-				entries.add(new PatternEntry(i, pat, resultIcon, name, pattern, pat.getSCAR(), recipe));
+			if (slotStack.getItem() instanceof ItemScarPattern) {
+				for (ItemScarPattern.TemplateEntry entry : ItemScarPattern.getTemplateEntries(slotStack, minecraft.level)) {
+					entries.add(new PatternEntry(i, entry.resultIcon(), entry.displayName(), entry.pattern(), entry.recipe()));
+				}
 			}
 		}
 	}
@@ -427,10 +418,6 @@ public class ScreenScarBinderViewer extends Screen {
 				if (player != null) {
 					player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 				}
-				String patternText = I18n.get(Hemomancy.MOD_ID + "."
-						+ BuiltInRegistries.ITEM.getKey(entry.scarRef().get()) + ".pattern.text");
-				Minecraft.getInstance().setScreen(
-						new ScreenScarPattern(entry.scarRef(), entry.recipe(), patternText));
 				return true;
 			}
 		}

@@ -5,9 +5,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
-import com.vincenthuto.hemomancy.common.item.itemhandler.ScarBinderItemHandler;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketScarCraftingEvent;
@@ -26,8 +24,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,8 +95,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 	/** Simple record holding data for one binder pattern entry. */
 	private record BinderPatternEntry(
-			int slotIndex,
-			ItemScarPattern patternItem,
 			ItemStack resultIcon,
 			String displayName,
 			byte[][] pattern,
@@ -167,26 +161,17 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	}
 
 	private void syncPatternSlotState() {
-		// Auto-detect when a pattern item is placed/removed in slot 4
 		ItemStack currentPatternSlot = te.getItem(4);
 		if (!ItemStack.isSameItemSameComponents(currentPatternSlot, lastPatternSlotItem)) {
 			lastPatternSlotItem = currentPatternSlot.copy();
-			if (currentPatternSlot.getItem() instanceof ItemScarBinder) {
-				// A binder was placed — rebuild the pattern selector panel
+			if (currentPatternSlot.getItem() instanceof ItemScarPattern) {
 				rebuildBinderEntries(currentPatternSlot);
-				binderPanelVisible = true;
 				binderSelectedEntry = -1;
-			} else if (currentPatternSlot.getItem() instanceof ItemScarPattern) {
-				// A single pattern was placed — hide binder panel, load it
-				binderPanelVisible = false;
-				binderEntries.clear();
-				ItemScarPattern scarPattern = (ItemScarPattern) currentPatternSlot.getItem();
-				ScarRecipe patternRecipe = scarPattern.getRecipe();
-				if (patternRecipe != null && patternRecipe.getPattern() != null) {
-					loadPatternIntoGrid(patternRecipe.getPattern());
+				binderPanelVisible = binderEntries.size() > 1;
+				if (binderEntries.size() == 1 && binderEntries.get(0).pattern() != null) {
+					loadPatternIntoGrid(binderEntries.get(0).pattern());
 				}
 			} else {
-				// Slot was emptied — hide binder panel, clear the grid
 				binderPanelVisible = false;
 				binderEntries.clear();
 				binderSelectedEntry = -1;
@@ -487,30 +472,16 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	 * Scans the ScarBinder's inventory and populates binderEntries with
 	 * all valid pattern items found inside.
 	 */
-	private void rebuildBinderEntries(ItemStack binderStack) {
+	private void rebuildBinderEntries(ItemStack patternStack) {
 		binderEntries.clear();
 		binderScrollOffset = 0;
 		binderHoveredEntry = -1;
 
-		if (binderStack.isEmpty() || !(binderStack.getItem() instanceof ItemScarBinder)) return;
+		if (patternStack.isEmpty() || !(patternStack.getItem() instanceof ItemScarPattern)) return;
 
-		IItemHandler handler = binderStack.getCapability(Capabilities.ItemHandler.ITEM);
-		if (!(handler instanceof ScarBinderItemHandler rbHandler)) return;
-
-		rbHandler.load();
-
-		for (int i = 0; i < rbHandler.getSlots(); i++) {
-			ItemStack slotStack = rbHandler.getStackInSlot(i);
-			if (slotStack.getItem() instanceof ItemScarPattern pat) {
-				ScarRecipe recipe = pat.getRecipe();
-				if (recipe == null) continue;
-
-				ItemStack resultIcon = recipe.getResultItem();
-				String name = I18n.get(resultIcon.getDescriptionId());
-				byte[][] patternData = recipe.getPattern();
-
-				binderEntries.add(new BinderPatternEntry(i, pat, resultIcon, name, patternData, recipe));
-			}
+		for (ItemScarPattern.TemplateEntry entry : ItemScarPattern.getTemplateEntries(patternStack, minecraft.level)) {
+			String name = I18n.get(entry.resultIcon().getDescriptionId());
+			binderEntries.add(new BinderPatternEntry(entry.resultIcon(), name, entry.pattern(), entry.recipe()));
 		}
 	}
 
@@ -547,7 +518,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		graphics.fill(px + PANEL_WIDTH - 1, py, px + PANEL_WIDTH, py + panelHeight, 0xAA8B6914);
 
 		// Header
-		String header = ChatFormatting.GOLD + "Binder" + ChatFormatting.DARK_GRAY
+		String header = ChatFormatting.GOLD + "Patterns" + ChatFormatting.DARK_GRAY
 				+ " (" + binderEntries.size() + ")";
 		graphics.drawString(font, header, px + PANEL_PADDING, py + PANEL_PADDING, 0xFFFFFF, true);
 
@@ -658,21 +629,20 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	 */
 	private void renderMiniPattern(GuiGraphics graphics, byte[][] patternData, int x, int y, float partialTicks) {
 		int gridSize = 8 * MINI_CELL;
-		//graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x60000000);
+		graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x60000000);
 
-	//	int activeColor = 0xFFDAA520; // solid gold — matches binder panel theme
-
-//		for (int i = 0; i < 8; i++) {
-//			for (int j = 0; j < 8; j++) {
-//				int cx = x + j * MINI_CELL;
-//				int cy = y + i * MINI_CELL;
-//				if (patternData[i][j] != 0) {
-//					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, activeColor);
-//				} else {
-//					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, 0x30333333);
-//				}
-//			}
-//		}
+		int activeColor = 0xFFDAA520;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				int cx = x + j * MINI_CELL;
+				int cy = y + i * MINI_CELL;
+				if (patternData[i][j] != 0) {
+					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, activeColor);
+				} else {
+					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, 0x30333333);
+				}
+			}
+		}
 	}
 
 	/**
@@ -774,10 +744,17 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 				left + 28, top + 80 + TOP_CONTENT_Y_OFFSET, 16, 16,
 				ScarActionButton.IconType.LOAD, (press) -> {
 					ItemStack patternStack = te.getItem(4);
-					if (patternStack.getItem() instanceof ItemScarPattern scarPattern) {
-						ScarRecipe patternRecipe = scarPattern.getRecipe();
-						if (patternRecipe != null && patternRecipe.getPattern() != null) {
-							loadPatternIntoGrid(patternRecipe.getPattern());
+					if (patternStack.getItem() instanceof ItemScarPattern) {
+						if (binderSelectedEntry >= 0 && binderSelectedEntry < binderEntries.size()) {
+							BinderPatternEntry entry = binderEntries.get(binderSelectedEntry);
+							if (entry.pattern() != null) {
+								loadPatternIntoGrid(entry.pattern());
+								return;
+							}
+						}
+						List<ItemScarPattern.TemplateEntry> entries = ItemScarPattern.getTemplateEntries(patternStack, minecraft.level);
+						if (!entries.isEmpty() && entries.get(0).pattern() != null) {
+							loadPatternIntoGrid(entries.get(0).pattern());
 						}
 					}
 				}));

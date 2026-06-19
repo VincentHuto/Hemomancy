@@ -3,14 +3,15 @@ package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -33,7 +34,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
@@ -44,22 +44,20 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 	public static final String TAG_SCAR_IDS = "ScarIds";
 	public static final int MAX_SCAR_IDS = 4;
 
-	String path;
-	DeferredHolder<Item, Item> scar;
-
-	public ItemScarPattern(Properties prop, DeferredHolder<Item, Item> scar, String recipePath) {
+	public ItemScarPattern(Properties prop) {
 		super(prop.stacksTo(1));
-		this.scar = scar;
-		this.path = recipePath;
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (worldIn.isClientSide) {
-			//Hemomancy.proxy.openPatternGui(scar, getRecipe());
 			playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+	}
+
+	public static ItemStack createTemplatePattern(ResourceLocation scarId) {
+		return createPreparedPattern(List.of(scarId));
 	}
 
 	public static ItemStack createPreparedPattern(Collection<ResourceLocation> scarIds) {
@@ -99,42 +97,72 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 		tag.put(TAG_SCAR_IDS, list);
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
-	
-	public DeferredHolder<Item, Item> getSCAR() {
-		return scar;
-	}
-	
-	public void setSCAR(DeferredHolder<Item, Item> scar) {
-		this.scar = scar;
+
+	public static List<TemplateEntry> getTemplateEntries(ItemStack stack, Level level) {
+		List<TemplateEntry> entries = new ArrayList<>();
+		for (ResourceLocation scarId : getScarIds(stack)) {
+			ScarRecipe recipe = getRecipeForScarId(scarId, level);
+			if (recipe == null || recipe.getPattern() == null) {
+				continue;
+			}
+			ItemStack resultIcon = recipe.getResultItem();
+			String displayName = resultIcon.getHoverName().getString();
+			entries.add(new TemplateEntry(scarId, resultIcon, displayName, recipe.getPattern(), recipe));
+		}
+		return entries;
 	}
 
-	public ScarRecipe getRecipe() {
-		ScarRecipe recipe = ScarRecipeSerializer.getRecipe(path);
+	public static ScarRecipe getPrimaryRecipe(ItemStack stack, Level level) {
+		List<ResourceLocation> scarIds = getScarIds(stack);
+		if (scarIds.isEmpty()) {
+			return null;
+		}
+		return getRecipeForScarId(scarIds.get(0), level);
+	}
+
+	public static ScarRecipe getRecipeForScarId(ResourceLocation scarId, Level level) {
+		String recipePath = recipePathForScarId(scarId);
+		ScarRecipe recipe = ScarRecipeSerializer.getRecipe(recipePath);
+		if (recipe != null) {
+			return recipe;
+		}
+
+		recipe = getRecipeFromLevel(level, recipePath);
 		if (recipe != null) {
 			return recipe;
 		}
 
 		Level serverLevel = getServerLevel();
-		recipe = getRecipeFromLevel(serverLevel);
+		recipe = getRecipeFromLevel(serverLevel, recipePath);
 		if (recipe != null) {
 			return recipe;
 		}
 
 		if (FMLEnvironment.dist.isClient()) {
-			return getRecipeFromClientLevel();
+			return getRecipeFromClientLevel(recipePath);
 		}
 
 		return null;
 	}
 
-	private Level getServerLevel() {
+	private static String recipePathForScarId(ResourceLocation scarId) {
+		if (scarId == null) {
+			return "";
+		}
+		if (scarId.getNamespace().equals(Hemomancy.MOD_ID)) {
+			return scarId.getPath();
+		}
+		return scarId.toString();
+	}
+
+	private static Level getServerLevel() {
 		if (ServerLifecycleHooks.getCurrentServer() == null) {
 			return null;
 		}
 		return ServerLifecycleHooks.getCurrentServer().overworld();
 	}
 
-	private ScarRecipe getRecipeFromLevel(Level level) {
+	private static ScarRecipe getRecipeFromLevel(Level level, String recipePath) {
 		if (level == null) {
 			return null;
 		}
@@ -142,8 +170,8 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 		for (RecipeHolder<ScarRecipe> holder : level.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get())) {
 			ResourceLocation id = holder.id();
 			String idPath = id.getPath();
-			if (idPath.equals(path) || idPath.equals("scar/" + path) || idPath.equals("chisel/" + path)
-					|| idPath.equals("rune/" + path)) {
+			if (idPath.equals(recipePath) || idPath.equals("scar/" + recipePath) || idPath.equals("chisel/" + recipePath)
+					|| idPath.equals("rune/" + recipePath)) {
 				return holder.value();
 			}
 		}
@@ -152,24 +180,12 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	private ScarRecipe getRecipeFromClientLevel() {
+	private static ScarRecipe getRecipeFromClientLevel(String recipePath) {
 		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 		if (mc.level == null) {
 			return null;
 		}
-		return getRecipeFromLevel(mc.level);
-	}
-	
-	public String getPath() {
-		return path;
-	}
-	
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public void getPatternGui() {
-	//	Hemomancy.proxy.openPatternGui(scar, getRecipe());
+		return getRecipeFromLevel(mc.level, recipePath);
 	}
 
 	@Override
@@ -183,6 +199,8 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 			for (ResourceLocation id : ids) {
 				tooltip.add(Component.literal(" - " + id.getPath()).withStyle(ChatFormatting.GRAY));
 			}
+		} else {
+			tooltip.add(Component.translatable("tooltip.hemomancy.scar_pattern.blank").withStyle(ChatFormatting.GRAY));
 		}
 	}
 
@@ -196,6 +214,10 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 				return renderer;
 			}
 		};
+	}
+
+	public record TemplateEntry(ResourceLocation scarId, ItemStack resultIcon, String displayName, byte[][] pattern,
+			ScarRecipe recipe) {
 	}
 
 }

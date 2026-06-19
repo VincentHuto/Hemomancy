@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 
 import net.minecraft.world.Container;
@@ -15,7 +14,7 @@ public class ScarPatternSlot extends Slot {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		return stack.getItem() instanceof ItemScarPattern || stack.getItem() instanceof ItemScarBinder;
+		return stack.getItem() instanceof ItemScarPattern;
 	}
 
 }

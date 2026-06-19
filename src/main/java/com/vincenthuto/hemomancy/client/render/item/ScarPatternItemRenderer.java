@@ -14,15 +14,13 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -101,10 +99,6 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 		boolean flatOverlayContext = isFlatOverlayContext(displayContext);
 		for (int i = 0; i < scarIds.size() && i < QUADRANT_OFFSETS.length; i++) {
-			ItemStack patternStack = patternStackFor(scarIds.get(i));
-			if (patternStack.isEmpty()) {
-				continue;
-			}
 			float[] offset = QUADRANT_OFFSETS[i];
 			float centerX = offset[0] + 0.16F;
 			float centerY = offset[1] + 0.16F;
@@ -131,22 +125,18 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 			poseStack.mulPose(Axis.YP.rotationDegrees((float) 0));
 			poseStack.mulPose(Axis.ZP.rotationDegrees((float) 0));
 			poseStack.scale(0.75F, 0.75f, 0.75f);
-			renderPatternOverlay(patternStack, poseStack, buffer, combinedLight, combinedOverlay, mc, i);
+			renderScarOverlay(scarIds.get(i), poseStack, buffer, combinedLight, combinedOverlay, mc);
 			poseStack.popPose();
 		}
 		return true;
 	}
 
-	private void renderPatternOverlay(ItemStack patternStack, PoseStack poseStack, MultiBufferSource buffer,
-			int combinedLight, int combinedOverlay, Minecraft mc, int seedOffset) {
-		BakedModel model = mc.getItemRenderer().getModel(patternStack, mc.level, null, 59 + seedOffset);
-		RandomSource random = RandomSource.create(9173L + seedOffset);
+	private void renderScarOverlay(ResourceLocation scarId, PoseStack poseStack, MultiBufferSource buffer,
+			int combinedLight, int combinedOverlay, Minecraft mc) {
+		ResourceLocation texture = Hemomancy.rloc("item/scars/" + scarId.getPath());
+		TextureAtlasSprite sprite = mc.getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture);
 		VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS));
-		for (BakedQuad quad : model.getQuads(null, null, random)) {
-			if (quad.getTintIndex() == 1) {
-				renderQuadWithAlpha(poseStack.last(), translucentBuffer, quad, 0.85F, combinedLight, combinedOverlay);
-			}
-		}
+		renderSpriteQuad(poseStack.last(), translucentBuffer, sprite, 0.85F, combinedLight, combinedOverlay);
 	}
 
 	private static boolean isFlatOverlayContext(ItemDisplayContext displayContext) {
@@ -157,23 +147,37 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 				|| displayContext == ItemDisplayContext.GROUND;
 	}
 
-	private static ItemStack patternStackFor(ResourceLocation id) {
-		String path = id.getPath();
-		if (path.startsWith("scar_")) {
-			path = path.substring("scar_".length());
-		}
-		Item item = BuiltInRegistries.ITEM.get(Hemomancy.rloc("scar_pattern_" + path));
-		if (item == Items.AIR) {
-			return ItemStack.EMPTY;
-		}
-		return new ItemStack(item);
-	}
-
 	/**
 	 * Manually emits a quad's vertices with a custom alpha value.
 	 * Vertex data format per vertex: posX, posY, posZ, color(ABGR), texU, texV, lightmapUV, normalPacked
 	 * (8 ints per vertex for DefaultVertexFormat.BLOCK)
 	 */
+	private void renderSpriteQuad(PoseStack.Pose pose, VertexConsumer consumer, TextureAtlasSprite sprite,
+			float alpha, int light, int overlay) {
+		Matrix4f posMatrix = pose.pose();
+		Matrix3f normalMatrix = pose.normal();
+		Vector3f normal = new Vector3f(0.0F, 0.0F, 1.0F);
+		normal.mul(normalMatrix);
+		int a = (int) (alpha * 255.0F);
+
+		addSpriteVertex(consumer, posMatrix, normal, 0.0F, 1.0F, 0.0F, sprite.getU0(), sprite.getV1(), a, light, overlay);
+		addSpriteVertex(consumer, posMatrix, normal, 1.0F, 1.0F, 0.0F, sprite.getU1(), sprite.getV1(), a, light, overlay);
+		addSpriteVertex(consumer, posMatrix, normal, 1.0F, 0.0F, 0.0F, sprite.getU1(), sprite.getV0(), a, light, overlay);
+		addSpriteVertex(consumer, posMatrix, normal, 0.0F, 0.0F, 0.0F, sprite.getU0(), sprite.getV0(), a, light, overlay);
+	}
+
+	private void addSpriteVertex(VertexConsumer consumer, Matrix4f posMatrix, Vector3f normal, float x, float y,
+			float z, float u, float v, int alpha, int light, int overlay) {
+		Vector4f pos = new Vector4f(x, y, z, 1.0F);
+		pos.mul(posMatrix);
+		consumer.addVertex(pos.x(), pos.y(), pos.z())
+				.setColor(255, 255, 255, alpha)
+				.setUv(u, v)
+				.setOverlay(overlay)
+				.setLight(light)
+				.setNormal(normal.x(), normal.y(), normal.z());
+	}
+
 	private void renderQuadWithAlpha(PoseStack.Pose pose, VertexConsumer consumer, BakedQuad quad,
 			float alpha, int light, int overlay) {
 		int[] vertexData = quad.getVertices();

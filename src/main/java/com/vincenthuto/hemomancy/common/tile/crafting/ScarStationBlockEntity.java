@@ -134,11 +134,9 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	public boolean tryLoadPatternFromSlot() {
 		ItemStack patternStack = this.getItem(4);
 		if (!patternStack.isEmpty() && patternStack.getItem() instanceof ItemScarPattern) {
-			ItemScarPattern patternItem =
-					(ItemScarPattern) patternStack.getItem();
-			ScarRecipe patternRecipe = patternItem.getRecipe();
-			if (patternRecipe != null && patternRecipe.getPattern() != null) {
-				byte[][] recipePattern = patternRecipe.getPattern();
+			List<ItemScarPattern.TemplateEntry> entries = ItemScarPattern.getTemplateEntries(patternStack, level);
+			if (!entries.isEmpty() && entries.get(0).pattern() != null) {
+				byte[][] recipePattern = entries.get(0).pattern();
 				// Deep copy so we don't modify the recipe's array
 				byte[][] copy = new byte[recipePattern.length][];
 				for (int i = 0; i < recipePattern.length; i++) {

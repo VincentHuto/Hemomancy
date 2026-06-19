@@ -769,7 +769,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> scar_binder = BASEITEMS.register("scar_binder",
             () -> new ItemScarBinder("scar_binder", 18, Rarity.UNCOMMON));
 	public static final DeferredHolder<Item, Item> scar_pattern = BASEITEMS.register("scar_pattern",
-			() -> new ItemScarPattern(new Item.Properties(), null, "scar_pattern"));
+			() -> new ItemScarPattern(new Item.Properties()));
     public static final DeferredHolder<Item, Item> scar_binder_upgraded = BASEITEMS.register("scar_binder_upgraded",
             () -> new ItemScarBinder("scar_binder_upgraded", 27, Rarity.RARE));
     public static final DeferredHolder<Item, Item> respergillus = BASEITEMS.register("respergillus",
@@ -827,105 +827,54 @@ public class ItemInit {
     // ── ANIMUS — Vitality / Healing ──
     public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_heart));
-    public static final DeferredHolder<Item, Item> scar_pattern_heart = BASEITEMS.register("scar_pattern_heart",
-            () -> new ItemScarPattern(new Item.Properties(), scar_heart, "scar_heart"));
     public static final DeferredHolder<Item, Item> scar_marrow = BASEITEMS.register("scar_marrow",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_marrow));
-    public static final DeferredHolder<Item, Item> scar_pattern_marrow = BASEITEMS.register("scar_pattern_marrow",
-            () -> new ItemScarPattern(new Item.Properties(), scar_marrow, "scar_marrow"));
     public static final DeferredHolder<Item, Item> scar_phoenix = BASEITEMS.register("scar_phoenix",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_phoenix));
-    public static final DeferredHolder<Item, Item> scar_pattern_phoenix = BASEITEMS.register("scar_pattern_phoenix",
-            () -> new ItemScarPattern(new Item.Properties(), scar_phoenix, "scar_phoenix"));
     public static final DeferredHolder<Item, Item> scar_pyre = BASEITEMS.register("scar_pyre",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_pyre));
-    public static final DeferredHolder<Item, Item> scar_pattern_pyre = BASEITEMS.register("scar_pattern_pyre",
-            () -> new ItemScarPattern(new Item.Properties(), scar_pyre, "scar_pyre"));
     public static final DeferredHolder<Item, Item> scar_sol = BASEITEMS.register("scar_sol",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_sol));
-    public static final DeferredHolder<Item, Item> scar_pattern_sol = BASEITEMS.register("scar_pattern_sol",
-            () -> new ItemScarPattern(new Item.Properties(), scar_sol, "scar_sol"));
     public static final DeferredHolder<Item, Item> scar_corona = BASEITEMS.register("scar_corona",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_corona));
-    public static final DeferredHolder<Item, Item> scar_pattern_corona = BASEITEMS.register("scar_pattern_corona",
-            () -> new ItemScarPattern(new Item.Properties(), scar_corona, "scar_corona"));
     public static final DeferredHolder<Item, Item> scar_feral = BASEITEMS.register("scar_feral",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_feral));
-    public static final DeferredHolder<Item, Item> scar_pattern_feral = BASEITEMS.register("scar_pattern_feral",
-            () -> new ItemScarPattern(new Item.Properties(), scar_feral, "scar_feral"));
     public static final DeferredHolder<Item, Item> scar_flux = BASEITEMS.register("scar_flux",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_flux));
-    public static final DeferredHolder<Item, Item> scar_pattern_flux = BASEITEMS.register("scar_pattern_flux",
-            () -> new ItemScarPattern(new Item.Properties(), scar_flux, "scar_flux"));
     public static final DeferredHolder<Item, Item> scar_chimera = BASEITEMS.register("scar_chimera",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_chimera));
-    public static final DeferredHolder<Item, Item> scar_pattern_chimera = BASEITEMS.register("scar_pattern_chimera",
-            () -> new ItemScarPattern(new Item.Properties(), scar_chimera, "scar_chimera"));
     public static final DeferredHolder<Item, Item> scar_halo = BASEITEMS.register("scar_halo",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_halo));
-    public static final DeferredHolder<Item, Item> scar_pattern_halo = BASEITEMS.register("scar_pattern_halo",
-            () -> new ItemScarPattern(new Item.Properties(), scar_halo, "scar_halo"));
     public static final DeferredHolder<Item, Item> scar_veil = BASEITEMS.register("scar_veil",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_veil));
-    public static final DeferredHolder<Item, Item> scar_pattern_veil = BASEITEMS.register("scar_pattern_veil",
-            () -> new ItemScarPattern(new Item.Properties(), scar_veil, "scar_veil"));
     public static final DeferredHolder<Item, Item> scar_transcendence = BASEITEMS.register("scar_transcendence",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_transcendence));
-    public static final DeferredHolder<Item, Item> scar_pattern_transcendence = BASEITEMS.register(
-            "scar_pattern_transcendence",
-            () -> new ItemScarPattern(new Item.Properties(), scar_transcendence, "scar_transcendence"));
     public static final DeferredHolder<Item, Item> scar_blight = BASEITEMS.register("scar_blight",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_blight));
-    public static final DeferredHolder<Item, Item> scar_pattern_blight = BASEITEMS.register("scar_pattern_blight",
-            () -> new ItemScarPattern(new Item.Properties(), scar_blight, "scar_blight"));
     public static final DeferredHolder<Item, Item> scar_wither = BASEITEMS.register("scar_wither",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_wither));
-    public static final DeferredHolder<Item, Item> scar_pattern_wither = BASEITEMS.register("scar_pattern_wither",
-            () -> new ItemScarPattern(new Item.Properties(), scar_wither, "scar_wither"));
     public static final DeferredHolder<Item, Item> scar_oblivion = BASEITEMS.register("scar_oblivion",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_oblivion));
-    public static final DeferredHolder<Item, Item> scar_pattern_oblivion = BASEITEMS.register("scar_pattern_oblivion",
-            () -> new ItemScarPattern(new Item.Properties(), scar_oblivion, "scar_oblivion"));
     public static final DeferredHolder<Item, Item> scar_rime = BASEITEMS.register("scar_rime",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_rime));
-    public static final DeferredHolder<Item, Item> scar_pattern_rime = BASEITEMS.register("scar_pattern_rime",
-            () -> new ItemScarPattern(new Item.Properties(), scar_rime, "scar_rime"));
     public static final DeferredHolder<Item, Item> scar_glacier = BASEITEMS.register("scar_glacier",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_glacier));
-    public static final DeferredHolder<Item, Item> scar_pattern_glacier = BASEITEMS.register("scar_pattern_glacier",
-            () -> new ItemScarPattern(new Item.Properties(), scar_glacier, "scar_glacier"));
     public static final DeferredHolder<Item, Item> scar_descendence = BASEITEMS.register("scar_descendence",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_descendence));
-    public static final DeferredHolder<Item, Item> scar_pattern_descendence = BASEITEMS.register("scar_pattern_descendence",
-            () -> new ItemScarPattern(new Item.Properties(), scar_descendence, "scar_descendence"));
     public static final DeferredHolder<Item, Item> scar_thorn = BASEITEMS.register("scar_thorn",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_thorn));
-    public static final DeferredHolder<Item, Item> scar_pattern_thorn = BASEITEMS.register("scar_pattern_thorn",
-            () -> new ItemScarPattern(new Item.Properties(), scar_thorn, "scar_thorn"));
     public static final DeferredHolder<Item, Item> scar_anvil = BASEITEMS.register("scar_anvil",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_anvil));
-    public static final DeferredHolder<Item, Item> scar_pattern_anvil = BASEITEMS.register("scar_pattern_anvil",
-            () -> new ItemScarPattern(new Item.Properties(), scar_anvil, "scar_anvil"));
     public static final DeferredHolder<Item, Item> scar_crucible = BASEITEMS.register("scar_crucible",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_crucible));
-    public static final DeferredHolder<Item, Item> scar_pattern_crucible = BASEITEMS.register("scar_pattern_crucible",
-            () -> new ItemScarPattern(new Item.Properties(), scar_crucible, "scar_crucible"));
     public static final DeferredHolder<Item, Item> scar_blood_honed = BASEITEMS.register("scar_blood_honed",
             () -> new BloodHonedScar(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> scar_pattern_blood_honed = BASEITEMS.register("scar_pattern_blood_honed",
-            () -> new ItemScarPattern(new Item.Properties(), scar_blood_honed, "scar_blood_honed"));
     public static final DeferredHolder<Item, Item> scar_shade = BASEITEMS.register("scar_shade",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_shade));
-    public static final DeferredHolder<Item, Item> scar_pattern_shade = BASEITEMS.register("scar_pattern_shade",
-            () -> new ItemScarPattern(new Item.Properties(), scar_shade, "scar_shade"));
     public static final DeferredHolder<Item, Item> scar_moon = BASEITEMS.register("scar_moon",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_moon));
-    public static final DeferredHolder<Item, Item> scar_pattern_moon = BASEITEMS.register("scar_pattern_moon",
-            () -> new ItemScarPattern(new Item.Properties(), scar_moon, "scar_moon"));
     public static final DeferredHolder<Item, Item> scar_eye = BASEITEMS.register("scar_eye",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_eye));
-    public static final DeferredHolder<Item, Item> scar_pattern_eye = BASEITEMS.register("scar_pattern_eye",
-            () -> new ItemScarPattern(new Item.Properties(), scar_eye, "scar_eye"));
     // Spawn Eggs
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
             () -> new DeferredSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));

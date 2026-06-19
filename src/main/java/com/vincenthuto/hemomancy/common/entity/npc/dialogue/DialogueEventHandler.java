@@ -300,7 +300,7 @@ public class DialogueEventHandler {
 		}
 
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.forPlayer(player);
-		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.pattern().get()));
+		giveOrDropAtEntity(player, entityId, lesson.patternStack());
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.scar_blank.get()));
 		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.catalyst()));
 		if (!hasAnyKnapper(player)) {
@@ -331,7 +331,7 @@ public class DialogueEventHandler {
 		}
 
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.continuationForPlayer(player);
-		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.pattern().get()));
+		giveOrDropAtEntity(player, entityId, lesson.patternStack());
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.scar_blank.get()));
 		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.catalyst()));
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.runic_motif_paper.get(), 4));

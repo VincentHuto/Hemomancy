@@ -19,6 +19,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		anastomoticBrazierAndMasonsEffigyAreWired();
 		masonsEffigyScreenMatchesConceptLayout();
 		masonEffigyMotifPaperPreparesDynamicPattern();
+		dynamicScarPatternReplacesPerScarPatternItems();
 	}
 
 	private static void scarRegistryOwnsDefinitions() throws IOException {
@@ -192,10 +193,30 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertDoesNotContain("right click no longer directly creates scar pattern", block, "ItemScarPattern.createPreparedPattern");
 		assertContains("scar pattern renderer reads dynamic ids", renderer, "ItemScarPattern.getScarIds(stack)");
 		assertContains("scar pattern renderer lays out four quadrants", renderer, "QUADRANT_OFFSETS");
-		assertContains("scar pattern renderer renders layer one overlays only", renderer, "renderPatternOverlay");
-		assertContains("scar pattern renderer restricts dynamic icons to overlay layer", renderer, "quad.getTintIndex() == 1");
+		assertContains("scar pattern renderer renders overlay sprites", renderer, "renderScarOverlay");
 		assertContains("scar pattern renderer rotates dynamic overlays around z", renderer, "Axis.ZP.rotationDegrees");
 		assertDoesNotContain("scar pattern renderer no longer renders whole scar items", renderer, "renderStatic(scarStack");
+	}
+
+	private static void dynamicScarPatternReplacesPerScarPatternItems() throws IOException {
+		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
+		String pattern = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
+		String slot = read("src/main/java/com/vincenthuto/hemomancy/common/menu/slot/ScarPatternSlot.java");
+		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/crafting/scar/ScarStationScreen.java");
+		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
+
+		assertContains("single scar pattern item remains registered", itemInit, "BASEITEMS.register(\"scar_pattern\"");
+		assertDoesNotContain("old heart scar pattern item is removed", itemInit, "scar_pattern_heart");
+		assertDoesNotContain("old blood-honed scar pattern item is removed", itemInit, "scar_pattern_blood_honed");
+		assertContains("scar pattern can create single-template stacks", pattern, "createTemplatePattern");
+		assertContains("scar pattern exposes multiple station entries", pattern, "getTemplateEntries");
+		assertDoesNotContain("scar pattern no longer stores a fixed scar holder", pattern, "DeferredHolder<Item, Item>");
+		assertDoesNotContain("scar pattern no longer stores a fixed recipe path", pattern, "String path");
+		assertContains("scar pattern slot accepts scar patterns", slot, "stack.getItem() instanceof ItemScarPattern");
+		assertDoesNotContain("scar pattern slot rejects retired binders", slot, "ItemScarBinder");
+		assertContains("scar station rebuilds pattern entries from dynamic item", screen, "ItemScarPattern.getTemplateEntries");
+		assertDoesNotContain("scar station no longer scans binders for patterns", screen, "ScarBinderItemHandler");
+		assertDoesNotContain("scar pattern renderer no old pattern item lookup", renderer, "scar_pattern_");
 	}
 
 	private static String read(String path) throws IOException {

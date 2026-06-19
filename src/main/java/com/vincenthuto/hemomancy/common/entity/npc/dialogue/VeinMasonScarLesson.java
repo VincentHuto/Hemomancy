@@ -1,10 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -15,14 +19,14 @@ public final class VeinMasonScarLesson {
 	private static final Map<EnumBloodTendency, Lesson> LESSONS = new EnumMap<>(EnumBloodTendency.class);
 
 	static {
-		LESSONS.put(EnumBloodTendency.ANIMUS, lesson(ItemInit.scar_pattern_heart, Items.GOLDEN_APPLE, ItemInit.scar_heart));
-		LESSONS.put(EnumBloodTendency.FLAMMEUS, lesson(ItemInit.scar_pattern_pyre, Items.BLAZE_POWDER, ItemInit.scar_pyre));
-		LESSONS.put(EnumBloodTendency.DUCTILIS, lesson(ItemInit.scar_pattern_feral, Items.LEATHER, ItemInit.scar_feral));
-		LESSONS.put(EnumBloodTendency.LUX, lesson(ItemInit.scar_pattern_halo, Items.END_ROD, ItemInit.scar_halo));
-		LESSONS.put(EnumBloodTendency.MORTEM, lesson(ItemInit.scar_pattern_blight, Items.FERMENTED_SPIDER_EYE, ItemInit.scar_blight));
-		LESSONS.put(EnumBloodTendency.CONGEATIO, lesson(ItemInit.scar_pattern_rime, Items.PACKED_ICE, ItemInit.scar_rime));
-		LESSONS.put(EnumBloodTendency.FERRIC, lesson(ItemInit.scar_pattern_thorn, Items.IRON_INGOT, ItemInit.scar_thorn));
-		LESSONS.put(EnumBloodTendency.TENEBRIS, lesson(ItemInit.scar_pattern_shade, Items.COAL, ItemInit.scar_shade));
+		LESSONS.put(EnumBloodTendency.ANIMUS, lesson("scar_heart", Items.GOLDEN_APPLE, ItemInit.scar_heart));
+		LESSONS.put(EnumBloodTendency.FLAMMEUS, lesson("scar_pyre", Items.BLAZE_POWDER, ItemInit.scar_pyre));
+		LESSONS.put(EnumBloodTendency.DUCTILIS, lesson("scar_feral", Items.LEATHER, ItemInit.scar_feral));
+		LESSONS.put(EnumBloodTendency.LUX, lesson("scar_halo", Items.END_ROD, ItemInit.scar_halo));
+		LESSONS.put(EnumBloodTendency.MORTEM, lesson("scar_blight", Items.FERMENTED_SPIDER_EYE, ItemInit.scar_blight));
+		LESSONS.put(EnumBloodTendency.CONGEATIO, lesson("scar_rime", Items.PACKED_ICE, ItemInit.scar_rime));
+		LESSONS.put(EnumBloodTendency.FERRIC, lesson("scar_thorn", Items.IRON_INGOT, ItemInit.scar_thorn));
+		LESSONS.put(EnumBloodTendency.TENEBRIS, lesson("scar_shade", Items.COAL, ItemInit.scar_shade));
 	}
 
 	private VeinMasonScarLesson() {
@@ -58,12 +62,14 @@ public final class VeinMasonScarLesson {
 		return LESSONS.get(rank <= 0 ? best : second);
 	}
 
-	private static Lesson lesson(DeferredHolder<Item, Item> pattern, Item catalyst,
+	private static Lesson lesson(String patternScarId, Item catalyst,
 			DeferredHolder<Item, Item> scar) {
-		return new Lesson(pattern, catalyst, scar);
+		return new Lesson(Hemomancy.rloc(patternScarId), catalyst, scar);
 	}
 
-	public record Lesson(DeferredHolder<Item, Item> pattern, Item catalyst,
-			DeferredHolder<Item, Item> scar) {
+	public record Lesson(ResourceLocation patternScarId, Item catalyst, DeferredHolder<Item, Item> scar) {
+		public ItemStack patternStack() {
+			return ItemScarPattern.createTemplatePattern(patternScarId);
+		}
 	}
 }

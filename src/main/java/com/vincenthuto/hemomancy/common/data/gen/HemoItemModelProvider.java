@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.packs.PackType;
@@ -60,14 +59,7 @@ public class HemoItemModelProvider extends ItemModelProvider {
             if (hasHandAuthoredItemModel(value)) {
                 continue;
             }
-            if (value instanceof ItemScarPattern patternItem) {
-                String itemPath = BuiltInRegistries.ITEM.getKey(value).getPath();
-                String scarPath = BuiltInRegistries.ITEM.getKey(patternItem.getSCAR().get()).getPath();
-                getBuilder(itemPath)
-                        .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
-                        .texture("layer0", modLoc("item/scar_pattern"))
-                        .texture("layer1", modLoc("item/scars/" + scarPath));
-            } else if (value instanceof BloodMemoryItem) {
+            if (value instanceof BloodMemoryItem) {
                 String itemPath = BuiltInRegistries.ITEM.getKey(value).getPath();
                 var builder = getBuilder(itemPath)
                         .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
