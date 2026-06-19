@@ -49,7 +49,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     const beforeMeta = JSON.parse(JSON.stringify(state.metadata)) as Record<string, NpcMetadata>;
     if (undo()) { render(); syncMeta(beforeMeta); }
-  } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+  } else if (e.key === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey)) {
     e.preventDefault();
     const beforeMeta = JSON.parse(JSON.stringify(state.metadata)) as Record<string, NpcMetadata>;
     if (redo()) { render(); syncMeta(beforeMeta); }
