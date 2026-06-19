@@ -1,5 +1,5 @@
 import type { DialogueFile, DialogueNodeModel, DialogueOptionModel, DialogueTreeModel } from '../shared/types';
-import { currentFile, graphKey, optionMeta, speakerSlug, state, translation } from './state';
+import { currentFile, graphKey, optionMeta, state, translation } from './state';
 
 const CARD_WIDTH = 260;
 const HEADER_H = 38;
@@ -36,10 +36,6 @@ function escapeAttr(v: string): string {
 
 function truncate(v: string, len: number): string {
   return v.length > len ? v.slice(0, len - 1) + '…' : v;
-}
-
-function cardHeight(node: DialogueNodeModel): number {
-  return HEADER_H + SECTION_LABEL_H + SECTION_LABEL_H + node.options.length * OPTION_ROW_H + SECTION_LABEL_H + BOTTOM_ROW_H;
 }
 
 function treeHeight(tree: DialogueTreeModel): number {
@@ -132,7 +128,7 @@ function optionLabel(option: DialogueOptionModel): string {
   return translation(option.text) || option.text.split('.').at(-1) || option.text;
 }
 
-function renderNodeCard(node: DialogueNodeModel, pos: NodePos, treeMethod: string, slug: string): string {
+function renderNodeCard(node: DialogueNodeModel, pos: NodePos, treeMethod: string): string {
   const active = isActive(treeMethod, node.id);
   return `<div class="card-node ${active ? 'active' : ''}" data-node-card="${escapeAttr(node.id)}" data-tree-method="${escapeAttr(treeMethod)}" style="left:${pos.x}px;top:${pos.y}px">
     <div class="card-header" data-drag-node="${escapeAttr(node.id)}" data-drag-tree="${escapeAttr(treeMethod)}">
@@ -177,7 +173,6 @@ export function renderGraph(el: HTMLElement, onRender: () => void): void {
     return;
   }
 
-  const slug = speakerSlug(file);
   let currentY = 0;
   const treeLayouts: Array<{ tree: DialogueTreeModel; positions: Map<string, NodePos>; bannerY: number }> = [];
 
@@ -200,7 +195,7 @@ export function renderGraph(el: HTMLElement, onRender: () => void): void {
     renderTreeBanner(tree, bannerY) +
     (tree.dispatchOnly ? '' : [...positions.entries()].map(([nodeId]) => {
       const node = tree.nodes.find(n => n.id === nodeId);
-      return node ? renderNodeCard(node, positions.get(nodeId)!, tree.method, slug) : '';
+      return node ? renderNodeCard(node, positions.get(nodeId)!, tree.method) : '';
     }).join(''))
   ).join('');
 
@@ -282,13 +277,7 @@ document.addEventListener('mousemove', e => {
     ...(state.graphPositions[key] ?? {}),
     [dragState.nodeId]: { x: Math.max(0, dragState.originX + dx), y: Math.max(0, dragState.originY + dy) }
   };
-  const graphEl = document.querySelector<HTMLElement>('#content');
-  if (graphEl) {
-    const el = document.querySelector<HTMLElement>('.graph');
-    if (el) {
-      document.dispatchEvent(new CustomEvent('graph-drag-render'));
-    }
-  }
+  document.dispatchEvent(new CustomEvent('graph-drag-render'));
 });
 
 document.addEventListener('mouseup', () => {
