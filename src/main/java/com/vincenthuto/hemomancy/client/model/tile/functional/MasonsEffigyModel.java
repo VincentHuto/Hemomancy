@@ -40,7 +40,6 @@ public class MasonsEffigyModel extends Model {
         this.head = root.getChild("head");
         this.halo = root.getChild("halo");
     }
-
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
@@ -118,19 +117,19 @@ public class MasonsEffigyModel extends Model {
 
         PartDefinition tablet_3_r1 = tablet3.addOrReplaceChild("tablet_3_r1", CubeListBuilder.create().texOffs(95, 74).addBox(-1.1F, -1.4F, -0.25F, 2.2F, 2.8F, 0.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.125F, 3.1F, 0.0F, 0.0F, -1.5708F, 0.0F));
 
-        PartDefinition torso = partdefinition.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(52, 22).addBox(-3.75F, 1.0F, -2.3F, 7.5F, 2.0F, 4.3F, new CubeDeformation(0.0F))
-                .texOffs(52, 8).addBox(-4.5F, -1.0F, -2.7F, 9.0F, 2.0F, 5.2F, new CubeDeformation(0.0F))
+        PartDefinition torso = partdefinition.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(52, 23).addBox(-3.75F, 1.0F, -2.3F, 7.5F, 2.0F, 4.3F, new CubeDeformation(0.0F))
+                .texOffs(52, 7).addBox(-4.5F, -1.0F, -2.7F, 9.0F, 2.0F, 5.2F, new CubeDeformation(0.0F))
                 .texOffs(52, 0).addBox(-5.8F, -3.2F, -3.0F, 11.6F, 2.2F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 15.0F, 0.0F));
 
         PartDefinition delt_L_r1 = torso.addOrReplaceChild("delt_L_r1", CubeListBuilder.create().texOffs(108, 91).addBox(-3.2F, 0.0F, -2.4F, 3.2F, 1.6F, 4.8F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.0F, -3.2F, 0.0F, 0.0F, 0.0F, 0.4189F));
 
         PartDefinition delt_R_r1 = torso.addOrReplaceChild("delt_R_r1", CubeListBuilder.create().texOffs(18, 58).addBox(0.0F, 0.0F, -2.4F, 3.2F, 1.6F, 4.8F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(3.0F, -3.2F, 0.0F, 0.0F, 0.0F, -0.4189F));
 
-        PartDefinition neck = partdefinition.addOrReplaceChild("neck", CubeListBuilder.create().texOffs(50, 61).addBox(-1.85F, -2.3F, -1.8F, 3.7F, 3.6F, 3.2F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 10.5F, 0.0F));
+        PartDefinition neck = partdefinition.addOrReplaceChild("neck", CubeListBuilder.create().texOffs(50, 61).addBox(-1.9F, -2.3F, -1.8F, 3.7F, 3.6F, 3.2F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 10.5F, 0.0F));
 
-        PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(102, 50).addBox(-2.8F, 3.5F, -3.4F, 5.6F, 1.6F, 5.6F, new CubeDeformation(0.0F))
-                .texOffs(48, 30).addBox(-4.1F, -2.2F, -3.4F, 8.2F, 5.8F, 7.3F, new CubeDeformation(0.0F))
-                .texOffs(0, 58).addBox(-4.1F, -2.2F, 3.6F, 8.2F, 5.2F, 0.7F, new CubeDeformation(0.0F))
+        PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(102, 50).addBox(-2.9F, 3.5F, -3.4F, 5.6F, 1.6F, 5.6F, new CubeDeformation(0.0F))
+                .texOffs(48, 30).addBox(-4.2F, -2.2F, -3.4F, 8.2F, 5.8F, 7.3F, new CubeDeformation(0.0F))
+                .texOffs(0, 58).addBox(-4.2F, -2.2F, 3.6F, 8.2F, 5.2F, 0.7F, new CubeDeformation(0.0F))
                 .texOffs(52, 15).addBox(-3.0F, -3.6F, -2.6F, 6.0F, 1.4F, 5.7F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 5.0F, 0.0F));
 
         PartDefinition halo = partdefinition.addOrReplaceChild("halo", CubeListBuilder.create(), PartPose.offset(0.0F, 3.7438F, 6.0F));
@@ -163,7 +162,6 @@ public class MasonsEffigyModel extends Model {
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
-
 
 
     public void setupAnim(float ageInTicks) {
