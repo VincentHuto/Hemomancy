@@ -1,6 +1,6 @@
 import type { DialogueNodeModel, DialogueTreeModel, NpcMetadata } from '../shared/types';
 import { pushMetadata } from './api';
-import { currentFile, currentNode, currentNodeTree, metadataKey, optionMeta, speakerSlug, state, translation } from './state';
+import { currentFile, currentNode, currentNodeTree, metadataKey, optionMeta, pushUndo, speakerSlug, state, translation } from './state';
 
 function escapeHtml(v: string): string {
   return v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -75,6 +75,7 @@ function renderLinesPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialog
   document.getElementById('node-id')!.addEventListener('change', e => {
     const next = (e.target as HTMLInputElement).value.trim();
     if (!next || next === node.id) return;
+    pushUndo();
     const old = node.id;
     node.id = next;
     tree.nodes.forEach(n => n.options.forEach(o => { if (o.next === old) o.next = next; }));
@@ -84,18 +85,21 @@ function renderLinesPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialog
   });
 
   document.getElementById('add-line')!.onclick = () => {
+    pushUndo();
     node.lines.push(suggestLineKey(tree, node));
     state.preview = null;
     onRender();
   };
 
   document.getElementById('add-option')!.onclick = () => {
+    pushUndo();
     node.options.push({ text: suggestOptionKey(tree, node, node.options.length + 1), next: null, event: null });
     state.preview = null;
     onRender();
   };
 
   document.getElementById('delete-node')!.onclick = () => {
+    pushUndo();
     tree.nodes = tree.nodes.filter(n => n.id !== node.id);
     tree.nodes.forEach(n => n.options.forEach(o => { if (o.next === node.id) o.next = null; }));
     state.selectedRow = null;
@@ -104,11 +108,12 @@ function renderLinesPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialog
   };
 
   el.querySelectorAll<HTMLInputElement>('[data-line]').forEach(input => {
-    input.oninput = () => { node.lines[Number(input.dataset.line)] = input.value; state.preview = null; };
+    input.oninput = () => { pushUndo(); node.lines[Number(input.dataset.line)] = input.value; state.preview = null; };
   });
 
   el.querySelectorAll<HTMLButtonElement>('[data-delete-line]').forEach(btn => {
     btn.onclick = () => {
+      pushUndo();
       node.lines.splice(Number(btn.dataset.deleteLine), 1);
       state.preview = null;
       onRender();
@@ -169,17 +174,20 @@ function renderOptionPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialo
     </div>`;
 
   document.getElementById('opt-text')!.addEventListener('input', e => {
+    pushUndo();
     option.text = (e.target as HTMLInputElement).value;
     state.preview = null;
   });
 
   document.getElementById('opt-next')!.addEventListener('change', e => {
+    pushUndo();
     option.next = (e.target as HTMLSelectElement).value || null;
     state.preview = null;
     onRender();
   });
 
   document.getElementById('opt-event')!.addEventListener('input', e => {
+    pushUndo();
     option.event = (e.target as HTMLInputElement).value.trim() || null;
     state.preview = null;
   });
@@ -198,14 +206,17 @@ function renderOptionPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialo
   }
 
   document.getElementById('opt-animation')!.addEventListener('change', e => {
+    pushUndo();
     saveTrigger('animationTrigger', (e.target as HTMLInputElement).value.trim());
   });
 
   document.getElementById('opt-sound')!.addEventListener('change', e => {
+    pushUndo();
     saveTrigger('soundTrigger', (e.target as HTMLInputElement).value.trim());
   });
 
   document.getElementById('delete-option')!.onclick = () => {
+    pushUndo();
     node.options.splice(optionIndex, 1);
     state.selectedRow = state.selectedRow ? { ...state.selectedRow, section: 'lines' } : null;
     state.preview = null;
