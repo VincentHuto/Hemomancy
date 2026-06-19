@@ -44,7 +44,7 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 	};
 	private static final float ICON_RADIUS_SCALE = 0.62F;
 	private static final float GUI_OVERLAY_DEPTH = 1.12F;
-	private static final float HELD_OVERLAY_DEPTH = 0.045F;
+	private static final float HELD_OVERLAY_DEPTH = 0.245F;
 
 	public ScarPatternItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);

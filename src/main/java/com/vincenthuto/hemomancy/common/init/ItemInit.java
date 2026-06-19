@@ -69,13 +69,10 @@ public class ItemInit {
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_heart")),
                     new Item.Properties()));
-    public static final DeferredHolder<BannerPattern, BannerPattern> veins = BANNERPATTERNS.register("hemomancy_veins",
-            () -> new BannerPattern(Hemomancy.rloc("hemomancy_veins"), "hemomancy_veins"));
-    public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
-            () -> new BannerPatternItem(
-                    TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),
-                    new Item.Properties()));
+
     // Charm
+    public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
+            () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
             () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTendency.ANIMUS, 0));
     public static final DeferredHolder<Item, Item> mycophant_tendril = BASEITEMS.register("mycophant_tendril",
@@ -139,6 +136,12 @@ public class ItemInit {
             () -> new StainedChurchMapItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> masons_respite_map = BASEITEMS.register("masons_respite_map",
             () -> new MasonsRespiteMapItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<BannerPattern, BannerPattern> veins = BANNERPATTERNS.register("hemomancy_veins",
+            () -> new BannerPattern(Hemomancy.rloc("hemomancy_veins"), "hemomancy_veins"));
+    public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
+            () -> new BannerPatternItem(
+                    TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_veins")),
+                    new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
 //            () -> new Item(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",
@@ -181,8 +184,7 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> crimson_lacquer = BASEITEMS.register("crimson_lacquer",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
-            () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
+
     public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> curor_lens = BASEITEMS.register("curor_lens",

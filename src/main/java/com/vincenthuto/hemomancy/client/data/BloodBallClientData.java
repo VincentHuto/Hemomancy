@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.data;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SanguineBlobItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.ItemSanguineConduit;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -68,7 +69,9 @@ public class BloodBallClientData {
 		Player player = mc.player;
 
 		boolean holdsBlob = player.getMainHandItem().getItem() instanceof SanguineBlobItem
-				|| player.getOffhandItem().getItem() instanceof SanguineBlobItem;
+				|| player.getOffhandItem().getItem() instanceof SanguineBlobItem
+				|| player.getMainHandItem().getItem() instanceof ItemSanguineConduit
+				|| player.getOffhandItem().getItem() instanceof ItemSanguineConduit;
 		if (!holdsBlob) return false;
 
 		return HemoCapabilityAccess.getInitiatoryDegree(player)

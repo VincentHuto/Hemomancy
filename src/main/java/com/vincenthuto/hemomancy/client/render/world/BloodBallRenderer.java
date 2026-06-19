@@ -132,7 +132,7 @@ public class BloodBallRenderer {
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 
 		poseStack.pushPose();
-		poseStack.translate(renderPos.x - cam.x, renderPos.y - cam.y, renderPos.z - cam.z);
+		poseStack.translate(renderPos.x - cam.x, renderPos.y - cam.y-1, renderPos.z - cam.z);
 		// Apply squish scale (always Y-axis, simulates ground impact)
 		if (squishTicks > 0) {
 			poseStack.scale(squishXZScale, squishYScale, squishXZScale);
