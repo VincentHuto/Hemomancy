@@ -45,10 +45,11 @@ async function init(): Promise<void> {
   state.fileIndex = 0;
   state.selectedRow = null;
   state.preview = null;
-  const file = currentFile();
-  if (file) {
-    const slug = speakerSlug(file);
-    state.metadata[slug] = await fetchMetadata(slug);
+  if (state.workspace) {
+    await Promise.all(state.workspace.dialogueFiles.map(async (f) => {
+      const slug = speakerSlug(f);
+      state.metadata[slug] = await fetchMetadata(slug);
+    }));
   }
   state.message = `${state.workspace?.dialogueFiles.length ?? 0} dialogue files loaded`;
   render();

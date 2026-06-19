@@ -1,9 +1,10 @@
 import type { DialogueFile, DialogueNodeModel, DialogueOptionModel, DialogueTreeModel } from '../shared/types';
-import { currentFile, graphKey, optionMeta, state, translation } from './state';
+import { currentFile, graphKey, state, translation } from './state';
 
 const CARD_WIDTH = 260;
 const HEADER_H = 38;
 const SECTION_LABEL_H = 32;
+const OPTIONS_LABEL_H = 20;
 const OPTION_ROW_H = 34;
 const BOTTOM_ROW_H = 36;
 const COL_WIDTH = 330;
@@ -92,7 +93,7 @@ function inputPortPos(pos: NodePos): NodePos {
 function outputPortPos(pos: NodePos, optionIndex: number): NodePos {
   return {
     x: pos.x + CARD_WIDTH,
-    y: pos.y + HEADER_H + SECTION_LABEL_H + SECTION_LABEL_H + (optionIndex + 0.5) * OPTION_ROW_H
+    y: pos.y + HEADER_H + SECTION_LABEL_H + OPTIONS_LABEL_H + (optionIndex + 0.5) * OPTION_ROW_H
   };
 }
 

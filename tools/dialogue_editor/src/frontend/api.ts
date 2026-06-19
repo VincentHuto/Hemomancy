@@ -1,5 +1,5 @@
 import type { DialogueFile, DialogueInquiryEntry, NpcMetadata, PreviewResult } from '../shared/types';
-import { currentFile, speakerSlug, state } from './state';
+import { state } from './state';
 
 export async function loadWorkspace(): Promise<void> {
   const res = await fetch('/api/workspace');

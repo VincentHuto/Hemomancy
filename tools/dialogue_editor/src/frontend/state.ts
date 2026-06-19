@@ -81,10 +81,11 @@ export function translation(key: string): string {
   return state.dirtyTranslations[key] ?? state.workspace?.translations[key] ?? '';
 }
 
-export function metadataKey(treeMethod: string, nodeId: string, optionIndex: number): string {
-  return `${treeMethod}::${nodeId}::${optionIndex}`;
+export function metadataKey(treeMethod: string, variant: number | undefined, nodeId: string, optionIndex: number): string {
+  const vStr = variant !== undefined ? `::${variant}` : '';
+  return `${treeMethod}${vStr}::${nodeId}::${optionIndex}`;
 }
 
-export function optionMeta(slug: string, treeMethod: string, nodeId: string, optionIndex: number) {
-  return state.metadata[slug]?.options[metadataKey(treeMethod, nodeId, optionIndex)] ?? {};
+export function optionMeta(slug: string, treeMethod: string, variant: number | undefined, nodeId: string, optionIndex: number) {
+  return state.metadata[slug]?.options[metadataKey(treeMethod, variant, nodeId, optionIndex)] ?? {};
 }

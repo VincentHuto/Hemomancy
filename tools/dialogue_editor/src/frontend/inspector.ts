@@ -131,7 +131,7 @@ function renderOptionPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialo
 
   const file = currentFile();
   const slug = file ? speakerSlug(file) : '';
-  const meta = optionMeta(slug, tree.method, node.id, optionIndex);
+  const meta = optionMeta(slug, tree.method, tree.variant, node.id, optionIndex);
 
   const nodeOptions = ['<option value="">-- end conversation --</option>']
     .concat(tree.nodes.filter(n => n.id !== node.id).map(n =>
@@ -186,7 +186,7 @@ function renderOptionPanel(el: HTMLElement, node: DialogueNodeModel, tree: Dialo
 
   async function saveTrigger(field: 'animationTrigger' | 'soundTrigger', value: string): Promise<void> {
     if (!file) return;
-    const key = metadataKey(tree.method, node.id, optionIndex);
+    const key = metadataKey(tree.method, tree.variant, node.id, optionIndex);
     const current = state.metadata[slug] ?? { version: 1, options: {} };
     const existing = current.options[key] ?? {};
     const updated: NpcMetadata = {
