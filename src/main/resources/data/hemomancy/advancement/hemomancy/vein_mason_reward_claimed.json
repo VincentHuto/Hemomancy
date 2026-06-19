@@ -1,0 +1,27 @@
+{
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.hemomancy.vein_mason_reward_claimed.desc"
+    },
+    "frame": "task",
+    "hidden": true,
+    "icon": {
+      "id": "hemomancy:scar_pattern"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.hemomancy.vein_mason_reward_claimed.title"
+    }
+  },
+  "requirements": [
+    [
+      "manual"
+    ]
+  ]
+}

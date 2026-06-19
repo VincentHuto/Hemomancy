@@ -66,6 +66,20 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/red_taxonomy_complete");
 	public static final ResourceLocation ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE =
 			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_complete");
+	public static final ResourceLocation ADV_VICAR_MASONS_RESPITE_DIRECTIVE =
+			Hemomancy.rloc("hemomancy/vicar_masons_respite_directive");
+	public static final ResourceLocation ADV_VEIN_MASON_FIRST_LESSON =
+			Hemomancy.rloc("hemomancy/vein_mason_first_lesson");
+	public static final ResourceLocation ADV_VEIN_MASON_FIRST_SCAR_CARVED =
+			Hemomancy.rloc("hemomancy/vein_mason_first_scar_carved");
+	public static final ResourceLocation ADV_VEIN_MASON_FIRST_SCAR_LEARNED =
+			Hemomancy.rloc("hemomancy/vein_mason_first_scar_learned");
+	public static final ResourceLocation ADV_VEIN_MASON_FIRST_EFFIGY_PATTERN =
+			Hemomancy.rloc("hemomancy/vein_mason_first_effigy_pattern");
+	public static final ResourceLocation ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT =
+			Hemomancy.rloc("hemomancy/vein_mason_first_effigy_loadout");
+	public static final ResourceLocation ADV_VEIN_MASON_REWARD_CLAIMED =
+			Hemomancy.rloc("hemomancy/vein_mason_reward_claimed");
 
 	// ── Endgame milestones ─────────────────────────────────────────────────────
 	public static final ResourceLocation ADV_VOICES_IN_THE_VEIN =
@@ -162,5 +176,33 @@ public final class HarbingerAdvancementGranter {
 
 	public static boolean isMnemonistWovenVesselComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
+	}
+
+	public static boolean isVicarMasonsRespiteDirective(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VICAR_MASONS_RESPITE_DIRECTIVE);
+	}
+
+	public static boolean isVeinMasonFirstLesson(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_LESSON);
+	}
+
+	public static boolean isVeinMasonFirstScarCarved(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_SCAR_CARVED);
+	}
+
+	public static boolean isVeinMasonFirstScarLearned(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_SCAR_LEARNED);
+	}
+
+	public static boolean isVeinMasonFirstEffigyPattern(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_EFFIGY_PATTERN);
+	}
+
+	public static boolean isVeinMasonFirstEffigyLoadout(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
+	}
+
+	public static boolean isVeinMasonRewardClaimed(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_REWARD_CLAIMED);
 	}
 }

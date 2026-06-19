@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "hemomancy:mason_effigy"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.vein_mason_first_effigy_loadout.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.vein_mason_first_effigy_loadout.desc"
+    },
+    "hidden": true,
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/vein_mason_first_scar_learned",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

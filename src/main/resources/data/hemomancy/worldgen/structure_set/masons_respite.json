@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:masons_respite",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 194742613,
+    "spacing": 72,
+    "separation": 24,
+    "type": "minecraft:random_spread"
+  }
+}

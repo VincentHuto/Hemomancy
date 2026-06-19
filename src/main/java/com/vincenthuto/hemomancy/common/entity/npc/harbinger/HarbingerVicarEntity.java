@@ -180,7 +180,8 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
                         isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(player),
                         hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
-                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED));
+                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
+                        hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE));
             }
             tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "vicar",
                     "hemomancy.vicar.item_inquiry.unknown", degree, 0f);

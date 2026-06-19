@@ -125,7 +125,8 @@ public class AnastomoticBrazierBlock extends Block implements EntityBlock, Simpl
 
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity instanceof AnastomoticBrazierBlockEntity brazier) {
-			if (!stack.isEmpty() && (brazier.tryLearnScar(player, stack) || brazier.tryCommitLoadout(player, stack))) {
+			if (!stack.isEmpty() && (brazier.tryLearnScar(player, stack) || brazier.tryCommitLoadout(player, stack)
+					|| brazier.tryClearLoadout(player, stack))) {
 				return InteractionResult.SUCCESS;
 			}
 		}

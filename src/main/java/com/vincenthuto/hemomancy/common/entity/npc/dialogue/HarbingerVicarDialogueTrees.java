@@ -22,6 +22,7 @@ public final class HarbingerVicarDialogueTrees {
 	private static final String SPEAKER = "entity.hemomancy.harbinger_vicar";
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";
+	public static final String EVENT_MASONS_RESPITE_DIRECTIVE = "vicar_masons_respite_directive";
 
 	private HarbingerVicarDialogueTrees() {}
 
@@ -42,12 +43,19 @@ public final class HarbingerVicarDialogueTrees {
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy, boolean hasFoundHermitRoadRemnant, boolean hasHermitRoadLedger) {
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy,
+				hasFoundHermitRoadRemnant, hasHermitRoadLedger, false);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			boolean hasAbocipherLiteracy, boolean hasFoundHermitRoadRemnant, boolean hasHermitRoadLedger,
+			boolean masonsRespiteDirective) {
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId, hasFoundHermitRoadRemnant, hasHermitRoadLedger);
 			case 2 -> votary(entityId);
 			case 3 -> initiate(entityId);
-			case 4 -> adept(entityId, hasAbocipherLiteracy);
+			case 4 -> adept(entityId, hasAbocipherLiteracy, masonsRespiteDirective);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
 			case 6 -> sanctified(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited, hasAbocipherLiteracy);
@@ -295,9 +303,18 @@ public final class HarbingerVicarDialogueTrees {
 
 	/** Degree 4 — Adept. The vicar speaks of the Sanguine Brotherhood and blood bonds. */
 	public static DialogueTree adept(int entityId, boolean hasAbocipherLiteracy) {
+		return adept(entityId, hasAbocipherLiteracy, false);
+	}
+
+	public static DialogueTree adept(int entityId, boolean hasAbocipherLiteracy, boolean masonsRespiteDirective) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_brotherhood", "brotherhood_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
+		greetingOptions.add(masonsRespiteDirective
+				? new DialogueOption("hemomancy.dialogue.vicar.option.seek_vein_mason",
+						"masons_respite_followup", null)
+				: new DialogueOption("hemomancy.dialogue.vicar.option.seek_vein_mason",
+						"masons_respite_directive", EVENT_MASONS_RESPITE_DIRECTIVE));
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
@@ -313,6 +330,18 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
 						"hemomancy.vicar.adept.degree_hint"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("masons_respite_directive", List.of(
+						"hemomancy.vicar.adept.masons_respite.line1",
+						"hemomancy.vicar.adept.masons_respite.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("masons_respite_followup", List.of(
+						"hemomancy.vicar.adept.masons_respite.followup.line1",
+						"hemomancy.vicar.adept.masons_respite.followup.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))

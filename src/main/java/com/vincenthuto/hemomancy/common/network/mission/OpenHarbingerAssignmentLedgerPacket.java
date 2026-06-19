@@ -16,7 +16,13 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		int redTaxonomyCount,
 		boolean redTaxonomyComplete,
 		boolean hasBlankHematicMemory,
-		boolean mnemonistWovenVesselComplete) implements CustomPacketPayload {
+		boolean mnemonistWovenVesselComplete,
+		boolean vicarMasonsRespiteDirective,
+		boolean veinMasonFirstLesson,
+		boolean veinMasonFirstScarCarved,
+		boolean veinMasonFirstScarLearned,
+		boolean veinMasonFirstEffigyPattern,
+		boolean veinMasonFirstEffigyLoadout) implements CustomPacketPayload {
 	public static final Type<OpenHarbingerAssignmentLedgerPacket> TYPE =
 			new Type<>(Hemomancy.rloc("open_harbinger_assignment_ledger"));
 	public static final StreamCodec<FriendlyByteBuf, OpenHarbingerAssignmentLedgerPacket> STREAM_CODEC =
@@ -32,6 +38,12 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.redTaxonomyComplete);
 		buf.writeBoolean(msg.hasBlankHematicMemory);
 		buf.writeBoolean(msg.mnemonistWovenVesselComplete);
+		buf.writeBoolean(msg.vicarMasonsRespiteDirective);
+		buf.writeBoolean(msg.veinMasonFirstLesson);
+		buf.writeBoolean(msg.veinMasonFirstScarCarved);
+		buf.writeBoolean(msg.veinMasonFirstScarLearned);
+		buf.writeBoolean(msg.veinMasonFirstEffigyPattern);
+		buf.writeBoolean(msg.veinMasonFirstEffigyLoadout);
 	}
 
 	public static OpenHarbingerAssignmentLedgerPacket decode(FriendlyByteBuf buf) {
@@ -44,6 +56,12 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
 				buf.readBoolean());
 	}
 
@@ -51,7 +69,10 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		ctx.enqueueWork(() -> HarbingerAssignmentLedgerScreen.open(
 				msg.degree, msg.firstAwakening, msg.degreeOne, msg.firstRemnant, msg.ledgerGranted,
 				msg.redTaxonomyCount, msg.redTaxonomyComplete, msg.hasBlankHematicMemory,
-				msg.mnemonistWovenVesselComplete));
+				msg.mnemonistWovenVesselComplete, msg.vicarMasonsRespiteDirective,
+				msg.veinMasonFirstLesson, msg.veinMasonFirstScarCarved,
+				msg.veinMasonFirstScarLearned, msg.veinMasonFirstEffigyPattern,
+				msg.veinMasonFirstEffigyLoadout));
 	}
 
 	@Override

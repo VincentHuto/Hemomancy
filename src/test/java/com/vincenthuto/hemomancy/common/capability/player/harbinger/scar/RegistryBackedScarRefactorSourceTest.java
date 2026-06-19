@@ -101,8 +101,11 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("scar pattern creates prepared loadouts", pattern, "createPreparedPattern");
 		assertContains("brazier learns from scar items", brazier, "tryLearnScar");
 		assertContains("brazier commits scar pattern loadouts", brazier, "tryCommitLoadout");
+		assertContains("brazier clears loadouts from blank motif paper", brazier, "tryClearLoadout");
+		assertContains("brazier accepts blank motif paper for clearing", brazier, "ItemInit.runic_motif_paper");
 		assertContains("brazier unlocks known scars", brazier, "addKnownCerebralScar");
 		assertContains("brazier activates selected scars", brazier, "activateCerebralScar");
+		assertContains("brazier deactivates active scars", brazier, "deactivateCerebralScar");
 		assertContains("effigy limits prepared loadouts", menu, "MAX_SELECTED_SCARS = 4");
 		assertContains("effigy screen renders known scars", screen, "renderScarList");
 	}

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
@@ -24,6 +25,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
@@ -136,7 +138,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		}
 		double needed = Math.max(0.0D, getRequiredBlood() - pendingBlood);
 		if (needed <= 0.0D) {
-			completeMotifRitual();
+			completeMotifRitual(player);
 			return 0.0D;
 		}
 		double amount = Math.min(Math.min(maxAmount, needed), playerVolume.getBloodVolume());
@@ -150,7 +152,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 			level.playSound(null, worldPosition, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.25F, 0.75F);
 		}
 		if (pendingBlood >= getRequiredBlood() - 0.001D) {
-			completeMotifRitual();
+			completeMotifRitual(player);
 			player.displayClientMessage(Component.literal("The Effigy casts off a completed scar pattern.")
 					.withStyle(ChatFormatting.DARK_RED), true);
 		} else {
@@ -163,7 +165,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		return amount;
 	}
 
-	private void completeMotifRitual() {
+	private void completeMotifRitual(Player player) {
 		ItemStack pattern = ItemScarPattern.createPreparedPattern(selectedScarIds);
 		pendingMotif = ItemStack.EMPTY;
 		pendingBlood = 0.0D;
@@ -179,6 +181,10 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 			PacketHandler.sendSanguineOmenEffect(Vec3.atCenterOf(worldPosition).add(0.0D, 0.25D, 0.0D), 18.0D,
 					serverLevel, 24, 0.35F);
 			level.playSound(null, worldPosition, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.8F, 0.65F);
+			if (player instanceof ServerPlayer serverPlayer) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_PATTERN);
+			}
 		}
 		markDirtyAndSync();
 	}

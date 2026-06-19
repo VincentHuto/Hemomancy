@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "hemomancy:masons_respite_map"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.vicar_masons_respite_directive.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.vicar_masons_respite_directive.desc"
+    },
+    "hidden": true,
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/degree_4_adept",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

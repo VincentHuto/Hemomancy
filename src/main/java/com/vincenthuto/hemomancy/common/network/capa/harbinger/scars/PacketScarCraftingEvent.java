@@ -3,7 +3,9 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
@@ -73,7 +75,12 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 								false);
 						return;
 					}
+					boolean outputWasEmpty = station.getItem(2).isEmpty();
 					station.craftEvent();
+					if (outputWasEmpty && station.getItem(2).getItem() instanceof ItemScar) {
+						HarbingerAdvancementGranter.grantIfNotDone(player,
+								HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_CARVED);
+					}
 				}
 			});
 		}

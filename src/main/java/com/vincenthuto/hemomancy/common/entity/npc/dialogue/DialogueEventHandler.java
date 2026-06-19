@@ -142,6 +142,15 @@ public class DialogueEventHandler {
 			case HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT -> {
 				handleVicarHermitRoadReport(player, event.getEntityId());
 			}
+			case HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE -> {
+				handleVicarMasonsRespiteDirective(player, event.getEntityId());
+			}
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON -> {
+				handleVeinMasonFirstLesson(player, event.getEntityId());
+			}
+			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD -> {
+				handleVeinMasonContinuationReward(player, event.getEntityId());
+			}
 			case "qliphoth_communion_done" -> {
 				// Player completed the full Qliphoth Communion — nine pomes consumed.
 				// This is a narrative milestone; the apotheos_rite path is now spiritually prepared.
@@ -236,6 +245,100 @@ public class DialogueEventHandler {
 				HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED);
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_hermit_road_ledger")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleVicarMasonsRespiteDirective(ServerPlayer player, int entityId) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 4) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (HarbingerAdvancementGranter.isVicarMasonsRespiteDirective(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.masons_respite_map.get()));
+		HarbingerAdvancementGranter.grantIfNotDone(player,
+				HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_map")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleVeinMasonFirstLesson(ServerPlayer player, int entityId) {
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
+				.map(volume -> volume.isActive())
+				.orElse(false);
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> progress.hasBegunPurification())
+				.orElse(false);
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(progress -> progress.hasClarityUnlocked())
+				.orElse(false);
+		if (degree < 4 || !activeBlood || purifying || clarity) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vein_mason_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (HarbingerAdvancementGranter.isVeinMasonFirstLesson(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vein_mason_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.forPlayer(player);
+		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.pattern().get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.scar_blank.get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.catalyst()));
+		if (!hasAnyKnapper(player)) {
+			giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.hematic_iron_knapper.get()));
+		}
+		HarbingerAdvancementGranter.grantIfNotDone(player,
+				HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vein_mason_first_lesson")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleVeinMasonContinuationReward(ServerPlayer player, int entityId) {
+		if (!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vein_mason_reward_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vein_mason_reward_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.continuationForPlayer(player);
+		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.pattern().get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.scar_blank.get()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(lesson.catalyst()));
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.runic_motif_paper.get(), 4));
+		HarbingerAdvancementGranter.grantIfNotDone(player,
+				HarbingerAdvancementGranter.ADV_VEIN_MASON_REWARD_CLAIMED);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vein_mason_reward_claimed")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 	}
@@ -405,6 +508,15 @@ public class DialogueEventHandler {
 				if (count >= needed) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasAnyKnapper(ServerPlayer player) {
+		for (ItemStack stack : player.getInventory().items) {
+			if (stack.getItem() instanceof com.vincenthuto.hutoslib.common.item.ItemKnapper) {
+				return true;
 			}
 		}
 		return false;

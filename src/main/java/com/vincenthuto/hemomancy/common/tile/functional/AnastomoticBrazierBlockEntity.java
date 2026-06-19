@@ -5,7 +5,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
@@ -69,6 +71,10 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		}
 
 		scars.addKnownCerebralScar(scarId);
+		if (player instanceof ServerPlayer serverPlayer) {
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+					HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_LEARNED);
+		}
 		stack.shrink(1);
 		syncScarState(player, scars);
 		pulse();
@@ -117,10 +123,46 @@ public class AnastomoticBrazierBlockEntity extends BlockEntity {
 		for (ResourceLocation id : selected) {
 			scars.activateCerebralScar(id);
 		}
+		if (player instanceof ServerPlayer serverPlayer) {
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+					HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
+		}
 		stack.shrink(1);
 		syncScarState(player, scars);
 		pulse();
 		message(player, "The pattern collapses into your active scar loadout.", ChatFormatting.DARK_RED);
+		return true;
+	}
+
+	public boolean tryClearLoadout(Player player, ItemStack stack) {
+		if (!stack.is(ItemInit.runic_motif_paper.get())) {
+			return false;
+		}
+		if (!hasDegree(player)) {
+			message(player, "The Anastomotic Brazier answers only the Fourth Degree and above.", ChatFormatting.RED);
+			return true;
+		}
+		IScars scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+		if (scars == null) {
+			message(player, "Your scar memory is silent.", ChatFormatting.RED);
+			return true;
+		}
+		if (scars.getActiveCerebralScars().isEmpty()) {
+			message(player, "No active cerebral scars answer the flame.", ChatFormatting.GOLD);
+			return true;
+		}
+		if (!spendBlood(player, LOADOUT_BLOOD_COST)) {
+			message(player, "Not enough blood to scour the active scar loadout.", ChatFormatting.RED);
+			return true;
+		}
+
+		for (ResourceLocation active : List.copyOf(scars.getActiveCerebralScars())) {
+			scars.deactivateCerebralScar(active);
+		}
+		stack.shrink(1);
+		syncScarState(player, scars);
+		pulse();
+		message(player, "The blank motif burns away your active cerebral scar loadout.", ChatFormatting.DARK_RED);
 		return true;
 	}
 

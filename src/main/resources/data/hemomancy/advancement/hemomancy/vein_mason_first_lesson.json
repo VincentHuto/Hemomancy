@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "id": "hemomancy:scar_pattern"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.vein_mason_first_lesson.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.vein_mason_first_lesson.desc"
+    },
+    "hidden": true,
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/vicar_masons_respite_directive",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

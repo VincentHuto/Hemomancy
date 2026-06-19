@@ -137,6 +137,8 @@ public class ItemInit {
             () -> new HematicSutureNeedleItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> stained_church_map = BASEITEMS.register("stained_church_map",
             () -> new StainedChurchMapItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> masons_respite_map = BASEITEMS.register("masons_respite_map",
+            () -> new MasonsRespiteMapItem(new Item.Properties().fireResistant()));
 //    public static final DeferredHolder<Item, Item> hematic_field_ink = BASEITEMS.register("hematic_field_ink",
 //            () -> new Item(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> pale_field_ink = BASEITEMS.register("pale_field_ink",

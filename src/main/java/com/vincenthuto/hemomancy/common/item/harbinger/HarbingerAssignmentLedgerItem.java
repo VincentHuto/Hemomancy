@@ -42,7 +42,13 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 					hasBlankHematicMemory(serverPlayer),
-					HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer)));
+					HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
+					HarbingerAdvancementGranter.isVicarMasonsRespiteDirective(serverPlayer),
+					HarbingerAdvancementGranter.isVeinMasonFirstLesson(serverPlayer),
+					HarbingerAdvancementGranter.isVeinMasonFirstScarCarved(serverPlayer),
+					HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(serverPlayer),
+					HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(serverPlayer),
+					HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 	}

@@ -24,6 +24,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int ASSIGNMENT_CARD_HEIGHT = 30;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
 	private static final int WOVEN_VESSEL_HEIGHT = 68;
+	private static final int VEIN_MASON_HEIGHT = 68;
 	private static final int SCROLLBAR_WIDTH = 6;
 	private static final int SCROLL_STEP = 18;
 	private static final int PANEL = 0xD0140505;
@@ -52,6 +53,12 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean redTaxonomyComplete;
 	private final boolean hasBlankHematicMemory;
 	private final boolean mnemonistWovenVesselComplete;
+	private final boolean vicarMasonsRespiteDirective;
+	private final boolean veinMasonFirstLesson;
+	private final boolean veinMasonFirstScarCarved;
+	private final boolean veinMasonFirstScarLearned;
+	private final boolean veinMasonFirstEffigyPattern;
+	private final boolean veinMasonFirstEffigyLoadout;
 	private final MilestoneDrawerState milestoneState = new MilestoneDrawerState();
 	private final VeinBackgroundRenderer veinBg = new VeinBackgroundRenderer();
 	private int left;
@@ -64,7 +71,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private HarbingerAssignmentLedgerScreen(int degree, boolean firstAwakening, boolean degreeOne,
 			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete,
-			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete) {
+			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
+			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
+			boolean veinMasonFirstScarCarved, boolean veinMasonFirstScarLearned,
+			boolean veinMasonFirstEffigyPattern, boolean veinMasonFirstEffigyLoadout) {
 		super(Component.translatable("screen.hemomancy.harbinger_assignment_ledger.title"));
 		this.degree = degree;
 		this.firstAwakening = firstAwakening;
@@ -75,15 +85,26 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.redTaxonomyComplete = redTaxonomyComplete;
 		this.hasBlankHematicMemory = hasBlankHematicMemory;
 		this.mnemonistWovenVesselComplete = mnemonistWovenVesselComplete;
+		this.vicarMasonsRespiteDirective = vicarMasonsRespiteDirective;
+		this.veinMasonFirstLesson = veinMasonFirstLesson;
+		this.veinMasonFirstScarCarved = veinMasonFirstScarCarved;
+		this.veinMasonFirstScarLearned = veinMasonFirstScarLearned;
+		this.veinMasonFirstEffigyPattern = veinMasonFirstEffigyPattern;
+		this.veinMasonFirstEffigyLoadout = veinMasonFirstEffigyLoadout;
 	}
 
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
 			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete,
-			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete) {
+			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
+			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
+			boolean veinMasonFirstScarCarved, boolean veinMasonFirstScarLearned,
+			boolean veinMasonFirstEffigyPattern, boolean veinMasonFirstEffigyLoadout) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
 				degree, firstAwakening, degreeOne, firstRemnant, ledgerGranted,
 				redTaxonomyCount, redTaxonomyComplete, hasBlankHematicMemory,
-				mnemonistWovenVesselComplete));
+				mnemonistWovenVesselComplete, vicarMasonsRespiteDirective,
+				veinMasonFirstLesson, veinMasonFirstScarCarved, veinMasonFirstScarLearned,
+				veinMasonFirstEffigyPattern, veinMasonFirstEffigyLoadout));
 	}
 
 	@Override
@@ -209,7 +230,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 		int taxonomyY = cardY + ASSIGNMENT_CARD_HEIGHT + SECTION_GAP;
 		renderRedTaxonomy(gfx, x, taxonomyY, w, mouseX, mouseY);
-		renderWovenVessel(gfx, x, taxonomyY + RED_TAXONOMY_HEIGHT + SECTION_GAP, w, mouseX, mouseY);
+		int wovenY = taxonomyY + RED_TAXONOMY_HEIGHT + SECTION_GAP;
+		renderWovenVessel(gfx, x, wovenY, w, mouseX, mouseY);
+		renderVeinMason(gfx, x, wovenY + WOVEN_VESSEL_HEIGHT + SECTION_GAP, w, mouseX, mouseY);
 		return totalAssignmentContentHeight();
 	}
 
@@ -275,6 +298,57 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		if (degree >= 3) completed++;
 		if (hasBlankHematicMemory) completed++;
 		if (mnemonistWovenVesselComplete) completed++;
+		return completed;
+	}
+
+	private void renderVeinMason(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		gfx.fill(x, y, x + w, y + VEIN_MASON_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, VEIN_MASON_HEIGHT, BORDER, BORDER_MUTED);
+		renderVeinMasonHeader(gfx, x + 8, y + 6, w - 16);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, veinMasonProgress(), 4);
+		renderTruncatedDescription(gfx, Component.translatable(veinMasonDescriptionKey()),
+				x + 8, y + 42, w - 16, veinMasonFirstEffigyLoadout ? TEXT : MUTED, mouseX, mouseY);
+	}
+
+	private void renderVeinMasonHeader(GuiGraphics gfx, int x, int y, int w) {
+		List<FormattedCharSequence> wrapped = font.split(
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.vein_mason.title"), w);
+		if (!wrapped.isEmpty()) {
+			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
+		}
+		gfx.drawString(font,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.vein_mason.progress",
+						veinMasonProgress(), 4),
+				x, y + 12, veinMasonFirstEffigyLoadout ? DONE : CURRENT, false);
+	}
+
+	private String veinMasonDescriptionKey() {
+		if (veinMasonFirstEffigyLoadout) {
+			return "screen.hemomancy.harbinger_assignment_ledger.vein_mason.reward";
+		}
+		if (!vicarMasonsRespiteDirective) {
+			return "screen.hemomancy.harbinger_assignment_ledger.vein_mason.desc";
+		}
+		if (!veinMasonFirstLesson) {
+			return "screen.hemomancy.harbinger_assignment_ledger.vein_mason.find";
+		}
+		if (!veinMasonFirstScarLearned) {
+			return veinMasonFirstScarCarved
+					? "screen.hemomancy.harbinger_assignment_ledger.vein_mason.burn_scar"
+					: "screen.hemomancy.harbinger_assignment_ledger.vein_mason.carve_scar";
+		}
+		if (!veinMasonFirstEffigyPattern) {
+			return "screen.hemomancy.harbinger_assignment_ledger.vein_mason.prepare_pattern";
+		}
+		return "screen.hemomancy.harbinger_assignment_ledger.vein_mason.commit_loadout";
+	}
+
+	private int veinMasonProgress() {
+		int completed = 0;
+		if (veinMasonFirstLesson) completed++;
+		if (veinMasonFirstScarLearned) completed++;
+		if (veinMasonFirstEffigyPattern) completed++;
+		if (veinMasonFirstEffigyLoadout) completed++;
 		return completed;
 	}
 
@@ -370,7 +444,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private int totalAssignmentContentHeight() {
 		return ASSIGNMENT_CARD_HEIGHT * 4 + CARD_GAP * 3 + SECTION_GAP + RED_TAXONOMY_HEIGHT
-				+ SECTION_GAP + WOVEN_VESSEL_HEIGHT;
+				+ SECTION_GAP + WOVEN_VESSEL_HEIGHT + SECTION_GAP + VEIN_MASON_HEIGHT;
 	}
 
 	private int clampAssignmentScroll(int scroll) {

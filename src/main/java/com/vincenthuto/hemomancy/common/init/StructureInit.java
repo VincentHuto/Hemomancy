@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.worldgen.structure.CrimsonLodgeAnnexStru
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerVoyagerWreckStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HermitageRemnantStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.MasonsRespiteStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.MausoleumStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.SanguineSurveyorBivouacStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.UnstainedChurchStructure;
@@ -60,6 +61,9 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<HermitageRemnantStructure>> hermitage_remnant = STRUCTURES
 			.register("hermitage_remnant", () -> explicitStructureTypeTyping(HermitageRemnantStructure.CODEC));
+
+	public static final DeferredHolder<StructureType<?>, StructureType<MasonsRespiteStructure>> masons_respite = STRUCTURES
+			.register("masons_respite", () -> explicitStructureTypeTyping(MasonsRespiteStructure.CODEC));
 
 	public static final DeferredHolder<StructureType<?>, StructureType<BogBodyOssuaryNicheStructure>> bog_body_ossuary_niche = STRUCTURES
 			.register("bog_body_ossuary_niche", () -> explicitStructureTypeTyping(BogBodyOssuaryNicheStructure.CODEC));
