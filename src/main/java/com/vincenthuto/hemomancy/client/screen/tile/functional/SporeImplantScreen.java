@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -334,7 +334,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
 
 		// Special amber tint for the central fungal scar slot
-		if (slot instanceof SelectiveScarTypeSlot) {
+		if (slot instanceof SelectiveEquipmentTypeSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x25CC6600);
 		}
 		// Subtle warm tint for the surrounding scar slots

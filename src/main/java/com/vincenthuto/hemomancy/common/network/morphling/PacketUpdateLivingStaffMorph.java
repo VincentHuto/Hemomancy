@@ -78,7 +78,7 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 			if (!jar.isEmpty())
 				return jar;
 			// Scar equip slot 7
-			return HemoCapabilityAccess.getScars(player).map(r -> r.getStackInSlot(7))
+			return HemoCapabilityAccess.getEquipment(player).map(r -> r.getStackInSlot(7))
 					.filter(s -> s.getItem() instanceof ItemMorphlingJar).orElse(ItemStack.EMPTY);
 		}
 	}

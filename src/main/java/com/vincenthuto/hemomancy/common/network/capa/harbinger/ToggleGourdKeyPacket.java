@@ -38,7 +38,7 @@ public class ToggleGourdKeyPacket implements CustomPacketPayload {
 				return;
 
 			// Get the gourd from scar slot 6
-			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
+			HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
 				ItemStack stack = inv.getStackInSlot(6);
 				if (stack.getItem() instanceof BloodGourdItem) {
 					CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();

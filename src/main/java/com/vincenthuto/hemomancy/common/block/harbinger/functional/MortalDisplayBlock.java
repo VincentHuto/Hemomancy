@@ -120,7 +120,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 
 			// Equip the Charm of Vascularium into the player's VASC scar slot
 			if (!worldIn.isClientSide) {
-				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
+				HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
 					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
 					int vascSlot = 5; // HarbingerEquipmentType.VASC slot
 					if (scars.getStackInSlot(vascSlot).isEmpty()) {

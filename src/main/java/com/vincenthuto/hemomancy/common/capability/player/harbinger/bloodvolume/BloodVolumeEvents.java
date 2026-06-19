@@ -270,7 +270,7 @@ public class BloodVolumeEvents {
 	}
 
 	private static void fillFirstEquippedGourd(Player player, double amount) {
-		HemoCapabilityAccess.getScars(player).ifPresent(scars -> fillFirstEquippedGourd(scars, amount));
+		HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> fillFirstEquippedGourd(equipment, amount));
 	}
 
 	private static void fillFirstEquippedGourd(IHarbingerEquipmentItemHandler scars, double amount) {

@@ -176,7 +176,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 	public boolean stillValid(Player playerIn) {
 		// Equipped in scar slot
 		if (slotID == -200) {
-			return HemoCapabilityAccess.getScars(playerIn)
+			return HemoCapabilityAccess.getEquipment(playerIn)
 					.map(r -> r.getStackInSlot(7).getItem() instanceof ItemMorphlingJar)
 					.orElse(false);
 		}
@@ -242,11 +242,11 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			return playerEntity.getOffhandItem();
 		}
 		// 3. scar-equip slot (slot 7 in the SCARS capability)
-		ItemStack ScarSlotJar = HemoCapabilityAccess.getScars(playerEntity)
+		ItemStack EquipmentSlotJar = HemoCapabilityAccess.getEquipment(playerEntity)
 				.map(r -> r.getStackInSlot(7)).orElse(ItemStack.EMPTY);
-		if (ScarSlotJar.getItem() instanceof ItemMorphlingJar) {
+		if (EquipmentSlotJar.getItem() instanceof ItemMorphlingJar) {
 			slotID = -200;
-			return ScarSlotJar;
+			return EquipmentSlotJar;
 		}
 		// 4. Anywhere in inventory
 		Inventory inv = playerEntity.getInventory();

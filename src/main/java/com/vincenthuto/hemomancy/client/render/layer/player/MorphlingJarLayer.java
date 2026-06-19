@@ -36,7 +36,7 @@ public class MorphlingJarLayer<T extends LivingEntity, M extends HumanoidModel<T
             return;
         }
         if (ent instanceof Player player) {
-            HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
+            HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
                 var stack = inv.getStackInSlot(7);
                 if (stack.getItem() instanceof ItemMorphlingJar jar) {
                     this.translateToBody(matrixStack);

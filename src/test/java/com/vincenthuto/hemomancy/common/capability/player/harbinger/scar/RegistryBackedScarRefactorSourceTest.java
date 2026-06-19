@@ -193,7 +193,8 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertDoesNotContain("right click no longer directly creates scar pattern", block, "ItemScarPattern.createPreparedPattern");
 		assertContains("scar pattern renderer reads dynamic ids", renderer, "ItemScarPattern.getScarIds(stack)");
 		assertContains("scar pattern renderer lays out four quadrants", renderer, "QUADRANT_OFFSETS");
-		assertContains("scar pattern renderer renders overlay sprites", renderer, "renderScarOverlay");
+		assertContains("scar pattern renderer renders actual scar item overlays", renderer, "scarStackFor");
+		assertContains("scar pattern renderer renders only overlay layer from scar item model", renderer, "quad.getTintIndex() == 1");
 		assertContains("scar pattern renderer rotates dynamic overlays around z", renderer, "Axis.ZP.rotationDegrees");
 		assertDoesNotContain("scar pattern renderer no longer renders whole scar items", renderer, "renderStatic(scarStack");
 	}
@@ -216,6 +217,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertDoesNotContain("scar pattern slot rejects retired binders", slot, "ItemScarBinder");
 		assertContains("scar station rebuilds pattern entries from dynamic item", screen, "ItemScarPattern.getTemplateEntries");
 		assertDoesNotContain("scar station no longer scans binders for patterns", screen, "ScarBinderItemHandler");
+		assertContains("scar pattern renderer resolves actual scar items", renderer, "BuiltInRegistries.ITEM.get(scarId)");
 		assertDoesNotContain("scar pattern renderer no old pattern item lookup", renderer, "scar_pattern_");
 	}
 

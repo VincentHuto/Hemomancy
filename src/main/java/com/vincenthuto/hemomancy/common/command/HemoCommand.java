@@ -614,8 +614,8 @@ public class HemoCommand {
 		if (!inventoryJar.isEmpty()) {
 			changed |= updateMorphlingJarStack(inventoryJar, original, updated);
 		}
-		ItemStack scarJar = HemoCapabilityAccess.getScars(player)
-				.map(scars -> scars.getStackInSlot(7))
+		ItemStack scarJar = HemoCapabilityAccess.getEquipment(player)
+				.map(equipmentItemHandler -> equipmentItemHandler.getStackInSlot(7))
 				.filter(stack -> stack.getItem() instanceof ItemMorphlingJar)
 				.orElse(ItemStack.EMPTY);
 		if (!scarJar.isEmpty() && scarJar != inventoryJar) {

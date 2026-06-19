@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AntiphonomycesResonansItem;
@@ -28,8 +28,8 @@ public final class CrawlingChoirHandler {
 			return;
 		}
 
-		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-			ItemStack slot0 = scars.getStackInSlot(0);
+		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
+			ItemStack slot0 = scars.getFungalScar();
 			if (!(slot0.getItem() instanceof AntiphonomycesResonansItem)) {
 				return;
 			}

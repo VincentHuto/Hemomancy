@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -10,13 +8,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-public class SelectiveScarTypeSlot extends SlotItemHandler {
+public class SelectiveEquipmentTypeSlot extends SlotItemHandler {
 	int mindScarSlot;
 	Player player;
 	Class<? extends Item> itemType;
 
-	public SelectiveScarTypeSlot(Player player, Class<? extends Item> itemType, IItemHandlerModifiable itemHandler, int slot,
-	                             int par4, int par5) {
+	public SelectiveEquipmentTypeSlot(Player player, Class<? extends Item> itemType, IItemHandlerModifiable itemHandler, int slot,
+	                                  int par4, int par5) {
 		super(itemHandler, slot, par4, par5);
 		this.mindScarSlot = slot;
 		this.player = player;

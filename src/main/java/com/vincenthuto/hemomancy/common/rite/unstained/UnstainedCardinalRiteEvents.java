@@ -248,7 +248,7 @@ public class UnstainedCardinalRiteEvents {
 						false);
 			}
 
-			HemoCapabilityAccess.getScars(caster).ifPresent(scars -> {
+			HemoCapabilityAccess.getEquipment(caster).ifPresent(scars -> {
 				ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
 				if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
 					scars.setStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, ItemStack.EMPTY);

@@ -111,9 +111,9 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 			return;
 		}
 		if (entity instanceof Player player) {
-			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-				for (int slot = 0; slot < scars.getSlots(); slot++) {
-					ItemStack stack = scars.getStackInSlot(slot);
+			HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
+				for (int slot = 0; slot < equipment.getSlots(); slot++) {
+					ItemStack stack = equipment.getStackInSlot(slot);
 					if (stack.getItem() == this) {
 						tickBloodTransfer(stack, player);
 					}

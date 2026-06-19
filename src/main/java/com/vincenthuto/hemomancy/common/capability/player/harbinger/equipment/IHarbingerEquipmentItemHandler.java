@@ -9,9 +9,9 @@ public interface IHarbingerEquipmentItemHandler extends IItemHandlerModifiable {
 
 	boolean isItemValidForSlot(int slot, ItemStack stack);
 
-	boolean isScarsUnlocked();
+	boolean isEquipmentUnlocked();
 
-	void setScarsUnlocked(boolean unlocked);
+	void setEquipmentUnlocked(boolean unlocked);
 
 	void setEventBlock(boolean blockEvents);
 

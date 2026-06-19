@@ -67,7 +67,7 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
             return;
         }
         if (ent instanceof Player player) {
-            HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
+            HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
                 var stack = inv.getStackInSlot(6);
                 if (stack.getItem() instanceof BloodGourdItem gourd) {
                     this.translateToBody(matrixStack);

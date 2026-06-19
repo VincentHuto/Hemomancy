@@ -24,7 +24,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	private final ItemStack[] syncPrevious = new ItemStack[SCAR_SLOTS];
 	private boolean[] changed = new boolean[SCAR_SLOTS];
 	private boolean blockEvents = false;
-	private boolean ScarsUnlocked = false;
+	private boolean EquipmentUnlocked = false;
 	private LivingEntity holder;
 
 	public HarbingerEquipmentContainer() {
@@ -90,13 +90,13 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	}
 
 	@Override
-	public boolean isScarsUnlocked() {
-		return ScarsUnlocked;
+	public boolean isEquipmentUnlocked() {
+		return EquipmentUnlocked;
 	}
 
 	@Override
-	public void setScarsUnlocked(boolean unlocked) {
-		this.ScarsUnlocked = unlocked;
+	public void setEquipmentUnlocked(boolean unlocked) {
+		this.EquipmentUnlocked = unlocked;
 	}
 
 	@Override
@@ -131,27 +131,25 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	@Override
 	public void setSize(int size) {
 		if (size != SCAR_SLOTS)
-			System.out.println("Cannot resize scar container");
+			System.out.println("Cannot resize equipment container");
 	}
 
 	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag nbt = super.serializeNBT(provider);
-		nbt.putBoolean("ScarsUnlocked", ScarsUnlocked);
+		nbt.putBoolean("EquipmentUnlocked", EquipmentUnlocked);
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 		super.deserializeNBT(provider, nbt);
-		this.ScarsUnlocked = nbt.getBoolean("ScarsUnlocked");
+		this.EquipmentUnlocked = nbt.getBoolean("EquipmentUnlocked");
 	}
 
 	@Override
 	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-		// No validation here: setStackInSlot is used for authoritative operations
-		// (network sync, menu sync, deserialization). Player-initiated inserts are
-		// already validated by insertItem() and slot mayPlace() checks.
+
 		super.setStackInSlot(slot, stack);
 	}
 
@@ -163,8 +161,8 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 		List<Player> receivers = null;
 		for (byte i = 0; i < getSlots(); i++) {
 			ItemStack stack = getStackInSlot(i);
-			IHarbingerEquipment scar = stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
-			boolean autosync = scar != null && scar.willAutoSync(holder);
+			IHarbingerEquipment equipment = stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+			boolean autosync = equipment != null && equipment.willAutoSync(holder);
 			if (changed[i] || autosync && !ItemStack.isSameItemSameComponents(stack, syncPrevious[i])) {
 				if (receivers == null) {
 					receivers = new ArrayList<>(((ServerLevel) holder.level()).players());

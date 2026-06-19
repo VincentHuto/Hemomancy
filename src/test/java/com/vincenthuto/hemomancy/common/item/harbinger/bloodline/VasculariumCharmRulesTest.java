@@ -6,9 +6,9 @@ public final class VasculariumCharmRulesTest {
 
 	public static void main(String[] args) {
 		assertFalse("equipped vascularium charms are not emitted from scar death drops",
-				VasculariumCharmRules.shouldDropEquippedScarSlot(true));
-		assertTrue("non-vascularium equipped scars still follow normal death drops",
-				VasculariumCharmRules.shouldDropEquippedScarSlot(false));
+				VasculariumCharmRules.shouldDropEquippedSlot(true));
+		assertTrue("non-vascularium equipped equipment  still follow normal death drops",
+				VasculariumCharmRules.shouldDropEquippedSlot(false));
 
 		assertFalse("the charm cannot be removed from an unvalidated equipment menu",
 				VasculariumCharmRules.canRemoveFromEquipmentMenu(false));

@@ -342,16 +342,16 @@ public static IVisceralOrgans requireVisceralOrgans(Player player) {
 
 // ── Scars ─────────────────────────────────────────────────────────────────
 
-public static Optional<IHarbingerEquipmentItemHandler> getScars(Player player) {
-    IHarbingerEquipmentItemHandler scars = player.getCapability(HemoCapabilityKeys.HARBINGER_EQUIPMENT);
-    if (scars instanceof HarbingerEquipmentContainer container) {
+public static Optional<IHarbingerEquipmentItemHandler> getEquipment(Player player) {
+    IHarbingerEquipmentItemHandler equipment = player.getCapability(HemoCapabilityKeys.HARBINGER_EQUIPMENT);
+    if (equipment instanceof HarbingerEquipmentContainer container) {
         container.bindHolder(player);
     }
-    return Optional.ofNullable(scars);
+    return Optional.ofNullable(equipment);
 }
 
-public static IHarbingerEquipmentItemHandler requireScars(Player player) {
-    return getScars(player).orElseThrow(IllegalStateException::new);
+public static IHarbingerEquipmentItemHandler requireEquipment(Player player) {
+    return getEquipment(player).orElseThrow(IllegalStateException::new);
 }
 
 public static Optional<IHarbingerEquipment> getScar(ItemStack stack) {

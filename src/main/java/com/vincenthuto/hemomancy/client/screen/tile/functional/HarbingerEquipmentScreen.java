@@ -4,9 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
-import com.vincenthuto.hemomancy.common.menu.slot.ScarArmorSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.EquipmentArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.VasculariumCharmSlot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -178,9 +178,9 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
 		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
 
-		if (slot instanceof ScarArmorSlot) {
+		if (slot instanceof EquipmentArmorSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15CC2222);
-		} else if (slot instanceof SelectiveScarTypeSlot) {
+		} else if (slot instanceof SelectiveEquipmentTypeSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x18AA1530);
 		} else if (slot instanceof VasculariumCharmSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20D65C7A);
@@ -198,7 +198,7 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		int menuSlot = this.menu.slots.indexOf(slot);
 		if (slot instanceof VasculariumCharmSlot) {
 			gfx.blit(EMPTY_CHARM_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
-		} else if (slot instanceof SelectiveScarTypeSlot) {
+		} else if (slot instanceof SelectiveEquipmentTypeSlot) {
 			if (slot.index == HarbingerEquipmentMenu.GOURD_SLOT_INDEX || menuSlot == 6) {
 				gfx.blit(EMPTY_GOURD_SLOT, sx, sy, 0, 0, 16, 16, 16, 16);
 			} else if (slot.index == HarbingerEquipmentMenu.JAR_SLOT_INDEX || menuSlot == 4) {

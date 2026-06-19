@@ -28,47 +28,47 @@ public class ItemMindSpike extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-
-		if (!level.isClientSide) {
-			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			if (degree < MIN_DEGREE) {
-				player.displayClientMessage(
-						Component.literal("Your blood has not yet reached the understanding to wield this.")
-								.withStyle(ChatFormatting.DARK_PURPLE),
-						false);
-				return InteractionResultHolder.fail(stack);
-			}
-
-			HemoCapabilityAccess.getScars(player).ifPresent((IHarbingerEquipmentItemHandler scars) -> {
-				boolean wasUnlocked = scars.isScarsUnlocked();
-				scars.setScarsUnlocked(!wasUnlocked);
-
-				if (!wasUnlocked) {
-					player.displayClientMessage(
-							Component.literal("The spike pierces your mind... Scar slots are now ")
-									.withStyle(ChatFormatting.DARK_PURPLE)
-									.append(Component.literal("open").withStyle(ChatFormatting.GREEN,
-											ChatFormatting.BOLD)),
-							false);
-				} else {
-					// Drop any equipped scars from SCAR-type slots before locking
-					for (int i = SCAR_SLOT_MIN; i <= SCAR_SLOT_MAX; i++) {
-						ItemStack scarStack = scars.getStackInSlot(i);
-						if (!scarStack.isEmpty()) {
-							player.drop(scarStack.copy(), false);
-							scars.setStackInSlot(i, ItemStack.EMPTY);
-						}
-					}
-
-					player.displayClientMessage(
-							Component.literal("Your mind closes... Scar slots are now ")
-									.withStyle(ChatFormatting.DARK_PURPLE)
-									.append(Component.literal("sealed").withStyle(ChatFormatting.RED,
-											ChatFormatting.BOLD)),
-							false);
-				}
-			});
-		}
+//
+//		if (!level.isClientSide) {
+//			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+//			if (degree < MIN_DEGREE) {
+//				player.displayClientMessage(
+//						Component.literal("Your blood has not yet reached the understanding to wield this.")
+//								.withStyle(ChatFormatting.DARK_PURPLE),
+//						false);
+//				return InteractionResultHolder.fail(stack);
+//			}
+//
+//			HemoCapabilityAccess.getScars(player).ifPresent((IHarbingerEquipmentItemHandler scars) -> {
+//				boolean wasUnlocked = scars.isEquipmentUnlocked();
+//				scars.setScarsUnlocked(!wasUnlocked);
+//
+//				if (!wasUnlocked) {
+//					player.displayClientMessage(
+//							Component.literal("The spike pierces your mind... Scar slots are now ")
+//									.withStyle(ChatFormatting.DARK_PURPLE)
+//									.append(Component.literal("open").withStyle(ChatFormatting.GREEN,
+//											ChatFormatting.BOLD)),
+//							false);
+//				} else {
+//					// Drop any equipped scars from SCAR-type slots before locking
+//					for (int i = SCAR_SLOT_MIN; i <= SCAR_SLOT_MAX; i++) {
+//						ItemStack scarStack = scars.getStackInSlot(i);
+//						if (!scarStack.isEmpty()) {
+//							player.drop(scarStack.copy(), false);
+//							scars.setStackInSlot(i, ItemStack.EMPTY);
+//						}
+//					}
+//
+//					player.displayClientMessage(
+//							Component.literal("Your mind closes... Scar slots are now ")
+//									.withStyle(ChatFormatting.DARK_PURPLE)
+//									.append(Component.literal("sealed").withStyle(ChatFormatting.RED,
+//											ChatFormatting.BOLD)),
+//							false);
+//				}
+//			});
+//		}
 
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}

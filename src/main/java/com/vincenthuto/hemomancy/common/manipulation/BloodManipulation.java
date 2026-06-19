@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal.CrawlingChoirHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;

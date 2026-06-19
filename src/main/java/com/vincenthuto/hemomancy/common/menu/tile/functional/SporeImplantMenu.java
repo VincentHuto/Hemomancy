@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,7 +41,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		// Slot layout (scar/fungus slots only):
 		// 0        : fungal scar slot (scar cap slot 0) — center
 		// 1-4      : scar slots       (scar cap slots 1-4) — surrounding
-		this.addSlot(new SelectiveScarTypeSlot(player, ItemFungalScar.class, scars, IScars.FUNGAL_SLOT, 80, 35));
+		this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemFungalScar.class, scars, IScars.FUNGAL_SLOT, 80, 35));
 
 		// Player inventory (27 slots)
 		for (int l = 0; l < 3; ++l) {

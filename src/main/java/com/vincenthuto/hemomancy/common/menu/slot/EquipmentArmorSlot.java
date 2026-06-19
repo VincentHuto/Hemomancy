@@ -14,13 +14,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import javax.annotation.Nullable;
 
-public class ScarArmorSlot extends Slot {
+public class EquipmentArmorSlot extends Slot {
 
 	private EquipmentSlot slotType;
 	private Player playerEntity;
 
-	public ScarArmorSlot(Container inventoryIn, int index, int xPosition, int yPosition, EquipmentSlot slotType,
-			Player playerEntity) {
+	public EquipmentArmorSlot(Container inventoryIn, int index, int xPosition, int yPosition, EquipmentSlot slotType,
+	                          Player playerEntity) {
 		super(inventoryIn, index, xPosition, yPosition);
 		this.slotType = slotType;
 		this.playerEntity = playerEntity;

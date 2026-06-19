@@ -35,8 +35,8 @@ public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>>
 			float headPitch) {
 
 		if (entity instanceof Player player) {
-			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
-				if (inv.getStackInSlot(0).getItem() == ItemInit.noctifly_agaric.get()) {
+			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
+				if (scars.getFungalScar().getItem() == ItemInit.noctifly_agaric.get()) {
 					matrixStackIn.pushPose();
 					matrixStackIn.translate(0.0D, 0.0D, 0.125D);
 					this.getParentModel().copyPropertiesTo(this.modelElytra);
@@ -48,7 +48,6 @@ public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>>
 							OverlayTexture.NO_OVERLAY, -1);
 					matrixStackIn.popPose();
 				}
-
 			});
 		}
 	}

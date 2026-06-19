@@ -269,7 +269,7 @@ public final class BloodRoutingHelper {
 
     @Nullable
     private static GourdHandle findOpenScarGourd(ServerPlayer owner) {
-        IHarbingerEquipmentItemHandler scars = HemoCapabilityAccess.getScars(owner).orElse(null);
+        IHarbingerEquipmentItemHandler scars = HemoCapabilityAccess.getEquipment(owner).orElse(null);
         if (scars == null) {
             return null;
         }

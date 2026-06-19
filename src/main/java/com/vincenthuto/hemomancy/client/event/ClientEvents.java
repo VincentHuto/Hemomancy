@@ -303,7 +303,7 @@ public class ClientEvents {
                             mc.setScreen(new RadialChooseStillArtScreen());
                             continue;
                         }
-                        HemoCapabilityAccess.getScars(mc.player).ifPresent(inv -> {
+                        HemoCapabilityAccess.getEquipment(mc.player).ifPresent(inv -> {
                             if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
                                 mc.setScreen(new RadialChooseManipScreen(inv));
                             }
@@ -528,7 +528,7 @@ public class ClientEvents {
          MorphlingPlayerPartVisibility.restore(event.getRenderer());
      }
 
-     @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+     @EventBusSubscriber(modid = Hemomancy.MOD_ID,value = Dist.CLIENT)
      public static class ClientModBusEvents {
 
         public static BakedModel bloodAbsorptionModel, bloodProjectionModel;

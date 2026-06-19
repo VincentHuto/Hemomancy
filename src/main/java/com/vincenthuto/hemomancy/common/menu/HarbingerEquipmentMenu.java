@@ -6,9 +6,9 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.menu.slot.ScarArmorSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.EquipmentArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.VasculariumCharmSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -33,7 +33,7 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
     private final Player player;
     private final boolean openedFromScarletVanity;
 
-    public IHarbingerEquipmentItemHandler scars;
+    public IHarbingerEquipmentItemHandler equipment;
 
     public HarbingerEquipmentMenu(final int windowId, final Inventory playerInventory) {
         this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
@@ -55,21 +55,21 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
         this.player = playerInventory.player;
         this.openedFromScarletVanity = openedFromScarletVanity;
 
-        this.scars = HemoCapabilityAccess.requireScars(this.player);
+        this.equipment = HemoCapabilityAccess.requireEquipment(this.player);
 
         for (int k = 0; k < 4; ++k) {
             final EquipmentSlot EquipmentSlot = VALID_EQUIPMENT_SLOTS[k];
-            this.addSlot(new ScarArmorSlot(playerInventory, 36 + (3 - k), 18, 18 + k * 20, EquipmentSlot, this.player));
+            this.addSlot(new EquipmentArmorSlot(playerInventory, 36 + (3 - k), 18, 18 + k * 20, EquipmentSlot, this.player));
         }
 
-//		this.addSlot(new SelectiveScarTypeSlot(player, ItemFungalScar.class, scars, 0, 77, 8));
+//		this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemFungalScar.class, scars, 0, 77, 8));
 //		this.addSlot(new ScarSlot(player, scars, 1, 77 + 1 * 18, 8));
 //		this.addSlot(new ScarSlot(player, scars, 2, 77 + 2 * 18, 8));
 //		this.addSlot(new ScarSlot(player, scars, 3, 77 + 3 * 18, 8));
-        this.addSlot(new SelectiveScarTypeSlot(player, ItemMorphlingJar.class, scars, JAR_SLOT_INDEX, 176, 28));
-        this.addSlot(new VasculariumCharmSlot(player, scars, CHARM_SLOT_INDEX, 176, 52,
+        this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemMorphlingJar.class, equipment, JAR_SLOT_INDEX, 176, 28));
+        this.addSlot(new VasculariumCharmSlot(player, equipment, CHARM_SLOT_INDEX, 176, 52,
                 this.openedFromScarletVanity));
-        this.addSlot(new SelectiveScarTypeSlot(player, BloodGourdItem.class, scars, GOURD_SLOT_INDEX, 176, 76));
+        this.addSlot(new SelectiveEquipmentTypeSlot(player, BloodGourdItem.class, equipment, GOURD_SLOT_INDEX, 176, 76));
 
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {

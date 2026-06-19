@@ -110,7 +110,7 @@ public class BloodVolumeOverlay {
 
             HemoCapabilityAccess.getBloodVolume(player).ifPresent(bloodCap -> {
                 if (bloodCap == null || !bloodCap.isActive()) return;
-                HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
+                HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
                     if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem) {
                         PacketHandler.sendToServer(new BloodVolumeClientPacket());
 
@@ -569,7 +569,7 @@ public class BloodVolumeOverlay {
 
     private void renderEquippedGourd(GuiGraphics gfx, Player player, int posX, int posY, int screenWidth, int screenHeight,
                                      float time) {
-        HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
+        HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
             ItemStack gourdStack = scars.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
             if (!(gourdStack.getItem() instanceof BloodGourdItem)) {
                 return;

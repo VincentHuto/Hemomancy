@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumChar
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class VasculariumCharmSlot extends SelectiveScarTypeSlot {
+public class VasculariumCharmSlot extends SelectiveEquipmentTypeSlot {
 	private final boolean openedFromScarletVanity;
 
 	public VasculariumCharmSlot(Player player, IHarbingerEquipmentItemHandler itemHandler, int slot, int x, int y,

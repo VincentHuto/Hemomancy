@@ -1524,7 +1524,7 @@ public class HarbingerCardinalRiteEvents {
 	private static void grantScarOnPruning(ServerPlayer player) {
 		ItemStack scar = new ItemStack(ItemInit.scar_transcendence.get());
 		boolean placed = false;
-		var scarsOpt = HemoCapabilityAccess.getScars(player);
+		var scarsOpt = HemoCapabilityAccess.getScarState(player);
 		if (scarsOpt.isPresent()) {
 			var scars = scarsOpt.get();
 			for (int slot = 1; slot <= 4; slot++) {

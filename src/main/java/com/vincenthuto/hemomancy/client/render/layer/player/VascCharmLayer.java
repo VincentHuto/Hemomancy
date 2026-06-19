@@ -30,7 +30,7 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 			return;
 		}
 		if (ent instanceof Player player) {
-			HemoCapabilityAccess.getScars(player).ifPresent(inv -> {
+			HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
 				ItemStack charmStack = inv.getStackInSlot(5);
 				if (charmStack.getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();

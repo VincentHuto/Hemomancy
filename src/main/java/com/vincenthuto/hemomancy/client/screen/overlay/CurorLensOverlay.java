@@ -102,7 +102,7 @@ public class CurorLensOverlay {
 	}
 
 	private Component scarLine(Player player) {
-		return HemoCapabilityAccess.getScars(player).map(scars -> {
+		return HemoCapabilityAccess.getScarState(player).map(scars -> {
 			List<String> names = new ArrayList<>();
 			int count = 0;
 			for (int i = 0; i < scars.getSlots(); i++) {

@@ -4,7 +4,7 @@ public final class VasculariumCharmRules {
 	private VasculariumCharmRules() {
 	}
 
-	public static boolean shouldDropEquippedScarSlot(boolean isVasculariumCharm) {
+	public static boolean shouldDropEquippedSlot(boolean isVasculariumCharm) {
 		return !isVasculariumCharm;
 	}
 
