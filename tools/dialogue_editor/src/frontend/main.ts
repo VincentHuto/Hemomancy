@@ -1,10 +1,10 @@
 import '../frontend/styles.css';
-import type { Diagnostic, DialogueFile, DialogueInquiryEntry, DialogueTreeModel, DialogueWorkspace, PreviewResult } from '../shared/types';
-import { applyPreview as applyPreviewApi, fetchMetadata, fetchPreview, loadWorkspace as loadWorkspaceApi } from './api';
+import type { Diagnostic, DialogueFile, DialogueInquiryEntry, DialogueTreeModel, DialogueWorkspace, NpcMetadata, PreviewResult } from '../shared/types';
+import { applyPreview as applyPreviewApi, fetchMetadata, fetchPreview, loadWorkspace as loadWorkspaceApi, pushMetadata } from './api';
 import { renderGraph } from './graph';
 import { renderInspector } from './inspector';
 import { renderSidebar } from './sidebar';
-import { currentFile, paletteFor, speakerSlug, state } from './state';
+import { currentFile, paletteFor, pushUndo, redo, speakerSlug, state, undo } from './state';
 import type { Tab } from './state';
 
 const tabs: Tab[] = ['Graph', 'Translations', 'Events', 'Item Inquiries', 'Validation', 'Diff'];
@@ -13,6 +13,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div class="shell">
     <header class="topbar">
       <div class="brand">Hemomancy Dialogue Workspace</div>
+      <button id="undo" disabled>↩ Undo</button>
+      <button id="redo" disabled>↪ Redo</button>
       <button id="reload">Reload</button>
       <button id="preview">Preview Diff</button>
       <button id="apply" class="primary" disabled>Apply Preview</button>
@@ -32,6 +34,27 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 document.getElementById('reload')!.onclick = () => init();
 document.getElementById('preview')!.onclick = () => runPreview();
 document.getElementById('apply')!.onclick = () => runApply();
+document.getElementById('undo')!.onclick = () => {
+  const beforeMeta = JSON.parse(JSON.stringify(state.metadata)) as Record<string, NpcMetadata>;
+  if (undo()) { render(); syncMeta(beforeMeta); }
+};
+document.getElementById('redo')!.onclick = () => {
+  const beforeMeta = JSON.parse(JSON.stringify(state.metadata)) as Record<string, NpcMetadata>;
+  if (redo()) { render(); syncMeta(beforeMeta); }
+};
+document.addEventListener('keydown', e => {
+  const mod = e.metaKey || e.ctrlKey;
+  if (!mod) return;
+  if (e.key === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    const beforeMeta = JSON.parse(JSON.stringify(state.metadata)) as Record<string, NpcMetadata>;
+    if (undo()) { render(); syncMeta(beforeMeta); }
+  } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+    e.preventDefault();
+    const beforeMeta = JSON.parse(JSON.stringify(state.metadata)) as Record<string, NpcMetadata>;
+    if (redo()) { render(); syncMeta(beforeMeta); }
+  }
+});
 document.addEventListener('graph-drag-render', () => {
   renderGraph(document.getElementById('content')!, render);
 });
@@ -45,6 +68,8 @@ async function init(): Promise<void> {
   state.fileIndex = 0;
   state.selectedRow = null;
   state.preview = null;
+  state.undoStack = [];
+  state.redoStack = [];
   if (state.workspace) {
     await Promise.all(state.workspace.dialogueFiles.map(async (f) => {
       const slug = speakerSlug(f);
@@ -59,6 +84,8 @@ function render(): void {
   applyThemeClass();
   document.getElementById('status')!.textContent = state.message;
   (document.getElementById('apply') as HTMLButtonElement).disabled = !state.preview?.canApply;
+  (document.getElementById('undo') as HTMLButtonElement).disabled = !state.undoStack.length;
+  (document.getElementById('redo') as HTMLButtonElement).disabled = !state.redoStack.length;
   renderSidebar(document.getElementById('sidebar')!, render);
   renderTabs();
   renderContent();
@@ -95,6 +122,16 @@ function renderContent(): void {
 function escapeHtml(v: string): string { return v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function escapeAttr(v: string): string { return escapeHtml(v).replace(/"/g, '&quot;'); }
 
+function syncMeta(before: Record<string, NpcMetadata>): void {
+  const after = state.metadata;
+  const all = new Set([...Object.keys(before), ...Object.keys(after)]);
+  for (const slug of all) {
+    if (JSON.stringify(before[slug]) !== JSON.stringify(after[slug])) {
+      pushMetadata(slug, after[slug] ?? { version: 1, options: {} });
+    }
+  }
+}
+
 function renderTranslations(el: HTMLElement): void {
   const ws = state.workspace!;
   const file = currentFile();
@@ -112,7 +149,7 @@ function renderTranslations(el: HTMLElement): void {
     ${sorted.length === 0 ? '<div class="empty">No translation keys for this file.</div>' : ''}
   </div>`;
   el.querySelectorAll<HTMLTextAreaElement>('[data-translation]').forEach(ta => {
-    ta.oninput = () => { state.dirtyTranslations[ta.dataset.translation!] = ta.value; state.preview = null; };
+    ta.oninput = () => { pushUndo(); state.dirtyTranslations[ta.dataset.translation!] = ta.value; state.preview = null; };
   });
 }
 
@@ -133,7 +170,7 @@ function renderEvents(el: HTMLElement): void {
     </div>`;
   el.querySelector<HTMLButtonElement>('#add-event')!.onclick = () => {
     const val = (el.querySelector<HTMLInputElement>('#new-event')!).value.trim();
-    if (val) { state.newEvents.add(val); state.preview = null; state.message = `Event stub queued: ${val}`; render(); }
+    if (val) { pushUndo(); state.newEvents.add(val); state.preview = null; state.message = `Event stub queued: ${val}`; render(); }
   };
 }
 
@@ -198,6 +235,7 @@ function renderInquiries(el: HTMLElement): void {
     if (ws.inquiries.some(e => e.path === path) || state.dirtyInquiries.has(path)) {
       state.message = `Inquiry already exists for ${npcId} / ${registry.id}.`; render(); return;
     }
+    pushUndo();
     const lineKey = `hemomancy.${npcId}.item_inquiry.${registry.id}.line1`;
     const entry: DialogueInquiryEntry = { path, npcId, itemId: `hemomancy/${registry.id}`, lines: [lineKey], valid: true };
     ws.inquiries = [...ws.inquiries, entry].sort((a, b) => a.path.localeCompare(b.path));
@@ -210,6 +248,7 @@ function renderInquiries(el: HTMLElement): void {
   };
 
   el.querySelectorAll<HTMLButtonElement>('[data-remove-inquiry]').forEach(btn => btn.onclick = () => {
+    pushUndo();
     const path = btn.dataset.removeInquiry!;
     const entry = state.dirtyInquiries.get(path);
     ws.inquiries = ws.inquiries.filter(e => e.path !== path);
@@ -220,6 +259,7 @@ function renderInquiries(el: HTMLElement): void {
   });
 
   el.querySelectorAll<HTMLInputElement>('[data-inquiry-key]').forEach(input => input.oninput = () => {
+    pushUndo();
     const original = ws.inquiries.find(e => e.path === input.dataset.inquiryKey)!;
     const lines = [...(state.dirtyInquiries.get(original.path)?.lines ?? original.lines)];
     lines[Number(input.dataset.lineIndex)] = input.value.trim();
@@ -228,10 +268,11 @@ function renderInquiries(el: HTMLElement): void {
   });
 
   el.querySelectorAll<HTMLTextAreaElement>('[data-inquiry-translation]').forEach(ta => ta.oninput = () => {
-    state.dirtyTranslations[ta.dataset.inquiryTranslation!] = ta.value; state.preview = null;
+    pushUndo(); state.dirtyTranslations[ta.dataset.inquiryTranslation!] = ta.value; state.preview = null;
   });
 
   el.querySelectorAll<HTMLButtonElement>('[data-add-inquiry-line]').forEach(btn => btn.onclick = () => {
+    pushUndo();
     const original = ws.inquiries.find(e => e.path === btn.dataset.addInquiryLine)!;
     const lines = [...(state.dirtyInquiries.get(original.path)?.lines ?? original.lines)];
     const topic = original.itemId.split('/').at(-1) || 'new_item';
