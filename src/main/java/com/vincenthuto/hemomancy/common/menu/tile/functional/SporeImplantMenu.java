@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
-import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
 
 import net.minecraft.core.BlockPos;
@@ -17,10 +16,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class SporeImplantMenu extends AbstractContainerMenu {
+	public static final int FUNGAL_SLOT_UI = 0;
+	public static final int SLOT_COUNT = 1;
 
 	private final Player player;
 
-	public IScarsItemHandler scars;
+	public IScars scars;
 
 	public SporeImplantMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
@@ -35,16 +36,12 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		super(ContainerInit.fungal_implantation.get(), windowId);
 		this.player = playerInventory.player;
 
-		this.scars = HemoCapabilityAccess.requireScars(this.player);
+		this.scars = HemoCapabilityAccess.requireScarState(this.player);
 
 		// Slot layout (scar/fungus slots only):
 		// 0        : fungal scar slot (scar cap slot 0) — center
 		// 1-4      : scar slots       (scar cap slots 1-4) — surrounding
-		this.addSlot(new SelectiveScarTypeSlot(player, ItemFungalScar.class, scars, 0, 80, 35));
-		this.addSlot(new ScarSlot(player, scars, 1, 80, 13));
-		this.addSlot(new ScarSlot(player, scars, 2, 58, 35));
-		this.addSlot(new ScarSlot(player, scars, 3, 102, 35));
-		this.addSlot(new ScarSlot(player, scars, 4, 80, 57));
+		this.addSlot(new SelectiveScarTypeSlot(player, ItemFungalScar.class, scars, IScars.FUNGAL_SLOT, 80, 35));
 
 		// Player inventory (27 slots)
 		for (int l = 0; l < 3; ++l) {
@@ -74,13 +71,10 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		// 1-4      : scar slots       (scar cap slots 1-4)
 		// 5-31     : player main inventory (27 slots)
 		// 32-40    : hotbar (9 slots)
-		final int fungalSlotUI   = 0;
-		final int ScarSlotStart  = 1;
-		final int ScarSlotEnd    = 4;   // inclusive
-		final int containerEnd   = 5;   // first player-inv slot
-		final int playerInvStart = 5;
-		final int hotbarStart    = 32;
-		final int hotbarEnd      = 40;  // inclusive
+		final int containerEnd   = SLOT_COUNT;   // first player-inv slot
+		final int playerInvStart = SLOT_COUNT;
+		final int hotbarStart    = 28;
+		final int hotbarEnd      = 36;  // inclusive
 
 		if (index < containerEnd) {
 			// Moving FROM a scar slot → player inventory
@@ -119,25 +113,13 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 
 			// Fungal scar → fungal slot
 			if (!moved && stackInSlot.getItem() instanceof ItemFungalScar) {
-				Slot fungalSlot = this.slots.get(fungalSlotUI);
+				Slot fungalSlot = this.slots.get(FUNGAL_SLOT_UI);
 				if (!fungalSlot.hasItem() && fungalSlot.mayPlace(stackInSlot)) {
 					fungalSlot.set(stackInSlot.split(1));
 					moved = true;
 				}
 			}
-
-			// other scars → scar slots 1-4
-			if (!moved) {
-				for (int i = ScarSlotStart; i <= ScarSlotEnd && !moved; i++) {
-					Slot ScarSlot = this.slots.get(i);
-					if (!ScarSlot.hasItem() && ScarSlot.mayPlace(stackInSlot)) {
-						ScarSlot.set(stackInSlot.split(1));
-						moved = true;
-					}
-				}
-			}
-
-			// Nothing matched — swap between hotbar and main inventory
+// Nothing matched — swap between hotbar and main inventory
 			if (!moved) {
 				if (index >= playerInvStart && index < hotbarStart) {
 					if (!this.moveItemStackTo(stackInSlot, hotbarStart, hotbarEnd + 1, false)) {

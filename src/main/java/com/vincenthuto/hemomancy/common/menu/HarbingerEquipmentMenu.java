@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
@@ -33,7 +33,7 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
     private final Player player;
     private final boolean openedFromScarletVanity;
 
-    public IScarsItemHandler scars;
+    public IHarbingerEquipmentItemHandler scars;
 
     public HarbingerEquipmentMenu(final int windowId, final Inventory playerInventory) {
         this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,

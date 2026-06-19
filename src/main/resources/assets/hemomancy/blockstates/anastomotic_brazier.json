@@ -1,0 +1,36 @@
+{
+  "multipart": [
+    {
+      "when": { "facing": "north", "ritual_phase": "0" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier" }
+    },
+    {
+      "when": { "facing": "south", "ritual_phase": "0" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "ritual_phase": "0" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier", "y": 270 }
+    },
+    {
+      "when": { "facing": "east", "ritual_phase": "0" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier", "y": 90 }
+    },
+    {
+      "when": { "facing": "north", "ritual_phase": "1" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier_lit" }
+    },
+    {
+      "when": { "facing": "south", "ritual_phase": "1" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier_lit", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "ritual_phase": "1" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier_lit", "y": 270 }
+    },
+    {
+      "when": { "facing": "east", "ritual_phase": "1" },
+      "apply": { "model": "hemomancy:block/anastomotic_brazier_lit", "y": 90 }
+    }
+  ]
+}

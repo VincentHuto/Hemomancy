@@ -6,8 +6,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -65,12 +67,18 @@ public final class HemoCapabilityKeys {
     public static final EntityCapability<IVisceralOrgans, Void> VISCERAL_ORGANS =
             EntityCapability.createVoid(Hemomancy.rloc("visceral_organs"), IVisceralOrgans.class);
 
-    public static final EntityCapability<IScarsItemHandler, Void> SCARS =
-            EntityCapability.createVoid(Hemomancy.rloc("scars"), IScarsItemHandler.class);
+    public static final EntityCapability<IScars, Void> SCARS =
+            EntityCapability.createVoid(Hemomancy.rloc("scars"), IScars.class);
+
+    public static final EntityCapability<IHarbingerEquipmentItemHandler, Void> HARBINGER_EQUIPMENT =
+            EntityCapability.createVoid(Hemomancy.rloc("harbinger_equipment"), IHarbingerEquipmentItemHandler.class);
 
     public static final ItemCapability<IBloodVolume, Void> ITEM_BLOOD_VOLUME =
             ItemCapability.createVoid(Hemomancy.rloc("item_blood_volume"), IBloodVolume.class);
 
-    public static final ItemCapability<IScar, Void> ITEM_SCAR =
-            ItemCapability.createVoid(Hemomancy.rloc("item_scar"), IScar.class);
+    public static final ItemCapability<IScarItem, Void> ITEM_SCAR =
+            ItemCapability.createVoid(Hemomancy.rloc("item_scar"), IScarItem.class);
+
+    public static final ItemCapability<IHarbingerEquipment, Void> ITEM_HARBINGER_EQUIPMENT =
+            ItemCapability.createVoid(Hemomancy.rloc("item_harbinger_equipment"), IHarbingerEquipment.class);
 }

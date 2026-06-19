@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Blo
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphling;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
@@ -88,6 +89,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ScarsContainer>> SCARS =
             ATTACHMENT_TYPES.register("scars",
                     () -> AttachmentType.serializable(() -> new ScarsContainer()).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HarbingerEquipmentContainer>> HARBINGER_EQUIPMENT =
+            ATTACHMENT_TYPES.register("harbinger_equipment",
+                    () -> AttachmentType.serializable(() -> new HarbingerEquipmentContainer()).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<LastDeathMemoryAttachment>> LAST_DEATH_MEMORY =
             ATTACHMENT_TYPES.register("last_death_memory",

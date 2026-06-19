@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -39,7 +39,7 @@ public class ItemMindSpike extends Item {
 				return InteractionResultHolder.fail(stack);
 			}
 
-			HemoCapabilityAccess.getScars(player).ifPresent((IScarsItemHandler scars) -> {
+			HemoCapabilityAccess.getScars(player).ifPresent((IHarbingerEquipmentItemHandler scars) -> {
 				boolean wasUnlocked = scars.isScarsUnlocked();
 				scars.setScarsUnlocked(!wasUnlocked);
 

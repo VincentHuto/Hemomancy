@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -273,7 +273,7 @@ public class BloodVolumeEvents {
 		HemoCapabilityAccess.getScars(player).ifPresent(scars -> fillFirstEquippedGourd(scars, amount));
 	}
 
-	private static void fillFirstEquippedGourd(IScarsItemHandler scars, double amount) {
+	private static void fillFirstEquippedGourd(IHarbingerEquipmentItemHandler scars, double amount) {
 		for (int slot = 0; slot < scars.getSlots(); slot++) {
 			ItemStack stack = scars.getStackInSlot(slot);
 			if (stack.getItem() instanceof BloodGourdItem gourd) {

@@ -1,39 +1,23 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
 public enum ScarType {
-	FUNGAL(0), SCAR(1, 2, 3, 4), OVERRIDE(0, 1, 2, 3), VASC(5), GOURD(6), JAR(7);
-
-	int[] validSlots;
-
-	ScarType(int... validSlots) {
-		this.validSlots = validSlots;
-	}
-
-	public int[] getValidSlots() {
-		return validSlots;
-	}
-
-	public boolean hasSlot(int slot) {
-		for (int s : validSlots) {
-			if (s == slot)
-				return true;
-		}
-		return false;
-	}
+	CEREBRAL, FUNGAL;
 
 	/**
-	 * Parses a ScarType from user/data strings, supporting legacy names.
+	 * Parses a scar-domain type from user/data strings, supporting legacy recipe names.
 	 */
 	public static ScarType fromString(String raw) {
 		if (raw == null)
-			return OVERRIDE;
+			return CEREBRAL;
 		String s = raw.trim().toUpperCase();
 		if (s.equals("CONTRACT"))
 			return FUNGAL;
+		if (s.equals("SCAR"))
+			return CEREBRAL;
 		try {
 			return ScarType.valueOf(s);
 		} catch (IllegalArgumentException ex) {
-			return OVERRIDE;
+			return CEREBRAL;
 		}
 	}
 }

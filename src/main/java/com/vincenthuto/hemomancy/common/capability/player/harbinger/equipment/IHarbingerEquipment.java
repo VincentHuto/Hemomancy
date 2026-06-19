@@ -1,8 +1,8 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 
 import net.minecraft.world.entity.LivingEntity;
 
-public interface IScar {
+public interface IHarbingerEquipment {
 
 	default boolean canEquip(LivingEntity player) {
 		return true;
@@ -12,7 +12,7 @@ public interface IScar {
 		return true;
 	}
 
-	ScarType getScarType();
+	HarbingerEquipmentType getHarbingerEquipmentType();
 	
 
 	default void onEquipped(LivingEntity player) {

@@ -2,12 +2,15 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -339,19 +342,35 @@ public static IVisceralOrgans requireVisceralOrgans(Player player) {
 
 // ── Scars ─────────────────────────────────────────────────────────────────
 
-public static Optional<IScarsItemHandler> getScars(Player player) {
-    IScarsItemHandler scars = player.getCapability(HemoCapabilityKeys.SCARS);
+public static Optional<IHarbingerEquipmentItemHandler> getScars(Player player) {
+    IHarbingerEquipmentItemHandler scars = player.getCapability(HemoCapabilityKeys.HARBINGER_EQUIPMENT);
+    if (scars instanceof HarbingerEquipmentContainer container) {
+        container.bindHolder(player);
+    }
+    return Optional.ofNullable(scars);
+}
+
+public static IHarbingerEquipmentItemHandler requireScars(Player player) {
+    return getScars(player).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<IHarbingerEquipment> getScar(ItemStack stack) {
+    return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT));
+}
+
+public static Optional<IScars> getScarState(Player player) {
+    IScars scars = player.getCapability(HemoCapabilityKeys.SCARS);
     if (scars instanceof ScarsContainer container) {
         container.bindHolder(player);
     }
     return Optional.ofNullable(scars);
 }
 
-public static IScarsItemHandler requireScars(Player player) {
-    return getScars(player).orElseThrow(IllegalStateException::new);
+public static IScars requireScarState(Player player) {
+    return getScarState(player).orElseThrow(IllegalStateException::new);
 }
 
-public static Optional<IScar> getScar(ItemStack stack) {
+public static Optional<IScarItem> getScarItem(ItemStack stack) {
     return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_SCAR));
 }
 

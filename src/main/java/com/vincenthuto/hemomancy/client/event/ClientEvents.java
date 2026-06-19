@@ -76,6 +76,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.HarbingerEquipmentScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.MasonsEffigyScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MnemonicReliquaryScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScreen;
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
@@ -686,6 +687,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scarlet_vanity.get(), ScarletVanityRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.mason_effigy.get(), MasonsEffigyRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.fungal_podium.get(), FungalPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.fungal_implantation_pylon.get(),
                     FungalImplantationPylonRenderer::new);
@@ -840,6 +842,7 @@ public class ClientEvents {
         public static void registerMenuScreens(RegisterMenuScreensEvent event) {
             event.register(ContainerInit.gourd_charm_inventory.get(), HarbingerEquipmentScreen::new);
             event.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
+            event.register(ContainerInit.mason_effigy.get(), MasonsEffigyScreen::new);
             event.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
             event.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
             event.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);

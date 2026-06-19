@@ -112,12 +112,12 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		drawBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
 
 		// ───── Dark amber gradient panel behind the inventory section ─────
-		Slot firstInventorySlot = this.menu.slots.get(5);
+		Slot firstInventorySlot = this.menu.slots.get(SporeImplantMenu.SLOT_COUNT);
 		InventoryPanelTextures.blit(gfx, InventoryPanelTextures.FUNGAL,
 				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
 
 		// ───── Slot backgrounds ─────
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < SporeImplantMenu.SLOT_COUNT; i++) {
 			Slot slot = this.menu.slots.get(i);
 			int sx = gx + slot.x;
 			int sy = gy + slot.y;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -9,13 +9,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
 public class NoctiluminaDevoransItem extends ItemFungalScar {
 
-	public NoctiluminaDevoransItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmountIn) {
-		super(properties, tendencyIn, deepenAmountIn);
+	public NoctiluminaDevoransItem(Properties properties, DeferredHolder<ScarDefinition, ScarDefinition> scarDefinition) {
+		super(properties, scarDefinition);
 	}
 
 	@Override

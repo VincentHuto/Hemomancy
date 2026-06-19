@@ -122,7 +122,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 			if (!worldIn.isClientSide) {
 				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
 					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
-					int vascSlot = 5; // ScarType.VASC slot
+					int vascSlot = 5; // HarbingerEquipmentType.VASC slot
 					if (scars.getStackInSlot(vascSlot).isEmpty()) {
 						scars.setStackInSlot(vascSlot, charm);
 						player.displayClientMessage(

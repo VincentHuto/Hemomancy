@@ -15,10 +15,6 @@ public class PuppeteersSpindleModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Hemomancy.rloc("puppeteers_spindle_model"), "main");
 
-    private static final int STONE_COLOR = -1;
-    private static final int DARK_WOOD_COLOR = 0xFF6B2A20;
-    private static final int THREAD_COLOR = 0xFFC72435;
-
     private final ModelPart root;
     private final ModelPart stone;
     private final ModelPart wood;
@@ -69,9 +65,9 @@ public class PuppeteersSpindleModel extends Model {
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
                                int packedColor) {
-        this.stone.render(poseStack, vertexConsumer, packedLight, packedOverlay, STONE_COLOR);
-        this.wood.render(poseStack, vertexConsumer, packedLight, packedOverlay, DARK_WOOD_COLOR);
-        this.spoolWood.render(poseStack, vertexConsumer, packedLight, packedOverlay, DARK_WOOD_COLOR);
-        this.thread.render(poseStack, vertexConsumer, packedLight, packedOverlay, THREAD_COLOR);
+        this.stone.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        this.wood.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        this.spoolWood.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+        this.thread.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
     }
 }

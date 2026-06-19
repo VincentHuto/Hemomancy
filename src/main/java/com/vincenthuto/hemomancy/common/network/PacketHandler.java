@@ -96,6 +96,8 @@ public class PacketHandler {
 
         // ── Scar system ───────────────────────────────────────────────────────
         net.playBidirectional(PacketScarSync.TYPE, PacketScarSync.STREAM_CODEC, PacketScarSync::handle);
+        net.playToClient(PacketSyncScarsState.TYPE, PacketSyncScarsState.STREAM_CODEC, PacketSyncScarsState::handle);
+        net.playToServer(PacketPrepareScarPattern.TYPE, PacketPrepareScarPattern.STREAM_CODEC, PacketPrepareScarPattern::handle);
         net.playBidirectional(PacketGourdScarSync.TYPE, PacketGourdScarSync.STREAM_CODEC, PacketGourdScarSync::handle);
         net.playBidirectional(PacketOpenScarsInv.TYPE, PacketOpenScarsInv.STREAM_CODEC, PacketOpenScarsInv::handle);
         net.playBidirectional(PacketOpenSporeInv.TYPE, PacketOpenSporeInv.STREAM_CODEC, PacketOpenSporeInv::handle);

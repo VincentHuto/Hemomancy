@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AntiphonomycesResonansItem;

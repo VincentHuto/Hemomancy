@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class ThanomycesResurgensItem extends ItemFungalScar {
 
 	private static final String TAG_COOLDOWN_EXPIRY = "split_husk_cooldown_expiry";
 
-	public ThanomycesResurgensItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmountIn) {
-		super(properties, tendencyIn, deepenAmountIn);
+	public ThanomycesResurgensItem(Properties properties, DeferredHolder<ScarDefinition, ScarDefinition> scarDefinition) {
+		super(properties, scarDefinition);
 	}
 
 	/**

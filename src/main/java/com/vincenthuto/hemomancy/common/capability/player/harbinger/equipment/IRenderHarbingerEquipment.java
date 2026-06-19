@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public interface IRenderScar extends IScar {
+public interface IRenderHarbingerEquipment {
 
 
 	public static void doRender(HumanoidModel<?> bipedModel, ItemStack stack, LivingEntity player, PoseStack ms,

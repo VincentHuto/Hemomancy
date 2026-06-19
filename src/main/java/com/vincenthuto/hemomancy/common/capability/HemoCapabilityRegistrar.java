@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.common.capability;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.ItemStackBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
@@ -57,6 +58,8 @@ public final class HemoCapabilityRegistrar {
                 (player, ctx) -> player.getData(HemoAttachmentTypes.VISCERAL_ORGANS));
         event.registerEntity(HemoCapabilityKeys.SCARS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.SCARS));
+        event.registerEntity(HemoCapabilityKeys.HARBINGER_EQUIPMENT, EntityType.PLAYER,
+                (player, ctx) -> player.getData(HemoAttachmentTypes.HARBINGER_EQUIPMENT));
 
         event.registerItem(HemoCapabilityKeys.ITEM_BLOOD_VOLUME,
                 (stack, ctx) -> {
@@ -72,11 +75,18 @@ public final class HemoCapabilityRegistrar {
                 ItemInit.curved_horn.get(),
                 ItemInit.hemorath_rib.get());
 
-        // ── IScar item capabilities — register each item that implements IScar ──
+        // ── IHarbingerEquipment item capabilities — register each item that implements IHarbingerEquipment ──
         for (Item item : BuiltInRegistries.ITEM) {
-            if (item instanceof IScar) {
+            if (item instanceof IScarItem) {
                 event.registerItem(HemoCapabilityKeys.ITEM_SCAR,
-                        (stack, ctx) -> (IScar) stack.getItem(), item);
+                        (stack, ctx) -> (IScarItem) stack.getItem(), item);
+            }
+        }
+
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item instanceof IHarbingerEquipment) {
+                event.registerItem(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT,
+                        (stack, ctx) -> (IHarbingerEquipment) stack.getItem(), item);
             }
         }
 

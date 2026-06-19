@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
 
@@ -14,7 +14,7 @@ public class ScarSlot extends SlotItemHandler {
 	int ScarSlot;
 	Player player;
 
-	public ScarSlot(Player player, IScarsItemHandler itemHandler, int slot, int par4, int par5) {
+	public ScarSlot(Player player, IHarbingerEquipmentItemHandler itemHandler, int slot, int par4, int par5) {
 		super(itemHandler, slot, par4, par5);
 		this.ScarSlot = slot;
 		this.player = player;
@@ -22,7 +22,7 @@ public class ScarSlot extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		if (stack.getItem() instanceof IScar && !(stack.getItem() instanceof ItemFungalScar)
+		if (stack.getItem() instanceof IHarbingerEquipment && !(stack.getItem() instanceof ItemFungalScar)
 				&& !(stack.getItem() instanceof VasculariumCharmItem)) {
 			return true;
 		} else {
@@ -36,7 +36,7 @@ public class ScarSlot extends SlotItemHandler {
 		if (stack.isEmpty())
 			return false;
 
-		IScar mindscar = HemoCapabilityAccess.getScar(stack).orElseThrow(NullPointerException::new);
+		IHarbingerEquipment mindscar = HemoCapabilityAccess.getScar(stack).orElseThrow(NullPointerException::new);
 		return mindscar.canUnequip(player);
 	}
 

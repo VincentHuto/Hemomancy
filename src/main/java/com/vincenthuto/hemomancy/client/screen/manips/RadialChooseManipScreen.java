@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
@@ -51,7 +51,7 @@ public class RadialChooseManipScreen extends Screen {
 
 	private ItemStack vascCharmEquipped;
 	private BloodGourdItem gourdEquipped;
-	private IScarsItemHandler inv;
+	private IHarbingerEquipmentItemHandler inv;
 
 	private Minecraft mc;
 	private boolean needsRecheckStacks = true;
@@ -60,7 +60,7 @@ public class RadialChooseManipScreen extends Screen {
 
 	private final GenericRadialMenu menu;
 
-	public RadialChooseManipScreen(IScarsItemHandler invIn) {
+	public RadialChooseManipScreen(IHarbingerEquipmentItemHandler invIn) {
 		super(Component.literal("RADIAL MENU"));
 		inv = invIn;
 		this.mc = Minecraft.getInstance();

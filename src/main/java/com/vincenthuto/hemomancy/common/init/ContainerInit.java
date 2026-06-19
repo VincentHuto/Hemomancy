@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.*;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.*;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.SporeImplantMenu;
 import net.minecraft.core.registries.Registries;
@@ -44,6 +45,9 @@ public class ContainerInit {
 
 	public static final DeferredHolder<MenuType<?>, MenuType<SporeImplantMenu>> fungal_implantation = CONTAINERS
 			.register("fungal_implantation", () -> IMenuTypeExtension.create(SporeImplantMenu::new));
+
+	public static final DeferredHolder<MenuType<?>, MenuType<MasonsEffigyMenu>> mason_effigy = CONTAINERS
+			.register("mason_effigy", () -> IMenuTypeExtension.create(MasonsEffigyMenu::new));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<VascularViewMenu>> vascular_view =
 			CONTAINERS.register("vascular_view", () -> IMenuTypeExtension.create(VascularViewMenu::new));

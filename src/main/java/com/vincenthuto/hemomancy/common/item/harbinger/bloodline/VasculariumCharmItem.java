@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -32,7 +32,7 @@ import net.minecraft.world.phys.HitResult;
 
 import java.util.List;
 
-public class VasculariumCharmItem extends Item implements IScar {
+public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 
 	public static enum Commands {
 		FOLLOW, INTERACT, MOVE, STAY, DIAGNOSTICS, EAT, ATTACK;
@@ -63,9 +63,8 @@ public class VasculariumCharmItem extends Item implements IScar {
 	}
 
 	@Override
-	public ScarType getScarType() {
-		// TODO Auto-generated method stub
-		return ScarType.VASC;
+	public HarbingerEquipmentType getHarbingerEquipmentType() {
+		return HarbingerEquipmentType.VASC;
 	}
 
 	@Override

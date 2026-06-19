@@ -2,9 +2,9 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-06-06 Harbinger bloodline recruitment doctrine and current implementation status. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-06-18 registry-backed scars, Mason's Effigy scar-pattern preparation, and Anastomotic Brazier loadout burning. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
-> **Current Lore-State Snapshot (2026-06-06 audit):**
+> **Current Lore-State Snapshot (2026-06-18 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
@@ -14,6 +14,7 @@
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, Vesper/Mycophant summoning rituals, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - Harbinger outpost recruitment now reflects covenant restraint: a player's bloodline can draw one pledged voice from an outpost and one of each calling, supporting the Order's doctrine of spreading the cause rather than absorbing an entire lodge.
+> - Cerebral scars now read more like internalized mind-maps than worn trinkets: Scar items are burned into memory, Mason's Effigy prepares known scars into a motif, projected blood writes the motif into a dynamic Scar Pattern, and the Anastomotic Brazier burns that pattern to set the active scar loadout.
 > - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
 ---
@@ -233,7 +234,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### ADEPT 4 — *of the Sanguine Brotherhood*
 **Lore:** The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the earliest form of the Bloodline system. An Adept has moved beyond solo practice into understanding blood as communal inheritance. Simultaneously, the first **Fungal Whispers** begin — subliminal and barely perceptible. Just seeds of doubt.
 
-**Gameplay:** **Scars** and the **Cerebral Scarring Station**. Scar crafting requires minimum Degree 4 (wired in code). Players gain access to the Cerebral Scarring Station (surgical encoding of venous/neural pathways) and the Chisel Station (rune encoding). Scars equip in the Scar Binder and grant passive bonuses, skill amplification, or manipulation modifiers. Visceral Organ extraction via the Visceral Mirror ritual also becomes Adept-tier content. The Sporitic Thurible now sits in this same Adept band: a held thurible that burns aligned spores with blood upkeep, externalizing the Brotherhood's battlefield covenant as infectious support incense rather than simple weaponry.
+**Gameplay:** **Scars** and the **Cerebral Scarring Station**. Scar crafting requires minimum Degree 4 (wired in code). Players gain access to the Cerebral Scarring Station (surgical encoding of venous/neural pathways), the Mason's Effigy (scar loadout attunement), and the Anastomotic Brazier (burning scars into memory or burning prepared Scar Patterns into the active loadout). Scars grant passive bonuses, skill amplification, or manipulation modifiers from the player's active cerebral scar ids rather than from an equipped normal-scar item slot. Visceral Organ extraction via the Visceral Mirror ritual also becomes Adept-tier content. The Sporitic Thurible now sits in this same Adept band: a held thurible that burns aligned spores with blood upkeep, externalizing the Brotherhood's battlefield covenant as infectious support incense rather than simple weaponry.
 
 #### ILLUMINATUS 5 — *of the Crimson Lodge*
 **Lore:** The Crimson Lodge documented the link between hemomancy and the mycelial network — and kept that knowledge secret, insisting it must be "arrived at independently." Becoming Illuminatus means the Lodge judges the player ready to receive what they recorded. The Vicar reveals it: *"The blood you command… it was not always blood."* Most Harbingers never reach this degree. Fungal Whispers become clearer intrusions.

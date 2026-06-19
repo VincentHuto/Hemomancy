@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
@@ -29,7 +29,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class ItemMorphlingJar extends Item implements IScar {
+public class ItemMorphlingJar extends Item implements IHarbingerEquipment {
 
 	String name;
 	Integer size;
@@ -43,8 +43,8 @@ public class ItemMorphlingJar extends Item implements IScar {
 	}
 
 	@Override
-	public ScarType getScarType() {
-		return ScarType.JAR;
+	public HarbingerEquipmentType getHarbingerEquipmentType() {
+		return HarbingerEquipmentType.JAR;
 	}
 
 	@OnlyIn(Dist.CLIENT)

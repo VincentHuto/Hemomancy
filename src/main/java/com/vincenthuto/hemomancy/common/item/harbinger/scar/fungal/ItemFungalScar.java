@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IRenderScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IRenderHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
@@ -14,11 +13,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
-public class ItemFungalScar extends ItemScar implements IRenderScar {
+public class ItemFungalScar extends ItemScar implements IRenderHarbingerEquipment {
 
-	public ItemFungalScar(Properties properties, EnumBloodTendency tendencyIn, float deepenAmountIn) {
-		super(properties, tendencyIn, deepenAmountIn);
+	public ItemFungalScar(Properties properties, DeferredHolder<ScarDefinition, ScarDefinition> scarDefinition) {
+		super(properties, scarDefinition);
 	}
 
 	public Rarity getRarity(ItemStack stack) {
@@ -28,11 +28,6 @@ public class ItemFungalScar extends ItemScar implements IRenderScar {
 	@Override
 	public boolean isFoil(ItemStack stack) {
 		return true;
-	}
-
-	@Override
-	public ScarType getScarType() {
-		return ScarType.FUNGAL;
 	}
 
 	@Override

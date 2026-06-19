@@ -80,6 +80,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(HematicArmatureModel.LAYER_LOCATION, HematicArmatureModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
 		event.registerLayerDefinition(PuppeteersSpindleModel.LAYER_LOCATION, PuppeteersSpindleModel::createBodyLayer);
+		event.registerLayerDefinition(MasonsEffigyModel.LAYER_LOCATION, MasonsEffigyModel::createBodyLayer);
 		event.registerLayerDefinition(DictationTableModel.LAYER_LOCATION, DictationTableModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerSaintSarcophagusModel.LAYER_LOCATION, HarbingerSaintSarcophagusModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineMonolithModel.LAYER_LOCATION, SanguineMonolithModel::createBodyLayer);

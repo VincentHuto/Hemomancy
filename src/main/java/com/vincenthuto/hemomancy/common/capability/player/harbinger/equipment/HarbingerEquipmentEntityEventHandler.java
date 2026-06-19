@@ -1,14 +1,15 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal.LatchingVeinHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.fungal.VeinMinerHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.AnastocordycepsNexusItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SanguifloraeCadensItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SaprovittaVestigiumItem;
@@ -58,18 +59,10 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
-public class ScarEntityEventHandler {
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
+public class HarbingerEquipmentEntityEventHandler {
 
 	/** scar slots 1â€“4 hold regular (non-fungal) scars. */
-	private static final int SCAR_SLOT_MIN = 1;
-	private static final int SCAR_SLOT_MAX = 4;
-
-	/** Effective max scar slot, expanded by the Scar Resonance skill (up to +3). */
-	private static int getEffectiveScarSlotMax(Player player) {
-		return SCAR_SLOT_MAX + SkillPointHelper.getScarResonanceSlots(player);
-	}
-
 	// --- Synergy bonus definitions (one per tendency) ---
 
 	private static final class SynergyBonus {
@@ -170,7 +163,8 @@ public class ScarEntityEventHandler {
 
 				// Split Husk (Thanomyces resurgens) — death prevention in slot 0
 				if (!event.isCanceled()) {
-					ItemStack fungalSlot = scars.getStackInSlot(0);
+					HemoCapabilityAccess.getScarState(player).ifPresent(scarState -> {
+					ItemStack fungalSlot = scarState.getFungalScar();
 					if (fungalSlot.getItem() instanceof ThanomycesResurgensItem splitHusk) {
 						long gameTime = player.level().getGameTime();
 						if (splitHusk.isReady(fungalSlot, gameTime)) {
@@ -191,6 +185,7 @@ public class ScarEntityEventHandler {
 							}
 						}
 					}
+					});
 				}
 			});
 		}
@@ -240,7 +235,8 @@ public class ScarEntityEventHandler {
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
-		HemoCapabilityAccess.getScars(player).ifPresent(IScarsItemHandler::tick);
+		HemoCapabilityAccess.getScars(player).ifPresent(com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler::tick);
+		HemoCapabilityAccess.getScarState(player).ifPresent(com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars::tick);
 		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
 		if (attributeInstance != null) {
 			AttributeModifier elytraModifier = AttributeInit.getElytraModifier();
@@ -259,8 +255,8 @@ public class ScarEntityEventHandler {
 
 		// Feeding Wake (Saprovitta vestigium) — damaging blood-fungal trail while moving
 		if (!player.level().isClientSide && player.tickCount % SaprovittaVestigiumItem.TRAIL_INTERVAL_TICKS == 0) {
-			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-				ItemStack fungalSlot = scars.getStackInSlot(0);
+			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
+				ItemStack fungalSlot = scars.getFungalScar();
 				if (fungalSlot.getItem() instanceof SaprovittaVestigiumItem) {
 					double movSq = player.getDeltaMovement().horizontalDistanceSqr();
 					if (movSq > SaprovittaVestigiumItem.MOVEMENT_THRESHOLD_SQ) {
@@ -287,16 +283,11 @@ public class ScarEntityEventHandler {
 
 		// Player attacks another entity
 		if (sourceEntity instanceof Player player && !player.level().isClientSide) {
-			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
-					ItemStack stack = scars.getStackInSlot(i);
-					if (stack.getItem() instanceof ItemScar scar) {
-						scar.onPlayerAttack(player, harmed);
-					}
-				}
+			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
+				scars.forEachActiveCerebralScar(scar -> scar.onPlayerAttack(player, harmed));
 
-				// Latching Vein (Anastocordyceps nexus) — tether struck enemy and nearby mobs
-				ItemStack fungalSlot = scars.getStackInSlot(0);
+				// Latching Vein (Anastocordyceps nexus) - tether struck enemy and nearby mobs
+				ItemStack fungalSlot = scars.getFungalScar();
 				if (fungalSlot.getItem() instanceof AnastocordycepsNexusItem && harmed instanceof LivingEntity) {
 					LatchingVeinHandler.applyTether(player, harmed, player.level().getGameTime());
 				}
@@ -313,14 +304,8 @@ public class ScarEntityEventHandler {
 		// Player is attacked by another entity
 		if (harmed instanceof Player player && !player.level().isClientSide) {
 			if (sourceEntity instanceof LivingEntity attacker) {
-				HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-					for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
-						ItemStack stack = scars.getStackInSlot(i);
-						if (stack.getItem() instanceof ItemScar scar) {
-							scar.onPlayerDefend(player, attacker);
-						}
-					}
-				});
+				HemoCapabilityAccess.getScarState(player).ifPresent(scars ->
+						scars.forEachActiveCerebralScar(scar -> scar.onPlayerDefend(player, attacker)));
 			}
 		}
 	}
@@ -329,16 +314,11 @@ public class ScarEntityEventHandler {
 	public static void onEntityKilledByPlayer(LivingDeathEvent event) {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity killed = event.getEntity();
-			HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
-				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
-					ItemStack stack = scars.getStackInSlot(i);
-					if (stack.getItem() instanceof ItemScar scar) {
-						scar.onPlayerKill(player, killed);
-					}
-				}
+			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
+				scars.forEachActiveCerebralScar(scar -> scar.onPlayerKill(player, killed));
 
-				// Vein Orchard (Sanguiflora cadens) — chance to drop blood resources at kill site
-				ItemStack fungalSlot = scars.getStackInSlot(0);
+				// Vein Orchard (Sanguiflora cadens) - chance to drop blood resources at kill site
+				ItemStack fungalSlot = scars.getFungalScar();
 				int symbiosis = SkillPointHelper.getFungalSymbiosisLevel(player);
 				if (fungalSlot.getItem() instanceof SanguifloraeCadensItem
 						&& player.level().random.nextFloat() < Math.min(1.0F,
@@ -362,14 +342,9 @@ public class ScarEntityEventHandler {
 	// --- Synergy logic ---
 
 	private static void checkScarSynergy(Player player) {
-		HemoCapabilityAccess.getScars(player).ifPresent(scars -> {
+		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
 			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
-			for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(player); i++) {
-				ItemStack stack = scars.getStackInSlot(i);
-				if (stack.getItem() instanceof ItemScar scar) {
-					counts.merge(scar.getAssignedTendency(), 1, Integer::sum);
-				}
-			}
+			scars.forEachActiveCerebralScar(scar -> counts.merge(scar.getAssignedTendency(), 1, Integer::sum));
 
 			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
 				SynergyBonus bonus = SYNERGY_BONUSES.get(tendency);
@@ -401,10 +376,10 @@ public class ScarEntityEventHandler {
 	@SubscribeEvent
 	public static void onBlockBreak(BreakEvent event) {
 
-		HemoCapabilityAccess.getScars(event.getPlayer()).ifPresent(scars -> {
+		HemoCapabilityAccess.getScarState(event.getPlayer()).ifPresent(scars -> {
 			HemoCapabilityAccess.getKnownManipulations(event.getPlayer()).ifPresent(manips -> {
 
-				if (scars.getStackInSlot(0).getItem() == ItemInit.talaromyces_minus.get()
+				if (scars.getFungalScar().getItem() == ItemInit.talaromyces_minus.get()
 						&& event.getPlayer().isShiftKeyDown()) {
 					if (manips.getLastVeinMineStart() == BlockPos.ZERO && event.getState().is(Tags.Blocks.ORES)) {
 						VeinMinerHelper.tryVeinMine(event.getPlayer().getMainHandItem(), event.getPlayer(),

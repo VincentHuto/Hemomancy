@@ -18,7 +18,7 @@ public class ScarRecipe extends CustomRecipe {
 	private ResourceLocation id;
 	protected ResourceLocation[] requiredItems = new ResourceLocation[0];
 	protected int tier = 1;
-	protected ScarType scarType = ScarType.OVERRIDE;
+	protected ScarType scarType = ScarType.CEREBRAL;
 	private byte[][] pattern;
 	protected final Ingredient ingredient1;
 	protected final Ingredient ingredient2;
@@ -27,14 +27,14 @@ public class ScarRecipe extends CustomRecipe {
 	protected ItemStack outputItem = null;
 	protected int outputQuantity;
 
-	public ScarRecipe(ResourceLocation resourceLocation, int tier, ScarType type, Ingredient ingredient1,
-			Ingredient ingredient2, byte[][] pattern, ItemStack result) {
+	public ScarRecipe(ResourceLocation resourceLocation, int tier, ScarType scarType, Ingredient ingredient1,
+                      Ingredient ingredient2, byte[][] pattern, ItemStack result) {
 		super(CraftingBookCategory.MISC);
 		this.id = resourceLocation;
 		this.ingredient1 = ingredient1;
 		this.ingredient2 = ingredient2;
 		this.tier = tier;
-		this.scarType = type;
+		this.scarType = scarType;
 		this.pattern = pattern;
 		this.outputItem = result;
 	}

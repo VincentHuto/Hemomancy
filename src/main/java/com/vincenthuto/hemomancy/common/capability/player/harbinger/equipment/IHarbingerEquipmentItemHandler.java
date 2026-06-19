@@ -1,9 +1,9 @@
-package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
-public interface IScarsItemHandler extends IItemHandlerModifiable {
+public interface IHarbingerEquipmentItemHandler extends IItemHandlerModifiable {
 
 	boolean isEventBlocked();
 

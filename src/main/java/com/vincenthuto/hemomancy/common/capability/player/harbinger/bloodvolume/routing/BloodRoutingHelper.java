@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -269,7 +269,7 @@ public final class BloodRoutingHelper {
 
     @Nullable
     private static GourdHandle findOpenScarGourd(ServerPlayer owner) {
-        IScarsItemHandler scars = HemoCapabilityAccess.getScars(owner).orElse(null);
+        IHarbingerEquipmentItemHandler scars = HemoCapabilityAccess.getScars(owner).orElse(null);
         if (scars == null) {
             return null;
         }

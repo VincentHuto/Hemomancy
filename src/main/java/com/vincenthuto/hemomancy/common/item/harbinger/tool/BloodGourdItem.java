@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.BloodGourdItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentType;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensionsProvider {
+public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoClientItemExtensionsProvider {
 
 	public static String TAG_STATE = "state";
 	EnumBloodGourdTiers tier;
@@ -90,8 +90,8 @@ public class BloodGourdItem extends Item implements IScar, HemoClientItemExtensi
 	}
 
 	@Override
-	public ScarType getScarType() {
-		return ScarType.GOURD;
+	public HarbingerEquipmentType getHarbingerEquipmentType() {
+		return HarbingerEquipmentType.GOURD;
 	}
 
 	@Override

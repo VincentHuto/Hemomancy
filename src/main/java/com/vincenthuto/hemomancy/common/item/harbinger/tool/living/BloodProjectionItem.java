@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.MasonsEffigyBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -118,6 +119,15 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 			if (be != null) {
 				if (be instanceof SomaticLoomBlockEntity loom && player instanceof Player projectingPlayer) {
 					if (loom.tryChargeRitualBlood(projectingPlayer, tileTransferRate, livingStaff)) {
+						if (projectingPlayer instanceof ServerPlayer serverPlayer) {
+							PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
+						}
+						return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
+					}
+					return 0.0D;
+				}
+				if (be instanceof MasonsEffigyBlockEntity effigy && player instanceof Player projectingPlayer) {
+					if (effigy.receiveProjectedBlood(projectingPlayer, tileTransferRate, livingStaff) > 0.0D) {
 						if (projectingPlayer instanceof ServerPlayer serverPlayer) {
 							PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
 						}

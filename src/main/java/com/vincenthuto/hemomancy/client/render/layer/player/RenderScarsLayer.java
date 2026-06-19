@@ -2,8 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IRenderScar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IRenderHarbingerEquipment;
 
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,30 +21,23 @@ public class RenderScarsLayer<T extends Player, M extends PlayerModel<T>> extend
 	public void render(PoseStack matrixStack, MultiBufferSource iRenderTypeBuffer, int packedLightIn, Player player,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch,
 			float scale) {
-		IScarsItemHandler inv = HemoCapabilityAccess.requireScars(player);
-
 		matrixStack.pushPose();
-		this.dispatchRenders(matrixStack, packedLightIn, iRenderTypeBuffer, inv, player, 
-				partialTicks);
+		this.dispatchRenders(matrixStack, packedLightIn, iRenderTypeBuffer, player, partialTicks);
 		matrixStack.popPose();
 
 	}
 
 	private void dispatchRenders(PoseStack matrix, int packedLightIn, MultiBufferSource iRenderTypeBuffer,
-			IScarsItemHandler inv, Player player, float partialTicks) {
-		for (int i = 0; i < inv.getSlots(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
+	                             Player player, float partialTicks) {
+		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
+			ItemStack stack = scars.getFungalScar();
 			if (!stack.isEmpty()) {
-				HemoCapabilityAccess.getScar(stack).ifPresent(scar -> {
-					if (scar instanceof IRenderScar) {
-						matrix.pushPose();
-						((IRenderScar) scar).onPlayerScarRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player,
-								 partialTicks);
-						matrix.popPose();
-
-					}
-				});
+				if (stack.getItem() instanceof IRenderHarbingerEquipment renderer) {
+					matrix.pushPose();
+					renderer.onPlayerScarRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player, partialTicks);
+					matrix.popPose();
+				}
 			}
-		}
+		});
 	}
 }

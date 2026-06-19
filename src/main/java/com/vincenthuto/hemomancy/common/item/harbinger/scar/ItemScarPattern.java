@@ -4,11 +4,19 @@ import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 
 
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -17,6 +25,8 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
@@ -26,7 +36,13 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class ItemScarPattern extends Item implements HemoClientItemExtensionsProvider {
+	public static final String TAG_SCAR_IDS = "ScarIds";
+	public static final int MAX_SCAR_IDS = 4;
 
 	String path;
 	DeferredHolder<Item, Item> scar;
@@ -44,6 +60,44 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 			playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+	}
+
+	public static ItemStack createPreparedPattern(Collection<ResourceLocation> scarIds) {
+		ItemStack stack = new ItemStack(ItemInit.scar_pattern.get());
+		setScarIds(stack, scarIds);
+		return stack;
+	}
+
+	public static boolean hasPreparedLoadout(ItemStack stack) {
+		return !getScarIds(stack).isEmpty();
+	}
+
+	public static List<ResourceLocation> getScarIds(ItemStack stack) {
+		List<ResourceLocation> ids = new ArrayList<>();
+		if (stack.isEmpty() || !stack.has(DataComponents.CUSTOM_DATA)) {
+			return ids;
+		}
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		ListTag list = tag.getList(TAG_SCAR_IDS, Tag.TAG_STRING);
+		for (int i = 0; i < list.size() && ids.size() < MAX_SCAR_IDS; i++) {
+			ResourceLocation id = ResourceLocation.tryParse(list.getString(i));
+			if (id != null && !ids.contains(id)) {
+				ids.add(id);
+			}
+		}
+		return ids;
+	}
+
+	public static void setScarIds(ItemStack stack, Collection<ResourceLocation> scarIds) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		ListTag list = new ListTag();
+		for (ResourceLocation id : scarIds) {
+			if (id != null && list.size() < MAX_SCAR_IDS) {
+				list.add(StringTag.valueOf(id.toString()));
+			}
+		}
+		tag.put(TAG_SCAR_IDS, list);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 	
 	public DeferredHolder<Item, Item> getSCAR() {
@@ -116,6 +170,20 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 
 	public void getPatternGui() {
 	//	Hemomancy.proxy.openPatternGui(scar, getRecipe());
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip,
+			TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
+		List<ResourceLocation> ids = getScarIds(stack);
+		if (!ids.isEmpty()) {
+			tooltip.add(Component.translatable("tooltip.hemomancy.scar_pattern.loadout", ids.size())
+					.withStyle(ChatFormatting.DARK_RED));
+			for (ResourceLocation id : ids) {
+				tooltip.add(Component.literal(" - " + id.getPath()).withStyle(ChatFormatting.GRAY));
+			}
+		}
 	}
 
 	@Override

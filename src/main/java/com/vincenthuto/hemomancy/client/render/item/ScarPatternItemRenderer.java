@@ -2,6 +2,9 @@ package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -12,10 +15,14 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -29,6 +36,15 @@ import java.util.List;
  * with translucent blending so the background shows through.
  */
 public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
+	private static final float[][] QUADRANT_OFFSETS = {
+			{0.16F, 0.54F},
+			{0.52F, 0.54F},
+			{0.16F, 0.18F},
+			{0.52F, 0.18F}
+	};
+	private static final float ICON_RADIUS_SCALE = 0.62F;
+	private static final float GUI_OVERLAY_DEPTH = 1.12F;
+	private static final float HELD_OVERLAY_DEPTH = 0.045F;
 
 	public ScarPatternItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
@@ -56,6 +72,10 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 			}
 		}
 
+		if (renderPreparedScarIcons(stack, displayContext, poseStack, buffer, combinedLight, combinedOverlay, mc)) {
+			return;
+		}
+
 		// Render layer1 (scar overlay, tintIndex 1) with entity translucent render type
 		RenderType translucentType = RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS);
 		VertexConsumer translucentBuffer = buffer.getBuffer(translucentType);
@@ -71,6 +91,82 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 				renderQuadWithAlpha(poseStack.last(), translucentBuffer, quad, alpha, combinedLight, combinedOverlay);
 			}
 		}
+	}
+
+	private boolean renderPreparedScarIcons(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack,
+			MultiBufferSource buffer, int combinedLight, int combinedOverlay, Minecraft mc) {
+		List<ResourceLocation> scarIds = ItemScarPattern.getScarIds(stack);
+		if (scarIds.isEmpty()) {
+			return false;
+		}
+		boolean flatOverlayContext = isFlatOverlayContext(displayContext);
+		for (int i = 0; i < scarIds.size() && i < QUADRANT_OFFSETS.length; i++) {
+			ItemStack patternStack = patternStackFor(scarIds.get(i));
+			if (patternStack.isEmpty()) {
+				continue;
+			}
+			float[] offset = QUADRANT_OFFSETS[i];
+			float centerX = offset[0] + 0.16F;
+			float centerY = offset[1] + 0.16F;
+			poseStack.pushPose();
+			// rotation value used to spin the icon itself
+			double rotation = ((System.currentTimeMillis() / 18.0) + i * 42.0) % 360.0;
+			float depth = (flatOverlayContext ? HELD_OVERLAY_DEPTH : GUI_OVERLAY_DEPTH) + i * 0.01F;
+			poseStack.translate(0.125F, 0.125F, depth);
+
+			// Orbit across the motif face so the dynamic scar marks circle the pattern itself.
+			float baseX = centerX - 0.5F - 0.18F;
+			float baseY = centerY - 0.95F - 0.18F; // vertical offset (keep unchanged)
+			float originalRadius = (float) Math.hypot(baseX, baseY);
+			float orbitRadius = originalRadius * ICON_RADIUS_SCALE;
+			double angleRad = Math.toRadians(rotation);
+			float orbitX = (float) Math.cos(angleRad) * orbitRadius;
+			float orbitY = (float) Math.sin(angleRad) * orbitRadius;
+
+			// translate by the computed orbit vector (relative to the center point)
+			poseStack.translate(orbitX, orbitY, 0.0F);
+
+			// Spin the overlay in the item plane.
+			poseStack.mulPose(Axis.XP.rotationDegrees((float) 0));
+			poseStack.mulPose(Axis.YP.rotationDegrees((float) 0));
+			poseStack.mulPose(Axis.ZP.rotationDegrees((float) 0));
+			poseStack.scale(0.75F, 0.75f, 0.75f);
+			renderPatternOverlay(patternStack, poseStack, buffer, combinedLight, combinedOverlay, mc, i);
+			poseStack.popPose();
+		}
+		return true;
+	}
+
+	private void renderPatternOverlay(ItemStack patternStack, PoseStack poseStack, MultiBufferSource buffer,
+			int combinedLight, int combinedOverlay, Minecraft mc, int seedOffset) {
+		BakedModel model = mc.getItemRenderer().getModel(patternStack, mc.level, null, 59 + seedOffset);
+		RandomSource random = RandomSource.create(9173L + seedOffset);
+		VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS));
+		for (BakedQuad quad : model.getQuads(null, null, random)) {
+			if (quad.getTintIndex() == 1) {
+				renderQuadWithAlpha(poseStack.last(), translucentBuffer, quad, 0.85F, combinedLight, combinedOverlay);
+			}
+		}
+	}
+
+	private static boolean isFlatOverlayContext(ItemDisplayContext displayContext) {
+		return displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+				|| displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+				|| displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+				|| displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND
+				|| displayContext == ItemDisplayContext.GROUND;
+	}
+
+	private static ItemStack patternStackFor(ResourceLocation id) {
+		String path = id.getPath();
+		if (path.startsWith("scar_")) {
+			path = path.substring("scar_".length());
+		}
+		Item item = BuiltInRegistries.ITEM.get(Hemomancy.rloc("scar_pattern_" + path));
+		if (item == Items.AIR) {
+			return ItemStack.EMPTY;
+		}
+		return new ItemStack(item);
 	}
 
 	/**
@@ -120,4 +216,3 @@ public class ScarPatternItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 	}
 }
-

@@ -6,7 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.tile.RadiantPortalRendertype;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.tile.functional.ScarletVanityBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -154,9 +154,9 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 		});
 	}
 
-	private static void renderEquippedItem(ScarletVanityBlockEntity te, Direction facing, IScarsItemHandler scars, int slot,
-			PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
-			double x, double y, double z, float yaw, float scale) {
+	private static void renderEquippedItem(ScarletVanityBlockEntity te, Direction facing, IHarbingerEquipmentItemHandler scars, int slot,
+                                           PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+                                           double x, double y, double z, float yaw, float scale) {
 		ItemStack stack = scars.getStackInSlot(slot);
 		if (stack.isEmpty()) {
 			return;

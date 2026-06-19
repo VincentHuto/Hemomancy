@@ -51,7 +51,7 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 
 	private static ScarRecipe fromJsonObject(ResourceLocation id, JsonObject pJson) {
 		int tier = 0;
-		ScarType scarType = ScarType.OVERRIDE;
+		ScarType scarType = ScarType.CEREBRAL;
 		Ingredient ingredient1 = Ingredient.CODEC_NONEMPTY
 				.parse(JsonOps.INSTANCE, GsonHelper.getAsJsonObject(pJson, "ingredient1"))
 				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient1: " + err));
