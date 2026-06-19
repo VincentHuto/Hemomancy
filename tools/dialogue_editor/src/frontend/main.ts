@@ -4,7 +4,7 @@ import { applyPreview as applyPreviewApi, fetchMetadata, fetchPreview, loadWorks
 import { renderGraph } from './graph';
 import { renderInspector } from './inspector';
 import { renderSidebar } from './sidebar';
-import { currentFile, paletteFor, speakerSlug, state, translation } from './state';
+import { currentFile, paletteFor, speakerSlug, state } from './state';
 import type { Tab } from './state';
 
 const tabs: Tab[] = ['Graph', 'Translations', 'Events', 'Item Inquiries', 'Validation', 'Diff'];

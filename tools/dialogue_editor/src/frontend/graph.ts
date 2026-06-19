@@ -200,7 +200,7 @@ export function renderGraph(el: HTMLElement, onRender: () => void): void {
   ).join('');
 
   el.innerHTML = `<div class="graph" style="min-height:${totalHeight}px;min-width:${totalWidth}px;position:relative">
-    <svg class="edges" width="${totalWidth}" height="${totalHeight}"><defs><linearGradient id="edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--accent,#a04040);stop-opacity:0.7"/><stop offset="100%" style="stop-color:var(--accent2,#804080);stop-opacity:0.9"/></linearGradient></defs>${svgEdges}</svg>
+    <svg class="edges" width="${totalWidth}" height="${totalHeight}"><defs><linearGradient id="edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--edge-a,#b84a43);stop-opacity:0.7"/><stop offset="100%" style="stop-color:var(--edge-b,#d08a60);stop-opacity:0.9"/></linearGradient></defs>${svgEdges}</svg>
     ${cards}
   </div>`;
 
