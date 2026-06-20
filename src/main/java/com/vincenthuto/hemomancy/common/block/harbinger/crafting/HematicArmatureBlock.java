@@ -315,6 +315,9 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 		if (stack.isEmpty()) {
 			return InteractionResult.PASS;
 		}
+		if (armature.applyArmatureUpgradeItem(serverPlayer, hand)) {
+			return InteractionResult.SUCCESS;
+		}
 		if (armature.useBloodContainerInHand(serverPlayer, hand)) {
 			return InteractionResult.SUCCESS;
 		}

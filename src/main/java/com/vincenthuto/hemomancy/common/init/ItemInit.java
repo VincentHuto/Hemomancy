@@ -835,6 +835,10 @@ public class ItemInit {
             () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
             () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredHolder<Item, Item> vicars_consecration_kit = BASEITEMS.register("vicars_consecration_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> monolithic_cornerstone = BASEITEMS.register("monolithic_cornerstone",
+            () -> new MonolithicCornerstoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
             () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> fungal_spine = BASEITEMS.register("fungal_spine",

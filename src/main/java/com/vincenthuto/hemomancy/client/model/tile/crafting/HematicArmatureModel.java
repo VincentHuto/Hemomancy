@@ -6,6 +6,7 @@ package com.vincenthuto.hemomancy.client.model.tile.crafting;// Made with Blockb
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -73,18 +74,14 @@ public class HematicArmatureModel extends Model {
 				.texOffs(0, 91).addBox(-1.0F, -54.0F, -2.0F, 4.0F, 46.0F, 4.0F, new CubeDeformation(0.0F))
 				.texOffs(169, 167).addBox(-3.0F, -57.7F, -3.0F, 8.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(159, 61).addBox(0.0F, -20.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(159, 61).addBox(0.0F, -20.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(138, 61).addBox(0.0F, -42.0F, -1.0F, 8.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(189, 110).addBox(0.0F, -50.0F, -1.0F, 6.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(23.0F, 24.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
+				.texOffs(159, 61).addBox(0.0F, -20.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(23.0F, 24.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
 
 		PartDefinition right_pillar = partdefinition.addOrReplaceChild("right_pillar", CubeListBuilder.create().texOffs(113, 157).addBox(-4.0F, -8.0F, -3.0F, 8.0F, 8.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(17, 91).addBox(-2.0F, -54.0F, -2.0F, 4.0F, 46.0F, 4.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 172).addBox(-4.0F, -57.7F, -3.0F, 8.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(167, 187).addBox(-7.0F, -20.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
 				.texOffs(167, 187).addBox(-7.0F, -34.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(186, 187).addBox(-7.0F, -32.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(179, 73).addBox(-8.0F, -42.0F, -1.0F, 8.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(189, 115).addBox(-6.0F, -50.0F, -1.0F, 6.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-23.0F, 24.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
+				.texOffs(186, 187).addBox(-7.0F, -32.0F, -1.0F, 7.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-23.0F, 24.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
 
 		PartDefinition arch = partdefinition.addOrReplaceChild("arch", CubeListBuilder.create().texOffs(41, 118).addBox(0.0F, -2.0F, -2.0F, 23.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
 				.texOffs(96, 118).addBox(-23.0F, -2.0F, -2.0F, 23.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
@@ -156,7 +153,10 @@ public class HematicArmatureModel extends Model {
 				.texOffs(138, 182).addBox(4.0F, -4.0F, -4.0F, 1.0F, 1.0F, 8.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 183).addBox(-4.5F, -4.0F, -4.0F, 1.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-29.0F, -10.0F, 17.0F));
 
-		PartDefinition vicarkit_upgrade = partdefinition.addOrReplaceChild("vicarkit_upgrade", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition vicarkit_upgrade = partdefinition.addOrReplaceChild("vicarkit_upgrade", CubeListBuilder.create().texOffs(138, 61).addBox(16.0F, -42.0F, -1.0F, 8.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(189, 110).addBox(16.0F, -50.0F, -1.0F, 6.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(189, 115).addBox(-23.0F, -50.0F, -1.0F, 6.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(179, 73).addBox(-25.0F, -42.0F, -1.0F, 8.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
 		PartDefinition candles = vicarkit_upgrade.addOrReplaceChild("candles", CubeListBuilder.create().texOffs(192, 93).addBox(-18.0F, -2.0F, 17.3333F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
 				.texOffs(39, 186).addBox(-16.0F, -5.0F, -8.6667F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F))
@@ -187,6 +187,14 @@ public class HematicArmatureModel extends Model {
 		bannerR.zRot = -sway;
 		bannerL.xRot = flutter;
 		bannerR.xRot = flutter;
+	}
+
+	public void setupUpgradeVisibility(ArmatureUpgradeRules.ArmatureTier tier) {
+		boolean vicarConsecrated = tier.id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id();
+		boolean monolithic = tier.id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id();
+		chains.visible = vicarConsecrated;
+		vicarkit_upgrade.visible = vicarConsecrated;
+		monolithic_cornerstone.visible = monolithic;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.HematicArmatureModel;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import com.vincenthuto.hemomancy.common.tile.crafting.HematicArmatureBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -53,7 +54,9 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 		float yRot = rotationFor(facing);
 		float itemYRot = itemRotationFor(facing);
 
-		renderReservoir(armature, poseStack, buffer);
+		if (armature.getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id()) {
+			renderReservoir(armature, poseStack, buffer);
+		}
 		if (buffer instanceof MultiBufferSource.BufferSource source) {
 			source.endBatch(RenderTypeInit.FLASK_FLUID);
 		}
@@ -72,6 +75,7 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 				? armature.getLevel().getGameTime() + partialTicks
 				: partialTicks;
 		model.setupBannerAnimation(ageInTicks);
+		model.setupUpgradeVisibility(armature.getArmatureTier());
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 	}

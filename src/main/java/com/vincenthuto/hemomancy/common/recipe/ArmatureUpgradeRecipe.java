@@ -106,6 +106,11 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 
 	public boolean matchesUpgrade(ArmatureUpgradeRules.ArmatureSlot slot, ItemStack wornBase,
 			ItemStack bowlReagent, Player player) {
+		return matchesUpgrade(slot, wornBase, bowlReagent, player, ArmatureUpgradeRules.ArmatureTier.BASE);
+	}
+
+	public boolean matchesUpgrade(ArmatureUpgradeRules.ArmatureSlot slot, ItemStack wornBase,
+			ItemStack bowlReagent, Player player, ArmatureUpgradeRules.ArmatureTier armatureTier) {
 		if (armorSlot != slot || wornBase.isEmpty() || bowlReagent.isEmpty()) {
 			return false;
 		}
@@ -113,6 +118,9 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 			return false;
 		}
 		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < requiredDegree) {
+			return false;
+		}
+		if (!armatureTier.canCraftRequiredDegree(requiredDegree)) {
 			return false;
 		}
 		return persistentDataGate == null || persistentDataGate.matches(player);

@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.HematicArmatureModel;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.HematicArmatureRenderer;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -72,6 +73,7 @@ public class HematicArmatureItemRenderer extends BlockEntityWithoutLevelRenderer
 		}
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
+		model.setupUpgradeVisibility(ArmatureUpgradeRules.ArmatureTier.BASE);
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 

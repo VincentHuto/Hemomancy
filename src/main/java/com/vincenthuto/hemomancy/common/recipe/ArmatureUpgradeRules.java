@@ -17,10 +17,56 @@ public final class ArmatureUpgradeRules {
 		FEET
 	}
 
+	public enum ArmatureTier {
+		BASE(0, "base"),
+		VICAR_CONSECRATED(1, "vicar_consecrated"),
+		MONOLITHIC(2, "monolithic");
+
+		private final int id;
+		private final String serializedName;
+
+		ArmatureTier(int id, String serializedName) {
+			this.id = id;
+			this.serializedName = serializedName;
+		}
+
+		public int id() {
+			return id;
+		}
+
+		public String serializedName() {
+			return serializedName;
+		}
+
+		public boolean canCraftRequiredDegree(int requiredDegree) {
+			return this.id >= requiredTierForDegree(requiredDegree).id;
+		}
+
+		public static ArmatureTier byId(int id) {
+			for (ArmatureTier tier : values()) {
+				if (tier.id == id) {
+					return tier;
+				}
+			}
+			return BASE;
+		}
+
+		public static ArmatureTier byName(String name) {
+			for (ArmatureTier tier : values()) {
+				if (tier.serializedName.equals(name) || tier.name().equalsIgnoreCase(name)) {
+					return tier;
+				}
+			}
+			return BASE;
+		}
+	}
+
 	public record Candidate(ArmatureSlot slot, int bowlSlot, boolean baseMatches, boolean reagentMatches,
 			boolean persistentGateMatches, int requiredDegree, int playerDegree, double bloodCost) {
-		public boolean hasMatchingInputs() {
-			return baseMatches && reagentMatches && persistentGateMatches && playerDegree >= requiredDegree;
+		public boolean hasMatchingInputs(ArmatureTier armatureTier) {
+			return baseMatches && reagentMatches && persistentGateMatches
+					&& playerDegree >= requiredDegree
+					&& armatureTier.canCraftRequiredDegree(requiredDegree);
 		}
 	}
 
@@ -53,6 +99,16 @@ public final class ArmatureUpgradeRules {
 		return List.of(ArmatureSlot.HEAD, ArmatureSlot.CHEST, ArmatureSlot.LEGS, ArmatureSlot.FEET);
 	}
 
+	public static ArmatureTier requiredTierForDegree(int requiredDegree) {
+		if (requiredDegree >= 7) {
+			return ArmatureTier.MONOLITHIC;
+		}
+		if (requiredDegree >= 5) {
+			return ArmatureTier.VICAR_CONSECRATED;
+		}
+		return ArmatureTier.BASE;
+	}
+
 	public static List<Integer> bowlSlotsInInsertionOrder() {
 		return List.of(
 				bowlSlotFor(ArmatureSlot.HEAD),
@@ -83,6 +139,11 @@ public final class ArmatureUpgradeRules {
 	}
 
 	public static ProcessResult process(List<Candidate> candidates, int playerDegree, double availableBlood) {
+		return process(candidates, playerDegree, ArmatureTier.BASE, availableBlood);
+	}
+
+	public static ProcessResult process(List<Candidate> candidates, int playerDegree,
+			ArmatureTier armatureTier, double availableBlood) {
 		List<ArmatureSlot> upgradedSlots = new ArrayList<>();
 		List<Integer> consumedBowlSlots = new ArrayList<>();
 		double spent = 0;
@@ -99,7 +160,7 @@ public final class ArmatureUpgradeRules {
 				Candidate checked = new Candidate(candidate.slot(), candidate.bowlSlot(), candidate.baseMatches(),
 						candidate.reagentMatches(), candidate.persistentGateMatches(),
 						candidate.requiredDegree(), playerDegree, candidate.bloodCost());
-				if (!checked.hasMatchingInputs()) {
+				if (!checked.hasMatchingInputs(armatureTier)) {
 					continue;
 				}
 				if (spent + checked.bloodCost() > availableBlood) {

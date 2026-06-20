@@ -15,6 +15,7 @@ public final class ArmatureUpgradeRulesTest {
 		matchingReagentInAnyBowlCanUpgradeArmorSlot();
 		partialCompletionConsumesOnlySuccessfulSlots();
 		reagentBaseDegreeAndPersistentGatesBlockPieces();
+		armatureTierGatesHighDegreeRecipes();
 		insufficientBloodStopsAtTheMatchingPiece();
 	}
 
@@ -104,6 +105,32 @@ public final class ArmatureUpgradeRulesTest {
 		assertTrue("no blocked candidates upgrade", result.upgradedSlots().isEmpty());
 		assertDouble("no blood spent", 0, result.bloodSpent());
 		assertTrue("no bowls consumed", result.consumedBowlSlots().isEmpty());
+	}
+
+	private static void armatureTierGatesHighDegreeRecipes() {
+		ArmatureUpgradeRules.ProcessResult baseResult = ArmatureUpgradeRules.process(List.of(
+				candidate(ArmatureUpgradeRules.ArmatureSlot.HEAD, 0, true, true, true, 5, 5, 50)
+		), 5, ArmatureUpgradeRules.ArmatureTier.BASE, 100);
+
+		assertTrue("base armature cannot craft degree 5 upgrades", baseResult.upgradedSlots().isEmpty());
+
+		ArmatureUpgradeRules.ProcessResult vicarResult = ArmatureUpgradeRules.process(List.of(
+				candidate(ArmatureUpgradeRules.ArmatureSlot.HEAD, 0, true, true, true, 5, 5, 50),
+				candidate(ArmatureUpgradeRules.ArmatureSlot.CHEST, 1, true, true, true, 7, 7, 50)
+		), 7, ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED, 500);
+
+		assertEquals("vicar armature crafts degree 5 only", 1, vicarResult.upgradedSlots().size());
+		assertTrue("degree 5 upgrade allowed after vicar kit",
+				vicarResult.upgradedSlots().contains(ArmatureUpgradeRules.ArmatureSlot.HEAD));
+		assertFalse("degree 7 upgrade still blocked before cornerstone",
+				vicarResult.upgradedSlots().contains(ArmatureUpgradeRules.ArmatureSlot.CHEST));
+
+		ArmatureUpgradeRules.ProcessResult monolithicResult = ArmatureUpgradeRules.process(List.of(
+				candidate(ArmatureUpgradeRules.ArmatureSlot.CHEST, 1, true, true, true, 7, 7, 50)
+		), 7, ArmatureUpgradeRules.ArmatureTier.MONOLITHIC, 100);
+
+		assertTrue("degree 7 upgrade allowed after cornerstone",
+				monolithicResult.upgradedSlots().contains(ArmatureUpgradeRules.ArmatureSlot.CHEST));
 	}
 
 	private static void insufficientBloodStopsAtTheMatchingPiece() {

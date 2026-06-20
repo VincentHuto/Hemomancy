@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
@@ -69,6 +70,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 
 	private static final String TAG_RESTRAINED_PLAYER = "RestrainedPlayer";
 	private static final String TAG_BLOOD_LEVEL = "BloodLevel";
+	private static final String TAG_ARMATURE_TIER = "ArmatureTier";
 
 	private NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	@Nullable
@@ -77,6 +79,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	private ArmatureUpgradeRules.ArmatureSlot pendingSlot;
 	private int pendingBowlSlot = -1;
 	private long craftStartTick = -1L;
+	private ArmatureUpgradeRules.ArmatureTier armatureTier = ArmatureUpgradeRules.ArmatureTier.BASE;
 
 	public HematicArmatureBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.hematic_armature.get(), pos, state);
@@ -173,7 +176,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			if (reagent.isEmpty()) {
 				continue;
 			}
-			ArmatureUpgradeRecipe recipe = findMatchingRecipe(recipes, slot, worn, reagent, player);
+			ArmatureUpgradeRecipe recipe = findMatchingRecipe(recipes, slot, worn, reagent, player, armatureTier);
 			if (recipe != null) {
 				return new MatchedUpgrade(recipe, bowlSlot, reagent);
 			}
@@ -190,9 +193,10 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 
 	@Nullable
 	private static ArmatureUpgradeRecipe findMatchingRecipe(List<ArmatureUpgradeRecipe> recipes,
-			ArmatureUpgradeRules.ArmatureSlot slot, ItemStack worn, ItemStack reagent, Player player) {
+			ArmatureUpgradeRules.ArmatureSlot slot, ItemStack worn, ItemStack reagent, Player player,
+			ArmatureUpgradeRules.ArmatureTier armatureTier) {
 		for (ArmatureUpgradeRecipe recipe : recipes) {
-			if (recipe.matchesUpgrade(slot, worn, reagent, player)) {
+			if (recipe.matchesUpgrade(slot, worn, reagent, player, armatureTier)) {
 				return recipe;
 			}
 		}
@@ -395,6 +399,55 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		return false;
 	}
 
+	public boolean applyArmatureUpgradeItem(ServerPlayer player, InteractionHand hand) {
+		ItemStack held = player.getItemInHand(hand);
+		if (held.isEmpty()) {
+			return false;
+		}
+
+		ArmatureUpgradeRules.ArmatureTier targetTier = null;
+		int requiredDegree = 0;
+		if (held.is(ItemInit.vicars_consecration_kit.get())) {
+			targetTier = ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED;
+			requiredDegree = 5;
+		} else if (held.is(ItemInit.monolithic_cornerstone.get())) {
+			targetTier = ArmatureUpgradeRules.ArmatureTier.MONOLITHIC;
+			requiredDegree = 7;
+		}
+		if (targetTier == null) {
+			return false;
+		}
+		if (armatureTier.id() >= targetTier.id()) {
+			player.sendSystemMessage(Component.translatable(
+					"block.hemomancy.hematic_armature.upgrade_already_applied").withStyle(ChatFormatting.DARK_RED));
+			return true;
+		}
+		if (targetTier == ArmatureUpgradeRules.ArmatureTier.MONOLITHIC
+				&& armatureTier != ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED) {
+			player.sendSystemMessage(Component.translatable(
+					"block.hemomancy.hematic_armature.cornerstone_requires_vicar").withStyle(ChatFormatting.DARK_RED));
+			return true;
+		}
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < requiredDegree) {
+			player.sendSystemMessage(Component.translatable(
+					"block.hemomancy.hematic_armature.upgrade_requires_degree",
+					requiredDegree).withStyle(ChatFormatting.DARK_RED));
+			return true;
+		}
+
+		armatureTier = targetTier;
+		clearPendingCraft();
+		if (!player.getAbilities().instabuild) {
+			held.shrink(1);
+		}
+		sendUpdates();
+		player.sendSystemMessage(Component.translatable(
+				"block.hemomancy.hematic_armature.upgrade_tier_applied",
+				Component.translatable("block.hemomancy.hematic_armature.tier."
+						+ targetTier.serializedName())).withStyle(ChatFormatting.DARK_RED));
+		return true;
+	}
+
 	private static void giveOrDrop(Player player, ItemStack stack) {
 		if (stack.isEmpty()) {
 			return;
@@ -417,6 +470,10 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 
 	public boolean hasRestrainedPlayer() {
 		return restrainedPlayer != null;
+	}
+
+	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() {
+		return armatureTier;
 	}
 
 	public void clearRestrainedPlayer(@Nullable UUID playerId) {
@@ -564,6 +621,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, items, registries);
 		restrainedPlayer = tag.hasUUID(TAG_RESTRAINED_PLAYER) ? tag.getUUID(TAG_RESTRAINED_PLAYER) : null;
+		armatureTier = tag.contains(TAG_ARMATURE_TIER)
+				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER))
+				: ArmatureUpgradeRules.ArmatureTier.BASE;
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			volume.setActive(true);
@@ -579,6 +639,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (restrainedPlayer != null) {
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
+		tag.putString(TAG_ARMATURE_TIER, armatureTier.serializedName());
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
@@ -592,6 +653,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (restrainedPlayer != null) {
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
+		tag.putString(TAG_ARMATURE_TIER, armatureTier.serializedName());
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
@@ -605,6 +667,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, items, registries);
 		restrainedPlayer = tag.hasUUID(TAG_RESTRAINED_PLAYER) ? tag.getUUID(TAG_RESTRAINED_PLAYER) : null;
+		armatureTier = tag.contains(TAG_ARMATURE_TIER)
+				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER))
+				: ArmatureUpgradeRules.ArmatureTier.BASE;
 		IBloodVolume volume = getBloodCapability();
 		if (volume != null) {
 			volume.setActive(true);
