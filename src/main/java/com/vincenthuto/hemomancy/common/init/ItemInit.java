@@ -222,18 +222,19 @@ public class ItemInit {
             () -> new VivianiteScalpelItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> spore_sac = BASEITEMS.register("spore_sac",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> desiccated_membrane = BASEITEMS.register("desiccated_membrane",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> molten_scab = BASEITEMS.register("molten_scab",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> void_ichor = BASEITEMS.register("void_ichor",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> frozen_clot = BASEITEMS.register("frozen_clot",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> abyssal_ichor = BASEITEMS.register("abyssal_ichor",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> nerve_bundle = BASEITEMS.register("nerve_bundle",
-            () -> new Item(new Item.Properties()));
+    // Dormant tendency-mob placeholder drops. Keep these here for easy restoration if the mobs return.
+//    public static final DeferredHolder<Item, Item> desiccated_membrane = BASEITEMS.register("desiccated_membrane",
+//            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> molten_scab = BASEITEMS.register("molten_scab",
+//            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> void_ichor = BASEITEMS.register("void_ichor",
+//            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> frozen_clot = BASEITEMS.register("frozen_clot",
+//            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> abyssal_ichor = BASEITEMS.register("abyssal_ichor",
+//            () -> new Item(new Item.Properties()));
+//    public static final DeferredHolder<Item, Item> nerve_bundle = BASEITEMS.register("nerve_bundle",
+//            () -> new Item(new Item.Properties()));
     // Enzymes
     public static final DeferredHolder<Item, Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
             () -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));
@@ -957,27 +958,27 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hematic_burrower = SPAWNEGGS.register(
             "spawn_egg_hematic_burrower",
             () -> new DeferredSpawnEggItem(EntityInit.hematic_burrower, 0x3A2520, 0x8A1020, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
-            "spawn_egg_dessicant",
-            () -> new DeferredSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
-            "spawn_egg_cruor_fiend",
-            () -> new DeferredSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_void_drinker = SPAWNEGGS.register(
-            "spawn_egg_void_drinker",
-            () -> new DeferredSpawnEggItem(EntityInit.void_drinker, 0x1A0033, 0x6A0DAD, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_frozen_clot = SPAWNEGGS.register(
-            "spawn_egg_frozen_clot",
-            () -> new DeferredSpawnEggItem(EntityInit.frozen_clot, 0xA8D8EA, 0x5C0000, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
-            "spawn_egg_abyssal_siphon",
-            () -> new DeferredSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
-            "spawn_egg_synapse_hound",
-            () -> new DeferredSpawnEggItem(EntityInit.synapse_hound, 0x7DF9FF, 0x8B0000, new Item.Properties()));
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
-            "spawn_egg_myelin_borer",
-            () -> new DeferredSpawnEggItem(EntityInit.myelin_borer, 0xE8D8C0, 0x7DF9FF, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
+//            "spawn_egg_dessicant",
+//            () -> new DeferredSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
+//            "spawn_egg_cruor_fiend",
+//            () -> new DeferredSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_void_drinker = SPAWNEGGS.register(
+//            "spawn_egg_void_drinker",
+//            () -> new DeferredSpawnEggItem(EntityInit.void_drinker, 0x1A0033, 0x6A0DAD, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_frozen_clot = SPAWNEGGS.register(
+//            "spawn_egg_frozen_clot",
+//            () -> new DeferredSpawnEggItem(EntityInit.frozen_clot, 0xA8D8EA, 0x5C0000, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
+//            "spawn_egg_abyssal_siphon",
+//            () -> new DeferredSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
+//            "spawn_egg_synapse_hound",
+//            () -> new DeferredSpawnEggItem(EntityInit.synapse_hound, 0x7DF9FF, 0x8B0000, new Item.Properties()));
+//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
+//            "spawn_egg_myelin_borer",
+//            () -> new DeferredSpawnEggItem(EntityInit.myelin_borer, 0xE8D8C0, 0x7DF9FF, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_crimson_doe = SPAWNEGGS.register(
             "spawn_egg_crimson_doe",
             () -> new DeferredSpawnEggItem(EntityInit.crimson_doe, 0xFAE6E6, 0x8B0000, new Item.Properties()));

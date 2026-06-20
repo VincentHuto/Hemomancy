@@ -51,7 +51,6 @@ public class SpecimenJarBlockItem extends BlockItem {
 				|| target.getType() == EntityInit.chitinite.get()
 				|| target.getType() == EntityInit.fervent_chitinite.get()
 				|| target.getType() == EntityInit.hemolymphopoda.get()
-				|| target.getType() == EntityInit.myelin_borer.get()
 				|| target.getType() == EntityInit.fargone.get()
 				|| target.getType() == EntityInit.tooth_pecks.get();
 	}

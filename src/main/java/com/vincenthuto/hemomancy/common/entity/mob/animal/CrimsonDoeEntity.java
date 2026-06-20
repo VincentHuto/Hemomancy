@@ -47,7 +47,7 @@ public class CrimsonDoeEntity extends PathfinderMob {
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		BlockPos below = pos.below();
 		return world.getBlockState(below).isSolidRender(world, below)
-				&& world.getRawBrightness(pos, 0) > 8;
+				&& (!world.dimensionType().hasSkyLight() || world.getRawBrightness(pos, 0) > 8);
 	}
 
 	@Override

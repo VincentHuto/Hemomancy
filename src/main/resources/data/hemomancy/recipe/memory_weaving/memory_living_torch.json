@@ -2,7 +2,7 @@
     "type":  "hemomancy:memory_weaving",
     "catalysts":  [
                       {
-                          "item":  "hemomancy:molten_scab"
+                          "item":  "hemomancy:fervent_spores"
                       }
                   ],
     "enzymes":  {

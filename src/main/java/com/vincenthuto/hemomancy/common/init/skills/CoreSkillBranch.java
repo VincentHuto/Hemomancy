@@ -47,7 +47,7 @@ public final class CoreSkillBranch {
 			SkillPointInit.skill_dynamic_use = SkillPointInit.registerSkill(branch,
 					new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_efficiency)
 							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(505, 310).setBranch("core").setBranchColor(0xFFD00000)
-							.setIconItem(() -> new ItemStack(ItemInit.abyssal_ichor.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.recycled_enzyme.get())));
 			SkillPointInit.skill_feeding_frenzy = SkillPointInit.registerSkill(branch,
 					new SkillPoint(5, "skill_feeding_frenzy", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_last_wind)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(391, 210).setBranch("core").setBranchColor(0xFFD00000)

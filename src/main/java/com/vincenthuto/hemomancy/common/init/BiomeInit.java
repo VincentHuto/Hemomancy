@@ -289,10 +289,6 @@ public class BiomeInit {
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 		// Deep-dwelling creatures â€” bizarre, predatory, alien
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.myelin_borer.get(), 18, 1, 4));
-		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.abyssal_siphon.get(), 10, 1, 2));
-		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.erythromycelium_eruptus.get(), 8, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.AMBIENT,
 				new MobSpawnSettings.SpawnerData(EntityInit.hemolymphopoda.get(), 20, 3, 8));
@@ -333,18 +329,13 @@ public class BiomeInit {
 
 	/**
 	 * Hemorrhagic Plateau â€” hot, exposed, hostile. A blasted highland of dried
-	 * hemorrhagic crust and scattered calcified growths. Cruor Fiends patrol the
-	 * surface while dessicants lurk in cracked fissures. Rare Spore Nexus Towers
+	 * hemorrhagic crust and scattered calcified growths. Rare Spore Nexus Towers
 	 * erupt from the plateau floor.
 	 */
 	private static Biome hemorrhagicPlateau(HolderGetter<PlacedFeature> placedFeatureGetter,
 			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 		// Surface predators of the exposed plateau
-		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.cruor_fiend.get(), 20, 1, 3));
-		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.dessicant.get(), 15, 1, 4));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.abhorent_thought.get(), 6, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,

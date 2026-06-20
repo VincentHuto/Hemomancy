@@ -30,7 +30,6 @@ public final class BloodEconomyLootDataTest {
 
 		String jugCandidates = read(DATA_ROOT.resolve("hemomancy/tags/entity_type/bloody_jug_drop_candidates.json"));
 		assertContains("thirsters can drop bloody jugs", jugCandidates, "hemomancy:thirster");
-		assertContains("cruor fiends can drop bloody jugs", jugCandidates, "hemomancy:cruor_fiend");
 		assertContains("blood drunk puppeteers can drop bloody jugs", jugCandidates, "hemomancy:blood_drunk_puppeteer");
 	}
 

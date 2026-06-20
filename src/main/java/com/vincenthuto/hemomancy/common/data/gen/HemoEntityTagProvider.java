@@ -46,7 +46,6 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chitinite.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fervent_chitinite.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.hemolymphopoda.getId()))
-				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.myelin_borer.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fargone.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.tooth_pecks.getId()));
 

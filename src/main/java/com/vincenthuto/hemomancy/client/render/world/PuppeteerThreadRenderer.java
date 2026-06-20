@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.client.Minecraft;
@@ -13,6 +15,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.UUID;
 
 public final class PuppeteerThreadRenderer {
 	private static final int SEGMENTS = 28;
@@ -33,10 +37,24 @@ public final class PuppeteerThreadRenderer {
 		for (Entity entity : level.entitiesForRendering()) {
 			if (entity instanceof LivingEntity summon && entity instanceof BoundPuppeteerSummon bound) {
 				renderThreadToSummon(poseStack, consumer, summon, bound, partialTick, camera);
+			} else if (entity instanceof EnthralledDollEntity doll && doll.isSummonedByPuppeteer()) {
+				renderThreadToWildDoll(poseStack, consumer, doll, partialTick, camera, level);
 			}
 		}
 
 		buffer.endBatch(RenderType.lines());
+	}
+
+	private static void renderThreadToWildDoll(PoseStack poseStack, VertexConsumer consumer,
+											   EnthralledDollEntity doll, float partialTick,
+											   Vec3 camera, ClientLevel level) {
+		BloodDrunkPuppeteerEntity puppeteer = findPuppeteerOwner(level, doll.getOwnerUUID());
+		if (puppeteer == null) {
+			return;
+		}
+		Vec3 start = entityAnchor(puppeteer, partialTick, 0.78).subtract(camera);
+		Vec3 end = entityAnchor(doll, partialTick, 0.78).subtract(camera);
+		renderThread(poseStack, consumer, start, end, doll.tickCount + partialTick, 1.0F);
 	}
 
 	private static void renderThreadToSummon(PoseStack poseStack, VertexConsumer consumer,
@@ -57,8 +75,12 @@ public final class PuppeteerThreadRenderer {
 
 		Vec3 start = ownerAnchor(owner, partialTick).subtract(camera);
 		Vec3 end = summonAnchor(summon, partialTick).subtract(camera);
+		renderThread(poseStack, consumer, start, end, summon.tickCount + partialTick, fade);
+	}
+
+	private static void renderThread(PoseStack poseStack, VertexConsumer consumer,
+									 Vec3 start, Vec3 end, float time, float fade) {
 		Vec3 delta = end.subtract(start);
-		float time = summon.tickCount + partialTick;
 
 		poseStack.pushPose();
 		PoseStack.Pose pose = poseStack.last();
@@ -88,6 +110,20 @@ public final class PuppeteerThreadRenderer {
 		poseStack.popPose();
 	}
 
+	private static BloodDrunkPuppeteerEntity findPuppeteerOwner(ClientLevel level, UUID ownerId) {
+		if (ownerId == null) {
+			return null;
+		}
+		for (Entity entity : level.entitiesForRendering()) {
+			if (entity instanceof BloodDrunkPuppeteerEntity puppeteer
+					&& puppeteer.isAlive()
+					&& ownerId.equals(puppeteer.getUUID())) {
+				return puppeteer;
+			}
+		}
+		return null;
+	}
+
 	private static Vec3 ownerAnchor(Player owner, float partialTick) {
 		double x = Mth.lerp(partialTick, owner.xOld, owner.getX());
 		double y = Mth.lerp(partialTick, owner.yOld, owner.getY()) + owner.getBbHeight() * 0.68;
@@ -99,9 +135,13 @@ public final class PuppeteerThreadRenderer {
 	}
 
 	private static Vec3 summonAnchor(LivingEntity summon, float partialTick) {
-		double x = Mth.lerp(partialTick, summon.xOld, summon.getX());
-		double y = Mth.lerp(partialTick, summon.yOld, summon.getY()) + summon.getBbHeight() * 0.55;
-		double z = Mth.lerp(partialTick, summon.zOld, summon.getZ());
+		return entityAnchor(summon, partialTick, 0.55);
+	}
+
+	private static Vec3 entityAnchor(LivingEntity entity, float partialTick, double heightScale) {
+		double x = Mth.lerp(partialTick, entity.xOld, entity.getX());
+		double y = Mth.lerp(partialTick, entity.yOld, entity.getY()) + entity.getBbHeight() * heightScale;
+		double z = Mth.lerp(partialTick, entity.zOld, entity.getZ());
 		return new Vec3(x, y, z);
 	}
 

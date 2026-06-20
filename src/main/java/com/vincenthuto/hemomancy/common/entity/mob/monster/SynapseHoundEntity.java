@@ -102,7 +102,7 @@ public class SynapseHoundEntity extends Monster {
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
-				&& checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
 	@Override

@@ -2,7 +2,7 @@
     "type":  "hemomancy:memory_weaving",
     "catalysts":  [
                       {
-                          "item":  "hemomancy:frozen_clot"
+                          "item":  "hemomancy:frigid_spores"
                       }
                   ],
     "enzymes":  {

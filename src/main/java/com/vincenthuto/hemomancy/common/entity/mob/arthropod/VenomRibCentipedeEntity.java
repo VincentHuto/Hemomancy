@@ -80,7 +80,6 @@ public class VenomRibCentipedeEntity extends PathfinderMob {
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, ChitiniteEntity.class, true));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, FerventChitiniteEntity.class, true));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, HemolymphopodaEntity.class, true));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, MyelinBorerEntity.class, true));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, ToothPecksEntity.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, VerdigrisMothEntity.class, true));
 	}

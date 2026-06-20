@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "hemomancy:void_ichor" },
+    { "item": "hemomancy:umbral_spores" },
     { "item": "hemomancy:sanguine_formation" },
     { "item": "minecraft:ender_eye" }
   ],

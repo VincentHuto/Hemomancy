@@ -12,8 +12,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -90,7 +90,8 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Player.class,
+				BloodDrunkPuppeteerTuning.PUPPETEER_AVOID_PLAYER_DISTANCE, 1.0D, 1.2D));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 		this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));

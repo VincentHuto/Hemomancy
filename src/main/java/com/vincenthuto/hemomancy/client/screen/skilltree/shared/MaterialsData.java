@@ -361,35 +361,35 @@ public final class MaterialsData {
                 "Common stone saturated with sanguine residue.",
                 "Materials", () -> new ItemStack(ItemInit.blood_stained_stone.get())));
 
-        list.add(new MaterialEntry("desiccated_membrane", "Desiccated Membrane",
-                "Dried organic membrane harvested from blood constructs.",
-                "Materials", () -> new ItemStack(ItemInit.desiccated_membrane.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("molten_scab", "Molten Scab",
-                "Hardened blood residue with a high heat signature.",
-                "Materials", () -> new ItemStack(ItemInit.molten_scab.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("frozen_clot", "Frozen Clot",
-                "A coagulated mass of blood locked in a cold stasis.",
-                "Materials", () -> new ItemStack(ItemInit.frozen_clot.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("abyssal_ichor", "Abyssal Ichor",
-                "Dark ichor drawn from deeper blood constructs. Tenebris-aligned.",
-                "Materials", () -> new ItemStack(ItemInit.abyssal_ichor.get()),
-                true, UnlockPredicate.minDegree(5)));
-
-        list.add(new MaterialEntry("void_ichor", "Void Ichor",
-                "Ichor from the periphery of blood space. Reacts violently with light.",
-                "Materials", () -> new ItemStack(ItemInit.void_ichor.get()),
-                true, UnlockPredicate.minDegree(6)));
-
-        list.add(new MaterialEntry("nerve_bundle", "Nerve Bundle",
-                "Extracted nerve cluster. Carries residual Ductilis tendency.",
-                "Materials", () -> new ItemStack(ItemInit.nerve_bundle.get()),
-                true, UnlockPredicate.minDegree(3)));
+//        list.add(new MaterialEntry("desiccated_membrane", "Desiccated Membrane",
+//                "Dried organic membrane harvested from blood constructs.",
+//                "Materials", () -> new ItemStack(ItemInit.desiccated_membrane.get()),
+//                true, UnlockPredicate.minDegree(3)));
+//
+//        list.add(new MaterialEntry("molten_scab", "Molten Scab",
+//                "Hardened blood residue with a high heat signature.",
+//                "Materials", () -> new ItemStack(ItemInit.molten_scab.get()),
+//                true, UnlockPredicate.minDegree(3)));
+//
+//        list.add(new MaterialEntry("frozen_clot", "Frozen Clot",
+//                "A coagulated mass of blood locked in a cold stasis.",
+//                "Materials", () -> new ItemStack(ItemInit.frozen_clot.get()),
+//                true, UnlockPredicate.minDegree(3)));
+//
+//        list.add(new MaterialEntry("abyssal_ichor", "Abyssal Ichor",
+//                "Dark ichor drawn from deeper blood constructs. Tenebris-aligned.",
+//                "Materials", () -> new ItemStack(ItemInit.abyssal_ichor.get()),
+//                true, UnlockPredicate.minDegree(5)));
+//
+//        list.add(new MaterialEntry("void_ichor", "Void Ichor",
+//                "Ichor from the periphery of blood space. Reacts violently with light.",
+//                "Materials", () -> new ItemStack(ItemInit.void_ichor.get()),
+//                true, UnlockPredicate.minDegree(6)));
+//
+//        list.add(new MaterialEntry("nerve_bundle", "Nerve Bundle",
+//                "Extracted nerve cluster. Carries residual Ductilis tendency.",
+//                "Materials", () -> new ItemStack(ItemInit.nerve_bundle.get()),
+//                true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("fungal_spine", "Fungal Spine",
                 "Hardened spine from a fungal blood creature. Used in crafting.",

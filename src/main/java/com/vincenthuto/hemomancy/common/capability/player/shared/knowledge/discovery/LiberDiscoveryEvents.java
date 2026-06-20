@@ -70,7 +70,7 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("fungal_spine"),          LiberEntryDefinitions.HYPHAE);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("spore_sac"),             LiberEntryDefinitions.HYPHAE);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("chitinous_husk"),        LiberEntryDefinitions.HYPHAE);
-		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("desiccated_membrane"),   LiberEntryDefinitions.HYPHAE);
+//		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("desiccated_membrane"),   LiberEntryDefinitions.HYPHAE);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("fervent_husk"),          LiberEntryDefinitions.HYPHAE);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("foul_paste"),            LiberEntryDefinitions.HYPHAE);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("serpent_scale"),         LiberEntryDefinitions.HYPHAE);
@@ -85,8 +85,8 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("engram_stamp"),               LiberEntryDefinitions.BLOOD_MEMORIES);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("unsigned_ancestral_ledger"),  LiberEntryDefinitions.BLOOD_MEMORIES);
 
-		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("abyssal_ichor"),  LiberEntryDefinitions.ENTITY);
-		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("void_ichor"),     LiberEntryDefinitions.ENTITY);
+//		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("abyssal_ichor"),  LiberEntryDefinitions.ENTITY);
+//		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("void_ichor"),     LiberEntryDefinitions.ENTITY);
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("qliphoth_seed"),  LiberEntryDefinitions.QLIPHOTH);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("qliphoth_pome"),  LiberEntryDefinitions.QLIPHOTH);

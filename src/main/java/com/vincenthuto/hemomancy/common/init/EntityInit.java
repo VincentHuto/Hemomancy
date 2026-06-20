@@ -442,40 +442,41 @@ public class EntityInit {
                     .sized(1F, 1F).build(Hemomancy.rloc("chthonian").toString()));
 
     // New biome mobs
-    public static final DeferredHolder<EntityType<?>, EntityType<DessicantEntity>> dessicant = ENTITY_TYPES.register(
-            "dessicant",
-            () -> EntityType.Builder.of(DessicantEntity::new, MobCategory.MONSTER)
-                    .sized(0.8F, 0.5F).build(Hemomancy.rloc("dessicant").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<CruorFiendEntity>> cruor_fiend = ENTITY_TYPES.register(
-            "cruor_fiend",
-            () -> EntityType.Builder.of(CruorFiendEntity::new, MobCategory.MONSTER)
-                    .fireImmune().sized(0.8F, 2.0F).build(Hemomancy.rloc("cruor_fiend").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<VoidDrinkerEntity>> void_drinker = ENTITY_TYPES.register(
-            "void_drinker",
-            () -> EntityType.Builder.of(VoidDrinkerEntity::new, MobCategory.MONSTER)
-                    .sized(1.0F, 1.5F).build(Hemomancy.rloc("void_drinker").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<FrozenClotEntity>> frozen_clot = ENTITY_TYPES.register(
-            "frozen_clot",
-            () -> EntityType.Builder.of(FrozenClotEntity::new, MobCategory.MONSTER)
-                    .sized(1.0F, 1.0F).build(Hemomancy.rloc("frozen_clot").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<AbyssalSiphonEntity>> abyssal_siphon = ENTITY_TYPES.register(
-            "abyssal_siphon",
-            () -> EntityType.Builder.of(AbyssalSiphonEntity::new, MobCategory.MONSTER)
-                    .sized(1.2F, 0.6F).build(Hemomancy.rloc("abyssal_siphon").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<SynapseHoundEntity>> synapse_hound = ENTITY_TYPES.register(
-            "synapse_hound",
-            () -> EntityType.Builder.of(SynapseHoundEntity::new, MobCategory.MONSTER)
-                    .sized(0.8F, 1.0F).build(Hemomancy.rloc("synapse_hound").toString()));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<MyelinBorerEntity>> myelin_borer = ENTITY_TYPES.register(
-            "myelin_borer",
-            () -> EntityType.Builder.of(MyelinBorerEntity::new, MobCategory.MONSTER)
-                    .sized(0.6F, 0.4F).build(Hemomancy.rloc("myelin_borer").toString()));
+    // Tendency placeholder mobs are dormant until they have a stronger gameplay role.
+//    public static final DeferredHolder<EntityType<?>, EntityType<DessicantEntity>> dessicant = ENTITY_TYPES.register(
+//            "dessicant",
+//            () -> EntityType.Builder.of(DessicantEntity::new, MobCategory.MONSTER)
+//                    .sized(0.8F, 0.5F).build(Hemomancy.rloc("dessicant").toString()));
+//
+//    public static final DeferredHolder<EntityType<?>, EntityType<CruorFiendEntity>> cruor_fiend = ENTITY_TYPES.register(
+//            "cruor_fiend",
+//            () -> EntityType.Builder.of(CruorFiendEntity::new, MobCategory.MONSTER)
+//                    .fireImmune().sized(0.8F, 2.0F).build(Hemomancy.rloc("cruor_fiend").toString()));
+//
+//    public static final DeferredHolder<EntityType<?>, EntityType<VoidDrinkerEntity>> void_drinker = ENTITY_TYPES.register(
+//            "void_drinker",
+//            () -> EntityType.Builder.of(VoidDrinkerEntity::new, MobCategory.MONSTER)
+//                    .sized(1.0F, 1.5F).build(Hemomancy.rloc("void_drinker").toString()));
+//
+//    public static final DeferredHolder<EntityType<?>, EntityType<FrozenClotEntity>> frozen_clot = ENTITY_TYPES.register(
+//            "frozen_clot",
+//            () -> EntityType.Builder.of(FrozenClotEntity::new, MobCategory.MONSTER)
+//                    .sized(1.0F, 1.0F).build(Hemomancy.rloc("frozen_clot").toString()));
+//
+//    public static final DeferredHolder<EntityType<?>, EntityType<AbyssalSiphonEntity>> abyssal_siphon = ENTITY_TYPES.register(
+//            "abyssal_siphon",
+//            () -> EntityType.Builder.of(AbyssalSiphonEntity::new, MobCategory.MONSTER)
+//                    .sized(1.2F, 0.6F).build(Hemomancy.rloc("abyssal_siphon").toString()));
+//
+//    public static final DeferredHolder<EntityType<?>, EntityType<SynapseHoundEntity>> synapse_hound = ENTITY_TYPES.register(
+//            "synapse_hound",
+//            () -> EntityType.Builder.of(SynapseHoundEntity::new, MobCategory.MONSTER)
+//                    .sized(0.8F, 1.0F).build(Hemomancy.rloc("synapse_hound").toString()));
+//
+//    public static final DeferredHolder<EntityType<?>, EntityType<MyelinBorerEntity>> myelin_borer = ENTITY_TYPES.register(
+//            "myelin_borer",
+//            () -> EntityType.Builder.of(MyelinBorerEntity::new, MobCategory.MONSTER)
+//                    .sized(0.6F, 0.4F).build(Hemomancy.rloc("myelin_borer").toString()));
 
     // Passive Mobs
     public static final DeferredHolder<EntityType<?>, EntityType<CrimsonDoeEntity>> crimson_doe = ENTITY_TYPES.register(
@@ -672,27 +673,27 @@ public class EntityInit {
         event.register(EntityInit.abhorent_thought.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.dessicant.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DessicantEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.cruor_fiend.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CruorFiendEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.void_drinker.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VoidDrinkerEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.frozen_clot.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FrozenClotEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.abyssal_siphon.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbyssalSiphonEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.synapse_hound.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SynapseHoundEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.myelin_borer.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere,
-                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.dessicant.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DessicantEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.cruor_fiend.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CruorFiendEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.void_drinker.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VoidDrinkerEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.frozen_clot.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FrozenClotEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.abyssal_siphon.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbyssalSiphonEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.synapse_hound.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SynapseHoundEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
+//        event.register(EntityInit.myelin_borer.get(), SpawnPlacementTypes.ON_GROUND,
+//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere,
+//                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.crimson_doe.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -805,13 +806,13 @@ public class EntityInit {
         event.put(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalEntity.setAttributes().build());
         event.put(EntityInit.vesper_evening_star.get(), VesperTheEveningStarEntity.setAttributes().build());
         event.put(EntityInit.mycophant.get(), MycophantEntity.setAttributes().build());
-        event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
-        event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
-        event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
-        event.put(EntityInit.frozen_clot.get(), FrozenClotEntity.setAttributes().build());
-        event.put(EntityInit.abyssal_siphon.get(), AbyssalSiphonEntity.setAttributes().build());
-        event.put(EntityInit.synapse_hound.get(), SynapseHoundEntity.setAttributes().build());
-        event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
+//        event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
+//        event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
+//        event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
+//        event.put(EntityInit.frozen_clot.get(), FrozenClotEntity.setAttributes().build());
+//        event.put(EntityInit.abyssal_siphon.get(), AbyssalSiphonEntity.setAttributes().build());
+//        event.put(EntityInit.synapse_hound.get(), SynapseHoundEntity.setAttributes().build());
+//        event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
         event.put(EntityInit.hematic_burrower.get(), HematicBurrowerEntity.setAttributes().build());

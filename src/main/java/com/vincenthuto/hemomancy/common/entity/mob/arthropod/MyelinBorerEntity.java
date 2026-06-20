@@ -101,7 +101,7 @@ public class MyelinBorerEntity extends Monster {
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
 				&& pPos.getY() < 48
-				&& checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
 	@Override

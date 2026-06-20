@@ -35,11 +35,8 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
  * <ul>
  *   <li>Any entity implementing {@link IBloodConstruct} (player-summoned constructs)</li>
  *   <li>{@link HematicConstructEntity} &mdash; wild hematic construct</li>
- *   <li>{@link CruorFiendEntity} &mdash; cruor (dark blood) fiend</li>
- *   <li>{@link FrozenClotEntity} &mdash; blood clot creature</li>
  *   <li>{@link BloodDrunkPuppeteerEntity} &mdash; blood-drunk puppeteer</li>
  *   <li>{@link ThirsterEntity} &mdash; blood thirster</li>
- *   <li>{@link AbyssalSiphonEntity} &mdash; abyssal blood siphon</li>
  *   <li>{@link LeechEntity} &mdash; leech (blood sucker)</li>
  *   <li>{@link VenousStriderEntity} &mdash; venous (blood-vessel) strider</li>
  * </ul>
@@ -125,11 +122,8 @@ public class ViridSalisTrailHandler {
     private static boolean isBloodMob(LivingEntity entity) {
         return entity instanceof IBloodConstruct
                 || entity instanceof HematicConstructEntity
-                || entity instanceof CruorFiendEntity
-                || entity instanceof FrozenClotEntity
                 || entity instanceof BloodDrunkPuppeteerEntity
                 || entity instanceof ThirsterEntity
-                || entity instanceof AbyssalSiphonEntity
                 || entity instanceof LeechEntity
                 || entity instanceof VenousStriderEntity;
     }

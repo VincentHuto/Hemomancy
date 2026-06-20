@@ -33,18 +33,6 @@
     "misc": [],
     "monster": [
       {
-        "type": "hemomancy:cruor_fiend",
-        "weight": 20,
-        "minCount": 1,
-        "maxCount": 3
-      },
-      {
-        "type": "hemomancy:dessicant",
-        "weight": 15,
-        "minCount": 1,
-        "maxCount": 4
-      },
-      {
         "type": "hemomancy:abhorent_thought",
         "weight": 6,
         "minCount": 1,

@@ -6,6 +6,8 @@ public final class BloodDrunkPuppeteerTuning {
 	public static final double DOLL_FOLLOW_START_DISTANCE = 7.0;
 	public static final double DOLL_TELEPORT_DISTANCE = 40.0;
 	public static final double DOLL_FOLLOW_SPEED = 1.12;
+	public static final double DOLL_ATTACK_SPEED = 1.18;
+	public static final float PUPPETEER_AVOID_PLAYER_DISTANCE = 6.0F;
 	public static final boolean SUMMONED_DOLLS_DROP_LOOT = false;
 
 	private static final double[][] DOLL_OFFSETS = {

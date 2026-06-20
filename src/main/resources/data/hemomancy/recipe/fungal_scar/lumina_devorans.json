@@ -5,7 +5,7 @@
   "phase1_duration": 1200,
   "maturation_threshold": 2000,
   "seed": {
-    "id": "hemomancy:void_ichor"
+    "id": "hemomancy:umbral_spores"
   },
   "immature_result": {
     "id": "hemomancy:immature_fungal_scar"

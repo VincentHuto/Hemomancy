@@ -13,7 +13,6 @@ public final class EntityLootTableCoverageResourceTest {
 
 	private static final GuaranteedDrop[] GUARANTEED_MATERIAL_DROPS = {
 			new GuaranteedDrop("abhorent_thought", "hemomancy:sanguine_formation"),
-			new GuaranteedDrop("abyssal_siphon", "hemomancy:abyssal_ichor"),
 			new GuaranteedDrop("barbed_urchin", "hemomancy:calcified_blood_spine"),
 			new GuaranteedDrop("blood_drunk_puppeteer", "hemomancy:puppeteering_thread"),
 			new GuaranteedDrop("blood_thrall", "hemomancy:sanguine_formation"),
@@ -21,13 +20,10 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("chthonian", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian_queen", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("crimson_doe", "hemomancy:bleeding_bulb"),
-			new GuaranteedDrop("cruor_fiend", "hemomancy:molten_scab"),
-			new GuaranteedDrop("dessicant", "hemomancy:desiccated_membrane"),
 			new GuaranteedDrop("enthralled_doll", "hemomancy:bleeding_bulb"),
 			new GuaranteedDrop("erythromycelium_eruptus", "hemomancy:spore_sac"),
 			new GuaranteedDrop("fargone", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("fervent_chitinite", "hemomancy:fervent_husk"),
-			new GuaranteedDrop("frozen_clot", "hemomancy:frozen_clot"),
 			new GuaranteedDrop("fungling", "hemomancy:spore_sac"),
 			new GuaranteedDrop("harbinger_alchemist", "hemomancy:hemolytic_solution"),
 			new GuaranteedDrop("harbinger_vicar", "hemomancy:sanguine_formation"),
@@ -39,16 +35,13 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("lump_of_thought", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("morphling_polyp", "hemomancy:morphling_polyp"),
 			new GuaranteedDrop("mycophant", "hemomancy:mycophant_tendril"),
-			new GuaranteedDrop("myelin_borer", "hemomancy:nerve_bundle"),
 			new GuaranteedDrop("scarlet_serpent", "hemomancy:serpent_scale"),
 			new GuaranteedDrop("seraphae", "hemomancy:hallowed_residuum_seraphae"),
 			new GuaranteedDrop("seraphae_fragment", "hemomancy:sanguine_formation"),
-			new GuaranteedDrop("synapse_hound", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("thirster", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("tooth_pecks", "minecraft:bone_meal"),
 			new GuaranteedDrop("venous_strider", "hemomancy:vivacious_spores"),
-			new GuaranteedDrop("vesper_evening_star", "hemomancy:memory_of_vesper"),
-			new GuaranteedDrop("void_drinker", "hemomancy:void_ichor") };
+			new GuaranteedDrop("vesper_evening_star", "hemomancy:memory_of_vesper") };
 
 	private EntityLootTableCoverageResourceTest() {
 	}

@@ -3,6 +3,8 @@
   "values": [
     "minecraft:mushroom_fields",
     "minecraft:swamp",
-    "minecraft:mangrove_swamp"
+    "minecraft:mangrove_swamp",
+    "hemomancy:fungal_gardens",
+    "hemomancy:fungal_isles"
   ]
 }

@@ -1,0 +1,84 @@
+package com.vincenthuto.hemomancy.common.entity.mob.monster;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public final class TendencyMobSpawnRulesSourceTest {
+	private static final String[] DORMANT_ENTITY_IDS = {
+			"dessicant",
+			"cruor_fiend",
+			"void_drinker",
+			"frozen_clot",
+			"abyssal_siphon",
+			"synapse_hound",
+			"myelin_borer"
+	};
+	private static final String[] DORMANT_DROP_IDS = {
+			"desiccated_membrane",
+			"molten_scab",
+			"void_ichor",
+			"frozen_clot",
+			"abyssal_ichor",
+			"nerve_bundle"
+	};
+
+	private TendencyMobSpawnRulesSourceTest() {
+	}
+
+	public static void main(String[] args) throws IOException {
+		String entityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
+		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
+		for (String id : DORMANT_ENTITY_IDS) {
+			assertDoesNotContain("dormant mob should not be actively registered: " + id,
+					stripLineComments(entityInit), "register(\"" + id + "\"");
+			assertPathMissing("dormant mob should not have a biome modifier: " + id,
+					Path.of("src/main/resources/data/hemomancy/neoforge/biome_modifier/add_" + id + ".json"));
+			assertPathMissing("dormant mob should not have an entity loot table: " + id,
+					Path.of("src/main/resources/data/hemomancy/loot_table/entities/" + id + ".json"));
+		}
+		for (String id : DORMANT_DROP_IDS) {
+			assertDoesNotContain("dormant drop should not be actively registered: " + id,
+					stripLineComments(itemInit), "register(\"" + id + "\"");
+			assertDoesNotContain("recipes should not consume dormant drop: " + id,
+					readTree(Path.of("src/main/resources/data/hemomancy/recipe")), "hemomancy:" + id);
+		}
+	}
+
+	private static String read(String path) throws IOException {
+		return Files.readString(Path.of(path)).replace("\r\n", "\n");
+	}
+
+	private static String readTree(Path root) throws IOException {
+		StringBuilder content = new StringBuilder();
+		try (var paths = Files.walk(root)) {
+			for (Path path : paths.filter(Files::isRegularFile).toList()) {
+				content.append(Files.readString(path).replace("\r\n", "\n")).append('\n');
+			}
+		}
+		return content.toString();
+	}
+
+	private static String stripLineComments(String text) {
+		StringBuilder stripped = new StringBuilder();
+		for (String line : text.split("\n")) {
+			String trimmed = line.stripLeading();
+			if (!trimmed.startsWith("//")) {
+				stripped.append(line).append('\n');
+			}
+		}
+		return stripped.toString();
+	}
+
+	private static void assertPathMissing(String label, Path path) {
+		if (Files.exists(path)) {
+			throw new AssertionError(label + ": still exists at " + path);
+		}
+	}
+
+	private static void assertDoesNotContain(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + ": found " + unexpected);
+		}
+	}
+}

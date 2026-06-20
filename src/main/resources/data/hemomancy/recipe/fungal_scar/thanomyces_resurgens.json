@@ -5,7 +5,7 @@
   "phase1_duration": 2400,
   "maturation_threshold": 3000,
   "seed": {
-    "id": "hemomancy:frozen_clot"
+    "id": "hemomancy:frigid_spores"
   },
   "immature_result": {
     "id": "hemomancy:immature_fungal_scar"

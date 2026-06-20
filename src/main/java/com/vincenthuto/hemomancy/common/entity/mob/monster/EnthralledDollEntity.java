@@ -242,6 +242,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 		LivingEntity puppeteerTarget = puppeteer.getTarget();
 		if (puppeteerTarget != null && canAttack(puppeteerTarget)) {
 			setTarget(puppeteerTarget);
+			getNavigation().moveTo(puppeteerTarget, BloodDrunkPuppeteerTuning.DOLL_ATTACK_SPEED);
 		}
 		double distanceToPuppeteer = distanceToSqr(puppeteer);
 		double teleportDistance = BloodDrunkPuppeteerTuning.DOLL_TELEPORT_DISTANCE;
