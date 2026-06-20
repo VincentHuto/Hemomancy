@@ -56,21 +56,22 @@ public class UnstainedWeaponSwingAnimationHandler {
 		float arc = Mth.sin(sqrtSwing * (float) Math.PI);
 		float sweep = Mth.sin(swing * (float) Math.PI);
 
-		poseStack.translate(side * -0.06F * sweep, 0.02F * sweep, -0.10F * sweep);
-		poseStack.mulPose(Axis.YP.rotationDegrees(side * -70.0F * arc));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(side * -35.0F * sweep));
-		poseStack.mulPose(Axis.XP.rotationDegrees(-18.0F * arc));
+		poseStack.translate(side * 0.14F * sweep, 0.10F * arc, -0.06F * sweep);
+		poseStack.mulPose(Axis.YP.rotationDegrees(side * 46.0F * arc));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(side * 62.0F * sweep));
+		poseStack.mulPose(Axis.XP.rotationDegrees(-24.0F * arc));
 	}
 
 	private static void applyWarhammerSwing(PoseStack poseStack, float swing, float side) {
-		float raisePhase = Mth.clamp(1.0F - swing * 2.0F, 0.0F, 1.0F);
-		float slamPhase = Mth.clamp((swing - 0.35F) / 0.65F, 0.0F, 1.0F);
+		float windup = 1.0F - smoothStep(Mth.clamp(swing / 0.68F, 0.0F, 1.0F));
+		float slamPhase = smoothStep(Mth.clamp((swing - 0.58F) / 0.42F, 0.0F, 1.0F));
 		float body = Mth.sin(swing * (float) Math.PI);
 
-		poseStack.translate(side * -0.04F * raisePhase, 0.14F * raisePhase - 0.20F * slamPhase, -0.16F * raisePhase);
-		poseStack.mulPose(Axis.YP.rotationDegrees(side * (18.0F * raisePhase - 22.0F * slamPhase)));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(side * (10.0F * raisePhase - 16.0F * slamPhase)));
-		poseStack.mulPose(Axis.XP.rotationDegrees(72.0F * raisePhase - 138.0F * slamPhase - 8.0F * body));
+		poseStack.translate(side * 0.05F * windup, 0.18F * windup - 0.34F * slamPhase,
+				-0.18F * windup - 0.08F * slamPhase);
+		poseStack.mulPose(Axis.YP.rotationDegrees(side * (8.0F * windup - 6.0F * slamPhase)));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(side * (6.0F * windup - 8.0F * slamPhase)));
+		poseStack.mulPose(Axis.XP.rotationDegrees(58.0F * windup - 178.0F * slamPhase - 10.0F * body));
 	}
 
 	private static void applyDaggerSwing(PoseStack poseStack, float swing, float side) {
@@ -82,6 +83,10 @@ public class UnstainedWeaponSwingAnimationHandler {
 		poseStack.mulPose(Axis.YP.rotationDegrees(side * (8.0F * tuck + 10.0F * thrust)));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(side * (8.0F * tuck + 16.0F * thrust)));
 		poseStack.mulPose(Axis.XP.rotationDegrees(48.0F * thrust + 18.0F * lift));
+	}
+
+	private static float smoothStep(float value) {
+		return value * value * (3.0F - 2.0F * value);
 	}
 
 }

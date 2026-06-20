@@ -453,8 +453,7 @@ public class DialogueEventHandler {
 				.map(progress -> progress.hasClarityUnlocked())
 				.orElse(false);
 
-		if (degree < 3 || purifying || clarity
-				|| !HarbingerAdvancementGranter.isRedTaxonomyComplete(player)) {
+		if (degree < 3 || purifying || clarity) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.mnemonist_woven_vessel_unready")
 							.withStyle(ChatFormatting.GRAY),

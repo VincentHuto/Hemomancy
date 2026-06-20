@@ -188,6 +188,8 @@ public final class HarbingerVicarDialogueTrees {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_hermit_road",
 					"hermit_road_intro", null));
 		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_blood_crafting",
+				"blood_crafting", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item",
 				"item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
@@ -205,6 +207,13 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("hermit_road_intro", List.of(
 						"hemomancy.vicar.hermit_road.intro.line1",
 						"hemomancy.vicar.hermit_road.intro.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("blood_crafting", List.of(
+						"hemomancy.vicar.blood_crafting.absorption",
+						"hemomancy.vicar.blood_crafting.projection",
+						"hemomancy.vicar.blood_crafting.structure"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))

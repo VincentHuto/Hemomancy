@@ -1,3 +1,4 @@
 {
-  "parent": "hemomancy:block/puffball_fungus"
+  "parent": "hemomancy:block/puffball_fungus",
+  "gui_light": "front"
 }

@@ -71,7 +71,7 @@ public class CovenantThroneItemRenderer extends BlockEntityWithoutLevelRenderer 
 			poseStack.scale(GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.YP, 220, true).toMoj());
-			poseStack.mulPose(Axis.ZP .rotationDegrees(-10));
+			poseStack.mulPose(Axis.ZP .rotationDegrees(10));
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			poseStack.translate(0.5, 0.65, 0.5);
 			poseStack.scale(WORLD_MODEL_SCALE, WORLD_MODEL_SCALE, WORLD_MODEL_SCALE);

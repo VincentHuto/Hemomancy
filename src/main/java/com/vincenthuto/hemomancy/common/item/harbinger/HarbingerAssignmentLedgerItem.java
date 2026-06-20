@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
@@ -35,14 +36,24 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 							Hemomancy.rloc("hemomancy/the_first_awakening")),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_DEGREE_1_NEOPHYTE),
+					HarbingerAdvancementGranter.isVesselFilled(serverPlayer),
+					HarbingerAdvancementGranter.isLiberSanguinumCrafted(serverPlayer),
+					HarbingerAdvancementGranter.isHematicIronBlockCrafted(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
+					hasVialCentrifuge(serverPlayer),
+					hasSampledBloodVial(serverPlayer),
+					HarbingerAdvancementGranter.isFirstSeparationStarted(serverPlayer),
+					hasAnyEnzyme(serverPlayer),
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
+					HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer),
+					HarbingerAdvancementGranter.isEnzymeMasteryComplete(serverPlayer),
 					hasBlankHematicMemory(serverPlayer),
 					HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
+					HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(serverPlayer),
 					HarbingerAdvancementGranter.isVicarMasonsRespiteDirective(serverPlayer),
 					HarbingerAdvancementGranter.isVeinMasonFirstLesson(serverPlayer),
 					HarbingerAdvancementGranter.isVeinMasonFirstScarCarved(serverPlayer),
@@ -56,6 +67,32 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 	private static boolean hasBlankHematicMemory(ServerPlayer player) {
 		return player.getInventory().items.stream()
 				.anyMatch(stack -> stack.is(ItemInit.hematic_memory.get()));
+	}
+
+	private static boolean hasVialCentrifuge(ServerPlayer player) {
+		return player.getInventory().items.stream()
+				.anyMatch(stack -> stack.is(BlockInit.vial_centrifuge.get().asItem()));
+	}
+
+	private static boolean hasSampledBloodVial(ServerPlayer player) {
+		return player.getInventory().items.stream()
+				.anyMatch(stack -> stack.getItem() instanceof BloodVialItem
+						&& BloodVialItem.getEntityType(stack) != null);
+	}
+
+	private static boolean hasAnyEnzyme(ServerPlayer player) {
+		return player.getInventory().items.stream().anyMatch(HarbingerAssignmentLedgerItem::isEnzyme);
+	}
+
+	private static boolean isEnzyme(ItemStack stack) {
+		return stack.is(ItemInit.vivacious_enzyme.get())
+				|| stack.is(ItemInit.fervent_enzyme.get())
+				|| stack.is(ItemInit.neurotic_enzyme.get())
+				|| stack.is(ItemInit.incandescent_enzyme.get())
+				|| stack.is(ItemInit.ruinous_enzyme.get())
+				|| stack.is(ItemInit.frigid_enzyme.get())
+				|| stack.is(ItemInit.ferric_enzyme.get())
+				|| stack.is(ItemInit.umbral_enzyme.get());
 	}
 
 	@Override

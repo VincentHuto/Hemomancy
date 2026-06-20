@@ -93,7 +93,6 @@ public class HarbingerMnemonistEntity extends PathfinderMob {
 			} else {
 				tree = HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
 						isNpcInPlayerBloodline(player, this), canClaimStarter,
-						HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 						HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer));
 			}
 			tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "mnemonist",

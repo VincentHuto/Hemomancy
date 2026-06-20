@@ -1,0 +1,23 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 150,
+  "required_degree": 4,
+  "heldItem": "hemomancy:runic_motif_paper",
+  "hitBlock": "hemomancy:polished_venous_stone",
+  "pattern": [
+    ["T T", "TVT", "T T"],
+    ["   ", "VVV", "   "],
+    ["T T", "TVT", "T T"]
+  ],
+  "key": {
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "V": {
+      "block": "hemomancy:polished_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:mason_effigy"
+  }
+}

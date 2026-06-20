@@ -243,6 +243,8 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerMnemonistDialogueTrees.java"));
 		String mnemonistEntity = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java"));
+		String somaticLoom = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/tile/crafting/SomaticLoomBlockEntity.java"));
 		String eventHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
 		String advancementGranter = read(SOURCE_ROOT.resolve(
@@ -263,9 +265,15 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE");
 		assertContains("advancement helper checks woven vessel completion", advancementGranter,
 				"isMnemonistWovenVesselComplete");
-		assertContains("alchemist receives red taxonomy completion state", alchemistEntity,
-				"isRedTaxonomyComplete(serverPlayer)");
-		assertContains("alchemist breadcrumb option is gated behind taxonomy completion", alchemistTrees,
+		assertContains("advancement constant exists for first loom weave", advancementGranter,
+				"ADV_MNEMONIST_FIRST_WEAVE_COMPLETE");
+		assertContains("advancement helper checks first loom weave", advancementGranter,
+				"isMnemonistFirstWeaveComplete");
+		assertContains("loom grants first weave assignment record", somaticLoom,
+				"ADV_MNEMONIST_FIRST_WEAVE_COMPLETE");
+		assertContains("alchemist d3 breadcrumb points to mnemonist", alchemistTrees,
+				"hemomancy.alchemist.initiate.mnemonist_breadcrumb");
+		assertDoesNotContain("alchemist d3 breadcrumb no longer requires taxonomy completion", alchemistTrees,
 				"redTaxonomyComplete");
 		assertContains("alchemist breadcrumb points to mnemonist", alchemistTrees,
 				"hemomancy.alchemist.initiate.mnemonist_breadcrumb");
@@ -285,8 +293,15 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		assertContains("woven vessel rewards bleeding bulb", eventHandler, "ItemInit.bleeding_bulb.get()");
 		assertContains("woven vessel rewards vivacious enzyme", eventHandler, "ItemInit.vivacious_enzyme.get()");
 		assertContains("ledger item sends blank memory state", ledgerItem, "hasBlankHematicMemory");
+		assertContains("ledger item sends first weave state", ledgerItem, "isMnemonistFirstWeaveComplete");
 		assertContains("ledger packet carries woven vessel completion", ledgerPacket, "mnemonistWovenVesselComplete");
+		assertContains("ledger packet carries first weave completion", ledgerPacket, "mnemonistFirstWeaveComplete");
 		assertContains("ledger screen renders woven vessel assignment", ledgerScreen, "renderWovenVessel");
+		assertContains("woven vessel progress displays three steps", ledgerScreen, "wovenVesselProgress(), 3");
+		assertDoesNotContain("woven vessel progress no longer includes red taxonomy", ledgerScreen,
+				"if (redTaxonomyComplete) completed++");
+		assertDoesNotContain("woven vessel progress no longer includes degree reached", ledgerScreen,
+				"if (degree >= 3) completed++");
 		assertContains("woven vessel language title exists", language,
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title");
 		assertContains("mnemonist recipe dialogue names self", language, "a piece of yourself");
@@ -295,6 +310,9 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		assertContains("woven vessel completion advancement exists", read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/advancement/hemomancy/mnemonist_woven_vessel_complete.json")),
 				"advancements.hemomancy.mnemonist_woven_vessel_complete.title");
+		assertContains("first loom weave advancement exists", read(RESOURCE_ROOT.resolve(
+				"data/hemomancy/advancement/hemomancy/mnemonist_first_weave_complete.json")),
+				"advancements.hemomancy.mnemonist_first_weave_complete.title");
 		assertContains("docs mention woven vessel assignment", docs, "The Woven Vessel");
 	}
 

@@ -1,3 +1,6 @@
 {
-  "parent": "hemomancy:block/erythrocoral_tendril"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:block/erythrocoral_tendril"
+  }
 }

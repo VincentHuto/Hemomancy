@@ -69,36 +69,51 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/model/item/unstained/AbsolutionDaggerModel.java",
 				"stiletto",
 				"Dagger model should define its stiletto blade");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case WARHAMMER -> 0.52F",
-				"Warhammer GUI scale should be large enough for an inventory slot");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case GLAIVE -> 0.48F",
-				"Glaive GUI scale should be large enough for an inventory slot");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case DAGGER -> 0.7F",
-				"Dagger GUI scale should be large enough for an inventory slot");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"applyHandAnchor(displayContext, poseStack);",
-				"Unstained weapons should translate their model origin into the player's hand");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));",
-				"Right-hand contexts should use the tuned side-on weapon orientation");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));",
-				"Left-hand contexts should mirror the tuned side-on weapon orientation");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case THIRD_PERSON_RIGHT_HAND -> poseStack.translate(-0.5F, -0.5F, -0.5F);",
-				"Right-hand third-person transform should preserve the manually tuned anchor");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case THIRD_PERSON_LEFT_HAND -> poseStack.translate(0.5F, -0.5F, -0.5F);",
-				"Left-hand third-person transform should mirror the manually tuned anchor");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case FIRST_PERSON_RIGHT_HAND -> poseStack.translate(-0.42F, -0.38F, -0.42F);",
-				"Right-hand first-person transform should follow the tuned third-person anchor at a closer offset");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWeaponItemRenderer.java",
-				"case FIRST_PERSON_LEFT_HAND -> poseStack.translate(0.42F, -0.38F, -0.42F);",
-				"Left-hand first-person transform should mirror the tuned first-person anchor");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWarhammerItemRenderer.java",
+				"GUI_MODEL_SCALE = 0.46F",
+				"Warhammer GUI scale should be tuned independently for its broad bell head");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWarhammerItemRenderer.java",
+				"GUI_MODEL_TRANSLATE_X = 0.42D",
+				"Warhammer GUI pose should move right within the inventory slot");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWarhammerItemRenderer.java",
+				"GUI_MODEL_TRANSLATE_Y = -0.44D",
+				"Warhammer GUI pose should move up within the inventory slot");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/SilthmereGlaiveItemRenderer.java",
+				"GUI_MODEL_SCALE = 0.32F",
+				"Glaive GUI scale should be tuned independently for its long polearm silhouette");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/SilthmereGlaiveItemRenderer.java",
+				"GUI_MODEL_TRANSLATE_X = 0.42D",
+				"Glaive GUI pose should move right within the inventory slot");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/SilthmereGlaiveItemRenderer.java",
+				"GUI_MODEL_TRANSLATE_Y = -0.4D",
+				"Glaive GUI pose should move up within the inventory slot");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"GUI_MODEL_SCALE = 0.62F",
+				"Dagger GUI scale should be tuned independently for its short blade silhouette");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"GUI_MODEL_TRANSLATE_X = 0.2D",
+				"Dagger GUI pose should move right within the inventory slot");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"GUI_MODEL_TRANSLATE_Y = -0.2D",
+				"Dagger GUI pose should move up within the inventory slot");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWarhammerItemRenderer.java",
+				"applyFirstPersonTransform",
+				"Warhammer should own its first-person hand transform");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/SilthmereGlaiveItemRenderer.java",
+				"applyFirstPersonTransform",
+				"Glaive should own its first-person hand transform");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"applyFirstPersonTransform",
+				"Dagger should own its first-person hand transform");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWarhammerItemRenderer.java",
+				"WARHAMMER_TEXTURE",
+				"Warhammer renderer should own its texture");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/SilthmereGlaiveItemRenderer.java",
+				"GLAIVE_TEXTURE",
+				"Glaive renderer should own its texture");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"DAGGER_TEXTURE",
+				"Dagger renderer should own its texture");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
 				"@EventBusSubscriber",
 				"Unstained weapon swing adjustments should run through the old shared RenderHandEvent path");
@@ -112,8 +127,14 @@ public class UnstainedWeaponRendererResourceTest {
 				"float sqrtSwing = Mth.sqrt(swing);",
 				"Silthmere glaive should use the older event-path arc instead of the failed replacement sweep");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
-				"float raisePhase = Mth.clamp(1.0F - swing * 2.0F, 0.0F, 1.0F);",
-				"Unstained warhammer should use the older raise/slam event-path swing");
+				"float windup = 1.0F - smoothStep(Mth.clamp(swing / 0.68F, 0.0F, 1.0F));",
+				"Unstained warhammer should hold the windup longer before its downward slam");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"float slamPhase = smoothStep(Mth.clamp((swing - 0.58F) / 0.42F, 0.0F, 1.0F));",
+				"Unstained warhammer should delay its slam for a heavier swing");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
+				"poseStack.translate(side * 0.14F * sweep, 0.10F * arc, -0.06F * sweep);",
+				"Silthmere glaive should sweep up and right in first person");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/UnstainedWeaponSwingAnimationHandler.java",
 				"Axis.XP.rotationDegrees(48.0F * thrust + 18.0F * lift)",
 				"Absolution dagger special swing should drive upward as a thrust");

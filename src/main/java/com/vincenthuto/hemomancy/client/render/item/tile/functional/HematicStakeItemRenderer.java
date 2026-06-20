@@ -40,10 +40,10 @@ public class HematicStakeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	private static void applyDisplayTransform(ItemDisplayContext displayContext, PoseStack poseStack) {
 		if (displayContext == ItemDisplayContext.GUI) {
-			poseStack.translate(0.0f, -0.03f, 0.0f);
+			poseStack.translate(0.0f, 0.1f, 0.0f);
 			poseStack.mulPose(Axis.XP.rotationDegrees(18.0f));
 			poseStack.mulPose(Axis.YP.rotationDegrees(-28.0f));
-			poseStack.scale(1.38f, 1.38f, 1.38f);
+			poseStack.scale(1f, 1f, 1f);
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			poseStack.scale(1.18f, 1.18f, 1.18f);
 		} else if (displayContext == ItemDisplayContext.GROUND) {

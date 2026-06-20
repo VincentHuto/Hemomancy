@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWeaponItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWarhammerItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
@@ -106,8 +106,7 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWeaponItemRenderer(
-					UnstainedWeaponItemRenderer.Kind.WARHAMMER, null, null);
+			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWarhammerItemRenderer(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {

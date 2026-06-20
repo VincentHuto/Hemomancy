@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWeaponItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.unstained.AbsolutionDaggerItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -124,8 +124,7 @@ public class AbsolutionDaggerItem extends SwordItem implements HemoClientItemExt
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWeaponItemRenderer(
-					UnstainedWeaponItemRenderer.Kind.DAGGER, null, null);
+			private final BlockEntityWithoutLevelRenderer renderer = new AbsolutionDaggerItemRenderer(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {

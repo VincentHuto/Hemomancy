@@ -48,6 +48,14 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/hermit_road_first_remnant");
 	public static final ResourceLocation ADV_HERMIT_ROAD_LEDGER_GRANTED =
 			Hemomancy.rloc("hemomancy/hermit_road_ledger_granted");
+	public static final ResourceLocation ADV_VESSEL_FILLED =
+			Hemomancy.rloc("hemomancy/vessel_filled");
+	public static final ResourceLocation ADV_FANE_SANGUINIUM =
+			Hemomancy.rloc("hemomancy/fane_sanguinium");
+	public static final ResourceLocation ADV_IRON_IN_THE_BLOOD =
+			Hemomancy.rloc("hemomancy/iron_in_the_blood");
+	public static final ResourceLocation ADV_FIRST_SEPARATION_STARTED =
+			Hemomancy.rloc("hemomancy/first_separation_started");
 	public static final ResourceLocation ADV_RED_TAXONOMY_INFECTED_FUNGUS =
 			Hemomancy.rloc("hemomancy/red_taxonomy_infected_fungus");
 	public static final ResourceLocation ADV_RED_TAXONOMY_STINKHORN_FUNGUS =
@@ -64,8 +72,28 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/red_taxonomy_puffball_fungus");
 	public static final ResourceLocation ADV_RED_TAXONOMY_COMPLETE =
 			Hemomancy.rloc("hemomancy/red_taxonomy_complete");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_VIVACIOUS =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_vivacious");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_FERVENT =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_fervent");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_NEUROTIC =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_neurotic");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_INCANDESCENT =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_incandescent");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_RUINOUS =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_ruinous");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_FRIGID =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_frigid");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_FERRIC =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_ferric");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_UMBRAL =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_umbral");
+	public static final ResourceLocation ADV_ENZYME_MASTERY_COMPLETE =
+			Hemomancy.rloc("hemomancy/enzyme_mastery_complete");
 	public static final ResourceLocation ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE =
 			Hemomancy.rloc("hemomancy/mnemonist_woven_vessel_complete");
+	public static final ResourceLocation ADV_MNEMONIST_FIRST_WEAVE_COMPLETE =
+			Hemomancy.rloc("hemomancy/mnemonist_first_weave_complete");
 	public static final ResourceLocation ADV_VICAR_MASONS_RESPITE_DIRECTIVE =
 			Hemomancy.rloc("hemomancy/vicar_masons_respite_directive");
 	public static final ResourceLocation ADV_VEIN_MASON_FIRST_LESSON =
@@ -111,6 +139,17 @@ public final class HarbingerAdvancementGranter {
 		ADV_RED_TAXONOMY_RAFFLESIA,
 		ADV_RED_TAXONOMY_DEVILS_TOOTH,
 		ADV_RED_TAXONOMY_PUFFBALL_FUNGUS,
+	};
+
+	public static final ResourceLocation[] ENZYME_MASTERY_RECORDS = {
+		ADV_ENZYME_MASTERY_VIVACIOUS,
+		ADV_ENZYME_MASTERY_FERVENT,
+		ADV_ENZYME_MASTERY_NEUROTIC,
+		ADV_ENZYME_MASTERY_INCANDESCENT,
+		ADV_ENZYME_MASTERY_RUINOUS,
+		ADV_ENZYME_MASTERY_FRIGID,
+		ADV_ENZYME_MASTERY_FERRIC,
+		ADV_ENZYME_MASTERY_UMBRAL,
 	};
 
 	private HarbingerAdvancementGranter() {}
@@ -174,8 +213,42 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_RED_TAXONOMY_COMPLETE);
 	}
 
+	public static int getEnzymeMasteryCount(ServerPlayer player) {
+		int count = 0;
+		for (ResourceLocation enzyme : ENZYME_MASTERY_RECORDS) {
+			if (hasAdvancement(player, enzyme)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public static boolean isEnzymeMasteryComplete(ServerPlayer player) {
+		return hasAdvancement(player, ADV_ENZYME_MASTERY_COMPLETE);
+	}
+
+	public static boolean isVesselFilled(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VESSEL_FILLED);
+	}
+
+	public static boolean isLiberSanguinumCrafted(ServerPlayer player) {
+		return hasAdvancement(player, ADV_FANE_SANGUINIUM);
+	}
+
+	public static boolean isHematicIronBlockCrafted(ServerPlayer player) {
+		return hasAdvancement(player, ADV_IRON_IN_THE_BLOOD);
+	}
+
+	public static boolean isFirstSeparationStarted(ServerPlayer player) {
+		return hasAdvancement(player, ADV_FIRST_SEPARATION_STARTED);
+	}
+
 	public static boolean isMnemonistWovenVesselComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE);
+	}
+
+	public static boolean isMnemonistFirstWeaveComplete(ServerPlayer player) {
+		return hasAdvancement(player, ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
 	}
 
 	public static boolean isVicarMasonsRespiteDirective(ServerPlayer player) {

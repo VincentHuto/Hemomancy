@@ -11,12 +11,22 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		int degree,
 		boolean firstAwakening,
 		boolean degreeOne,
+		boolean vesselFilled,
+		boolean liberSanguinumCrafted,
+		boolean hematicIronBlockCrafted,
 		boolean firstRemnant,
 		boolean ledgerGranted,
+		boolean hasVialCentrifuge,
+		boolean hasSampledBloodVial,
+		boolean firstSeparationStarted,
+		boolean hasAnyEnzyme,
 		int redTaxonomyCount,
 		boolean redTaxonomyComplete,
+		int enzymeMasteryCount,
+		boolean enzymeMasteryComplete,
 		boolean hasBlankHematicMemory,
 		boolean mnemonistWovenVesselComplete,
+		boolean mnemonistFirstWeaveComplete,
 		boolean vicarMasonsRespiteDirective,
 		boolean veinMasonFirstLesson,
 		boolean veinMasonFirstScarCarved,
@@ -32,12 +42,22 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeVarInt(msg.degree);
 		buf.writeBoolean(msg.firstAwakening);
 		buf.writeBoolean(msg.degreeOne);
+		buf.writeBoolean(msg.vesselFilled);
+		buf.writeBoolean(msg.liberSanguinumCrafted);
+		buf.writeBoolean(msg.hematicIronBlockCrafted);
 		buf.writeBoolean(msg.firstRemnant);
 		buf.writeBoolean(msg.ledgerGranted);
+		buf.writeBoolean(msg.hasVialCentrifuge);
+		buf.writeBoolean(msg.hasSampledBloodVial);
+		buf.writeBoolean(msg.firstSeparationStarted);
+		buf.writeBoolean(msg.hasAnyEnzyme);
 		buf.writeVarInt(msg.redTaxonomyCount);
 		buf.writeBoolean(msg.redTaxonomyComplete);
+		buf.writeVarInt(msg.enzymeMasteryCount);
+		buf.writeBoolean(msg.enzymeMasteryComplete);
 		buf.writeBoolean(msg.hasBlankHematicMemory);
 		buf.writeBoolean(msg.mnemonistWovenVesselComplete);
+		buf.writeBoolean(msg.mnemonistFirstWeaveComplete);
 		buf.writeBoolean(msg.vicarMasonsRespiteDirective);
 		buf.writeBoolean(msg.veinMasonFirstLesson);
 		buf.writeBoolean(msg.veinMasonFirstScarCarved);
@@ -53,7 +73,17 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readBoolean(),
 				buf.readVarInt(),
+				buf.readBoolean(),
+				buf.readVarInt(),
+				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
@@ -67,9 +97,14 @@ public record OpenHarbingerAssignmentLedgerPacket(
 
 	public static void handle(final OpenHarbingerAssignmentLedgerPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> HarbingerAssignmentLedgerScreen.open(
-				msg.degree, msg.firstAwakening, msg.degreeOne, msg.firstRemnant, msg.ledgerGranted,
-				msg.redTaxonomyCount, msg.redTaxonomyComplete, msg.hasBlankHematicMemory,
-				msg.mnemonistWovenVesselComplete, msg.vicarMasonsRespiteDirective,
+				msg.degree, msg.firstAwakening, msg.degreeOne,
+				msg.vesselFilled, msg.liberSanguinumCrafted, msg.hematicIronBlockCrafted,
+				msg.firstRemnant, msg.ledgerGranted,
+				msg.hasVialCentrifuge, msg.hasSampledBloodVial,
+				msg.firstSeparationStarted, msg.hasAnyEnzyme,
+				msg.redTaxonomyCount, msg.redTaxonomyComplete,
+				msg.enzymeMasteryCount, msg.enzymeMasteryComplete, msg.hasBlankHematicMemory,
+				msg.mnemonistWovenVesselComplete, msg.mnemonistFirstWeaveComplete, msg.vicarMasonsRespiteDirective,
 				msg.veinMasonFirstLesson, msg.veinMasonFirstScarCarved,
 				msg.veinMasonFirstScarLearned, msg.veinMasonFirstEffigyPattern,
 				msg.veinMasonFirstEffigyLoadout));

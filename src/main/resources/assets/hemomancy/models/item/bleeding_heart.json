@@ -1,3 +1,6 @@
 {
-  "parent": "hemomancy:block/bleeding_heart"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:block/bleeding_heart"
+  }
 }

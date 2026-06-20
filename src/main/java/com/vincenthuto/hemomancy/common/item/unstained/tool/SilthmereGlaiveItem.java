@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWeaponItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.unstained.SilthmereGlaiveItemRenderer;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
@@ -114,8 +114,7 @@ public class SilthmereGlaiveItem extends SwordItem implements HemoClientItemExte
 	@Override
 	public IClientItemExtensions hemomancy$getClientItemExtensions() {
 		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new UnstainedWeaponItemRenderer(
-					UnstainedWeaponItemRenderer.Kind.GLAIVE, null, null);
+			private final BlockEntityWithoutLevelRenderer renderer = new SilthmereGlaiveItemRenderer(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {

@@ -809,6 +809,9 @@ public class BlockInit {
 		if (b == BlockInit.puppeteers_spindle.get()) {
 			return Pair.of(block.getSecond(), new PuppeteersSpindleBlockItem(b, new Item.Properties()));
 		}
+		if (b == BlockInit.mason_effigy.get()) {
+			return Pair.of(block.getSecond(), new MasonsEffigyBlockItem(b, new Item.Properties()));
+		}
 		if (b == BlockInit.covenant_throne.get()) {
 			return Pair.of(block.getSecond(), new CovenantThroneBlockItem(b, new Item.Properties()));
 		}

@@ -22,7 +22,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int SECTION_GAP = 12;
 	private static final int CARD_GAP = 5;
 	private static final int ASSIGNMENT_CARD_HEIGHT = 30;
+	private static final int FIRST_BLOODCRAFT_HEIGHT = 145;
+	private static final int HERMIT_ROAD_HEIGHT = 110;
+	private static final int FIRST_SEPARATION_HEIGHT = 180;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
+	private static final int ENZYME_MASTERY_HEIGHT = 56;
 	private static final int WOVEN_VESSEL_HEIGHT = 68;
 	private static final int VEIN_MASON_HEIGHT = 68;
 	private static final int SCROLLBAR_WIDTH = 6;
@@ -47,12 +51,22 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final int degree;
 	private final boolean firstAwakening;
 	private final boolean degreeOne;
+	private final boolean vesselFilled;
+	private final boolean liberSanguinumCrafted;
+	private final boolean hematicIronBlockCrafted;
 	private final boolean firstRemnant;
 	private final boolean ledgerGranted;
+	private final boolean hasVialCentrifuge;
+	private final boolean hasSampledBloodVial;
+	private final boolean firstSeparationStarted;
+	private final boolean hasAnyEnzyme;
 	private final int redTaxonomyCount;
 	private final boolean redTaxonomyComplete;
+	private final int enzymeMasteryCount;
+	private final boolean enzymeMasteryComplete;
 	private final boolean hasBlankHematicMemory;
 	private final boolean mnemonistWovenVesselComplete;
+	private final boolean mnemonistFirstWeaveComplete;
 	private final boolean vicarMasonsRespiteDirective;
 	private final boolean veinMasonFirstLesson;
 	private final boolean veinMasonFirstScarCarved;
@@ -70,8 +84,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private Component hoveredAssignmentDescription;
 
 	private HarbingerAssignmentLedgerScreen(int degree, boolean firstAwakening, boolean degreeOne,
-			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete,
+			boolean vesselFilled, boolean liberSanguinumCrafted, boolean hematicIronBlockCrafted,
+			boolean firstRemnant, boolean ledgerGranted,
+			boolean hasVialCentrifuge, boolean hasSampledBloodVial,
+			boolean firstSeparationStarted, boolean hasAnyEnzyme,
+			int redTaxonomyCount, boolean redTaxonomyComplete,
+			int enzymeMasteryCount, boolean enzymeMasteryComplete,
 			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
+			boolean mnemonistFirstWeaveComplete,
 			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
 			boolean veinMasonFirstScarCarved, boolean veinMasonFirstScarLearned,
 			boolean veinMasonFirstEffigyPattern, boolean veinMasonFirstEffigyLoadout) {
@@ -79,12 +99,22 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.degree = degree;
 		this.firstAwakening = firstAwakening;
 		this.degreeOne = degreeOne;
+		this.vesselFilled = vesselFilled;
+		this.liberSanguinumCrafted = liberSanguinumCrafted;
+		this.hematicIronBlockCrafted = hematicIronBlockCrafted;
 		this.firstRemnant = firstRemnant;
 		this.ledgerGranted = ledgerGranted;
+		this.hasVialCentrifuge = hasVialCentrifuge;
+		this.hasSampledBloodVial = hasSampledBloodVial;
+		this.firstSeparationStarted = firstSeparationStarted;
+		this.hasAnyEnzyme = hasAnyEnzyme;
 		this.redTaxonomyCount = redTaxonomyCount;
 		this.redTaxonomyComplete = redTaxonomyComplete;
+		this.enzymeMasteryCount = enzymeMasteryCount;
+		this.enzymeMasteryComplete = enzymeMasteryComplete;
 		this.hasBlankHematicMemory = hasBlankHematicMemory;
 		this.mnemonistWovenVesselComplete = mnemonistWovenVesselComplete;
+		this.mnemonistFirstWeaveComplete = mnemonistFirstWeaveComplete;
 		this.vicarMasonsRespiteDirective = vicarMasonsRespiteDirective;
 		this.veinMasonFirstLesson = veinMasonFirstLesson;
 		this.veinMasonFirstScarCarved = veinMasonFirstScarCarved;
@@ -94,15 +124,23 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
-			boolean firstRemnant, boolean ledgerGranted, int redTaxonomyCount, boolean redTaxonomyComplete,
+			boolean vesselFilled, boolean liberSanguinumCrafted, boolean hematicIronBlockCrafted,
+			boolean firstRemnant, boolean ledgerGranted,
+			boolean hasVialCentrifuge, boolean hasSampledBloodVial,
+			boolean firstSeparationStarted, boolean hasAnyEnzyme,
+			int redTaxonomyCount, boolean redTaxonomyComplete,
+			int enzymeMasteryCount, boolean enzymeMasteryComplete,
 			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
+			boolean mnemonistFirstWeaveComplete,
 			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
 			boolean veinMasonFirstScarCarved, boolean veinMasonFirstScarLearned,
 			boolean veinMasonFirstEffigyPattern, boolean veinMasonFirstEffigyLoadout) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
-				degree, firstAwakening, degreeOne, firstRemnant, ledgerGranted,
-				redTaxonomyCount, redTaxonomyComplete, hasBlankHematicMemory,
-				mnemonistWovenVesselComplete, vicarMasonsRespiteDirective,
+				degree, firstAwakening, degreeOne, vesselFilled, liberSanguinumCrafted, hematicIronBlockCrafted,
+				firstRemnant, ledgerGranted, hasVialCentrifuge, hasSampledBloodVial,
+				firstSeparationStarted, hasAnyEnzyme,
+				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete, hasBlankHematicMemory,
+				mnemonistWovenVesselComplete, mnemonistFirstWeaveComplete, vicarMasonsRespiteDirective,
 				veinMasonFirstLesson, veinMasonFirstScarCarved, veinMasonFirstScarLearned,
 				veinMasonFirstEffigyPattern, veinMasonFirstEffigyLoadout));
 	}
@@ -187,8 +225,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private void renderAssignments(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		Component degreeText = Component.translatable("screen.hemomancy.harbinger_assignment_ledger.degree", degree);
 		renderAssignmentHeader(gfx, x, y, w,
-				Component.literal("D1 Assignment: The Hermit Road"), degreeText);
-		drawProgressBar(gfx, x, y + 25, w, 8, completedCount(), 4);
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.header"), degreeText);
+		drawProgressBar(gfx, x, y + 25, w, 8, completedCount(), 13);
 
 		int listY = y + 38;
 		int listH = Math.max(38, contentBottom() - listY);
@@ -212,28 +250,86 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private int renderAssignmentList(GuiGraphics gfx, int x, int cardY, int w, int mouseX, int mouseY) {
-		renderAssignmentCard(gfx, x, cardY, w, ASSIGNMENT_CARD_HEIGHT, firstAwakening,
-				"screen.hemomancy.harbinger_assignment_ledger.step.invitation",
-				"screen.hemomancy.harbinger_assignment_ledger.step.invitation.desc", mouseX, mouseY);
-		cardY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x, cardY, w, ASSIGNMENT_CARD_HEIGHT, degreeOne,
-				"screen.hemomancy.harbinger_assignment_ledger.step.initiation",
-				"screen.hemomancy.harbinger_assignment_ledger.step.initiation.desc", mouseX, mouseY);
-		cardY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x, cardY, w, ASSIGNMENT_CARD_HEIGHT, firstRemnant,
+		renderFirstBloodcraft(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += FIRST_BLOODCRAFT_HEIGHT + SECTION_GAP;
+		renderHermitRoad(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += HERMIT_ROAD_HEIGHT + SECTION_GAP;
+		renderFirstSeparation(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += FIRST_SEPARATION_HEIGHT + SECTION_GAP;
+		renderRedTaxonomy(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += RED_TAXONOMY_HEIGHT + SECTION_GAP;
+		renderEnzymeMastery(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += ENZYME_MASTERY_HEIGHT + SECTION_GAP;
+		renderWovenVessel(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += WOVEN_VESSEL_HEIGHT + SECTION_GAP;
+		renderVeinMason(gfx, x, cardY, w, mouseX, mouseY);
+		return totalAssignmentContentHeight();
+	}
+
+	private void renderFirstBloodcraft(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		gfx.fill(x, y, x + w, y + FIRST_BLOODCRAFT_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_BLOODCRAFT_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_bloodcraft.progress",
+				firstBloodcraftProgress(), 3, firstBloodcraftProgress() >= 3);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, firstBloodcraftProgress(), 3);
+		int rowY = y + 42;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, vesselFilled,
+				"screen.hemomancy.harbinger_assignment_ledger.step.fill_vessel",
+				"screen.hemomancy.harbinger_assignment_ledger.step.fill_vessel.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, liberSanguinumCrafted,
+				"screen.hemomancy.harbinger_assignment_ledger.step.craft_liber",
+				"screen.hemomancy.harbinger_assignment_ledger.step.craft_liber.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hematicIronBlockCrafted,
+				"screen.hemomancy.harbinger_assignment_ledger.step.craft_hematic_iron",
+				"screen.hemomancy.harbinger_assignment_ledger.step.craft_hematic_iron.desc", mouseX, mouseY);
+	}
+
+	private void renderHermitRoad(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		gfx.fill(x, y, x + w, y + HERMIT_ROAD_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, HERMIT_ROAD_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.side_title",
+				"screen.hemomancy.harbinger_assignment_ledger.hermit_road.progress",
+				hermitRoadProgress(), 2, hermitRoadProgress() >= 2);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, hermitRoadProgress(), 2);
+		int rowY = y + 42;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstRemnant,
 				"screen.hemomancy.harbinger_assignment_ledger.step.remnant",
 				"screen.hemomancy.harbinger_assignment_ledger.step.remnant.desc", mouseX, mouseY);
-		cardY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x, cardY, w, ASSIGNMENT_CARD_HEIGHT, ledgerGranted,
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, ledgerGranted,
 				"screen.hemomancy.harbinger_assignment_ledger.step.ledger",
 				"screen.hemomancy.harbinger_assignment_ledger.step.ledger.desc", mouseX, mouseY);
+	}
 
-		int taxonomyY = cardY + ASSIGNMENT_CARD_HEIGHT + SECTION_GAP;
-		renderRedTaxonomy(gfx, x, taxonomyY, w, mouseX, mouseY);
-		int wovenY = taxonomyY + RED_TAXONOMY_HEIGHT + SECTION_GAP;
-		renderWovenVessel(gfx, x, wovenY, w, mouseX, mouseY);
-		renderVeinMason(gfx, x, wovenY + WOVEN_VESSEL_HEIGHT + SECTION_GAP, w, mouseX, mouseY);
-		return totalAssignmentContentHeight();
+	private void renderFirstSeparation(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		gfx.fill(x, y, x + w, y + FIRST_SEPARATION_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_SEPARATION_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, x + 8, y + 6, w - 16,
+				"screen.hemomancy.harbinger_assignment_ledger.first_separation.title",
+				"screen.hemomancy.harbinger_assignment_ledger.first_separation.progress",
+				firstSeparationProgress(), 4, firstSeparationProgress() >= 4);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, firstSeparationProgress(), 4);
+		int rowY = y + 42;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasVialCentrifuge,
+				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_centrifuge",
+				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_centrifuge.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasSampledBloodVial,
+				"screen.hemomancy.harbinger_assignment_ledger.step.sample_blood_vial",
+				"screen.hemomancy.harbinger_assignment_ledger.step.sample_blood_vial.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, firstSeparationStarted,
+				"screen.hemomancy.harbinger_assignment_ledger.step.start_separation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.start_separation.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, hasAnyEnzyme,
+				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_enzyme",
+				"screen.hemomancy.harbinger_assignment_ledger.step.obtain_enzyme.desc", mouseX, mouseY);
 	}
 
 	private void renderAssignmentCard(GuiGraphics gfx, int x, int y, int w, int h, boolean done,
@@ -259,7 +355,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private void renderTaxonomyHeader(GuiGraphics gfx, int x, int y, int w) {
 		List<FormattedCharSequence> wrapped = font.split(
-				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.title"), w);
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.red_taxonomy.side_title"), w);
 		if (!wrapped.isEmpty()) {
 			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
 		}
@@ -269,15 +365,38 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				x, y + 12, redTaxonomyComplete ? DONE : CURRENT, false);
 	}
 
+	private void renderEnzymeMastery(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		gfx.fill(x, y, x + w, y + ENZYME_MASTERY_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, ENZYME_MASTERY_HEIGHT, BORDER, BORDER_MUTED);
+		renderEnzymeMasteryHeader(gfx, x + 8, y + 6, w - 16);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, Math.min(enzymeMasteryCount, 8), 8);
+		renderTruncatedDescription(gfx, Component.translatable(enzymeMasteryComplete
+						? "screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.complete"
+						: "screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.desc"),
+				x + 8, y + 42, w - 16, enzymeMasteryComplete ? TEXT : MUTED, mouseX, mouseY);
+	}
+
+	private void renderEnzymeMasteryHeader(GuiGraphics gfx, int x, int y, int w) {
+		List<FormattedCharSequence> wrapped = font.split(
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.side_title"), w);
+		if (!wrapped.isEmpty()) {
+			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
+		}
+		gfx.drawString(font,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.progress",
+						enzymeMasteryCount, 8),
+				x, y + 12, enzymeMasteryComplete ? DONE : CURRENT, false);
+	}
+
 	private void renderWovenVessel(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		gfx.fill(x, y, x + w, y + WOVEN_VESSEL_HEIGHT, PANEL_DARK);
 		ScreenDrawUtils.drawBorder(gfx, x, y, w, WOVEN_VESSEL_HEIGHT, BORDER, BORDER_MUTED);
 		renderWovenVesselHeader(gfx, x + 8, y + 6, w - 16);
-		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, wovenVesselProgress(), 4);
-		renderTruncatedDescription(gfx, Component.translatable(mnemonistWovenVesselComplete
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, wovenVesselProgress(), 3);
+		renderTruncatedDescription(gfx, Component.translatable(mnemonistFirstWeaveComplete
 						? "screen.hemomancy.harbinger_assignment_ledger.woven_vessel.complete"
 						: "screen.hemomancy.harbinger_assignment_ledger.woven_vessel.desc"),
-				x + 8, y + 42, w - 16, mnemonistWovenVesselComplete ? TEXT : MUTED, mouseX, mouseY);
+				x + 8, y + 42, w - 16, mnemonistFirstWeaveComplete ? TEXT : MUTED, mouseX, mouseY);
 	}
 
 	private void renderWovenVesselHeader(GuiGraphics gfx, int x, int y, int w) {
@@ -288,17 +407,26 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		}
 		gfx.drawString(font,
 				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.woven_vessel.progress",
-						wovenVesselProgress(), 4),
-				x, y + 12, mnemonistWovenVesselComplete ? DONE : CURRENT, false);
+						wovenVesselProgress(), 3),
+				x, y + 12, mnemonistFirstWeaveComplete ? DONE : CURRENT, false);
 	}
 
 	private int wovenVesselProgress() {
 		int completed = 0;
-		if (redTaxonomyComplete) completed++;
-		if (degree >= 3) completed++;
 		if (hasBlankHematicMemory) completed++;
 		if (mnemonistWovenVesselComplete) completed++;
+		if (mnemonistFirstWeaveComplete) completed++;
 		return completed;
+	}
+
+	private void renderGroupHeader(GuiGraphics gfx, int x, int y, int w, String titleKey, String progressKey,
+			int progress, int total, boolean done) {
+		List<FormattedCharSequence> wrapped = font.split(Component.translatable(titleKey), w);
+		if (!wrapped.isEmpty()) {
+			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
+		}
+		gfx.drawString(font, Component.translatable(progressKey, progress, total),
+				x, y + 12, done ? DONE : CURRENT, false);
 	}
 
 	private void renderVeinMason(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -435,16 +563,60 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private int completedCount() {
 		int completed = 0;
-		if (firstAwakening) completed++;
-		if (degreeOne) completed++;
+		if (vesselFilled) completed++;
+		if (liberSanguinumCrafted) completed++;
+		if (hematicIronBlockCrafted) completed++;
+		if (firstRemnant) completed++;
+		if (ledgerGranted) completed++;
+		if (hasVialCentrifuge) completed++;
+		if (hasSampledBloodVial) completed++;
+		if (firstSeparationStarted) completed++;
+		if (hasAnyEnzyme) completed++;
+		if (redTaxonomyComplete) {
+			completed++;
+		}
+		if (enzymeMasteryComplete) {
+			completed++;
+		}
+		if (mnemonistFirstWeaveComplete) {
+			completed++;
+		}
+		if (veinMasonFirstEffigyLoadout) {
+			completed++;
+		}
+		return completed;
+	}
+
+	private int totalAssignmentContentHeight() {
+		return FIRST_BLOODCRAFT_HEIGHT + SECTION_GAP + HERMIT_ROAD_HEIGHT
+				+ SECTION_GAP + FIRST_SEPARATION_HEIGHT
+				+ SECTION_GAP + RED_TAXONOMY_HEIGHT + SECTION_GAP + ENZYME_MASTERY_HEIGHT
+				+ SECTION_GAP + WOVEN_VESSEL_HEIGHT
+				+ SECTION_GAP + VEIN_MASON_HEIGHT;
+	}
+
+	private int firstBloodcraftProgress() {
+		int completed = 0;
+		if (vesselFilled) completed++;
+		if (liberSanguinumCrafted) completed++;
+		if (hematicIronBlockCrafted) completed++;
+		return completed;
+	}
+
+	private int hermitRoadProgress() {
+		int completed = 0;
 		if (firstRemnant) completed++;
 		if (ledgerGranted) completed++;
 		return completed;
 	}
 
-	private int totalAssignmentContentHeight() {
-		return ASSIGNMENT_CARD_HEIGHT * 4 + CARD_GAP * 3 + SECTION_GAP + RED_TAXONOMY_HEIGHT
-				+ SECTION_GAP + WOVEN_VESSEL_HEIGHT + SECTION_GAP + VEIN_MASON_HEIGHT;
+	private int firstSeparationProgress() {
+		int completed = 0;
+		if (hasVialCentrifuge) completed++;
+		if (hasSampledBloodVial) completed++;
+		if (firstSeparationStarted) completed++;
+		if (hasAnyEnzyme) completed++;
+		return completed;
 	}
 
 	private int clampAssignmentScroll(int scroll) {

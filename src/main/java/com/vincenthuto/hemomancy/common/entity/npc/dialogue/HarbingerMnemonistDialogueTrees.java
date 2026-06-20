@@ -24,16 +24,16 @@ public final class HarbingerMnemonistDialogueTrees {
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean canClaimStarter) {
-		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter, false, false);
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, canClaimStarter, false);
 	}
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
-			boolean canClaimStarter, boolean redTaxonomyComplete, boolean wovenVesselComplete) {
+			boolean canClaimStarter, boolean wovenVesselComplete) {
 		if (degree <= 0) return uninitiated(entityId);
 		if (degree == 1) return neophyte(entityId, canClaimStarter);
 		if (degree == 2) return votary(entityId, canClaimStarter);
 		return woven(entityId, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
-				redTaxonomyComplete && !wovenVesselComplete);
+				!wovenVesselComplete);
 	}
 
 	public static DialogueTree purifying(int entityId) {

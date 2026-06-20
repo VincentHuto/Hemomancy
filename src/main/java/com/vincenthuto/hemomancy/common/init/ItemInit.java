@@ -738,7 +738,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
             () -> new UnstainedWarhammerItem(8f, -3.4f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> unstained_shield = SPECIALITEMS.register("unstained_shield",
+    public static final DeferredHolder<Item, Item> unstained_shield = HANDHELDITEMS.register("unstained_shield",
             () -> new UnstainedShieldItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> absolution_dagger = HANDHELDITEMS.register("absolution_dagger",
             () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
@@ -752,7 +752,7 @@ public class ItemInit {
 //    public static final DeferredHolder<Item, Item> pale_silver_pickaxe = HANDHELDITEMS.register("pale_silver_pickaxe",
 //            () -> new PaleSilverPickaxeItem(EnumModToolTiers.UNSTAINED, 1, -2.8f,
 //                    new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> pale_silver_bell = SPECIALITEMS.register("pale_silver_bell",
+    public static final DeferredHolder<Item, Item> pale_silver_bell = HANDHELDITEMS.register("pale_silver_bell",
             () -> new PaleSilverBellItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 //    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
 //            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));

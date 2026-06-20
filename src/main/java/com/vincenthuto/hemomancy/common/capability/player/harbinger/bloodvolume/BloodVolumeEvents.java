@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
@@ -41,6 +42,16 @@ public class BloodVolumeEvents {
 
 		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (!volume.isActive()) return;
+			if (player instanceof ServerPlayer serverPlayer
+					&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1
+					&& volume.getBloodVolume() >= 5000.0) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_VESSEL_FILLED);
+			}
+			if (player instanceof ServerPlayer serverPlayer
+					&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2) {
+				recordEnzymeMastery(serverPlayer);
+			}
 
 			// â”€â”€ Skill: Capacity â€” add flat bonus to max blood â”€â”€
 			double baseMax = 5000.0;
@@ -161,6 +172,40 @@ public class BloodVolumeEvents {
 				}
 			}
 		});
+	}
+
+	private static void recordEnzymeMastery(ServerPlayer serverPlayer) {
+		for (ItemStack stack : serverPlayer.getInventory().items) {
+			if (stack.is(ItemInit.vivacious_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_VIVACIOUS);
+			} else if (stack.is(ItemInit.fervent_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_FERVENT);
+			} else if (stack.is(ItemInit.neurotic_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_NEUROTIC);
+			} else if (stack.is(ItemInit.incandescent_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_INCANDESCENT);
+			} else if (stack.is(ItemInit.ruinous_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_RUINOUS);
+			} else if (stack.is(ItemInit.frigid_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_FRIGID);
+			} else if (stack.is(ItemInit.ferric_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_FERRIC);
+			} else if (stack.is(ItemInit.umbral_enzyme.get())) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_UMBRAL);
+			}
+		}
+		if (HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer) >= 8) {
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+					HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_COMPLETE);
+		}
 	}
 
 	/**

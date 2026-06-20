@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:vial_centrifuge"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.enzyme_mastery_complete.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.enzyme_mastery_complete.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/degree_2_votary",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

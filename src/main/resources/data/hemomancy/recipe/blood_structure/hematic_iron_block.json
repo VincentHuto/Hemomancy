@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:blood_structure_recipe",
   "bloodCost": 50,
-  "required_degree": 0,
+  "required_degree": 1,
   "heldItem": "minecraft:ink_sac",
   "hitBlock": "minecraft:iron_block",
   "pattern": [

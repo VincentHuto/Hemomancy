@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
@@ -721,6 +722,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		playSound(SoundEvents.END_PORTAL_SPAWN, 0.5f, 1.5f);
 		if (player instanceof ServerPlayer serverPlayer) {
 			SkillPointGainEvents.onMemoryWeavingCompleted(serverPlayer);
+			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+					HarbingerAdvancementGranter.ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
 		}
 
 		clearActiveRitual(false);
