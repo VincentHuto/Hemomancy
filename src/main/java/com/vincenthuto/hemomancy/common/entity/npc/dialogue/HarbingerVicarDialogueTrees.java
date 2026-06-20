@@ -23,6 +23,7 @@ public final class HarbingerVicarDialogueTrees {
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";
 	public static final String EVENT_MASONS_RESPITE_DIRECTIVE = "vicar_masons_respite_directive";
+	public static final String EVENT_CONSECRATION_KIT = "vicar_consecration_kit";
 
 	private HarbingerVicarDialogueTrees() {}
 
@@ -373,6 +374,7 @@ public final class HarbingerVicarDialogueTrees {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.consecrate_armature", "armature_consecration", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
@@ -391,6 +393,20 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("founding_fane_lore", List.of(
 						"hemomancy.vicar.illuminatus.founding_fane_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.consecrate_armature", "armature_consecration", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("armature_consecration", List.of(
+						"hemomancy.vicar.illuminatus.armature_consecration.line1",
+						"hemomancy.vicar.illuminatus.armature_consecration.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.take_consecration_kit",
+								"armature_consecration_given", EVENT_CONSECRATION_KIT),
+						new DialogueOption("hemomancy.dialogue.vicar.option.not_yet", null, null)
+				)))
+				.addNode(new DialogueNode("armature_consecration_given", List.of(
+						"hemomancy.vicar.illuminatus.armature_consecration.given"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))

@@ -20,6 +20,7 @@ public final class SanguineMonolithDialogueTrees {
 
 	/** Sentinel used in place of an entity ID for this block-based speaker. */
 	public static final int BLOCK_ENTITY_ID = -1;
+	public static final String EVENT_CORNERSTONE = "monolith_cornerstone";
 
 	private SanguineMonolithDialogueTrees() {}
 
@@ -113,13 +114,28 @@ public final class SanguineMonolithDialogueTrees {
 						"hemomancy.monolith.guidance.archon.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.monolith.option.what_are_you", "what_are_you", null),
+						new DialogueOption("hemomancy.dialogue.monolith.option.anchor_armature", "armature_cornerstone", null),
 						new DialogueOption("hemomancy.dialogue.monolith.option.press_further", "press_again", null),
 						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("what_are_you", List.of(
 						"hemomancy.monolith.what_are_you.archon"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.monolith.option.anchor_armature", "armature_cornerstone", null),
 						new DialogueOption("hemomancy.dialogue.monolith.option.press_further", "press_again", null),
+						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("armature_cornerstone", List.of(
+						"hemomancy.monolith.armature_cornerstone.line1",
+						"hemomancy.monolith.armature_cornerstone.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.monolith.option.accept_cornerstone",
+								"armature_cornerstone_given", EVENT_CORNERSTONE),
+						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("armature_cornerstone_given", List.of(
+						"hemomancy.monolith.armature_cornerstone.given"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("press_again", List.of(

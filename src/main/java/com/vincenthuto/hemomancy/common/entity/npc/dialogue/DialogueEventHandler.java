@@ -45,6 +45,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public class DialogueEventHandler {
 	private static final int BLOOD_SHOTTING_OVERLAY_TICKS = 1200;
 	private static final float BLOOD_SHOTTING_OVERLAY_ALPHA = 0.30F;
+	private static final String VICAR_CONSECRATION_KIT_CLAIM_KEY =
+			"hemomancy.vicar_consecration_kit_claimed";
+	private static final String MONOLITH_CORNERSTONE_CLAIM_KEY =
+			"hemomancy.monolithic_cornerstone_claimed";
 
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
@@ -144,6 +148,12 @@ public class DialogueEventHandler {
 			}
 			case HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE -> {
 				handleVicarMasonsRespiteDirective(player, event.getEntityId());
+			}
+			case HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT -> {
+				handleVicarConsecrationKit(player, event.getEntityId());
+			}
+			case SanguineMonolithDialogueTrees.EVENT_CORNERSTONE -> {
+				handleMonolithCornerstone(player, event.getEntityId());
 			}
 			case HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON -> {
 				handleVeinMasonFirstLesson(player, event.getEntityId());
@@ -269,6 +279,52 @@ public class DialogueEventHandler {
 				HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE);
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_map")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleVicarConsecrationKit(ServerPlayer player, int entityId) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 5) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (player.getPersistentData().getBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vicars_consecration_kit.get()));
+		player.getPersistentData().putBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY, true);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_granted")
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+	}
+
+	private static void handleMonolithCornerstone(ServerPlayer player, int entityId) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 7) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (player.getPersistentData().getBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_known")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.monolithic_cornerstone.get()));
+		player.getPersistentData().putBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY, true);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 	}
