@@ -276,6 +276,7 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 				removeFillers(level, pos, state.getValue(FACING));
 			}
 			if (level.getBlockEntity(pos) instanceof HematicArmatureBlockEntity armature) {
+				armature.dropAppliedUpgradeItems(level, pos);
 				Containers.dropContents(level, pos, armature);
 				level.updateNeighbourForOutputSignal(pos, this);
 			}

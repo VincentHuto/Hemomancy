@@ -180,7 +180,7 @@ public class BiomeInit {
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.fargone.get(), 6, 1, 3));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.blood_drunk_puppeteer.get(), 4, 1, 1));
+				new MobSpawnSettings.SpawnerData(EntityInit.blood_drunk_puppeteer.get(), 12, 1, 1));
 		spawnBuilder.addSpawn(MobCategory.CREATURE,
 				new MobSpawnSettings.SpawnerData(EntityInit.fungling.get(), 12, 2, 5));
 		spawnBuilder.addSpawn(MobCategory.CREATURE,
@@ -348,7 +348,7 @@ public class BiomeInit {
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.abhorent_thought.get(), 6, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.blood_drunk_puppeteer.get(), 3, 1, 1));
+				new MobSpawnSettings.SpawnerData(EntityInit.blood_drunk_puppeteer.get(), 8, 1, 1));
 		spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.GHAST, 10, 1, 1));
 		// Sparse survivable life
 		spawnBuilder.addSpawn(MobCategory.CREATURE,

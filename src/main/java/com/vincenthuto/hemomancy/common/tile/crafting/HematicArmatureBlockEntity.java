@@ -30,6 +30,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -474,6 +475,17 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 
 	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() {
 		return armatureTier;
+	}
+
+	public void dropAppliedUpgradeItems(Level level, BlockPos pos) {
+		if (armatureTier.id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id()) {
+			Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+					new ItemStack(ItemInit.vicars_consecration_kit.get()));
+		}
+		if (armatureTier.id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id()) {
+			Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+					new ItemStack(ItemInit.monolithic_cornerstone.get()));
+		}
 	}
 
 	public void clearRestrainedPlayer(@Nullable UUID playerId) {

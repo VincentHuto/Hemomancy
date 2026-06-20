@@ -2208,11 +2208,12 @@ Harbinger armor progression is centered on the **Hematic Armature** (`hematic_ar
 | D2 | Vanilla iron armor | Hematic Iron Scrap | 250 | Hematic Iron |
 | D3 | Hematic Iron | Calcified Blood Spine | 500 | Barbed |
 | D3 | Hematic Iron | Chitinous Husk | 500 | Chitinite |
-| D5 | Barbed or Chitinite | Crimson Lacquer | 1,200 | Blood Lust, with cosmetic lineage stack data (`barbed` or `chitinite`) |
+| D3 | Hematic Iron | Glow Ink Sac | 500 | Prismatic |
+| D5 | Barbed, Chitinite, or Prismatic | Crimson Lacquer | 1,200 | Blood Lust, with cosmetic lineage stack data (`barbed`, `chitinite`, or `prismatic`) |
 | D5-D6 | Blood Lust helmet | Tengu Mask / Horned Mask / Lodestone Faceplate / Velorum Mask | 350-500 | Blood Lust mask variants |
 | D7 Silent Archon | Blood Lust | Monolith Imbued Cloth | 2,000 | Silent Archon Vestments; gated by `hemomancy:archon_choice_made = "silent"` |
 
-Direct shaped recipes for Hematic Iron, Barbed, and Chitinite armor are intentionally removed; weapons, shields, and reagent components remain regular crafting where present.
+Direct shaped recipes for Hematic Iron, Barbed, Chitinite, and Prismatic armor are intentionally removed; weapons, shields, and reagent components remain regular crafting where present.
 
 ### 22.1 Hematic Iron Armor
 
@@ -2230,7 +2231,7 @@ Crimson Lodge combat vestment upgraded from either D3 armor fork:
 - ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm.png) Helm (no mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_tengu.png) Helm (Tengu mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_horned.png) Helm (Horned mask), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_lodestone.png) Helm (Lodestone faceplate), ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_velorum.png) Helm (Velorum mask)
 - ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_chest.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_legs.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/blood_lust_boots.png) Boots
 - Mask items: ![](../src/main/resources/assets/hemomancy/textures/item/tengu_mask.png) Tengu Mask, ![](../src/main/resources/assets/hemomancy/textures/item/horned_mask.png) Horned Mask, ![](../src/main/resources/assets/hemomancy/textures/item/lodestone_faceplate.png) Lodestone Faceplate, ![](../src/main/resources/assets/hemomancy/textures/item/velorum_mask.png) Velorum Mask. These are Armature helmet upgrades, not separate set identities.
-- **Lineage:** Blood Lust pieces store `hemomancy:lineage = "barbed"` or `"chitinite"` when upgraded. Current lineage is aesthetic/model data only; stats and set bonus are identical.
+- **Lineage:** Blood Lust pieces store `hemomancy:lineage = "barbed"`, `"chitinite"`, or `"prismatic"` when upgraded. Current lineage is aesthetic/model data only; stats and set bonus are identical.
 - **Mask modifiers:** Tengu grants brief Speed after direct melee hits; Horned applies Blood Loss to the target; Lodestone trickles small blood recovery while active; Velorum grants brief Absorption.
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
 - **Repair:** Hematic Iron Scrap
@@ -2242,11 +2243,11 @@ Crimson Lodge combat vestment upgraded from either D3 armor fork:
 
 ### 22.3 Barbed Armor
 
-Defensive barbed armor set:
+Retaliatory coastal-venom armor blending Barbed Urchin spines, Venom Rib Centipede poison, and Fargone blood-moon aggression:
 - ![](../src/main/resources/assets/hemomancy/textures/item/barbed_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_boots.png) Boots
 - Barbed Shield ![](../src/main/resources/assets/hemomancy/textures/entity/barbed_shield/model_barbed_shield.png)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
-- **Repair:** Chitinous Husk
+- **Repair:** Calcified Blood Spine
 - **Set Bonus (4 pieces):** Thorns â€” attackers take 2 damage and receive Blood Loss effect (3 seconds)
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_2.png)
@@ -2255,7 +2256,7 @@ Defensive barbed armor set:
 
 ### 22.4 Chitinite Armor
 
-Insectoid/chitin-based armor:
+Ferric bastion armor blending Chitinite plating, Chthonian termite mandibles, and Chalybeate Snail living-mineral sclerites:
 - ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/chitinite_boots.png) Boots
 - Chitinite Shield ![](../src/main/resources/assets/hemomancy/textures/entity/chitinite_shield/model_chitinite_shield.png)
 - Chitinite Arm Banner (dyeable, 16 colors)
@@ -2267,7 +2268,19 @@ Insectoid/chitin-based armor:
 >
 > Item stacks use the same model-backed 3D renderer as the worn armor.
 
-### 22.5 Unstained Armor
+### 22.5 Prismatic Armor
+
+Flash-evasion armor blending Prism Cuttle chromatophores, Lantern Tick displays, and Blood Drunk Puppeteer red-gold spectacle:
+- ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_boots.png) Boots
+- **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability x37, Enchantability 15
+- **Repair:** Glow Ink Sac
+- **Set Bonus (4 pieces):** Prismatic flash - when hit by a living attacker, briefly grants Speed and blinds, nauseates, and outlines the attacker plus nearby hostile mobs. The flash has an 8-second cooldown.
+
+> Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/prismatic_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/prismatic_layer_2.png)
+>
+> Current resources use placeholder flat item sprites and vanilla armor layers so final bespoke models can replace them without changing progression ids.
+
+### 22.6 Unstained Armor
 
 Anti-blood zealot armor (for the Unstained path):
 - ![](../src/main/resources/assets/hemomancy/textures/item/unstained_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_boots.png) Boots
@@ -2281,7 +2294,7 @@ Anti-blood zealot armor (for the Unstained path):
 
 Unstained weapon items now render through 3D custom item models rather than flat handheld sprites. `unstained_warhammer`, `silthmere_glaive`, `absolution_dagger`, and `annettas_absolution_dagger` use `builtin/entity` item model JSONs and `HemoClientItemExtensionsProvider` to route to `UnstainedWeaponItemRenderer`. Model layers are registered in `LayerEvents`: `UnstainedWarhammerModel` uses a Pale Silver Bell-inspired striking head, `SilthmereGlaiveModel` uses a long polearm shaft with a swept blade, and `AbsolutionDaggerModel` uses a narrow stiletto profile shared by Annetta's boss-drop variant. `UnstainedWeaponRendererResourceTest` guards against these items regressing to 2D handheld model JSONs or losing their client renderer/model layer wiring.
 
-### 22.6 Crown of Sacred Marrow
+### 22.7 Crown of Sacred Marrow
 
 Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 - **Stats:** Same as Hematic Iron (Defense 3/6/8/3, Toughness 3.0, KB Resist 0.1)
@@ -2290,9 +2303,11 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 
 > **Note:** All armor sets share identical base stat distributions (equivalent to Netherite-tier defense/toughness) but each has a unique set bonus implemented in `ArmorSetBonusHandler`. The Marrow Crown is an artifact helmet with its own standalone bonus that doesn't require a full set.
 
-### 22.7 Silent Archon Vestments and One-Off Pieces
+### 22.8 Silent Archon Vestments and One-Off Pieces
 
 **Silent Archon Vestments** are D7 survivor-duelist vestments made by reforging Blood Lust armor with Monolith Imbued Cloth after choosing the Silent Archon path (`hemomancy:archon_choice_made = "silent"`). Their full-set bonus refuses lethal damage once per 12,000-tick cooldown by spending 3,000 player blood, leaving the player barely alive and applying Resistance briefly plus harsh Weakness, Slowness, Mining Fatigue, and Darkness recovery debuffs. The bonus excludes Degree 8 Apotheos players. Runtime rendering uses `SilentArchonArmorModel`, the robe-derived `silent_archon_layer_1/2.png` armor textures, and a semi-translucent Monolith Fragment shader overlay when worn; inventory, hand, frame, and dropped item stacks use the same custom 3D armor-piece renderer instead of flat generated sprites.
+
+Future visual direction: the robe silhouette may lean toward Gael's armor from Dark Souls 3, especially the battered pilgrim-knight layering, heavy cloak mass, and worn endgame duelist feel.
 
 One-off armor pieces intentionally use distinct material holders so they break full-set bonuses:
 - **Hemolymphopoda Headpiece:** existing D3 aquatic/organic helmet.
@@ -2312,7 +2327,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 | **Scarlet Vanity**                   | `ScarletVanityBlockEntity`                 | Opens the Harbinger equipment screen for equipping the Charm of Vascularium, Blood Gourds, and Morphling Jar. The block uses a red vanity JSON model with a central blood-reflection bowl, while `ScarletVanityRenderer` displays the currently equipped items flat on the tabletop.                                                                                                                                                                                                                                                                                                                        |
 | **Somatic Loom**                     | `SomaticLoomBlockEntity`                   | Degree 3 refined memory-weaving station. Stores up to 64 internal enzyme units per tendency, accepts one blank Hematic Memory plus a list of catalyst candidates, enters an editable dark-red awaiting-blood glow when an exact recipe is ready, then runs a physical orb-weaving ritual where the player projects blood and drags colored tendency-orbs home with a Living Staff. Renders expanded offscreen bounds for the ritual orbs, strands, trails, and shader-writhed orb shells. ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/somatic_loom.png)                                                                                                                                                                                                                                                    |
 | **Puppeteer's Spindle**              | `PuppeteersSpindleBlockEntity`             | Harbinger puppeteer control station. Two-slot container: slot 0 accepts a `marionette_crossbar`, slot 1 accepts `puppeteering_thread`. Thread inserted into the feeder slot is consumed immediately into a persistent `threadBuffer` capped at 512, and the slotted crossbar auto-fills from that buffer up to its 256-thread cap. The screen handles summon selection, crossbar binding/attunement, and call/recall preparation for the slotted crossbar. The placed block stores horizontal facing, faces the placer, and renders through `PuppeteersSpindleRenderer` / `PuppeteersSpindleModel` plus a custom block item renderer. |
-| **Hematic Armature**                 | `HematicArmatureBlockEntity`               | Standing ritual armor-upgrade machine with no player-facing GUI. Right-click inserts held reagents into the four one-item bowl slots in insertion order, crouch/right-click withdraws the most recent bowl item first, and blood containers fill the 8,000-blood reservoir. Walking onto the block mounts the player to a hidden `ArmatureRestraintEntity`; while restrained, worn armor upgrades in helmet/chest/legs/boots order through `hemomancy:armature_upgrade` recipes. Any bowl reagent can satisfy any matching worn armor piece. Crafting takes 100 ticks per item, allows partial completion, and emits windup/completion particles. The block now has three persistent visual/recipe tiers: the base Armature Rack handles normal pre-Lodge recipes; applying a **Vicar's Consecration Kit** at Degree 5 upgrades it for D5-D6 recipes such as Blood Lust armor; applying a **Monolithic Cornerstone** at Degree 7 requires the Vicar tier first and upgrades it for D7+ recipes such as Silent Archon Vestments. Renders through `HematicArmatureModel`/`HematicArmatureRenderer` with tier-hidden Vicar kit ornamentation, Monolithic cornerstone/heart reservoir parts, bowl item renders, custom block item renderer, extended culling bounds, and linked filler blocks for the wide bowl stands/top arch. |
+| **Hematic Armature**                 | `HematicArmatureBlockEntity`               | Standing ritual armor-upgrade machine with no player-facing GUI. Right-click inserts held reagents into the four one-item bowl slots in insertion order, crouch/right-click withdraws the most recent bowl item first, and blood containers fill the 8,000-blood reservoir. Walking onto the block mounts the player to a hidden `ArmatureRestraintEntity`; while restrained, worn armor upgrades in helmet/chest/legs/boots order through `hemomancy:armature_upgrade` recipes. Any bowl reagent can satisfy any matching worn armor piece. Crafting takes 100 ticks per item, allows partial completion, and emits windup/completion particles. The block now has three persistent visual/recipe tiers: the base Armature Rack handles normal pre-Lodge recipes; applying a **Vicar's Consecration Kit** at Degree 5 upgrades it for D5-D6 recipes such as Blood Lust armor; applying a **Monolithic Cornerstone** at Degree 7 requires the Vicar tier first and upgrades it for D7+ recipes such as Silent Archon Vestments. Breaking an upgraded Armature drops the applied upgrade item or items so the replacement block can be re-upgraded. Renders through `HematicArmatureModel`/`HematicArmatureRenderer` with tier-hidden Vicar kit ornamentation, Monolithic cornerstone/heart reservoir parts, bowl item renders, custom block item renderer, extended culling bounds, and linked filler blocks for the wide bowl stands/top arch. |
 | **Vial Centrifuge**                  | `VialCentrifugeBlockEntity`                | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. Accepts **Vial Rack** right-click bulk inserts, and startup now requires at least one processable vial with valid output fit. ![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/vial_centrifuge.png)                                                                                                                                                                                                                                   |
 | **ghastly_alembic**                  | `GhastlyAlembicBlockEntity`                | Squeezes items to extract blood (requires fire below). Has 4 slots: Input (slot 0), Flask (slot 1, fills Cured Clay Flasks into Bloody Flasks), Result (slot 2), and **Catalyst (slot 3)** â€” an optional catalyst ingredient that modifies or enhances the recipe output. Hopper access: top â†’ input, bottom â†’ result, sides â†’ flask + catalyst. Renders via custom `GhastlyAlembicRenderer` (3D entity model `GhastlyAlembicModel`, facing-aware)![](../src/main/resources/assets/hemomancy/textures/ref%20doc%20images/ghastly_alembic.png)   .                                                                                                                           |
 > **Ghastly Alembic gourd filling:** The alembic's result/blood output slot also accepts Blood Gourds. When a gourd is placed there, the block entity drains stored blood from its internal tank into the gourd's stack-backed internal blood volume instead of producing bottled blood in that slot.
@@ -2861,7 +2876,7 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
 | **Blood Thrall** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_thrall/blood_thrall.png) | Creature | Small (0.6Ã—0.7), summoned blood transport creature. Can bind direct-routing sources/nodes, carry a capped amount, and deposit into target reservoirs without duplicating source blood. |
-| **Blood Drunk Puppeteer** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png) | Monster | Rare blood-themed hostile in dark/spooky and fungal biomes; summons four bonded Enthralled Dolls, drops Puppeteering Thread, and is a bloody-jug drop candidate |
+| **Blood Drunk Puppeteer** | ![](../src/main/resources/assets/hemomancy/textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png) | Monster | Uncommon biome-gated hostile in dark/spooky, swamp, old-growth, and fungal biomes; uses solid-ground mob placement rather than vanilla darkness-only monster placement so it remains findable as a signature wild encounter. Summons four bonded Enthralled Dolls, drops Puppeteering Thread, and is a bloody-jug drop candidate |
 | **Enthralled Doll** | | Monster | Puppeteer-bound support minion. Summoned dolls follow/assist their puppeteer and vanish without loot if the owner is gone |
 | **Unstained Zealot** | ![](../src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
 | **Unstained Guardian** | | Creature | NPC that guards Unstained sacred sites |

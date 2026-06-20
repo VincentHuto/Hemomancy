@@ -666,6 +666,15 @@ public class ItemInit {
             () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
             () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.BOOTS));
+    // Prismatic
+    public static final DeferredHolder<Item, Item> prismatic_helm = BASEITEMS.register("prismatic_helm",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> prismatic_chestplate = BASEITEMS.register("prismatic_chestplate",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> prismatic_leggings = BASEITEMS.register("prismatic_leggings",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.LEGGINGS));
+    public static final DeferredHolder<Item, Item> prismatic_boots = BASEITEMS.register("prismatic_boots",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.BOOTS));
     // Unstained
     public static final DeferredHolder<Item, Item> unstained_helm = BASEITEMS.register("unstained_helm",
             () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.HELMET));

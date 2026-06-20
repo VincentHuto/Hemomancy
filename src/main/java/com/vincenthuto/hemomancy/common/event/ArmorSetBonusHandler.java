@@ -20,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -48,6 +49,7 @@ public class ArmorSetBonusHandler {
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
 	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
 	private static final String SILENT_ARCHON_COOLDOWN_TAG = "hemomancy:silent_archon_refusal_until";
+	private static final String PRISMATIC_FLASH_COOLDOWN_TAG = "hemomancy:prismatic_flash_until";
 
 	private static final double HEMATIC_IRON_BLOOD_REGEN = 2.0;
 	private static final int HEMATIC_IRON_REGEN_INTERVAL = 20; // Every 20 ticks = 1 second
@@ -55,8 +57,14 @@ public class ArmorSetBonusHandler {
 	private static final float BARBED_THORNS_DAMAGE = 2.0f;
 	private static final int BARBED_BLOOD_LOSS_DURATION = 60; // 3 seconds
 	private static final int BARBED_BLOOD_LOSS_AMPLIFIER = 0;
+	private static final int BARBED_POISON_DURATION = 80;
 	private static final double CHITINITE_TOUGHNESS_BONUS = 2.0;
 	private static final float CHITINITE_PROJECTILE_REDUCTION = 0.25f;
+	private static final int PRISMATIC_FLASH_COOLDOWN_TICKS = 160;
+	private static final int PRISMATIC_FLASH_BLINDNESS_TICKS = 40;
+	private static final int PRISMATIC_FLASH_CONFUSION_TICKS = 80;
+	private static final int PRISMATIC_FLASH_SPEED_TICKS = 60;
+	private static final double PRISMATIC_FLASH_RANGE = 4.0D;
 	private static final double MARROW_CROWN_DAMAGE_BONUS = 0.10;
 	private static final double MARROW_CROWN_BLOOD_THRESHOLD = 0.50;
 	private static final int UNSTAINED_CHECK_INTERVAL = 10; // Check every 10 ticks
@@ -198,12 +206,37 @@ public class ArmorSetBonusHandler {
 			// Thorns damage
 			attacker.hurt(player.damageSources().thorns(player), BARBED_THORNS_DAMAGE);
 
-			// Apply Blood Loss effect to attacker
+			// Apply Blood Loss and venom to attacker.
 			attacker.addEffect(new MobEffectInstance(
 					EffectInit.blood_loss,
 					BARBED_BLOOD_LOSS_DURATION,
 					BARBED_BLOOD_LOSS_AMPLIFIER));
+			attacker.addEffect(new MobEffectInstance(MobEffects.POISON, BARBED_POISON_DURATION, 0, false, true, true));
 		}
+
+		if (hasFullSet(player, EnumModArmorTiers.PRISMATIC)) {
+			triggerPrismaticFlash(player, attacker);
+		}
+	}
+
+	private static void triggerPrismaticFlash(Player player, LivingEntity attacker) {
+		long now = player.level().getGameTime();
+		if (player.getPersistentData().getLong(PRISMATIC_FLASH_COOLDOWN_TAG) > now) {
+			return;
+		}
+
+		player.getPersistentData().putLong(PRISMATIC_FLASH_COOLDOWN_TAG, now + PRISMATIC_FLASH_COOLDOWN_TICKS);
+		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, PRISMATIC_FLASH_SPEED_TICKS, 0, false, true, true));
+
+		player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PRISMATIC_FLASH_RANGE),
+				target -> target.isAlive() && target != player && (target == attacker || target instanceof Monster))
+				.forEach(ArmorSetBonusHandler::applyPrismaticFlashEffects);
+	}
+
+	private static void applyPrismaticFlashEffects(LivingEntity target) {
+		target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, PRISMATIC_FLASH_BLINDNESS_TICKS, 0, false, true, true));
+		target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, PRISMATIC_FLASH_CONFUSION_TICKS, 0, false, true, true));
+		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, PRISMATIC_FLASH_CONFUSION_TICKS, 0, false, true, true));
 	}
 
 	private static boolean trySilentArchonDeathRefusal(Player player, LivingDamageEvent.Pre event) {

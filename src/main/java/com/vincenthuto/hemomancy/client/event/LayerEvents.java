@@ -252,6 +252,15 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedArmorModel.BARBED_FEET_LAYER,
 				() -> BarbedArmorModel.createBodyLayer(EquipmentSlot.FEET));
 
+		event.registerLayerDefinition(PrismaticArmorModel.PRISMATIC_HELMET_LAYER,
+				() -> PrismaticArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(PrismaticArmorModel.PRISMATIC_CHEST_LAYER,
+				() -> PrismaticArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(PrismaticArmorModel.PRISMATIC_LEGS_LAYER,
+				() -> PrismaticArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(PrismaticArmorModel.PRISMATIC_FEET_LAYER,
+				() -> PrismaticArmorModel.createBodyLayer(EquipmentSlot.FEET));
+
 		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_HELMET_LAYER,
 				() -> UnstainedArmorModel.createHeadLayer(EquipmentSlot.HEAD));
 		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_CHEST_LAYER,

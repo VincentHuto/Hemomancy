@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.ChalybeateFortressArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CovenantLeaderArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.PrismaticArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
@@ -24,6 +25,8 @@ public final class ModelBackedArmorItemRenderHelper {
 	public static final ResourceLocation BARBED_LAYER_2 = armorTexture("barbed_layer_2");
 	public static final ResourceLocation CHITINITE_LAYER_1 = armorTexture("chitinite_layer_1");
 	public static final ResourceLocation CHITINITE_LAYER_2 = armorTexture("chitinite_layer_2");
+	public static final ResourceLocation PRISMATIC_LAYER_1 = armorTexture("prismatic_layer_1");
+	public static final ResourceLocation PRISMATIC_LAYER_2 = armorTexture("prismatic_layer_2");
 	public static final ResourceLocation UNSTAINED_LAYER_1 = armorTexture("unstained_layer_1");
 	public static final ResourceLocation UNSTAINED_LAYER_2 = armorTexture("unstained_layer_2");
 	public static final ResourceLocation CHALYBEATE_LAYER_1 = armorTexture("chalybeate_sclerite_layer_1");
@@ -76,6 +79,18 @@ public final class ModelBackedArmorItemRenderHelper {
 		} else if (stack.is(ItemInit.chitinite_boots.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, ChitiniteArmorModel.boots::get,
 					CHITINITE_LAYER_1);
+		} else if (stack.is(ItemInit.prismatic_helm.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, PrismaticArmorModel.helmet::get,
+					PRISMATIC_LAYER_1);
+		} else if (stack.is(ItemInit.prismatic_chestplate.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, PrismaticArmorModel.chest::get,
+					PRISMATIC_LAYER_1);
+		} else if (stack.is(ItemInit.prismatic_leggings.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, PrismaticArmorModel.legs::get,
+					PRISMATIC_LAYER_2);
+		} else if (stack.is(ItemInit.prismatic_boots.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, PrismaticArmorModel.boots::get,
+					PRISMATIC_LAYER_1);
 		} else if (stack.is(ItemInit.unstained_helm.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, UnstainedArmorModel.helmet::get,
 					UNSTAINED_LAYER_1);

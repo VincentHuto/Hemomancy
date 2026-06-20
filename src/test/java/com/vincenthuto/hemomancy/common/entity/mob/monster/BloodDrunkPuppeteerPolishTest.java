@@ -26,12 +26,31 @@ public final class BloodDrunkPuppeteerPolishTest {
 		assertFileContains("biome modifier", Path.of(
 						"src/main/resources/data/hemomancy/neoforge/biome_modifier/add_blood_drunk_puppeteer.json"),
 				"hemomancy:blood_drunk_puppeteer");
+		assertFileContains("biome modifier gives puppeteers a findable wild spawn weight", Path.of(
+						"src/main/resources/data/hemomancy/neoforge/biome_modifier/add_blood_drunk_puppeteer.json"),
+				"\"weight\": 24");
 		assertFileContains("spawn biome tag", Path.of(
 						"src/main/resources/data/hemomancy/tags/worldgen/biome/blood_drunk_puppeteer_spawnlist.json"),
 				"minecraft:dark_forest");
+		assertFileContains("spawn biome tag includes mangroves for wild testing", Path.of(
+						"src/main/resources/data/hemomancy/tags/worldgen/biome/blood_drunk_puppeteer_spawnlist.json"),
+				"minecraft:mangrove_swamp");
 		assertFileContains("puppeteer loot", Path.of(
 						"src/main/resources/data/hemomancy/loot_table/entities/blood_drunk_puppeteer.json"),
 				"hemomancy:puppeteering_thread");
+		assertFileContains("sporecrown thicket has a meaningful puppeteer spawn weight", Path.of(
+						"src/main/java/com/vincenthuto/hemomancy/common/init/BiomeInit.java"),
+				"EntityInit.blood_drunk_puppeteer.get(), 12, 1, 1");
+		assertFileContains("hemorrhagic plateau has a meaningful puppeteer spawn weight", Path.of(
+						"src/main/java/com/vincenthuto/hemomancy/common/init/BiomeInit.java"),
+				"EntityInit.blood_drunk_puppeteer.get(), 8, 1, 1");
+		String puppeteerEntity = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerEntity.java"))
+				.replace("\r\n", "\n");
+		assertContains("puppeteer uses biome placement rules instead of vanilla darkness lottery",
+				puppeteerEntity, "&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);");
+		assertDoesNotContain("puppeteer should not use vanilla monster darkness rules for signature wild spawns",
+				puppeteerEntity, "checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom)");
 	}
 
 	private static void assertFileContains(String label, Path path, String needle) throws Exception {
@@ -53,6 +72,18 @@ public final class BloodDrunkPuppeteerPolishTest {
 	private static void assertTrue(String label, boolean value) {
 		if (!value) {
 			throw new AssertionError(label);
+		}
+	}
+
+	private static void assertContains(String label, String text, String expected) {
+		if (!text.contains(expected)) {
+			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertDoesNotContain(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 }

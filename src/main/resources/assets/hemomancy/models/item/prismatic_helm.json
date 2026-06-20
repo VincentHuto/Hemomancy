@@ -1,0 +1,9 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "layer0": "hemomancy:item/prismatic_helm",
+    "particle": "hemomancy:item/prismatic_helm"
+  },
+  "gui_light": "front",
+  "display": {}
+}
