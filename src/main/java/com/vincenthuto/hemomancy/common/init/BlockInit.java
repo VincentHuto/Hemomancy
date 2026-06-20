@@ -490,18 +490,41 @@ public class BlockInit {
 			() -> new StemBlock(GOURD_BLOCK_KEY, ATTACHED_GOURD_STEM_BLOCK_KEY, GOURD_SEED_ITEM_KEY, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak()
 					.sound(SoundType.HARD_CROP).pushReaction(PushReaction.DESTROY)));
 
-	// Idols
-	public static final DeferredHolder<Block, Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
-			() -> new BlockHumaneIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-					.sound(SoundType.STONE)));
-	public static final DeferredHolder<Block, Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
-			() -> new BlockSerpentineIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
-
 	// Tiles
+	public static final DeferredHolder<Block, Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
+			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
+
+	public static final DeferredHolder<Block, Block> ghastly_alembic = MODELEDBLOCKS.register("ghastly_alembic",
+			() -> new GhastlyAlembicBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
+
+	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
+			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
+					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
+			MnemonicReliquaryBlock::new);
+	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
+			DictationTableBlock::new);
+	public static final DeferredHolder<Block, Block> mnemonic_candle = MODELEDBLOCKS.register("mnemonic_candle",
+			() -> new MnemonicCandleBlock(BlockBehaviour.Properties.of()
+					.strength(0.2F, 1.0F)
+					.sound(SoundType.CANDLE)
+					.lightLevel(state -> state.getValue(MnemonicCandleBlock.LIT) ? 12 : 0)
+					.noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> scar_station = MODELEDBLOCKS.register("scar_station",
 			() -> new ScarStationBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE).noOcclusion()));
+	public static final DeferredHolder<Block, Block> mason_effigy = MODELEDBLOCKS.register("mason_effigy",
+			() -> new MasonsEffigyBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 8.0F).sound(SoundType.STONE).noOcclusion()));
+	public static final DeferredHolder<Block, Block> anastomotic_brazier = MODELEDBLOCKS.register("anastomotic_brazier",
+			() -> new AnastomoticBrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
+	public static final DeferredHolder<Block, Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
+			() -> new BrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
 
 	public static final DeferredHolder<Block, Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new MorphlingIncubatorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -513,6 +536,34 @@ public class BlockInit {
 			() -> new SpecimenJarBlock(BlockBehaviour.Properties.of().strength(0.3F, 1.0F)
 					.sound(SoundType.GLASS).noOcclusion()));
 
+	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
+			() -> new ConsecratedBloodwellBlock(
+					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+							.strength(3.0F, 8.0F).sound(SoundType.METAL).noOcclusion().lightLevel(s -> 3)));
+
+	public static final DeferredHolder<Block, Block> sanguine_monolith = MODELEDBLOCKS.register("sanguine_monolith",
+			() -> new SanguineMonolithBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(3.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 5).noOcclusion()));
+
+	public static final DeferredHolder<Block, Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
+			() -> new UnstainedPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
+
+	public static final DeferredHolder<Block, Block> altar_of_cleansing = MODELEDBLOCKS.register("altar_of_cleansing",
+			() -> new AltarOfCleansingBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 7).noOcclusion()));
+	public static final DeferredHolder<Block, Block> pallid_retort = MODELEDBLOCKS.register("pallid_retort",
+			() -> new PallidRetortBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
+
+	// Idols / late utility fixtures
+	public static final DeferredHolder<Block, Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
+			() -> new BlockHumaneIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
+			() -> new BlockSerpentineIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
+
 	public static final DeferredHolder<Block, Block> mycelial_crucible = MODELEDBLOCKS.register("mycelial_crucible",
 			() -> new MycelialCrucibleBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -522,13 +573,6 @@ public class BlockInit {
 			() -> new MycelialLanternBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(2.5F, 8.0F).sound(SoundType.LANTERN).lightLevel(s -> 8).noOcclusion()));
-
-	public static final DeferredHolder<Block, Block> mnemonic_candle = MODELEDBLOCKS.register("mnemonic_candle",
-			() -> new MnemonicCandleBlock(BlockBehaviour.Properties.of()
-					.strength(0.2F, 1.0F)
-					.sound(SoundType.CANDLE)
-					.lightLevel(state -> state.getValue(MnemonicCandleBlock.LIT) ? 12 : 0)
-					.noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> witness_organ = MODELEDBLOCKS.register("witness_organ",
 			() -> new WitnessOrganBlock(BlockBehaviour.Properties.of()
@@ -541,14 +585,6 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
-
-	public static final DeferredHolder<Block, Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
-			() -> new UnstainedPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
-
-	public static final DeferredHolder<Block, Block> altar_of_cleansing = MODELEDBLOCKS.register("altar_of_cleansing",
-			() -> new AltarOfCleansingBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 7).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> cleansed_stone = BASEBLOCKS.register("cleansed_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -589,10 +625,6 @@ public class BlockInit {
 			() -> new SaintSarcophagusBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
 
-	public static final DeferredHolder<Block, Block> sanguine_monolith = MODELEDBLOCKS.register("sanguine_monolith",
-			() -> new SanguineMonolithBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(3.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 5).noOcclusion()));
-
 	public static final DeferredHolder<Block, Block> sanguine_omen = BASEBLOCKS.register("sanguine_omen",
 			() -> new SanguineOmenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
 					.requiresCorrectToolForDrops().strength(2.0F, 6.0F).sound(SoundType.STONE).lightLevel(s -> 3)
@@ -605,11 +637,6 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new DendriticDistributorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
-
-	public static final DeferredHolder<Block, Block> consecrated_bloodwell = MODELEDBLOCKS.register("consecrated_bloodwell",
-			() -> new ConsecratedBloodwellBlock(
-					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-							.strength(3.0F, 8.0F).sound(SoundType.METAL).noOcclusion().lightLevel(s -> 3)));
 
 	public static final DeferredHolder<Block, Block> hematic_stake = MODELEDBLOCKS.register("hematic_stake",
 			() -> new HematicStakeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
@@ -644,38 +671,12 @@ public class BlockInit {
 			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
-	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
-			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
-					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
-	public static final DeferredHolder<Block, Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
-			MnemonicReliquaryBlock::new);
-	public static final DeferredHolder<Block, Block> dictation_table = SPECIALBLOCKS.register("dictation_table",
-			DictationTableBlock::new);
 	public static final DeferredHolder<Block, Block> puppeteers_spindle = MODELEDBLOCKS
 			.register("puppeteers_spindle", () -> new PuppeteersSpindleBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.WOOD).noOcclusion()));
 	public static final DeferredHolder<Block, Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
 			() -> new EarthenVeinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.STONE)));
-	public static final DeferredHolder<Block, Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
-			() -> new BrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-					.sound(SoundType.METAL)));
-	public static final DeferredHolder<Block, Block> anastomotic_brazier = MODELEDBLOCKS.register("anastomotic_brazier",
-			() -> new AnastomoticBrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
-	public static final DeferredHolder<Block, Block> mason_effigy = MODELEDBLOCKS.register("mason_effigy",
-			() -> new MasonsEffigyBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 8.0F).sound(SoundType.STONE).noOcclusion()));
-	public static final DeferredHolder<Block, Block> ghastly_alembic = MODELEDBLOCKS.register("ghastly_alembic",
-			() -> new GhastlyAlembicBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-					.sound(SoundType.METAL)));
-	public static final DeferredHolder<Block, Block> pallid_retort = MODELEDBLOCKS.register("pallid_retort",
-			() -> new PallidRetortBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-					.sound(SoundType.METAL)));
-
-	public static final DeferredHolder<Block, Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
-			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
 	public static final DeferredHolder<Block, Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()

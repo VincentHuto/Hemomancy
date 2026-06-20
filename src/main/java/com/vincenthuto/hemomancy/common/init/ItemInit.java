@@ -58,9 +58,6 @@ public class ItemInit {
             Hemomancy.MOD_ID);
     public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
-    public static final DeferredHolder<Item, Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
-            () -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE.holder(),
-                    Hemomancy.rloc("textures/entity/arm_banner/chitinite_arm_banner.png")));
 
     // public static final DamageSource bloodLoss = new DamageSource("bloodloss");
     public static final DeferredHolder<BannerPattern, BannerPattern> heart = BANNERPATTERNS.register("hemomancy_heart",
@@ -69,28 +66,6 @@ public class ItemInit {
             () -> new BannerPatternItem(
                     TagKey.create(Registries.BANNER_PATTERN, Hemomancy.rloc("pattern_item/hemomancy_heart")),
                     new Item.Properties()));
-
-    // Charm
-    public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
-            () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
-    public static final DeferredHolder<Item, Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
-            () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTendency.ANIMUS, 0));
-    public static final DeferredHolder<Item, Item> mycophant_tendril = BASEITEMS.register("mycophant_tendril",
-            () -> new MycophantTendrilItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
-    // Debug / Testing
-    public static final DeferredHolder<Item, Item> structure_spawner = SPECIALITEMS.register("structure_spawner",
-            () -> new StructureSpawnerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
-    public static final DeferredHolder<Item, Item> debug_showcase = SPECIALITEMS.register("debug_showcase",
-            () -> new DebugShowcaseItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
-    public static final DeferredHolder<Item, Item> structure_scanner = SPECIALITEMS.register("structure_scanner",
-            () -> new StructureScannerItem(
-                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).component(
-                            DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(),
-                            new StructureScannerTooltipComponent(List.of(
-                                    Component.literal("Right-click two corners of a structure").withStyle(ChatFormatting.GRAY),
-                                    Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
-                                    Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
-                                    Component.literal("Creative mode only!").withStyle(ChatFormatting.RED))))));
 
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
@@ -120,6 +95,18 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> scout_field_notes = SPECIALITEMS.register("scout_field_notes",
             () -> new PreWrittenMemoItem(new Item.Properties()));
     // Base Items
+    public static final DeferredHolder<Item, Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
+            () -> new ItemNameBlockItem(BlockInit.gourd_stem.get(), new Item.Properties()));
+    // Gourd Foods
+    public static final DeferredHolder<Item, Item> gourd_slice = BASEITEMS.register("gourd_slice",
+            () -> new Item(new Item.Properties()
+                    .food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).fast().build())));
+    public static final DeferredHolder<Item, Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
+            () -> new Item(new Item.Properties()
+                    .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
+    public static final DeferredHolder<Item, Item> gourd_stew = BASEITEMS.register("gourd_stew",
+            () -> new Item(new Item.Properties().stacksTo(1).craftRemainder(Items.BOWL)
+                    .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
             () -> new Item(new Item.Properties()));
 //    public static final DeferredHolder<Item, Item> field_notes = BASEITEMS.register("field_notes",
@@ -247,33 +234,6 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> nerve_bundle = BASEITEMS.register("nerve_bundle",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> fungal_spine = BASEITEMS.register("fungal_spine",
-            () -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
-            () -> new ItemNameBlockItem(BlockInit.gourd_stem.get(), new Item.Properties()));
-    // Gourd Foods
-    public static final DeferredHolder<Item, Item> gourd_slice = BASEITEMS.register("gourd_slice",
-            () -> new Item(new Item.Properties()
-                    .food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).fast().build())));
-    public static final DeferredHolder<Item, Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
-            () -> new Item(new Item.Properties()
-                    .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
-    public static final DeferredHolder<Item, Item> gourd_stew = BASEITEMS.register("gourd_stew",
-            () -> new Item(new Item.Properties().stacksTo(1).craftRemainder(Items.BOWL)
-                    .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build())));
-    // Qliphoth Reagent
-    public static final DeferredHolder<Item, Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
-            () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
-            () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
-                    .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
-    public static final DeferredHolder<Item, Item> monolith_fragment = BASEITEMS.register("monolith_fragment",
-            () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
-    public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
-            () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
-    public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
-            () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
-
     // Enzymes
     public static final DeferredHolder<Item, Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
             () -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));
@@ -323,43 +283,6 @@ public class ItemInit {
     // Bloodline Pool Monitor - Now part of the bloodwell
 //    public static final DeferredHolder<Item, Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
 //            () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
-    // Unstained Our Lady of Still Waters materials
-    public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> hemolytic_plating = BASEITEMS.register("hemolytic_plating",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> pale_humor_flask = BASEITEMS.register("pale_humor_flask",
-            () -> new PaleHumorFlaskItem(new Item.Properties(), 500));
-    public static final DeferredHolder<Item, Item> hemolytic_vial = BASEITEMS.register("hemolytic_vial",
-            () -> new HemolyticVialItem(new Item.Properties().stacksTo(16)));
-    public static final DeferredHolder<Item, Item> draught_of_still_waters = BASEITEMS.register("draught_of_still_waters",
-            () -> new DraughtOfStillWatersItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> draught_of_still_mercy = BASEITEMS.register("draught_of_still_mercy",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-    public static final DeferredHolder<Item, Item> pallid_infusion = BASEITEMS.register("pallid_infusion",
-            () -> new PallidInfusionItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> lethean_dew = BASEITEMS.register("lethean_dew",
-            () -> new LetheanDewItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> lethean_brew = BASEITEMS.register("lethean_brew",
-            () -> new LetheanBrewItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> tears_of_silthmere = BASEITEMS.register("tears_of_silthmere",
-            () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
-            () -> new BlockItem(BlockInit.lethean_poppy_wreath.get(), new Item.Properties().stacksTo(16)));
-    public static final DeferredHolder<Item, Item> silver_chalice = BASEITEMS.register("silver_chalice",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> pallid_icon = BASEITEMS.register("pallid_icon",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-    public static final DeferredHolder<Item, Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
-            () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> pale_distillate = BASEITEMS.register("pale_distillate",
-            () -> new Item(new Item.Properties().stacksTo(16)));
     // Hematic Memories
     public static final DeferredHolder<Item, Item> drudge_electrode = BASEITEMS.register("drudge_electrode",
             () -> new DrudgeElectrodeItem(new Item.Properties()));
@@ -577,8 +500,6 @@ public class ItemInit {
     // Morphlings
     public static final DeferredHolder<Item, Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
             () -> new ItemMorphlingPolyp(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
-            () -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
     public static final DeferredHolder<Item, Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
             () -> new FungalMorphlingItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
@@ -627,8 +548,27 @@ public class ItemInit {
             () -> new BloodVialItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> vial_rack = SPECIALITEMS.register("vial_rack",
             () -> new VialRackItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
+            () -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
     public static final DeferredHolder<Item, Item> engram_stamp = SPECIALITEMS.register("engram_stamp",
             () -> new EngramStampItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
+            () -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE.holder(),
+                    Hemomancy.rloc("textures/entity/arm_banner/chitinite_arm_banner.png")));
+    // Debug / Testing
+    public static final DeferredHolder<Item, Item> structure_spawner = SPECIALITEMS.register("structure_spawner",
+            () -> new StructureSpawnerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredHolder<Item, Item> debug_showcase = SPECIALITEMS.register("debug_showcase",
+            () -> new DebugShowcaseItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredHolder<Item, Item> structure_scanner = SPECIALITEMS.register("structure_scanner",
+            () -> new StructureScannerItem(
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).component(
+                            DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(),
+                            new StructureScannerTooltipComponent(List.of(
+                                    Component.literal("Right-click two corners of a structure").withStyle(ChatFormatting.GRAY),
+                                    Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
+                                    Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
+                                    Component.literal("Creative mode only!").withStyle(ChatFormatting.RED))))));
 
     // Equipment
     // Artifacts
@@ -877,6 +817,66 @@ public class ItemInit {
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_moon));
     public static final DeferredHolder<Item, Item> scar_eye = BASEITEMS.register("scar_eye",
             () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_eye));
+
+    // Charm / conduit-scale progression
+    public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
+            () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
+            () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTendency.ANIMUS, 0));
+    public static final DeferredHolder<Item, Item> mycophant_tendril = BASEITEMS.register("mycophant_tendril",
+            () -> new MycophantTendrilItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    // Qliphoth Reagent
+    public static final DeferredHolder<Item, Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
+            () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
+            () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
+                    .food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.8F).alwaysEdible().build())));
+    public static final DeferredHolder<Item, Item> monolith_fragment = BASEITEMS.register("monolith_fragment",
+            () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
+            () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
+            () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredHolder<Item, Item> fungal_spine = BASEITEMS.register("fungal_spine",
+            () -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+
+    // Unstained Our Lady of Still Waters materials
+    public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> hemolytic_plating = BASEITEMS.register("hemolytic_plating",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> pale_humor_flask = BASEITEMS.register("pale_humor_flask",
+            () -> new PaleHumorFlaskItem(new Item.Properties(), 500));
+    public static final DeferredHolder<Item, Item> hemolytic_vial = BASEITEMS.register("hemolytic_vial",
+            () -> new HemolyticVialItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredHolder<Item, Item> draught_of_still_waters = BASEITEMS.register("draught_of_still_waters",
+            () -> new DraughtOfStillWatersItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> draught_of_still_mercy = BASEITEMS.register("draught_of_still_mercy",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> pallid_infusion = BASEITEMS.register("pallid_infusion",
+            () -> new PallidInfusionItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> lethean_dew = BASEITEMS.register("lethean_dew",
+            () -> new LetheanDewItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> lethean_brew = BASEITEMS.register("lethean_brew",
+            () -> new LetheanBrewItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> tears_of_silthmere = BASEITEMS.register("tears_of_silthmere",
+            () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
+            () -> new BlockItem(BlockInit.lethean_poppy_wreath.get(), new Item.Properties().stacksTo(16)));
+    public static final DeferredHolder<Item, Item> silver_chalice = BASEITEMS.register("silver_chalice",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> pallid_icon = BASEITEMS.register("pallid_icon",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> pale_distillate = BASEITEMS.register("pale_distillate",
+            () -> new Item(new Item.Properties().stacksTo(16)));
     // Spawn Eggs
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
             () -> new DeferredSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));
@@ -1012,7 +1012,7 @@ public class ItemInit {
 
         return Stream
                 .<Collection<? extends DeferredHolder<Item, ? extends Item>>>of(BASEITEMS.getEntries(),
-                        HANDHELDITEMS.getEntries(), SPECIALITEMS.getEntries(), SPAWNEGGS.getEntries())
+                        SPECIALITEMS.getEntries(), HANDHELDITEMS.getEntries(), SPAWNEGGS.getEntries())
                 .flatMap(Collection::stream);
     }
 
