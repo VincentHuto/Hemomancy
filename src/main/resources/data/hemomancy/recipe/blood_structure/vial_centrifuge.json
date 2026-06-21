@@ -17,6 +17,20 @@
       "block": "minecraft:glass"
     }
   },
+  "offerings": [
+    {
+      "ingredient": {
+        "item": "minecraft:glass_bottle"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:copper_ingot"
+      },
+      "count": 1
+    }
+  ],
   "result": {
     "id": "hemomancy:vial_centrifuge"
   }

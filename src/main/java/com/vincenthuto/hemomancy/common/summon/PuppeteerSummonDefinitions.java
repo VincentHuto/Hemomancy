@@ -11,7 +11,7 @@ public final class PuppeteerSummonDefinitions {
 	public static final String MNEMONIST_PUPPET = "mnemonist_puppet";
 
 	private static final List<PuppeteerSummonDefinition> DEFINITIONS = List.of(
-			new PuppeteerSummonDefinition(VEINWING_VULTURE, "Flying Striker", 2,
+			new PuppeteerSummonDefinition(VEINWING_VULTURE, "Flying Striker", 3,
 					14.0, 4.0, 0.36, 28, 18,
 					"hemomancy.summon.veinwing_vulture.lore"),
 			new PuppeteerSummonDefinition(MARROW_SPITTER, "Ranged Support", 3,

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -67,6 +68,10 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	private static final int MAX_PATTERN_SLOTS = 2;
 	private static final int OUTPUT_SLOT_X = 115;
 	private static final int OUTPUT_SLOT_Y = 41;
+	private static final int OFFERING_SLOT_START_X = 105;
+	private static final int OFFERING_SLOT_Y = 66;
+	private static final int OFFERING_SLOT_SPACING = 20;
+	private static final int MAX_OFFERING_SLOTS = 2;
 
 	// Colors
 	private static final int BG_COLOR = 0xFF0A0204;
@@ -142,6 +147,9 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HELD_ITEM_SLOT_Y - 1);
 		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HIT_BLOCK_SLOT_Y - 1);
 		drawSlotFrame(gfx, OUTPUT_SLOT_X - 1, OUTPUT_SLOT_Y - 1);
+		for (int i = 0; i < Math.min(MAX_OFFERING_SLOTS, recipe.getOfferings().size()); i++) {
+			drawSlotFrame(gfx, OFFERING_SLOT_START_X + (i * OFFERING_SLOT_SPACING) - 1, OFFERING_SLOT_Y - 1);
+		}
 
 		// Pattern block slot frames
 		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
@@ -170,6 +178,10 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 
 		gfx.drawString(font, Component.literal("In"), INPUT_SLOT_X, HELD_ITEM_SLOT_Y - 10, LABEL_COLOR, false);
 		gfx.drawString(font, Component.literal("Out"), OUTPUT_SLOT_X, OUTPUT_SLOT_Y - 10, LABEL_COLOR, false);
+		if (!recipe.getOfferings().isEmpty()) {
+			gfx.drawString(font, Component.literal("Offer"), OFFERING_SLOT_START_X, OFFERING_SLOT_Y - 10,
+					LABEL_COLOR, false);
+		}
 
 		// ── 3D multiblock preview ──
 		render3DPreview(recipe, gfx);
@@ -205,6 +217,16 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		// Result
 		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X, OUTPUT_SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
+
+		for (int i = 0; i < Math.min(MAX_OFFERING_SLOTS, recipe.getOfferings().size()); i++) {
+			BloodStructureOffering offering = recipe.getOfferings().get(i);
+			List<ItemStack> stacks = ingredientStacksFor(offering);
+			if (!stacks.isEmpty()) {
+				builder.addSlot(RecipeIngredientRole.INPUT,
+								OFFERING_SLOT_START_X + (i * OFFERING_SLOT_SPACING), OFFERING_SLOT_Y)
+						.addIngredients(VanillaTypes.ITEM_STACK, stacks);
+			}
+		}
 	}
 
 	// ═══════════════════════════════════════════════════════════════
@@ -312,6 +334,16 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			ItemStack stack = new ItemStack(block.asItem(), count);
 			if (!stack.isEmpty()) {
 				stacks.add(stack);
+			}
+		}
+		return stacks;
+	}
+
+	private List<ItemStack> ingredientStacksFor(BloodStructureOffering offering) {
+		List<ItemStack> stacks = new ArrayList<>();
+		for (ItemStack stack : offering.ingredient().getItems()) {
+			if (!stack.isEmpty()) {
+				stacks.add(stack.copyWithCount(offering.count()));
 			}
 		}
 		return stacks;

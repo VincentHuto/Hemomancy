@@ -17,6 +17,14 @@
       "block": "hemomancy:polished_venous_stone"
     }
   },
+  "offerings": [
+    {
+      "ingredient": {
+        "tag": "minecraft:flowers"
+      },
+      "count": 2
+    }
+  ],
   "result": {
     "id": "hemomancy:mason_effigy"
   }

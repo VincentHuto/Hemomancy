@@ -2,7 +2,7 @@
   "type": "hemomancy:puppeteer_trial_recipe",
   "bloodCost": 500,
   "summon": "veinwing_vulture",
-  "required_degree": 2,
+  "required_degree": 3,
   "heldItem": "hemomancy:sanguine_quintessence",
   "hitBlock": "hemomancy:conscious_mass",
   "consume_pattern": true,

@@ -1,22 +1,32 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.block.shared.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
-import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -44,17 +54,18 @@ import java.util.stream.Stream;
 
 /**
  * Iron Brazier block — a versatile ritual apparatus. In its base form it
- * can be lit and extinguished by hand. When used for organ echo upgrades,
- * the ritual phase property tracks the brazier's state:
+ * is lit only by Blood Projection or Living Staff projection.
+ * The ritual phase property tracks the brazier's state:
  * <ul>
  *   <li><b>0</b> — Unlit (cold)</li>
  *   <li><b>1</b> — Normal fire (lit)</li>
  *   <li><b>2</b> — Sanguine flames (reagents accepted, awaiting echo)</li>
  * </ul>
  */
-public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
+public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	public static final double BLOOD_TO_LIGHT = 50.0D;
 
 	/**
 	 * Ritual phase: 0 = unlit, 1 = normal fire, 2 = sanguine flames (awaiting echo).
@@ -190,25 +201,20 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
 		int phase = state.getValue(RITUAL_PHASE);
+		BlockEntity be = worldIn.getBlockEntity(pos);
+		IronBrazierBlockEntity brazierTE = be instanceof IronBrazierBlockEntity brazier ? brazier : null;
+
+		if (player.isShiftKeyDown() && brazierTE != null && brazierTE.hasOffering()) {
+			ItemStack extracted = brazierTE.extractOffering();
+			if (!player.getInventory().add(extracted)) {
+				player.drop(extracted, false);
+			}
+			return InteractionResult.SUCCESS;
+		}
 
 		// === Phase 0: Unlit — light the brazier ===
 		if (phase == 0) {
-			if (state.getValue(WATERLOGGED)) {
-				return stack.isEmpty() || stack.getItem() == Items.FLINT_AND_STEEL || stack.getItem() == Items.FIRE_CHARGE
-						? InteractionResult.SUCCESS
-						: InteractionResult.PASS;
-			}
-			if (stack.getItem() == Items.FLINT_AND_STEEL || stack.getItem() == Items.FIRE_CHARGE) {
-				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 1), 3);
-				return InteractionResult.SUCCESS;
-			}
-			if (stack.isEmpty()) {
-				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 1), 3);
-				player.hurt(player.damageSources().generic(), 1.5f);
-				if (!worldIn.isClientSide) {
-					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
-							BloodCellParticleFactory.createData(ParticleColor.BLOOD));
-				}
+			if (brazierTE != null && brazierTE.insertOffering(player, stack)) {
 				return InteractionResult.SUCCESS;
 			}
 			return InteractionResult.PASS;
@@ -216,34 +222,17 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 
 		// === Phase 1: Normal lit — accept reagents or extinguish ===
 		if (phase == 1) {
-			// Try accepting reagent items for the organ rite
-			BlockEntity be = worldIn.getBlockEntity(pos);
-			if (be instanceof IronBrazierBlockEntity brazierTE) {
-				if (!stack.isEmpty() && brazierTE.tryAcceptReagent(player, stack, worldIn, pos, state)) {
-					return InteractionResult.SUCCESS;
-				}
-			}
-
-			// Empty hand sneak = extinguish
-			if (stack.isEmpty() && player.isShiftKeyDown()) {
-				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 0), 3);
-				player.hurt(player.damageSources().generic(), 1f);
-				if (!worldIn.isClientSide) {
-					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos, ParticleTypes.SMOKE);
-				}
+			if (brazierTE != null && brazierTE.insertOffering(player, stack)) {
 				return InteractionResult.SUCCESS;
 			}
+
 			return InteractionResult.PASS;
 		}
 
 		// === Phase 2: Sanguine flames — accept echo item for upgrade ===
 		if (phase == 2) {
-			BlockEntity be = worldIn.getBlockEntity(pos);
-			if (be instanceof IronBrazierBlockEntity brazierTE) {
-				if (!stack.isEmpty() && stack.getItem() instanceof OrganEchoItem) {
-					brazierTE.tryAcceptEcho(player, stack, worldIn, pos, state);
-					return InteractionResult.SUCCESS;
-				}
+			if (brazierTE != null && brazierTE.insertOffering(player, stack)) {
+				return InteractionResult.SUCCESS;
 			}
 			return InteractionResult.PASS;
 		}
@@ -260,9 +249,63 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
+		if (isBloodTool(stack)) {
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		}
 		return handleInteraction(state, worldIn, pos, player, stack) == InteractionResult.PASS
 				? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
 				: ItemInteractionResult.SUCCESS;
+	}
+
+	private static boolean isBloodTool(ItemStack stack) {
+		return stack.getItem() instanceof BloodAbsorptionItem
+				|| stack.getItem() instanceof BloodProjectionItem
+				|| stack.getItem() instanceof LivingStaffItem;
+	}
+
+	@Override
+	public double absorbBloodFromBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
+			double maxAmount) {
+		return 0.0D;
+	}
+
+	@Override
+	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
+			double maxAmount) {
+		if (state.getValue(WATERLOGGED) || state.getValue(RITUAL_PHASE) > 0 || maxAmount < BLOOD_TO_LIGHT) {
+			return 0.0D;
+		}
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (volume == null || !volume.isActive() || volume.getBloodVolume() < BLOOD_TO_LIGHT) {
+			if (level.getGameTime() % 20L == 0L) {
+				player.displayClientMessage(Component.literal("No blood answers the brazier."), true);
+			}
+			return 0.0D;
+		}
+		volume.subtractBloodVolume(BLOOD_TO_LIGHT);
+		volume.addBloodSpend(BLOOD_TO_LIGHT);
+		BloodVolumeEvents.syncVolume(player, volume);
+		level.setBlock(pos, state.setValue(RITUAL_PHASE, 1), Block.UPDATE_ALL);
+		HLParticleUtils.spawnPoof(level, pos, BloodCellParticleFactory.createData(ParticleColor.BLOOD));
+		level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.55F, 0.75F);
+		return BLOOD_TO_LIGHT;
+	}
+
+	@Override
+	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+		if (!state.is(newState.getBlock())) {
+			dropOffering(level, pos);
+		}
+		super.onRemove(state, level, pos, newState, movedByPiston);
+	}
+
+	private static void dropOffering(Level level, BlockPos pos) {
+		if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier) {
+			ItemStack offering = brazier.extractOffering();
+			if (!offering.isEmpty()) {
+				Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.9D, pos.getZ() + 0.5D, offering);
+			}
+		}
 	}
 
 	/**

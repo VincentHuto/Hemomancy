@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -408,6 +409,32 @@ public final class CraftingTabView {
 		}
 		y += 6;
 
+		// Brazier offerings
+		if (!recipe.getOfferings().isEmpty()) {
+			gfx.drawString(ctx.font(), Component.literal("Brazier Offerings:")
+					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+			int offeringTextX = panelX + 20;
+			int offeringWrapW = panelW - 24;
+			for (BloodStructureOffering offering : recipe.getOfferings()) {
+				List<ItemStack> stacks = List.of(offering.ingredient().getItems());
+				if (stacks.isEmpty()) {
+					continue;
+				}
+				ItemStack display = stacks.get((int) (materialCycleIndex() % stacks.size()));
+				gfx.renderItem(display, panelX + 2, y);
+				String prefix = " x" + offering.count() + " braziers  ";
+				List<FormattedCharSequence> offeringLines = wrappedLines(ctx.font(),
+						prefix + display.getHoverName().getString(), offeringWrapW);
+				for (int li = 0; li < offeringLines.size(); li++) {
+					gfx.drawString(ctx.font(), offeringLines.get(li),
+							offeringTextX, y + 4 + li * lineH, 0xAAAAAA);
+				}
+				y += Math.max(18, offeringLines.size() * lineH + 4);
+			}
+			y += 4;
+		}
+
 		// Block materials list
 		if (recipe.getPattern() != null) {
 			List<MultiblockPattern.MaterialCount> materials = recipe.getPattern().getMaterialCounts(false);
@@ -487,6 +514,22 @@ public final class CraftingTabView {
 					result.getHoverName().getString(), panelW - 20).size() * lineH + 4);
 		}
 		y += 6;
+
+		if (!recipe.getOfferings().isEmpty()) {
+			y += lineH;
+			int offeringWrapW = panelW - 24;
+			for (BloodStructureOffering offering : recipe.getOfferings()) {
+				List<ItemStack> stacks = List.of(offering.ingredient().getItems());
+				if (stacks.isEmpty()) {
+					continue;
+				}
+				ItemStack display = stacks.get((int) (materialCycleIndex() % stacks.size()));
+				String prefix = " x" + offering.count() + " braziers  ";
+				y += Math.max(18, wrappedLines(font,
+						prefix + display.getHoverName().getString(), offeringWrapW).size() * lineH + 4);
+			}
+			y += 4;
+		}
 
 		if (recipe.getPattern() != null) {
 			List<MultiblockPattern.MaterialCount> materials = recipe.getPattern().getMaterialCounts(false);

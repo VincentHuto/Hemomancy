@@ -1,268 +1,113 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.BrazierBlock;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
-import java.util.Locale;
-
-/**
- * Block entity for the Iron Brazier — doubles as a ritual apparatus for
- * organ echo upgrades when reagents are sacrificed into its flames.
- *
- * <h3>Ritual Flow</h3>
- * <ol>
- *   <li>Brazier must be lit ({@link BrazierBlock#RITUAL_PHASE RITUAL_PHASE=1}).</li>
- *   <li>Player throws in reagent items (blood crystal shards, vivianite clusters).
- *       Each accepted reagent increments {@link #reagentsAccepted}.</li>
- *   <li>Once enough reagents are consumed ({@link #REQUIRED_REAGENTS}), the
- *       brazier enters the {@link BrazierBlock#RITUAL_PHASE RITUAL_PHASE=2}
- *       state — sanguine flames — and awaits an organ echo.</li>
- *   <li>Player right-clicks with an organ echo item to consume it and
- *       upgrade the corresponding organ on their capability. The brazier
- *       cools back to normal.</li>
- * </ol>
- */
 public class IronBrazierBlockEntity extends BlockEntity {
+	private static final String TAG_OFFERING = "Offering";
 
-	/** Number of reagent items required to activate sanguine flames. */
-	public static final int REQUIRED_REAGENTS = 3;
-
-	/** Ticks the sanguine flame state persists before timing out back to normal lit. */
-	private static final int SANGUINE_TIMEOUT_TICKS = 600; // 30 seconds
-
-	/** How many valid reagents have been tossed in since the last reset. */
-	private int reagentsAccepted = 0;
-
-	/**
-	 * The organ that this reagent batch is tuned for.
-	 * Set on the first accepted reagent; subsequent reagents must match the same organ.
-	 * Null when the brazier is idle or freshly lit.
-	 */
-	@Nullable
-	private EnumOrgan lockedOrgan = null;
-
-	/** Server tick counter for the sanguine flame timeout. */
-	private int sanguineTicks = 0;
+	private ItemStack offering = ItemStack.EMPTY;
 
 	public IronBrazierBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.iron_brazier.get(), pos, state);
 	}
 
-	// ========================== TICK ==========================
-
 	public static void serverTick(Level level, BlockPos pos, BlockState state, IronBrazierBlockEntity te) {
-		int phase = state.getValue(BrazierBlock.RITUAL_PHASE);
-		if (phase == 2) {
-			// Sanguine flame timeout
-			te.sanguineTicks++;
-			if (te.sanguineTicks >= SANGUINE_TIMEOUT_TICKS) {
-				te.resetRitual(level, pos, state);
-			}
-		}
 	}
 
-	// ========================== REAGENT ACCEPTANCE ==========================
+	public ItemStack getOfferingDisplayStack() {
+		return offering.copy();
+	}
 
-	/**
-	 * Attempts to accept a reagent item thrown into the brazier by the player.
-	 * The first accepted reagent locks the brazier to a specific organ; subsequent
-	 * reagents must be of the same organ-resonant type.
-	 * @return true if the item was consumed as a valid reagent
-	 */
-	public boolean tryAcceptReagent(Player player, ItemStack stack, Level level, BlockPos pos, BlockState state) {
-		int phase = state.getValue(BrazierBlock.RITUAL_PHASE);
-		if (phase != 1) return false; // Must be in normal-lit state
+	public ItemStack getOfferingForMatching() {
+		return offering;
+	}
 
-		EnumOrgan organForItem = organForReagent(stack);
-		if (organForItem == null) return false;
+	public boolean hasOffering() {
+		return !offering.isEmpty();
+	}
 
-		// On the first reagent, lock the organ; on subsequent ones, enforce it.
-		if (lockedOrgan == null) {
-			lockedOrgan = organForItem;
-		} else if (lockedOrgan != organForItem) {
-			msg(player, "The brazier is already attuned to the "
-					+ lockedOrgan.getName().toLowerCase(Locale.ROOT) + ". Offer matching reagents.",
-					ChatFormatting.RED);
+	public boolean insertOffering(Player player, ItemStack stack) {
+		if (stack.isEmpty() || !offering.isEmpty()) {
 			return false;
 		}
-
-		stack.shrink(1);
-		reagentsAccepted++;
-		markDirtyAndSync();
-
-		if (reagentsAccepted >= REQUIRED_REAGENTS) {
-			// Transition to sanguine flame state
-			level.setBlock(pos, state.setValue(BrazierBlock.RITUAL_PHASE, 2), 3);
-			sanguineTicks = 0;
-			msg(player, "The brazier erupts with sanguine flames — offer the Echo of your "
-					+ lockedOrgan.getName().toLowerCase() + " to the fire.",
-					ChatFormatting.DARK_RED);
-		} else {
-			int remaining = REQUIRED_REAGENTS - reagentsAccepted;
-			msg(player, "The brazier consumes the offering... " + remaining + " more required.",
-					ChatFormatting.GOLD);
+		offering = stack.copyWithCount(1);
+		if (player == null || !player.getAbilities().instabuild) {
+			stack.shrink(1);
 		}
+		markDirtyAndSync();
 		return true;
 	}
 
-	/**
-	 * Attempts to accept an organ echo item to complete the upgrade ritual.
-	 * The offered echo must match the organ the brazier is currently attuned to.
-	 * @return true if the echo was consumed and the organ was upgraded
-	 */
-	public boolean tryAcceptEcho(Player player, ItemStack stack, Level level, BlockPos pos, BlockState state) {
-		int phase = state.getValue(BrazierBlock.RITUAL_PHASE);
-		if (phase != 2) return false; // Must be in sanguine flame state
-
-		if (!(stack.getItem() instanceof OrganEchoItem echoItem)) return false;
-
-		EnumOrgan organ = echoItem.getOrgan();
-
-		// The echo must match the organ the reagents were attuned to.
-		if (lockedOrgan != null && lockedOrgan != organ) {
-			msg(player, "These flames were kindled for the "
-					+ lockedOrgan.getName().toLowerCase() + ". Offer the correct Echo.",
-					ChatFormatting.RED);
-			return false;
+	public ItemStack extractOffering() {
+		if (offering.isEmpty()) {
+			return ItemStack.EMPTY;
 		}
-
-		// Check and upgrade the organ on the player's capability
-		boolean[] success = { false };
-		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
-			int currentLevel = organs.getOrganLevel(organ);
-			if (currentLevel >= 3) {
-				msg(player, "This organ echo has already reached its maximum refinement.",
-						ChatFormatting.GOLD);
-				return;
-			}
-
-			int newLevel = Math.min(currentLevel + 1, 3);
-			organs.setOrganLevel(organ, newLevel);
-
-			// Consume the echo item
-			stack.shrink(1);
-
-			String levelDesc = newLevel == 1 ? "imprinted" : "refined to level " + newLevel;
-			if (organ == EnumOrgan.HEART) {
-				msg(player, "The echo of your heart dissolves into the sanguine flames. "
-						+ "Your muscles learn to beat without it \u2014 " + levelDesc + ".",
-						ChatFormatting.DARK_RED);
-			} else {
-				msg(player, "The echo of your " + organ.getName().toLowerCase()
-						+ " dissolves into the sanguine flames \u2014 " + levelDesc + ".",
-						ChatFormatting.GOLD);
-			}
-			success[0] = true;
-		});
-
-		if (success[0]) {
-			// Reset brazier back to normal lit state
-			resetRitual(level, pos, state);
-		}
-		return success[0];
-	}
-
-	// ========================== HELPERS ==========================
-
-	/**
-	 * Maps a reagent item to the organ it is resonant with.
-	 * Returns {@code null} if the item is not a recognized brazier reagent.
-	 *
-	 * <ul>
-	 *   <li>Heart     → blood_crystal_shard   (pure life-force)</li>
-	 *   <li>Spleen    → vivianite_cluster      (mineral, blood-volume filtration)</li>
-	 *   <li>Lungs     → fervent_husk           (breath, combustion)</li>
-	 *   <li>Kidneys   → consecrated_copper_ingot (copper-salt filtration)</li>
-	 *   <li>Liver     → bleeding_bulb          (fluid, alchemical cleansing)</li>
-	 * </ul>
-	 */
-	@Nullable
-	private static EnumOrgan organForReagent(ItemStack stack) {
-		if (stack.getItem() == ItemInit.blood_crystal_shard.get())    return EnumOrgan.HEART;
-		if (stack.getItem() == ItemInit.vivianite_cluster.get())       return EnumOrgan.SPLEEN;
-		if (stack.getItem() == ItemInit.fervent_husk.get())            return EnumOrgan.LUNGS;
-		if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) return EnumOrgan.KIDNEYS;
-		if (stack.getItem() == ItemInit.bleeding_bulb.get())           return EnumOrgan.LIVER;
-		return null;
-	}
-
-	private void resetRitual(Level level, BlockPos pos, BlockState state) {
-		reagentsAccepted = 0;
-		sanguineTicks = 0;
-		lockedOrgan = null;
-		// Go back to normal lit (phase 1)
-		BlockState current = level.getBlockState(pos);
-		if (current.getValue(BrazierBlock.RITUAL_PHASE) == 2) {
-			level.setBlock(pos, current.setValue(BrazierBlock.RITUAL_PHASE, 1), 3);
-		}
+		ItemStack extracted = offering.copy();
+		offering = ItemStack.EMPTY;
 		markDirtyAndSync();
+		return extracted;
 	}
 
-	private void msg(Player player, String text, ChatFormatting color) {
-		player.displayClientMessage(Component.literal(text).withStyle(color), true);
+	public ItemStack consumeOffering() {
+		return extractOffering();
 	}
 
-	private void markDirtyAndSync() {
+	public void markDirtyAndSync() {
 		setChanged();
 		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
 		}
 	}
-
-	// ========================== ACCESSORS ==========================
-
-	public int getReagentsAccepted() { return reagentsAccepted; }
-	public int getSanguineTicks() { return sanguineTicks; }
-	@Nullable public EnumOrgan getLockedOrgan() { return lockedOrgan; }
-
-	// ========================== NBT ==========================
 
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.saveAdditional(tag, provider);
-		tag.putInt("ReagentsAccepted", reagentsAccepted);
-		tag.putInt("SanguineTicks", sanguineTicks);
-		if (lockedOrgan != null) {
-			tag.putString("LockedOrgan", lockedOrgan.name());
+		if (!offering.isEmpty()) {
+			tag.put(TAG_OFFERING, offering.save(provider));
 		}
 	}
 
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.loadAdditional(tag, provider);
-		reagentsAccepted = tag.getInt("ReagentsAccepted");
-		sanguineTicks = tag.getInt("SanguineTicks");
-		String organName = tag.getString("LockedOrgan");
-		lockedOrgan = organName.isEmpty() ? null : EnumOrgan.byName(organName);
+		offering = tag.contains(TAG_OFFERING)
+				? ItemStack.parseOptional(provider, tag.getCompound(TAG_OFFERING))
+				: ItemStack.EMPTY;
 	}
 
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-		CompoundTag tag = super.getUpdateTag(provider);
-		saveAdditional(tag, provider);
-		return tag;
+		return saveWithoutMetadata(provider);
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
+		super.handleUpdateTag(tag, provider);
+		loadAdditional(tag, provider);
 	}
 
 	@Override
 	public Packet<ClientGamePacketListener> getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
+		if (pkt.getTag() != null) {
+			handleUpdateTag(pkt.getTag(), provider);
+		}
 	}
 }

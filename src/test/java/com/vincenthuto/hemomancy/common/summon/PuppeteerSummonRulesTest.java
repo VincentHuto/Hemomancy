@@ -5,7 +5,7 @@ public final class PuppeteerSummonRulesTest {
 	}
 
 	public static void main(String[] args) {
-		assertEquals("three v1 summons", 3, PuppeteerSummonDefinitions.all().size());
+		assertEquals("four v1 summons", 4, PuppeteerSummonDefinitions.all().size());
 
 		PuppeteerSummonDefinition vulture = PuppeteerSummonDefinitions.byName("veinwing_vulture")
 				.orElseThrow(() -> new AssertionError("missing veinwing vulture"));
@@ -13,13 +13,19 @@ public final class PuppeteerSummonRulesTest {
 				.orElseThrow(() -> new AssertionError("missing marrow spitter"));
 		PuppeteerSummonDefinition hulk = PuppeteerSummonDefinitions.byName("gorebound_hulk")
 				.orElseThrow(() -> new AssertionError("missing gorebound hulk"));
+		PuppeteerSummonDefinition puppet = PuppeteerSummonDefinitions.byName("mnemonist_puppet")
+				.orElseThrow(() -> new AssertionError("missing mnemonist puppet"));
 
-		assertEquals("vulture degree", 2, vulture.requiredDegree());
+		assertEquals("vulture degree", 3, vulture.requiredDegree());
 		assertEquals("spitter degree", 3, spitter.requiredDegree());
 		assertEquals("hulk degree", 4, hulk.requiredDegree());
-		assertTrue("degree 2 can unlock vulture", PuppeteerSummonRules.canUnlockAtDegree(vulture, 2));
+		assertEquals("mnemonist puppet degree", 5, puppet.requiredDegree());
+		assertFalse("degree 2 only foreshadows puppeteering", PuppeteerSummonRules.canUnlockAtDegree(vulture, 2));
+		assertTrue("degree 3 can unlock vulture", PuppeteerSummonRules.canUnlockAtDegree(vulture, 3));
 		assertFalse("degree 2 cannot unlock spitter", PuppeteerSummonRules.canUnlockAtDegree(spitter, 2));
 		assertTrue("degree 4 can unlock hulk", PuppeteerSummonRules.canUnlockAtDegree(hulk, 4));
+		assertFalse("degree 4 cannot unlock mnemonist puppet", PuppeteerSummonRules.canUnlockAtDegree(puppet, 4));
+		assertTrue("degree 5 can unlock mnemonist puppet", PuppeteerSummonRules.canUnlockAtDegree(puppet, 5));
 
 		assertEquals("base active cap", 1, PuppeteerSummonRules.activeSummonCap(0));
 		assertEquals("puppet skein level 3 cap", 4, PuppeteerSummonRules.activeSummonCap(3));

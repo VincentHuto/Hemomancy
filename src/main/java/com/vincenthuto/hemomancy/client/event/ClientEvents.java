@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
+import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
@@ -202,6 +203,7 @@ public class ClientEvents {
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
+        ActiveBloodStructureOfferingBurstClientData.tick();
         BloodStructureFeedSpiralParticles.tick();
         BloodBallClientData.tick();
         VeinSpiderCourierClientData.tick();
@@ -689,6 +691,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scarlet_vanity.get(), ScarletVanityRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mason_effigy.get(), MasonsEffigyRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.iron_brazier.get(), IronBrazierRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.fungal_podium.get(), FungalPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.fungal_implantation_pylon.get(),
                     FungalImplantationPylonRenderer::new);

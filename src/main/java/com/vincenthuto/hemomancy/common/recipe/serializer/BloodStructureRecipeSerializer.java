@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.*;
 import com.mojang.serialization.*;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
@@ -18,6 +19,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -146,6 +148,23 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		return GsonHelper.getAsInt(pJson, "requiredDegree", 0);
 	}
 
+	private static List<BloodStructureOffering> offeringsFromJson(JsonObject json) {
+		if (!json.has("offerings")) {
+			return List.of();
+		}
+		JsonArray array = GsonHelper.getAsJsonArray(json, "offerings");
+		List<BloodStructureOffering> offerings = new ArrayList<>();
+		for (int i = 0; i < array.size(); i++) {
+			JsonObject entry = GsonHelper.convertToJsonObject(array.get(i), "offerings[" + i + "]");
+			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(JsonOps.INSTANCE,
+					GsonHelper.getNonNull(entry, "ingredient"))
+					.getOrThrow(err -> new JsonSyntaxException("Invalid blood structure offering ingredient: " + err));
+			int count = GsonHelper.getAsInt(entry, "count", 1);
+			offerings.add(new BloodStructureOffering(ingredient, count));
+		}
+		return offerings;
+	}
+
 	// ---- JSON helpers ----
 
 	private static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
@@ -169,7 +188,9 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, displayKeyMapFromKeyEntries(keyEntries), pattern, true);
 		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
 		int requiredDegree = requiredDegreeFromJson(pJson);
-		return new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree);
+		List<BloodStructureOffering> offerings = offeringsFromJson(pJson);
+		return new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree,
+				offerings);
 	}
 
 	// ---- RecipeSerializer 1.21.1 API ----
@@ -177,7 +198,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	private static final MapCodec<BloodStructureRecipe> CODEC = new MapCodec<BloodStructureRecipe>() {
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "required_degree")
+			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "required_degree", "offerings")
 					.map(ops::createString);
 		}
 
@@ -206,6 +227,15 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 					.ifPresent(e -> prefix.add("result", JsonOps.INSTANCE.convertTo(ops, e)));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
+			JsonArray offerings = new JsonArray();
+			for (BloodStructureOffering offering : recipe.getOfferings()) {
+				JsonObject offeringJson = new JsonObject();
+				Ingredient.CODEC_NONEMPTY.encodeStart(JsonOps.INSTANCE, offering.ingredient()).result()
+						.ifPresent(element -> offeringJson.add("ingredient", element));
+				offeringJson.addProperty("count", offering.count());
+				offerings.add(offeringJson);
+			}
+			prefix.add("offerings", JsonOps.INSTANCE.convertTo(ops, offerings));
 			return prefix;
 		}
 	};
@@ -256,7 +286,15 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : ItemStack.EMPTY;
 		boolean unstained = pBuffer.readBoolean();
 		int requiredDegree = pBuffer.readInt();
-		return new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree);
+		int offeringCount = pBuffer.readVarInt();
+		List<BloodStructureOffering> offerings = new ArrayList<>();
+		for (int i = 0; i < offeringCount; i++) {
+			Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer);
+			int count = pBuffer.readVarInt();
+			offerings.add(new BloodStructureOffering(ingredient, count));
+		}
+		return new BloodStructureRecipe(id, cost, mbPattern, heldItem, hitBlock, result, unstained, requiredDegree,
+				offerings);
 	}
 
 	private static void toNetwork(RegistryFriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
@@ -287,6 +325,11 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		}
 		pBuffer.writeBoolean(pRecipe.isUnstained());
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
+		pBuffer.writeVarInt(pRecipe.getOfferings().size());
+		for (BloodStructureOffering offering : pRecipe.getOfferings()) {
+			Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, offering.ingredient());
+			pBuffer.writeVarInt(offering.count());
+		}
 	}
 
 	private static List<Block> readDisplayBlocks(RegistryFriendlyByteBuf pBuffer) {
