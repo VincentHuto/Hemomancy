@@ -33,8 +33,8 @@ public enum EnumModArmorTiers {
 			() -> Ingredient.of(ItemInit.hematic_iron_scrap.get())),
 	SILENT_ARCHON("silent_archon", 18, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F,
 			() -> Ingredient.of(ItemInit.monolith_imbued_cloth.get())),
-	CHALYBEATE_SCLERITE("chalybeate_sclerite", 12, SoundEvents.ARMOR_EQUIP_GENERIC, 4.0F, 0.1F,
-			() -> Ingredient.of(ItemInit.chalybeate_sclerite.get())),
+	VENOUS_STRIDER("venous_strider", 12, SoundEvents.ARMOR_EQUIP_GENERIC, 4.0F, 0.1F,
+			() -> Ingredient.of(ItemInit.venous_pinion.get())),
 	COVENANT_MANTLE("covenant_mantle", 18, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F,
 			() -> Ingredient.of(ItemInit.crimson_lacquer.get()));
 

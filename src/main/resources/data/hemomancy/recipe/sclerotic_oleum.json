@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:chitinous_husk" },
+    { "item": "hemomancy:chalybeate_sclerite" },
+    { "item": "hemomancy:queens_physogastrism" }
+  ],
+  "result": {
+    "id": "hemomancy:sclerotic_oleum"
+  }
+}

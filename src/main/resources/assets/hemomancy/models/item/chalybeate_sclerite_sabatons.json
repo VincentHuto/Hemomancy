@@ -1,9 +1,0 @@
-{
-  "parent": "builtin/entity",
-  "textures": {
-    "layer0": "hemomancy:item/chalybeate_sclerite_sabatons",
-    "particle": "hemomancy:item/chalybeate_sclerite_sabatons"
-  },
-  "gui_light": "front",
-  "display": {}
-}

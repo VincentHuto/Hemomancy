@@ -21,15 +21,15 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class ChalybeateScleriteSabatonsItem extends ArmorItem implements HemoClientItemExtensionsProvider {
-	public ChalybeateScleriteSabatonsItem(Holder<ArmorMaterial> material, Type slot) {
+public class VenousStriderSabatonsItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+	public VenousStriderSabatonsItem(Holder<ArmorMaterial> material, Type slot) {
 		super(material, slot, new Item.Properties().fireResistant());
 	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context,
 			List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(Component.translatable("tooltip.hemomancy.chalybeate_sclerite_sabatons")
+		tooltip.add(Component.translatable("tooltip.hemomancy.venous_strider_sabatons")
 				.withStyle(ChatFormatting.DARK_GREEN));
 	}
 
@@ -42,7 +42,7 @@ public class ChalybeateScleriteSabatonsItem extends ArmorItem implements HemoCli
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-				if (itemStack.getItem() == ItemInit.chalybeate_sclerite_sabatons.get()) {
+				if (itemStack.getItem() == ItemInit.venous_strider_sabatons.get()) {
 					return ChalybeateFortressArmorModel.boots.get();
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);

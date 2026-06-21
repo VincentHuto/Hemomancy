@@ -145,6 +145,22 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> calcified_blood_spine = BASEITEMS.register("calcified_blood_spine",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> toxicognath = BASEITEMS.register("toxicognath",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> fargone_proboscis = BASEITEMS.register("fargone_proboscis",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> queens_physogastrism = BASEITEMS.register("queens_physogastrism",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> cuttlefish_chromatophores = BASEITEMS.register("cuttlefish_chromatophores",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> sclerotic_oleum = BASEITEMS.register("sclerotic_oleum",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> aculeate_vitriol = BASEITEMS.register("aculeate_vitriol",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> chromatic_sublimate = BASEITEMS.register("chromatic_sublimate",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> venous_pinion = BASEITEMS.register("venous_pinion",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",
@@ -637,8 +653,8 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> silent_archon_boots = BASEITEMS.register("silent_archon_boots",
             () -> new SilentArchonArmorItem(EnumModArmorTiers.SILENT_ARCHON.holder(), ArmorItem.Type.BOOTS));
     // Harbinger one-offs
-    public static final DeferredHolder<Item, Item> chalybeate_sclerite_sabatons = BASEITEMS.register("chalybeate_sclerite_sabatons",
-            () -> new ChalybeateScleriteSabatonsItem(EnumModArmorTiers.CHALYBEATE_SCLERITE.holder(), ArmorItem.Type.BOOTS));
+    public static final DeferredHolder<Item, Item> venous_strider_sabatons = BASEITEMS.register("venous_strider_sabatons",
+            () -> new VenousStriderSabatonsItem(EnumModArmorTiers.VENOUS_STRIDER.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> covenant_mantle = BASEITEMS.register("covenant_mantle",
             () -> new CovenantMantleArmorItem(EnumModArmorTiers.COVENANT_MANTLE.holder(), ArmorItem.Type.CHESTPLATE));
     // Barbed/Barbed

@@ -23,8 +23,8 @@ public final class HarbingerArmor3dModelResourceTest {
 				"SilentArchonArmorModel.legs.get()",
 				"SilentArchonArmorModel.boots.get()",
 				"new SilentArchonArmorItemRenderer(");
-		assertModelWiring("chalybeate sabatons item",
-				"com/vincenthuto/hemomancy/common/item/shared/armor/ChalybeateScleriteSabatonsItem.java",
+		assertModelWiring("venous strider sabatons item",
+				"com/vincenthuto/hemomancy/common/item/shared/armor/VenousStriderSabatonsItem.java",
 				"implements HemoClientItemExtensionsProvider",
 				"ChalybeateFortressArmorModel.boots.get()",
 				"new ModelBackedArmorItemRenderer(");
@@ -161,15 +161,15 @@ public final class HarbingerArmor3dModelResourceTest {
 		assertItemModelParent("unstained_chestplate", "builtin/entity");
 		assertItemModelParent("unstained_leggings", "builtin/entity");
 		assertItemModelParent("unstained_boots", "builtin/entity");
-		assertItemModelParent("chalybeate_sclerite_sabatons", "builtin/entity");
+		assertItemModelParent("venous_strider_sabatons", "builtin/entity");
 		assertItemModelParent("covenant_mantle", "builtin/entity");
 		assertItemModelParent("marrow_crown", "builtin/entity");
 		assertItemModelParent("hemolymphopoda_headpiece", "builtin/entity");
 
 		assertItemModelParent("hematic_iron_helm", "minecraft:item/generated");
 
-		assertImageSize("chalybeate fortress worn texture",
-				"assets/hemomancy/textures/models/armor/chalybeate_sclerite_layer_1.png", 256, 128);
+		assertImageSize("venous strider sabatons worn texture",
+				"assets/hemomancy/textures/models/armor/venous_strider_layer_1.png", 256, 128);
 		assertImageSize("silent archon outer worn texture",
 				"assets/hemomancy/textures/models/armor/silent_archon_layer_1.png", 256, 128);
 		assertImageSize("silent archon inner worn texture",

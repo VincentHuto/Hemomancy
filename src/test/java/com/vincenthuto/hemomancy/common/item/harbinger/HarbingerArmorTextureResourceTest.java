@@ -19,7 +19,7 @@ public final class HarbingerArmorTextureResourceTest {
 			"silent_archon_chestplate",
 			"silent_archon_leggings",
 			"silent_archon_boots",
-			"chalybeate_sclerite_sabatons",
+			"venous_strider_sabatons",
 			"covenant_mantle"
 	};
 
@@ -38,7 +38,7 @@ public final class HarbingerArmorTextureResourceTest {
 		assertExists("Silent Archon worn layer 2",
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/silent_archon_layer_2.png"));
 		assertExists("Chalybeate worn layer 1",
-				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/chalybeate_sclerite_layer_1.png"));
+				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/venous_strider_layer_1.png"));
 		assertExists("Covenant mantle worn layer 1",
 				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/covenant_mantle_layer_1.png"));
 
@@ -60,8 +60,8 @@ public final class HarbingerArmorTextureResourceTest {
 				"com/vincenthuto/hemomancy/common/item/shared/armor/EnumModArmorTiers.java"));
 		assertContains("Silent Archon must not reuse Blood Lust worn texture", armorTiers,
 				"SILENT_ARCHON(\"silent_archon\"");
-		assertContains("Chalybeate sabatons must not reuse Chitinite worn texture", armorTiers,
-				"CHALYBEATE_SCLERITE(\"chalybeate_sclerite\"");
+		assertContains("Venous Strider sabatons must not reuse Chitinite worn texture", armorTiers,
+				"VENOUS_STRIDER(\"venous_strider\"");
 		assertContains("Covenant mantle must not reuse Blood Lust worn texture", armorTiers,
 				"COVENANT_MANTLE(\"covenant_mantle\"");
 	}

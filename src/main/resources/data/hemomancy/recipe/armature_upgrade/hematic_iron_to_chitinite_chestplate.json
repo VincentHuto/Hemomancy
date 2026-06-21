@@ -3,7 +3,7 @@
   "required_degree": 3,
   "armor_slot": "chest",
   "base": { "item": "hemomancy:hematic_iron_chestplate" },
-  "reagent": { "item": "hemomancy:chitinous_husk" },
+  "reagent": { "item": "hemomancy:sclerotic_oleum" },
   "blood_cost": 500,
   "result": { "id": "hemomancy:chitinite_chestplate" }
 }

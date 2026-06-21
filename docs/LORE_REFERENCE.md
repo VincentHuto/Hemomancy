@@ -282,7 +282,7 @@ The ladder is a degree ladder with sidegrade forks. Hematic Iron is the first ch
 
 Silent Archon Vestments are different. They are cloth and armor mixed after the Archon refuses Apotheos, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
 
-One-off pieces should remain covenant-breaking tradeoffs in tone as well as mechanics. The Crown of Sacred Marrow, Hemolymphopoda Headpiece, Chalybeate Sclerite Sabatons, and Covenant Mantle each express a narrow vow or ecology. Wearing one means choosing that vow over the comfort of a full-set identity.
+One-off pieces should remain covenant-breaking tradeoffs in tone as well as mechanics. The Crown of Sacred Marrow, Hemolymphopoda Headpiece, Venous Strider Sabatons, and Covenant Mantle each express a narrow vow or ecology. Wearing one means choosing that vow over the comfort of a full-set identity.
 
 ### 6.5 The Founding Fane
 

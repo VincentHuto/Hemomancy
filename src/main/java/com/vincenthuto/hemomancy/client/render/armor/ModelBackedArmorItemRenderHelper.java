@@ -29,7 +29,7 @@ public final class ModelBackedArmorItemRenderHelper {
 	public static final ResourceLocation PRISMATIC_LAYER_2 = armorTexture("prismatic_layer_2");
 	public static final ResourceLocation UNSTAINED_LAYER_1 = armorTexture("unstained_layer_1");
 	public static final ResourceLocation UNSTAINED_LAYER_2 = armorTexture("unstained_layer_2");
-	public static final ResourceLocation CHALYBEATE_LAYER_1 = armorTexture("chalybeate_sclerite_layer_1");
+	public static final ResourceLocation VENOUS_STRIDER_LAYER_1 = armorTexture("venous_strider_layer_1");
 	public static final ResourceLocation COVENANT_MANTLE_LAYER_1 = armorTexture("covenant_mantle_layer_1");
 
 	private ModelBackedArmorItemRenderHelper() {
@@ -103,9 +103,9 @@ public final class ModelBackedArmorItemRenderHelper {
 		} else if (stack.is(ItemInit.unstained_boots.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, UnstainedArmorModel.boots::get,
 					UNSTAINED_LAYER_1);
-		} else if (stack.is(ItemInit.chalybeate_sclerite_sabatons.get())) {
+		} else if (stack.is(ItemInit.venous_strider_sabatons.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, ChalybeateFortressArmorModel.boots::get,
-					CHALYBEATE_LAYER_1);
+					VENOUS_STRIDER_LAYER_1);
 		} else if (stack.is(ItemInit.covenant_mantle.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, CovenantLeaderArmorModel.chest::get,
 					COVENANT_MANTLE_LAYER_1);

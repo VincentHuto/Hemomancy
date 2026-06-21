@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:serpent_scale" },
+    { "item": "hemomancy:puppeteering_thread" },
+    { "item": "hemomancy:cuttlefish_chromatophores" }
+  ],
+  "result": {
+    "id": "hemomancy:chromatic_sublimate"
+  }
+}

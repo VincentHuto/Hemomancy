@@ -1885,10 +1885,18 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/active_befouling_ash.png) Active Befouling / ![](../src/main/resources/assets/hemomancy/textures/item/active_smouldering_ash.png) Active Smouldering Ash | Active versions of ash trails |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_scrap.png) Hematic Iron Scrap | Blood-infused iron alloy ingredient |
 | ![](../src/main/resources/assets/hemomancy/textures/item/hematic_iron_powder.png) Hematic Iron Powder | Extracted from blood via centrifuge |
-| Calcified Blood Spine | Barbed Urchin reagent for the D3 Barbed armor fork in the Hematic Armature. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/crimson_lacquer.png) Crimson Lacquer | Crimson Lodge coating made from Hematic Iron Powder, Blood Crystal Shard, and Sanguine Salve; upgrades Barbed or Chitinite armor into Blood Lust in the Hematic Armature. |
+| Calcified Blood Spine | Barbed Urchin reagent folded into Aculeate Vitriol for the D3 Barbed armor fork in the Hematic Armature. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/crimson_lacquer.png) Crimson Lacquer | Crimson Lodge coating made from Hematic Iron Powder, Blood Crystal Shard, and Sanguine Salve; upgrades Barbed, Chitinite, or Prismatic armor into Blood Lust in the Hematic Armature. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/monolith_imbued_cloth.png) Monolith Imbued Cloth | Archon-tier cloth made from Monolith Fragment, Puppeteering Thread, and white wool; reforges Blood Lust into Silent Archon Vestments for players who made the silent Archon choice. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/chalybeate_sclerite.png) Chalybeate Sclerite | Ferric deep-ocean material nonlethally knapped from retracted Chalybeate Snails with any HutosLib `ItemKnapper`. Distills to Hematic Iron Powder and can substitute for Ferric Enzyme in the Ferric Spores recipe. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/toxicognath.png) Toxicognath | Venom-Rib Centipede fang organ used in Aculeate Vitriol. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/fargone_proboscis.png) Fargone Proboscis | Blood-moon mosquito feeding lance used in Aculeate Vitriol. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/queens_physogastrism.png) Queen's Physogastrism | Chthonian Queen swollen brood organ used in Sclerotic Oleum. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/cuttlefish_chromatophores.png) Cuttlefish Chromatophores | Prism Cuttle pigment sacs used in Chromatic Sublimate. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/sclerotic_oleum.png) Sclerotic Oleum | Chitinite hardening quench oil made from Chitinous Husk, Chalybeate Sclerite, and Queen's Physogastrism; upgrades Hematic Iron into Chitinite armor in the Armature. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/aculeate_vitriol.png) Aculeate Vitriol | Barbed retaliatory corrosive infusion made from Toxicognath, Fargone Proboscis, and Calcified Blood Spine; upgrades Hematic Iron into Barbed armor in the Armature. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/chromatic_sublimate.png) Chromatic Sublimate | Prismatic control-sheen coating made from Serpent Scale, Puppeteering Thread, and Cuttlefish Chromatophores; upgrades Hematic Iron into Prismatic armor in the Armature. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/venous_pinion.png) Venous Pinion | Rare Venous Strider balancing feather used to craft the Venous Strider Sabatons and tie their emergency slow-fall brace to the heron-like strider ecology. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/erythrocoral_fragment.png) Erythrocoral Fragment | Vivacious warm-ocean fungal-coral material, best harvested from Erythrocoral fans/tendrils with shears. Combines with Spore Sac and Hyphal Substrate into Vivacious Spores, or distills back into a low-yield Spore Sac. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/salt_stained_voyager_log.png) Salt-Stained Voyager Log | Non-progression lore salvage from Harbinger Voyager Wrecks. Vicar, Mnemonist, and Alchemist item inquiry entries frame the wrecks as failed field research and covenant tragedy rather than simple villain evidence. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/consecrated_copper_ingot.png) Consecrated Copper Ingot | Anti-blood copper, used in Unstained path |
@@ -2201,9 +2209,9 @@ Harbinger armor progression is centered on the **Hematic Armature** (`hematic_ar
 | Degree | Base worn armor | Armature reagent | Blood per piece | Result |
 |--------|-----------------|------------------|-----------------|--------|
 | D2 | Vanilla iron armor | Hematic Iron Scrap | 250 | Hematic Iron |
-| D3 | Hematic Iron | Calcified Blood Spine | 500 | Barbed |
-| D3 | Hematic Iron | Chitinous Husk | 500 | Chitinite |
-| D3 | Hematic Iron | Glow Ink Sac | 500 | Prismatic |
+| D3 | Hematic Iron | Aculeate Vitriol | 500 | Barbed |
+| D3 | Hematic Iron | Sclerotic Oleum | 500 | Chitinite |
+| D3 | Hematic Iron | Chromatic Sublimate | 500 | Prismatic |
 | D5 | Barbed, Chitinite, or Prismatic | Crimson Lacquer | 1,200 | Blood Lust, with cosmetic lineage stack data (`barbed`, `chitinite`, or `prismatic`) |
 | D5-D6 | Blood Lust helmet | Tengu Mask / Horned Mask / Lodestone Faceplate / Velorum Mask | 350-500 | Blood Lust mask variants |
 | D7 Silent Archon | Blood Lust | Monolith Imbued Cloth | 2,000 | Silent Archon Vestments; gated by `hemomancy:archon_choice_made = "silent"` |
@@ -2242,6 +2250,7 @@ Retaliatory coastal-venom armor blending Barbed Urchin spines, Venom Rib Centipe
 - ![](../src/main/resources/assets/hemomancy/textures/item/barbed_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_boots.png) Boots
 - Barbed Shield ![](../src/main/resources/assets/hemomancy/textures/entity/barbed_shield/model_barbed_shield.png)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
+- **Preparation:** Aculeate Vitriol, brewed from Toxicognath, Fargone Proboscis, and Calcified Blood Spine.
 - **Repair:** Calcified Blood Spine
 - **Set Bonus (4 pieces):** Thorns â€” attackers take 2 damage and receive Blood Loss effect (3 seconds)
 
@@ -2256,6 +2265,7 @@ Ferric bastion armor blending Chitinite plating, Chthonian termite mandibles, an
 - Chitinite Shield ![](../src/main/resources/assets/hemomancy/textures/entity/chitinite_shield/model_chitinite_shield.png)
 - Chitinite Arm Banner (dyeable, 16 colors)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
+- **Preparation:** Sclerotic Oleum, tempered from Chitinous Husk, Chalybeate Sclerite, and Queen's Physogastrism.
 - **Repair:** Chitinous Husk
 - **Set Bonus (4 pieces):** +2.0 Armor Toughness (via attribute modifier) and 25% projectile damage reduction
 
@@ -2265,10 +2275,11 @@ Ferric bastion armor blending Chitinite plating, Chthonian termite mandibles, an
 
 ### 22.5 Prismatic Armor
 
-Flash-evasion armor blending Prism Cuttle chromatophores, Lantern Tick displays, and Blood Drunk Puppeteer red-gold spectacle:
+Flash-evasion armor blending Scarlet Serpent hood scales, Blood Drunk Puppeteer red-gold spectacle, and Prism Cuttle chromatophores:
 - ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/prismatic_boots.png) Boots
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability x37, Enchantability 15
-- **Repair:** Glow Ink Sac
+- **Preparation:** Chromatic Sublimate, sublimated from Serpent Scale, Puppeteering Thread, and Cuttlefish Chromatophores.
+- **Repair:** Serpent Scale
 - **Set Bonus (4 pieces):** Prismatic flash - when hit by a living attacker, briefly grants Speed and blinds, nauseates, and outlines the attacker plus nearby hostile mobs. The flash has an 8-second cooldown.
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/prismatic_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/prismatic_layer_2.png)
@@ -2308,7 +2319,7 @@ One-off armor pieces intentionally use distinct material holders so they break f
 - **Hemolymphopoda Headpiece:** existing D3 aquatic/organic helmet.
 - **Lantern Tick Helmet:** rare underground arthropod helmet dropped by Lantern Ticks. It renders as a large latched tick on the wearer's head and maintains a temporary moving light source around the wearer until removed.
 - **Crown of Sacred Marrow:** D5/D6 artifact helmet with high-blood melee bonus.
-- **Chalybeate Sclerite Sabatons:** D3/D4 boots from nonlethally knapped Chalybeate Sclerite; reduce projectile/fall damage and brace long falls. Uses the imported Fortress armor model/texture for worn and item-stack 3D boot renders.
+- **Venous Strider Sabatons:** D3/D4 one-off boots crafted from Venous Pinions shed by rare Venous Striders; reduce projectile/fall damage and brace long falls. Uses the imported Fortress armor model/texture for worn and item-stack 3D boot renders.
 - **Covenant Mantle:** D6 chest piece tied to bloodline covenant play; spends wearer blood to grant nearby initiated allies brief resistance. Uses the imported cultist leader armor model/texture for worn and item-stack 3D chest renders.
 
 ---
@@ -2926,6 +2937,7 @@ Notable implemented drop families:
 | Hematic Burrower | Ordinary death loot is clay-only; the rare coal/raw copper/raw iron reward is emitted only during the panic dig-away escape behavior |
 | Blood Lantern Jelly | Empty/no meaningful combat drops; its value is ambient reef life and specimen preservation |
 | Prism Cuttle | Small glow-ink fallback; intended value is observation, specimen capture, and its defensive flash ecology |
+| Venous Strider | Vivacious Spores plus Venous Pinions for crafting Venous Strider Sabatons |
 | Venom-Rib Centipede | Spider-eye fallback from a dangerous damp-biome predator; venom pressure and bug predation are the primary encounter identity |
 | Lantern Tick | Drops the Lantern Tick Helmet; encounter value is the latch parasite behavior and mobile-light artifact, not material farming |
 | Mnemonic Whale | Empty/no meaningful combat drops; intended interaction is nonlethal Mnemonic Ambergris sampling and observation |
@@ -3515,7 +3527,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Loot Modifiers** (`AddItemModifier`) â€” framework exists; specific loot targets are not yet assigned.
 - **Gourdvine Tap** â€” `Partial`: Draft living "machine plant" block (`gourdvine_tap`) that passively generates blood into an internal reservoir and slowly fills an inserted Blood Gourd; bone meal cultivation advances 4 growth stages that increase its fill rate. Anchors: `GourdvineTapBlock`, `GourdvineTapBlockEntity`, `assets/hemomancy/blockstates/gourdvine_tap.json`.
 - **Visceral Organs System** â€” **Implemented:** All 5 organ effects are fully implemented in `VisceralOrgansEvents`: **Spleen** (+1000 max blood per level, announces capacity expansion on first reach); **Liver** (removes Poison at level 2+, Wither at level 3+); **Lungs** (Water Breathing while underwater); **Kidneys** (Regeneration at level-1 amplifier; amplifier +1 during a Blood Moon); **Heart** (Damage Resistance capped at Resistance II; Wither immunity at level 3 â€” Cardiac Autonomy fully mastered; blood drain 10Ã·level per 2 s). **Iron Brazier** reagent system is organ-specific. See Â§20.8.
-- **Armor Set Bonuses** â€” **Implemented:** Current full sets have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal plus minor mask modifiers), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile/non-direct reduction), Unstained (Blood Loss/Hemolysis immunity), and Silent Archon Vestments (blood-spending death refusal gated to Silent Archons and excluding Apotheos). One-off tradeoff pieces such as Marrow Crown, Chalybeate Sclerite Sabatons, and Covenant Mantle have standalone bonuses that intentionally break full-set bonuses. See Â§22 for details.
+- **Armor Set Bonuses** â€” **Implemented:** Current full sets have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal plus minor mask modifiers), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile/non-direct reduction), Unstained (Blood Loss/Hemolysis immunity), and Silent Archon Vestments (blood-spending death refusal gated to Silent Archons and excluding Apotheos). One-off tradeoff pieces such as Marrow Crown, Venous Strider Sabatons, and Covenant Mantle have standalone bonuses that intentionally break full-set bonuses. See Â§22 for details.
 - **Morphling Maturity** â€” **Implemented:** All 12 morphlings now have named maturity-tier reactive abilities (Developing â†’ Mature â†’ Apex) and secondary tendencies defined. See Â§16.1.
 - **Morphling Mutation Visual Layer** â€” **Implemented:** Equipped morphlings can render player tint/swirl overlays and animated model attachments through `MorphlingMutationLayer`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, and `MorphlingMutationRegistry`. Attachment state syncs to tracking players through `SyncEquippedMorphlingPacket`; replacement attachments can hide vanilla humanoid parts through `MorphlingPlayerPartVisibility`. All 12 morphlings now have registered attachment examples. See Â§16.5.
 - **Morphling Jar Screen** - **Implemented:** `MorphlingJarScreen` is now the single storage and selection UI. It keeps the server-backed jar slots available for item dragging while rendering the animated green morphling display in the center; right-click, shift-right-click, and the jar keybind all open this unified container.
@@ -3527,7 +3539,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **Fungal Scar Cultivation** â€” **Implemented:** `MycelialCrucibleBlockEntity`, `FungalScarCultivationRecipe`, and `FungalScarCultivationSerializer` now support the two-phase fungal scar flow. Nine recipes live in `data/hemomancy/recipe/fungal_scar/`; all use the consolidated `immature_fungal_scar` culture item with target metadata and aligned-enzyme maturation.
 - **Mycelial Lantern / Enzyme Fruiting** â€” **Implemented:** `MycelialLanternBlockEntity`, `EnzymeFruitingRecipe`, `EnzymeFruitingRecipeSerializer`, eight spore culture items, eight enzyme-fruiting JSON recipes, Blood Structure recipe, menu/screen, block entity renderer, item renderer, Blockbench source, and JEI category/catalyst/recipe registration are present.
 - **Hematic Armature / Armor Upgrade Path** â€” **Implemented:** `HematicArmatureBlockEntity`, `ArmatureUpgradeRecipe`, custom renderer/model/item renderer, hidden restraint entity, no-GUI right-click bowl interaction, walk-on mounting, filler-block multiblock bounds, 5-second per-piece processing, bowl/player particle feedback, and JEI category/catalyst wiring are present. Recipes live in `data/hemomancy/recipe/armature_upgrade/`.
-- **Harbinger Armor Model and Texture Pass** â€” **Implemented:** Blood Lust mask variants, Silent Archon Vestments, Barbed, Chitinite, Unstained, Chalybeate Sclerite Sabatons, Covenant Mantle, Crimson Lacquer, Monolith Imbued Cloth, and the recent memory overlays all have item/model resource coverage. All custom 3D armor sets and one-off armor pieces except Hematic Iron now use model-backed 3D item-stack rendering where applicable.
+- **Harbinger Armor Model and Texture Pass** â€” **Implemented:** Blood Lust mask variants, Silent Archon Vestments, Barbed, Chitinite, Unstained, Venous Strider Sabatons, Covenant Mantle, Crimson Lacquer, Monolith Imbued Cloth, and the recent memory overlays all have item/model resource coverage. All custom 3D armor sets and one-off armor pieces except Hematic Iron now use model-backed 3D item-stack rendering where applicable.
 - **Sporitic Thurible** - **Implemented:** Degree 4 Harbinger offhand support item with aligned-spore ignition, 6,000-tick catalyst burn time, GUI burn meter computed from `BurnEndGameTime`, blood upkeep, server-derived swing intensity, spore-colored ambient particles, hostile infection aura, Sporitic Resonance manipulation discount/cooldown hooks, Blood Structure recipe, custom first-person renderer, third-person player layer, hidden vanilla held item, active catalyst miniature rendered inside the thurible head, and articulated client-side chain physics. The supplied thurible photo remains visual reference only and is not packaged as an asset.
 - **Direct Blood Routing** â€” **Implemented:** `HematicSutureNeedleItem`, `HematicSutureNodeBlockEntity`, `BloodRoutingSavedData`, `IBloodSourceContract`, `IBloodRoutingTarget`, and `BloodRoutingHelper` provide pull-based machine feeding without a basin, fluid, or bulk storage block. Current behavior supports nearby personal/gourd links, Degree 5 fane links, optional bloodline-pool draw with leader/opt-in checks, Blood Thrall courier draw/deposit, and Drudge tendering around an SSC.
 - **Puppeteer Spindle and Trial Unlocks** â€” **Implemented:** `PuppeteersSpindleBlockEntity`, `PuppeteersSpindleMenu`, `PuppeteersSpindleScreen`, `PacketPuppeteersSpindleAction`, `PuppeteersSpindleRenderer`, and `PuppeteersSpindleItemRenderer` provide the two-slot spindle workflow, persistent 512-thread buffer, slotted crossbar filling/binding, themed screen, custom block model, and facing-aware placement. `PuppeteerTrialRecipe`, `PuppeteerTrialRecipeSerializer`, and `PuppeteerSummonTrialEvents` provide the Sanguine Quintessence Blood Crafting trial unlock path for Veinwing Vulture, Marrow Spitter, and Gorebound Hulk.

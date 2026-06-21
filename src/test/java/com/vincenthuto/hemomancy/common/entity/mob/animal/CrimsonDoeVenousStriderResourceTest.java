@@ -46,6 +46,10 @@ public final class CrimsonDoeVenousStriderResourceTest {
 		String striderModifier = readResource("data/hemomancy/neoforge/biome_modifier/add_venous_strider.json");
 		String striderTag = readResource("data/hemomancy/tags/worldgen/biome/venous_strider_spawnlist.json");
 		String hemorrhagicPlateau = readResource("data/hemomancy/worldgen/biome/hemorrhagic_plateau.json");
+		String striderLoot = readResource("data/hemomancy/loot_table/entities/venous_strider.json");
+		String sabatonsRecipe = readResource("data/hemomancy/recipe/venous_strider_sabatons.json");
+		String lang = readResource("assets/hemomancy/lang/en_us.json");
+		String pinionModel = readResource("assets/hemomancy/models/item/venous_pinion.json");
 		assertContains("venous strider modifier type", striderModifier, "\"type\": \"neoforge:add_spawns\"");
 		assertContains("venous strider modifier entity", striderModifier, "\"type\": \"hemomancy:venous_strider\"");
 		assertContains("venous strider mushroom spawn", striderTag, "\"minecraft:mushroom_fields\"");
@@ -54,6 +58,15 @@ public final class CrimsonDoeVenousStriderResourceTest {
 		assertContains("venous strider fungal isles spawn", striderTag, "\"hemomancy:fungal_isles\"");
 		assertContains("venous strider hemorrhagic plateau spawn", hemorrhagicPlateau,
 				"\"type\": \"hemomancy:venous_strider\"");
+		assertContains("venous pinion item registration", itemInit, "venous_pinion = BASEITEMS.register(");
+		assertContains("venous pinion loot", striderLoot, "\"name\": \"hemomancy:venous_pinion\"");
+		assertContains("sabatons recipe uses venous pinion", sabatonsRecipe, "\"item\": \"hemomancy:venous_pinion\"");
+		assertNotContains("sabatons recipe no longer consumes chalybeate sclerite", sabatonsRecipe,
+				"\"item\": \"hemomancy:chalybeate_sclerite\"");
+		assertContains("venous pinion lang", lang, "\"item.hemomancy.venous_pinion\": \"Venous Pinion\"");
+		assertContains("sabatons display name follows venous strider source", lang,
+				"\"item.hemomancy.venous_strider_sabatons\": \"Venous Strider Sabatons\"");
+		assertContains("venous pinion model texture", pinionModel, "\"layer0\": \"hemomancy:item/venous_pinion\"");
 	}
 
 	private static void assertNaturalNoSkylightSpawns(String label, String entitySource) {
@@ -81,6 +94,12 @@ public final class CrimsonDoeVenousStriderResourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String forbidden) {
+		if (text.contains(forbidden)) {
+			throw new AssertionError(label + ": found " + forbidden);
 		}
 	}
 }

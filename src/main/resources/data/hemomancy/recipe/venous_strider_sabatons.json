@@ -6,10 +6,10 @@
     "I I"
   ],
   "key": {
-    "S": { "item": "hemomancy:chalybeate_sclerite" },
+    "S": { "item": "hemomancy:venous_pinion" },
     "I": { "item": "hemomancy:hematic_iron_scrap" }
   },
   "result": {
-    "id": "hemomancy:chalybeate_sclerite_sabatons"
+    "id": "hemomancy:venous_strider_sabatons"
   }
 }

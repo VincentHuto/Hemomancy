@@ -3,7 +3,7 @@
   "required_degree": 3,
   "armor_slot": "legs",
   "base": { "item": "hemomancy:hematic_iron_leggings" },
-  "reagent": { "item": "minecraft:glow_ink_sac" },
+  "reagent": { "item": "hemomancy:chromatic_sublimate" },
   "blood_cost": 500,
   "result": { "id": "hemomancy:prismatic_leggings" }
 }

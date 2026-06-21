@@ -13,9 +13,9 @@ public final class ArmorSetProgressionResourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		assertSidegradeBranch("barbed", "calcified_blood_spine");
-		assertSidegradeBranch("chitinite", "chitinous_husk");
-		assertSidegradeBranch("prismatic", "minecraft:glow_ink_sac");
+		assertSidegradeBranch("barbed", "aculeate_vitriol");
+		assertSidegradeBranch("chitinite", "sclerotic_oleum");
+		assertSidegradeBranch("prismatic", "chromatic_sublimate");
 		assertBloodLustLineage("barbed");
 		assertBloodLustLineage("chitinite");
 		assertBloodLustLineage("prismatic");

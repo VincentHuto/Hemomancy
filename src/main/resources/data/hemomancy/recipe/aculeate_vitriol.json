@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:toxicognath" },
+    { "item": "hemomancy:fargone_proboscis" },
+    { "item": "hemomancy:calcified_blood_spine" }
+  ],
+  "result": {
+    "id": "hemomancy:aculeate_vitriol"
+  }
+}

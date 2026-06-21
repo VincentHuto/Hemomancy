@@ -19,10 +19,13 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("chitinite", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian_queen", "hemomancy:chitinous_husk"),
+			new GuaranteedDrop("chthonian_queen", "hemomancy:queens_physogastrism"),
 			new GuaranteedDrop("crimson_doe", "hemomancy:bleeding_bulb"),
+			new GuaranteedDrop("prism_cuttle", "hemomancy:cuttlefish_chromatophores"),
 			new GuaranteedDrop("enthralled_doll", "hemomancy:bleeding_bulb"),
 			new GuaranteedDrop("erythromycelium_eruptus", "hemomancy:spore_sac"),
 			new GuaranteedDrop("fargone", "hemomancy:sanguine_formation"),
+			new GuaranteedDrop("fargone", "hemomancy:fargone_proboscis"),
 			new GuaranteedDrop("fervent_chitinite", "hemomancy:fervent_husk"),
 			new GuaranteedDrop("fungling", "hemomancy:spore_sac"),
 			new GuaranteedDrop("harbinger_alchemist", "hemomancy:hemolytic_solution"),
@@ -40,7 +43,9 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("seraphae_fragment", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("thirster", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("tooth_pecks", "minecraft:bone_meal"),
+			new GuaranteedDrop("venom_rib_centipede", "hemomancy:toxicognath"),
 			new GuaranteedDrop("venous_strider", "hemomancy:vivacious_spores"),
+			new GuaranteedDrop("venous_strider", "hemomancy:venous_pinion"),
 			new GuaranteedDrop("vesper_evening_star", "hemomancy:memory_of_vesper") };
 
 	private EntityLootTableCoverageResourceTest() {

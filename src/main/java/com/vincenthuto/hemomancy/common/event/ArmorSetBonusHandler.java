@@ -68,7 +68,7 @@ public class ArmorSetBonusHandler {
 	private static final double MARROW_CROWN_DAMAGE_BONUS = 0.10;
 	private static final double MARROW_CROWN_BLOOD_THRESHOLD = 0.50;
 	private static final int UNSTAINED_CHECK_INTERVAL = 10; // Check every 10 ticks
-	private static final float CHALYBEATE_DAMAGE_REDUCTION = 0.15F;
+	private static final float VENOUS_STRIDER_SABATONS_DAMAGE_REDUCTION = 0.15F;
 	private static final double COVENANT_MANTLE_BLOOD_COST = 10.0D;
 
 	/**
@@ -144,7 +144,7 @@ public class ArmorSetBonusHandler {
 		}
 
 		if (player.tickCount % 20 == 0
-				&& player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.chalybeate_sclerite_sabatons.get())
+				&& player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.venous_strider_sabatons.get())
 				&& player.fallDistance > 3.0F) {
 			player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 40, 0, false, true, true));
 		}
@@ -183,10 +183,10 @@ public class ArmorSetBonusHandler {
 			return;
 		}
 
-		if (player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.chalybeate_sclerite_sabatons.get())
+		if (player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.venous_strider_sabatons.get())
 				&& (event.getSource().is(DamageTypeTags.IS_PROJECTILE)
 				|| event.getSource().is(DamageTypes.FALL))) {
-			event.setNewDamage(event.getNewDamage() * (1.0F - CHALYBEATE_DAMAGE_REDUCTION));
+			event.setNewDamage(event.getNewDamage() * (1.0F - VENOUS_STRIDER_SABATONS_DAMAGE_REDUCTION));
 		}
 
 		// Chitinite set bonus: projectile damage reduction

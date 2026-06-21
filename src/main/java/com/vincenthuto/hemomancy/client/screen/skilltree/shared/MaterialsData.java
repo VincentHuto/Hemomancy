@@ -342,6 +342,46 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.serpent_scale.get()),
                 true, UnlockPredicate.minDegree(3)));
 
+        list.add(new MaterialEntry("toxicognath", "Toxicognath",
+                "Venom-bearing mouthpart taken from a Venom-Rib Centipede.",
+                "Materials", () -> new ItemStack(ItemInit.toxicognath.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("fargone_proboscis", "Fargone Proboscis",
+                "A blood-drinking proboscis prepared for corrosive armor baths.",
+                "Materials", () -> new ItemStack(ItemInit.fargone_proboscis.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("queens_physogastrism", "Queen's Physogastrism",
+                "Distended royal brood tissue used in hardening armor oleums.",
+                "Materials", () -> new ItemStack(ItemInit.queens_physogastrism.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("cuttlefish_chromatophores", "Cuttlefish Chromatophores",
+                "Pigment organs from a Prism Cuttle, still flashing with false color.",
+                "Materials", () -> new ItemStack(ItemInit.cuttlefish_chromatophores.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("sclerotic_oleum", "Sclerotic Oleum",
+                "Armor-hardening quench oil for Chitinite sidegrades.",
+                "Materials", () -> new ItemStack(ItemInit.sclerotic_oleum.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("aculeate_vitriol", "Aculeate Vitriol",
+                "Biting corrosive infusion for Barbed sidegrades.",
+                "Materials", () -> new ItemStack(ItemInit.aculeate_vitriol.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("chromatic_sublimate", "Chromatic Sublimate",
+                "Prismatic control-sheen coating for Prismatic sidegrades.",
+                "Materials", () -> new ItemStack(ItemInit.chromatic_sublimate.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("venous_pinion", "Venous Pinion",
+                "Rare balancing feather from a Venous Strider, used for emergency-fall sabatons.",
+                "Materials", () -> new ItemStack(ItemInit.venous_pinion.get()),
+                true, UnlockPredicate.minDegree(3)));
+
         list.add(new MaterialEntry("hematic_iron_powder", "Hematic Iron Powder",
                 "Ground hematic iron. Intermediate step before smelting into ingots.",
                 "Materials", () -> new ItemStack(ItemInit.hematic_iron_powder.get()),
