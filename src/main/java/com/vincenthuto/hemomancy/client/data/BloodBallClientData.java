@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SanguineBlobItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.ItemSanguineConduit;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -69,14 +70,18 @@ public class BloodBallClientData {
 		Player player = mc.player;
 
 		boolean holdsBlob = player.getMainHandItem().getItem() instanceof SanguineBlobItem
-				|| player.getOffhandItem().getItem() instanceof SanguineBlobItem
-				|| player.getMainHandItem().getItem() instanceof ItemSanguineConduit
+				|| player.getOffhandItem().getItem() instanceof SanguineBlobItem;
+		boolean holdsConduit = player.getMainHandItem().getItem() instanceof ItemSanguineConduit
 				|| player.getOffhandItem().getItem() instanceof ItemSanguineConduit;
-		if (!holdsBlob) return false;
+		if (!holdsBlob && !(holdsConduit && bloodOrbConduitRendererEnabled())) return false;
 
 		return HemoCapabilityAccess.getInitiatoryDegree(player)
 				.map(IInitiatoryDegree::getDegreeNumber)
 				.orElse(0) >= 3;
+	}
+
+	private static boolean bloodOrbConduitRendererEnabled() {
+		return HemoClientConfig.RENDER_BLOOD_ORB_RENDERER == null || HemoClientConfig.RENDER_BLOOD_ORB_RENDERER.get();
 	}
 
 	/** Current interpolated world-space position of the ball, or {@code null} if inactive. */

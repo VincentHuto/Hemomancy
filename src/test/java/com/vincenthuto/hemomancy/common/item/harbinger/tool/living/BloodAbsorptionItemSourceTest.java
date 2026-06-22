@@ -23,6 +23,12 @@ public final class BloodAbsorptionItemSourceTest {
 				onUseTick, "LivingStaffFocusRules.bareAbsorptionRange()");
 		assertContains("bare block absorption uses the shared bare per-tick helper",
 				onUseTick, "LivingStaffFocusRules.bareBlockAbsorptionPerTick()");
+		assertContains("bare absorption applies channel movement penalty while held",
+				onUseTick, "applyChannelMovementPenalty");
+		assertContains("bare living-target absorption uses pulse interval helper",
+				onUseTick, "BloodAbsorptionChannelRules.livingTargetPulseInterval");
+		assertContains("bare living-target absorption records strain only after mob drain",
+				onUseTick, "updateChannelStrain");
 		assertBefore("absorbing from a target only hurts entities on the server",
 				absorbFromTarget, "if (level.isClientSide)", "target.hurt");
 		assertContains("absorption tracks target health before damage",
@@ -35,6 +41,14 @@ public final class BloodAbsorptionItemSourceTest {
 				absorbFromTarget, "if (!hurt || absorbed <= 0.0D)");
 		assertContains("absorption credits actual damage instead of requested amount",
 				absorbFromTarget, "volume.fill(absorbed)");
+		assertContains("channel movement penalty reads Dragging Siphon",
+				source, "SkillPointHelper.getDraggingSiphonLevel");
+		assertContains("channel movement penalty reads Mobile Conduit",
+				source, "SkillPointHelper.getMobileConduitLevel");
+		assertContains("channel movement penalty reads Unbound Siphon",
+				source, "SkillPointHelper.hasUnboundSiphon");
+		assertContains("blood poisoning applies wither",
+				source, "MobEffects.WITHER");
 
 		assertContains("absorption excludes bloodless entities",
 				source, "HemoEntityPredicates.NOBLOOD");

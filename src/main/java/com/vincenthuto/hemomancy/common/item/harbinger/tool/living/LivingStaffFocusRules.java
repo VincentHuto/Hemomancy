@@ -69,7 +69,8 @@ public final class LivingStaffFocusRules {
 	}
 
 	public static double bareAbsorptionPerSecond() {
-		return BARE_ABSORPTION_DAMAGE * 20.0D;
+		return BARE_ABSORPTION_DAMAGE * (20.0D
+				/ BloodAbsorptionChannelRules.livingTargetPulseInterval(false, 0));
 	}
 
 	public static double bareBlockAbsorptionPerTick() {
@@ -81,7 +82,8 @@ public final class LivingStaffFocusRules {
 			return 0.0D;
 		}
 		int targets = Math.min(absorptionTargetCap(true, focus), availableTargets);
-		return absorptionDamagePerTarget(focus) * targets * (20.0D / absorptionPulseIntervalTicks(focus));
+		return absorptionDamagePerTarget(focus) * targets * (20.0D
+				/ BloodAbsorptionChannelRules.livingTargetPulseInterval(true, 0));
 	}
 
 	public static double blockAbsorptionPerTick(LivingStaffFocusProfile focus) {

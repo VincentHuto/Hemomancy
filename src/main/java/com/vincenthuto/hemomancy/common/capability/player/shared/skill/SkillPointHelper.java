@@ -396,6 +396,80 @@ public final class SkillPointHelper {
 		return LivingStaffWeaponFormRules.hotSwapCostForWeaponsMasterLevel(getWeaponsMasterLevel());
 	}
 
+	public static int getDraggingSiphonLevel(Player player) {
+		return getDraggingSiphonLevel(progress(player));
+	}
+
+	public static int getDraggingSiphonLevel() {
+		return getDraggingSiphonLevel(progress(null));
+	}
+
+	private static int getDraggingSiphonLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_dragging_siphon;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getMobileConduitLevel(Player player) {
+		return getMobileConduitLevel(progress(player));
+	}
+
+	public static int getMobileConduitLevel() {
+		return getMobileConduitLevel(progress(null));
+	}
+
+	private static int getMobileConduitLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_mobile_conduit;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static int getBloodToleranceLevel(Player player) {
+		return getBloodToleranceLevel(progress(player));
+	}
+
+	public static int getBloodToleranceLevel() {
+		return getBloodToleranceLevel(progress(null));
+	}
+
+	private static int getBloodToleranceLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_blood_tolerance;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
+	public static boolean hasUnboundSiphon(Player player) {
+		return hasUnboundSiphon(progress(player));
+	}
+
+	public static boolean hasUnboundSiphon() {
+		return hasUnboundSiphon(progress(null));
+	}
+
+	private static boolean hasUnboundSiphon(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_unbound_siphon;
+		return sp != null && progress.isUnlocked(sp);
+	}
+
+	public static int getAbsorptionCadenceLevel(Player player) {
+		return getAbsorptionCadenceLevel(progress(player));
+	}
+
+	public static int getAbsorptionCadenceLevel() {
+		return getAbsorptionCadenceLevel(progress(null));
+	}
+
+	private static int getAbsorptionCadenceLevel(SkillProgress progress) {
+		int level = 0;
+		SkillPoint quickened = SkillPointInit.skill_quickened_draw;
+		SkillPoint hungry = SkillPointInit.skill_hungry_pulse;
+		SkillPoint arterial = SkillPointInit.skill_arterial_cadence;
+		if (quickened != null && progress.isUnlocked(quickened)) level++;
+		if (hungry != null && progress.isUnlocked(hungry)) level++;
+		if (arterial != null && progress.isUnlocked(arterial)) level++;
+		return level;
+	}
+
 	public static int getThreadEconomyLevel(Player player) {
 		return getThreadEconomyLevel(progress(player));
 	}

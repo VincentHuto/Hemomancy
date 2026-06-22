@@ -9,7 +9,7 @@ public final class LivingStaffFocusRulesTest {
 		unskilledStaffAbsorbsAndProjectsFasterThanBareHands();
 		unskilledStaffAbsorptionMatchesBareHandOnOneTargetAndBeatsItWithTwo();
 		livingConduitIncreasesAbsorptionTargetsAndRange();
-		vascularDrawIncreasesAbsorptionAmountAndPulseSpeed();
+		vascularDrawIncreasesAbsorptionAmountAndBlockThroughput();
 		staffBlockAbsorptionPerTickScalesWithFocus();
 		crimsonProjectionIncreasesProjectionRates();
 		vesperMemoryIsTheHighestFocusTier();
@@ -53,15 +53,15 @@ public final class LivingStaffFocusRulesTest {
 						> LivingStaffFocusRules.absorptionRange(none));
 	}
 
-	private static void vascularDrawIncreasesAbsorptionAmountAndPulseSpeed() {
+	private static void vascularDrawIncreasesAbsorptionAmountAndBlockThroughput() {
 		LivingStaffFocusProfile none = LivingStaffFocusProfile.NONE;
 		LivingStaffFocusProfile maxDraw = new LivingStaffFocusProfile(0, 3, 0, false);
 		assertTrue("vascular draw increases absorption amount",
 				LivingStaffFocusRules.absorptionDamagePerTarget(maxDraw)
 						> LivingStaffFocusRules.absorptionDamagePerTarget(none));
-		assertTrue("vascular draw makes absorption pulse faster",
-				LivingStaffFocusRules.absorptionPulseIntervalTicks(maxDraw)
-						< LivingStaffFocusRules.absorptionPulseIntervalTicks(none));
+		assertTrue("vascular draw increases block absorption throughput",
+				LivingStaffFocusRules.blockAbsorptionPerTick(maxDraw)
+						> LivingStaffFocusRules.blockAbsorptionPerTick(none));
 	}
 
 	private static void staffBlockAbsorptionPerTickScalesWithFocus() {

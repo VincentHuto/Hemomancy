@@ -407,6 +407,13 @@ public class SkillsTabController implements IProgressTab {
             case "skill_scar_mastery"    -> "\u2721";
             case "skill_living_conduit"  -> "L";
             case "skill_vascular_draw"   -> "V";
+            case "skill_dragging_siphon" -> "D";
+            case "skill_mobile_conduit" -> "M";
+            case "skill_blood_tolerance" -> "T";
+            case "skill_unbound_siphon" -> "U";
+            case "skill_quickened_draw" -> "Q";
+            case "skill_hungry_pulse" -> "H";
+            case "skill_arterial_cadence" -> "A";
             case "skill_crimson_projection" -> "P";
             case "skill_weapons_master" -> "W";
             case "skill_hematic_focus" -> "F";

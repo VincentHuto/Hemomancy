@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -129,6 +130,10 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	@Override
 	public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
 		super.onUseTick(pLevel, pLivingEntity, pStack, pRemainingUseDuration);
+		if (pLivingEntity instanceof Player player
+				&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
+			BloodAbsorptionItem.applyChannelMovementPenalty(player);
+		}
 		if (pLivingEntity.level().isClientSide) {
 			if (pLivingEntity.isShiftKeyDown()) {
 				Random rand = new Random();
@@ -176,12 +181,17 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 				if (tryAbsorbFromLookedAtBlockWithStaff(pLevel, player, focus)) {
+					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}
 				int elapsed = getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration;
-				int interval = LivingStaffFocusRules.absorptionPulseIntervalTicks(focus);
+				int interval = BloodAbsorptionChannelRules.livingTargetPulseInterval(true,
+						SkillPointHelper.getAbsorptionCadenceLevel(player));
 				if (elapsed % interval == 0) {
-					absorbWithStaff(pLevel, player, pStack);
+					double handled = absorbWithStaff(pLevel, player, pStack);
+					BloodAbsorptionItem.updateChannelStrain(player, handled > 0.0D);
+				} else {
+					BloodAbsorptionItem.updateChannelStrain(player, false);
 				}
 			} else if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION)) {
 				projectWithStaff(pLevel, player, pStack);
@@ -302,11 +312,11 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		return true;
 	}
 
-	private static void absorbWithStaff(Level level, Player player, ItemStack stack) {
+	private static double absorbWithStaff(Level level, Player player, ItemStack stack) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				.orElseThrow(NullPointerException::new);
 		if (!volume.isActive() || volume.isFull()) {
-			return;
+			return 0.0D;
 		}
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
@@ -324,6 +334,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			handled += BloodAbsorptionItem.absorbFromTarget(level, player, target, amountPerTarget);
 		}
 		recordUtilityBloodHandled(player, handled);
+		return handled;
 	}
 
 	private static void projectWithStaff(Level level, Player player, ItemStack stack) {

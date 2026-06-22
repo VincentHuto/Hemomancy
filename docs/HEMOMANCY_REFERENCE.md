@@ -241,6 +241,7 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `render_layers.renderEquippedMorphlingLayer` | Boolean | `true` | true/false | Renders the equipped morphling on the player arm in third person |
 | `render_layers.renderEquippedMorphlingHandLayer` | Boolean | `true` | true/false | Renders the equipped morphling on the player hand in first person |
 | `render_layers.renderMorphlingMutationLayer` | Boolean | `true` | true/false | Renders morphling mutation overlays and model attachments |
+| `world_rendering.renderBloodOrbRenderer` | Boolean | `true` | true/false | Renders the floating blood orb effect while holding a Sanguine Conduit; Sanguine Blob always renders its orb |
 
 ### 3.3 MnA Cross-Mod Config (`HemoMnAConfig`)
 
@@ -1094,12 +1095,19 @@ Skill definitions are Java-owned. `SkillPointInit` keeps the public static field
 | Sanguine Surge | 7 | 3 | 2 | 2 | +1 passive blood regen/tick per level | Capacity |
 | Dynamic Use | 4 | 3 | 2 | 2 | +10% manipulation power when tendency matches | Efficiency |
 | Hemostasis | 6 | 3 | 2 | 2 | -10% blood lost when taking damage per level | Efficiency |
-| Vascular Draw | 22 | 3 | 2 | 2 | Living Staff absorption amount increases and pulse interval decreases per level | Living Conduit |
+| Vascular Draw | 22 | 3 | 2 | 2 | Living Staff absorption amount and block/reservoir draw rate increase per level | Living Conduit |
+| Dragging Siphon | 41 | 1 | 2 | 2 | Allows slow movement while channeling Blood Absorption | Vascular Draw |
+| Mobile Conduit | 42 | 3 | 2 | 3 | Reduces Blood Absorption movement slowdown per level | Dragging Siphon |
+| Blood Tolerance | 43 | 5 | 2 | 3 | Delays living-target absorption strain thresholds per level | Dragging Siphon |
+| Quickened Draw | 45 | 1 | 2 | 3 | First Blood Absorption living-target pulse frequency upgrade | Vascular Draw |
+| Hungry Pulse | 46 | 1 | 3 | 4 | Second Blood Absorption living-target pulse frequency upgrade | Quickened Draw |
 | Feeding Frenzy | 5 | 3 | 3 | 3 | +25% blood gained from kills | Last Wind |
 | Iron Will | 10 | 3 | 3 | 3 | 10% damage reduction per level when blood < 15% | Last Wind |
 | Crimson Projection | 23 | 3 | 3 | 3 | Living Staff structure feed and blood vessel feed rates increase per level | Living Conduit |
 | Weapons Master | 39 | 4 | 2 | 4 | -50mL Living Staff weapon hot-swap cost per level (250mL -> 50mL) | Crimson Projection + Vascular Draw |
-| Hematic Focus | 24 | 3 | 3 | 5 | Broad Living Staff focus: absorption cap/range/amount/pulse and projection rates improve per level | Crimson Projection + Vascular Draw + Deep Base |
+| Unbound Siphon | 44 | 1 | 4 | 5 | Removes Blood Absorption movement penalties | Mobile Conduit + Deep Base |
+| Arterial Cadence | 47 | 1 | 4 | 5 | Final Blood Absorption living-target pulse frequency upgrade | Hungry Pulse + Deep Base |
+| Hematic Focus | 24 | 3 | 3 | 5 | Broad Living Staff focus: absorption cap/range/amount and projection rates improve per level | Crimson Projection + Vascular Draw + Deep Base |
 | Vesper's Refusal | 25 | 3 | 4 | 7 | Amplifies awakened Vesper memory on the Living Staff; inert until Vesper's memory is awakened | Hematic Focus |
 | Blood Flow | 11 | 5 | 2 | 3 | -5% manipulation cooldowns per level | Hemostasis |
 | Coagulation | 12 | 3 | 3 | 4 | +15% chance to block incoming bleed effects | Hemostasis |
@@ -1127,11 +1135,18 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Dynamic Use | âœ… Yes | `BloodManipulation` â€” divides effective blood cost by multiplier when tendency matches |
 | Feeding Frenzy | âœ… Yes | `BloodVolumeEvents` â€” multiplies blood gained from kills |
 | Hemostasis | âœ… Yes | `BloodVolumeEvents` â€” multiplies blood drained when taking damage |
-| Vascular Draw | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” increases Living Staff absorption amount and pulse speed |
+| Vascular Draw | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” increases Living Staff absorption amount and block/reservoir draw rate |
+| Dragging Siphon | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” unlocks slow movement while channeling |
+| Mobile Conduit | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” reduces channel movement slowdown |
+| Blood Tolerance | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” delays weakness, nausea, and blood poisoning strain tiers |
+| Quickened Draw | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” improves living-target pulse interval |
+| Hungry Pulse | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” improves living-target pulse interval |
 | Crimson Projection | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” increases Living Staff projection/feed rates |
 | Weapons Master | âœ… Yes | `LivingStaffWeaponFormHelper` / `LivingStaffWeaponFormRules` â€” reduces Living Staff weapon hot-swap cost by 50mL per level |
-| Hematic Focus | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” improves all staff focus channels: absorption cap/range/amount/pulse and projection rates |
-| Vesper's Refusal | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” only applies when Vesper memory is awakened; improves staff target cap, range, absorption, pulse speed, and projection rates |
+| Unbound Siphon | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” removes channel movement penalties |
+| Arterial Cadence | âœ… Yes | `BloodAbsorptionChannelRules` / Blood Absorption item paths â€” reaches the mature living-target pulse interval |
+| Hematic Focus | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” improves staff focus channels: absorption cap/range/amount and projection rates |
+| Vesper's Refusal | âœ… Yes | `LivingStaffFocusProfile` / `LivingStaffFocusRules` â€” only applies when Vesper memory is awakened; improves staff target cap, range, absorption amount, and projection rates |
 | Sanguine Surge | âœ… Yes | `BloodVolumeEvents` â€” adds passive blood regen per tick |
 | Crimson Mastery | âœ… Yes | `PyreticForgeManip` â€” scales items smelted per cast |
 | Vital Link | âœ… Yes | `KnownManipulationEvents` â€” chance to heal player on dealing manipulation damage |
@@ -2118,7 +2133,7 @@ All are single-stack, use the `LIVING` tool tier. The Living Staff is the prefer
 | Living Baghnakh | `LivingBaghnakhItem` | Blood-feeding claw weapon |
 | Living Torch | `LivingTorchItem` | Flammeus staff weapon form; ignites struck targets |
 | Living Flail | `LivingFlailItem` | Congeatio staff weapon form; slows struck targets and uses a physics-rendered chain/head model |
-| Living Staff | `LivingStaffItem` | Channels morphlings, blood magic, and living weapon forms. First blood-structure craft unlocks the player Living Staff bond and `conjure_staff`; absorption/projection power now reads from Living Conduit, Vascular Draw, and Crimson Projection skill levels, while Weapons Master reduces weapon-form hot-swap cost. |
+| Living Staff | `LivingStaffItem` | Channels morphlings, blood magic, and living weapon forms. First blood-structure craft unlocks the player Living Staff bond and `conjure_staff`; absorption/projection power now reads from Living Conduit, Vascular Draw, Crimson Projection, and the Blood Absorption channel/cadence skills, while Weapons Master reduces weapon-form hot-swap cost. |
 | Memory of Vesper | `MemoryOfVesperItem` | Vesper Evening Star drop. Right-click after forming a Living Staff bond to permanently awaken Vesper's memory in player staff progress instead of crafting a separate or stack-bound weapon. |
 | Living Syringe | `LivingSyringeItem` | Extracts blood vials from mobs into a loaded Vial Rack (Shift to eject rack) |
 | Living Crossbow | `LivingCrossbowItem` | Fires Blood Bolts |
@@ -2156,18 +2171,20 @@ Hot-swap cost is handled by `LivingStaffWeaponFormRules`: 250mL base, reduced by
 
 #### 21.2.3 Staff Blood Utility Rates
 
-Bare Blood Absorption now acts as the fallback hand tool at 1mL/tick against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff and starts at 4mL per target every 4 ticks, with a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before nearby living targets, matches the bare hand on one target, and outperforms it as soon as two targets are available.
+Bare Blood Absorption now acts as the fallback hand tool against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living-entity absorption is pulsed instead of every tick: the base cadence is every 10 ticks, improving through Quickened Draw, Hungry Pulse, and Arterial Cadence to every 4 ticks. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff, starts at 4mL per target per pulse, and has a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before nearby living targets and outperforms bare absorption once multiple targets are available.
+
+While actively channeling Blood Absorption, the player is rooted in place by default. Dragging Siphon unlocks slow movement, Mobile Conduit reduces the slowdown, and Unbound Siphon removes the movement penalty. Drawing from blocks, reservoirs, and bloodwells does not build strain. Draining living mobs builds Blood Absorption strain on the player: sustained overuse escalates through Weakness, Nausea, and a short Wither effect representing blood poisoning. Blood Tolerance delays those strain thresholds, and strain decays when the channel is held without successfully draining a living target.
 
 Staff focus scaling is centralized in `LivingStaffFocusRules`:
 
 | Source | Staff Effect |
 |--------|--------------|
 | Living Conduit | +1 target cap and +1.5 block absorption range per level |
-| Vascular Draw | +0.75 absorption per target and -1 pulse interval tick per level |
+| Vascular Draw | +0.75 absorption per target and +75 tile transfer per level |
 | Crimson Projection | +3 structure feed and +75 blood reservoir transfer per level |
-| Hematic Focus | +1 target cap, +0.75 range, +0.25 absorption, faster pulse at higher levels, +1.5 structure feed, +35 tile transfer per level |
-| Vesper memory awakened | +1 target cap, +1.5 range, +0.5 absorption, -1 pulse interval tick, +3 structure feed, +75 tile transfer |
-| Vesper's Refusal | Only while Vesper memory is awakened: +1 target cap, +0.75 range, +0.25 absorption, faster pulse at higher levels, +2 structure feed, +50 tile transfer per level |
+| Hematic Focus | +1 target cap, +0.75 range, +0.25 absorption, +1.5 structure feed, +35 tile transfer per level |
+| Vesper memory awakened | +1 target cap, +1.5 range, +0.5 absorption, +3 structure feed, +75 tile transfer |
+| Vesper's Refusal | Only while Vesper memory is awakened: +1 target cap, +0.75 range, +0.25 absorption, +2 structure feed, +50 tile transfer per level |
 
 Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks `BlockBloodEndpoint` on the looked-at block, then falls back to blood-structure feeding, Somatic Loom ritual charging, and `IBloodReservoir` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local reservoir buffer. Reservoir transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
 

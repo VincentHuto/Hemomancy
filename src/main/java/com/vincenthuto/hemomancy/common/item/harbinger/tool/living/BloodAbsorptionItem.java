@@ -8,14 +8,18 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -29,12 +33,16 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.Optional;
 
 public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand, HemoClientItemExtensionsProvider {
+	private static final String ABSORPTION_STRAIN_TICKS_KEY = "HemomancyBloodAbsorptionStrainTicks";
+	private static final int STRAIN_EFFECT_DURATION = 80;
+
 	public BloodAbsorptionItem(Properties prop) {
 		super(prop.stacksTo(1));
 	}
@@ -106,6 +114,9 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
+		if (player instanceof Player channelingPlayer) {
+			applyChannelMovementPenalty(channelingPlayer);
+		}
 		if (worldIn.isClientSide) {
 			return;
 		}
@@ -113,11 +124,73 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				LivingStaffFocusRules.bareAbsorptionRange(),
 				LivingStaffFocusRules.bareBlockAbsorptionPerTick());
 		if (blockHandled > 0.0D) {
+			updateChannelStrain(player, false);
 			return;
 		}
-		findBareAbsorptionTarget(player, LivingStaffFocusRules.bareAbsorptionRange())
-				.ifPresent(target -> absorbFromTarget(worldIn, player, target,
-						LivingStaffFocusRules.bareAbsorptionDamagePerTick()));
+		int elapsed = getUseDuration(stack, player) - count;
+		int interval = BloodAbsorptionChannelRules.livingTargetPulseInterval(false,
+				player instanceof Player channelingPlayer
+						? SkillPointHelper.getAbsorptionCadenceLevel(channelingPlayer)
+						: 0);
+		if (elapsed % interval != 0) {
+			updateChannelStrain(player, false);
+			return;
+		}
+		boolean drainedLivingTarget = findBareAbsorptionTarget(player, LivingStaffFocusRules.bareAbsorptionRange())
+				.map(target -> absorbFromTarget(worldIn, player, target,
+						LivingStaffFocusRules.bareAbsorptionDamagePerTick()) > 0.0D)
+				.orElse(false);
+		updateChannelStrain(player, drainedLivingTarget);
+	}
+
+	public static void applyChannelMovementPenalty(Player player) {
+		double multiplier = BloodAbsorptionChannelRules.movementMultiplier(
+				SkillPointHelper.getDraggingSiphonLevel(player),
+				SkillPointHelper.getMobileConduitLevel(player),
+				SkillPointHelper.hasUnboundSiphon(player));
+		if (multiplier >= 1.0D) {
+			return;
+		}
+		Vec3 movement = player.getDeltaMovement();
+		player.setDeltaMovement(movement.x * multiplier, movement.y, movement.z * multiplier);
+		if (multiplier <= 0.0D) {
+			player.xxa = 0.0F;
+			player.zza = 0.0F;
+		}
+	}
+
+	public static void updateChannelStrain(LivingEntity user, boolean drainedLivingTarget) {
+		if (!(user instanceof Player player) || player.level().isClientSide) {
+			return;
+		}
+		CompoundTag data = player.getPersistentData();
+		int strainTicks = BloodAbsorptionChannelRules.nextStrainTicks(
+				data.getInt(ABSORPTION_STRAIN_TICKS_KEY), drainedLivingTarget);
+		if (strainTicks <= 0) {
+			data.remove(ABSORPTION_STRAIN_TICKS_KEY);
+			return;
+		}
+		data.putInt(ABSORPTION_STRAIN_TICKS_KEY, strainTicks);
+		applyStrainEffects(player, BloodAbsorptionChannelRules.strainTier(strainTicks,
+				SkillPointHelper.getBloodToleranceLevel(player)));
+	}
+
+	private static void applyStrainEffects(Player player, BloodAbsorptionChannelRules.StrainTier tier) {
+		switch (tier) {
+			case BLOOD_POISONING -> {
+				player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, STRAIN_EFFECT_DURATION, 0, false, true, true));
+				player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, STRAIN_EFFECT_DURATION, 0, false, true, true));
+				player.addEffect(new MobEffectInstance(MobEffects.WITHER, STRAIN_EFFECT_DURATION / 2, 0, false, true, true));
+			}
+			case NAUSEA -> {
+				player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, STRAIN_EFFECT_DURATION, 0, false, true, true));
+				player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, STRAIN_EFFECT_DURATION, 0, false, true, true));
+			}
+			case WEAKNESS -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+					STRAIN_EFFECT_DURATION, 0, false, true, true));
+			case NONE -> {
+			}
+		}
 	}
 
 	public static Optional<LivingEntity> findBareAbsorptionTarget(LivingEntity user, double range) {

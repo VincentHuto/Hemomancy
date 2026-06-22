@@ -13,6 +13,7 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_EQUIPPED_MORPHLING_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_EQUIPPED_MORPHLING_HAND_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_MUTATION_LAYER;
+	public static ModConfigSpec.BooleanValue RENDER_BLOOD_ORB_RENDERER;
 	public static ModConfigSpec.BooleanValue RENDER_FANE_BOUNDARY;
 
 	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
@@ -61,6 +62,10 @@ public class HemoClientConfig {
 		CLIENT_BUILDER.pop();
 
 		CLIENT_BUILDER.comment("Client-side toggles for Hemomancy world rendering effects").push("world_rendering");
+
+		RENDER_BLOOD_ORB_RENDERER = CLIENT_BUILDER
+				.comment("Render the floating blood orb effect when holding a Sanguine Conduit. Sanguine Blob always renders its orb.")
+				.define("renderBloodOrbRenderer", true);
 
 		RENDER_FANE_BOUNDARY = CLIENT_BUILDER
 				.comment("Render Founding Fane boundary domes and screen distortion.")
