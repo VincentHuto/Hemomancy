@@ -47,8 +47,8 @@ public static Optional<IBloodVolume> getBloodVolume(Entity entity) {
 }
 
 public static Optional<IBloodVolume> getBloodVolume(BlockEntity be) {
-    if (be instanceof IBloodReservoir reservoir) {
-        return Optional.ofNullable(reservoir.getBloodCapability());
+    if (be instanceof IBloodReservoir) {
+        return Optional.ofNullable(be.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME));
     }
     return Optional.empty();
 }

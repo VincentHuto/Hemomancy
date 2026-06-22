@@ -47,8 +47,13 @@ public final class HematicArmatureEntityModelResourceTest {
 				renderer, "RESERVOIR_BOTTOM_Y = 4.05F");
 		assertContains("block renderer bounds should include the raised reservoir",
 				renderer, "FRAME_RENDER_HEIGHT = 5.5D");
+		assertContains("blood reservoir should draw side vials at every tier",
+				renderer, "renderSideVialReservoirs(poseStack, buffer, yRot, fillPct);");
+		assertBefore("side vial reservoir fill should not be behind the Monolithic tier gate",
+				renderer, "renderSideVialReservoirs(poseStack, buffer, yRot, fillPct);",
+				"if (armature.getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id())");
 		assertBefore("blood reservoir should render before translucent model",
-				renderer, "renderReservoir(armature, poseStack, buffer);",
+				renderer, "renderReservoir(armature, poseStack, buffer, yRot);",
 				"renderModel(armature, partialTicks, poseStack, buffer, combinedLight, yRot);");
 		assertBefore("blood reservoir batch should flush before translucent model",
 				renderer, "source.endBatch(RenderTypeInit.FLASK_FLUID);",

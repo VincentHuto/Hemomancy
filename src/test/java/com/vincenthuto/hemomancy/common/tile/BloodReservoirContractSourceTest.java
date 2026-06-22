@@ -32,6 +32,10 @@ public final class BloodReservoirContractSourceTest {
 		assertContains("slot processing composes reservoir and inventory", slotAccess,
 				"processBloodContainerInputSlot(Container container, IBloodReservoir reservoir)");
 		assertContains("capability lookup uses reservoir contract", capabilityAccess, "be instanceof IBloodReservoir");
+		assertContains("capability lookup reads reservoir attachment directly", capabilityAccess,
+				"be.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME)");
+		assertNotContains("capability lookup does not recurse through reservoir method", capabilityAccess,
+				"reservoir.getBloodCapability()");
 		assertContains("block interactions sync reservoirs", blockInteractions, "be instanceof IBloodReservoir reservoir");
 		assertContains("blood container transfer accepts reservoir", bloodTransfer, "IBloodReservoir reservoir");
 		assertNotContains("old blood tile contract removed", sourceTree, "IBloodTile");

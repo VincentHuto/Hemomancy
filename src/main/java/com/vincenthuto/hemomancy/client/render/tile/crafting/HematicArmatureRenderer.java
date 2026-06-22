@@ -31,6 +31,13 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 	private static final float RESERVOIR_RADIUS = 3.0F / 16.0F;
 	private static final float RESERVOIR_BOTTOM_Y = 4.05F;
 	private static final float RESERVOIR_MAX_HEIGHT = 7.0F / 16.0F;
+	private static final float SIDE_VIAL_Z_RADIUS = 1.85F / 16.0F;
+	private static final float SIDE_VIAL_MODEL_BOTTOM_Y = 5.0F / 16.0F;
+	private static final float SIDE_VIAL_MAX_HEIGHT = 11.0F / 16.0F;
+	private static final float LEFT_VIAL_X0 = 14.15F / 16.0F;
+	private static final float LEFT_VIAL_X1 = 17.85F / 16.0F;
+	private static final float RIGHT_VIAL_X0 = -17.85F / 16.0F;
+	private static final float RIGHT_VIAL_X1 = -14.15F / 16.0F;
 
 	private static final float[][] BOWL_POSITIONS = new float[][] {
 			{ -2.625F, 1.44F, 0.25F },
@@ -54,9 +61,7 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 		float yRot = rotationFor(facing);
 		float itemYRot = itemRotationFor(facing);
 
-		if (armature.getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id()) {
-			renderReservoir(armature, poseStack, buffer);
-		}
+		renderReservoir(armature, poseStack, buffer, yRot);
 		if (buffer instanceof MultiBufferSource.BufferSource source) {
 			source.endBatch(RenderTypeInit.FLASK_FLUID);
 		}
@@ -67,9 +72,7 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 	private void renderModel(HematicArmatureBlockEntity armature, float partialTicks, PoseStack poseStack,
 			MultiBufferSource buffer, int combinedLight, float yRot) {
 		poseStack.pushPose();
-		poseStack.translate(0.5D, 1.5D, 0.5D);
-		poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-		poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+		applyModelTransform(poseStack, yRot);
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		float ageInTicks = armature.getLevel() != null
 				? armature.getLevel().getGameTime() + partialTicks
@@ -124,7 +127,7 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 	}
 
 	private static void renderReservoir(HematicArmatureBlockEntity armature, PoseStack poseStack,
-			MultiBufferSource buffer) {
+			MultiBufferSource buffer, float yRot) {
 		double max = armature.getMaxBloodVolume();
 		double current = armature.getBloodVolume();
 		if (max <= 0.0D || current <= 0.0D) {
@@ -132,6 +135,37 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 		}
 
 		float fillPct = (float) Math.min(current / max, 1.0D);
+		renderSideVialReservoirs(poseStack, buffer, yRot, fillPct);
+		if (armature.getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id()) {
+			renderHeartReservoir(poseStack, buffer, fillPct);
+		}
+	}
+
+	private static void renderSideVialReservoirs(PoseStack poseStack, MultiBufferSource buffer, float yRot,
+			float fillPct) {
+		float height = SIDE_VIAL_MAX_HEIGHT * fillPct;
+		float topY = SIDE_VIAL_MODEL_BOTTOM_Y - height;
+
+		poseStack.pushPose();
+		applyModelTransform(poseStack, yRot);
+		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.FLASK_FLUID);
+		Matrix4f mat = poseStack.last().pose();
+		renderColorBox(vc, mat, LEFT_VIAL_X0, topY, -SIDE_VIAL_Z_RADIUS,
+				LEFT_VIAL_X1, SIDE_VIAL_MODEL_BOTTOM_Y, SIDE_VIAL_Z_RADIUS,
+				154, 9, 9, 192);
+		renderColorBox(vc, mat, RIGHT_VIAL_X0, topY, -SIDE_VIAL_Z_RADIUS,
+				RIGHT_VIAL_X1, SIDE_VIAL_MODEL_BOTTOM_Y, SIDE_VIAL_Z_RADIUS,
+				154, 9, 9, 192);
+		poseStack.popPose();
+	}
+
+	private static void applyModelTransform(PoseStack poseStack, float yRot) {
+		poseStack.translate(0.5D, 1.5D, 0.5D);
+		poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+	}
+
+	private static void renderHeartReservoir(PoseStack poseStack, MultiBufferSource buffer, float fillPct) {
 		float height = RESERVOIR_MAX_HEIGHT * fillPct;
 
 		poseStack.pushPose();
