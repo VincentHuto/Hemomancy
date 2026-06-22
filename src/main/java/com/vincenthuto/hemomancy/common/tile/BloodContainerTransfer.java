@@ -15,9 +15,20 @@ public final class BloodContainerTransfer {
     private BloodContainerTransfer() {
     }
 
-    public static boolean fillReservoirFromSlot(Container container, @Nullable IBloodVolume reservoir,
-                                                int filledContainerSlot, int emptyContainerOutputSlot,
-                                                boolean acceptBloodGourds, double gourdTransferRate) {
+    public static boolean fillReservoirFromSlot(
+            Container container, IBloodReservoir reservoir, IBloodContainerSlotAccess slots) {
+        return fillReservoirFromSlot(
+                container,
+                reservoir == null ? null : reservoir.getBloodCapability(),
+                slots.getBloodContainerInputSlot(),
+                slots.getEmptyBloodContainerOutputSlot(),
+                slots.acceptsBloodGourdInput(),
+                slots.getBloodGourdInputTransferRate());
+    }
+
+    private static boolean fillReservoirFromSlot(Container container, @Nullable IBloodVolume reservoir,
+                                                 int filledContainerSlot, int emptyContainerOutputSlot,
+                                                 boolean acceptBloodGourds, double gourdTransferRate) {
         if (reservoir == null || reservoir.isFull()) return false;
 
         ItemStack bloodStack = container.getItem(filledContainerSlot);
@@ -58,9 +69,11 @@ public final class BloodContainerTransfer {
         return false;
     }
 
-    public static boolean drainReservoirIntoGourdSlot(Container container, @Nullable IBloodVolume reservoir,
+    public static boolean drainReservoirIntoGourdSlot(Container container, IBloodReservoir reservoir,
                                                       int bloodGourdSlot, double transferRate) {
         if (reservoir == null) return false;
+        IBloodVolume reservoirVolume = reservoir.getBloodCapability();
+        if (reservoirVolume == null) return false;
 
         ItemStack gourdStack = container.getItem(bloodGourdSlot);
         if (!(gourdStack.getItem() instanceof BloodGourdItem)) return false;
@@ -77,14 +90,15 @@ public final class BloodContainerTransfer {
         }
 
         double transfer = calculateGourdTransfer(
-                reservoir.getBloodVolume(),
+                reservoirVolume.getBloodVolume(),
                 gourdVolume.getBloodVolume(),
                 gourdMax > 0 ? gourdMax : gourdVolume.getMaxBloodVolume(),
                 transferRate);
         if (transfer <= 0) return false;
 
-        reservoir.drain(transfer);
+        reservoirVolume.drain(transfer);
         gourdVolume.fill(transfer);
+        reservoir.sendUpdates();
         return true;
     }
 

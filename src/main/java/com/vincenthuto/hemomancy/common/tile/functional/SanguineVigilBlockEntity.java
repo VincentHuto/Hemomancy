@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -25,13 +25,13 @@ import java.util.List;
 /**
  * Block entity for the {@link SanguineVigilBlock}.
  *
- * <p>Blood is stored via the {@link IBloodTile} attachment up to
+ * <p>Blood is stored via the {@link IBloodReservoir} attachment up to
  * {@link #MAX_BLOOD} units.  Every {@link #WARD_TICK_INTERVAL} ticks the
  * block entity scans for hostile mobs within {@link #WARD_RADIUS} blocks and
  * applies {@code blood_binding} to them, draining {@link #BLOOD_PER_APPLICATION}
  * from its store.  When blood runs out the ward goes dormant.</p>
  */
-public class SanguineVigilBlockEntity extends BlockEntity implements IBloodTile {
+public class SanguineVigilBlockEntity extends BlockEntity implements IBloodReservoir {
 
     /** Maximum blood stored by the Vigil. */
     public static final double MAX_BLOOD = 5_000.0;
@@ -98,7 +98,7 @@ public class SanguineVigilBlockEntity extends BlockEntity implements IBloodTile 
         te.sendUpdates();
     }
 
-    // ── IBloodTile ─────────────────────────────────────────────────────────────
+    // ── IBloodReservoir ─────────────────────────────────────────────────────────────
 
     @Override
     public void sendUpdates() {

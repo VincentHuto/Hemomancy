@@ -704,15 +704,15 @@ public final class MaterialsData {
                 "Scars & Patterns", () -> new ItemStack(ItemInit.scar_blank.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("scar_binder", "Scar Binder",
-                "Leather-bound case that stores Scar Patterns and carved scars.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder.get()),
-                true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("scar_binder_upgraded", "Scar Binder (Upgraded)",
-                "Expanded scar binder with additional storage capacity.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder_upgraded.get()),
-                true, UnlockPredicate.minDegree(5)));
+//        list.add(new MaterialEntry("scar_binder", "Scar Binder",
+//                "Leather-bound case that stores Scar Patterns and carved scars.",
+//                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder.get()),
+//                true, UnlockPredicate.minDegree(4)));
+//
+//        list.add(new MaterialEntry("scar_binder_upgraded", "Scar Binder (Upgraded)",
+//                "Expanded scar binder with additional storage capacity.",
+//                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder_upgraded.get()),
+//                true, UnlockPredicate.minDegree(5)));
 
         list.add(new MaterialEntry("scar_transcendence", "Scar of Transcendence",
                 "Lux-aligned scar (Tier III). The light becomes a weight; stillness becomes its price.",

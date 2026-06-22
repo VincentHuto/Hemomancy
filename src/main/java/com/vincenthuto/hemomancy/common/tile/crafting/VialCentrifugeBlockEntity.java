@@ -11,7 +11,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
-import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -37,7 +38,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
-		implements StackedContentsCompatible, IBloodReservoirContainer {
+		implements StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess {
 
 	public static final int SLOT_INPUT = 0;
 	public static final int SLOT_BLOOD = 1;
@@ -246,7 +247,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	// ---- Blood slot processing ----
 
 	private void processBloodSlot() {
-		if (processBloodContainerInputSlot()) sendUpdates();
+		if (processBloodContainerInputSlot(this, this)) sendUpdates();
 	}
 
 	@Override

@@ -11,7 +11,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
-import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -49,7 +50,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class HematicArmatureBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer {
+public class HematicArmatureBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
 	public static final int SLOT_HEAD_REAGENT = 0;
 	public static final int SLOT_CHEST_REAGENT = 1;
 	public static final int SLOT_LEGS_REAGENT = 2;
@@ -87,7 +88,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, HematicArmatureBlockEntity armature) {
-		boolean changed = armature.processBloodContainerInputSlot();
+		boolean changed = armature.processBloodContainerInputSlot(armature, armature);
 		changed |= armature.tryProcessRestrainedPlayer(level);
 		if (changed) {
 			armature.sendUpdates();

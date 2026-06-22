@@ -11,7 +11,8 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
-import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -61,7 +62,7 @@ import java.util.List;
  * lit soul campfire, lava, magma, or crimson flames.
  */
 public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
-		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodReservoirContainer {
+		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
@@ -357,13 +358,13 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	 * the blood reservoir, outputting empty clay flasks to the flask output slot.
 	 */
 	private static void tryDrainBloodIntoGourd(GhastlyAlembicBlockEntity te) {
-		if (BloodContainerTransfer.drainReservoirIntoGourdSlot(te, te.getBloodCapability(), SLOT_FLASK_OUTPUT, 100D)) {
+		if (BloodContainerTransfer.drainReservoirIntoGourdSlot(te, te, SLOT_FLASK_OUTPUT, 100D)) {
 			te.sendUpdates();
 		}
 	}
 
 	private static void tryFillBloodFromFlask(GhastlyAlembicBlockEntity te) {
-		if (te.processBloodContainerInputSlot()) {
+		if (te.processBloodContainerInputSlot(te, te)) {
 			te.sendUpdates();
 		}
 	}

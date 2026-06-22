@@ -108,7 +108,7 @@ public class SummonThrallManip extends BloodManipulation {
 					return;
 				}
 
-				// Destination must be a valid blood tile (has blood volume capability)
+				// Destination must be a valid blood reservoir (has blood volume capability)
 				BlockEntity destBe = world.getBlockEntity(hitBlock);
 				if (destBe == null || !HemoCapabilityAccess.getBloodVolume(destBe).isPresent()) {
 					player.displayClientMessage(
@@ -138,7 +138,7 @@ public class SummonThrallManip extends BloodManipulation {
 	}
 
 	private void spawnNewThrall(Player player, Level world, BlockPos sourceBlock) {
-		// Source must be a valid blood tile (has blood volume capability)
+		// Source must be a valid blood reservoir (has blood volume capability)
 		BlockEntity srcBe = world.getBlockEntity(sourceBlock);
 		if (srcBe == null || !HemoCapabilityAccess.getBloodVolume(srcBe).isPresent()) {
 			player.displayClientMessage(

@@ -80,7 +80,7 @@ public class ScreenScarBinderViewer extends Screen {
 
 	// ── Instance state ──────────────────────────────────────────────────
 	private int left, top;
-	private final ItemStack binderIcon = new ItemStack(ItemInit.scar_binder.get());
+	private final ItemStack binderIcon = new ItemStack(ItemInit.tome_of_the_unstained.get());
 	private final ItemStack sourceBinder;
 	public ScarBinderItemHandler handler;
 
@@ -144,7 +144,7 @@ public class ScreenScarBinderViewer extends Screen {
 			handler = rbHandler;
 			handler.load();
 		} else {
-			int fallbackSize = stack.getItem() == ItemInit.scar_binder_upgraded.get() ? 27 : 18;
+			int fallbackSize = stack.getItem() == ItemInit.tome_of_the_unstained.get() ? 27 : 18;
 			handler = new ScarBinderItemHandler(stack, fallbackSize);
 			handler.load();
 			binderHandler = handler;

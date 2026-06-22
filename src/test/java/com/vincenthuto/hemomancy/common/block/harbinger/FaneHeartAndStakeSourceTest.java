@@ -79,7 +79,7 @@ public final class FaneHeartAndStakeSourceTest {
 		String stakeBlockModel = Files.readString(STAKE_BLOCK_MODEL).replace("\r\n", "\n");
 		String lang = Files.readString(LANG).replace("\r\n", "\n");
 
-		assertContains("bloodwell blocks duplicate hearts", bloodwell, "canPlaceBloodwell");
+		assertContains("bloodwell rejects unregistered placements", bloodwell, "isRegisteredBloodwell");
 		assertContains("bloodwell collapses fane on removal", bloodwell, "removeHeartAndGetStakes");
 		assertContains("bloodwell breaks associated stakes on removal", bloodwell, "removeBlock(stakePos, false)");
 		assertContains("bloodwell uses footprint membership", bloodwell, "isInOwnFane");
@@ -99,8 +99,8 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("bloodwell syncs changed bloodline pool after endpoint transfer", bloodwell,
 				"syncBloodlinePool(player, globalLine)");
 		assertNotContains("bloodwell no longer owns fixed 25000ml local buffer", bloodwellBlockEntity, "MAX_BLOOD");
-		assertNotContains("bloodwell no longer implements blood tile storage", bloodwellBlockEntity,
-				"implements IBloodTile");
+		assertNotContains("bloodwell no longer implements reservoir storage", bloodwellBlockEntity,
+				"implements IBloodReservoir");
 		assertNotContains("bloodwell no longer saves local blood level", bloodwellBlockEntity, "TAG_BLOOD_LEVEL");
 		assertContains("bloodwell block entity syncs bloodline pool fullness", bloodwellBlockEntity,
 				"syncFromBloodlinePool");
@@ -110,19 +110,19 @@ public final class FaneHeartAndStakeSourceTest {
 				"projectBloodIntoBlock");
 		assertContains("dynamic block interaction helper resolves block endpoints", blockBloodInteractions,
 				"state.getBlock() instanceof BlockBloodEndpoint");
-		assertContains("dynamic block interaction helper absorbs from legacy blood tiles", blockBloodInteractions,
-				"tryAbsorbFromBloodTile");
-		assertContains("dynamic block interaction helper drains tile blood", blockBloodInteractions,
-				"tileVolume.subtractBloodVolume");
-		assertContains("dynamic block interaction helper fills player blood from tile", blockBloodInteractions,
+		assertContains("dynamic block interaction helper absorbs from reservoirs", blockBloodInteractions,
+				"tryAbsorbFromReservoir");
+		assertContains("dynamic block interaction helper drains reservoir blood", blockBloodInteractions,
+				"reservoirVolume.subtractBloodVolume");
+		assertContains("dynamic block interaction helper fills player blood from reservoir", blockBloodInteractions,
 				"playerVolume.fill");
-		assertContains("dynamic block interaction helper updates blood tiles", blockBloodInteractions,
-				"bt.sendUpdates()");
+		assertContains("dynamic block interaction helper updates reservoirs", blockBloodInteractions,
+				"reservoir.sendUpdates()");
 		assertContains("dynamic block interaction helper syncs player after tile absorption", blockBloodInteractions,
 				"new BloodVolumeServerPacket(playerVolume)");
 		assertContains("blood absorption tries block endpoints before entity absorption", bloodAbsorption,
 				"BlockBloodInteractions.tryAbsorbFromLookedAtBlock");
-		assertContains("blood projection tries block endpoints before legacy tile handling", bloodProjection,
+		assertContains("blood projection tries block endpoints before reservoir handling", bloodProjection,
 				"BlockBloodInteractions.tryProjectIntoLookedAtBlock");
 		assertContains("blood tool interaction event recognizes block endpoints", bloodProjectionEvents,
 				"BlockBloodEndpoint");

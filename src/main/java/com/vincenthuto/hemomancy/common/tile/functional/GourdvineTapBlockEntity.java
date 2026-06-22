@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
-public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, Container {
+public class GourdvineTapBlockEntity extends BlockEntity implements IBloodReservoir, Container {
 
     public static final int SLOT_GOURD = 0;
     public static final int INVENTORY_SIZE = 1;
@@ -65,7 +65,7 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
 
         ItemStack gourdStack = te.items.get(SLOT_GOURD);
         if (!gourdStack.isEmpty() && genRate > 0) {
-            if (BloodContainerTransfer.drainReservoirIntoGourdSlot(te, reservoir, SLOT_GOURD, genRate)) {
+            if (BloodContainerTransfer.drainReservoirIntoGourdSlot(te, te, SLOT_GOURD, genRate)) {
                 changed = true;
             }
         }
@@ -148,7 +148,7 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodTile, 
         }
     }
 
-    // ── IBloodTile ────────────────────────────────────────────────────────────
+    // ── IBloodReservoir ────────────────────────────────────────────────────────────
 
     @Override
     public void sendUpdates() {

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.functional.HematicSutureNodeBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -28,8 +28,8 @@ import java.util.List;
 /**
  * Blood Thrall Effigy — a two-step item:
  * <ol>
- *   <li>Shift+Right-click on a source {@link IBloodTile} → binds source (glows red)</li>
- *   <li>Shift+Right-click on a destination {@link IBloodTile} → binds destination (glows blue)</li>
+ *   <li>Shift+Right-click on a source {@link IBloodReservoir} → binds source (glows red)</li>
+ *   <li>Shift+Right-click on a destination {@link IBloodReservoir} → binds destination (glows blue)</li>
  *   <li>Right-click on the ground → spawns a {@link BloodThrallEntity} that shuttles
  *       blood between the two positions. Consumes the item + blood cost.</li>
  * </ol>
@@ -55,7 +55,7 @@ public class BloodThrallItem extends Item {
 
         BlockEntity be = level.getBlockEntity(pos);
 
-        // ── Shift+click on an IBloodTile → bind source/dest ──
+        // ── Shift+click on an IBloodReservoir → bind source/dest ──
         if (player.isShiftKeyDown() && be != null) {
             CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 

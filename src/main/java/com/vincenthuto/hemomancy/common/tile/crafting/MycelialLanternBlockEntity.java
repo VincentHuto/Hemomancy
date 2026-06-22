@@ -7,7 +7,8 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialLanternMenu;
 import com.vincenthuto.hemomancy.common.recipe.EnzymeFruitingRecipe;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
-import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,7 +35,7 @@ import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 
-public class MycelialLanternBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer, IMultiBlockEntity, WorldlyContainer {
+public class MycelialLanternBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess, IMultiBlockEntity, WorldlyContainer {
 
     public static final String TAG_BLOOD_LEVEL = "bloodLevel";
     private static final float MAX_BLOOD = 4_000F;
@@ -164,7 +165,7 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
     }
 
     private boolean processBloodSlot() {
-        return processBloodContainerInputSlot();
+        return processBloodContainerInputSlot(this, this);
     }
 
     public ItemStack getCultureStack() {

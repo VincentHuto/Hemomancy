@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,12 +17,12 @@ import java.util.List;
  * Block entity for the Semi-Sentient Construct (SSC).
  * <p>
  * The SSC serves as the hub for Drudge entities. It implements
- * {@link IBloodTile} so that it can hold a blood volume (populated by
+ * {@link IBloodReservoir} so that it can hold a blood volume (populated by
  * adjacent Dendritic Distributors or filled via the Blood Thrall system).
  * Each tick it refills the blood charge of any nearby Drudge whose
  * {@code homePos} matches this SSC's world position.
  */
-public class SemiSentientConstructBlockEntity extends BlockEntity implements IBloodTile {
+public class SemiSentientConstructBlockEntity extends BlockEntity implements IBloodReservoir {
 
     /** Maximum blood the SSC can hold — generous so many drudges can be fed. */
     public static final double MAX_BLOOD = 30_000.0;
@@ -39,7 +39,7 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
         super(BlockEntityInit.semi_sentient_construct.get(), pos, state);
     }
 
-    // ── IBloodTile ────────────────────────────────────────────────────────────
+    // ── IBloodReservoir ────────────────────────────────────────────────────────────
 
     @Override
     public void sendUpdates() {

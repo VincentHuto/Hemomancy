@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import org.joml.Vector3f;
 
-public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, IMultiBlockEntity {
+public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity {
 
 	private static final String TAG_CONTENT_SIZE = "contentSize";
 	private static final String TAG_BLOOD_LEVEL = "bloodLevel";

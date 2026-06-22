@@ -21,7 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisc
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemory;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;
 import com.vincenthuto.hutoslib.common.book.knowledge.IBookKnowledge;
 import net.minecraft.world.entity.Entity;
@@ -47,8 +47,8 @@ public static Optional<IBloodVolume> getBloodVolume(Entity entity) {
 }
 
 public static Optional<IBloodVolume> getBloodVolume(BlockEntity be) {
-    if (be instanceof IBloodTile) {
-        return Optional.of(be.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME));
+    if (be instanceof IBloodReservoir reservoir) {
+        return Optional.ofNullable(reservoir.getBloodCapability());
     }
     return Optional.empty();
 }

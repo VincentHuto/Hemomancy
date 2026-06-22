@@ -9,7 +9,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemImmatureFungalScar;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialCrucibleMenu;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
-import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -63,7 +64,7 @@ import javax.annotation.Nullable;
  *
  * <p>Blood runs dry → cultivation pauses; progress is not lost.
  */
-public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer {
+public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
 
     // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -224,7 +225,7 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
     // ── Blood slot processing ─────────────────────────────────────────────────
 
     private void processBloodSlot() {
-        if (processBloodContainerInputSlot()) sendUpdates();
+        if (processBloodContainerInputSlot(this, this)) sendUpdates();
     }
 
     @Override

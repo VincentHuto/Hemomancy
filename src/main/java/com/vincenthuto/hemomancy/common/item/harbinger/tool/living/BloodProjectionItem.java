@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.functional.MasonsEffigyBlockEntity;
 import net.minecraft.ChatFormatting;
@@ -141,7 +141,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 							.orElseThrow(IllegalStateException::new);
 					if(!tileVolume.isFull()) {
 						tileVolume.fillFromSource(playerVolume, tileTransferRate);
-						if (be instanceof IBloodTile bt) {
+						if (be instanceof IBloodReservoir bt) {
 							bt.sendUpdates();
 						}
 					}

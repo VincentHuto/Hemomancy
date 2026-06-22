@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.FillerBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +39,7 @@ public final class BlockBloodInteractions {
 			return target.endpoint().absorbBloodFromBlock(serverLevel, target.pos(), target.state(), player, maxAmount);
 		}
 		BlockPos pos = findLookedAtBlockPos(player, reach);
-		return pos == null ? 0.0D : tryAbsorbFromBloodTile(serverLevel, pos, player, maxAmount);
+		return pos == null ? 0.0D : tryAbsorbFromReservoir(serverLevel, pos, player, maxAmount);
 	}
 
 	public static double tryProjectIntoLookedAtBlock(Level level, LivingEntity user, double maxAmount) {
@@ -73,7 +73,7 @@ public final class BlockBloodInteractions {
 		if (level.getBlockState(pos).getBlock() instanceof BlockBloodEndpoint) {
 			return true;
 		}
-		return resolveBloodTile(level, pos) != null;
+		return resolveBloodReservoir(level, pos) != null;
 	}
 
 	private static BlockTarget findLookedAtEndpoint(ServerLevel level, ServerPlayer player, double reach) {
@@ -101,34 +101,34 @@ public final class BlockBloodInteractions {
 		return trace.getType() == HitResult.Type.BLOCK ? ((BlockHitResult) trace).getBlockPos() : null;
 	}
 
-	private static double tryAbsorbFromBloodTile(ServerLevel level, BlockPos pos, ServerPlayer player,
+	private static double tryAbsorbFromReservoir(ServerLevel level, BlockPos pos, ServerPlayer player,
 			double maxAmount) {
-		BlockEntity be = resolveBloodTile(level, pos);
+		BlockEntity be = resolveBloodReservoir(level, pos);
 		if (be == null) {
 			return 0.0D;
 		}
-		IBloodVolume tileVolume = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
+		IBloodVolume reservoirVolume = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-		if (tileVolume == null || playerVolume == null || !playerVolume.isActive()) {
+		if (reservoirVolume == null || playerVolume == null || !playerVolume.isActive()) {
 			return 0.0D;
 		}
 
 		double playerRoom = Math.max(0.0D, playerVolume.getMaxBloodVolume() - playerVolume.getBloodVolume());
-		double transfer = Math.min(maxAmount, Math.min(tileVolume.getBloodVolume(), playerRoom));
+		double transfer = Math.min(maxAmount, Math.min(reservoirVolume.getBloodVolume(), playerRoom));
 		if (transfer <= 0.0D) {
 			return 0.0D;
 		}
 
-		tileVolume.subtractBloodVolume(transfer);
+		reservoirVolume.subtractBloodVolume(transfer);
 		playerVolume.fill(transfer);
-		if (be instanceof IBloodTile bt) {
-			bt.sendUpdates();
+		if (be instanceof IBloodReservoir reservoir) {
+			reservoir.sendUpdates();
 		}
 		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(playerVolume));
 		return transfer;
 	}
 
-	private static BlockEntity resolveBloodTile(Level level, BlockPos pos) {
+	private static BlockEntity resolveBloodReservoir(Level level, BlockPos pos) {
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be instanceof FillerBlockEntity filler) {
 			BlockPos mainPos = filler.getMainBlockPos();

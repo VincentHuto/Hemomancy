@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -81,7 +81,7 @@ public final class BloodRoutingHelper {
         }
 
         targetVolume.fill(drawn);
-        if (be instanceof IBloodTile tile) {
+        if (be instanceof IBloodReservoir tile) {
             tile.sendUpdates();
         }
         if (be instanceof IBloodRoutingTarget routingTarget) {

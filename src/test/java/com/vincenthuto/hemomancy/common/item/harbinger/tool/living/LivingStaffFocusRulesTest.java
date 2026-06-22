@@ -88,7 +88,7 @@ public final class LivingStaffFocusRulesTest {
 		assertTrue("crimson projection increases structure feed rate",
 				LivingStaffFocusRules.structureProjectionRate(true, maxProjection)
 						> LivingStaffFocusRules.structureProjectionRate(true, none));
-		assertTrue("crimson projection increases blood tile feed rate",
+		assertTrue("crimson projection increases blood reservoir feed rate",
 				LivingStaffFocusRules.bloodTileProjectionRate(true, maxProjection)
 						> LivingStaffFocusRules.bloodTileProjectionRate(true, none));
 	}

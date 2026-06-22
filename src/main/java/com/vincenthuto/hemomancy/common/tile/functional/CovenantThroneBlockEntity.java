@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -23,10 +23,10 @@ import java.util.UUID;
  * Covenant Trance was last triggered), which drives the per-player cooldown
  * check.</p>
  *
- * <p>{@link IBloodTile} is implemented only to satisfy internal capability
+ * <p>{@link IBloodReservoir} is implemented only to satisfy internal capability
  * lookup conventions; no blood is stored in this block entity itself.</p>
  */
-public class CovenantThroneBlockEntity extends BlockEntity implements IBloodTile, IMultiBlockEntity {
+public class CovenantThroneBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity {
 
     private static final String TAG_LAST_TRANCE = "lastTranceTime";
     private static final String TAG_SEATED_PLAYER = "seatedPlayer";
@@ -103,7 +103,7 @@ public class CovenantThroneBlockEntity extends BlockEntity implements IBloodTile
         return AABB.INFINITE;
     }
 
-    // ── IBloodTile ─────────────────────────────────────────────────────────────
+    // ── IBloodReservoir ─────────────────────────────────────────────────────────────
 
     @Override
     public void sendUpdates() {

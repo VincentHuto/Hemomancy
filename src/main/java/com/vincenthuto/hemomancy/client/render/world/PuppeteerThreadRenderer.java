@@ -20,6 +20,9 @@ import java.util.UUID;
 
 public final class PuppeteerThreadRenderer {
 	private static final int SEGMENTS = 28;
+	private static final double WILD_PUPPETEER_ANCHOR_SCALE = 0.25;
+	private static final double WILD_DOLL_ANCHOR_SCALE = -0.5;
+	private static final double SUMMON_ANCHOR_SCALE = 0.55;
 
 	private PuppeteerThreadRenderer() {
 	}
@@ -52,8 +55,8 @@ public final class PuppeteerThreadRenderer {
 		if (puppeteer == null) {
 			return;
 		}
-		Vec3 start = entityAnchor(puppeteer, partialTick, 0.78).subtract(camera);
-		Vec3 end = entityAnchor(doll, partialTick, 0.78).subtract(camera);
+		Vec3 start = entityAnchor(puppeteer, partialTick, WILD_PUPPETEER_ANCHOR_SCALE).subtract(camera);
+		Vec3 end = entityAnchor(doll, partialTick, WILD_DOLL_ANCHOR_SCALE).subtract(camera);
 		renderThread(poseStack, consumer, start, end, doll.tickCount + partialTick, 1.0F);
 	}
 
@@ -74,6 +77,7 @@ public final class PuppeteerThreadRenderer {
 		}
 
 		Vec3 start = ownerAnchor(owner, partialTick).subtract(camera);
+
 		Vec3 end = summonAnchor(summon, partialTick).subtract(camera);
 		renderThread(poseStack, consumer, start, end, summon.tickCount + partialTick, fade);
 	}
@@ -99,7 +103,6 @@ public final class PuppeteerThreadRenderer {
 			int green = (int) (8 + pulse * 20);
 			int blue = (int) (12 + pulse * 18);
 			int alpha = (int) ((170 + 55 * Math.sin(t * Math.PI)) * fade);
-
 			consumer.addVertex(pose.pose(), (float) point.x, (float) point.y, (float) point.z)
 					.setColor(red, green, blue, alpha)
 					.setNormal(pose, (float) normal.x, (float) normal.y, (float) normal.z);
@@ -135,7 +138,7 @@ public final class PuppeteerThreadRenderer {
 	}
 
 	private static Vec3 summonAnchor(LivingEntity summon, float partialTick) {
-		return entityAnchor(summon, partialTick, 0.55);
+		return entityAnchor(summon, partialTick, SUMMON_ANCHOR_SCALE);
 	}
 
 	private static Vec3 entityAnchor(LivingEntity entity, float partialTick, double heightScale) {

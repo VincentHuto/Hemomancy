@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/curved_horn"
+    "layer0": "hemomancy:item/calcified_blood_spine"
   }
 }

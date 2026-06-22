@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DirectBloodLinkData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.ThrallCourierSource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +46,7 @@ import java.util.UUID;
 
 /**
  * Blood Thrall — a summoned blood golem that physically carries blood between
- * a designated source IBloodTile and destination IBloodTile. It pathfinds
+ * a designated source IBloodReservoir and destination IBloodReservoir. It pathfinds
  * between them, absorbing blood at the source and depositing at the destination.
  * Can be killed by mobs. Multiple thralls = more throughput.
  */
@@ -506,7 +506,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             if (srcVol.getBloodVolume() >= toTransfer) {
                 srcVol.drain(toTransfer);
                 thrall.setCarriedBlood(thrall.getCarriedBlood() + toTransfer);
-                if (be instanceof IBloodTile bt) bt.sendUpdates();
+                if (be instanceof IBloodReservoir bt) bt.sendUpdates();
                 return true;
             }
             return false;
@@ -524,7 +524,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             double transferred = courier.transferTo(destVol, transferRate);
             if (transferred > 0) {
                 thrall.setCarriedBlood((float) courier.getCarriedBlood());
-                if (be instanceof IBloodTile bt) bt.sendUpdates();
+                if (be instanceof IBloodReservoir bt) bt.sendUpdates();
                 return true;
             }
             return false;

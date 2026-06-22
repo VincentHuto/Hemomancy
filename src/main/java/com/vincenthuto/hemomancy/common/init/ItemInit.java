@@ -734,12 +734,12 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> runic_motif_paper = BASEITEMS.register("runic_motif_paper",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> scar_binder = BASEITEMS.register("scar_binder",
-            () -> new ItemScarBinder("scar_binder", 18, Rarity.UNCOMMON));
+//    public static final DeferredHolder<Item, Item> scar_binder = BASEITEMS.register("scar_binder",
+//            () -> new ItemScarBinder("scar_binder", 18, Rarity.UNCOMMON));
 	public static final DeferredHolder<Item, Item> scar_pattern = BASEITEMS.register("scar_pattern",
 			() -> new ItemScarPattern(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> scar_binder_upgraded = BASEITEMS.register("scar_binder_upgraded",
-            () -> new ItemScarBinder("scar_binder_upgraded", 27, Rarity.RARE));
+//    public static final DeferredHolder<Item, Item> scar_binder_upgraded = BASEITEMS.register("scar_binder_upgraded",
+//            () -> new ItemScarBinder("scar_binder_upgraded", 27, Rarity.RARE));
     public static final DeferredHolder<Item, Item> respergillus = BASEITEMS.register("respergillus",
             () -> new RespergillusItem(new Item.Properties().stacksTo(1), ScarInit.respergillus));
 

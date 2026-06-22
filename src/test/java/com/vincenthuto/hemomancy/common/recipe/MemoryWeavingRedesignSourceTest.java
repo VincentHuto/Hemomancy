@@ -182,13 +182,13 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertContains("projection tools pass through while loom awaits blood", block, "isProjectionTool(stack)");
 		assertContains("projection tools skip default block feedback before item use", block,
 				"ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION");
-		assertContains("projection tool event disables blood tile block interaction", projectionEvents,
+		assertContains("projection tool event disables reservoir block interaction", projectionEvents,
 				"event.setUseBlock(TriState.FALSE)");
 		assertContains("projection tool event allows item projection use", projectionEvents,
 				"event.setUseItem(TriState.TRUE)");
-		assertContains("projection tool event recognizes blood-volume tiles", projectionEvents,
+		assertContains("projection tool event recognizes blood reservoirs", projectionEvents,
 				"HemoCapabilityAccess.getBloodVolume");
-		assertContains("projection tool event recognizes filler-linked blood tiles", projectionEvents,
+		assertContains("projection tool event recognizes filler-linked blood reservoirs", projectionEvents,
 				"FillerBlockEntity");
 		assertContains("living staff feeds loom orb dragging during held use", staff, "dragSelectedOrb");
 		assertContains("bare projection detects loom ritual charging", bareProjection, "tryChargeRitualBlood");

@@ -531,8 +531,8 @@ The fane is now modeled as a **Soft Envelope** instead of one fixed circular ter
 - The fountain renderer throttles particle spawning per bloodwell position and no longer pads stream segments into each other with overlap.
 
 **Block blood endpoints:**
-- `BlockBloodEndpoint` and `BlockBloodInteractions` provide the reusable hook for Blood Absorption / Blood Projection against blocks. Blood Projection first checks the looked-at block for direct world reactions such as feeding a vanilla Dead Bush into a Bloodwood tree, then asks endpoint blocks whether they can absorb/project blood before falling back to legacy living-entity, blood-structure, or blood-tile behavior.
-- Blood Absorption also works against legacy blood-volume tile machines that Blood Projection can fill. When aimed at a blood tile, it removes blood from the tile, fills the player up to their personal capacity, sends tile updates, and syncs the player's blood volume.
+- `BlockBloodEndpoint` and `BlockBloodInteractions` provide the reusable hook for Blood Absorption / Blood Projection against blocks. Blood Projection first checks the looked-at block for direct world reactions such as feeding a vanilla Dead Bush into a Bloodwood tree, then asks endpoint blocks whether they can absorb/project blood before falling back to living-entity, blood-structure, or blood-reservoir behavior.
+- Blood Absorption also works against blood reservoir block entities that Blood Projection can fill. When aimed at a reservoir, it removes blood from that reservoir, fills the player up to their personal capacity, sends reservoir updates, and syncs the player's blood volume.
 - `ConsecratedBloodwellBlock` is the first endpoint implementation: absorption draws from the bound bloodline pool and projection contributes to it. Future blocks can implement the same contract for other "drawing blood out of a block" interactions without becoming blood tanks.
 
 > **Status: Partial.** The heart/stake footprint model, duplicate bloodwell prevention, heart collapse/reconsecration/disband stake cleanup, stake placement validation, progenitor stake manifestation, bloodline-gated bloodwell conduit use, dynamic block blood absorption/projection endpoints, footprint-based gameplay checks, packet sync, relation-aware full-sphere boundary rendering, bloodwell fountain rendering, and preview commands are implemented. Remaining WIP is final balance/art polish and broader in-game tuning.
@@ -1807,7 +1807,7 @@ In Rogue state: targets players (priority) then monsters; the equipped memory is
 
 ### SSC as Hub: `SemiSentientConstructBlockEntity`
 
-The SSC now implements `IBloodTile` so it can hold its own blood volume (max 30 000 mL, refillable by Dendritic Distributors or other sources). Every 10 ticks it scans for nearby Drudges whose `homePos` matches its position and refills their `bloodCharge` at 50 mL per tick-scan (= 500 mL per second at 20 TPS).
+The SSC now implements `IBloodReservoir` so it can hold its own blood volume (max 30 000 mL, refillable by Dendritic Distributors or other sources). Every 10 ticks it scans for nearby Drudges whose `homePos` matches its position and refills their `bloodCharge` at 50 mL per tick-scan (= 500 mL per second at 20 TPS).
 
 Right-clicking the SSC with an empty hand now displays the status of all bound Drudges and the SSC's own blood level.
 
@@ -1850,7 +1850,7 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 - Current source contracts are `EquippedGourdSource`, `LinkedPlayerSource`, `BloodlineSource`, `ThrallCourierSource`, and `DrudgeTenderSource`.
 - `IBloodRoutingTarget` lets a machine request only current recipe demand or a capped working reserve.
 - `BloodRoutingHelper` performs pull-based transfer, source priority, safety floors, bloodline checks, and target sync.
-- Existing `IBloodTile` / `IBloodReservoirContainer` reservoirs remain valid targets. If a block entity does not implement `IBloodRoutingTarget`, routing fills only toward `BloodRoutingRules.DEFAULT_WORKING_RESERVE` (600 blood), not the whole reservoir.
+- Existing `IBloodReservoir` block entities remain valid targets. If a block entity does not implement `IBloodRoutingTarget`, routing fills only toward `BloodRoutingRules.DEFAULT_WORKING_RESERVE` (600 blood), not the whole reservoir.
 
 **Hematic Suture Needle:**
 - Registry item: `hematic_suture_needle`; class: `HematicSutureNeedleItem`.
@@ -2156,7 +2156,7 @@ Hot-swap cost is handled by `LivingStaffWeaponFormRules`: 250mL base, reduced by
 
 #### 21.2.3 Staff Blood Utility Rates
 
-Bare Blood Absorption now acts as the fallback hand tool at 1mL/tick against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to legacy blood tile extraction and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff and starts at 4mL per target every 4 ticks, with a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood tile path before nearby living targets, matches the bare hand on one target, and outperforms it as soon as two targets are available.
+Bare Blood Absorption now acts as the fallback hand tool at 1mL/tick against one target within 5 blocks. When aimed at a block implementing `BlockBloodEndpoint`, it asks that block to provide blood before falling back to blood reservoir extraction and then living-entity targeting; the Consecrated Bloodwell uses this to draw directly from the bound bloodline pool. Living Staff absorption uses the selected `blood_absorption` manipulation while holding the staff and starts at 4mL per target every 4 ticks, with a base target cap of 2 and base range of 6 blocks. It checks the same block endpoint / blood reservoir path before nearby living targets, matches the bare hand on one target, and outperforms it as soon as two targets are available.
 
 Staff focus scaling is centralized in `LivingStaffFocusRules`:
 
@@ -2164,12 +2164,12 @@ Staff focus scaling is centralized in `LivingStaffFocusRules`:
 |--------|--------------|
 | Living Conduit | +1 target cap and +1.5 block absorption range per level |
 | Vascular Draw | +0.75 absorption per target and -1 pulse interval tick per level |
-| Crimson Projection | +3 structure feed and +75 blood tile transfer per level |
+| Crimson Projection | +3 structure feed and +75 blood reservoir transfer per level |
 | Hematic Focus | +1 target cap, +0.75 range, +0.25 absorption, faster pulse at higher levels, +1.5 structure feed, +35 tile transfer per level |
 | Vesper memory awakened | +1 target cap, +1.5 range, +0.5 absorption, -1 pulse interval tick, +3 structure feed, +75 tile transfer |
 | Vesper's Refusal | Only while Vesper memory is awakened: +1 target cap, +0.75 range, +0.25 absorption, faster pulse at higher levels, +2 structure feed, +50 tile transfer per level |
 
-Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks `BlockBloodEndpoint` on the looked-at block, then falls back to blood-structure feeding, Somatic Loom ritual charging, and legacy `IBloodTile` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local tile buffer. Legacy blood transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
+Blood Projection is now server-authoritative through `BloodProjectionItem.projectFromEntity`. Projection first checks `BlockBloodEndpoint` on the looked-at block, then falls back to blood-structure feeding, Somatic Loom ritual charging, and `IBloodReservoir` transfer. The Consecrated Bloodwell endpoint contributes directly to the bound bloodline pool instead of filling a local reservoir buffer. Reservoir transfer uses `BloodVolumeTransferRules` so larger staff transfer chunks clamp to available source blood and target capacity before draining.
 
 > *Note: Living tools (blade, axe, spear, staff, syringe, crossbow, lancea, baghnakh) use 3D entity models rather than flat item textures â€” see `src/main/resources/assets/hemomancy/textures/entity/` for their model textures:*
 >

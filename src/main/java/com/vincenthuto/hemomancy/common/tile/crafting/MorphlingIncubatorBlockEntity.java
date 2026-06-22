@@ -12,7 +12,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.tile.IBloodReservoirContainer;
+import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
+import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodReservoirContainer {
+public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	private static final int CRAFT_TIME = 200;
@@ -166,7 +167,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	// ---- Blood slot processing ----
 
 	private void processBloodSlot() {
-		if (processBloodContainerInputSlot()) sendUpdates();
+		if (processBloodContainerInputSlot(this, this)) sendUpdates();
 	}
 
 	@Override
