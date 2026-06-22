@@ -7,6 +7,7 @@ public final class BloodAbsorptionChannelRulesTest {
 	public static void main(String[] args) {
 		defaultChannelLocksMovementUntilSkillUnlocksSlowMovement();
 		advancedMovementSkillsReduceAndRemoveTheSlowdown();
+		clientInputMultiplierCompensatesForVanillaUseItemSlowdown();
 		livingTargetPulseFrequencyImprovesAtDegreeThreeFourAndFive();
 		strainTierThresholdsDelayWithToleranceSkill();
 		strainDecaysWhenNoLivingTargetWasDrained();
@@ -28,6 +29,17 @@ public final class BloodAbsorptionChannelRulesTest {
 				BloodAbsorptionChannelRules.movementMultiplier(1, 3, false));
 		assertDouble("free channel capstone removes movement penalty", 1.0D,
 				BloodAbsorptionChannelRules.movementMultiplier(1, 3, true));
+	}
+
+	private static void clientInputMultiplierCompensatesForVanillaUseItemSlowdown() {
+		assertDouble("locked input stays locked",
+				0.0D, BloodAbsorptionChannelRules.clientInputMultiplier(0.0D));
+		assertDouble("dragging siphon survives vanilla use-item slowdown",
+				1.25D, BloodAbsorptionChannelRules.clientInputMultiplier(0.25D));
+		assertDouble("mobile conduit tier three survives vanilla use-item slowdown",
+				3.5D, BloodAbsorptionChannelRules.clientInputMultiplier(0.70D));
+		assertDouble("unbound siphon cancels vanilla use-item slowdown",
+				5.0D, BloodAbsorptionChannelRules.clientInputMultiplier(1.0D));
 	}
 
 	private static void livingTargetPulseFrequencyImprovesAtDegreeThreeFourAndFive() {

@@ -91,6 +91,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumChar
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.item.shared.HemoItemProperties;
@@ -217,6 +218,25 @@ public class ClientEvents {
         EndgameBossMusicHandler.tick();
         handleArmatureCameraFallback();
         handleCommonClientTickInput();
+    }
+
+    @SubscribeEvent
+    public static void onBloodAbsorptionMovementInput(MovementInputUpdateEvent event) {
+        Player player = event.getEntity();
+        if (!BloodAbsorptionItem.isChannelingBloodAbsorption(player)) {
+            return;
+        }
+        double movementMultiplier = BloodAbsorptionItem.getChannelMovementMultiplier(player);
+        double inputMultiplier = BloodAbsorptionItem.getClientChannelMovementInputMultiplier(player);
+        var input = event.getInput();
+        input.forwardImpulse *= inputMultiplier;
+        input.leftImpulse *= inputMultiplier;
+        if (movementMultiplier <= 0.0D) {
+            input.up = false;
+            input.down = false;
+            input.left = false;
+            input.right = false;
+        }
     }
 
     private static void handleArmatureCameraFallback() {

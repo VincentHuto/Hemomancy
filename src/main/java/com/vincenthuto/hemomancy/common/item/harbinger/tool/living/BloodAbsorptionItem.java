@@ -144,10 +144,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	}
 
 	public static void applyChannelMovementPenalty(Player player) {
-		double multiplier = BloodAbsorptionChannelRules.movementMultiplier(
-				SkillPointHelper.getDraggingSiphonLevel(player),
-				SkillPointHelper.getMobileConduitLevel(player),
-				SkillPointHelper.hasUnboundSiphon(player));
+		double multiplier = getChannelMovementMultiplier(player);
 		if (multiplier >= 1.0D) {
 			return;
 		}
@@ -157,6 +154,25 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			player.xxa = 0.0F;
 			player.zza = 0.0F;
 		}
+	}
+
+	public static double getChannelMovementMultiplier(Player player) {
+		return BloodAbsorptionChannelRules.movementMultiplier(
+				SkillPointHelper.getDraggingSiphonLevel(player),
+				SkillPointHelper.getMobileConduitLevel(player),
+				SkillPointHelper.hasUnboundSiphon(player));
+	}
+
+	public static double getClientChannelMovementInputMultiplier(Player player) {
+		return BloodAbsorptionChannelRules.clientInputMultiplier(getChannelMovementMultiplier(player));
+	}
+
+	public static boolean isChannelingBloodAbsorption(Player player) {
+		if (player == null || !player.isUsingItem()) {
+			return false;
+		}
+		return player.getUseItem().getItem() instanceof BloodAbsorptionItem
+				|| LivingStaffItem.isLivingStaffAbsorptionUse(player, player.getUseItem());
 	}
 
 	public static void updateChannelStrain(LivingEntity user, boolean drainedLivingTarget) {

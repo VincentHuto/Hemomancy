@@ -54,6 +54,10 @@ public final class LivingStaffSkillSourceTest {
 		assertContains("crimson projection helper", skillHelper, "getCrimsonProjectionLevel(Player player)");
 		assertContains("weapons master helper", skillHelper, "getWeaponsMasterLevel(Player player)");
 		assertContains("hot swap cost helper", skillHelper, "getLivingStaffHotSwapCost(Player player)");
+		assertContains("client-side skill helper reads synced client cache",
+				skillHelper, "player.level().isClientSide");
+		assertBefore("client-side skill helper checks cache before attachment",
+				skillHelper, "player.level().isClientSide", "HemoCapabilityAccess.getSkillProgress(player)");
 		assertContains("dragging siphon helper", skillHelper, "getDraggingSiphonLevel(Player player)");
 		assertContains("mobile conduit helper", skillHelper, "getMobileConduitLevel(Player player)");
 		assertContains("blood tolerance helper", skillHelper, "getBloodToleranceLevel(Player player)");
@@ -104,6 +108,14 @@ public final class LivingStaffSkillSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertBefore(String label, String text, String first, String second) {
+		int firstIndex = text.indexOf(first);
+		int secondIndex = text.indexOf(second);
+		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
+			throw new AssertionError(label + " (expected '" + first + "' before '" + second + "')");
 		}
 	}
 }

@@ -12,6 +12,7 @@ public final class BloodAbsorptionItemSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String source = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
 		String onUseTick = source.substring(source.indexOf("public void onUseTick"),
 				source.indexOf("public static Optional<LivingEntity> findBareAbsorptionTarget"));
 		String absorbFromTarget = source.substring(source.indexOf("public static double absorbFromTarget"),
@@ -47,6 +48,24 @@ public final class BloodAbsorptionItemSourceTest {
 				source, "SkillPointHelper.getMobileConduitLevel");
 		assertContains("channel movement penalty reads Unbound Siphon",
 				source, "SkillPointHelper.hasUnboundSiphon");
+		assertContains("channel movement exposes multiplier for client input",
+				source, "getChannelMovementMultiplier");
+		assertContains("channel movement compensates client input for vanilla use-item slowdown",
+				source, "getClientChannelMovementInputMultiplier");
+		assertContains("channel movement detects bare blood absorption use",
+				source, "player.getUseItem().getItem() instanceof BloodAbsorptionItem");
+		assertContains("channel movement detects staff blood absorption use",
+				source, "LivingStaffItem.isLivingStaffAbsorptionUse(player, player.getUseItem())");
+		assertContains("client input event handles channel movement at the input layer",
+				clientEvents, "MovementInputUpdateEvent");
+		assertContains("client input event checks blood absorption channeling",
+				clientEvents, "BloodAbsorptionItem.isChannelingBloodAbsorption(player)");
+		assertContains("client input event scales forward input by channel multiplier",
+				clientEvents, "input.forwardImpulse *= inputMultiplier");
+		assertContains("client input event scales strafe input by channel multiplier",
+				clientEvents, "input.leftImpulse *= inputMultiplier");
+		assertContains("client input event clears movement keys when fully locked",
+				clientEvents, "input.up = false;");
 		assertContains("blood poisoning applies wither",
 				source, "MobEffects.WITHER");
 

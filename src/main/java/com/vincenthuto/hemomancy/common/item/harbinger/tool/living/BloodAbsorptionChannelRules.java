@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 public final class BloodAbsorptionChannelRules {
 	private static final double BASE_UNLOCKED_MOVEMENT_MULTIPLIER = 0.25D;
 	private static final double MOVEMENT_RECOVERY_PER_LEVEL = 0.15D;
+	private static final double VANILLA_USE_ITEM_MOVEMENT_MULTIPLIER = 0.2D;
 	private static final int BASE_LIVING_TARGET_PULSE_INTERVAL = 10;
 	private static final int PULSE_REDUCTION_PER_CADENCE_LEVEL = 2;
 	private static final int MIN_LIVING_TARGET_PULSE_INTERVAL = 4;
@@ -32,6 +33,14 @@ public final class BloodAbsorptionChannelRules {
 		}
 		return Math.min(1.0D, BASE_UNLOCKED_MOVEMENT_MULTIPLIER
 				+ Math.max(0, slowdownReductionLevel) * MOVEMENT_RECOVERY_PER_LEVEL);
+	}
+
+	public static double clientInputMultiplier(double desiredMovementMultiplier) {
+		double desired = Math.max(0.0D, desiredMovementMultiplier);
+		if (desired <= 0.0D) {
+			return 0.0D;
+		}
+		return desired / VANILLA_USE_ITEM_MOVEMENT_MULTIPLIER;
 	}
 
 	public static int livingTargetPulseInterval(boolean usingLivingStaff, int cadenceLevel) {
