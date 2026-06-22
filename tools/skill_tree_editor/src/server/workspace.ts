@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
-import type { PreviewRequest, PreviewResult, SkillWorkspace } from '../shared/types';
+import type { IconRegistryOptions, PreviewRequest, PreviewResult, SkillWorkspace } from '../shared/types';
 import { makeFileDiff } from './diff';
 import { parseSkillBranchJava, renderSkillBranchJava } from './skillParser';
 import { hasBlockingDiagnostics, validateSkillWorkspace } from './validation';
@@ -47,6 +47,7 @@ export async function loadWorkspace(repoRoot = defaultRepoRoot()): Promise<Skill
     repoRoot,
     branches,
     translations,
+    iconOptions: loadIconRegistryOptions(repoRoot),
     diagnostics
   };
 }
@@ -113,4 +114,19 @@ function readJson<T>(path: string, fallback: T): T {
 
 function sortObject<T extends Record<string, unknown>>(value: T): T {
   return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b))) as T;
+}
+
+function loadIconRegistryOptions(repoRoot: string): IconRegistryOptions {
+  return {
+    items: loadDeferredHolderFields(safeResolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java')),
+    blocks: loadDeferredHolderFields(safeResolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java'))
+  };
+}
+
+function loadDeferredHolderFields(path: string): string[] {
+  if (!existsSync(path)) return [];
+  const source = readFileSync(path, 'utf8');
+  return [...source.matchAll(/public\s+static\s+final\s+DeferredHolder<[^;=]+>\s+(\w+)\s*=\s*\w+\.register\(/g)]
+    .map(match => match[1])
+    .sort((a, b) => a.localeCompare(b));
 }

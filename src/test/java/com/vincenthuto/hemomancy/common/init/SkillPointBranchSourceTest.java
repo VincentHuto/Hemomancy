@@ -18,7 +18,7 @@ public final class SkillPointBranchSourceTest {
 		String layerRules = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillTreeLayerRules.java");
 		String harbingerScreen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/HarbingerProgressScreen.java");
 		String veinBackground = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/VeinBackgroundRenderer.java");
-		String scarCraftPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/scars/PacketScarCraftingEvent.java");
+		String scarCraftPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/scars/PacketScarCraftingEvent.java");
 		String skillPointHelper = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/skill/SkillPointHelper.java");
 		String core = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/CoreSkillBranch.java");
 		String scars = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/ScarSkillBranch.java");
@@ -33,6 +33,8 @@ public final class SkillPointBranchSourceTest {
 		assertContains("SkillPointInit delegates living staff branch", init, "LivingStaffSkillBranch.register(BASE)");
 		assertContains("SkillPointInit delegates covenant branch", init, "CovenantSkillBranch.register(BASE)");
 		assertContains("SkillPointInit delegates mycelial branch", init, "MycelialSkillBranch.register(BASE)");
+		assertBefore("SkillPointInit registers mycelial before scar cross-branch parents resolve", init,
+				"MycelialSkillBranch.register(BASE);", "ScarSkillBranch.register(BASE);");
 		assertNotContains("SkillPointInit no longer owns raw skill declarations", init, "new SkillPoint(");
 		assertContains("SkillPointInit stores editable degree labels", init, "setDegreeLabelPosition(int degree, int x, int y)");
 		assertContains("SkillPointInit exposes editable degree labels", init, "getDegreeLabelPosition(int degree)");
@@ -101,7 +103,8 @@ public final class SkillPointBranchSourceTest {
 		assertContains("trace cache stops traces at node rims", traceCache, "trimTraceEndpoint");
 		assertContains("trace cache gives straight traces a subtle organic sway", traceCache, "organicSway");
 		assertContains("trace cache caps organic trace sway for readability", traceCache, "TRACE_ORGANIC_SWAY_MAX");
-		assertContains("trace cache dims locked branch traces", traceCache, "dimTraceColor(branchTraceColor(sp))");
+		assertContains("trace cache colors each trace from its parent skill", traceCache, "branchTraceColor(parent)");
+		assertContains("trace cache dims locked branch traces", traceCache, "dimTraceColor(branchTraceColor(parent))");
 		assertContains("trace cache bakes to a dynamic texture", traceCache, "DynamicTexture");
 		assertContains("trace cache bakes pixels through NativeImage", traceCache, "NativeImage");
 		assertContains("trace cache draws compass degree rings while baking", traceCache, "bakeDegreeRing");
@@ -152,6 +155,8 @@ public final class SkillPointBranchSourceTest {
 		assertContains("summon branch adds bound command", summons, "SkillPointInit.skill_bound_command");
 		assertContains("scar branch adds deep inscription", scars, "SkillPointInit.skill_deep_inscription");
 		assertContains("scar branch adds fungal symbiosis", scars, "SkillPointInit.skill_fungal_symbiosis");
+		assertContains("fungal symbiosis keeps hyphal cultivation as a live parent", scars,
+				"addParents(SkillPointInit.skill_hyphal_cultivation)");
 		assertContains("covenant branch adds fane suture", covenant, "SkillPointInit.skill_fane_suture");
 		assertContains("covenant deep skills depend on deep base", covenant, "addParents(SkillPointInit.deep_base_skill)");
 		assertContains("mycelial branch adds sporitic attunement", mycelial, "SkillPointInit.skill_sporitic_attunement");
@@ -200,6 +205,20 @@ public final class SkillPointBranchSourceTest {
 	private static void assertNotContains(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
+		}
+	}
+
+	private static void assertBefore(String label, String text, String first, String second) {
+		int firstIndex = text.indexOf(first);
+		int secondIndex = text.indexOf(second);
+		if (firstIndex < 0) {
+			throw new AssertionError(label + " (missing first marker '" + first + "')");
+		}
+		if (secondIndex < 0) {
+			throw new AssertionError(label + " (missing second marker '" + second + "')");
+		}
+		if (firstIndex > secondIndex) {
+			throw new AssertionError(label + " expected '" + first + "' before '" + second + "'");
 		}
 	}
 }

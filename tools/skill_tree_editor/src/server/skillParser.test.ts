@@ -36,8 +36,9 @@ test('parses editable skill declarations from marked Java branches', () => {
       parentFields: [],
       skillPointCost: 1,
       requiredDegree: 0,
-      treeX: null,
-      treeY: null,
+            treeX: null,
+            treeY: null,
+      iconSource: 'item',
       iconItem: 'sanguine_formation',
       description: ''
     },
@@ -55,10 +56,42 @@ test('parses editable skill declarations from marked Java branches', () => {
       requiredDegree: 1,
       treeX: null,
       treeY: null,
+      iconSource: 'item',
       iconItem: 'vitality_chalice',
       description: ''
     }
   ]);
+});
+
+test('parses and renders block-backed icon items', () => {
+  const source = branchSource.replace(
+    'ItemInit.vitality_chalice.get()',
+    'BlockInit.dendritic_distributor.get()'
+  );
+  const parsed = parseSkillBranchJava('src/main/java/example/CoreSkillBranch.java', source);
+
+  expect(parsed.skills[1]).toEqual(expect.objectContaining({
+    iconSource: 'block',
+    iconItem: 'dendritic_distributor'
+  }));
+
+  const rendered = renderSkillBranchJava(source, parsed);
+
+  expect(rendered).toContain('.setIconItem(() -> new ItemStack(BlockInit.dendritic_distributor.get())));');
+});
+
+test('adds a BlockInit import when rendering a newly block-backed icon item', () => {
+  const parsed = parseSkillBranchJava('src/main/java/example/CoreSkillBranch.java', branchSource);
+  parsed.skills[1] = {
+    ...parsed.skills[1],
+    iconSource: 'block',
+    iconItem: 'dendritic_distributor'
+  };
+
+  const rendered = renderSkillBranchJava(branchSource, parsed);
+
+  expect(rendered).toContain('import com.vincenthuto.hemomancy.common.init.BlockInit;');
+  expect(rendered).toContain('.setIconItem(() -> new ItemStack(BlockInit.dendritic_distributor.get())));');
 });
 
 test('parses and renders branch trace colors', () => {

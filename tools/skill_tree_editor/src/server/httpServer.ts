@@ -46,6 +46,10 @@ const server = createServer(async (req, res) => {
       return serveItemAsset(res, decodeURIComponent(url.pathname.slice('/asset/item/'.length)));
     }
 
+    if (req.method === 'GET' && url.pathname.startsWith('/asset/block/')) {
+      return serveBlockAsset(res, decodeURIComponent(url.pathname.slice('/asset/block/'.length)));
+    }
+
     if (req.method === 'GET' && !url.pathname.startsWith('/api/')) {
       return serveStatic(res, url.pathname);
     }
@@ -111,6 +115,35 @@ function serveItemAsset(res: ServerResponse, fileName: string): void {
   const fallback = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <rect width="24" height="24" fill="#180304"/>
     <text x="12" y="16" text-anchor="middle" font-family="monospace" font-size="12" fill="#d64c42">${letter}</text>
+  </svg>`;
+  res.writeHead(200, { 'content-type': 'image/svg+xml; charset=utf-8' });
+  res.end(fallback);
+}
+
+function serveBlockAsset(res: ServerResponse, fileName: string): void {
+  const id = fileName.replace(/\.png$/i, '');
+  if (!/^[a-z0-9_]+$/.test(id)) {
+    return send(res, 400, { error: 'Invalid block asset id' });
+  }
+  const candidates = [
+    `src/main/resources/assets/hemomancy/textures/block/${id}.png`,
+    `src/main/resources/assets/hemomancy/textures/block/${id}_top.png`,
+    `src/main/resources/assets/hemomancy/textures/block/${id}_front.png`,
+    `src/main/resources/assets/hemomancy/textures/block/${id}_side.png`
+  ];
+  for (const candidate of candidates) {
+    const abs = safeResolve(repoRoot, candidate);
+    if (existsSync(abs)) {
+      res.writeHead(200, { 'content-type': 'image/png' });
+      res.end(readFileSync(abs));
+      return;
+    }
+  }
+  const letter = id.charAt(0).toUpperCase() || '?';
+  const fallback = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <rect width="24" height="24" fill="#11140e"/>
+    <rect x="4" y="4" width="16" height="16" fill="#25301d" stroke="#7c9a4b"/>
+    <text x="12" y="16" text-anchor="middle" font-family="monospace" font-size="10" fill="#d7e5b5">${letter}</text>
   </svg>`;
   res.writeHead(200, { 'content-type': 'image/svg+xml; charset=utf-8' });
   res.end(fallback);

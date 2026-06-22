@@ -49,6 +49,18 @@ test('preview exposes multi-parent inspector controls', () => {
   expect(css).toContain('.parent-pill');
 });
 
+test('preview exposes item and block icon selectors', () => {
+  const main = read('main.ts');
+  const css = read('styles.css');
+
+  expect(main).toContain('iconOptions');
+  expect(main).toContain('data-edit="iconSource"');
+  expect(main).toContain('data-edit="iconItem"');
+  expect(main).toContain('iconSelectOptions');
+  expect(main).toContain('iconAssetUrl(skill)');
+  expect(css).toContain('.icon-editor');
+});
+
 test('preview exposes draggable degree labels', () => {
   const main = read('main.ts');
   const css = read('styles.css');

@@ -36,6 +36,17 @@ test('loads Java skill branch files and attaches translation descriptions', asyn
   const root = makeRepo();
   writeBranch(root, 'CoreSkillBranch.java', coreBranchSource);
   writeBranch(root, 'LivingStaffSkillBranch.java', branchSource);
+  writeInit(root, 'ItemInit.java', `package example;
+public class ItemInit {
+  public static final DeferredHolder<Item, Item> living_staff = BASEITEMS.register("living_staff", () -> null);
+  public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish", () -> null);
+}
+`);
+  writeInit(root, 'BlockInit.java', `package example;
+public class BlockInit {
+  public static final DeferredHolder<Block, Block> dendritic_distributor = BASEBLOCKS.register("dendritic_distributor", () -> null);
+}
+`);
   writeLang(root, {
     'skill.hemomancy.base.desc': 'The root of blood instruction.',
     'skill.hemomancy.skill_manip_slots.desc': 'More room for manipulations.',
@@ -47,6 +58,10 @@ test('loads Java skill branch files and attaches translation descriptions', asyn
   const livingStaffBranch = workspace.branches.find(branch => branch.branch === 'living_staff');
   expect(workspace.branches).toHaveLength(2);
   expect(livingStaffBranch?.skills[0].description).toBe('The staff answers through disciplined circulation.');
+  expect(workspace.iconOptions).toEqual({
+    items: ['living_staff', 'scrying_dish'],
+    blocks: ['dendritic_distributor']
+  });
 });
 
 test('previews Java branch edits and lang changes without applying them', async () => {
@@ -113,6 +128,12 @@ function makeRepo(): string {
 
 function writeBranch(root: string, name: string, source: string): void {
   writeFileSync(join(root, 'src/main/java/com/vincenthuto/hemomancy/common/init/skills', name), source, 'utf8');
+}
+
+function writeInit(root: string, name: string, source: string): void {
+  const dir = join(root, 'src/main/java/com/vincenthuto/hemomancy/common/init');
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, name), source, 'utf8');
 }
 
 function writeLang(root: string, values: Record<string, string>): void {

@@ -97,7 +97,7 @@ final class SkillTraceLayerCache {
                 }
 
                 boolean parentUnlocked = SkillProgressClientCache.current().getState(parent) == EnumSkillStates.UNLOCKED;
-                int branchColor = parentUnlocked ? branchTraceColor(sp) : dimTraceColor(branchTraceColor(sp));
+                int branchColor = parentUnlocked ? branchTraceColor(parent) : dimTraceColor(branchTraceColor(parent));
                 int bakedColor = withAlpha(branchColor, parentUnlocked ? 148 : 78);
                 List<TracePoint> points = sampleCubic(parentPos[0], parentPos[1], childPos[0], childPos[1]);
                 bakePointTrace(image, points, bakedColor);

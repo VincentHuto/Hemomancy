@@ -339,6 +339,7 @@ function branch(name: string, count: number): SkillBranchFile {
     requiredDegree: 0,
     treeX: null,
     treeY: null,
+    iconSource: null,
     iconItem: null,
     description: ''
   }));
@@ -368,6 +369,7 @@ function skill(field: string, name: string, id: number, parentField: string | nu
     requiredDegree,
     treeX: null,
     treeY: null,
+    iconSource: null,
     iconItem: null,
     description: ''
   };

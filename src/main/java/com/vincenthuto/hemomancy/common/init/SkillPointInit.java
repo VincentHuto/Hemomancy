@@ -53,9 +53,9 @@ public class SkillPointInit {
 		CoreSkillBranch.register(BASE);
 		LivingStaffSkillBranch.register(BASE);
 		SummonSkillBranch.register(BASE);
+		MycelialSkillBranch.register(BASE);
 		ScarSkillBranch.register(BASE);
 		CovenantSkillBranch.register(BASE);
-		MycelialSkillBranch.register(BASE);
 		registerSkillBranch(BASE);
 	}
 

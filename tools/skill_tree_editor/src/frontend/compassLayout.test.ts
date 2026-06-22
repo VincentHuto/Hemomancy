@@ -132,6 +132,7 @@ function skill(field: string, id: number, parentField: string | null, requiredDe
     requiredDegree,
     treeX: null,
     treeY: null,
+    iconSource: null,
     iconItem: null,
     description: ''
   };

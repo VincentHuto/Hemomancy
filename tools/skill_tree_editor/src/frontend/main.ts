@@ -1,6 +1,7 @@
 import type {
   Diagnostic,
   DegreeLabelPosition,
+  IconSource,
   PreviewResult,
   SkillBranchFile,
   SkillModel,
@@ -247,7 +248,7 @@ function renderWireEdge(edge: GraphEdge): string {
 
 function renderSkillNode({ skill, x, y }: { skill: SkillModel; x: number; y: number }): string {
   const selected = skill.field === selectedField ? 'selected' : '';
-  const imageUrl = skill.iconItem ? `/asset/item/${encodeURIComponent(skill.iconItem)}.png` : null;
+  const imageUrl = iconAssetUrl(skill);
   const initial = skill.name.replace(/^skill_/, '').charAt(0).toUpperCase() || '?';
   return `<g class="skill-node ${selected}" data-skill="${escapeAttr(skill.field)}" transform="translate(${x} ${y})">
     <rect class="node-glow" x="-22" y="-22" width="44" height="44"></rect>
@@ -317,7 +318,7 @@ function renderInspector(): string {
         <h2>${escapeHtml(skill.name)}</h2>
         <p>${escapeHtml(branch.path)}</p>
       </div>
-      <div class="icon-chip">${escapeHtml(skill.iconItem ?? 'none')}</div>
+      <div class="icon-chip">${escapeHtml(iconLabel(skill))}</div>
     </div>
 
     <label>Branch color<input type="color" data-branch-edit="color" value="${escapeAttr(branchColor)}" /></label>
@@ -337,7 +338,10 @@ function renderInspector(): string {
       <div class="parent-list">${parentList}</div>
       <label>Add<select data-action="add-parent">${addParentOptions}</select></label>
     </div>
-      <label>Icon item<input data-edit="iconItem" value="${escapeAttr(skill.iconItem ?? '')}" placeholder="living_staff" /></label>
+    <div class="icon-editor">
+      <label>Icon type<select data-edit="iconSource">${iconSourceOptions(skill.iconSource)}</select></label>
+      <label>Icon ${skill.iconSource ? `<select data-edit="iconItem">${iconSelectOptions(skill)}</select>` : '<select data-edit="iconItem" disabled><option value="">Select a type first</option></select>'}</label>
+    </div>
     <div class="grid2">
       <label>Tree X<input type="number" data-edit="treeX" value="${skill.treeX ?? ''}" /></label>
       <label>Tree Y<input type="number" data-edit="treeY" value="${skill.treeY ?? ''}" /></label>
@@ -355,6 +359,46 @@ function stateOptions(current: string): string {
   return ['UNLOCKED', 'LOCKED'].map(state =>
     `<option value="${state}" ${state === current ? 'selected' : ''}>${state}</option>`
   ).join('');
+}
+
+function iconSourceOptions(current: IconSource): string {
+  return [
+    ['', 'None'],
+    ['item', 'ItemInit item'],
+    ['block', 'BlockInit block']
+  ].map(([value, label]) =>
+    `<option value="${value}" ${value === (current ?? '') ? 'selected' : ''}>${label}</option>`
+  ).join('');
+}
+
+function iconSelectOptions(skill: SkillModel): string {
+  const options = iconOptionsForSource(skill.iconSource);
+  const values = skill.iconItem && !options.includes(skill.iconItem)
+    ? [skill.iconItem, ...options]
+    : options;
+  return [
+    '<option value="">No icon</option>',
+    ...values.map(value =>
+      `<option value="${escapeAttr(value)}" ${value === skill.iconItem ? 'selected' : ''}>${escapeHtml(value)}</option>`
+    )
+  ].join('');
+}
+
+function iconOptionsForSource(source: IconSource): string[] {
+  if (source === 'block') return workspace?.iconOptions.blocks ?? [];
+  if (source === 'item') return workspace?.iconOptions.items ?? [];
+  return [];
+}
+
+function iconAssetUrl(skill: SkillModel): string | null {
+  if (!skill.iconSource || !skill.iconItem) return null;
+  const assetType = skill.iconSource === 'block' ? 'block' : 'item';
+  return `/asset/${assetType}/${encodeURIComponent(skill.iconItem)}.png`;
+}
+
+function iconLabel(skill: SkillModel): string {
+  if (!skill.iconSource || !skill.iconItem) return 'none';
+  return `${skill.iconSource}:${skill.iconItem}`;
 }
 
 function wireEvents(): void {
@@ -1114,6 +1158,9 @@ function coerceSkillEditValue(key: EditableSkillKey, value: string): SkillEditVa
   if (key === 'parentFields') {
     return [];
   }
+  if (key === 'iconSource') {
+    return value === 'item' || value === 'block' ? value : null;
+  }
   if (key === 'iconItem') {
     return value.trim() || null;
   }
@@ -1129,6 +1176,13 @@ function applySkillEditValue(skill: SkillModel, key: string, value: SkillEditVal
     setParentFields(skill, typeof value === 'string' && value ? [value] : []);
   } else if (key === 'parentFields') {
     setParentFields(skill, Array.isArray(value) ? value : []);
+  } else if (key === 'iconSource') {
+    skill.iconSource = value === 'item' || value === 'block' ? value : null;
+    if (!skill.iconSource) {
+      skill.iconItem = null;
+    } else if (skill.iconItem && !iconOptionsForSource(skill.iconSource).includes(skill.iconItem)) {
+      skill.iconItem = null;
+    }
   } else if (key === 'iconItem') {
     skill.iconItem = typeof value === 'string' && value.trim() ? value.trim() : null;
   } else if (key === 'branch') {
@@ -1156,6 +1210,7 @@ function addSkill(): void {
     requiredDegree: activeWorkspace === 'deep' ? 5 : 0,
     treeX: selectedSkill()?.treeX != null ? selectedSkill()!.treeX! + 64 : null,
     treeY: selectedSkill()?.treeY != null ? selectedSkill()!.treeY! + 64 : null,
+    iconSource: null,
     iconItem: null,
     description: ''
   };

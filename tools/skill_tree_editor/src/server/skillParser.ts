@@ -1,4 +1,4 @@
-import type { DegreeLabelPosition, Diagnostic, SkillBranchFile, SkillModel } from '../shared/types';
+import type { DegreeLabelPosition, Diagnostic, IconSource, SkillBranchFile, SkillModel } from '../shared/types';
 import { argbLiteralFromHex, hexFromArgbLiteral, normalizeBranchColor } from '../shared/branchColors';
 import { normalizeParentFields, parentFieldsOf } from '../shared/skillParents';
 
@@ -83,7 +83,9 @@ export function renderSkillBranchJava(source: string, file: SkillBranchFile): st
   const renderedDegreeLabels = renderDegreeLabels(file.degreeLabels ?? [], marker[1]);
   const renderedSkills = file.skills.map(skill => renderSkillDeclaration(skill, marker[1], file.color)).join('\n');
   const renderedSection = [renderedDegreeLabels, renderedSkills].filter(Boolean).join('\n');
-  return `${source.slice(0, marker.index)}${startLine}\n${renderedSection}\n${endLine}${source.slice(footerEnd)}`;
+  return ensureIconImports(
+    `${source.slice(0, marker.index)}${startLine}\n${renderedSection}\n${endLine}${source.slice(footerEnd)}`
+  );
 }
 
 function splitSkillDeclarations(section: string): string[] {
@@ -107,6 +109,7 @@ function parseSkillDeclaration(block: string, branch: string): SkillModel | null
   const skill = /new\s+SkillPoint\(\s*(\d+)\s*,\s*"([^"]+)"\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*EnumSkillStates\.([A-Z_]+)\s*,\s*(null|SkillPointInit\.(\w+))\s*\)/s.exec(block);
   if (!field || !skill) return null;
   const treePosition = /\.setTreePosition\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)/.exec(block);
+  const icon = parseIconItem(block);
   const parentField = skill[6] === 'null' ? null : skill[7];
   const parentFields = normalizeParentFields([
     ...(parentField ? [parentField] : []),
@@ -126,7 +129,8 @@ function parseSkillDeclaration(block: string, branch: string): SkillModel | null
     requiredDegree: Number(/\.setRequiredDegree\((\d+)\)/.exec(block)?.[1] ?? '0'),
     treeX: treePosition ? Number(treePosition[1]) : null,
     treeY: treePosition ? Number(treePosition[2]) : null,
-    iconItem: /ItemInit\.(\w+)\.get\(\)/.exec(block)?.[1] ?? null,
+    iconSource: icon.source,
+    iconItem: icon.item,
     description: ''
   };
 }
@@ -157,12 +161,50 @@ function renderSkillDeclaration(skill: SkillModel, markerIndent: string, branchC
   if (metadataChain.length) {
     lines.push(`${chainIndent}.${metadataChain.join('.')}`);
   }
-  if (skill.iconItem) {
-    lines.push(`${chainIndent}.setIconItem(() -> new ItemStack(ItemInit.${skill.iconItem}.get())));`);
+  if (skill.iconSource && skill.iconItem) {
+    const initClass = skill.iconSource === 'block' ? 'BlockInit' : 'ItemInit';
+    lines.push(`${chainIndent}.setIconItem(() -> new ItemStack(${initClass}.${skill.iconItem}.get())));`);
   } else {
     lines[lines.length - 1] += ');';
   }
   return lines.join('\n');
+}
+
+function parseIconItem(block: string): { source: IconSource; item: string | null } {
+  const match = /\.setIconItem\(\s*\(\)\s*->\s*new\s+ItemStack\(\s*(ItemInit|BlockInit)\.(\w+)\.get\(\)\s*\)\s*\)/s.exec(block);
+  if (!match) {
+    return { source: null, item: null };
+  }
+  return {
+    source: match[1] === 'BlockInit' ? 'block' : 'item',
+    item: match[2]
+  };
+}
+
+function ensureIconImports(source: string): string {
+  let next = source;
+  if (next.includes('ItemInit.') && !next.includes('import com.vincenthuto.hemomancy.common.init.ItemInit;')) {
+    next = addImport(next, 'com.vincenthuto.hemomancy.common.init.ItemInit');
+  }
+  if (next.includes('BlockInit.') && !next.includes('import com.vincenthuto.hemomancy.common.init.BlockInit;')) {
+    next = addImport(next, 'com.vincenthuto.hemomancy.common.init.BlockInit');
+  }
+  return next;
+}
+
+function addImport(source: string, importPath: string): string {
+  const importLine = `import ${importPath};`;
+  const imports = [...source.matchAll(/^import\s+[\w.]+;\s*$/gm)];
+  if (imports.length) {
+    const insertAt = imports[imports.length - 1].index! + imports[imports.length - 1][0].length;
+    return `${source.slice(0, insertAt)}\n${importLine}${source.slice(insertAt)}`;
+  }
+  const packageMatch = /^package\s+[\w.]+;\s*$/m.exec(source);
+  if (packageMatch) {
+    const insertAt = packageMatch.index + packageMatch[0].length;
+    return `${source.slice(0, insertAt)}\n\n${importLine}${source.slice(insertAt)}`;
+  }
+  return `${importLine}\n${source}`;
 }
 
 function parseAdditionalParents(block: string): string[] {

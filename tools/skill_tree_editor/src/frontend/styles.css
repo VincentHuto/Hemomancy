@@ -587,6 +587,12 @@ label {
   gap: 8px;
 }
 
+.icon-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: 10px;
+}
+
 .parent-list {
   display: flex;
   flex-wrap: wrap;

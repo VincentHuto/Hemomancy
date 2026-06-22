@@ -22,8 +22,16 @@ export interface SkillModel {
   requiredDegree: number;
   treeX: number | null;
   treeY: number | null;
+  iconSource: IconSource;
   iconItem: string | null;
   description: string;
+}
+
+export type IconSource = 'item' | 'block' | null;
+
+export interface IconRegistryOptions {
+  items: string[];
+  blocks: string[];
 }
 
 export interface DegreeLabelPosition {
@@ -47,6 +55,7 @@ export interface SkillWorkspace {
   repoRoot: string;
   branches: SkillBranchFile[];
   translations: Record<string, string>;
+  iconOptions: IconRegistryOptions;
   diagnostics: Diagnostic[];
 }
 

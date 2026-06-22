@@ -45,8 +45,8 @@ public final class CoreSkillBranch {
 							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(389, 326).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.sanguine_salve.get())));
 			SkillPointInit.skill_dynamic_use = SkillPointInit.registerSkill(branch,
-					new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_efficiency)
-							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(505, 310).setBranch("core").setBranchColor(0xFFD00000)
+					new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(521, 630).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.recycled_enzyme.get())));
 			SkillPointInit.skill_feeding_frenzy = SkillPointInit.registerSkill(branch,
 					new SkillPoint(5, "skill_feeding_frenzy", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_last_wind)
@@ -86,11 +86,12 @@ public final class CoreSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
 			SkillPointInit.skill_manip_slots = SkillPointInit.registerSkill(branch,
 					new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
-							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(384, 424).setBranch("core").setBranchColor(0xFFD00000)
+							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(416, 456).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
 			SkillPointInit.skill_synaptic_memory = SkillPointInit.registerSkill(branch,
 					new SkillPoint(40, "skill_synaptic_memory", 450, 4, EnumSkillStates.LOCKED, SkillPointInit.skill_manip_slots)
-							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(382, 398).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill));
+							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(398, 398).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
+							.setIconItem(() -> new ItemStack(BlockInit.dendritic_distributor.get())));
 		// </skill-editor>
 	}
 }
