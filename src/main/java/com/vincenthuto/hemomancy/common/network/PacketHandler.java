@@ -182,6 +182,8 @@ public class PacketHandler {
         net.playToClient(PacketSyncFaneBoundaries.TYPE, PacketSyncFaneBoundaries.STREAM_CODEC, PacketSyncFaneBoundaries::handle);
         net.playToClient(PacketBloodCraftRing.TYPE, PacketBloodCraftRing.STREAM_CODEC, PacketBloodCraftRing::handle);
         net.playToClient(PacketBloodStructureFeed.TYPE, PacketBloodStructureFeed.STREAM_CODEC, PacketBloodStructureFeed::handle);
+        net.playToClient(PacketSanguineFormationProjection.TYPE,
+                PacketSanguineFormationProjection.STREAM_CODEC, PacketSanguineFormationProjection::handle);
         net.playToClient(PacketBloodStructureOfferingBurst.TYPE, PacketBloodStructureOfferingBurst.STREAM_CODEC, PacketBloodStructureOfferingBurst::handle);
 
         // ── Degree / Unstained progress ───────────────────────────────────────

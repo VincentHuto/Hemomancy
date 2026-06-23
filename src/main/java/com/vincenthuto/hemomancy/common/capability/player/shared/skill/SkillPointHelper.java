@@ -221,6 +221,20 @@ public final class SkillPointHelper {
 		return 1.0 + progress.getLevel(sp) * 0.15;
 	}
 
+	public static int getSanguineCrystallizationLevel(Player player) {
+		return getSanguineCrystallizationLevel(progress(player));
+	}
+
+	public static int getSanguineCrystallizationLevel() {
+		return getSanguineCrystallizationLevel(progress(null));
+	}
+
+	private static int getSanguineCrystallizationLevel(SkillProgress progress) {
+		SkillPoint sp = SkillPointInit.skill_sanguine_crystallization;
+		if (sp == null || !progress.isUnlocked(sp)) return 0;
+		return progress.getLevel(sp);
+	}
+
 	public static double getScarAffinityMultiplier(Player player) {
 		return getScarAffinityMultiplier(progress(player));
 	}

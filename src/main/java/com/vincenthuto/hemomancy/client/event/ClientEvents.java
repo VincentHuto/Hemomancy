@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstClientData;
+import com.vincenthuto.hemomancy.client.data.ActiveSanguineFormationProjectionClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
@@ -205,6 +206,7 @@ public class ClientEvents {
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
         ActiveBloodStructureOfferingBurstClientData.tick();
+        ActiveSanguineFormationProjectionClientData.tick();
         BloodStructureFeedSpiralParticles.tick();
         BloodBallClientData.tick();
         VeinSpiderCourierClientData.tick();
@@ -457,6 +459,7 @@ public class ClientEvents {
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
+            SanguineFormationProjectionRenderer.render(event.getPoseStack(), partialTick);
             FaneBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
             BlackVeilRenderer.render(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);

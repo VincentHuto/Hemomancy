@@ -88,6 +88,10 @@ public final class CoreSkillBranch {
 					new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
 							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(416, 456).setBranch("core").setBranchColor(0xFFD00000)
 							.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
+			SkillPointInit.skill_sanguine_crystallization = SkillPointInit.registerSkill(branch,
+					new SkillPoint(48, "skill_sanguine_crystallization", 100, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
+							.setSkillPointCost(1).setRequiredDegree(1).setTreePosition(544, 456).setBranch("core").setBranchColor(0xFFD00000)
+							.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
 			SkillPointInit.skill_synaptic_memory = SkillPointInit.registerSkill(branch,
 					new SkillPoint(40, "skill_synaptic_memory", 450, 4, EnumSkillStates.LOCKED, SkillPointInit.skill_manip_slots)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(398, 398).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)

@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBl
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
+import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -149,6 +150,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 				}
 			}
 
+			double formationHandled = SanguineFormationProjectionHandler.tryProjectAtLookTarget(worldIn, player,
+					structureFeedRate);
+			if (formationHandled > 0.0D) {
+				return formationHandled;
+			}
 		}
 		if (player instanceof ServerPlayer serverPlayer) {
 			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVolume));
