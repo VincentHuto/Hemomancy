@@ -101,9 +101,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> gourd_slice = BASEITEMS.register("gourd_slice",
             () -> new Item(new Item.Properties()
                     .food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).fast().build())));
-    public static final DeferredHolder<Item, Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
-            () -> new Item(new Item.Properties()
-                    .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
+//    public static final DeferredHolder<Item, Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
+//            () -> new Item(new Item.Properties()
+//                    .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).fast().build())));
     public static final DeferredHolder<Item, Item> gourd_stew = BASEITEMS.register("gourd_stew",
             () -> new Item(new Item.Properties().stacksTo(1).craftRemainder(Items.BOWL)
                     .food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build())));
