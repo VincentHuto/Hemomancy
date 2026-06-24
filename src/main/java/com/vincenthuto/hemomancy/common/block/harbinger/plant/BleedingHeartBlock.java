@@ -20,10 +20,17 @@ public class BleedingHeartBlock extends FlowerBlock {
 	@Override
 	public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
 		BlockPos blockpos = pPos.below();
+		BlockState belowState = pLevel.getBlockState(blockpos);
 		if (pState.getBlock() == this) // Forge: This function is called during world gen and placement, before this
 										// block is set, so if we are not 'here' then assume it's the pre-check.
-			return pLevel.getBlockState(blockpos).canSustainPlant(pLevel, blockpos, Direction.UP, this.defaultBlockState()) == TriState.TRUE
-					|| pLevel.getBlockState(blockpos).getBlock() == BlockInit.erythrocytic_mycelium.get();
-		return this.mayPlaceOn(pLevel.getBlockState(blockpos), pLevel, blockpos);
+		{
+			TriState soilDecision = belowState.canSustainPlant(pLevel, blockpos, Direction.UP, pState);
+			if (!soilDecision.isDefault()) {
+				return soilDecision.isTrue();
+			}
+			return this.mayPlaceOn(belowState, pLevel, blockpos)
+					|| belowState.getBlock() == BlockInit.erythrocytic_mycelium.get();
+		}
+		return this.mayPlaceOn(belowState, pLevel, blockpos);
 	}
 }

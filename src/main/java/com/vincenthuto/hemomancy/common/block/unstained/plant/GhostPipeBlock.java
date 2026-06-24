@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Ghost Pipe (Monotropa uniflora) — the "corpse plant."
  * Ghost-white, lacks chlorophyll, survives via mycorrhizal fungi.
- * Grows in the dark on mycelium, erythrocytic mycelium, or infested wood.
+ * Grows in the dark on ordinary plant soils, mycelium, or infested wood.
  * When a player is nearby, all mobs in the area receive the Glowing effect.
  */
 public class GhostPipeBlock extends FlowerBlock {
@@ -38,10 +38,14 @@ public class GhostPipeBlock extends FlowerBlock {
 		BlockPos below = pos.below();
 		BlockState belowState = level.getBlockState(below);
 		if (state.getBlock() == this) {
-			boolean supportsPlant = belowState.canSustainPlant(level, below, Direction.UP,
-					this.defaultBlockState()) == TriState.TRUE;
-			return supportsPlant
-					|| belowState.getBlock() == BlockInit.erythrocytic_mycelium.get()
+			if (belowState.getBlock() == BlockInit.erythrocytic_mycelium.get()) {
+				return false;
+			}
+			TriState soilDecision = belowState.canSustainPlant(level, below, Direction.UP, state);
+			if (!soilDecision.isDefault()) {
+				return soilDecision.isTrue();
+			}
+			return this.mayPlaceOn(belowState, level, below)
 					|| belowState.getBlock() == BlockInit.infested_wood.get()
 					|| belowState.is(Blocks.MYCELIUM);
 		}
