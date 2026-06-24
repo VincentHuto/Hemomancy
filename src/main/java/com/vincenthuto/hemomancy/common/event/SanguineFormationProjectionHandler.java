@@ -9,9 +9,10 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSanguineFormationProjection;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -149,6 +150,7 @@ public final class SanguineFormationProjectionHandler {
 
 		if (collapsed) {
 			level.playSound(null, key.pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8F, 0.55F);
+			spawnFailureFizz(level, faceCenter(key.pos, key.face));
 			sendProjectionSync(level, key, 1.0F, FINAL_VISIBLE_TICKS,
 					PacketSanguineFormationProjection.State.FAILURE, attuned);
 			return;
@@ -168,10 +170,17 @@ public final class SanguineFormationProjectionHandler {
 	}
 
 	private static void spawnSuccessBurst(ServerLevel level, Vec3 center) {
-		level.sendParticles(ParticleTypes.GLOW, center.x, center.y, center.z,
-				18, 0.18D, 0.18D, 0.18D, 0.08D);
-		level.sendParticles(ParticleTypes.END_ROD, center.x, center.y, center.z,
-				8, 0.10D, 0.10D, 0.10D, 0.04D);
+		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(185, 0, 0)),
+				center.x, center.y, center.z, 18, 0.18D, 0.18D, 0.18D, 0.08D);
+		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(95, 0, 0)),
+				center.x, center.y, center.z, 8, 0.10D, 0.10D, 0.10D, 0.04D);
+	}
+
+	private static void spawnFailureFizz(ServerLevel level, Vec3 center) {
+		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(70, 0, 0)),
+				center.x, center.y, center.z, 14, 0.16D, 0.16D, 0.16D, 0.018D);
+		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(24, 0, 0)),
+				center.x, center.y, center.z, 6, 0.08D, 0.08D, 0.08D, 0.010D);
 	}
 
 	private static Vec3 faceCenter(BlockPos pos, Direction face) {

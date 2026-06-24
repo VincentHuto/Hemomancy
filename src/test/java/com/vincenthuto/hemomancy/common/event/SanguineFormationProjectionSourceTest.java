@@ -38,14 +38,30 @@ public final class SanguineFormationProjectionSourceTest {
 				"SanguineFormationProjectionRenderer.render");
 		assertContains("successful formation crafts emit a glow particle burst", handler,
 				"spawnSuccessBurst(level, spawnPos)");
-		assertContains("success burst uses glow particles", handler,
+		assertContains("success burst uses HutosLib glow particles", handler,
+				"GlowParticleFactory.createData");
+		assertContains("success burst uses Harbinger blood-red glow colors", handler,
+				"new ParticleColor(185, 0, 0)");
+		assertNotContains("success burst should not use vanilla glow particles", handler,
 				"ParticleTypes.GLOW");
+		assertNotContains("success burst should not use unstained-looking end rod particles", handler,
+				"ParticleTypes.END_ROD");
+		assertContains("failed formations emit a darker HutosLib glow fizz", handler,
+				"spawnFailureFizz(level, faceCenter(key.pos, key.face))");
+		assertContains("failure fizz uses dark blood glow colors", handler,
+				"new ParticleColor(70, 0, 0)");
+		assertContains("failure fizz particles move slowly", handler,
+				"0.018D");
 		assertContains("forming visuals expire shortly after projection stops", handler,
 				"FORMING_VISIBLE_TICKS = 6");
 		assertContains("completion packet clears the active orb immediately", clientData,
 				"state == PacketSanguineFormationProjection.State.COMPLETE");
+		assertContains("failure packet clears failed orb immediately", clientData,
+				"state == PacketSanguineFormationProjection.State.FAILURE");
 		assertContains("forming packet refreshes the existing orb instead of replacing it", clientData,
 				"existing.refresh");
+		assertContains("failure state resets later forming progress instead of pinning at full", clientData,
+				"this.progress = progress");
 		assertContains("forming visuals track refreshed ticks to prevent stop-cast brightening", clientData,
 				"refreshedThisTick");
 		assertContains("renderer reads stable client visibility instead of restarting age fade", renderer,

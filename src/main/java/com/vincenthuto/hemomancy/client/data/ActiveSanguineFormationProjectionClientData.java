@@ -19,7 +19,8 @@ public final class ActiveSanguineFormationProjectionClientData {
 	public static void upsert(BlockPos pos, Direction face, float progress, int visibleTicks,
 			PacketSanguineFormationProjection.State state, boolean attuned, long seed) {
 		String key = key(pos, face, seed);
-		if (state == PacketSanguineFormationProjection.State.COMPLETE) {
+		if (state == PacketSanguineFormationProjection.State.COMPLETE
+				|| state == PacketSanguineFormationProjection.State.FAILURE) {
 			ACTIVE_PROJECTIONS.remove(key);
 			return;
 		}
@@ -80,7 +81,7 @@ public final class ActiveSanguineFormationProjectionClientData {
 
 		private void refresh(float progress, int visibleTicks, PacketSanguineFormationProjection.State state,
 				boolean attuned) {
-			this.progress = Math.max(this.progress, progress);
+			this.progress = progress;
 			this.initialVisibleTicks = visibleTicks;
 			this.remainingTicks = visibleTicks;
 			this.state = state;
