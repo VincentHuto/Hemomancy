@@ -24,6 +24,8 @@ public record ChamberSkyTheme(
 		int blueVeinLayers,
 		int bloodVesselLayers,
 		int neuralLayers,
+		boolean renderMonolithPillars,
+		int monolithPillarCount,
 		boolean renderBaseSkybox,
 		boolean renderCloudLayers,
 		boolean renderNebulaLayers,
@@ -54,6 +56,8 @@ public record ChamberSkyTheme(
 		private int blueVeinLayers = 2;
 		private int bloodVesselLayers = 2;
 		private int neuralLayers = 3;
+		private boolean renderMonolithPillars = false;
+		private int monolithPillarCount = 0;
 		private boolean renderBaseSkybox = true;
 		private boolean renderCloudLayers = true;
 		private boolean renderNebulaLayers = true;
@@ -110,6 +114,12 @@ public record ChamberSkyTheme(
 			return this;
 		}
 
+		public Builder monolithPillars(int count) {
+			this.renderMonolithPillars = count > 0;
+			this.monolithPillarCount = Math.max(0, count);
+			return this;
+		}
+
 		public Builder toggles(boolean baseSkybox, boolean clouds, boolean nebula, boolean membranePulse) {
 			this.renderBaseSkybox = baseSkybox;
 			this.renderCloudLayers = clouds;
@@ -122,7 +132,8 @@ public record ChamberSkyTheme(
 			return new ChamberSkyTheme(id, skyTexture, cloudTexture, wispTexture, noiseTexture, skyboxColor,
 					cloudColor, nebulaPrimary, nebulaSecondary, nebulaAccent, capillaryTint, bloodTint, veinTint,
 					neuralTint, pulseStrength, motionMultiplier, capillaryLayers, blueVeinLayers, bloodVesselLayers,
-					neuralLayers, renderBaseSkybox, renderCloudLayers, renderNebulaLayers, renderMembranePulse);
+					neuralLayers, renderMonolithPillars, monolithPillarCount, renderBaseSkybox, renderCloudLayers,
+					renderNebulaLayers, renderMembranePulse);
 		}
 	}
 }

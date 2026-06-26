@@ -274,6 +274,65 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType silentArchonStormCloud(float gameTime, float cloudSeed, float cloudDensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"silent_archon_storm_cloud_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.SILENT_ARCHON_STORM_CLOUD.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "CloudSeed", cloudSeed);
+					setUniform(shader, "CloudDensity", cloudDensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.SILENT_ARCHON_STORM_CLOUD.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("silent_archon_storm_cloud",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 4096, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.SILENT_ARCHON_STORM_CLOUD.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType silentArchonVolumetricFog(ResourceLocation texture, float gameTime, float fogSeed,
+			float fogLayer, float fogDensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"silent_archon_fog_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.SILENT_ARCHON_FOG.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "FogSeed", fogSeed);
+					setUniform(shader, "FogLayer", fogLayer);
+					setUniform(shader, "FogDensity", fogDensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.SILENT_ARCHON_FOG.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("silent_archon_volumetric_fog",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 4096, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.SILENT_ARCHON_FOG.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	private static void setUniform(ShaderInstance shader, String name, float value) {
 		if (shader == null) {
 			return;

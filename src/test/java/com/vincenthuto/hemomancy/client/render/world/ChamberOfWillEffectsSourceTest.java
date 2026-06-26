@@ -1,18 +1,53 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.imageio.ImageIO;
 
 public final class ChamberOfWillEffectsSourceTest {
     private static final Path RENDERER = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffects.java");
+    private static final Path THEME = Path.of(
+            "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberSkyTheme.java");
+    private static final Path REGISTRY = Path.of(
+            "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberSkyThemeRegistry.java");
+    private static final Path RENDER_TYPES = Path.of(
+            "src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
+    private static final Path SHADER_INIT = Path.of(
+            "src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+    private static final Path SILENT_ARCHON_FOG_SHADER = Path.of(
+            "src/main/resources/assets/hemomancy/shaders/core/world/silent_archon_fog.json");
+    private static final Path SILENT_ARCHON_FOG_FRAGMENT = Path.of(
+            "src/main/resources/assets/hemomancy/shaders/core/world/silent_archon_fog.fsh");
+    private static final Path SILENT_ARCHON_STORM_CLOUD_FRAGMENT = Path.of(
+            "src/main/resources/assets/hemomancy/shaders/core/world/silent_archon_storm_cloud.fsh");
+    private static final Path SILENT_ARCHON_SKY_TEXTURE = Path.of(
+            "src/main/resources/assets/hemomancy/textures/environment/silent_archon_sky.png");
+    private static final Path SILENT_ARCHON_CLOUD_TEXTURE = Path.of(
+            "src/main/resources/assets/hemomancy/textures/environment/silent_archon_clouds.png");
 
     private ChamberOfWillEffectsSourceTest() {
     }
 
     public static void main(String[] args) throws IOException {
         String source = Files.readString(RENDERER).replace("\r\n", "\n");
+        String theme = Files.readString(THEME).replace("\r\n", "\n");
+        String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
+        String renderTypes = Files.readString(RENDER_TYPES).replace("\r\n", "\n");
+        String shaderInit = Files.readString(SHADER_INIT).replace("\r\n", "\n");
+        String fogShader = Files.exists(SILENT_ARCHON_FOG_SHADER)
+                ? Files.readString(SILENT_ARCHON_FOG_SHADER).replace("\r\n", "\n") : "";
+        String fogFragment = Files.exists(SILENT_ARCHON_FOG_FRAGMENT)
+                ? Files.readString(SILENT_ARCHON_FOG_FRAGMENT).replace("\r\n", "\n") : "";
+        String stormCloudFragment = Files.exists(SILENT_ARCHON_STORM_CLOUD_FRAGMENT)
+                ? Files.readString(SILENT_ARCHON_STORM_CLOUD_FRAGMENT).replace("\r\n", "\n") : "";
+        String nebulaFaceSource = source.substring(source.indexOf("private static float renderNebulaFace"),
+                source.indexOf("private static Vector3f colorVector"));
+        String silentArchonFogRenderTypeSource = renderTypes.substring(
+                renderTypes.indexOf("public static RenderType silentArchonVolumetricFog"),
+                renderTypes.indexOf("private static void setUniform"));
 
         assertContains("renderSky exposes capillary layer count knob", source,
                 "int capillaryDepthLayers =");
@@ -71,7 +106,7 @@ public final class ChamberOfWillEffectsSourceTest {
         assertContains("blood vessel detail t should promote one-layer density", source,
                 "return layer.index() == 0 && Mth.abs(layer.t() - 0.5F) < 0.001F ? 1.0F : layer.t();");
         assertContains("blood vessel count should use detail t", source,
-                "int vesselCount = 3 + Mth.floor(vesselDetailT * 3.0F);");
+                "int vesselCount = 2 + Mth.floor(vesselDetailT * 2.0F);");
         assertContains("blood vessel width should use detail t", source,
                 "float baseWidth = layeredSize(Mth.lerp(vesselDetailT, 0.060F, edgeLane ? 0.46F : 0.62F)");
         assertContains("blood vessel branches should sit behind the cell stream", source,
@@ -122,6 +157,203 @@ public final class ChamberOfWillEffectsSourceTest {
                 "SHOW_CLOSE_LAYERS");
         assertNotContains("distance layers should not be hard-gated by static booleans", source,
                 "SHOW_ULTRA_CLOSE_LAYERS");
+
+        assertContains("themes expose a monolith pillar toggle", theme,
+                "boolean renderMonolithPillars");
+        assertContains("themes expose a monolith pillar count", theme,
+                "int monolithPillarCount");
+        assertContains("theme builder can enable monolith pillars", theme,
+                "public Builder monolithPillars(int count)");
+        assertContains("silent archon should disable biological overlay layers", registry,
+                ".layers(0, 0, 0, 0)");
+        assertContains("silent archon should render monolith pillars", registry,
+                ".monolithPillars(16)");
+        assertContains("silent archon should use a dedicated calm sky texture", registry,
+                "SILENT_ARCHON_SKY");
+        assertContains("silent archon should use a dedicated soft cloud texture", registry,
+                "SILENT_ARCHON_CLOUDS");
+        assertContains("silent archon should keep harsh noise out of visible background textures", registry,
+                ".textures(SILENT_ARCHON_SKY, SILENT_ARCHON_CLOUDS, SILENT_ARCHON_CLOUDS, DEFAULT_NOISE)");
+        assertContains("silent archon should restore the brighter grey blue-green skybox", registry,
+                ".skybox(0xFF5F7472, 0xFF8CA6A2)");
+        assertContains("silent archon should keep a brighter grey blue-green haze", registry,
+                ".nebula(0x223031, 0x33484A, 0x55706D)");
+        assertContains("renderer gates Silent Archon depth effects by theme id", source,
+                "if (ChamberOfWillManager.THEME_SILENT_ARCHON.equals(theme.id()))");
+        assertContains("silent archon depth pass should render broad cloud strata", source,
+                "renderSilentArchonCloudStrata(poseStack, tesselator, f, skyDistance, theme);");
+        assertContains("silent archon depth pass should render a lower cloud deck", source,
+                "renderSilentArchonCloudDeck(poseStack, tesselator, f, skyDistance, theme);");
+        assertContains("silent archon depth pass should render distant monolith silhouettes", source,
+                "renderSilentArchonDistantMonolithSilhouettes(poseStack, tesselator, f, skyDistance);");
+        assertContains("cloud strata should use the silent archon cloud texture already on the theme", source,
+                "theme.cloudTexture()");
+        assertContains("cloud strata should draw tilted planes rather than face-locked cube faces", source,
+                "poseStack.mulPose(Axis.ZP.rotationDegrees(tilt));");
+        assertContains("cloud strata should drift slowly behind the pillars", source,
+                "float drift = time * (0.00055F + layer * 0.00014F);");
+        assertContains("cloud deck should use the silent archon cloud texture already on the theme", source,
+                "RenderSystem.setShaderTexture(0, theme.cloudTexture());");
+        assertContains("cloud deck should sit below the old mist horizon line", source,
+                "float deckY = -skyDistance * 0.72F;");
+        assertNotContains("silent archon cloud deck should not use vertical mist ring bands", source,
+                "renderSilentArchonMistRing(");
+        assertNotContains("silent archon cloud deck should not keep the old horizon placement", source,
+                "float horizonY = -skyDistance * 0.36F;");
+        assertContains("distant silhouettes should use simple color geometry", source,
+                "private static void renderDistantMonolithSilhouetteGeometry(");
+        assertContains("distant silhouettes should avoid the animated monolith shader path", source,
+                "BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);");
+        assertContains("distant silhouettes should include haze-faded alpha", source,
+                "int alpha = (int) Mth.clamp(Mth.lerp(depthT, 26.0F, 82.0F)");
+        assertContains("distant silhouettes should be rendered before foreground animated pillars", source,
+                "renderSilentArchonDepthEffects(poseStack, tesselator, f, skyDistance, theme);\n        RenderSystem.depthMask(true);\n        if (theme.renderMonolithPillars())");
+        assertNotContains("dead volumetric fog pass should not stay in the visible Silent Archon foreground stack", source,
+                "renderSilentArchonVolumetricFog(poseStack, tesselator, f, skyDistance, theme);");
+        assertNotContains("old foreground wisps should not stack with the procedural storm cloud bank", source,
+                "renderSilentArchonForegroundCloudWisps(poseStack, tesselator, f, skyDistance, theme);");
+        assertContains("foreground storm clouds should render after foreground animated pillars", source,
+                "renderSilentArchonMonolithPillars(poseStack, f, skyDistance, theme);\n        }\n        renderSilentArchonForegroundStormClouds(poseStack, f, skyDistance, theme);");
+        assertContains("volumetric fog should be Silent Archon gated through the active biome/effects theme", source,
+                "if (!isSilentArchonFogTheme())");
+        assertContains("Silent Archon dimension fog should tint toward pale blue-green biome fog", source,
+                "return new Vec3(0.52D, 0.66D, 0.68D).scale");
+        assertContains("Silent Archon dimension fog should not enable vanilla fog on monolith shaders", source,
+                "public boolean isFoggyAt(int x, int y) {\n        return false;");
+        assertNotContains("Silent Archon fog must not drive global fogginess because monolith shader uses linear_fog", source,
+                "public boolean isFoggyAt(int x, int y) {\n        return isSilentArchonFogTheme();");
+        assertContains("volumetric fog should use the Silent Archon fog render type", source,
+                "HemoRenderTypes.silentArchonVolumetricFog(theme.cloudTexture(), time * 0.05F");
+        assertContains("Silent Archon fog render type should be registered", shaderInit,
+                "SILENT_ARCHON_FOG.createInstance(provider)");
+        assertContains("Silent Archon fog render type should use the fog shader holder", renderTypes,
+                "ShaderInit.SILENT_ARCHON_FOG.getShard()");
+        assertContains("foreground fog must draw over monolith bases instead of being rejected by their depth", silentArchonFogRenderTypeSource,
+                ".setDepthTestState(RenderType.NO_DEPTH_TEST)");
+        assertNotContains("foreground fog must not use lequal depth because monoliths already wrote depth", silentArchonFogRenderTypeSource,
+                ".setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)");
+        assertContains("Silent Archon fog shader should sample the cloud texture", fogFragment,
+                "uniform sampler2D Sampler0;");
+        assertContains("Silent Archon fog shader should apply animated fog noise", fogFragment,
+                "float volumeNoise = fbm");
+        assertContains("volumetric fog should bind the silent archon cloud texture through the render type", renderTypes,
+                "RenderStateShard.TextureStateShard(texture, false, false)");
+        assertContains("volumetric fog should stack many depth slices through the monolith bases", source,
+                "int fogSlices = 18;");
+        assertContains("volumetric fog should build upward from the foreground pillar bases", source,
+                "float fogFloorY = -skyDistance * 0.74F;");
+        assertContains("background volumetric fog should stay subtle behind the storm cloud bank", source,
+                "float density = Mth.lerp(t, 0.32F, 0.18F);");
+        assertContains("background volumetric fog should use low alpha so it cannot read as flat foreground sprites", source,
+                "int alpha = (int) Mth.clamp(Mth.lerp(t, 42.0F, 24.0F), 0.0F, 48.0F);");
+        assertContains("volumetric fog should use bright pale vertex tint so it reads as fog, not dark stain", source,
+                "int red = Mth.floor(Mth.lerp(t, 174.0F, 150.0F));");
+        assertContains("legacy volumetric fog remains an atmospheric sheet helper, not the visible cloud bank", source,
+                "renderSilentArchonVolumetricFogSheet(");
+        assertContains("volumetric fog sheets should fade around monolith height instead of only on the horizon", source,
+                "float verticalFade = Mth.clamp(1.0F - Math.abs(yT - 0.48F) * 1.72F, 0.0F, 1.0F);");
+        assertContains("foreground storm clouds should reuse the foreground pillar placement seed", source,
+                "Random random = new Random(91077L);");
+        assertContains("foreground storm clouds should sit at the visible lower-shaft band, not the underground pillar base", source,
+                "float cloudCenterY = -skyDistance * Mth.lerp(distanceT, 0.36F, 0.56F);");
+        assertContains("foreground storm clouds should draw layered horizontal cloud banks", source,
+                "renderSilentArchonStormCloudBankLayer(");
+        assertContains("foreground storm clouds should subdivide banks into organic cells instead of giant panes", source,
+                "renderSilentArchonStormCloudBankCell(");
+        assertContains("foreground storm clouds should use a fixed cell grid to break up flat card silhouettes", source,
+                "int cellColumns = 6;");
+        assertNotContains("foreground storm clouds should not use vertical wisp cards that read as panels", source,
+                "renderSilentArchonStormCloudWisp(");
+        assertNotContains("foreground storm clouds should not use crossed billboard walls", source,
+                "renderSilentArchonStormCloudCross(");
+        assertContains("foreground storm clouds must not reuse the old theme cloud texture", source,
+                "HemoRenderTypes.silentArchonStormCloud(time * 0.05F, stormSeed, density)");
+        assertNotContains("foreground storm clouds must not bind theme.cloudTexture into the storm cloud render type", source,
+                "silentArchonStormCloud(theme.cloudTexture()");
+        assertContains("Silent Archon storm cloud shader should be registered", shaderInit,
+                "SILENT_ARCHON_STORM_CLOUD.createInstance(provider)");
+        assertContains("Silent Archon storm cloud render type should use the storm cloud shader holder", renderTypes,
+                "ShaderInit.SILENT_ARCHON_STORM_CLOUD.getShard()");
+        assertContains("storm cloud render type should draw over monolith bases", renderTypes,
+                "RenderType.create(\"silent_archon_storm_cloud\"");
+        assertContains("storm cloud render type should not depth-test against foreground monoliths", renderTypes,
+                ".setDepthTestState(RenderType.NO_DEPTH_TEST)");
+        assertNotContains("foreground storm clouds must not sample the reused cloud texture", stormCloudFragment,
+                "sampler2D Sampler0");
+        assertContains("storm cloud shader should build billows procedurally", stormCloudFragment,
+                "float billow = fbm");
+        assertContains("storm cloud shader should aggressively fade rectangular card edges", stormCloudFragment,
+                "float cardEdge = smoothstep(0.035, 0.24, edgeDistance);");
+        assertContains("storm cloud shader should avoid square cards by using a stricter rounded storm mask", stormCloudFragment,
+                "float stormMask = smoothstep(0.10, 0.56, domeMask);");
+        assertContains("storm cloud shader should discard fully transparent edges", stormCloudFragment,
+                "if (alpha < 0.012) {");
+        assertAverageBlueGreenSky("silent archon sky texture should be brighter than the near-black pass",
+                SILENT_ARCHON_SKY_TEXTURE);
+        assertMottledBlueGreenSky("silent archon sky texture should have lighter mottled depth",
+                SILENT_ARCHON_SKY_TEXTURE);
+        assertRareRedPurpleClouds("silent archon sky texture should include rare red-purple cloud bruising",
+                SILENT_ARCHON_SKY_TEXTURE);
+        assertRareRedBruises("silent archon sky texture should include rare red cloud bruises",
+                SILENT_ARCHON_SKY_TEXTURE);
+        assertSkyTextureEdgesBlend("silent archon sky texture should hide skybox face seams",
+                SILENT_ARCHON_SKY_TEXTURE);
+        assertCloudTextureAvoidsRepeatedBlobIslands("silent archon cloud texture should avoid repeated figure-eight blobs",
+                SILENT_ARCHON_CLOUD_TEXTURE);
+        assertContains("silent archon should avoid shattered rotated cloud boxes", registry,
+                ".toggles(true, false, true, false)");
+        assertNotContains("silent archon must not use procedural noise as every sky texture", registry,
+                ".textures(DEFAULT_NOISE, DEFAULT_NOISE, DEFAULT_NOISE, DEFAULT_NOISE)");
+        assertContains("renderer gates monolith pillars by theme", source,
+                "if (theme.renderMonolithPillars())");
+        assertContains("renderer uses the monolith block-entity shader path", source,
+                "HemoRenderTypes.monolithEntitySurface");
+        assertContains("renderer draws scattered pillar layer", source,
+                "renderSilentArchonMonolithPillars(poseStack, f, skyDistance, theme);");
+        assertContains("sky overlay haze should not write depth before monolith pillars", source,
+                "RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);\n        RenderSystem.depthMask(false);");
+        assertContains("sky overlay depth writes should be restored before monolith pillars", source,
+                "RenderSystem.depthMask(true);\n        if (theme.renderMonolithPillars())");
+        assertContains("nebula overlays should render on every physical skybox face", source,
+                "for (int face = 0; face < 6; face++) {\n            poseStack.pushPose();\n            rotateSkyFace(poseStack, face);");
+        assertContains("nebula overlays should seed each skybox face independently", source,
+                "Random faceRandom = new Random(layerSeed + face * 72931L);");
+        assertContains("nebula overlay planes should use face-local volume clusters", source,
+                "nextZoff = Math.max(nextZoff, renderNebulaFaceVolume(poseStack, faceRandom, f, skyDistance, tesselator, scale, zoff + face * 0.002F, wispTexture));");
+        assertContains("nebula face volume should use off-center anchor lanes", source,
+                "int clusterCount = 8;");
+        assertContains("nebula face volume should bias anchors toward the face perimeter", source,
+                "float anchorX = nebulaAnchorX(lane, random) * skyDistance * scale;");
+        assertContains("nebula face volume should keep 3D depth offsets", source,
+                "float depth = zoff + cluster * 0.012F + puff * 0.018F;");
+        assertContains("nebula face volume should restore non-planar pitch", nebulaFaceSource,
+                "poseStack.mulPose(Axis.XP.rotationDegrees(pitch));");
+        assertContains("nebula face volume should restore non-planar roll", nebulaFaceSource,
+                "poseStack.mulPose(Axis.ZP.rotationDegrees(roll));");
+        assertNotContains("nebula face volume should not flatten into face wash layers", nebulaFaceSource,
+                "int hazeLayers = 3;");
+        assertNotContains("nebula face volume should not use one full-face haze plane per layer", nebulaFaceSource,
+                "1.08F, 0xFF3A3A3A");
+        assertContains("pillar placement should be generated as opposite pairs", source,
+                "int pillarPairs = count / 2;");
+        assertContains("pillar placement should iterate paired samples", source,
+                "for (int pair = 0; pair < pillarPairs; pair++)");
+        assertContains("pillar placement should render the opposite compass partner", source,
+                "angle + Mth.TWO_PI * 0.5F");
+        assertNotContains("pillar placement should not be a single unpaired full-circle pass", source,
+                "float ringT = pillar / (float) Math.max(1, count);");
+        assertContains("pillar geometry should precompute shared seam corners", source,
+                "float[] cornerX = new float[sideCount + 1];");
+        assertContains("pillar geometry should precompute shared seam heights", source,
+                "float[] cornerTop = new float[sideCount + 1];");
+        assertContains("pillar geometry should reuse the next shared corner", source,
+                "float x1 = cornerX[side + 1];");
+        assertContains("pillar geometry should close the final horizontal seam", source,
+                "cornerX[sideCount] = cornerX[0];");
+        assertContains("pillar geometry should close the final vertical seam", source,
+                "cornerTop[sideCount] = cornerTop[0];");
+        assertNotContains("pillar faces must not compute independent right-edge radii", source,
+                "float r1 = radius * (0.86F + ((seed + side * 23 + 3) % 7) * 0.035F);");
     }
 
     private static void assertContains(String label, String source, String expected) {
@@ -134,5 +366,254 @@ public final class ChamberOfWillEffectsSourceTest {
         if (source.contains(unexpected)) {
             throw new AssertionError(label + ": still contains " + unexpected);
         }
+    }
+
+    private static void assertAverageBlueGreenSky(String label, Path path) throws IOException {
+        BufferedImage image = ImageIO.read(path.toFile());
+        if (image == null) {
+            throw new AssertionError(label + ": could not read " + path);
+        }
+        long red = 0;
+        long green = 0;
+        long blue = 0;
+        long pixels = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+                int alpha = (argb >>> 24) & 255;
+                if (alpha == 0) {
+                    continue;
+                }
+                red += (argb >>> 16) & 255;
+                green += (argb >>> 8) & 255;
+                blue += argb & 255;
+                pixels++;
+            }
+        }
+        int avgRed = Math.round(red / (float) pixels);
+        int avgGreen = Math.round(green / (float) pixels);
+        int avgBlue = Math.round(blue / (float) pixels);
+        int luminance = Math.round(avgRed * 0.2126F + avgGreen * 0.7152F + avgBlue * 0.0722F);
+        if (luminance < 86 || luminance > 126 || avgGreen < avgRed + 8 || avgBlue < avgRed + 6) {
+            throw new AssertionError(label + ": average rgb " + avgRed + "," + avgGreen + "," + avgBlue
+                    + " luminance " + luminance);
+        }
+    }
+
+    private static void assertMottledBlueGreenSky(String label, Path path) throws IOException {
+        BufferedImage image = ImageIO.read(path.toFile());
+        if (image == null) {
+            throw new AssertionError(label + ": could not read " + path);
+        }
+        int[] luminance = new int[image.getWidth() * image.getHeight()];
+        int pixels = 0;
+        long total = 0;
+        long totalSquares = 0;
+        int brightCloudPixels = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+                int alpha = (argb >>> 24) & 255;
+                if (alpha == 0) {
+                    continue;
+                }
+                int red = (argb >>> 16) & 255;
+                int green = (argb >>> 8) & 255;
+                int blue = argb & 255;
+                int value = Math.round(red * 0.2126F + green * 0.7152F + blue * 0.0722F);
+                luminance[pixels++] = value;
+                total += value;
+                totalSquares += (long) value * value;
+                if (value >= 136) {
+                    brightCloudPixels++;
+                }
+            }
+        }
+        java.util.Arrays.sort(luminance, 0, pixels);
+        float average = total / (float) pixels;
+        float variance = totalSquares / (float) pixels - average * average;
+        float standardDeviation = (float) Math.sqrt(Math.max(0.0F, variance));
+        int p05 = luminance[Math.max(0, Math.round(pixels * 0.05F) - 1)];
+        int p95 = luminance[Math.min(pixels - 1, Math.round(pixels * 0.95F) - 1)];
+        int p98 = luminance[Math.min(pixels - 1, Math.round(pixels * 0.98F) - 1)];
+        float brightCloudCoverage = brightCloudPixels / (float) pixels;
+        if (standardDeviation < 10.0F || p95 - p05 < 34 || p95 < 120 || p98 < 142
+                || brightCloudCoverage < 0.018F) {
+            throw new AssertionError(label + ": luminance sd " + standardDeviation + " p05 " + p05
+                    + " p95 " + p95 + " p98 " + p98 + " bright coverage " + brightCloudCoverage);
+        }
+    }
+
+    private static void assertSkyTextureEdgesBlend(String label, Path path) throws IOException {
+        BufferedImage image = ImageIO.read(path.toFile());
+        if (image == null) {
+            throw new AssertionError(label + ": could not read " + path);
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float horizontalEdgeDifference = 0.0F;
+        float verticalEdgeDifference = 0.0F;
+        for (int y = 0; y < height; y++) {
+            horizontalEdgeDifference += Math.abs(luminance(image.getRGB(0, y))
+                    - luminance(image.getRGB(width - 1, y)));
+        }
+        for (int x = 0; x < width; x++) {
+            verticalEdgeDifference += Math.abs(luminance(image.getRGB(x, 0))
+                    - luminance(image.getRGB(x, height - 1)));
+        }
+        horizontalEdgeDifference /= height;
+        verticalEdgeDifference /= width;
+        float cornerDifference = Math.abs(luminance(image.getRGB(0, 0)) - luminance(image.getRGB(width - 1, 0)))
+                + Math.abs(luminance(image.getRGB(0, height - 1)) - luminance(image.getRGB(width - 1, height - 1)))
+                + Math.abs(luminance(image.getRGB(0, 0)) - luminance(image.getRGB(0, height - 1)))
+                + Math.abs(luminance(image.getRGB(width - 1, 0)) - luminance(image.getRGB(width - 1, height - 1)));
+        if (horizontalEdgeDifference > 3.5F || verticalEdgeDifference > 3.5F || cornerDifference > 16.0F) {
+            throw new AssertionError(label + ": edge diffs horizontal " + horizontalEdgeDifference
+                    + " vertical " + verticalEdgeDifference + " corners " + cornerDifference);
+        }
+    }
+
+    private static void assertRareRedPurpleClouds(String label, Path path) throws IOException {
+        BufferedImage image = ImageIO.read(path.toFile());
+        if (image == null) {
+            throw new AssertionError(label + ": could not read " + path);
+        }
+        int bruisedPixels = 0;
+        int pixels = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+                int alpha = (argb >>> 24) & 255;
+                if (alpha == 0) {
+                    continue;
+                }
+                int red = (argb >>> 16) & 255;
+                int green = (argb >>> 8) & 255;
+                int blue = argb & 255;
+                pixels++;
+                if (red >= 92 && blue >= 104 && red > green - 10 && blue > green - 4) {
+                    bruisedPixels++;
+                }
+            }
+        }
+        float coverage = bruisedPixels / (float) pixels;
+        if (coverage < 0.006F || coverage > 0.260F) {
+            throw new AssertionError(label + ": red-purple coverage " + coverage);
+        }
+    }
+
+    private static void assertRareRedBruises(String label, Path path) throws IOException {
+        BufferedImage image = ImageIO.read(path.toFile());
+        if (image == null) {
+            throw new AssertionError(label + ": could not read " + path);
+        }
+        int redBruisePixels = 0;
+        int pixels = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+                int alpha = (argb >>> 24) & 255;
+                if (alpha == 0) {
+                    continue;
+                }
+                int red = (argb >>> 16) & 255;
+                int green = (argb >>> 8) & 255;
+                int blue = argb & 255;
+                pixels++;
+                if (red >= 108 && red > green + 8 && red > blue + 4) {
+                    redBruisePixels++;
+                }
+            }
+        }
+        float coverage = redBruisePixels / (float) pixels;
+        if (coverage < 0.0001F || coverage > 0.045F) {
+            throw new AssertionError(label + ": red bruise coverage " + coverage);
+        }
+    }
+
+    private static float luminance(int argb) {
+        int red = (argb >>> 16) & 255;
+        int green = (argb >>> 8) & 255;
+        int blue = argb & 255;
+        return red * 0.2126F + green * 0.7152F + blue * 0.0722F;
+    }
+
+    private static void assertCloudTextureAvoidsRepeatedBlobIslands(String label, Path path) throws IOException {
+        BufferedImage image = ImageIO.read(path.toFile());
+        if (image == null) {
+            throw new AssertionError(label + ": could not read " + path);
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        boolean[] visited = new boolean[width * height];
+        int largest = 0;
+        int secondLargest = 0;
+        int visiblePixels = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = y * width + x;
+                if (visited[index]) {
+                    continue;
+                }
+                int alpha = (image.getRGB(x, y) >>> 24) & 255;
+                if (alpha < 24) {
+                    visited[index] = true;
+                    continue;
+                }
+                int componentSize = floodVisibleCloudComponent(image, visited, x, y);
+                visiblePixels += componentSize;
+                if (componentSize > largest) {
+                    secondLargest = largest;
+                    largest = componentSize;
+                } else if (componentSize > secondLargest) {
+                    secondLargest = componentSize;
+                }
+            }
+        }
+        if (visiblePixels == 0) {
+            throw new AssertionError(label + ": no visible cloud pixels");
+        }
+        float largestShare = largest / (float) visiblePixels;
+        float secondLargestShare = secondLargest / (float) visiblePixels;
+        if (largestShare < 0.74F || secondLargestShare > 0.18F) {
+            throw new AssertionError(label + ": largest share " + largestShare + " second share "
+                    + secondLargestShare);
+        }
+    }
+
+    private static int floodVisibleCloudComponent(BufferedImage image, boolean[] visited, int startX, int startY) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[] queueX = new int[width * height];
+        int[] queueY = new int[width * height];
+        int read = 0;
+        int write = 0;
+        int size = 0;
+        queueX[write] = startX;
+        queueY[write++] = startY;
+        visited[startY * width + startX] = true;
+        while (read < write) {
+            int x = queueX[read];
+            int y = queueY[read++];
+            size++;
+            for (int direction = 0; direction < 4; direction++) {
+                int nextX = x + (direction == 0 ? 1 : direction == 1 ? -1 : 0);
+                int nextY = y + (direction == 2 ? 1 : direction == 3 ? -1 : 0);
+                if (nextX < 0 || nextY < 0 || nextX >= width || nextY >= height) {
+                    continue;
+                }
+                int index = nextY * width + nextX;
+                if (visited[index]) {
+                    continue;
+                }
+                int alpha = (image.getRGB(nextX, nextY) >>> 24) & 255;
+                visited[index] = true;
+                if (alpha >= 24) {
+                    queueX[write] = nextX;
+                    queueY[write++] = nextY;
+                }
+            }
+        }
+        return size;
     }
 }

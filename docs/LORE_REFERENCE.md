@@ -283,6 +283,10 @@ The ladder is a degree ladder with sidegrade forks. Hematic Iron is the first ch
 
 Silent Archon Vestments are different. They are cloth and armor mixed after the Archon refuses Apotheos, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
 
+The Silent Archon route exists because refusing Apotheos is not ignorance or simple fear. The Archon has witnessed the fungal revelation and either cannot speak of it, is cursed into silence by it, or chooses exile rather than becoming another mouth of the hive. "Silent" names the madness, restraint, and refusal that follow the truth. The monolith-themed gear should make that refusal visible: the Monolith is a reflection of the player's will, and wrapping the body in its shattered remnants means the player has become their own fixed will through the ultimate rejection of the revelation. Their blood still works, but by sheer will rather than obedience; at this point the Harbinger's selfhood is strong enough to overpower even the influence of the fungal source.
+
+The curse of silence should remain deliberately ambiguous. It may be self-imposed discipline, trauma, exile, madness, or a final kick in the teeth from the hive mind, but the result is the same: no one who reaches the truth can verbally speak it plainly to those below them. This is one reason the Harbingers can still exist and recruit without the whole Order collapsing under forewarning. Most Harbingers never reach Degree 5 and found a bloodline as a Vicar-level practitioner, let alone Degree 6 or higher. By the end of Degree 6 and the beginning of Degree 7, the player is already approaching the scale of a Harbinger Saint; beyond that, they are a living myth. Silent Archons cannot tell the warning, and Apotheos bodies no longer resemble ordinary Harbingers or meaningfully interact with mere mortals.
+
 One-off pieces should remain covenant-breaking tradeoffs in tone as well as mechanics. The Crown of Sacred Marrow, Hemolymphopoda Headpiece, Venous Strider Sabatons, and Covenant Mantle each express a narrow vow or ecology. Wearing one means choosing that vow over the comfort of a full-set identity.
 
 ### 6.5 The Founding Fane
@@ -310,6 +314,8 @@ The **Chamber of Will** is the Sanctified Harbinger's inward refuge. It should n
 Its progression role mirrors the Founding Fane without replacing it. The Founding Fane is outward: territory, bloodline logistics, covenant ownership, and the public declaration that this ground belongs to the Order. The Chamber of Will is inward: recovery, reflection, preparation, and the private admission that a high-degree Harbinger's mind has become a place.
 
 The chamber should feel like refuge first. It can be quiet, useful, and safe by default. As the player moves through Archon revelation, Qliphoth Communion, Silent Archon refusal, or Apotheos, the sky and boundaries can show that privacy eroding: vascular and neural structures gaining stranger colors, Qliphoth influence disturbing the pulse, Silent Archon restraint muting the chamber, and Apotheos pushing the refuge toward fungal transformation.
+
+In the Silent Archon state, the chamber should feel less like a living vascular interior and more like a cold dream of willpower: gray sky, dark storm-cloud or nebula masses, scattered black monolith pillars rising from a low cloud deck, far pillar-shadows half-lost in haze, and heavy foreground storm clouds that swallow the lower monoliths and make the refuge feel bottomless. Those pillars are not decorations so much as selfhood made architectural, the shattered Lodestone's lesson repeated across the refuge.
 
 ### 6.6 The Hematic Order's Historical Record
 

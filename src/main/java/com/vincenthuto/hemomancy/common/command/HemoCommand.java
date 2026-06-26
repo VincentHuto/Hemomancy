@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -50,6 +51,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -338,6 +340,55 @@ public class HemoCommand {
 										.executes(ctx -> setFanePreview(ctx.getSource(), FaneBoundaryRelation.RIVAL_ELDER)))
 								.then(Commands.literal("clear")
 										.executes(ctx -> clearFanePreview(ctx.getSource())))))
+
+				.then(Commands.literal("chamber")
+						.then(Commands.literal("theme")
+								.then(Commands.literal("cycle")
+										.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(), 1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player"), 1))))
+								.then(Commands.literal("next")
+										.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(), 1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player"), 1))))
+								.then(Commands.literal("previous")
+										.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(), -1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player"), -1))))
+								.then(Commands.literal("prev")
+										.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+												ctx.getSource().getPlayerOrException(), -1))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> cycleChamberTheme(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player"), -1))))
+								.then(Commands.literal("set")
+										.then(Commands.argument("theme", StringArgumentType.word())
+												.suggests((ctx, builder) -> {
+													for (ResourceLocation id : ChamberOfWillManager.orderedSkyThemes()) {
+														builder.suggest(id.getPath());
+														builder.suggest(id.toString());
+													}
+													return builder.buildFuture();
+												})
+												.executes(ctx -> setChamberTheme(ctx.getSource(),
+														ctx.getSource().getPlayerOrException(),
+														StringArgumentType.getString(ctx, "theme")))
+												.then(Commands.argument("player", EntityArgument.player())
+														.executes(ctx -> setChamberTheme(ctx.getSource(),
+																EntityArgument.getPlayer(ctx, "player"),
+																StringArgumentType.getString(ctx, "theme"))))))
+								.then(Commands.literal("reset")
+										.executes(ctx -> resetChamberTheme(ctx.getSource(),
+												ctx.getSource().getPlayerOrException()))
+										.then(Commands.argument("player", EntityArgument.player())
+												.executes(ctx -> resetChamberTheme(ctx.getSource(),
+														EntityArgument.getPlayer(ctx, "player")))))))
 
 				.then(Commands.literal("slots")
 						.then(Commands.literal("get")
@@ -1151,5 +1202,65 @@ public class HemoCommand {
 		source.sendSuccess(() -> Component.literal("Fane boundary preview cleared.").withStyle(ChatFormatting.GRAY),
 				false);
 		return 1;
+	}
+
+	private static int cycleChamberTheme(CommandSourceStack source, ServerPlayer player, int direction) {
+		ResourceLocation theme = ChamberOfWillManager.get(source.getServer()).cycleSkyThemeOverride(player, direction);
+		source.sendSuccess(() -> Component.literal("Chamber sky theme override for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" cycled to "))
+				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(".")),
+				true);
+		return 1;
+	}
+
+	private static int setChamberTheme(CommandSourceStack source, ServerPlayer player, String themeName) {
+		ResourceLocation theme = parseChamberTheme(themeName);
+		if (theme == null || !ChamberOfWillManager.isKnownSkyTheme(theme)) {
+			source.sendFailure(Component.literal("Unknown chamber sky theme '" + themeName
+					+ "'. Valid: " + chamberThemeList()));
+			return 0;
+		}
+
+		ChamberOfWillManager.get(source.getServer()).setSkyThemeOverride(player, theme);
+		source.sendSuccess(() -> Component.literal("Chamber sky theme override for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" set to "))
+				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(". Use /hemo chamber theme reset to return to progression.")),
+				true);
+		return 1;
+	}
+
+	private static int resetChamberTheme(CommandSourceStack source, ServerPlayer player) {
+		ResourceLocation theme = ChamberOfWillManager.get(source.getServer()).clearSkyThemeOverride(player);
+		source.sendSuccess(() -> Component.literal("Chamber sky theme override for ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" reset to progression theme "))
+				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(".")),
+				true);
+		return 1;
+	}
+
+	private static ResourceLocation parseChamberTheme(String themeName) {
+		String normalized = themeName.trim().toLowerCase(Locale.ROOT);
+		try {
+			return normalized.contains(":") ? ResourceLocation.parse(normalized) : Hemomancy.rloc(normalized);
+		} catch (RuntimeException ignored) {
+			return null;
+		}
+	}
+
+	private static String chamberThemeList() {
+		StringBuilder builder = new StringBuilder();
+		for (ResourceLocation id : ChamberOfWillManager.orderedSkyThemes()) {
+			if (!builder.isEmpty()) {
+				builder.append(", ");
+			}
+			builder.append(id);
+		}
+		return builder.toString();
 	}
 }

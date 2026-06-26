@@ -25,6 +25,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +43,12 @@ public class ChamberOfWillManager extends SavedData {
     public static final ResourceLocation THEME_QLIPHOTH_COMMUNION = Hemomancy.rloc("qliphoth_communion");
     public static final ResourceLocation THEME_SILENT_ARCHON = Hemomancy.rloc("silent_archon");
     public static final ResourceLocation THEME_APOTHEOS = Hemomancy.rloc("apotheos");
+    private static final List<ResourceLocation> ORDERED_SKY_THEMES = List.of(
+            THEME_WILL_DEFAULT,
+            THEME_ARCHON_REVELATION,
+            THEME_QLIPHOTH_COMMUNION,
+            THEME_SILENT_ARCHON,
+            THEME_APOTHEOS);
 
     public static final int CHAMBER_SPACING = 256;
     public static final int FLOOR_Y = 2;
@@ -55,6 +62,7 @@ public class ChamberOfWillManager extends SavedData {
     private final Map<UUID, Integer> ids = new HashMap<>();
     private final Map<UUID, ReturnPoint> returnPoints = new HashMap<>();
     private final Map<UUID, ChamberState> chamberStates = new HashMap<>();
+    private final Map<UUID, ResourceLocation> skyThemeOverrides = new HashMap<>();
 
     public ChamberOfWillManager() {
     }
@@ -155,13 +163,59 @@ public class ChamberOfWillManager extends SavedData {
         return BASE_ROOM_RADIUS + Math.max(0, Math.min(MAX_ROOM_TIER, tier)) * 2;
     }
 
+    public static List<ResourceLocation> orderedSkyThemes() {
+        return ORDERED_SKY_THEMES;
+    }
+
+    public static boolean isKnownSkyTheme(ResourceLocation theme) {
+        return ORDERED_SKY_THEMES.contains(theme);
+    }
+
+    public ResourceLocation setSkyThemeOverride(ServerPlayer player, ResourceLocation skyTheme) {
+        if (!isKnownSkyTheme(skyTheme)) {
+            return null;
+        }
+        skyThemeOverrides.put(player.getUUID(), skyTheme);
+        refreshProgressionState(player);
+        syncTo(player);
+        setDirty();
+        return skyTheme;
+    }
+
+    public ResourceLocation cycleSkyThemeOverride(ServerPlayer player, int direction) {
+        ResourceLocation current = skyThemeOverrides.getOrDefault(
+                player.getUUID(), getChamberState(player.getUUID()).skyTheme());
+        int currentIndex = ORDERED_SKY_THEMES.indexOf(current);
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+        int nextIndex = Math.floorMod(currentIndex + direction, ORDERED_SKY_THEMES.size());
+        return setSkyThemeOverride(player, ORDERED_SKY_THEMES.get(nextIndex));
+    }
+
+    public ResourceLocation clearSkyThemeOverride(ServerPlayer player) {
+        skyThemeOverrides.remove(player.getUUID());
+        refreshProgressionState(player);
+        syncTo(player);
+        setDirty();
+        return getChamberState(player.getUUID()).skyTheme();
+    }
+
     public void refreshProgressionState(ServerPlayer player) {
         ChamberState current = getChamberState(player.getUUID());
-        ChamberState next = progressionState(player);
+        ChamberState next = applySkyThemeOverride(player, progressionState(player));
         if (!current.equals(next)) {
             chamberStates.put(player.getUUID(), next);
             setDirty();
         }
+    }
+
+    private ChamberState applySkyThemeOverride(ServerPlayer player, ChamberState state) {
+        ResourceLocation override = skyThemeOverrides.get(player.getUUID());
+        if (override != null && isKnownSkyTheme(override)) {
+            return new ChamberState(state.tier(), override);
+        }
+        return state;
     }
 
     private static ChamberState progressionState(ServerPlayer player) {
@@ -341,6 +395,15 @@ public class ChamberOfWillManager extends SavedData {
         });
         tag.put("states", stateList);
 
+        ListTag overrideList = new ListTag();
+        skyThemeOverrides.forEach((uuid, theme) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            entry.putString("skyTheme", theme.toString());
+            overrideList.add(entry);
+        });
+        tag.put("skyThemeOverrides", overrideList);
+
         return tag;
     }
 
@@ -367,6 +430,17 @@ public class ChamberOfWillManager extends SavedData {
                     : THEME_WILL_DEFAULT;
             manager.chamberStates.put(entry.getUUID("uuid"),
                     new ChamberState(entry.getInt("tier"), theme));
+        }
+
+        for (Tag t : tag.getList("skyThemeOverrides", Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            try {
+                ResourceLocation theme = ResourceLocation.parse(entry.getString("skyTheme"));
+                if (isKnownSkyTheme(theme)) {
+                    manager.skyThemeOverrides.put(entry.getUUID("uuid"), theme);
+                }
+            } catch (RuntimeException ignored) {
+            }
         }
 
         return manager;
