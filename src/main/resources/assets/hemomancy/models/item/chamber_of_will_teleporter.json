@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/pocket_teleporter"
+    "layer0": "hemomancy:item/chamber_of_will_teleporter"
   }
 }

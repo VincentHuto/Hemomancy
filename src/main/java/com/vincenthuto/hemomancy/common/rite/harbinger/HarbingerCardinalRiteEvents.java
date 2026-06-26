@@ -48,6 +48,7 @@ import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -439,6 +440,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final String SANGUINE_DOMINION_RITE = "cardinal_rite/sanguine_dominion";
 	private static final String ETERNAL_COVENANT_RITE = "cardinal_rite/eternal_covenant";
 	private static final String ANCESTRAL_COMMUNION_RITE = "cardinal_rite/ancestral_communion";
+	private static final String CHAMBER_OF_WILL_RITE = "cardinal_rite/chamber_of_will";
 	private static final String EXSANGUINATION_RITE = "cardinal_rite/exsanguination";
 	private static final String HEMATIC_UNBINDING_RITE = "cardinal_rite/hematic_unbinding";
 	private static final String PALLID_SHADOW_RITE = "cardinal_rite/pallid_shadow";
@@ -836,8 +838,12 @@ public class HarbingerCardinalRiteEvents {
 			}
 			caster.displayClientMessage(
 					Component.translatable("hemomancy.rite.initiate_rite.blob_granted")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
+		}
+
+		if (CHAMBER_OF_WILL_RITE.equals(ritePath)) {
+			ChamberOfWillManager.get(sLevel.getServer()).enterChamber(caster);
 		}
 	}
 

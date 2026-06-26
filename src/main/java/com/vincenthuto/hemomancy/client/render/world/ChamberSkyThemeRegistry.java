@@ -1,0 +1,80 @@
+package com.vincenthuto.hemomancy.client.render.world;
+
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public final class ChamberSkyThemeRegistry {
+	public static final ResourceLocation DEFAULT_SKY =
+			Hemomancy.rloc("textures/environment/chamber_of_will_sky.png");
+	public static final ResourceLocation DEFAULT_CLOUDS =
+			Hemomancy.rloc("textures/environment/chamber_of_will_clouds.png");
+	public static final ResourceLocation DEFAULT_WISP =
+			Hemomancy.rloc("textures/environment/single_cloud.png");
+	public static final ResourceLocation DEFAULT_NOISE =
+			Hemomancy.rloc("textures/environment/noise_tile.png");
+
+	private static final Map<ResourceLocation, ChamberSkyTheme> THEMES = new LinkedHashMap<>();
+	public static final ChamberSkyTheme DEFAULT = register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_WILL_DEFAULT)
+			.skybox(0xFF454545, 0xFF808080)
+			.nebula(0x362E00, 0x801A00, 0x2E2600)
+			.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
+			.pulse(1.0F)
+			.layers(1, 2, 2, 3)
+			.build());
+
+	static {
+		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_ARCHON_REVELATION)
+				.skybox(0xFF3D3338, 0xFF8A6E72)
+				.nebula(0x3E2606, 0x8C1E16, 0x5B3A10)
+				.tints(0xFFE8D8, 0xFFD5EE, 0xC9D7FF, 0xFFE3A8)
+				.pulse(1.15F)
+				.motion(1.08F)
+				.layers(2, 2, 2, 3)
+				.build());
+		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION)
+				.skybox(0xFF2C2635, 0xFF6D5F86)
+				.nebula(0x271238, 0x4C1138, 0x64510D)
+				.tints(0xD8B6FF, 0xE39DFF, 0xB8C7FF, 0xFFE88D)
+				.pulse(1.35F)
+				.motion(0.92F)
+				.layers(2, 1, 3, 3)
+				.build());
+		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_SILENT_ARCHON)
+				.skybox(0xFF303235, 0xFF606A70)
+				.nebula(0x182024, 0x3C1115, 0x4F4A38)
+				.tints(0xD8E2E3, 0xD5C7CA, 0xCCD8EA, 0xE8E0C8)
+				.pulse(0.62F)
+				.motion(0.58F)
+				.layers(1, 1, 1, 2)
+				.build());
+		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_APOTHEOS)
+				.skybox(0xFF251B2B, 0xFF8C5E9E)
+				.nebula(0x35124A, 0x7A154A, 0x8A7011)
+				.tints(0xF1B8FF, 0xFF9BE4, 0xB3BBFF, 0xFFF3A8)
+				.pulse(1.7F)
+				.motion(1.22F)
+				.layers(2, 2, 3, 4)
+				.build());
+	}
+
+	private ChamberSkyThemeRegistry() {
+	}
+
+	public static ChamberSkyTheme register(ChamberSkyTheme theme) {
+		THEMES.put(theme.id(), theme);
+		return theme;
+	}
+
+	public static ChamberSkyTheme byId(ResourceLocation id) {
+		return THEMES.getOrDefault(id, DEFAULT);
+	}
+
+	public static ChamberSkyTheme activeTheme() {
+		return byId(ChamberOfWillClientData.skyTheme());
+	}
+}

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.worldgen.PocketDimensionManager;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoBookFilter;
@@ -62,12 +62,12 @@ public class ItemInit {
     public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
 
-    public static final DeferredHolder<Item, Item>  POCKET_TELEPORTER = BASEITEMS.register("pocket_teleporter",
+    public static final DeferredHolder<Item, Item> CHAMBER_OF_WILL_TELEPORTER = BASEITEMS.register("chamber_of_will_teleporter",
             () -> new Item(new Item.Properties().stacksTo(1)) {
                 @Override
                 public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
                     if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-                        PocketDimensionManager.teleport(serverPlayer);
+                        ChamberOfWillManager.teleport(serverPlayer);
                         player.getCooldowns().addCooldown(this, 40);
                     }
                     return InteractionResultHolder.success(player.getItemInHand(hand));

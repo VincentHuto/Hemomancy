@@ -79,6 +79,8 @@ public class PacketHandler {
 
         net.playToClient(PacketSyncPomeProgress.TYPE,
                 PacketSyncPomeProgress.STREAM_CODEC, PacketSyncPomeProgress::handle);
+        net.playToClient(PacketSyncChamberOfWill.TYPE,
+                PacketSyncChamberOfWill.STREAM_CODEC, PacketSyncChamberOfWill::handle);
         net.playToClient(LivingStaffProgressServerPacket.TYPE,
                 LivingStaffProgressServerPacket.STREAM_CODEC, LivingStaffProgressServerPacket::handle);
 

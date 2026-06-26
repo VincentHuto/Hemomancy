@@ -191,6 +191,29 @@ Hemolytic Solution is essentially formaldehyde — they're embalming themselves 
 
 ## Key Locations and Phenomena
 
+### The Chamber of Will
+
+The **Chamber of Will** is a high-degree Harbinger refuge unlocked at Degree 6 through the Rite of the Chamber of Will.
+
+**What It Is:**
+- A personal blood-memory chamber inside the caster's own will
+- A place to recover, reflect, and prepare
+- The inward counterpart to the Founding Fane's external territory
+- Not the Fungal Dimension and not the Entity's surface
+
+**How It Changes:**
+- Starts as a compact 9x9 refuge
+- Expands as the Harbinger reaches later progression tiers
+- Uses dynamic sky themes to show progression state
+- Archon, Qliphoth Communion, Silent Archon, and Apotheos states each disturb or recolor the chamber differently
+
+**Lore Meaning:**
+- Degree 5 claims ground in the world
+- Degree 6 claims a stable place inside blood-memory
+- Later progression shows that even a private mind is not entirely private once the infection begins answering back
+
+---
+
 ### The Fungal Dimension
 
 The "Flesh Beyond" — accessed at Apotheos via **Fungal Spine**.

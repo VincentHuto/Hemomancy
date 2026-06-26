@@ -10,7 +10,7 @@
   "coordinate_scale": 1.0,
   "ambient_light": 0.5,
   "logical_height": 32,
-  "effects": "hemomancy:pocket_dimension",
+  "effects": "hemomancy:chamber_of_will",
   "infiniburn": "#minecraft:infiniburn_overworld",
   "min_y": 0,
   "height": 32,

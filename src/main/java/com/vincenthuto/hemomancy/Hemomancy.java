@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.worldgen.PocketDimensionManager;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
@@ -172,7 +172,7 @@ public class Hemomancy {
         // }
     }
     private void onLevelTick(final LevelTickEvent.Post event) {
-        PocketDimensionManager.tick(event.getLevel());
+        ChamberOfWillManager.tick(event.getLevel());
     }
 
     // Combined a few methods into one more generic one

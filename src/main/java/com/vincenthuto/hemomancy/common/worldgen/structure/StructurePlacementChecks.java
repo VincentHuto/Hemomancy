@@ -19,7 +19,7 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean canPlaceOverworldHemomancyStructure(Structure.GenerationContext context) {
-		return !isPocketDimensionLikeContext(context);
+		return !isVoidRefugeContext(context);
 	}
 
 	static boolean isSuitableLandChunk(Structure.GenerationContext context) {
@@ -182,7 +182,7 @@ final class StructurePlacementChecks {
 				Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
 	}
 
-	private static boolean isPocketDimensionLikeContext(Structure.GenerationContext context) {
+	private static boolean isVoidRefugeContext(Structure.GenerationContext context) {
 		var possibleBiomes = context.biomeSource().possibleBiomes();
 		if (possibleBiomes.size() != 1) {
 			return false;

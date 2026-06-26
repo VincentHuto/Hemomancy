@@ -1,0 +1,124 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 2500,
+  "riteType": "grand",
+  "required_degree": 6,
+  "breakBlocksOnCreation": false,
+  "riteName": "Rite of the Chamber of Will",
+  "riteDescription": "A grand inward rite for the Sanctified. The caster folds blood-memory around a stable point of will, entering the private chamber that grows with their scars, infection, and ascension.",
+  "pattern": [
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "   HHH   "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    E    ",
+      "  HBBBH  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " HB C BH "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    H    ",
+      "    B    ",
+      "HB     BH"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    E    ",
+      "    H    ",
+      " B  C  B ",
+      " H  E  H ",
+      "HBC E CBH"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    H    ",
+      "    B    ",
+      "HB     BH"
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      " HB C BH "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "    E    ",
+      "  HBBBH  "
+    ],
+    [
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
+      "   HHH   "
+    ]
+  ],
+  "key": {
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "B": {
+      "block": "hemomancy:blood_wood_planks"
+    },
+    "C": {
+      "block": "hemomancy:chiseled_polished_venous_stone"
+    },
+    "E": {
+      "block": "hemomancy:engram_block"
+    }
+  }
+}

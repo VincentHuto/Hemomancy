@@ -2,13 +2,14 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-06-19 Cicatrix Anchorite / Vein-Mason hermitage lesson, registry-backed scars, Mason's Effigy scar-pattern preparation, and Anastomotic Brazier loadout burning. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
+> **Last Updated:** 2026-06-26 Chamber of Will Degree 6 refuge, dynamic chamber skies, Cicatrix Anchorite / Vein-Mason hermitage lesson, registry-backed scars, Mason's Effigy scar-pattern preparation, and Anastomotic Brazier loadout burning. Implementation-status notes use the same implemented / partial / dormant / planned vocabulary as `HEMOMANCY_REFERENCE.md`; lore intent remains canonical here, while mechanics details remain code/reference-doc sourced.
 
 > **Current Lore-State Snapshot (2026-06-18 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game ritual rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and only Cult Pruning can remove the bloom by normal progression.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay appear while the Pale Lady's costly immune response is active.
+> - **The Chamber of Will is now the Degree 6 inward refuge:** not the external Fungal Dimension, but a private blood-memory chamber whose space and sky react to Archon, Qliphoth, Silent Archon, and Apotheos progression.
 > - **Vesper and The Mycophant now have documented endgame roles:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant is the fruiting-body endpoint for Apotheos-aligned Harbingers. Their entities, rendering, sound hooks, boss music, core combat behavior, and guaranteed final reward loot tables are wired; summoning rituals remain WIP.
 > - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
 > - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain partial in gameplay implementation: broader Fungal Dimension progression, Vesper/Mycophant summoning rituals, non-Hemorath Saint chambers/world placement, and fuller boss artwork.
@@ -246,7 +247,7 @@ Each degree carries a **lore theme** — the historical/metaphysical institution
 #### SANCTIFIED 6 — *of the Bloodline Covenant*
 **Lore:** The Sanctified do not belong to the Order — they *are* the Order. The Vicar delivers the degree's doctrine: *"The blood becomes indistinguishable from the blood of the world."* The Bloodline Covenant is revealed — a ritual compact between Harbingers that merges blood pools and capabilities. Fungal Whispers grow direct and revelatory: *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium is named as the original organism.
 
-**Gameplay:** **Bloodline Covenant system** fully unlocked — players ritually bind capabilities into a shared Covenant: linked blood reserves, tendency bonuses that amplify between members, blood-link combat synergies. The Bloodline leader can ritually sever members (reinforcing the covenant-as-chosen-family framing). The Alchemist describes this degree as "final synthesis" — all machines working as one unified process.
+**Gameplay:** **Bloodline Covenant system** fully unlocked — players ritually bind capabilities into a shared Covenant: linked blood reserves, tendency bonuses that amplify between members, blood-link combat synergies. The Bloodline leader can ritually sever members (reinforcing the covenant-as-chosen-family framing). The Alchemist describes this degree as "final synthesis" — all machines working as one unified process. The **Rite of the Chamber of Will** also unlocks here: a Grand, inward cardinal rite that lets the caster enter a private blood-memory refuge. The chamber begins as a small 9x9 inner room and later grows with the Harbinger's progression; its sky changes from will-default vascular/neural imagery into Archon revelation, Qliphoth communion, Silent Archon restraint, or Apotheos transformation states.
 
 #### ARCHON 7 — *of the Hematic Order*
 **Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
@@ -301,6 +302,14 @@ At low degrees the fragment is barely aware; its surface is cold. By Degree 5–
 The shattering also leaves behind **Monolith Fragments**: stackable black-red facets that behave less like ordinary stone and more like frozen witness. They carry the weight of the Monolith's last coherent shape, making them fitting late-game catalysts for Archons who reject full fungal surrender. They are useful, familiar, and burdened rather than purely empowering; Apotheos-aligned bodies should find them oppressive.
 
 The Monolith uses degree-gated dialogue that gradually discloses its nature. Players who ask *"What are you?"* receive answers that escalate from official Lodge description (Degree 4) to admitted self-awareness (Degree 5) to disclosure of the contained thing (Degree 6) to direct recognition of kinship (Degree 7). Archon dialogue is intimate in a way that should feel wrong before it feels significant.
+
+### 6.5b The Chamber of Will
+
+The **Chamber of Will** is the Sanctified Harbinger's inward refuge. It should never read as a second Fungal Dimension. The Fungal Dimension is the Entity's surface, hostile and external; the Chamber is a controlled place inside the caster's own blood-memory, stabilized by will, infection, scar tissue, and accumulated degree.
+
+Its progression role mirrors the Founding Fane without replacing it. The Founding Fane is outward: territory, bloodline logistics, covenant ownership, and the public declaration that this ground belongs to the Order. The Chamber of Will is inward: recovery, reflection, preparation, and the private admission that a high-degree Harbinger's mind has become a place.
+
+The chamber should feel like refuge first. It can be quiet, useful, and safe by default. As the player moves through Archon revelation, Qliphoth Communion, Silent Archon refusal, or Apotheos, the sky and boundaries can show that privacy eroding: vascular and neural structures gaining stranger colors, Qliphoth influence disturbing the pulse, Silent Archon restraint muting the chamber, and Apotheos pushing the refuge toward fungal transformation.
 
 ### 6.6 The Hematic Order's Historical Record
 

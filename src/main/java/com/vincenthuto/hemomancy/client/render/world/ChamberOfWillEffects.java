@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.worldgen.PocketDimensionManager;
+import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -21,15 +21,9 @@ import org.joml.Vector3f;
 import java.util.Random;
 import java.util.function.Supplier;
 
-public class PocketDimensionEffects extends DimensionSpecialEffects {
+public class ChamberOfWillEffects extends DimensionSpecialEffects {
 
-
-    public static final ResourceLocation SKY_LOCATION = Hemomancy.rloc("textures/environment/pocket_dimension_sky.png");
-    public static final ResourceLocation CLOUDS_LOCATION = Hemomancy.rloc("textures/environment/pocket_clouds.png");
-    public static final ResourceLocation WISP_LOCATION = Hemomancy.rloc("textures/environment/single_cloud.png");
-    public static final ResourceLocation NOISE = Hemomancy.rloc("textures/environment/noise_tile.png");
-
-    public PocketDimensionEffects() {
+    public ChamberOfWillEffects() {
         super(Float.NaN, false, SkyType.NONE, false, false);
     }
 
@@ -43,28 +37,24 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         RenderSystem.depthMask(true);
 
         Tesselator tesselator = Tesselator.getInstance();
-        /*
-         * Skybox
-         */
-        boolean renderBaseSkybox = true;
-        boolean renderCloudLayers = true;
-        boolean renderNebulaLayers = true;
+        ChamberSkyTheme theme = ChamberSkyThemeRegistry.activeTheme();
 
 
         float skyDistance = 128.0F;
-        if (renderBaseSkybox) {
-            renderBox(poseStack, tesselator, skyDistance, 0, 1, GameRenderer::getPositionTexColorShader, SKY_LOCATION, 0xFF454545);
+        if (theme.renderBaseSkybox()) {
+            renderBox(poseStack, tesselator, skyDistance, 0, 1, GameRenderer::getPositionTexColorShader,
+                    theme.skyTexture(), theme.skyboxColor());
         }
         /*
          * Stars
          */
-        float f = level.getGameTime() + partialTick;
-        float membranePulse = membranePulse(f);
+        float f = (level.getGameTime() + partialTick) * theme.motionMultiplier();
+        float membranePulse = membranePulse(f) * theme.pulseStrength();
         float scale = .80f; // give buffer so rotated cubes don't clip through main skybox
         int layers = 6;
         Random random = new Random(431);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-        if (renderCloudLayers) {
+        if (theme.renderCloudLayers()) {
             for (int i = 0; i < layers; i++) {
                 poseStack.pushPose();
                 int j = layers - i - 1;
@@ -81,7 +71,8 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
                 rgb.mul(intensity);
                 rgb = new Vector3f(Math.min(rgb.x, 1), Math.min(rgb.y, 1), Math.min(rgb.z, 1));
                 RenderSystem.setShaderColor(rgb.x, rgb.y, rgb.z, 1f);
-                renderBox(poseStack, tesselator, skyDistance * scale, 0, 4f + 2f * scale, GameRenderer::getPositionTexColorShader, CLOUDS_LOCATION, 0xFF808080);
+                renderBox(poseStack, tesselator, skyDistance * scale, 0, 4f + 2f * scale,
+                        GameRenderer::getPositionTexColorShader, theme.cloudTexture(), theme.cloudColor());
                 poseStack.popPose();
                 scale -= 0.04f; // give slight separation between layers to prevent too much zfighting/artifacting
             }
@@ -91,30 +82,32 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         /*
          * Nebula
          */
-        var color = new Vector3f(.21f, .2f, .0f);
+        var color = colorVector(theme.nebulaPrimary());
         color.mul(0.075f);
         // use ever-enclosing z offset to ensure new planes are always in front of old planes, preventing alpha clipping
-        if (renderNebulaLayers) {
-            float zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, 0f);
-            color = new Vector3f(.5f, .1f, .0f);
+        if (theme.renderNebulaLayers()) {
+            float zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, 0f, theme.wispTexture());
+            color = colorVector(theme.nebulaSecondary());
             color.mul(0.125f);
-            zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, zoff);
-            color = new Vector3f(.18f, .15f, .0f);
+            zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, zoff, theme.wispTexture());
+            color = colorVector(theme.nebulaAccent());
             color.mul(0.125f);
-            zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, zoff);
+            zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, zoff, theme.wispTexture());
         }
 
-        int capillaryDepthLayers = 1;
-        int blueVeinDepthLayers = 2;
-        int bloodVesselDepthLayers =2;
-        int neuralDepthLayers =3;
+        int capillaryDepthLayers = theme.capillaryLayers();
+        int blueVeinDepthLayers = theme.blueVeinLayers();
+        int bloodVesselDepthLayers = theme.bloodVesselLayers();
+        int neuralDepthLayers = theme.neuralLayers();
 
         //renderCorticalFolds(poseStack, tesselator, f, skyDistance);
-        renderCapillaryWeb(poseStack, tesselator, f, skyDistance, capillaryDepthLayers);
-        renderBlueVeins(poseStack, tesselator, f, skyDistance, blueVeinDepthLayers);
-        renderBloodVessels(poseStack, tesselator, f, skyDistance, membranePulse, bloodVesselDepthLayers);
-        renderNeuralStructures(poseStack, tesselator, f, skyDistance, neuralDepthLayers);
-       renderMembranePulseVignette(poseStack, tesselator, skyDistance, membranePulse);
+        renderCapillaryWeb(poseStack, tesselator, f, skyDistance, capillaryDepthLayers, theme);
+        renderBlueVeins(poseStack, tesselator, f, skyDistance, blueVeinDepthLayers, theme);
+        renderBloodVessels(poseStack, tesselator, f, skyDistance, membranePulse, bloodVesselDepthLayers, theme);
+        renderNeuralStructures(poseStack, tesselator, f, skyDistance, neuralDepthLayers, theme);
+        if (theme.renderMembranePulse()) {
+            renderMembranePulseVignette(poseStack, tesselator, skyDistance, membranePulse);
+        }
         //renderBorderAura(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix);
 
         RenderSystem.enableDepthTest();
@@ -124,7 +117,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         return true;
     }
 
-    private static float renderNebula(PoseStack poseStack, Vector3f color, Random random, float f, float skyDistance, Tesselator tesselator, float scale, float zoff) {
+    private static float renderNebula(PoseStack poseStack, Vector3f color, Random random, float f,
+                                      float skyDistance, Tesselator tesselator, float scale, float zoff,
+                                      ResourceLocation wispTexture) {
         RenderSystem.setShaderColor(color.x, color.y, color.z, 1f);
         int clouds = 15;
         for (int i = 0; i < clouds; i++) {
@@ -144,13 +139,26 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
                 offset.mul(skyDistance * 0.25f * (1 + j * .025f));
                 poseStack.pushPose();
                 poseStack.translate(offset.x, zoff, offset.z);
-                renderPlane(poseStack, tesselator, skyDistance * scale, 0, 1, GameRenderer::getPositionTexColorShader, WISP_LOCATION, clusterScale, 0xFF606060);
+                renderPlane(poseStack, tesselator, skyDistance * scale, 0, 1,
+                        GameRenderer::getPositionTexColorShader, wispTexture, clusterScale, 0xFF606060);
                 poseStack.popPose();
                 zoff += 0.03f;
             }
             poseStack.popPose();
         }
         return zoff;
+    }
+
+    private static Vector3f colorVector(int rgb) {
+        return new Vector3f(
+                ((rgb >> 16) & 255) / 255.0F,
+                ((rgb >> 8) & 255) / 255.0F,
+                (rgb & 255) / 255.0F);
+    }
+
+    private static int tinted(int channel, int tint, int shift) {
+        float tintChannel = ((tint >> shift) & 255) / 255.0F;
+        return (int) Mth.clamp(channel * tintChannel, 0.0F, 255.0F);
     }
 
     private static int proceduralAlpha(float alpha) {
@@ -394,7 +402,8 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         return faceAngle + (shouldMirrorVesselFace(face) ? -localAngle : localAngle);
     }
 
-    private static void renderCapillaryWeb(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int layerCount) {
+    private static void renderCapillaryWeb(PoseStack poseStack, Tesselator tesselator, float time,
+                                           float skyDistance, int layerCount, ChamberSkyTheme theme) {
         layerCount = depthLayerCount(layerCount);
         if (layerCount <= 0) {
             return;
@@ -412,7 +421,7 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             for (int face = 0; face < 6; face++) {
                 poseStack.pushPose();
                 rotateSkyFace(poseStack, face);
-                renderCapillaryWebLayerFace(poseStack, tesselator, time, skyDistance, face, depthLayer);
+                renderCapillaryWebLayerFace(poseStack, tesselator, time, skyDistance, face, depthLayer, theme);
                 poseStack.popPose();
             }
         }
@@ -422,7 +431,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         RenderSystem.enableDepthTest();
     }
 
-    private static void renderCapillaryWebLayerFace(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int face, DepthLayer layer) {
+    private static void renderCapillaryWebLayerFace(PoseStack poseStack, Tesselator tesselator, float time,
+                                                   float skyDistance, int face, DepthLayer layer,
+                                                   ChamberSkyTheme theme) {
         int strands = 4 + Mth.floor(layer.t() * 4.0F);
         float layerTime = layeredTime(time, layer);
         for (int strand = 0; strand < strands; strand++) {
@@ -438,9 +449,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             float wave = 0.72F + (seed % 5) * 0.09F + layer.t() * 0.18F;
             float phase = seed * 1.917F;
             float baseWidth = layeredSize(0.030F + layer.t() * 0.105F + (seed % 3) * 0.010F, layer);
-            int red = 52 + Mth.floor(layer.t() * 48.0F) + (seed % 3) * 7;
-            int green = 12 + Mth.floor(layer.t() * 14.0F);
-            int blue = 8;
+            int red = tinted(52 + Mth.floor(layer.t() * 48.0F) + (seed % 3) * 7, theme.capillaryTint(), 16);
+            int green = tinted(12 + Mth.floor(layer.t() * 14.0F), theme.capillaryTint(), 8);
+            int blue = tinted(8, theme.capillaryTint(), 0);
             int alpha = layeredAlpha(9.0F + layer.t() * 28.0F + (strand % 2) * 4.0F, layer);
 
             renderVesselRibbon(poseStack, tesselator, depth, span, laneOffset, angle, wave, phase, layerTime * 0.42F, baseWidth, 38 + Mth.floor(layer.t() * 30.0F), red, green, blue, alpha);
@@ -472,7 +483,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         return faceAngle + (shouldMirrorVesselFace(face) ? -localAngle : localAngle);
     }
 
-    private static void renderBloodVessels(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, float membranePulse, int layerCount) {
+    private static void renderBloodVessels(PoseStack poseStack, Tesselator tesselator, float time,
+                                           float skyDistance, float membranePulse, int layerCount,
+                                           ChamberSkyTheme theme) {
         layerCount = depthLayerCount(layerCount);
         if (layerCount <= 0) {
             return;
@@ -490,7 +503,7 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             for (int face = 0; face < 6; face++) {
                 poseStack.pushPose();
                 rotateSkyFace(poseStack, face);
-                renderBloodVesselLayerFace(poseStack, tesselator, time, skyDistance, face, membranePulse, depthLayer);
+                renderBloodVesselLayerFace(poseStack, tesselator, time, skyDistance, face, membranePulse, depthLayer, theme);
                 poseStack.popPose();
             }
         }
@@ -500,7 +513,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         RenderSystem.enableDepthTest();
     }
 
-    private static void renderBloodVesselLayerFace(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int face, float membranePulse, DepthLayer layer) {
+    private static void renderBloodVesselLayerFace(PoseStack poseStack, Tesselator tesselator, float time,
+                                                  float skyDistance, int face, float membranePulse,
+                                                  DepthLayer layer, ChamberSkyTheme theme) {
         float vesselDetailT = bloodVesselDetailT(layer);
         int vesselCount = 2 + Mth.floor(vesselDetailT * 2.0F);
         float layerTime = layeredTime(time, layer);
@@ -519,21 +534,23 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             float wave = 0.50F + (seed % 4) * 0.10F + vesselDetailT * 0.16F;
             float phase = seed * 5.83F;
             float baseWidth = layeredSize(Mth.lerp(vesselDetailT, 0.060F, edgeLane ? 0.46F : 0.62F) + (seed % 4) * Mth.lerp(vesselDetailT, 0.008F, 0.038F), layer);
-            int red = (int) Mth.clamp(Mth.lerp(layer.t(), 70.0F, 168.0F) + membranePulse * 12.0F, 0.0F, 255.0F);
-            int blue = (int) Mth.clamp(Mth.lerp(layer.t(), 14.0F, 38.0F) + membranePulse * 8.0F, 0.0F, 255.0F);
+            int red = tinted((int) Mth.clamp(Mth.lerp(layer.t(), 70.0F, 168.0F) + membranePulse * 12.0F, 0.0F, 255.0F), theme.bloodTint(), 16);
+            int green = tinted(0, theme.bloodTint(), 8);
+            int blue = tinted((int) Mth.clamp(Mth.lerp(layer.t(), 14.0F, 38.0F) + membranePulse * 8.0F, 0.0F, 255.0F), theme.bloodTint(), 0);
             int alpha = layeredAlpha(Mth.lerp(layer.t(), 14.0F, edgeLane ? 48.0F : 62.0F) + membranePulse * 6.0F, layer);
 
-            renderPulsingVesselRibbon(poseStack, tesselator, depth, span, laneOffset, angle, wave, phase, layerTime, baseWidth, seed, 42 + Mth.floor(vesselDetailT * 54.0F), red, 0, blue, alpha);
+            renderPulsingVesselRibbon(poseStack, tesselator, depth, span, laneOffset, angle, wave, phase, layerTime, baseWidth, seed, 42 + Mth.floor(vesselDetailT * 54.0F), red, green, blue, alpha);
 
             if (layer.t() > 0.42F) {
                 renderBloodCellStream(poseStack, tesselator, depth - 0.11F, span, laneOffset, angle, wave, phase, layerTime, baseWidth, seed, edgeLane ? 4 : 7);
             }
 
-            renderVesselBranches(poseStack, tesselator, depth - 0.04F, span, laneOffset, angle, wave, phase, layerTime, baseWidth * Mth.lerp(vesselDetailT, 0.42F, 0.62F), 3 + Mth.floor(vesselDetailT * 2.0F), 0.24F + (seed % 3) * 0.05F, layeredSpan(skyDistance * Mth.lerp(vesselDetailT, 0.085F, 0.26F), layer), 28 + Mth.floor(vesselDetailT * 44.0F), seed, Math.max(24, red - 52), 0, Math.max(9, blue - 12), layeredAlpha(Mth.lerp(layer.t(), 16.0F, 48.0F), layer));
+            renderVesselBranches(poseStack, tesselator, depth - 0.04F, span, laneOffset, angle, wave, phase, layerTime, baseWidth * Mth.lerp(vesselDetailT, 0.42F, 0.62F), 3 + Mth.floor(vesselDetailT * 2.0F), 0.24F + (seed % 3) * 0.05F, layeredSpan(skyDistance * Mth.lerp(vesselDetailT, 0.085F, 0.26F), layer), 28 + Mth.floor(vesselDetailT * 44.0F), seed, Math.max(24, red - 52), green, Math.max(9, blue - 12), layeredAlpha(Mth.lerp(layer.t(), 16.0F, 48.0F), layer));
         }
     }
 
-    private static void renderBlueVeins(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int layerCount) {
+    private static void renderBlueVeins(PoseStack poseStack, Tesselator tesselator, float time,
+                                        float skyDistance, int layerCount, ChamberSkyTheme theme) {
         layerCount = depthLayerCount(layerCount);
         if (layerCount <= 0) {
             return;
@@ -551,7 +568,7 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             for (int face = 0; face < 6; face++) {
                 poseStack.pushPose();
                 rotateSkyFace(poseStack, face);
-                renderBlueVeinLayerFace(poseStack, tesselator, time, skyDistance, face, depthLayer);
+                renderBlueVeinLayerFace(poseStack, tesselator, time, skyDistance, face, depthLayer, theme);
                 poseStack.popPose();
             }
         }
@@ -561,7 +578,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         RenderSystem.enableDepthTest();
     }
 
-    private static void renderBlueVeinLayerFace(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int face, DepthLayer layer) {
+    private static void renderBlueVeinLayerFace(PoseStack poseStack, Tesselator tesselator, float time,
+                                               float skyDistance, int face, DepthLayer layer,
+                                               ChamberSkyTheme theme) {
         int veins = 3 + Mth.floor(layer.t() * 3.0F);
         float layerTime = layeredTime(time, layer);
         for (int vein = 0; vein < veins; vein+=2) {
@@ -579,9 +598,12 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             float baseWidth = layeredSize(Mth.lerp(layer.t(), 0.035F, 0.24F) + (seed % 3) * 0.016F, layer);
             int alpha = layeredAlpha(Mth.lerp(layer.t(), 10.0F, 78.0F), layer);
 
-            renderVesselRibbon(poseStack, tesselator, depth, span, laneOffset, angle, wave, phase, layerTime * 0.72F, baseWidth, 36 + Mth.floor(layer.t() * 42.0F), 5, 28, 105, alpha);
+            int red = tinted(5, theme.veinTint(), 16);
+            int green = tinted(28, theme.veinTint(), 8);
+            int blue = tinted(105, theme.veinTint(), 0);
+            renderVesselRibbon(poseStack, tesselator, depth, span, laneOffset, angle, wave, phase, layerTime * 0.72F, baseWidth, 36 + Mth.floor(layer.t() * 42.0F), red, green, blue, alpha);
 
-            renderVesselBranches(poseStack, tesselator, depth - 0.04F, span, laneOffset, angle, wave, phase, layerTime * 0.72F, baseWidth * 0.54F, 2 + Mth.floor(layer.t() * 2.0F), 0.28F + (seed % 3) * 0.06F, layeredSpan(skyDistance * Mth.lerp(layer.t(), 0.060F, 0.17F), layer), 20 + Mth.floor(layer.t() * 28.0F), seed, 4, 22, 88, layeredAlpha(Mth.lerp(layer.t(), 12.0F, 44.0F), layer));
+            renderVesselBranches(poseStack, tesselator, depth - 0.04F, span, laneOffset, angle, wave, phase, layerTime * 0.72F, baseWidth * 0.54F, 2 + Mth.floor(layer.t() * 2.0F), 0.28F + (seed % 3) * 0.06F, layeredSpan(skyDistance * Mth.lerp(layer.t(), 0.060F, 0.17F), layer), 20 + Mth.floor(layer.t() * 28.0F), seed, Math.max(0, red - 1), Math.max(0, green - 6), Math.max(0, blue - 17), layeredAlpha(Mth.lerp(layer.t(), 12.0F, 44.0F), layer));
         }
     }
 
@@ -796,7 +818,8 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         }
     }
 
-    private static void renderNeuralStructures(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int layerCount) {
+    private static void renderNeuralStructures(PoseStack poseStack, Tesselator tesselator, float time,
+                                               float skyDistance, int layerCount, ChamberSkyTheme theme) {
         layerCount = depthLayerCount(layerCount);
         if (layerCount <= 0) {
             return;
@@ -814,7 +837,7 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             for (int face = 0; face < 6; face++) {
                 poseStack.pushPose();
                 rotateSkyFace(poseStack, face);
-                renderNeuralLayerFace(poseStack, tesselator, time, skyDistance, face, depthLayer);
+                renderNeuralLayerFace(poseStack, tesselator, time, skyDistance, face, depthLayer, theme);
                 poseStack.popPose();
             }
         }
@@ -831,7 +854,9 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         RenderSystem.enableDepthTest();
     }
 
-    private static void renderNeuralLayerFace(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int face, DepthLayer layer) {
+    private static void renderNeuralLayerFace(PoseStack poseStack, Tesselator tesselator, float time,
+                                             float skyDistance, int face, DepthLayer layer,
+                                             ChamberSkyTheme theme) {
         int neurons = 2 + Mth.floor(layer.t() * 3.0F);
         float layerTime = layeredTime(time, layer);
         for (int neuron = 0; neuron < neurons; neuron++) {
@@ -850,12 +875,12 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             float somaPulse = 0.92F + 0.08F * Mth.sin(layerTime * 0.050F + seed);
             float somaRadius = layeredSize(Mth.lerp(layer.t(), 1.00F, 1.82F) * somaPulse, layer);
 
-            int neuralRed = Mth.floor(Mth.lerp(layer.t(), 72.0F, 148.0F));
-            int neuralGreen = Mth.floor(Mth.lerp(layer.t(), 48.0F, 96.0F));
-            int neuralBlue = Mth.floor(Mth.lerp(layer.t(), 8.0F, 16.0F));
-            int neuralCoreRed = Mth.floor(Mth.lerp(layer.t(), 132.0F, 236.0F));
-            int neuralCoreGreen = Mth.floor(Mth.lerp(layer.t(), 96.0F, 178.0F));
-            int neuralCoreBlue = Mth.floor(Mth.lerp(layer.t(), 22.0F, 44.0F));
+            int neuralRed = tinted(Mth.floor(Mth.lerp(layer.t(), 72.0F, 148.0F)), theme.neuralTint(), 16);
+            int neuralGreen = tinted(Mth.floor(Mth.lerp(layer.t(), 48.0F, 96.0F)), theme.neuralTint(), 8);
+            int neuralBlue = tinted(Mth.floor(Mth.lerp(layer.t(), 8.0F, 16.0F)), theme.neuralTint(), 0);
+            int neuralCoreRed = tinted(Mth.floor(Mth.lerp(layer.t(), 132.0F, 236.0F)), theme.neuralTint(), 16);
+            int neuralCoreGreen = tinted(Mth.floor(Mth.lerp(layer.t(), 96.0F, 178.0F)), theme.neuralTint(), 8);
+            int neuralCoreBlue = tinted(Mth.floor(Mth.lerp(layer.t(), 22.0F, 44.0F)), theme.neuralTint(), 0);
 
             renderNeuronSoma(poseStack, tesselator, centerX, depth + 0.18F, centerZ, somaRadius * Mth.lerp(layer.t(), 2.2F, 3.9F), 24, 16, 0, neuralLayerAlpha(Mth.lerp(layer.t(), 2.0F, 16.0F), layer));
             renderNeuronSoma(poseStack, tesselator, centerX, depth - 0.02F, centerZ, somaRadius * Mth.lerp(layer.t(), 0.82F, 1.55F), neuralRed, neuralGreen, neuralBlue, neuralLayerAlpha(Mth.lerp(layer.t(), 5.0F, 56.0F), layer));
@@ -1187,10 +1212,10 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         Vec3 cameraPos = camera.getPosition();
         Matrix4f matrix4f1 = new Matrix4f().rotation(quaternionf).translate((float) -cameraPos.x, (float) -cameraPos.y, (float) -cameraPos.z);
         poseStack.mulPose(matrix4f1);
-        // Each player's cell is centred at (0, FLOOR_Y, POCKET_SPACING * id); snap the aura to the current cell along Z.
-        int traversal = (int) (cameraPos.z / PocketDimensionManager.POCKET_SPACING) * PocketDimensionManager.POCKET_SPACING;
-        float HARDCODE_WIDTH = 9.0f; // matches the (ROOM_RADIUS * 2 + 1) floor
-        float halfWidth = HARDCODE_WIDTH / 2.0f;
+        // Each player's cell is centred at (0, FLOOR_Y, CHAMBER_SPACING * id); snap the aura to the current cell along Z.
+        int traversal = (int) (cameraPos.z / ChamberOfWillManager.CHAMBER_SPACING) * ChamberOfWillManager.CHAMBER_SPACING;
+        float chamberWidth = ChamberOfWillClientData.radius() * 2.0f + 1.0f;
+        float halfWidth = chamberWidth / 2.0f;
         float HARDCODE_X = 0.5f;
         float HARDCODE_Y = 1.25f;
         float HARDCODE_Z = traversal + 0.5f;
@@ -1202,10 +1227,10 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
 
         Tesselator tesselator = Tesselator.getInstance();
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-        RenderSystem.setShaderTexture(0, NOISE);
+        RenderSystem.setShaderTexture(0, ChamberSkyThemeRegistry.activeTheme().noiseTexture());
         float uvScrollMin = ((ticks + partialTick) / 21 / 12) % 4;
         float uvScrollMax = uvScrollMin + 5f / 20 / 12;
-        float uvTile = Mth.floor(HARDCODE_WIDTH / 4f); // times for x axis to tile
+        float uvTile = Mth.floor(chamberWidth / 4f); // times for x axis to tile
         for (int i = 0; i < 4; i++) {
             poseStack.pushPose();
             poseStack.mulPose(Axis.YP.rotationDegrees(i * 90));

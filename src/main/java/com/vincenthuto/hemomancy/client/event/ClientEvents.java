@@ -568,7 +568,7 @@ public class ClientEvents {
             // Legacy alias in case an older save still points to hemomancy:renderer.
             event.register(Hemomancy.rloc("renderer"), fungalEffects);
 
-            event.register(Hemomancy.rloc("pocket_dimension"), new PocketDimensionEffects());
+            event.register(Hemomancy.rloc("chamber_of_will"), new ChamberOfWillEffects());
 
         }
 

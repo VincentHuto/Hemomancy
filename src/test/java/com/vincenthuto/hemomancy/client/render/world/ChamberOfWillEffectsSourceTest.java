@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class PocketDimensionEffectsSourceTest {
+public final class ChamberOfWillEffectsSourceTest {
     private static final Path RENDERER = Path.of(
-            "src/main/java/com/vincenthuto/hemomancy/client/render/world/PocketDimensionEffects.java");
+            "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffects.java");
 
-    private PocketDimensionEffectsSourceTest() {
+    private ChamberOfWillEffectsSourceTest() {
     }
 
     public static void main(String[] args) throws IOException {

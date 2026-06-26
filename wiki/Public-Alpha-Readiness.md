@@ -20,7 +20,7 @@ Use this page to understand what alpha testers should expect.
 The current alpha build is strongest around these loops:
 
 - **Opt-in start** - Mortal Display activation, Blood Volume, HUD, and first blood-magic state.
-- **Harbinger core** - degree progression spine, Cardinal Rites, blood manipulations, memories, tendencies, vascular state, scars, morphlings, living staff forms, drudges, puppeteer spindle, Blood Moon, direct blood routing, Qliphoth Communion, and Founding Fane core.
+- **Harbinger core** - degree progression spine, Cardinal Rites, blood manipulations, memories, tendencies, vascular state, scars, morphlings, living staff forms, drudges, puppeteer spindle, Blood Moon, direct blood routing, Qliphoth Communion, Chamber of Will, and Founding Fane core.
 - **Unstained core** - purification progress, White Humor Purification, Still Arts, Unstained NPCs, Pale/Lethean theming, and mutual exclusion with Harbinger progress.
 - **World content** - Blood Temples, Harbinger Outposts, Unstained Churches, Broken Church/Annetta route, Chthonian termite mounds, Erythrocoral Reef, deep ocean vents, voyager wrecks, active voyager vessels, and Hemomancy mob ecology.
 - **Discovery support** - JEI categories, item inquiry dialogue, HutosLib book data, advancement hooks, and wiki/reference docs.
@@ -33,6 +33,7 @@ These are expected rough edges for public alpha:
 
 - **Guide/Liber surfaces are mixed.** HutosLib JSON book data exists for Harbinger and Unstained books, but the Harbinger Java progression renderer still has partial wiring. Treat Field Notes, Dictation Table, and Liber behavior as a smoke-test priority.
 - **Founding Fane is mechanically present but still being tuned.** The bloodwell/stake footprint system, relation-aware boundary rendering, and blood routing hooks exist; final balance and art polish are still pending.
+- **Chamber of Will V1 is caster-only.** The Degree 6 rite, personal chamber, radius growth, and dynamic sky themes exist; the later rite that pulls nearby players and mobs into the caster's chamber is not part of V1.
 - **Saints are partial.** Hemorath has the first complete trial flow. Seraphae, Putriciel, and Velorum have shared sarcophagus/boss mechanics but still need bespoke rooms, placement tuning, art/animation, and final balance.
 - **Fungal Dimension is partial.** Access, safe return, dimension mob population, and the Archon choice fork exist; deeper terrain and broader dimension content remain WIP.
 - **Endgame bosses are partial.** Vesper and the Mycophant have entities, rendering, sound, combat, boss music, and loot, but their summoning rituals still need another pass.
@@ -57,7 +58,7 @@ These are expected rough edges for public alpha:
 4. Open Field Notes or book surfaces and confirm the first steps are understandable.
 5. Follow the Harbinger path far enough to perform Sanguine Initiation and learn/use at least one manipulation.
 6. In a separate world/profile, follow the Unstained path far enough to perform White Humor Purification and unlock/use at least one Still Art.
-7. In a controlled test world, validate advanced systems: Somatic Loom, Mycelial Lantern, Hematic Armature, Morphling Jar, Puppeteer's Spindle, direct blood routing, Founding Fane, Blood Moon, and one saint or Annetta encounter.
+7. In a controlled test world, validate advanced systems: Somatic Loom, Mycelial Lantern, Hematic Armature, Morphling Jar, Puppeteer's Spindle, direct blood routing, Founding Fane, Chamber of Will, Blood Moon, and one saint or Annetta encounter.
 
 ---
 
@@ -71,4 +72,3 @@ Alpha feedback is most useful when it includes:
 - Any crash logs or disconnects.
 - Broken recipes, missing models/textures, confusing guidebook entries, or JEI gaps.
 - Balance pain points: blood costs, ritual costs, fane strength, mob spawn density, or unclear progression gates.
-

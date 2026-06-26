@@ -13,7 +13,7 @@ Hemomancy is a NeoForge blood magic mod built around the *quality* of blood mani
 
 **Release readiness:** Public-alpha readiness, known limitations, and tester-path expectations are tracked in [PUBLIC_ALPHA_READINESS.md](PUBLIC_ALPHA_READINESS.md).
 
-**Recently audited systems:** attachments/capabilities, registry-backed scars, Mason's Effigy/Anastomotic Brazier scar loadout rituals, dynamic Scar Pattern rendering, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, hematic memory tools, puppeteer summon trials, morphling mutation rendering/sync, Flexible Founding Fane heart/stake footprints, bloodwell/stake permissions and cleanup, boundary preview tooling, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, Mnemonic Whispers/Screams brewing effects and mob-effect icons, Harbinger outpost NPC recruitment and item-inquiry dialogue rules, HutosLib effect renderer/tester/template tooling, Hemomancy tendril manipulation visuals, Qliphoth Seed 3D/drop renderer, Harbinger manipulation detail wrapping, MnA/Curios dormant compat, and focused test coverage.
+**Recently audited systems:** attachments/capabilities, registry-backed scars, Mason's Effigy/Anastomotic Brazier scar loadout rituals, dynamic Scar Pattern rendering, NeoForge payload networking, Blood Structure/Cardinal Rite degree gates, Chamber of Will Degree 6 refuge/dynamic sky themes, Qliphoth Communion and Apotheos gating, endgame Vesper/Mycophant boss entity wiring, direct blood routing, hematic memory tools, puppeteer summon trials, morphling mutation rendering/sync, Flexible Founding Fane heart/stake footprints, bloodwell/stake permissions and cleanup, boundary preview tooling, Mycelial Crucible/Lantern, Sporitic Thurible, White Humor Purification, Blood Moon sync, machine access gating, Field Notes/Liber discovery, Base Items material/drop documentation, Hematic Armature armor upgrades/JEI, Somatic Loom memory-weaving recipe/event rewrite, Harbinger armor models and item textures, Blood Lust mask/lineage variants, Silent Archon vestments, Annetta's Sanguis Lancea item renderer, alpha building/decorative blocks and recipes, Mnemonic Whispers/Screams brewing effects and mob-effect icons, Harbinger outpost NPC recruitment and item-inquiry dialogue rules, HutosLib effect renderer/tester/template tooling, Hemomancy tendril manipulation visuals, Qliphoth Seed 3D/drop renderer, Harbinger manipulation detail wrapping, MnA/Curios dormant compat, and focused test coverage.
 
 <!-- Texture base paths from this docs/ file -->
 <!-- Items:   ../src/main/resources/assets/hemomancy/textures/item/ -->
@@ -539,6 +539,42 @@ The fane is now modeled as a **Soft Envelope** instead of one fixed circular ter
 - `ConsecratedBloodwellBlock` is the first endpoint implementation: absorption draws from the bound bloodline pool and projection contributes to it. Future blocks can implement the same contract for other "drawing blood out of a block" interactions without becoming blood tanks.
 
 > **Status: Partial.** The heart/stake footprint model, duplicate bloodwell prevention, heart collapse/reconsecration/disband stake cleanup, stake placement validation, progenitor stake manifestation, bloodline-gated bloodwell conduit use, dynamic block blood absorption/projection endpoints, footprint-based gameplay checks, packet sync, relation-aware full-sphere boundary rendering, bloodwell fountain rendering, and preview commands are implemented. Remaining WIP is final balance/art polish and broader in-game tuning.
+
+### 5.7a The Chamber of Will (Degree 6)
+
+At **Degree 6 (Sanctified)**, a Harbinger can perform the **Rite of the Chamber of Will** (`hemomancy:cardinal_rite/chamber_of_will`). This is a Grand, non-destructive cardinal rite with `required_degree: 6`, no result item, and a completion effect that sends the caster into their own chamber or returns them home if they are already inside it.
+
+The Chamber of Will is not the Fungal Dimension. It is a stable psychic/vascular refuge grown inside the Harbinger's blood-memory: private, caster-only in V1, and intentionally positioned as the inward counterpart to the Degree 5 Founding Fane. The fane makes bloodline territory real in the world; the chamber gives the Sanctified a place to recover, prepare, and watch their own will become less private as late progression disturbs it.
+
+**Runtime IDs and files:**
+- Dimension key: `hemomancy:chamber_of_will`
+- Dimension JSON: `data/hemomancy/dimension/chamber_of_will.json`
+- Dimension type JSON: `data/hemomancy/dimension_type/chamber_of_will_type.json`
+- Client effects key: `hemomancy:chamber_of_will`
+- SavedData name: `chamber_of_will_data`
+- Localized name: `The Chamber of Will`
+
+**Room growth and bounds:**
+- `ChamberOfWillManager` stores per-player chamber ids, return points, tier, and sky theme in overworld SavedData.
+- Tier 0 starts at a 9x9 floor (`BASE_ROOM_RADIUS = 4`).
+- Each later tier adds 2 blocks of radius, currently capped at tier 3.
+- Room generation, placement bounds, movement clamping, void rescue, dropped-item recovery, and border aura sizing read the owner's current radius rather than a hardcoded room size.
+- V1 is caster-only. Future rites that pull nearby players or mobs into the caster's chamber should build on an explicit owner/guest model instead of reusing the caster-only assumptions.
+
+**Dynamic sky themes:**
+The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`, so new themes can be added as data-shaped Java definitions without rewriting renderer logic. Theme fields cover sky/cloud/noise textures, skybox/cloud/nebula colors, vascular/neural tints, pulse and motion multipliers, layer counts, and layer toggles.
+
+| Progression State | Theme ID | Room Tier |
+|---|---:|---:|
+| Degree 6 | `hemomancy:will_default` | 0 |
+| Degree 7 before Qliphoth Communion | `hemomancy:archon_revelation` | 1 |
+| Qliphoth Communion complete | `hemomancy:qliphoth_communion` | 2 |
+| Silent Archon path | `hemomancy:silent_archon` | 2 |
+| Degree 8 / Apotheos | `hemomancy:apotheos` | 3 |
+
+The active state syncs to the client through `PacketSyncChamberOfWill`; missing or invalid theme ids fall back to `will_default`.
+
+> **Status: Implemented.** Core rename, dimension ids, SavedData, Degree 6 rite, caster-only enter/return travel, tier-radius room growth, radius-based safety checks, client sync, and dynamic sky-theme registry are implemented. Future work is the owner/guest rite that pulls nearby players and mobs into the caster's chamber, plus deeper chamber-specific recovery, memory, scar, or bloodline features.
 
 ### 5.8 The Saints System (Degree 3â€“4)
 
@@ -3551,7 +3587,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 
 | Status | Systems |
 |--------|---------|
-| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, Flexible Founding Fane heart/stake footprint core, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, Mnemonic Whispers/Screams potion effects and mob-effect icons, Blood Drunkenness mob-effect icon, endgame Vesper/Mycophant entity-render-sound wiring, HutosLib tendril visuals on selected manipulations, Qliphoth Seed 3D item/drop renderer with HutosLib tendril roots, HutosLib lightning/tendril/generic-particle tester and template tooling, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
+| Implemented | Entity loot JSONs, all 21 skill effects, visceral organs, armor set bonuses, morphling maturity powers, morphling mutation visual layer, standard scar effects, incubator recipes, fungal scar cultivation, Blood Moon mechanics, Chthonian termite mound behavior, deep ocean vent fields and Chalybeate Snail ecology, Erythrocoral Reef biome and Blood Lantern Jelly ecology, Harbinger Voyager Wreck salvage sites and Brined Votary remnants, active Harbinger Voyager Vessel structures with neutral crew placement, major NPC dialogue trees, early crude memory learning, Mycelial Lantern enzyme fruiting with JEI display/catalyst wiring, Hematic Armature armor upgrades with JEI display/catalyst wiring, Harbinger armor model/texture pass, Sporitic Thurible offhand support tool, direct blood routing, Chamber of Will Degree 6 refuge with tier-radius growth and dynamic sky themes, Flexible Founding Fane heart/stake footprint core, puppeteer spindle container/render pass, puppeteer trial Blood Crafting recipes, Mnemonic Whispers/Screams potion effects and mob-effect icons, Blood Drunkenness mob-effect icon, endgame Vesper/Mycophant entity-render-sound wiring, HutosLib tendril visuals on selected manipulations, Qliphoth Seed 3D item/drop renderer with HutosLib tendril roots, HutosLib lightning/tendril/generic-particle tester and template tooling, alpha building fixture set (chains, bars, walls, hematic iron door/trapdoor) with recipes and resource coverage test |
 | Partial | Progression/Liber Java renderer, Founding Fane balance/art tuning, Saints rooms/world placement/art, Fungal Dimension terrain/content, Vesper/Mycophant summoning rituals, Annetta final animation/combat polish |
 | Dormant | MnA and Curios compat source/config while their NeoForge 1.21.1 dependencies are unavailable and source exclusions remain active |
 | Planned | Direct-routing polish, forced manipulation rank-up rituals, active Harbinger voyager trade/rumor/dialogue expansion, optional Our Lady apparition encounter, Spectral Companion summon flow, remaining Unstained Church palette/decor polish |

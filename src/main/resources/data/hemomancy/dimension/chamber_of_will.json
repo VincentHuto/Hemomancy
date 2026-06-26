@@ -1,5 +1,5 @@
 {
-  "type": "hemomancy:pocket_dimension_type",
+  "type": "hemomancy:chamber_of_will_type",
   "generator": {
     "type": "minecraft:flat",
     "settings": {

@@ -19,6 +19,7 @@ The Harbinger Path is the way of the **Hematic Order** — a secret society that
 - Drudge creation, morphling incubation, puppeteering
 - Cardinal rites for advancement and utility
 - Founding Fanes with powerful buffs
+- The Chamber of Will, a Degree 6 inner refuge that grows with late Harbinger progression
 - Rich NPC interactions and lore discoveries
 
 ---
@@ -26,6 +27,8 @@ The Harbinger Path is the way of the **Hematic Order** — a secret society that
 ## The Seven Degrees (+ One)
 
 The Hematic Order is structured around **seven degrees of initiation**, each representing a deeper understanding of blood magic. Unknown to most Harbingers, each degree is also a stage in the Fungal Entity's reproductive cycle.
+
+> Current implementation note: the reference docs use Degree 5 **Illuminatus**, Degree 6 **Sanctified**, Degree 7 **Archon**, and Degree 8 **Apotheos**. Some older public wording on this page still uses legacy title names, but the Chamber of Will unlock below follows the current implementation.
 
 ### Degree 1: Pledged (Humilis)
 **"The First Step"**
@@ -215,6 +218,18 @@ The Hematic Order is structured around **seven degrees of initiation**, each rep
 - Ability to **sever bloodline members** (excommunication)
 - Archon vestments and regalia
 - The **Silent Archon** title and powers
+
+**Special Feature: The Chamber of Will**
+- Current implementation unlocks at **Degree 6 (Sanctified)** through `hemomancy:cardinal_rite/chamber_of_will`.
+- This is an inward refuge, not the external Fungal Dimension: the caster enters a private blood-memory chamber and can use the rite/teleport behavior to return home.
+- The first chamber is a compact 9x9 space. Later progression expands the usable radius.
+- The sky is dynamic and reflects progression:
+  - Degree 6: `will_default`
+  - Degree 7 before Qliphoth Communion: `archon_revelation`
+  - Qliphoth Communion complete: `qliphoth_communion`
+  - Silent Archon path: `silent_archon`
+  - Degree 8 / Apotheos: `apotheos`
+- V1 is caster-only. A future owner/guest rite can pull nearby players and mobs into the caster's chamber once that model is stable.
 
 **What Changes:**
 - Fungal whispers become clearer: "You are the bloom"
