@@ -74,6 +74,10 @@ public class SanguineSurveyorBivouacStructure extends Structure {
 
 	@Override
 	public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context) {
+		if (!StructurePlacementChecks.canPlaceOverworldHemomancyStructure(context)) {
+			return Optional.empty();
+		}
+
 		int startY = this.startHeight.sample(context.random(),
 				new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()));
 

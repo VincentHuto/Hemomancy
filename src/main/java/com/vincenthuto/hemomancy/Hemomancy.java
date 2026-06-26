@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.worldgen.PocketDimensionManager;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
@@ -33,6 +34,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
@@ -120,6 +122,8 @@ public class Hemomancy {
         modEventBus.addListener(this::buildContents);
         forgeBus.register(this);
         forgeBus.addListener(this::onAddReloadListeners);
+        forgeBus.addListener(this::onLevelTick);
+
 
         // RegisterPayloadsEvent fires on the mod bus â€“ register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
@@ -166,6 +170,9 @@ public class Hemomancy {
         //     modEventBus.addListener(CuriosPlugin::initCuriosSlots);
         //     modEventBus.addListener(CuriosPlugin::clientCurioSetup);
         // }
+    }
+    private void onLevelTick(final LevelTickEvent.Post event) {
+        PocketDimensionManager.tick(event.getLevel());
     }
 
     // Combined a few methods into one more generic one

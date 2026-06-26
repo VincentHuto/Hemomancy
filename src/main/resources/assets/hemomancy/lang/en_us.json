@@ -2921,5 +2921,9 @@
   "unstained.hemomancy.purity.cleansing.desc": "A steady purification burns away corruption.",
   "unstained.hemomancy.purity.corrupted.desc": "Blood still courses with hemomantic taint.",
   "unstained.hemomancy.purity.purified.desc": "The blood runs silver — fully purified.",
-  "unstained.hemomancy.purity.tainted.desc": "The first impurities begin to recede."
+  "unstained.hemomancy.purity.tainted.desc": "The first impurities begin to recede.",
+  "item.hemomancy.pocket_teleporter": "Pocket Dimension Teleporter",
+  "chat.hemomancy.pocket.block_out_of_bounds": "You cannot place blocks out of bounds",
+  "item.hemomancy.pocket_teleporter.desc": "Right-click to enter your pocket dimension, right-click again to return."
+
 }

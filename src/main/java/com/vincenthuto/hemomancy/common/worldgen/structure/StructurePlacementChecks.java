@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
@@ -15,11 +18,21 @@ final class StructurePlacementChecks {
 	private StructurePlacementChecks() {
 	}
 
+	static boolean canPlaceOverworldHemomancyStructure(Structure.GenerationContext context) {
+		return !isPocketDimensionLikeContext(context);
+	}
+
 	static boolean isSuitableLandChunk(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
+			return false;
+		}
 		return isSuitableLandChunk(context, MAX_ALLOWED_WATER_DEPTH);
 	}
 
 	static boolean isSuitableSwampChunk(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
+			return false;
+		}
 		return isSuitableLandChunk(context, MAX_ALLOWED_SWAMP_WATER_DEPTH);
 	}
 
@@ -44,6 +57,9 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean isSuitableBuriedMausoleumSite(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
+			return false;
+		}
 		if (!isSuitableLandChunk(context)) {
 			return false;
 		}
@@ -76,6 +92,9 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
+			return false;
+		}
 		ChunkPos chunkPos = context.chunkPos();
 		int minX = chunkPos.getMinBlockX();
 		int minZ = chunkPos.getMinBlockZ();
@@ -107,6 +126,9 @@ final class StructurePlacementChecks {
 	}
 
 	static boolean isSuitableActiveVoyagerVesselChunk(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
+			return false;
+		}
 		ChunkPos chunkPos = context.chunkPos();
 		int minX = chunkPos.getMinBlockX();
 		int minZ = chunkPos.getMinBlockZ();
@@ -158,5 +180,14 @@ final class StructurePlacementChecks {
 	private static int getOceanFloorHeight(Structure.GenerationContext context, int x, int z) {
 		return context.chunkGenerator().getFirstOccupiedHeight(x, z,
 				Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
+	}
+
+	private static boolean isPocketDimensionLikeContext(Structure.GenerationContext context) {
+		var possibleBiomes = context.biomeSource().possibleBiomes();
+		if (possibleBiomes.size() != 1) {
+			return false;
+		}
+		Holder<Biome> onlyBiome = possibleBiomes.iterator().next();
+		return onlyBiome.is(Biomes.THE_VOID);
 	}
 }

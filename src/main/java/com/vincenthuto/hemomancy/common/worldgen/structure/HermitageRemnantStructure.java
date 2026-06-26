@@ -57,6 +57,10 @@ public class HermitageRemnantStructure extends Structure {
 
 	@Override
 	public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+		if (!StructurePlacementChecks.canPlaceOverworldHemomancyStructure(context)) {
+			return Optional.empty();
+		}
+
 		int startY = this.startHeight.sample(context.random(),
 				new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()));
 		ChunkPos chunkPos = context.chunkPos();

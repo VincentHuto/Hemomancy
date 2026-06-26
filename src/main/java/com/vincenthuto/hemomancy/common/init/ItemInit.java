@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.PocketDimensionManager;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoBookFilter;
@@ -32,12 +33,14 @@ import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -58,6 +61,18 @@ public class ItemInit {
             Hemomancy.MOD_ID);
     public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(Registries.ITEM,
             Hemomancy.MOD_ID);
+
+    public static final DeferredHolder<Item, Item>  POCKET_TELEPORTER = BASEITEMS.register("pocket_teleporter",
+            () -> new Item(new Item.Properties().stacksTo(1)) {
+                @Override
+                public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+                    if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                        PocketDimensionManager.teleport(serverPlayer);
+                        player.getCooldowns().addCooldown(this, 40);
+                    }
+                    return InteractionResultHolder.success(player.getItemInHand(hand));
+                }
+            });
 
     // public static final DamageSource bloodLoss = new DamageSource("bloodloss");
     public static final DeferredHolder<BannerPattern, BannerPattern> heart = BANNERPATTERNS.register("hemomancy_heart",

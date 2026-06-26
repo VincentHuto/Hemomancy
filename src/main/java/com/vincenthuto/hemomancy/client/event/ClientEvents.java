@@ -475,6 +475,8 @@ public class ClientEvents {
         }
     }
 
+
+
     private static void renderBloodMoonSky(RenderLevelStageEvent event) {
         if (!BloodMoonClientState.isActive()) return;
 
@@ -565,6 +567,9 @@ public class ClientEvents {
             event.register(Hemomancy.rloc("fungal_gardens"), fungalEffects);
             // Legacy alias in case an older save still points to hemomancy:renderer.
             event.register(Hemomancy.rloc("renderer"), fungalEffects);
+
+            event.register(Hemomancy.rloc("pocket_dimension"), new PocketDimensionEffects());
+
         }
 
         @SubscribeEvent
