@@ -7,8 +7,18 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 public final class ChamberOfWillEffectsSourceTest {
-    private static final Path RENDERER = Path.of(
+	private static final Path WRAPPER = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffects.java");
+	private static final Path HELPERS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillRenderHelpers.java");
+	private static final Path ABSTRACT_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/AbstractChamberThemeEffects.java");
+	private static final Path THEME_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberThemeEffects.java");
+	private static final Path QLIPHOTH_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/QliphothCommunionChamberEffects.java");
+	private static final Path SILENT_ARCHON_EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/SilentArchonChamberEffects.java");
 	private static final Path CLIENT_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
     private static final Path THEME = Path.of(
@@ -42,7 +52,8 @@ public final class ChamberOfWillEffectsSourceTest {
     }
 
     public static void main(String[] args) throws IOException {
-        String source = Files.readString(RENDERER).replace("\r\n", "\n");
+        String source = read(WRAPPER) + "\n" + read(THEME_EFFECTS) + "\n" + read(ABSTRACT_EFFECTS) + "\n" + read(HELPERS)
+				+ "\n" + read(QLIPHOTH_EFFECTS) + "\n" + read(SILENT_ARCHON_EFFECTS);
 		String clientEvents = Files.readString(CLIENT_EVENTS).replace("\r\n", "\n");
         String theme = Files.readString(THEME).replace("\r\n", "\n");
         String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
@@ -58,12 +69,12 @@ public final class ChamberOfWillEffectsSourceTest {
 				? Files.readString(QLIPHOTH_BLACK_HOLE_SHADER).replace("\r\n", "\n") : "";
 		String qliphothBlackHoleFragment = Files.exists(QLIPHOTH_BLACK_HOLE_FRAGMENT)
 				? Files.readString(QLIPHOTH_BLACK_HOLE_FRAGMENT).replace("\r\n", "\n") : "";
-		String nebulaFaceSource = source.substring(source.indexOf("private static float renderNebulaFace"),
-				source.indexOf("private static Vector3f colorVector"));
-		String membranePulseSource = source.substring(source.indexOf("private static void renderMembranePulseVignette"),
-				source.indexOf("private static void renderMembranePulseFace"));
-		String qliphothSmallHoleSource = source.substring(source.indexOf("private static void renderQliphothSmallBlackHole"),
-				source.indexOf("private static void renderQliphothResidualRing"));
+		String nebulaFaceSource = source.substring(source.indexOf("static float renderNebulaFace"),
+				source.indexOf("static Vector3f colorVector"));
+		String membranePulseSource = source.substring(source.indexOf("static void renderMembranePulseVignette"),
+				source.indexOf("static void renderMembranePulseFace"));
+		String qliphothSmallHoleSource = source.substring(source.indexOf("static void renderQliphothSmallBlackHole"),
+				source.indexOf("static void renderQliphothResidualRing"));
         String silentArchonFogRenderTypeSource = renderTypes.substring(
                 renderTypes.indexOf("public static RenderType silentArchonVolumetricFog"),
                 renderTypes.indexOf("private static void setUniform"));
@@ -103,7 +114,7 @@ public final class ChamberOfWillEffectsSourceTest {
         assertContains("far neural colors should be muted before additive blending", source,
                 "Mth.floor(Mth.lerp(layer.t(), 72.0F, 148.0F))");
         assertContains("neural brightness should use a perceptual depth falloff", source,
-                "private static float neuralLayerVisibility(DepthLayer layer)");
+                "static float neuralLayerVisibility(DepthLayer layer)");
         assertContains("neural alpha should include depth visibility before additive blending", source,
                 "return layeredAlpha(alpha * neuralLayerVisibility(layer), layer);");
         assertContains("neural impulse glows should inherit layer visibility", source,
@@ -131,7 +142,7 @@ public final class ChamberOfWillEffectsSourceTest {
         assertContains("blood vessel branches should sit behind the cell stream", source,
                 "layeredAlpha(Mth.lerp(layer.t(), 16.0F, 48.0F), layer)");
         assertContains("vein branching should render multiple offshoots per parent", source,
-                "private static void renderVesselBranches(");
+                "static void renderVesselBranches(");
         assertContains("blood vessels should request dense branching", source,
                 "renderVesselBranches(poseStack, tesselator, depth - 0.04F, span, laneOffset, angle, wave, phase, layerTime, baseWidth * Mth.lerp(vesselDetailT, 0.42F, 0.62F), 3 + Mth.floor(vesselDetailT * 2.0F)");
         assertContains("blue veins should request visible branching", source,
@@ -202,7 +213,7 @@ public final class ChamberOfWillEffectsSourceTest {
 		assertContains("qliphoth communion should render its sigil backdrop before anatomical veins", source,
 				"renderQliphothCommunionBackdrop(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);");
 		assertBefore("qliphoth sigils should render behind blue veins", source,
-				"renderQliphothCommunionBackdrop(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);",
+				"renderBeforeSharedLayers(context);",
 				"renderBlueVeins(poseStack, tesselator, f, skyDistance, blueVeinDepthLayers, theme);");
 		assertContains("renderer should read synced pome count for qliphoth sky", source,
 				"int qliphothPomeCount = ChamberOfWillClientData.qliphothPomesConsumed();");
@@ -210,7 +221,7 @@ public final class ChamberOfWillEffectsSourceTest {
 				"renderQliphothCommunionSky(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);");
 		assertBefore("qliphoth black holes should still render after blood vessels", source,
 				"renderBloodVessels(poseStack, tesselator, f, skyDistance, membranePulse, bloodVesselDepthLayers, theme);",
-				"renderQliphothCommunionSky(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);");
+				"renderAfterSharedLayers(context);");
 		assertContains("qliphoth communion should add a faint constellation sigil layer", source,
 				"renderQliphothConstellationSigils(poseStack, tesselator, time, skyDistance, pomeCount);");
 		assertContains("qliphoth constellation sigils should render on each skybox face", source,
@@ -307,9 +318,9 @@ public final class ChamberOfWillEffectsSourceTest {
 		assertContains("qliphoth final tendrils should get a controlled lateral endpoint offset", source,
 				".add(twist.scale((finalHole ? 18.0D : 2.2D)");
 		assertContains("qliphoth small tendrils should be long enough to escape the black-hole lens disk", source,
-				"private static final double QLIPHOTH_SMALL_TENDRIL_PULL = 58.0D;");
+				"static final double QLIPHOTH_SMALL_TENDRIL_PULL = 58.0D;");
 		assertContains("qliphoth final tendrils should be shorter while still escaping the massive lens disk", source,
-				"private static final double QLIPHOTH_FINAL_TENDRIL_PULL = 68.0D;");
+				"static final double QLIPHOTH_FINAL_TENDRIL_PULL = 68.0D;");
 		assertContains("qliphoth tendril pull should use the long lens-escape constants", source,
 				"double pull = finalHole ? QLIPHOTH_FINAL_TENDRIL_PULL : QLIPHOTH_SMALL_TENDRIL_PULL;");
 		assertContains("qliphoth hutoslib tendrils should be emitted as 3D tube quads in sky coordinates",
@@ -392,25 +403,25 @@ public final class ChamberOfWillEffectsSourceTest {
         assertNotContains("silent archon cloud deck should not keep the old horizon placement", source,
                 "float horizonY = -skyDistance * 0.36F;");
         assertContains("distant silhouettes should use simple color geometry", source,
-                "private static void renderDistantMonolithSilhouetteGeometry(");
+                "static void renderDistantMonolithSilhouetteGeometry(");
         assertContains("distant silhouettes should avoid the animated monolith shader path", source,
                 "BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);");
         assertContains("distant silhouettes should include haze-faded alpha", source,
                 "int alpha = (int) Mth.clamp(Mth.lerp(depthT, 26.0F, 82.0F)");
         assertContains("distant silhouettes should be rendered before foreground animated pillars", source,
-                "renderSilentArchonDepthEffects(poseStack, tesselator, f, skyDistance, theme);\n        RenderSystem.depthMask(true);\n        if (theme.renderMonolithPillars())");
+                "renderAfterNebula(context);\n\t\tRenderSystem.depthMask(true);\n\t\trenderBeforeSharedLayers(context);");
         assertNotContains("dead volumetric fog pass should not stay in the visible Silent Archon foreground stack", source,
                 "renderSilentArchonVolumetricFog(poseStack, tesselator, f, skyDistance, theme);");
         assertNotContains("old foreground wisps should not stack with the procedural storm cloud bank", source,
                 "renderSilentArchonForegroundCloudWisps(poseStack, tesselator, f, skyDistance, theme);");
         assertContains("foreground storm clouds should render after foreground animated pillars", source,
-                "renderSilentArchonMonolithPillars(poseStack, f, skyDistance, theme);\n        }\n        renderSilentArchonForegroundStormClouds(poseStack, f, skyDistance, theme);");
+                "renderSilentArchonMonolithPillars(poseStack, f, skyDistance, theme);\n\t\t}\n\t\trenderSilentArchonForegroundStormClouds(poseStack, f, skyDistance, theme);");
         assertContains("volumetric fog should be Silent Archon gated through the active biome/effects theme", source,
                 "if (!isSilentArchonFogTheme())");
         assertContains("Silent Archon dimension fog should tint toward pale blue-green biome fog", source,
                 "return new Vec3(0.52D, 0.66D, 0.68D).scale");
         assertContains("Silent Archon dimension fog should not enable vanilla fog on monolith shaders", source,
-                "public boolean isFoggyAt(int x, int y) {\n        return false;");
+                "default boolean isFoggyAt(int x, int y) {\n\t\treturn false;");
         assertNotContains("Silent Archon fog must not drive global fogginess because monolith shader uses linear_fog", source,
                 "public boolean isFoggyAt(int x, int y) {\n        return isSilentArchonFogTheme();");
         assertContains("volumetric fog should use the Silent Archon fog render type", source,
@@ -508,9 +519,9 @@ public final class ChamberOfWillEffectsSourceTest {
         assertContains("renderer draws scattered pillar layer", source,
                 "renderSilentArchonMonolithPillars(poseStack, f, skyDistance, theme);");
         assertContains("sky overlay haze should not write depth before monolith pillars", source,
-                "RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);\n        RenderSystem.depthMask(false);");
+                "RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);\n\t\tRenderSystem.depthMask(false);");
         assertContains("sky overlay depth writes should be restored before monolith pillars", source,
-                "RenderSystem.depthMask(true);\n        if (theme.renderMonolithPillars())");
+                "RenderSystem.depthMask(true);\n\t\trenderBeforeSharedLayers(context);");
 		assertContains("membrane pulse should restore blending after shader render types clear state",
 				membranePulseSource,
 				"RenderSystem.enableBlend();\n        RenderSystem.disableDepthTest();");
@@ -558,6 +569,10 @@ public final class ChamberOfWillEffectsSourceTest {
         assertNotContains("pillar faces must not compute independent right-edge radii", source,
                 "float r1 = radius * (0.86F + ((seed + side * 23 + 3) % 7) * 0.035F);");
     }
+
+	private static String read(Path path) throws IOException {
+		return Files.readString(path).replace("\r\n", "\n");
+	}
 
     private static void assertContains(String label, String source, String expected) {
         if (!source.contains(expected)) {

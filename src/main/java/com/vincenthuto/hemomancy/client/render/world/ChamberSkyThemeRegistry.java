@@ -27,24 +27,27 @@ public final class ChamberSkyThemeRegistry {
 			Hemomancy.rloc("textures/environment/qliphoth_communion_clouds.png");
 
 	private static final Map<ResourceLocation, ChamberSkyTheme> THEMES = new LinkedHashMap<>();
-	public static final ChamberSkyTheme DEFAULT = register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_WILL_DEFAULT)
+	private static final Map<ResourceLocation, ChamberThemeEffects> EFFECTS = new LinkedHashMap<>();
+	public static final ChamberSkyTheme DEFAULT = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_WILL_DEFAULT)
 			.skybox(0xFF454545, 0xFF808080)
 			.nebula(0x362E00, 0x801A00, 0x2E2600)
 			.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
 			.pulse(1.0F)
 			.layers(1, 2, 2, 3)
-			.build());
+			.build();
 
 	static {
-		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_ARCHON_REVELATION)
+		register(DEFAULT, new WillDefaultChamberEffects(DEFAULT));
+		ChamberSkyTheme archonRevelation = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_ARCHON_REVELATION)
 				.skybox(0xFF3D3338, 0xFF8A6E72)
 				.nebula(0x3E2606, 0x8C1E16, 0x5B3A10)
 				.tints(0xFFE8D8, 0xFFD5EE, 0xC9D7FF, 0xFFE3A8)
 				.pulse(1.15F)
 				.motion(1.08F)
 				.layers(2, 2, 2, 3)
-				.build());
-		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION)
+				.build();
+		register(archonRevelation, new ArchonRevelationChamberEffects(archonRevelation));
+		ChamberSkyTheme qliphothCommunion = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION)
 				.textures(QLIPHOTH_COMMUNION_SKY, QLIPHOTH_COMMUNION_CLOUDS, DEFAULT_WISP, DEFAULT_NOISE)
 				.skybox(0xFF2C2635, 0xFF6D5F86)
 				.nebula(0x271238, 0x4C1138, 0x64510D)
@@ -52,8 +55,9 @@ public final class ChamberSkyThemeRegistry {
 				.pulse(1.35F)
 				.motion(0.92F)
 				.layers(2, 1, 3, 0)
-				.build());
-		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_SILENT_ARCHON)
+				.build();
+		register(qliphothCommunion, new QliphothCommunionChamberEffects(qliphothCommunion));
+		ChamberSkyTheme silentArchon = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_SILENT_ARCHON)
 				.textures(SILENT_ARCHON_SKY, SILENT_ARCHON_CLOUDS, SILENT_ARCHON_CLOUDS, DEFAULT_NOISE)
 				.skybox(0xFF5F7472, 0xFF8CA6A2)
 				.nebula(0x223031, 0x33484A, 0x55706D)
@@ -63,22 +67,25 @@ public final class ChamberSkyThemeRegistry {
 				.layers(0, 0, 0, 0)
 				.monolithPillars(16)
 				.toggles(true, false, true, false)
-				.build());
-		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_APOTHEOS)
+				.build();
+		register(silentArchon, new SilentArchonChamberEffects(silentArchon));
+		ChamberSkyTheme apotheos = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_APOTHEOS)
 				.skybox(0xFF251B2B, 0xFF8C5E9E)
 				.nebula(0x35124A, 0x7A154A, 0x8A7011)
 				.tints(0xF1B8FF, 0xFF9BE4, 0xB3BBFF, 0xFFF3A8)
 				.pulse(1.7F)
 				.motion(1.22F)
 				.layers(2, 2, 3, 4)
-				.build());
+				.build();
+		register(apotheos, new ApotheosChamberEffects(apotheos));
 	}
 
 	private ChamberSkyThemeRegistry() {
 	}
 
-	public static ChamberSkyTheme register(ChamberSkyTheme theme) {
+	private static ChamberSkyTheme register(ChamberSkyTheme theme, ChamberThemeEffects effects) {
 		THEMES.put(theme.id(), theme);
+		EFFECTS.put(theme.id(), effects);
 		return theme;
 	}
 
@@ -88,5 +95,13 @@ public final class ChamberSkyThemeRegistry {
 
 	public static ChamberSkyTheme activeTheme() {
 		return byId(ChamberOfWillClientData.skyTheme());
+	}
+
+	public static ChamberThemeEffects effectsById(ResourceLocation id) {
+		return EFFECTS.getOrDefault(id, EFFECTS.get(DEFAULT.id()));
+	}
+
+	public static ChamberThemeEffects activeEffects() {
+		return effectsById(ChamberOfWillClientData.skyTheme());
 	}
 }

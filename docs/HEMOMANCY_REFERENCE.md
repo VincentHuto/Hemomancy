@@ -562,7 +562,7 @@ The Chamber of Will is not the Fungal Dimension. It is a stable psychic/vascular
 - V1 is caster-only. Future rites that pull nearby players or mobs into the caster's chamber should build on an explicit owner/guest model instead of reusing the caster-only assumptions.
 
 **Dynamic sky themes:**
-The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`, so new themes can be added as data-shaped Java definitions without rewriting renderer logic. Theme fields cover sky/cloud/noise textures, skybox/cloud/nebula colors, vascular/neural tints, pulse and motion multipliers, layer counts, and layer toggles.
+The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`, so new themes can be added as data-shaped Java definitions without rewriting renderer logic. Each registered Chamber sky theme also owns a `ChamberThemeEffects` strategy, keeping theme-specific passes such as Qliphoth black holes or Silent Archon storm strata out of the dimension wrapper. Theme fields cover sky/cloud/noise textures, skybox/cloud/nebula colors, vascular/neural tints, pulse and motion multipliers, layer counts, and layer toggles.
 
 | Progression State | Theme ID | Room Tier |
 |---|---:|---:|
