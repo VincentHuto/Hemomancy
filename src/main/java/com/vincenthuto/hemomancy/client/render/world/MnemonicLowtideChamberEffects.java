@@ -98,6 +98,7 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 
 		renderMnemonicLowtideSkullVault(poseStack, tesselator, time, skyDistance, theme);
 		renderMnemonicLowtideBlackFluid(poseStack, tesselator, time, skyDistance, theme);
+		renderMnemonicLowtideHorizonHaze(poseStack, tesselator, time, skyDistance);
 		renderMnemonicLowtideNerveRoots(poseStack, tesselator, time, skyDistance);
 		renderMnemonicLowtideOutposts(poseStack, tesselator, time, skyDistance);
 		renderMnemonicLowtideArteryBridges(poseStack, tesselator, time, skyDistance);
@@ -238,6 +239,51 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 			}
 		}
 		bufferSource.endBatch(renderType);
+	}
+
+	static void renderMnemonicLowtideHorizonHaze(PoseStack poseStack, Tesselator tesselator, float time,
+			float skyDistance) {
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		Matrix4f matrix = poseStack.last().pose();
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		float half = skyDistance * 1.55F;
+
+		// 5 stacked haze quads rising from the fluid surface to hide the hard horizon seam
+		for (int layer = 0; layer < 5; layer++) {
+			float t = layer / 4.0F;
+			float yBottom = -skyDistance * Mth.lerp(t, 0.660F, 0.510F);
+			float yTop    = -skyDistance * Mth.lerp(t, 0.630F, 0.480F);
+			int r = (int) Mth.lerp(t, 55.0F, 18.0F);
+			int g = (int) Mth.lerp(t, 14.0F,  4.0F);
+			int b = (int) Mth.lerp(t, 10.0F,  3.0F);
+			int alpha = (int) Mth.lerp(t, 22.0F, 8.0F);
+			addLowtideGroundQuad(buffer, matrix, -half, yBottom, half, yTop, 0.0F, r, g, b, alpha);
+		}
+
+		// Fog floor: wide shallow quad just above the fluid plane to blur the transition
+		float fogFloorY = -skyDistance * 0.630F;
+		addLowtideGroundQuad(buffer, matrix, -half, -half, half, half, fogFloorY, 28, 7, 5, 18);
+
+		// Gentle lateral haze on inner side walls to soften the box corners
+		for (int side = 0; side < 4; side++) {
+			float angle  = side * Mth.HALF_PI;
+			float cosA   = Mth.cos(angle);
+			float sinA   = Mth.sin(angle);
+			float wallDist = skyDistance * 0.96F;
+			float wallX0 = cosA * wallDist - sinA * half;
+			float wallZ0 = sinA * wallDist + cosA * half;
+			float wallX1 = cosA * wallDist + sinA * half;
+			float wallZ1 = sinA * wallDist - cosA * half;
+			float topY   = -skyDistance * 0.30F;
+			float botY   = -skyDistance * 0.68F;
+			buffer.addVertex(matrix, wallX0, botY, wallZ0).setColor(22, 5, 4, 20);
+			buffer.addVertex(matrix, wallX0, topY, wallZ0).setColor(22, 5, 4, 0);
+			buffer.addVertex(matrix, wallX1, topY, wallZ1).setColor(22, 5, 4, 0);
+			buffer.addVertex(matrix, wallX1, botY, wallZ1).setColor(22, 5, 4, 20);
+		}
+
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	static void renderMnemonicLowtideMemoryFragments(PoseStack poseStack, Tesselator tesselator, float time,
