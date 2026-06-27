@@ -401,24 +401,56 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		Matrix4f matrix = poseStack.last().pose();
-		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 		Random random = new Random(0x0F710571L);
 		float baseY = -skyDistance * 0.58F;
 		for (int outpost = 0; outpost < 13; outpost++) {
-			float angle = outpost / 13.0F * Mth.TWO_PI + Mth.lerp(random.nextFloat(), -0.14F, 0.14F);
-			float distance = skyDistance * Mth.lerp(random.nextFloat(), 0.55F, 1.10F);
-			Vec3 center = new Vec3(Mth.cos(angle) * distance, baseY,
-					Mth.sin(angle) * distance);
-			Vec3 right = new Vec3(-Mth.sin(angle), 0.0D, Mth.cos(angle)).normalize();
-			Vec3 up = new Vec3(0.0D, 1.0D, 0.0D);
-			float scale = skyDistance * Mth.lerp(random.nextFloat(), 0.018F, 0.045F);
-			int alpha = (int) Mth.clamp(Mth.lerp(distance / skyDistance, 84.0F, 42.0F), 30.0F, 92.0F);
-			addLowtideBillboardQuad(buffer, matrix, center.add(up.scale(scale * 0.74F)), right, up,
-					scale * 0.52F, scale * 0.74F, 13, 10, 10, alpha);
-			addLowtideBillboardQuad(buffer, matrix, center.add(right.scale(scale * 0.52F)).add(up.scale(scale * 1.18F)),
-					right, up, scale * 0.18F, scale * 1.12F, 16, 12, 10, alpha);
-			addLowtideBillboardQuad(buffer, matrix, center.subtract(right.scale(scale * 0.46F)).add(up.scale(scale * 0.98F)),
-					right, up, scale * 0.14F, scale * 0.88F, 16, 12, 10, alpha - 8);
+			float angle    = outpost / 13.0F * Mth.TWO_PI + Mth.lerp(random.nextFloat(), -0.14F, 0.14F);
+			float distance = skyDistance * Mth.lerp(random.nextFloat(), 0.72F, 1.25F);
+			Vec3 center    = new Vec3(Mth.cos(angle) * distance, baseY, Mth.sin(angle) * distance);
+			Vec3 right     = new Vec3(-Mth.sin(angle), 0.0D, Mth.cos(angle)).normalize();
+			Vec3 up        = new Vec3(0.0D, 1.0D, 0.0D);
+			float scale    = skyDistance * Mth.lerp(random.nextFloat(), 0.022F, 0.058F);
+			int alpha      = (int) Mth.clamp(Mth.lerp(distance / skyDistance, 68.0F, 28.0F), 24.0F, 72.0F);
+
+			// Gothic spire: 5-layer stacked profile
+			// 1. Wide base platform
+			addLowtideBillboardQuad(buffer, matrix,
+					center.add(up.scale(scale * 0.08F)), right, up,
+					scale * 0.62F, scale * 0.08F, 52, 34, 22, alpha);
+			// 2. Main tower body
+			addLowtideBillboardQuad(buffer, matrix,
+					center.add(up.scale(scale * 0.62F)), right, up,
+					scale * 0.36F, scale * 0.54F, 46, 30, 20, alpha);
+			// 3. Upper tower (narrower)
+			addLowtideBillboardQuad(buffer, matrix,
+					center.add(up.scale(scale * 1.35F)), right, up,
+					scale * 0.22F, scale * 0.42F, 52, 34, 22, alpha);
+			// 4. Narrow spire shaft
+			addLowtideBillboardQuad(buffer, matrix,
+					center.add(up.scale(scale * 1.98F)), right, up,
+					scale * 0.09F, scale * 0.52F, 58, 38, 24, alpha);
+			// 5. Spire tip — 3D stroke to a pointed top
+			Vec3 shaftTop   = center.add(up.scale(scale * 2.50F));
+			Vec3 spirePoint = center.add(up.scale(scale * 2.95F));
+			addLowtide3DStroke(buffer, matrix,
+					(float) shaftTop.x,   (float) shaftTop.y,   (float) shaftTop.z,
+					(float) spirePoint.x, (float) spirePoint.y, (float) spirePoint.z,
+					scale * 0.055F, 62, 42, 26, alpha / 2);
+
+			// Small flanking turret on 2 out of 3 outposts
+			if (outpost % 3 != 2) {
+				Vec3 turretCenter = center.add(right.scale(scale * 0.58F));
+				addLowtideBillboardQuad(buffer, matrix,
+						turretCenter.add(up.scale(scale * 0.78F)), right, up,
+						scale * 0.14F, scale * 0.72F, 42, 26, 18, alpha * 2 / 3);
+				Vec3 turretTop   = turretCenter.add(up.scale(scale * 1.52F));
+				Vec3 turretPoint = turretCenter.add(up.scale(scale * 1.88F));
+				addLowtide3DStroke(buffer, matrix,
+						(float) turretTop.x,   (float) turretTop.y,   (float) turretTop.z,
+						(float) turretPoint.x, (float) turretPoint.y, (float) turretPoint.z,
+						scale * 0.040F, 55, 34, 20, alpha / 3);
+			}
 		}
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
