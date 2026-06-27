@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 public final class ChamberOfWillEffectsSourceTest {
     private static final Path RENDERER = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffects.java");
+	private static final Path CLIENT_EVENTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
     private static final Path THEME = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberSkyTheme.java");
     private static final Path REGISTRY = Path.of(
@@ -23,16 +25,25 @@ public final class ChamberOfWillEffectsSourceTest {
             "src/main/resources/assets/hemomancy/shaders/core/world/silent_archon_fog.fsh");
     private static final Path SILENT_ARCHON_STORM_CLOUD_FRAGMENT = Path.of(
             "src/main/resources/assets/hemomancy/shaders/core/world/silent_archon_storm_cloud.fsh");
-    private static final Path SILENT_ARCHON_SKY_TEXTURE = Path.of(
-            "src/main/resources/assets/hemomancy/textures/environment/silent_archon_sky.png");
-    private static final Path SILENT_ARCHON_CLOUD_TEXTURE = Path.of(
-            "src/main/resources/assets/hemomancy/textures/environment/silent_archon_clouds.png");
+	private static final Path SILENT_ARCHON_SKY_TEXTURE = Path.of(
+			"src/main/resources/assets/hemomancy/textures/environment/silent_archon_sky.png");
+	private static final Path SILENT_ARCHON_CLOUD_TEXTURE = Path.of(
+			"src/main/resources/assets/hemomancy/textures/environment/silent_archon_clouds.png");
+	private static final Path QLIPHOTH_SKY_TEXTURE = Path.of(
+			"src/main/resources/assets/hemomancy/textures/environment/qliphoth_communion_sky.png");
+	private static final Path QLIPHOTH_CLOUD_TEXTURE = Path.of(
+			"src/main/resources/assets/hemomancy/textures/environment/qliphoth_communion_clouds.png");
+	private static final Path QLIPHOTH_BLACK_HOLE_SHADER = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/qliphoth_black_hole.json");
+	private static final Path QLIPHOTH_BLACK_HOLE_FRAGMENT = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/qliphoth_black_hole.fsh");
 
     private ChamberOfWillEffectsSourceTest() {
     }
 
     public static void main(String[] args) throws IOException {
         String source = Files.readString(RENDERER).replace("\r\n", "\n");
+		String clientEvents = Files.readString(CLIENT_EVENTS).replace("\r\n", "\n");
         String theme = Files.readString(THEME).replace("\r\n", "\n");
         String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
         String renderTypes = Files.readString(RENDER_TYPES).replace("\r\n", "\n");
@@ -41,10 +52,18 @@ public final class ChamberOfWillEffectsSourceTest {
                 ? Files.readString(SILENT_ARCHON_FOG_SHADER).replace("\r\n", "\n") : "";
         String fogFragment = Files.exists(SILENT_ARCHON_FOG_FRAGMENT)
                 ? Files.readString(SILENT_ARCHON_FOG_FRAGMENT).replace("\r\n", "\n") : "";
-        String stormCloudFragment = Files.exists(SILENT_ARCHON_STORM_CLOUD_FRAGMENT)
-                ? Files.readString(SILENT_ARCHON_STORM_CLOUD_FRAGMENT).replace("\r\n", "\n") : "";
-        String nebulaFaceSource = source.substring(source.indexOf("private static float renderNebulaFace"),
-                source.indexOf("private static Vector3f colorVector"));
+		String stormCloudFragment = Files.exists(SILENT_ARCHON_STORM_CLOUD_FRAGMENT)
+				? Files.readString(SILENT_ARCHON_STORM_CLOUD_FRAGMENT).replace("\r\n", "\n") : "";
+		String qliphothBlackHoleShader = Files.exists(QLIPHOTH_BLACK_HOLE_SHADER)
+				? Files.readString(QLIPHOTH_BLACK_HOLE_SHADER).replace("\r\n", "\n") : "";
+		String qliphothBlackHoleFragment = Files.exists(QLIPHOTH_BLACK_HOLE_FRAGMENT)
+				? Files.readString(QLIPHOTH_BLACK_HOLE_FRAGMENT).replace("\r\n", "\n") : "";
+		String nebulaFaceSource = source.substring(source.indexOf("private static float renderNebulaFace"),
+				source.indexOf("private static Vector3f colorVector"));
+		String membranePulseSource = source.substring(source.indexOf("private static void renderMembranePulseVignette"),
+				source.indexOf("private static void renderMembranePulseFace"));
+		String qliphothSmallHoleSource = source.substring(source.indexOf("private static void renderQliphothSmallBlackHole"),
+				source.indexOf("private static void renderQliphothResidualRing"));
         String silentArchonFogRenderTypeSource = renderTypes.substring(
                 renderTypes.indexOf("public static RenderType silentArchonVolumetricFog"),
                 renderTypes.indexOf("private static void setUniform"));
@@ -168,12 +187,184 @@ public final class ChamberOfWillEffectsSourceTest {
                 ".layers(0, 0, 0, 0)");
         assertContains("silent archon should render monolith pillars", registry,
                 ".monolithPillars(16)");
-        assertContains("silent archon should use a dedicated calm sky texture", registry,
-                "SILENT_ARCHON_SKY");
-        assertContains("silent archon should use a dedicated soft cloud texture", registry,
-                "SILENT_ARCHON_CLOUDS");
-        assertContains("silent archon should keep harsh noise out of visible background textures", registry,
-                ".textures(SILENT_ARCHON_SKY, SILENT_ARCHON_CLOUDS, SILENT_ARCHON_CLOUDS, DEFAULT_NOISE)");
+		assertContains("silent archon should use a dedicated calm sky texture", registry,
+				"SILENT_ARCHON_SKY");
+		assertContains("silent archon should use a dedicated soft cloud texture", registry,
+				"SILENT_ARCHON_CLOUDS");
+		assertContains("qliphoth communion should use a dedicated dark sky texture", registry,
+				"QLIPHOTH_COMMUNION_SKY");
+		assertContains("qliphoth communion should use a dedicated mist cloud texture", registry,
+				"QLIPHOTH_COMMUNION_CLOUDS");
+		assertContains("qliphoth communion theme should bind dedicated textures", registry,
+				".textures(QLIPHOTH_COMMUNION_SKY, QLIPHOTH_COMMUNION_CLOUDS, DEFAULT_WISP, DEFAULT_NOISE)");
+		assertContains("qliphoth communion sigils should replace the normal neural structure layer", registry,
+				".layers(2, 1, 3, 0)");
+		assertContains("qliphoth communion should render its sigil backdrop before anatomical veins", source,
+				"renderQliphothCommunionBackdrop(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);");
+		assertBefore("qliphoth sigils should render behind blue veins", source,
+				"renderQliphothCommunionBackdrop(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);",
+				"renderBlueVeins(poseStack, tesselator, f, skyDistance, blueVeinDepthLayers, theme);");
+		assertContains("renderer should read synced pome count for qliphoth sky", source,
+				"int qliphothPomeCount = ChamberOfWillClientData.qliphothPomesConsumed();");
+		assertContains("renderer should draw qliphoth communion sky additions", source,
+				"renderQliphothCommunionSky(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);");
+		assertBefore("qliphoth black holes should still render after blood vessels", source,
+				"renderBloodVessels(poseStack, tesselator, f, skyDistance, membranePulse, bloodVesselDepthLayers, theme);",
+				"renderQliphothCommunionSky(poseStack, tesselator, f, skyDistance, theme, qliphothPomeCount);");
+		assertContains("qliphoth communion should add a faint constellation sigil layer", source,
+				"renderQliphothConstellationSigils(poseStack, tesselator, time, skyDistance, pomeCount);");
+		assertContains("qliphoth constellation sigils should render on each skybox face", source,
+				"renderQliphothConstellationSigilFace(poseStack, tesselator, time, skyDistance, face, pomeCount);");
+		assertContains("qliphoth constellation sigils should subtly lens toward migrating small holes", source,
+				"qliphothSigilLensPull(time, pomeCount, yaw, pitch)");
+		assertContains("qliphoth sigils should render as visible black and red goetic seals", source,
+				"addQliphothGoeticSealStroke(buffer, matrix,");
+		assertContains("qliphoth sigils should add radial rune bars instead of star-only constellations", source,
+				"addQliphothGoeticRuneBar(buffer, matrix,");
+		assertContains("qliphoth sigils should use organic curves instead of polygonal outlines", source,
+				"addQliphothOrganicSigilCurve(buffer, matrix,");
+		assertContains("qliphoth sigils should use curled terminals like ars goetic sigils", source,
+				"addQliphothOrganicSigilCurl(buffer, matrix,");
+		assertContains("qliphoth sigils should choose a stable randomized seal grammar", source,
+				"int variant = random.nextInt(8);");
+		assertContains("qliphoth sigils should include a hooked bar variant", source,
+				"renderQliphothHookedBarSigil(buffer, matrix,");
+		assertContains("qliphoth sigils should include a crowned loop variant", source,
+				"renderQliphothCrownedLoopSigil(buffer, matrix,");
+		assertContains("qliphoth sigils should include a forked pendant variant", source,
+				"renderQliphothForkedPendantSigil(buffer, matrix,");
+		assertContains("qliphoth sigils should include a ladder scroll variant", source,
+				"renderQliphothLadderScrollSigil(buffer, matrix,");
+		assertContains("qliphoth sigils should include a crescent hook variant", source,
+				"renderQliphothCrescentHookSigil(buffer, matrix,");
+		assertContains("qliphoth sigils should include a trident knot variant", source,
+				"renderQliphothTridentKnotSigil(buffer, matrix,");
+		assertContains("qliphoth sigils should include a stepped key variant", source,
+				"renderQliphothSteppedKeySigil(buffer, matrix,");
+		assertContains("qliphoth sigils should lens individual organic control points", source,
+				"qliphothOrganicSigilPoint(centerX, centerZ, radius, rotation,");
+		assertContains("qliphoth sigils should use yellow nodes instead of blood-red or ritual-gold stars", source,
+				"nodeRadius, 255, 214, 54, nodeAlpha);");
+		assertContains("qliphoth sigil strokes should use yellow ink over black shadows", source,
+				"0xFFD63A, redAlpha");
+		assertContains("qliphoth sky pass should be gated by theme id", source,
+				"if (!ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION.equals(theme.id()))");
+		assertContains("qliphoth sky should render one small hole per first eight pomes", source,
+				"int smallHoleCount = Math.min(8, pomeCount);");
+		assertContains("qliphoth final state should render residual absorbed rings", source,
+				"renderQliphothResidualRing(");
+		assertContains("qliphoth final state should render the massive zenith black hole", source,
+				"renderQliphothZenithBlackHole(");
+		assertContains("qliphoth final black hole should be anchored above the player, not below the world", source,
+				"renderQliphothZenithBlackHoleBillboard(");
+		assertContains("qliphoth final black hole should render as a screen-facing disk instead of a side-on sky tangent",
+				source,
+				"Vec3 right = new Vec3(camera.getLeftVector()).scale(-halfSize);");
+		assertContains("qliphoth final black hole should use camera up vector for a flat billboard",
+				source,
+				"Vec3 up = new Vec3(camera.getUpVector()).scale(halfSize);");
+		assertContains("qliphoth final black hole half size should retain the massive zenith scale", source,
+				"return skyDistance * 0.435F * pulse;");
+		assertNotContains("qliphoth sky renderer should not use the retired custom tendril mesh pass", source,
+				"renderQliphothTendrils(");
+		assertNotContains("qliphoth sky tendrils should not use persistent world-render anchors", clientEvents,
+				"QliphothSkyTendrilRenderer.render(partialTick);");
+		assertContains("qliphoth sky tendrils should render in the sky pass with the black holes", source,
+				"renderQliphothSkyTendrils(poseStack, tesselator, time, skyDistance, pomeCount);");
+		assertContains("qliphoth sky tendrils should use HutosLib tube geometry without the world-effect queue", source,
+				"TendrilGeometry.generate(sourceAtBlackHole, targetTowardCamera, config");
+		assertContains("qliphoth tendrils should use point anchors generated from black-hole sky directions",
+				source,
+				"Vec3 anchor = new Vec3(skyPoint.x, skyPoint.y, skyPoint.z);");
+		assertContains("qliphoth small tendrils should share the rendered black-hole seed",
+				source,
+				"qliphothSmallBlackHoleSeed(hole)");
+		assertContains("qliphoth small tendrils should share the rendered black-hole radius",
+				source,
+				"qliphothSmallBlackHoleHalfSize(time, skyDistance, hole, direction, pomeCount >= 9)");
+		assertContains("qliphoth small black holes should migrate slowly from their base sky directions", source,
+				"static float[] qliphothMigratedSmallBlackHoleDirection(float time, int hole, float[] direction)");
+		assertContains("qliphoth small tendrils should follow the same migrated direction as their black holes",
+				source,
+				"renderQliphothSkyTendrilCluster(buffer, matrix, time, skyDistance, migratedDirection[0], migratedDirection[1]");
+		assertContains("qliphoth small black-hole billboards should render at migrated directions", source,
+				"migratedDirection[0], migratedDirection[1], halfSize, 255");
+		assertContains("qliphoth residual small holes should also migrate after final communion", source,
+				"migratedDirection[0], migratedDirection[1], halfSize, 82");
+		assertContains("qliphoth migration should clamp pitch to stay in the visible skybox band", source,
+				"Mth.clamp(direction[1] + pitchDrift, -54.0F, 58.0F)");
+		assertContains("qliphoth hutoslib tendrils should pull inward toward the camera", source,
+				"anchor.subtract(forward.scale(pull))");
+		assertContains("qliphoth hutoslib tendrils should explicitly start inside the black-hole rim",
+				source,
+				"Vec3 sourceAtBlackHole = anchor.add(forward.scale(2.0D)).add(rim.scale(finalHole ? 0.58D : 0.18D));");
+		assertContains("qliphoth hutoslib tendrils should explicitly end toward the player",
+				source,
+				"Vec3 targetTowardCamera = anchor.subtract(forward.scale(pull))");
+		assertContains("qliphoth final tendrils should arc around the massive rim instead of crossing the center",
+				source,
+				".add(rim.scale(finalHole ? 1.12D : 0.46D))");
+		assertContains("qliphoth final tendrils should get a controlled lateral endpoint offset", source,
+				".add(twist.scale((finalHole ? 18.0D : 2.2D)");
+		assertContains("qliphoth small tendrils should be long enough to escape the black-hole lens disk", source,
+				"private static final double QLIPHOTH_SMALL_TENDRIL_PULL = 58.0D;");
+		assertContains("qliphoth final tendrils should be shorter while still escaping the massive lens disk", source,
+				"private static final double QLIPHOTH_FINAL_TENDRIL_PULL = 68.0D;");
+		assertContains("qliphoth tendril pull should use the long lens-escape constants", source,
+				"double pull = finalHole ? QLIPHOTH_FINAL_TENDRIL_PULL : QLIPHOTH_SMALL_TENDRIL_PULL;");
+		assertContains("qliphoth hutoslib tendrils should be emitted as 3D tube quads in sky coordinates",
+				source,
+				"TendrilGeometry.createTubeQuads(strand, 1.0F)");
+		assertContains("qliphoth hutoslib tendrils should keep final black-hole strand count higher",
+				source,
+				"int tendrilCount = finalHole ? 9 : 2;");
+		assertContains("qliphoth final tendril tubes should be singular wide strands, not paired rails",
+				source,
+				".withShape(finalHole ? 36 : 18, 1, finalHole ? 0.155F : 0.052F, finalHole ? 0.18F : 0.10F)");
+		assertNotContains("qliphoth final tendrils must not use two HutosLib strands per tendril",
+				source,
+				"finalHole ? 2 : 1");
+		assertContains("qliphoth final tendrils should use high curl so the massive hole does not render straight spokes",
+				source,
+				"finalHole ? 4.0F : 0.46F");
+		assertContains("qliphoth final tendrils should use high writhe amplitude at final-hole scale",
+				source,
+				"finalHole ? 2.0F : 0.10F");
+		assertContains("qliphoth final tendrils should writhe faster now that they are shorter", source,
+				"finalHole ? 0.095F : 0.045F");
+		assertNotContains("qliphoth sky tendrils should not add live camera position to their anchors", source,
+				"anchor = camera.add");
+		assertContains("qliphoth tendril anchors should mirror the black-hole billboard transform on X", source,
+				"-Mth.sin(yawRadians) * horizontal * distance");
+		assertContains("qliphoth tendril anchors should mirror the black-hole billboard transform on Z", source,
+				"-Mth.cos(yawRadians) * horizontal * distance");
+		assertContains("qliphoth black holes must use shader render type", source,
+				"HemoRenderTypes.qliphothBlackHole(");
+		assertContains("qliphoth shader should be registered", shaderInit,
+				"QLIPHOTH_BLACK_HOLE.createInstance(provider)");
+		assertContains("qliphoth render type should use qliphoth shader holder", renderTypes,
+				"ShaderInit.QLIPHOTH_BLACK_HOLE.getShard()");
+		assertContains("qliphoth black hole shader json should sample the theme sky texture", qliphothBlackHoleShader,
+				"\"Sampler0\"");
+		assertContains("qliphoth black hole shader should warp sampled sky uvs", qliphothBlackHoleFragment,
+				"vec2 lensedUv");
+		assertContains("qliphoth black hole shader should use a strong radial lens offset, not only swirl motion",
+				qliphothBlackHoleFragment,
+				"vec2 lensOffset = lensDirection * lensAmount * mix(0.54, 0.82, FinalHole);");
+		assertContains("qliphoth black hole shader should chromatically split lensed sky samples",
+				qliphothBlackHoleFragment,
+				"texture(Sampler0, fract(lensedUv + lensDirection * chromaticOffset)).r");
+		assertContains("qliphoth black hole shader should keep the lensed background visible outside the event horizon",
+				qliphothBlackHoleFragment,
+				"float lensWindow = (1.0 - smoothstep(coreRadius + 0.30, 0.92, radius)) * smoothstep(coreRadius + 0.020, coreRadius + 0.120, radius);");
+		assertContains("qliphoth black hole shader should draw a black event horizon", qliphothBlackHoleFragment,
+				"eventHorizon");
+		assertNotContains("qliphoth black holes must not be static pngs", registry,
+				"black_hole.png");
+		assertNotContains("qliphoth black holes must not be static pngs", source,
+				"black_hole.png");
+		assertContains("silent archon should keep harsh noise out of visible background textures", registry,
+				".textures(SILENT_ARCHON_SKY, SILENT_ARCHON_CLOUDS, SILENT_ARCHON_CLOUDS, DEFAULT_NOISE)");
         assertContains("silent archon should restore the brighter grey blue-green skybox", registry,
                 ".skybox(0xFF5F7472, 0xFF8CA6A2)");
         assertContains("silent archon should keep a brighter grey blue-green haze", registry,
@@ -298,10 +489,16 @@ public final class ChamberOfWillEffectsSourceTest {
                 SILENT_ARCHON_SKY_TEXTURE);
         assertSkyTextureEdgesBlend("silent archon sky texture should hide skybox face seams",
                 SILENT_ARCHON_SKY_TEXTURE);
-        assertCloudTextureAvoidsRepeatedBlobIslands("silent archon cloud texture should avoid repeated figure-eight blobs",
-                SILENT_ARCHON_CLOUD_TEXTURE);
-        assertContains("silent archon should avoid shattered rotated cloud boxes", registry,
-                ".toggles(true, false, true, false)");
+		assertCloudTextureAvoidsRepeatedBlobIslands("silent archon cloud texture should avoid repeated figure-eight blobs",
+				SILENT_ARCHON_CLOUD_TEXTURE);
+		assertQliphothSkyPalette("qliphoth sky texture should read as dark red-purple-blue mist",
+				QLIPHOTH_SKY_TEXTURE);
+		assertSkyTextureEdgesBlend("qliphoth sky texture should hide skybox face seams",
+				QLIPHOTH_SKY_TEXTURE);
+		assertQliphothCloudMist("qliphoth cloud texture should provide translucent mist",
+				QLIPHOTH_CLOUD_TEXTURE);
+		assertContains("silent archon should avoid shattered rotated cloud boxes", registry,
+				".toggles(true, false, true, false)");
         assertNotContains("silent archon must not use procedural noise as every sky texture", registry,
                 ".textures(DEFAULT_NOISE, DEFAULT_NOISE, DEFAULT_NOISE, DEFAULT_NOISE)");
         assertContains("renderer gates monolith pillars by theme", source,
@@ -314,6 +511,12 @@ public final class ChamberOfWillEffectsSourceTest {
                 "RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);\n        RenderSystem.depthMask(false);");
         assertContains("sky overlay depth writes should be restored before monolith pillars", source,
                 "RenderSystem.depthMask(true);\n        if (theme.renderMonolithPillars())");
+		assertContains("membrane pulse should restore blending after shader render types clear state",
+				membranePulseSource,
+				"RenderSystem.enableBlend();\n        RenderSystem.disableDepthTest();");
+		assertContains("small qliphoth black holes should use opaque quads so foreground roots cannot show through the event horizon",
+				qliphothSmallHoleSource,
+				"migratedDirection[0], migratedDirection[1], halfSize, 255, qliphothSmallBlackHoleSeed(hole)");
         assertContains("nebula overlays should render on every physical skybox face", source,
                 "for (int face = 0; face < 6; face++) {\n            poseStack.pushPose();\n            rotateSkyFace(poseStack, face);");
         assertContains("nebula overlays should seed each skybox face independently", source,
@@ -365,6 +568,20 @@ public final class ChamberOfWillEffectsSourceTest {
     private static void assertNotContains(String label, String source, String unexpected) {
         if (source.contains(unexpected)) {
             throw new AssertionError(label + ": still contains " + unexpected);
+        }
+    }
+
+    private static void assertBefore(String label, String source, String first, String second) {
+        int firstIndex = source.indexOf(first);
+        int secondIndex = source.indexOf(second);
+        if (firstIndex < 0) {
+            throw new AssertionError(label + ": missing first marker " + first);
+        }
+        if (secondIndex < 0) {
+            throw new AssertionError(label + ": missing second marker " + second);
+        }
+        if (firstIndex >= secondIndex) {
+            throw new AssertionError(label + ": expected " + first + " before " + second);
         }
     }
 
@@ -502,11 +719,11 @@ public final class ChamberOfWillEffectsSourceTest {
         }
     }
 
-    private static void assertRareRedBruises(String label, Path path) throws IOException {
-        BufferedImage image = ImageIO.read(path.toFile());
-        if (image == null) {
-            throw new AssertionError(label + ": could not read " + path);
-        }
+	private static void assertRareRedBruises(String label, Path path) throws IOException {
+		BufferedImage image = ImageIO.read(path.toFile());
+		if (image == null) {
+			throw new AssertionError(label + ": could not read " + path);
+		}
         int redBruisePixels = 0;
         int pixels = 0;
         for (int y = 0; y < image.getHeight(); y++) {
@@ -528,14 +745,107 @@ public final class ChamberOfWillEffectsSourceTest {
         float coverage = redBruisePixels / (float) pixels;
         if (coverage < 0.0001F || coverage > 0.045F) {
             throw new AssertionError(label + ": red bruise coverage " + coverage);
-        }
-    }
+		}
+	}
 
-    private static float luminance(int argb) {
-        int red = (argb >>> 16) & 255;
-        int green = (argb >>> 8) & 255;
-        int blue = argb & 255;
-        return red * 0.2126F + green * 0.7152F + blue * 0.0722F;
+	private static void assertQliphothSkyPalette(String label, Path path) throws IOException {
+		BufferedImage image = ImageIO.read(path.toFile());
+		if (image == null) {
+			throw new AssertionError(label + ": could not read " + path);
+		}
+		long red = 0;
+		long green = 0;
+		long blue = 0;
+		long luminanceTotal = 0;
+		int purpleBluePixels = 0;
+		int bloodMistPixels = 0;
+		int brightMistPixels = 0;
+		int pixels = 0;
+		for (int y = 0; y < image.getHeight(); y++) {
+			for (int x = 0; x < image.getWidth(); x++) {
+				int argb = image.getRGB(x, y);
+				int alpha = (argb >>> 24) & 255;
+				if (alpha == 0) {
+					continue;
+				}
+				int r = (argb >>> 16) & 255;
+				int g = (argb >>> 8) & 255;
+				int b = argb & 255;
+				int lum = Math.round(r * 0.2126F + g * 0.7152F + b * 0.0722F);
+				red += r;
+				green += g;
+				blue += b;
+				luminanceTotal += lum;
+				pixels++;
+				if (b >= 46 && r >= 34 && b > g + 8 && r > g + 4) {
+					purpleBluePixels++;
+				}
+				if (r >= 66 && r > g + 12 && r >= b - 6) {
+					bloodMistPixels++;
+				}
+				if (lum >= 74 && b > g && r > g - 8) {
+					brightMistPixels++;
+				}
+			}
+		}
+		int avgRed = Math.round(red / (float) pixels);
+		int avgGreen = Math.round(green / (float) pixels);
+		int avgBlue = Math.round(blue / (float) pixels);
+		int avgLuminance = Math.round(luminanceTotal / (float) pixels);
+		float purpleBlueCoverage = purpleBluePixels / (float) pixels;
+		float bloodMistCoverage = bloodMistPixels / (float) pixels;
+		float brightMistCoverage = brightMistPixels / (float) pixels;
+		if (avgLuminance < 28 || avgLuminance > 76 || avgGreen > avgRed - 2 || avgBlue < avgGreen + 8
+				|| purpleBlueCoverage < 0.18F || bloodMistCoverage < 0.035F || brightMistCoverage < 0.035F) {
+			throw new AssertionError(label + ": average rgb " + avgRed + "," + avgGreen + "," + avgBlue
+					+ " luminance " + avgLuminance + " purple-blue coverage " + purpleBlueCoverage
+					+ " blood coverage " + bloodMistCoverage + " bright mist coverage " + brightMistCoverage);
+		}
+	}
+
+	private static void assertQliphothCloudMist(String label, Path path) throws IOException {
+		BufferedImage image = ImageIO.read(path.toFile());
+		if (image == null) {
+			throw new AssertionError(label + ": could not read " + path);
+		}
+		int visible = 0;
+		int translucent = 0;
+		int darkPurple = 0;
+		for (int y = 0; y < image.getHeight(); y++) {
+			for (int x = 0; x < image.getWidth(); x++) {
+				int argb = image.getRGB(x, y);
+				int alpha = (argb >>> 24) & 255;
+				if (alpha <= 6) {
+					continue;
+				}
+				int red = (argb >>> 16) & 255;
+				int green = (argb >>> 8) & 255;
+				int blue = argb & 255;
+				visible++;
+				if (alpha < 210) {
+					translucent++;
+				}
+				if (red >= 28 && blue >= 34 && green <= Math.max(red, blue) - 2) {
+					darkPurple++;
+				}
+			}
+		}
+		if (visible == 0) {
+			throw new AssertionError(label + ": no visible mist pixels");
+		}
+		float translucentShare = translucent / (float) visible;
+		float darkPurpleShare = darkPurple / (float) visible;
+		if (translucentShare < 0.65F || darkPurpleShare < 0.34F) {
+			throw new AssertionError(label + ": translucent share " + translucentShare
+					+ " dark purple share " + darkPurpleShare);
+		}
+	}
+
+	private static float luminance(int argb) {
+		int red = (argb >>> 16) & 255;
+		int green = (argb >>> 8) & 255;
+		int blue = argb & 255;
+		return red * 0.2126F + green * 0.7152F + blue * 0.0722F;
     }
 
     private static void assertCloudTextureAvoidsRepeatedBlobIslands(String label, Path path) throws IOException {

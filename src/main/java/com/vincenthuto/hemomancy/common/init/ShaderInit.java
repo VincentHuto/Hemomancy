@@ -58,6 +58,10 @@ public class ShaderInit {
 	public static ShaderHolder SILENT_ARCHON_STORM_CLOUD = new ShaderHolder(Hemomancy.rloc("world/silent_archon_storm_cloud"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "CloudSeed", "CloudDensity");
 
+	public static ShaderHolder QLIPHOTH_BLACK_HOLE = new ShaderHolder(Hemomancy.rloc("world/qliphoth_black_hole"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HoleSeed", "LensStrength", "RingIntensity",
+			"FinalHole");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -82,6 +86,7 @@ public class ShaderInit {
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
+        registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

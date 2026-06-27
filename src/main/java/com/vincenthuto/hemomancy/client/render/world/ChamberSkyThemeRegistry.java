@@ -21,6 +21,10 @@ public final class ChamberSkyThemeRegistry {
 			Hemomancy.rloc("textures/environment/silent_archon_sky.png");
 	public static final ResourceLocation SILENT_ARCHON_CLOUDS =
 			Hemomancy.rloc("textures/environment/silent_archon_clouds.png");
+	public static final ResourceLocation QLIPHOTH_COMMUNION_SKY =
+			Hemomancy.rloc("textures/environment/qliphoth_communion_sky.png");
+	public static final ResourceLocation QLIPHOTH_COMMUNION_CLOUDS =
+			Hemomancy.rloc("textures/environment/qliphoth_communion_clouds.png");
 
 	private static final Map<ResourceLocation, ChamberSkyTheme> THEMES = new LinkedHashMap<>();
 	public static final ChamberSkyTheme DEFAULT = register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_WILL_DEFAULT)
@@ -41,12 +45,13 @@ public final class ChamberSkyThemeRegistry {
 				.layers(2, 2, 2, 3)
 				.build());
 		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION)
+				.textures(QLIPHOTH_COMMUNION_SKY, QLIPHOTH_COMMUNION_CLOUDS, DEFAULT_WISP, DEFAULT_NOISE)
 				.skybox(0xFF2C2635, 0xFF6D5F86)
 				.nebula(0x271238, 0x4C1138, 0x64510D)
 				.tints(0xD8B6FF, 0xE39DFF, 0xB8C7FF, 0xFFE88D)
 				.pulse(1.35F)
 				.motion(0.92F)
-				.layers(2, 1, 3, 3)
+				.layers(2, 1, 3, 0)
 				.build());
 		register(ChamberSkyTheme.builder(ChamberOfWillManager.THEME_SILENT_ARCHON)
 				.textures(SILENT_ARCHON_SKY, SILENT_ARCHON_CLOUDS, SILENT_ARCHON_CLOUDS, DEFAULT_NOISE)

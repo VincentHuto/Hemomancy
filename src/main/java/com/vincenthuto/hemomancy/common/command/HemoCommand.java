@@ -199,6 +199,15 @@ public class HemoCommand {
 
 				.then(Commands.literal("qliphoth")
 						.then(Commands.literal("pome")
+								.then(Commands.literal("set")
+										.then(Commands.argument("count", IntegerArgumentType.integer(0, 9))
+												.executes(ctx -> setPomeProgress(ctx.getSource(),
+														ctx.getSource().getPlayerOrException(),
+														IntegerArgumentType.getInteger(ctx, "count")))
+												.then(Commands.argument("player", EntityArgument.player())
+														.executes(ctx -> setPomeProgress(ctx.getSource(),
+																EntityArgument.getPlayer(ctx, "player"),
+																IntegerArgumentType.getInteger(ctx, "count"))))))
 								.then(Commands.literal("reset")
 										.executes(ctx -> resetPomeProgress(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 										.then(Commands.argument("player", EntityArgument.player())
@@ -738,9 +747,28 @@ public class HemoCommand {
 		degree.setQliphothCommunionDone(false);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
+		ChamberOfWillManager.syncFor(player);
 		source.sendSuccess(() -> Component.literal("Reset ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" Qliphoth pome progress and Communion gate.").withStyle(ChatFormatting.DARK_PURPLE)),
+				true);
+		return 1;
+	}
+
+	private static int setPomeProgress(CommandSourceStack source, ServerPlayer player, int count) {
+		int clamped = Math.max(0, Math.min(9, count));
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.orElseThrow(IllegalStateException::new);
+		degree.syncTotalPomesConsumed(clamped);
+		degree.setQliphothCommunionDone(clamped >= 9);
+		InitiatoryDegreeEvents.syncDegree(player, degree);
+		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(clamped));
+		ChamberOfWillManager.syncFor(player);
+		source.sendSuccess(() -> Component.literal("Set ")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" Qliphoth pome progress to ").withStyle(ChatFormatting.DARK_PURPLE))
+				.append(Component.literal(String.valueOf(clamped)).withStyle(ChatFormatting.LIGHT_PURPLE))
+				.append(Component.literal("/9.").withStyle(ChatFormatting.DARK_PURPLE)),
 				true);
 		return 1;
 	}

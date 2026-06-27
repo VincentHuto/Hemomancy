@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -223,6 +224,9 @@ public class ChamberOfWillManager extends SavedData {
         boolean qliphothDone = HemoCapabilityAccess.getInitiatoryDegree(player)
                 .map(deg -> deg.isQliphothCommunionDone() || deg.getTotalPomesConsumed() >= 9)
                 .orElse(false);
+        boolean qliphothStarted = qliphothDone
+                || qliphothPomeCount(player) > 0
+                || hasActiveQliphothBloom(player);
         String archonChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
 
         if (degree >= 8) {
@@ -231,13 +235,34 @@ public class ChamberOfWillManager extends SavedData {
         if (FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(archonChoice) && degree >= 7) {
             return new ChamberState(2, THEME_SILENT_ARCHON);
         }
-        if (qliphothDone) {
+        if (qliphothStarted) {
             return new ChamberState(2, THEME_QLIPHOTH_COMMUNION);
         }
         if (degree >= 7) {
             return new ChamberState(1, THEME_ARCHON_REVELATION);
         }
         return new ChamberState(0, THEME_WILL_DEFAULT);
+    }
+
+    private static int qliphothPomeCount(ServerPlayer player) {
+        return HemoCapabilityAccess.getInitiatoryDegree(player)
+                .map(deg -> deg.isQliphothCommunionDone() ? 9 : deg.getTotalPomesConsumed())
+                .orElse(0);
+    }
+
+    private static boolean hasActiveQliphothBloom(ServerPlayer player) {
+        MinecraftServer server = player.getServer();
+        if (server == null) {
+            return false;
+        }
+        QliphothBloomSavedData data = QliphothBloomSavedData.get(server.overworld());
+        UUID owner = player.getUUID();
+        for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
+            if (owner.equals(bloom.ownerUUID())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void ensureRoom(ServerLevel level, UUID owner) {
@@ -313,7 +338,7 @@ public class ChamberOfWillManager extends SavedData {
     public void syncTo(ServerPlayer player) {
         ChamberState state = getChamberState(player.getUUID());
         PacketHandler.sendToPlayer(player, new PacketSyncChamberOfWill(
-                state.skyTheme(), state.tier(), radiusFor(player.getUUID())));
+                state.skyTheme(), state.tier(), radiusFor(player.getUUID()), qliphothPomeCount(player)));
     }
 
     public static void syncFor(ServerPlayer player) {

@@ -274,6 +274,38 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType qliphothBlackHole(ResourceLocation texture, float gameTime, float holeSeed,
+			float lensStrength, float ringIntensity, boolean finalHole) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"qliphoth_black_hole_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.QLIPHOTH_BLACK_HOLE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "HoleSeed", holeSeed);
+					setUniform(shader, "LensStrength", lensStrength);
+					setUniform(shader, "RingIntensity", ringIntensity);
+					setUniform(shader, "FinalHole", finalHole ? 1.0f : 0.0f);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.QLIPHOTH_BLACK_HOLE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create(finalHole ? "qliphoth_black_hole_zenith" : "qliphoth_black_hole",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 2048, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.QLIPHOTH_BLACK_HOLE.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType silentArchonStormCloud(float gameTime, float cloudSeed, float cloudDensity) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"silent_archon_storm_cloud_uniforms",

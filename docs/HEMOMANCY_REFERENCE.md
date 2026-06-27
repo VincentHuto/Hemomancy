@@ -568,11 +568,13 @@ The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`
 |---|---:|---:|
 | Degree 6 | `hemomancy:will_default` | 0 |
 | Degree 7 before Qliphoth Communion | `hemomancy:archon_revelation` | 1 |
-| Qliphoth Communion complete | `hemomancy:qliphoth_communion` | 2 |
+| Active owned Qliphoth Bloom, Qliphoth pome progress, or Communion complete | `hemomancy:qliphoth_communion` | 2 |
 | Silent Archon path | `hemomancy:silent_archon` | 2 |
 | Degree 8 / Apotheos | `hemomancy:apotheos` | 3 |
 
 The active state syncs to the client through `PacketSyncChamberOfWill`; missing or invalid theme ids fall back to `will_default`.
+
+The Qliphoth Communion sky uses dedicated dark red-purple-blue sky and mist textures with root-script/star-glyph overlays. While the owner consumes Qliphoth Pomes, the chamber sync also carries the pome count: pomes 1-8 each add a small red-black shader vortex in the sky, and the ninth collapses those into residual rings plus a massive zenith black hole. These black holes are shader quads that lens the theme sky texture rather than static black-hole PNGs.
 
 The Silent Archon sky theme is visually distinct from the vascular/neural Chamber baseline: it uses cold gray noise/cloud textures, disables the biological overlay layers, and renders scattered black monolith pillars from the void toward the sky using the same animated Monolith surface shader family as the Sanguine Monolith block entity. A Silent Archon-only depth pass now adds broad tilted storm-cloud strata, simpler distant monolith silhouettes behind the foreground pillars, and a lower stacked cloud deck. The Chamber dimension effects also tint Silent Archon fog toward pale blue-green, while visible pillar-base occlusion is handled by a dedicated procedural foreground storm-cloud bank built from many small layered cells, so nearby monolith bases are swallowed by thick storm masses rather than merely darkened by haze or crossed by flat wisps.
 
@@ -3378,6 +3380,7 @@ The `/hemo` command tree (via `HemoCommand`, permission level 2) is the main in-
 **Initiatory Degree / Qliphoth:**
 - `degree get [player]` â€” show current initiatory degree and title
 - `degree set <0-8> [player]` â€” set degree directly; entering the Harbinger path can reset unstained progress through the mutual-exclusion helper
+- `qliphoth pome set <0-9> [player]` / `/hemo qliphoth pome set <0-9> [player]` â€” set Qliphoth pome progress for Communion sky and completion testing
 - `qliphoth pome reset [player]` â€” reset Qliphoth pome progress and reseal the Communion gate
 
 **Morphling Debug:**
