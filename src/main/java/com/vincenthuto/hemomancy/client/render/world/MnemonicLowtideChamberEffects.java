@@ -464,10 +464,10 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 		for (int bridge = 0; bridge < 5; bridge++) {
 			float angle = bridge / 5.0F * Mth.TWO_PI + 0.32F;
 			float startDistance = skyDistance * (0.68F + bridge * 0.028F);
-			float endDistance   = skyDistance * (1.30F + bridge * 0.018F);
-			float baseY         = skyDistance * (0.070F + bridge * 0.032F);
+			float endDistance = skyDistance * (1.30F + bridge * 0.018F);
+			float baseY = skyDistance * (0.070F + bridge * 0.032F);
 			float bridgeHalfWidth = skyDistance * (0.0062F + bridge * 0.0005F);
-			float bridgeDepth     = skyDistance * (0.0088F + bridge * 0.0006F);
+			float bridgeDepth = skyDistance * (0.0088F + bridge * 0.0006F);
 			int segments = 18;
 			Vec3 previous = new Vec3(Mth.cos(angle - 0.36F) * startDistance,
 					baseY + Mth.sin(time * 0.0008F + bridge) * skyDistance * 0.004F,
