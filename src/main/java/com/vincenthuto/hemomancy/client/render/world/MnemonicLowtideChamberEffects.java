@@ -142,35 +142,70 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 			Random random = new Random(0x51A7B00DL + face * 19397L);
 			float depth = -skyDistance * 0.948F;
 			int bands = 6;
+
+			// Primary bands: dark maroon at bandT=0, pale bone at bandT=1
 			for (int band = 0; band < bands; band++) {
 				float bandT = band / (float) Math.max(1, bands - 1);
 				float centerZ = Mth.lerp(bandT, -0.72F, 0.70F) * skyDistance;
-				float arc = Mth.lerp(random.nextFloat(), 0.18F, 0.36F) * skyDistance;
-				float phase = face * 0.63F + band * 1.19F;
-				float drift = Mth.sin(time * 0.00042F + phase) * skyDistance * 0.018F;
-				float startX = -skyDistance * Mth.lerp(random.nextFloat(), 0.68F, 0.96F);
-				float endX = skyDistance * Mth.lerp(random.nextFloat(), 0.68F, 0.96F);
-				float prevX = startX;
-				float prevZ = centerZ + drift + Mth.sin(phase) * skyDistance * 0.045F;
-				int red = band % 3 == 0 ? 214 : 132;
-				int green = band % 3 == 0 ? 184 : 78;
-				int blue = band % 3 == 0 ? 135 : 55;
-				int alpha = (int) Mth.clamp(Mth.lerp(bandT, 52.0F, 20.0F) + random.nextFloat() * 20.0F,
-						18.0F, 76.0F);
+				float arc     = Mth.lerp(random.nextFloat(), 0.22F, 0.42F) * skyDistance;
+				float phase   = face * 0.63F + band * 1.19F;
+				float drift   = Mth.sin(time * 0.00042F + phase) * skyDistance * 0.018F;
+				float startX  = -skyDistance * Mth.lerp(random.nextFloat(), 0.72F, 0.97F);
+				float endX    =  skyDistance * Mth.lerp(random.nextFloat(), 0.72F, 0.97F);
+				float prevX   = startX;
+				float prevZ   = centerZ + drift + Mth.sin(phase) * skyDistance * 0.045F;
 
-				for (int segment = 1; segment <= 18; segment++) {
-					float t = segment / 18.0F;
-					float x = Mth.lerp(t, startX, endX);
-					float bow = Mth.sin(t * Mth.PI) * arc;
-					float wrinkle = Mth.sin(t * Mth.TWO_PI * (1.4F + random.nextFloat() * 0.7F) + phase
-							+ time * 0.0009F) * skyDistance * 0.022F;
+				// Gradient: horizon bands deep maroon, zenith bands pale bone
+				int red   = (int) Mth.lerp(bandT, 75.0F,  195.0F);
+				int green = (int) Mth.lerp(bandT, 18.0F,  172.0F);
+				int blue  = (int) Mth.lerp(bandT, 12.0F,  140.0F);
+				// Side faces recede into darkness; top face (face==1) gets full weight
+				float faceMult = (face == 1) ? 1.0F : 0.38F;
+				int alpha = (int) Mth.clamp(
+						(Mth.lerp(bandT, 28.0F, 9.0F) + random.nextFloat() * 8.0F) * faceMult,
+						6.0F, 36.0F);
+
+				int segments = 24;
+				for (int segment = 1; segment <= segments; segment++) {
+					float t = segment / (float) segments;
+					float x       = Mth.lerp(t, startX, endX);
+					float bow     = Mth.sin(t * Mth.PI) * arc;
+					float wrinkle = Mth.sin(t * Mth.TWO_PI * (1.4F + random.nextFloat() * 0.7F)
+							+ phase + time * 0.0009F) * skyDistance * 0.018F;
 					float z = centerZ + drift - bow + wrinkle;
 					addLowtideFaceStroke(buffer, matrix, prevX, prevZ, x, z, depth,
-							skyDistance * Mth.lerp(bandT, 0.0055F, 0.0022F), red, green, blue, alpha);
+							skyDistance * Mth.lerp(bandT, 0.0048F, 0.0018F), red, green, blue, alpha);
 					prevX = x;
 					prevZ = z;
 				}
 			}
+
+			// Top face only: thin secondary vascular network, dark crimson
+			if (face == 1) {
+				Random vascRandom = new Random(0xC0A6471EL + face * 7331L);
+				for (int vessel = 0; vessel < 12; vessel++) {
+					float vPhase  = vessel * 0.52F;
+					float vStartX = Mth.lerp(vascRandom.nextFloat(), -0.88F, 0.88F) * skyDistance;
+					float vStartZ = Mth.lerp(vascRandom.nextFloat(), -0.68F, 0.68F) * skyDistance;
+					float vLen    = Mth.lerp(vascRandom.nextFloat(), 0.18F, 0.46F) * skyDistance;
+					float vAngle  = vascRandom.nextFloat() * Mth.TWO_PI;
+					float prevX = vStartX;
+					float prevZ = vStartZ;
+					int vSegments = 4 + vascRandom.nextInt(4);
+					for (int vs = 1; vs <= vSegments; vs++) {
+						float vt   = vs / (float) vSegments;
+						float bend = Mth.sin(vt * Mth.PI + vPhase + time * 0.0007F) * skyDistance * 0.055F;
+						float nx = vStartX + Mth.cos(vAngle) * vLen * vt + Mth.cos(vAngle + Mth.HALF_PI) * bend;
+						float nz = vStartZ + Mth.sin(vAngle) * vLen * vt + Mth.sin(vAngle + Mth.HALF_PI) * bend;
+						int va = (int) Mth.clamp(28.0F * (1.0F - vt * 0.55F), 6.0F, 28.0F);
+						addLowtideFaceStroke(buffer, matrix, prevX, prevZ, nx, nz, depth - 0.005F,
+								skyDistance * 0.0015F, 90, 22, 16, va);
+						prevX = nx;
+						prevZ = nz;
+					}
+				}
+			}
+
 			BufferUploader.drawWithShader(buffer.buildOrThrow());
 			poseStack.popPose();
 		}
