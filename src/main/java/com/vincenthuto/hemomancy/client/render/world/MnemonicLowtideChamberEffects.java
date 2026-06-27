@@ -55,7 +55,7 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 	@Override
 	public Vec3 getBrightnessDependentFogColor(Vec3 fogColor, float brightness) {
 		float fogBrightness = Mth.clamp(brightness * 0.36F + 0.64F, 0.50F, 1.0F);
-		return new Vec3(0.38D, 0.21D, 0.14D).scale(fogBrightness);
+		return new Vec3(0.22D, 0.09D, 0.07D).scale(fogBrightness);
 	}
 
 	static void renderMnemonicLowtideBaseSkybox(PoseStack poseStack, Tesselator tesselator, float skyDistance,
@@ -328,7 +328,7 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 		Matrix4f matrix = poseStack.last().pose();
 		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		Random random = new Random(0x4D454D4FL);
-		for (int fragment = 0; fragment < 26; fragment++) {
+		for (int fragment = 0; fragment < 14; fragment++) {
 			float yaw = Mth.wrapDegrees(random.nextFloat() * 360.0F
 					+ Mth.sin(time * (0.00045F + fragment * 0.000012F) + fragment) * 12.0F);
 			float pitch = Mth.lerp(random.nextFloat(), -20.0F, 42.0F)
@@ -346,12 +346,12 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 			float spin = time * (0.0012F + fragment * 0.000021F) + fragment * 0.71F;
 			Vec3 spunRight = right.scale(Mth.cos(spin)).add(up.scale(Mth.sin(spin)));
 			Vec3 spunUp = up.scale(Mth.cos(spin)).subtract(right.scale(Mth.sin(spin)));
-			float halfWidth = skyDistance * Mth.lerp(random.nextFloat(), 0.010F, 0.022F);
+			float halfWidth = skyDistance * Mth.lerp(random.nextFloat(), 0.007F, 0.015F);
 			float halfHeight = halfWidth * Mth.lerp(random.nextFloat(), 1.35F, 2.25F);
 			int alpha = (int) Mth.clamp(Mth.lerp(distance / skyDistance, 124.0F, 70.0F), 54.0F, 138.0F);
-			int red = fragment % 5 == 0 ? 232 : 197;
-			int green = fragment % 5 == 0 ? 215 : 163;
-			int blue = fragment % 5 == 0 ? 167 : 111;
+			int red   = fragment % 5 == 0 ? 210 : 182;
+			int green = fragment % 5 == 0 ? 188 : 160;
+			int blue  = fragment % 5 == 0 ? 140 : 115;
 			addLowtideBillboardQuad(buffer, matrix, center, spunRight, spunUp, halfWidth, halfHeight,
 					red, green, blue, alpha);
 		}
@@ -365,7 +365,7 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 		Matrix4f matrix = poseStack.last().pose();
 		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 		Random random = new Random(0xA11E57A1L);
-		for (int root = 0; root < 34; root++) {
+		for (int root = 0; root < 28; root++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
 			float distance = skyDistance * Mth.lerp(random.nextFloat(), 0.30F, 1.03F);
 			float x = Mth.cos(angle) * distance;
@@ -387,7 +387,7 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 				float width = skyDistance * Mth.lerp(t, 0.0045F, 0.0014F);
 				int alpha = (int) Mth.clamp(Mth.lerp(t, 100.0F, 42.0F), 26.0F, 108.0F);
 				addLowtide3DStroke(buffer, matrix, prevX, prevY, prevZ, nextX, nextY, nextZ, width,
-						225, 210, 174, alpha);
+						190, 168, 128, alpha);
 				prevX = nextX;
 				prevY = nextY;
 				prevZ = nextZ;
