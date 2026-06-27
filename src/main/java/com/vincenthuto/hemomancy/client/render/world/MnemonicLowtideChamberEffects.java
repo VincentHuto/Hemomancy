@@ -431,11 +431,11 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 		for (int bridge = 0; bridge < 5; bridge++) {
 			float angle = bridge / 5.0F * Mth.TWO_PI + 0.32F;
-			float startDistance = skyDistance * (0.54F + bridge * 0.030F);
-			float endDistance = skyDistance * (1.06F + bridge * 0.020F);
-			float baseY = skyDistance * (0.070F + bridge * 0.032F);
-			float bridgeHalfWidth = skyDistance * (0.0105F + bridge * 0.0008F);
-			float bridgeDepth = skyDistance * (0.0140F + bridge * 0.0010F);
+			float startDistance = skyDistance * (0.68F + bridge * 0.028F);
+			float endDistance   = skyDistance * (1.30F + bridge * 0.018F);
+			float baseY         = skyDistance * (0.070F + bridge * 0.032F);
+			float bridgeHalfWidth = skyDistance * (0.0062F + bridge * 0.0005F);
+			float bridgeDepth     = skyDistance * (0.0088F + bridge * 0.0006F);
 			int segments = 18;
 			Vec3 previous = new Vec3(Mth.cos(angle - 0.36F) * startDistance,
 					baseY + Mth.sin(time * 0.0008F + bridge) * skyDistance * 0.004F,
@@ -448,9 +448,9 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 				float drift = Mth.sin(time * 0.0008F + bridge + t * 2.4F) * skyDistance * 0.005F;
 				Vec3 next = new Vec3(Mth.cos(segmentAngle) * distance, baseY + archRise + drift,
 						Mth.sin(segmentAngle) * distance);
-				int alpha = (int) Mth.clamp(Mth.lerp(t, 110.0F, 24.0F), 22.0F, 118.0F);
+				int alpha = (int) Mth.clamp(Mth.lerp(t, 52.0F, 14.0F), 12.0F, 48.0F);
 				renderMnemonicLowtideBridgeArchSegment(buffer, matrix, previous, next, bridgeHalfWidth, bridgeDepth,
-						182, 46, 28, alpha);
+						88, 48, 28, alpha);
 
 				Vec3 side = lowtideBridgeSide(previous, next);
 				Vec3 railLift = new Vec3(0.0D, skyDistance * 0.010F, 0.0D);
@@ -459,11 +459,11 @@ final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 				Vec3 rightStart = previous.subtract(side.scale(bridgeHalfWidth)).add(railLift);
 				Vec3 rightEnd = next.subtract(side.scale(bridgeHalfWidth)).add(railLift);
 				addLowtide3DStroke(buffer, matrix, (float) leftStart.x, (float) leftStart.y, (float) leftStart.z,
-						(float) leftEnd.x, (float) leftEnd.y, (float) leftEnd.z, skyDistance * 0.0018F,
-						228, 160, 66, alpha / 2);
+						(float) leftEnd.x, (float) leftEnd.y, (float) leftEnd.z, skyDistance * 0.0012F,
+						155, 105, 38, alpha / 4);
 				addLowtide3DStroke(buffer, matrix, (float) rightStart.x, (float) rightStart.y, (float) rightStart.z,
-						(float) rightEnd.x, (float) rightEnd.y, (float) rightEnd.z, skyDistance * 0.0014F,
-						130, 38, 28, alpha / 2);
+						(float) rightEnd.x, (float) rightEnd.y, (float) rightEnd.z, skyDistance * 0.0009F,
+						60, 18, 14, alpha / 4);
 
 				if (segment % 3 == 0 && segment < segments - 1) {
 					addLowtideBridgeRib(buffer, matrix, next, side, bridgeHalfWidth, bridgeDepth,
