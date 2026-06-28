@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.world;
+package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -20,7 +20,7 @@ public class ChamberOfWillEffects extends DimensionSpecialEffects {
 		PoseStack poseStack = new PoseStack();
 		poseStack.mulPose(modelViewMatrix);
 		ChamberSkyTheme theme = ChamberSkyThemeRegistry.activeTheme();
-		float f = (level.getGameTime() + partialTick) * theme.motionMultiplier();
+		float f = (ticks + partialTick) * theme.motionMultiplier();
 		float membranePulse = ChamberOfWillRenderHelpers.membranePulse(f) * theme.pulseStrength();
 		int qliphothPomeCount = ChamberOfWillClientData.qliphothPomesConsumed();
 		ChamberThemeRenderContext context = new ChamberThemeRenderContext(level, ticks, partialTick, modelViewMatrix,

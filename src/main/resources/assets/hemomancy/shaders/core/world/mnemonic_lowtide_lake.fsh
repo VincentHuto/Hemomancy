@@ -1,21 +1,16 @@
 #version 150
 
-#moj_import <fog.glsl>
-
 uniform vec4 ColorModulator;
-uniform float FogStart;
-uniform float FogEnd;
-uniform vec4 FogColor;
 uniform float HemoTime;
 uniform float LakeSeed;
 uniform float NoiseScale;
 uniform float GlossStrength;
 uniform float EdgeFade;
 
-in float vertexDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
 in float waveLiftAmount;
+in float rippleHighlight;
 
 out vec4 fragColor;
 
@@ -48,7 +43,7 @@ float fbm(vec2 value) {
 
 void main() {
     vec2 uv = texCoord0;
-    float time = HemoTime * 0.045;
+    float time = HemoTime * 0.10;
     vec2 centered = uv - vec2(0.5);
     vec2 drift = vec2(time * 0.13, -time * 0.09);
     float low = fbm(centered * NoiseScale + drift);
@@ -58,26 +53,52 @@ void main() {
             cos((centered.x - high) * 7.0 - time * 2.1)
     ) * 0.035;
 
-    float redStream = smoothstep(0.52, 0.88, fbm(warped * 9.5 + vec2(time * 0.31, -time * 0.22)));
+    float redStream = smoothstep(0.48, 0.82, fbm(warped * 9.5 + vec2(time * 0.31, -time * 0.22)));
     float blackPocket = smoothstep(0.30, 0.74, fbm(warped * 4.0 - vec2(time * 0.08, time * 0.11)));
-    float parchmentHighlight = smoothstep(0.72, 0.96, fbm(warped * 17.0 + vec2(-time * 0.44, time * 0.37)));
-    float glossLine = pow(max(0.0, high), 7.0) * GlossStrength;
+    float greyPinkMarble = smoothstep(0.28, 0.72, fbm(warped * 6.2 + vec2(-time * 0.16, time * 0.12)));
+    float microBreakup = fbm(warped * 31.0 + vec2(time * 0.52, -time * 0.47) + high * 0.36);
+    float parchmentNoise = fbm(warped * 13.0 + vec2(-time * 0.34, time * 0.29));
+    float parchmentFine = fbm(warped * 24.0 + vec2(time * 0.27, -time * 0.33) + microBreakup * 0.42);
+    float parchmentHighlight = smoothstep(0.68, 0.94, parchmentNoise);
+    float beigeStreak = pow(smoothstep(0.64, 0.98,
+            parchmentNoise + parchmentFine * 0.24 + high * 0.12 + rippleHighlight * 0.18), 5.0);
+    float parchmentVein = beigeStreak * smoothstep(0.42, 0.84, microBreakup + redStream * 0.18);
+    float brightRedVein = pow(smoothstep(0.52, 0.91, redStream + microBreakup * 0.18 + rippleHighlight * 0.16), 2.4);
+    float glintStreak = pow(smoothstep(0.58, 0.95, high + rippleHighlight * 0.45 + microBreakup * 0.16), 4.0)
+            * GlossStrength;
+    float glossLine = pow(max(0.0, high), 6.0) * GlossStrength;
 
-    vec3 blackBase = vec3(0.006, 0.004, 0.004);
-    vec3 red = vec3(0.48, 0.018, 0.012);
-    vec3 deepRed = vec3(0.18, 0.006, 0.004);
-    vec3 parchment = vec3(0.78, 0.62, 0.39);
+    vec3 blackBase = vec3(0.012, 0.011, 0.012);
+    vec3 oxblood = vec3(0.56, 0.045, 0.048);
+    vec3 brightRed = vec3(0.92, 0.045, 0.032);
+    vec3 deepOxblood = vec3(0.18, 0.014, 0.016);
+    vec3 greyPink = vec3(0.24, 0.125, 0.148);
+    vec3 parchment = vec3(0.62, 0.46, 0.28);
+    vec3 warmBeigeVein = vec3(1.0, 0.68, 0.32);
 
-    vec3 color = mix(blackBase, deepRed, blackPocket * 0.62);
-    color = mix(color, red, redStream * 0.72);
-    color += parchment * parchmentHighlight * 0.28;
-    color += vec3(1.0, 0.84, 0.58) * glossLine * (0.10 + parchmentHighlight * 0.22);
-    color += red * abs(waveLiftAmount) * 0.85;
+    vec3 color = mix(blackBase, deepOxblood, blackPocket * 0.66);
+    color = mix(color, greyPink, greyPinkMarble * 0.24);
+    color = mix(color, oxblood, redStream * 0.48);
+    color = mix(color, brightRed, brightRedVein * 0.18);
+    color = mix(color, blackBase, smoothstep(0.18, 0.58, microBreakup) * 0.16);
+    color += parchment * parchmentHighlight * 0.08;
+    color += warmBeigeVein * parchmentVein * (0.24 + glintStreak * 0.22);
+    color += vec3(0.90, 0.65, 0.58) * glossLine * (0.08 + parchmentVein * 0.16);
+    color += vec3(0.76, 0.48, 0.50) * rippleHighlight * 0.18;
+    color += vec3(0.94, 0.78, 0.54) * glintStreak * 0.18;
+    color += greyPink * abs(waveLiftAmount) * 0.28;
+    float luma = dot(color, vec3(0.299, 0.587, 0.114));
+    float saturationBoost = 1.18;
+    float contrastLift = 1.12;
+    color = mix(vec3(luma), color, saturationBoost);
+    color = (color - vec3(0.16)) * contrastLift + vec3(0.13);
 
     float edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
-    float edgeFade = smoothstep(0.0, EdgeFade, edge);
-    float alpha = (0.72 + redStream * 0.12 + parchmentHighlight * 0.08 + glossLine * 0.08) * edgeFade;
+    float horizonFade = smoothstep(0.0, EdgeFade * 1.85, edge);
+    float edgeFade = smoothstep(0.0, EdgeFade, edge) * horizonFade;
+    float alpha = (0.80 + redStream * 0.08 + parchmentVein * 0.14 + glossLine * 0.11
+            + rippleHighlight * 0.06 + glintStreak * 0.08) * edgeFade;
     alpha *= vertexColor.a * ColorModulator.a;
 
-    fragColor = linear_fog(vec4(color * ColorModulator.rgb, alpha), vertexDistance, FogStart, FogEnd, FogColor);
+    fragColor = vec4(color * ColorModulator.rgb, min(alpha, 0.95));
 }

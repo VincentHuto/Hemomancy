@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.world;
+package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;

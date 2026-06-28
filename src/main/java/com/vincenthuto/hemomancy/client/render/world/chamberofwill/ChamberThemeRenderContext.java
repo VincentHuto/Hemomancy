@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.world;
+package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -6,7 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import org.joml.Matrix4f;
 
-record ChamberThemeRenderContext(
+public record ChamberThemeRenderContext(
 		ClientLevel level,
 		int ticks,
 		float partialTick,

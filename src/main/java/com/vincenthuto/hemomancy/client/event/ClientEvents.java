@@ -62,6 +62,7 @@ import com.vincenthuto.hemomancy.client.render.tile.SuspendedVivaniteRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
+import com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberOfWillEffects;
 import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
 import com.vincenthuto.hemomancy.client.screen.item.ScryingDiagnosticsScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;

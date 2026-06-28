@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.world;
+package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
@@ -43,11 +43,11 @@ public final class ChamberSkyThemeRegistry {
 				.nebula(0x000000, 0x000000, 0x000000)
 				.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
 				.pulse(0.0F)
-				.motion(0.0F)
+				.motion(1.0F)
 				.layers(0, 0, 0, 0)
 				.toggles(true, false, false, false)
 				.build();
-		register(mnemonicLowtide, new BlankChamberThemeEffects(mnemonicLowtide));
+		register(mnemonicLowtide, new MnemonicLowtideChamberEffects(mnemonicLowtide));
 		ChamberSkyTheme archonRevelation = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_ARCHON_REVELATION)
 				.skybox(0xFF3D3338, 0xFF8A6E72)
 				.nebula(0x3E2606, 0x8C1E16, 0x5B3A10)

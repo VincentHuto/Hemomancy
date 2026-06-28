@@ -8,6 +8,7 @@ public final class ChamberThemeEffectsSourceTest {
 	private static final Path PACKAGE = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill");
 	private static final Path RENDERER = PACKAGE.resolve("ChamberOfWillEffects.java");
+	private static final Path RENDER_CONTEXT = PACKAGE.resolve("ChamberThemeRenderContext.java");
 	private static final Path HELPERS = PACKAGE.resolve("ChamberOfWillRenderHelpers.java");
 	private static final Path REGISTRY = PACKAGE.resolve("ChamberSkyThemeRegistry.java");
 	private static final Path QLIPHOTH_EFFECTS = PACKAGE.resolve("QliphothCommunionChamberEffects.java");
@@ -20,6 +21,7 @@ public final class ChamberThemeEffectsSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String renderer = Files.readString(RENDERER).replace("\r\n", "\n");
+		String renderContext = Files.readString(RENDER_CONTEXT).replace("\r\n", "\n");
 		String helpers = Files.readString(HELPERS).replace("\r\n", "\n");
 		String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
 		String qliphothEffects = Files.readString(QLIPHOTH_EFFECTS).replace("\r\n", "\n");
@@ -40,6 +42,10 @@ public final class ChamberThemeEffectsSourceTest {
 
 		assertContains("renderer delegates sky rendering to active theme effects", renderer,
 				"return ChamberSkyThemeRegistry.activeEffects().renderSky(context);");
+		assertContains("renderer derives animated sky time from render callback ticks", renderer,
+				"float f = (ticks + partialTick) * theme.motionMultiplier();");
+		assertNotContains("renderer should not use client level game time for sky animation", renderer,
+				"level.getGameTime()");
 		assertContains("renderer delegates fog color to active theme effects", renderer,
 				"return ChamberSkyThemeRegistry.activeEffects().getBrightnessDependentFogColor(fogColor, brightness);");
 		assertContains("renderer delegates fogginess to active theme effects", renderer,
@@ -48,6 +54,8 @@ public final class ChamberThemeEffectsSourceTest {
 				"THEME_QLIPHOTH_COMMUNION.equals(theme.id())");
 		assertNotContains("renderer should not gate silent archon visuals directly", renderer,
 				"THEME_SILENT_ARCHON.equals(theme.id())");
+		assertContains("render context is public because public theme effect classes expose it in overrides", renderContext,
+				"public record ChamberThemeRenderContext(");
 
 		assertContains("registry stores effect strategies", registry,
 				"private static final Map<ResourceLocation, ChamberThemeEffects> EFFECTS");
@@ -65,12 +73,14 @@ public final class ChamberThemeEffectsSourceTest {
 				"new MnemonicLowtideChamberEffects(mnemonicLowtide)");
 		assertNotContains("mnemonic lowtide no longer uses blank theme effects", registry,
 				"new BlankChamberThemeEffects(mnemonicLowtide)");
-		assertContains("lowtide effects own lake render entry", lowtideEffects,
-				"public static void renderLake(RenderLevelStageEvent event)");
+		assertContains("lowtide effects own skybox lake render entry", lowtideEffects,
+				"renderLowtideSkyLake(");
 		assertContains("lowtide effects use lowtide lake render type", lowtideEffects,
 				"HemoRenderTypes.mnemonicLowtideLake(");
-		assertContains("lowtide effects place lake below floor", lowtideEffects,
-				"ChamberOfWillManager.FLOOR_Y - LAKE_DEPTH");
+		assertContains("lowtide effects place lake in skybox space", lowtideEffects,
+				"context.skyDistance()");
+		assertNotContains("lowtide effects should not place lake below physical floor", lowtideEffects,
+				"ChamberOfWillManager.FLOOR_Y");
 		assertContains("apotheos effects are registered", registry,
 				"new ApotheosChamberEffects(");
 

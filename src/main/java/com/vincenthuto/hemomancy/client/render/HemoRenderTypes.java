@@ -52,6 +52,17 @@ public final class HemoRenderTypes {
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	public static final RenderType MNEMONIC_LOWTIDE_WATERY_FOG = RenderType.create("mnemonic_lowtide_watery_fog",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 4096, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(RenderType.NO_DEPTH_TEST)
+					.setWriteMaskState(RenderType.COLOR_WRITE)
+					.setCullState(RenderType.NO_CULL)
+					.setLightmapState(RenderType.NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static RenderType loomOrbShell(float gameTime, float orbSeed, float centerX, float centerY, float centerZ,
 			float orbRadius, float writheStrength, float threadScale, boolean glowLayer) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
@@ -275,7 +286,7 @@ public final class HemoRenderTypes {
 	}
 
 	public static RenderType mnemonicLowtideLake(float gameTime, float lakeSeed, float waveStrength,
-			float noiseScale, float glossStrength, float edgeFade) {
+			float waveDetailScale, float noiseScale, float glossStrength, float edgeFade) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"mnemonic_lowtide_lake_uniforms",
 				() -> {
@@ -283,6 +294,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "HemoTime", gameTime);
 					setUniform(shader, "LakeSeed", lakeSeed);
 					setUniform(shader, "WaveStrength", waveStrength);
+					setUniform(shader, "WaveDetailScale", waveDetailScale);
 					setUniform(shader, "NoiseScale", noiseScale);
 					setUniform(shader, "GlossStrength", glossStrength);
 					setUniform(shader, "EdgeFade", edgeFade);
@@ -299,7 +311,7 @@ public final class HemoRenderTypes {
 						.setShaderState(ShaderInit.MNEMONIC_LOWTIDE_LAKE.getShard())
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
 						.setWriteMaskState(RenderType.COLOR_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)
