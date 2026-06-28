@@ -33,6 +33,7 @@ public final class ChamberThemeEffectsSourceTest {
 		assertFileExists("theme effects interface exists", "ChamberThemeEffects.java");
 		assertFileExists("render context exists", "ChamberThemeRenderContext.java");
 		assertFileExists("abstract shared effects base exists", "AbstractChamberThemeEffects.java");
+		assertFileExists("blank theme effects exists", "BlankChamberThemeEffects.java");
 		assertFileExists("default theme effects exists", "WillDefaultChamberEffects.java");
 		assertFileExists("archon revelation theme effects exists", "ArchonRevelationChamberEffects.java");
 		assertFileExists("qliphoth communion theme effects exists", "QliphothCommunionChamberEffects.java");
@@ -62,6 +63,8 @@ public final class ChamberThemeEffectsSourceTest {
 				"new QliphothCommunionChamberEffects(");
 		assertContains("silent archon effects are registered", registry,
 				"new SilentArchonChamberEffects(");
+		assertContains("mnemonic lowtide uses blank theme effects", registry,
+				"new BlankChamberThemeEffects(mnemonicLowtide)");
 		assertContains("apotheos effects are registered", registry,
 				"new ApotheosChamberEffects(");
 
@@ -90,6 +93,9 @@ public final class ChamberThemeEffectsSourceTest {
 				"ChamberOfWillRenderHelpers.renderSilentArchon");
 		assertNotContains("shared helpers should not contain silent archon render bodies", helpers,
 				"renderSilentArchon");
+
+		assertNotContains("shared helpers should not contain mnemonic lowtide render bodies", helpers,
+				"renderMnemonicLowtide");
 
 		assertContains("reference documents per-theme effects ownership", reference,
 				"Each registered Chamber sky theme also owns a `ChamberThemeEffects` strategy");

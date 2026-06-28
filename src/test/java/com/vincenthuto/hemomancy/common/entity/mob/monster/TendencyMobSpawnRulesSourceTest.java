@@ -6,13 +6,18 @@ import java.nio.file.Path;
 
 public final class TendencyMobSpawnRulesSourceTest {
 	private static final String[] DORMANT_ENTITY_IDS = {
-			"dessicant",
 			"cruor_fiend",
 			"void_drinker",
 			"frozen_clot",
 			"abyssal_siphon",
 			"synapse_hound",
 			"myelin_borer"
+	};
+	private static final String[] ACTIVE_DESICCANT_SNIPPETS = {
+			" desiccant = ENTITY_TYPES.register(",
+			"\"desiccant\"",
+			"DesiccantEntity::canSpawnHere",
+			"event.put(EntityInit.desiccant.get(), DesiccantEntity.setAttributes().build())"
 	};
 	private static final String[] DORMANT_DROP_IDS = {
 			"desiccated_membrane",
@@ -27,6 +32,7 @@ public final class TendencyMobSpawnRulesSourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
+		assertDesiccantActive();
 		String entityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		for (String id : DORMANT_ENTITY_IDS) {
@@ -43,6 +49,26 @@ public final class TendencyMobSpawnRulesSourceTest {
 			assertDoesNotContain("recipes should not consume dormant drop: " + id,
 					readTree(Path.of("src/main/resources/data/hemomancy/recipe")), "hemomancy:" + id);
 		}
+	}
+
+	private static void assertDesiccantActive() throws IOException {
+		String entityInit = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java"));
+		String itemInit = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java"));
+		String clientEvents = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String layerEvents = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
+		for (String snippet : ACTIVE_DESICCANT_SNIPPETS) {
+			assertContains("active desiccant source " + snippet, entityInit, snippet);
+		}
+		assertContains("desiccant spawn egg holder", itemInit, " spawn_egg_desiccant = SPAWNEGGS.register(");
+		assertContains("desiccant spawn egg id", itemInit, "\"spawn_egg_desiccant\"");
+		assertContains("desiccant renderer", clientEvents, "EntityInit.desiccant.get(), DesiccantRenderer::new");
+		assertContains("desiccant model layer", layerEvents, "DesiccantModel.LAYER_LOCATION");
+		assertPathExists("desiccant biome modifier",
+				Path.of("src/main/resources/data/hemomancy/neoforge/biome_modifier/add_desiccant.json"));
+		assertPathExists("desiccant biome tag",
+				Path.of("src/main/resources/data/hemomancy/tags/worldgen/biome/desiccant_spawnlist.json"));
+		assertPathExists("desiccant loot table",
+				Path.of("src/main/resources/data/hemomancy/loot_table/entities/desiccant.json"));
 	}
 
 	private static String read(String path) throws IOException {
@@ -76,9 +102,21 @@ public final class TendencyMobSpawnRulesSourceTest {
 		}
 	}
 
+	private static void assertPathExists(String label, Path path) {
+		if (!Files.exists(path)) {
+			throw new AssertionError(label + ": missing " + path);
+		}
+	}
+
 	private static void assertDoesNotContain(String label, String text, String unexpected) {
 		if (text.contains(unexpected)) {
 			throw new AssertionError(label + ": found " + unexpected);
+		}
+	}
+
+	private static void assertContains(String label, String text, String expected) {
+		if (!text.contains(expected)) {
+			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 }

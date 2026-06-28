@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     { "item": "hemomancy:toxicognath" },
-    { "item": "hemomancy:fargone_proboscis" },
+    { "item": "hemomancy:telson" },
     { "item": "hemomancy:calcified_blood_spine" }
   ],
   "result": {

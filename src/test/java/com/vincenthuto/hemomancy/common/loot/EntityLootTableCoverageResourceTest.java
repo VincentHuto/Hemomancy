@@ -21,6 +21,7 @@ public final class EntityLootTableCoverageResourceTest {
 			new GuaranteedDrop("chthonian_queen", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian_queen", "hemomancy:queens_physogastrism"),
 			new GuaranteedDrop("crimson_doe", "hemomancy:bleeding_bulb"),
+			new GuaranteedDrop("desiccant", "hemomancy:telson"),
 			new GuaranteedDrop("prism_cuttle", "hemomancy:cuttlefish_chromatophores"),
 			new GuaranteedDrop("enthralled_doll", "hemomancy:bleeding_bulb"),
 			new GuaranteedDrop("erythromycelium_eruptus", "hemomancy:spore_sac"),

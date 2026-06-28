@@ -17,12 +17,6 @@ public final class ChamberSkyThemeRegistry {
 			Hemomancy.rloc("textures/environment/single_cloud.png");
 	public static final ResourceLocation DEFAULT_NOISE =
 			Hemomancy.rloc("textures/environment/noise_tile.png");
-	public static final ResourceLocation MNEMONIC_LOWTIDE_SKY =
-			Hemomancy.rloc("textures/environment/mnemonic_lowtide_sky.png");
-	public static final ResourceLocation MNEMONIC_LOWTIDE_CLOUDS =
-			Hemomancy.rloc("textures/environment/mnemonic_lowtide_clouds.png");
-	public static final ResourceLocation MNEMONIC_LOWTIDE_FLUID =
-			Hemomancy.rloc("textures/environment/mnemonic_lowtide_fluid.png");
 	public static final ResourceLocation SILENT_ARCHON_SKY =
 			Hemomancy.rloc("textures/environment/silent_archon_sky.png");
 	public static final ResourceLocation SILENT_ARCHON_CLOUDS =
@@ -45,16 +39,15 @@ public final class ChamberSkyThemeRegistry {
 	static {
 		register(DEFAULT, new WillDefaultChamberEffects(DEFAULT));
 		ChamberSkyTheme mnemonicLowtide = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_MNEMONIC_LOWTIDE)
-				.textures(MNEMONIC_LOWTIDE_SKY, MNEMONIC_LOWTIDE_CLOUDS, MNEMONIC_LOWTIDE_CLOUDS, DEFAULT_NOISE)
-				.skybox(0xFF5A1810, 0xFF380E08)
-				.nebula(0x4A1710, 0x9E2F1D, 0x5C1208)
-				.tints(0xE7D4B0, 0xD15B3E, 0x9C7C66, 0xF2C86D)
-				.pulse(0.32F)
-				.motion(0.54F)
-				.layers(1, 0, 1, 0)
-				.toggles(true, false, true, true)
+				.skybox(0xFF1B0606, 0xFF1B0606)
+				.nebula(0x000000, 0x000000, 0x000000)
+				.tints(0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
+				.pulse(0.0F)
+				.motion(0.0F)
+				.layers(0, 0, 0, 0)
+				.toggles(true, false, false, false)
 				.build();
-		register(mnemonicLowtide, new MnemonicLowtideChamberEffects(mnemonicLowtide));
+		register(mnemonicLowtide, new BlankChamberThemeEffects(mnemonicLowtide));
 		ChamberSkyTheme archonRevelation = ChamberSkyTheme.builder(ChamberOfWillManager.THEME_ARCHON_REVELATION)
 				.skybox(0xFF3D3338, 0xFF8A6E72)
 				.nebula(0x3E2606, 0x8C1E16, 0x5B3A10)

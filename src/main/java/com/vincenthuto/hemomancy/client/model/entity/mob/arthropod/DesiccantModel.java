@@ -1,28 +1,33 @@
-package com.vincenthuto.hemomancy.client.model.entity.mob.monster;
+package com.vincenthuto.hemomancy.client.model.entity.mob.arthropod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.DessicantEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.DesiccantEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 
-public class DessicantModel extends EntityModel<DessicantEntity> {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("dessicant"), "main");
+public class DesiccantModel extends EntityModel<DesiccantEntity> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("desiccant"), "main");
+	private static final int TELSON_STING_COLOR = 0xFFFF3030;
 
 	private final ModelPart body;
 	private final ModelPart head;
 	private final ModelPart tail;
+	private final ModelPart telson;
 	private final ModelPart leftLegs;
 	private final ModelPart rightLegs;
+	private float telsonStingSwell;
 
-	public DessicantModel(ModelPart root) {
+	public DesiccantModel(ModelPart root) {
 		this.body = root.getChild("body");
 		this.head = root.getChild("head");
 		this.tail = root.getChild("tail");
+		this.telson = root.getChild("telson");
 		this.leftLegs = root.getChild("leftLegs");
 		this.rightLegs = root.getChild("rightLegs");
 	}
@@ -45,7 +50,10 @@ public class DessicantModel extends EntityModel<DessicantEntity> {
 		// Tail curving upward
 		partdefinition.addOrReplaceChild("tail", CubeListBuilder.create()
 				.texOffs(20, 0).addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 4.0F, new CubeDeformation(0.0F))
-				.texOffs(20, 6).addBox(-0.5F, -4.0F, 3.0F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(20, 6).addBox(-0.5F, -4.0F, 3.0F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)),
+				PartPose.offset(0.0F, 20.0F, 4.0F));
+
+		partdefinition.addOrReplaceChild("telson", CubeListBuilder.create()
 				.texOffs(26, 6).addBox(-0.5F, -6.0F, 2.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(0.0F, 20.0F, 4.0F));
 
@@ -68,18 +76,38 @@ public class DessicantModel extends EntityModel<DessicantEntity> {
 	}
 
 	@Override
-	public void setupAnim(DessicantEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(DesiccantEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		float legSwing = (float) Math.cos(limbSwing * 0.6662F) * 0.4F * limbSwingAmount;
 		this.leftLegs.zRot = legSwing;
 		this.rightLegs.zRot = -legSwing;
+		this.tail.xRot = 0.0F;
+		this.telson.xRot = 0.0F;
+		this.telson.xScale = 1.0F;
+		this.telson.yScale = 1.0F;
+		this.telson.zScale = 1.0F;
+		this.telsonStingSwell = 0.0F;
+
+		if (entity.isStinging()) {
+			float stingProgress = entity.getStingProgress();
+			float strike = Mth.sin(stingProgress * Mth.PI);
+			this.telsonStingSwell = strike;
+			this.tail.xRot = -0.35F - strike * 0.75F;
+			this.telson.xRot = this.tail.xRot - strike * 0.25F;
+			float telsonScale = 1.0F + strike * 0.45F;
+			this.telson.xScale = telsonScale;
+			this.telson.yScale = telsonScale;
+			this.telson.zScale = telsonScale;
+		}
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
-		body.render(poseStack, buffer, packedLight, packedOverlay);
-		head.render(poseStack, buffer, packedLight, packedOverlay);
-		tail.render(poseStack, buffer, packedLight, packedOverlay);
-		leftLegs.render(poseStack, buffer, packedLight, packedOverlay);
-		rightLegs.render(poseStack, buffer, packedLight, packedOverlay);
+		body.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		head.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		tail.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		int telsonColor = this.telsonStingSwell > 0.0F ? TELSON_STING_COLOR : packedColor;
+		telson.render(poseStack, buffer, packedLight, packedOverlay, telsonColor);
+		leftLegs.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
+		rightLegs.render(poseStack, buffer, packedLight, packedOverlay, packedColor);
 	}
 }

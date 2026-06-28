@@ -27,6 +27,7 @@ public final class ArmorPreparationResourceTest {
 		for (String id : new String[] {
 				"toxicognath",
 				"fargone_proboscis",
+				"telson",
 				"queens_physogastrism",
 				"cuttlefish_chromatophores",
 				"sclerotic_oleum",
@@ -42,6 +43,7 @@ public final class ArmorPreparationResourceTest {
 		assertContains("toxicognath lang", lang, "\"item.hemomancy.toxicognath\": \"Toxicognath\"");
 		assertContains("fargone proboscis lang", lang,
 				"\"item.hemomancy.fargone_proboscis\": \"Fargone Proboscis\"");
+		assertContains("telson lang", lang, "\"item.hemomancy.telson\": \"Telson\"");
 		assertContains("queens physogastrism lang", lang,
 				"\"item.hemomancy.queens_physogastrism\": \"Queen's Physogastrism\"");
 		assertContains("cuttlefish chromatophores lang", lang,
@@ -54,6 +56,7 @@ public final class ArmorPreparationResourceTest {
 		for (String id : new String[] {
 				"toxicognath",
 				"fargone_proboscis",
+				"telson",
 				"queens_physogastrism",
 				"cuttlefish_chromatophores",
 				"sclerotic_oleum",
@@ -73,6 +76,12 @@ public final class ArmorPreparationResourceTest {
 		assertContains("fargone proboscis drop",
 				read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/fargone.json")),
 				"\"name\": \"hemomancy:fargone_proboscis\"");
+		assertContains("desiccant telson drop",
+				read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/desiccant.json")),
+				"\"name\": \"hemomancy:telson\"");
+		assertContains("fargone proboscis drop remains",
+				read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/fargone.json")),
+				"\"name\": \"hemomancy:fargone_proboscis\"");
 		assertContains("queen physogastrism drop",
 				read(RESOURCE_ROOT.resolve("data/hemomancy/loot_table/entities/chthonian_queen.json")),
 				"\"name\": \"hemomancy:queens_physogastrism\"");
@@ -86,7 +95,8 @@ public final class ArmorPreparationResourceTest {
 		assertRecipeUses("sclerotic_oleum", "hemomancy:chalybeate_sclerite");
 		assertRecipeUses("sclerotic_oleum", "hemomancy:queens_physogastrism");
 		assertRecipeUses("aculeate_vitriol", "hemomancy:toxicognath");
-		assertRecipeUses("aculeate_vitriol", "hemomancy:fargone_proboscis");
+		assertRecipeUses("aculeate_vitriol", "hemomancy:telson");
+		assertRecipeDoesNotUse("aculeate_vitriol", "hemomancy:fargone_proboscis");
 		assertRecipeUses("aculeate_vitriol", "hemomancy:calcified_blood_spine");
 		assertRecipeUses("chromatic_sublimate", "hemomancy:serpent_scale");
 		assertRecipeUses("chromatic_sublimate", "hemomancy:puppeteering_thread");
@@ -113,6 +123,11 @@ public final class ArmorPreparationResourceTest {
 		assertContains(recipeId + " result", recipe, "\"id\": \"hemomancy:" + recipeId + "\"");
 	}
 
+	private static void assertRecipeDoesNotUse(String recipeId, String itemId) throws IOException {
+		String recipe = read(RECIPES.resolve(recipeId + ".json"));
+		assertDoesNotContain(recipeId + " should not use " + itemId, recipe, "\"item\": \"" + itemId + "\"");
+	}
+
 	private static String read(Path path) throws IOException {
 		if (!Files.exists(path)) {
 			throw new AssertionError("missing " + path);
@@ -129,6 +144,12 @@ public final class ArmorPreparationResourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertDoesNotContain(String label, String text, String forbidden) {
+		if (text.contains(forbidden)) {
+			throw new AssertionError(label + ": found " + forbidden);
 		}
 	}
 }

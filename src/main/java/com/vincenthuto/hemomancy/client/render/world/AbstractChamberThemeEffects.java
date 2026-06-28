@@ -41,10 +41,7 @@ abstract class AbstractChamberThemeEffects implements ChamberThemeEffects {
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthMask(true);
 
-		if (theme.renderBaseSkybox()) {
-			ChamberOfWillRenderHelpers.renderBox(poseStack, tesselator, skyDistance, 0, 1,
-					GameRenderer::getPositionTexColorShader, theme.skyTexture(), theme.skyboxColor());
-		}
+		renderBaseSkybox(context);
 
 		float scale = .80f; // give buffer so rotated cubes don't clip through main skybox
 		int layers = 6;
@@ -120,6 +117,17 @@ abstract class AbstractChamberThemeEffects implements ChamberThemeEffects {
 		RenderSystem.disableBlend();
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		return true;
+	}
+
+	protected void renderBaseSkybox(ChamberThemeRenderContext context) {
+		PoseStack poseStack = context.poseStack();
+		Tesselator tesselator = context.tesselator();
+		float skyDistance = context.skyDistance();
+		ChamberSkyTheme theme = context.theme();
+		if (theme.renderBaseSkybox()) {
+			ChamberOfWillRenderHelpers.renderBox(poseStack, tesselator, skyDistance, 0, 1,
+					GameRenderer::getPositionTexColorShader, theme.skyTexture(), theme.skyboxColor());
+		}
 	}
 
 	protected void renderAfterNebula(ChamberThemeRenderContext context) {

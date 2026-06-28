@@ -164,6 +164,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> fargone_proboscis = BASEITEMS.register("fargone_proboscis",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> telson = BASEITEMS.register("telson",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> queens_physogastrism = BASEITEMS.register("queens_physogastrism",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> cuttlefish_chromatophores = BASEITEMS.register("cuttlefish_chromatophores",
@@ -989,9 +991,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hematic_burrower = SPAWNEGGS.register(
             "spawn_egg_hematic_burrower",
             () -> new DeferredSpawnEggItem(EntityInit.hematic_burrower, 0x3A2520, 0x8A1020, new Item.Properties()));
-//    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
-//            "spawn_egg_dessicant",
-//            () -> new DeferredSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_desiccant = SPAWNEGGS.register(
+            "spawn_egg_desiccant",
+            () -> new DeferredSpawnEggItem(EntityInit.desiccant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
 //    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
 //            "spawn_egg_cruor_fiend",
 //            () -> new DeferredSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));

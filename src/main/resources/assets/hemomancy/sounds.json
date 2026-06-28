@@ -719,32 +719,32 @@
       }
     ]
   },
-  "entity.dessicant.ambient": {
+  "entity.desiccant.ambient": {
     "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.dessicant.ambient",
+    "subtitle": "subtitle.hemomancy.entity.desiccant.ambient",
     "sounds": [
       {
-        "name": "hemomancy:entity/dessicant/ambient",
+        "name": "hemomancy:entity/desiccant/ambient",
         "stream": true
       }
     ]
   },
-  "entity.dessicant.hurt": {
+  "entity.desiccant.hurt": {
     "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.dessicant.hurt",
+    "subtitle": "subtitle.hemomancy.entity.desiccant.hurt",
     "sounds": [
       {
-        "name": "hemomancy:entity/dessicant/hurt",
+        "name": "hemomancy:entity/desiccant/hurt",
         "stream": true
       }
     ]
   },
-  "entity.dessicant.death": {
+  "entity.desiccant.death": {
     "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.dessicant.death",
+    "subtitle": "subtitle.hemomancy.entity.desiccant.death",
     "sounds": [
       {
-        "name": "hemomancy:entity/dessicant/death",
+        "name": "hemomancy:entity/desiccant/death",
         "stream": true
       }
     ]

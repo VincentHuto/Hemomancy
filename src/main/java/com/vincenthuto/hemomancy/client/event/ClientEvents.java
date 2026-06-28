@@ -654,7 +654,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.hematic_construct.get(), HematicConstructRenderer::new);
             event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
             event.registerEntityRenderer(EntityInit.dark_arrow.get(), DarkArrowRenderer::new);
-//            event.registerEntityRenderer(EntityInit.dessicant.get(), DessicantRenderer::new);
+            event.registerEntityRenderer(EntityInit.desiccant.get(), DesiccantRenderer::new);
 //            event.registerEntityRenderer(EntityInit.cruor_fiend.get(), CruorFiendRenderer::new);
 //            event.registerEntityRenderer(EntityInit.void_drinker.get(), VoidDrinkerRenderer::new);
 //            event.registerEntityRenderer(EntityInit.frozen_clot.get(), FrozenClotRenderer::new);

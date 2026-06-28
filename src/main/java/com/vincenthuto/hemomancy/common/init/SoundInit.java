@@ -230,13 +230,13 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VOID_DRINKER_DEATH = registerSoundEvent(
 			"entity.void_drinker.death");
 
-	// Dessicant (desert scorpion blood-drainer)
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESSICANT_AMBIENT = registerSoundEvent(
-			"entity.dessicant.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESSICANT_HURT = registerSoundEvent(
-			"entity.dessicant.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESSICANT_DEATH = registerSoundEvent(
-			"entity.dessicant.death");
+	// Desiccant (desert scorpion blood-drainer)
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESICCANT_AMBIENT = registerSoundEvent(
+			"entity.desiccant.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESICCANT_HURT = registerSoundEvent(
+			"entity.desiccant.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESICCANT_DEATH = registerSoundEvent(
+			"entity.desiccant.death");
 
 	// Synapse Hound (neural pack predator)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SYNAPSE_HOUND_AMBIENT = registerSoundEvent(

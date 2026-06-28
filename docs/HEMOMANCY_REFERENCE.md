@@ -567,12 +567,15 @@ The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`
 | Progression State | Theme ID | Room Tier |
 |---|---:|---:|
 | Degree 6 | `hemomancy:will_default` | 0 |
+| First cerebral scar, major Mnemonist quest, or Degree 7 approach | `hemomancy:mnemonic_lowtide` | 1 |
 | Degree 7 before Qliphoth Communion | `hemomancy:archon_revelation` | 1 |
 | Active owned Qliphoth Bloom, Qliphoth pome progress, or Communion complete | `hemomancy:qliphoth_communion` | 2 |
 | Silent Archon path | `hemomancy:silent_archon` | 2 |
 | Degree 8 / Apotheos | `hemomancy:apotheos` | 3 |
 
 The active state syncs to the client through `PacketSyncChamberOfWill`; missing or invalid theme ids fall back to `will_default`.
+
+The Mnemonic Lowtide progression slot currently exists as a reserved transitional Chamber theme between the default refuge state and later Archon/Qliphoth branches. Its previous bespoke visual pass has been intentionally removed so the theme can be rebuilt from a clean blank-skybox baseline.
 
 The Qliphoth Communion sky uses dedicated dark red-purple-blue sky and mist textures with root-script/star-glyph overlays. While the owner consumes Qliphoth Pomes, the chamber sync also carries the pome count: pomes 1-8 each add a small red-black shader vortex in the sky, and the ninth collapses those into residual rings plus a massive zenith black hole. These black holes are shader quads that lens the theme sky texture rather than static black-hole PNGs.
 
@@ -1952,11 +1955,12 @@ Direct Blood Routing is the no-basin automation model for blood-fed machines. It
 | ![](../src/main/resources/assets/hemomancy/textures/item/monolith_imbued_cloth.png) Monolith Imbued Cloth | Archon-tier cloth made from Monolith Fragment, Puppeteering Thread, and white wool; reforges Blood Lust into Silent Archon Vestments for players who made the silent Archon choice. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/chalybeate_sclerite.png) Chalybeate Sclerite | Ferric deep-ocean material nonlethally knapped from retracted Chalybeate Snails with any HutosLib `ItemKnapper`. Distills to Hematic Iron Powder and can substitute for Ferric Enzyme in the Ferric Spores recipe. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/toxicognath.png) Toxicognath | Venom-Rib Centipede fang organ used in Aculeate Vitriol. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/fargone_proboscis.png) Fargone Proboscis | Blood-moon mosquito feeding lance used in Aculeate Vitriol. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/fargone_proboscis.png) Fargone Proboscis | Blood-moon mosquito feeding lance dropped by Fargones. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/telson.png) Telson | Desiccant scorpion stinger and venom bulb used in Aculeate Vitriol; the living organ swells red when feeding. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/queens_physogastrism.png) Queen's Physogastrism | Chthonian Queen swollen brood organ used in Sclerotic Oleum. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/cuttlefish_chromatophores.png) Cuttlefish Chromatophores | Prism Cuttle pigment sacs used in Chromatic Sublimate. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/sclerotic_oleum.png) Sclerotic Oleum | Chitinite hardening quench oil made from Chitinous Husk, Chalybeate Sclerite, and Queen's Physogastrism; upgrades Hematic Iron into Chitinite armor in the Armature. |
-| ![](../src/main/resources/assets/hemomancy/textures/item/aculeate_vitriol.png) Aculeate Vitriol | Barbed retaliatory corrosive infusion made from Toxicognath, Fargone Proboscis, and Calcified Blood Spine; upgrades Hematic Iron into Barbed armor in the Armature. |
+| ![](../src/main/resources/assets/hemomancy/textures/item/aculeate_vitriol.png) Aculeate Vitriol | Barbed retaliatory corrosive infusion made from Toxicognath, Telson, and Calcified Blood Spine; upgrades Hematic Iron into Barbed armor in the Armature. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/chromatic_sublimate.png) Chromatic Sublimate | Prismatic control-sheen coating made from Serpent Scale, Puppeteering Thread, and Cuttlefish Chromatophores; upgrades Hematic Iron into Prismatic armor in the Armature. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/venous_pinion.png) Venous Pinion | Rare Venous Strider balancing feather used to craft the Venous Strider Sabatons and tie their emergency slow-fall brace to the heron-like strider ecology. |
 | ![](../src/main/resources/assets/hemomancy/textures/item/erythrocoral_fragment.png) Erythrocoral Fragment | Vivacious warm-ocean fungal-coral material, best harvested from Erythrocoral fans/tendrils with shears. Combines with Spore Sac and Hyphal Substrate into Vivacious Spores, or distills back into a low-yield Spore Sac. |
@@ -2312,11 +2316,11 @@ Crimson Lodge combat vestment upgraded from either D3 armor fork:
 
 ### 22.3 Barbed Armor
 
-Retaliatory coastal-venom armor blending Barbed Urchin spines, Venom Rib Centipede poison, and Fargone blood-moon aggression:
+Retaliatory coastal-venom armor blending Barbed Urchin spines, Venom Rib Centipede poison, and Desiccant scorpion stings:
 - ![](../src/main/resources/assets/hemomancy/textures/item/barbed_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/barbed_boots.png) Boots
 - Barbed Shield ![](../src/main/resources/assets/hemomancy/textures/entity/barbed_shield/model_barbed_shield.png)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
-- **Preparation:** Aculeate Vitriol, brewed from Toxicognath, Fargone Proboscis, and Calcified Blood Spine.
+- **Preparation:** Aculeate Vitriol, brewed from Toxicognath, Telson, and Calcified Blood Spine.
 - **Repair:** Calcified Blood Spine
 - **Set Bonus (4 pieces):** Thorns â€” attackers take 2 damage and receive Blood Loss effect (3 seconds)
 
@@ -2929,7 +2933,8 @@ Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Ce
 | **Chthonian Queen** | ![](../src/main/resources/assets/hemomancy/textures/entity/chthonian_queen/model_chthonian_queen.png) | Monster | Boss variant of Chthonian; exactly 1 spawns per Termite Mound. Associated with gold (royal). The only gold-connected creature in the mod. |
 | **Lump of Thought** | ![](../src/main/resources/assets/hemomancy/textures/entity/lump_of_thought/model_lump_of_thought.png) | Monster | Sentient thought blob |
 | **Morphling Polyp** (mob) | ![](../src/main/resources/assets/hemomancy/textures/entity/morphling_polyp/model_morphling_polyp.png) | Monster | Rare black slime-like wild morphling larva. Natural spawns receive up to three biome-shaped layers (fungal, aquatic, cave, desert, forest, or open-land hints) and provide the player's first Morphling Polyp item. |
-| **Dormant tendency placeholder mobs** | | Monster | Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, and Myelin Borer are currently commented out with no active registry entries, spawn placements, biome modifiers, spawn eggs, loot tables, or recipe-drop routes. |
+| **Desiccant** | ![](../src/main/resources/assets/hemomancy/textures/entity/desiccant/model_desiccant.png) | Monster | Low desert scorpion blood-drainer. Spawns in dry hot biomes such as deserts, badlands, and savannas, and drops Telson for Aculeate Vitriol. Its sting animates the raised tail and red-swollen telson, inflicts Hunger and Blood Loss, and immediately saps 250 ml from active-blood players. |
+| **Dormant tendency placeholder mobs** | | Monster | Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, and Myelin Borer are currently commented out with no active registry entries, spawn placements, biome modifiers, spawn eggs, loot tables, or recipe-drop routes. |
 | **Brined Votary** | ![](../src/main/resources/assets/hemomancy/textures/entity/brined_votary/brined_votary.png) | Monster | Structure-only drowned Harbinger remnant placed by Harbinger Voyager Wrecks. Slow aquatic humanoid in corroded diving/ritual gear; wakes only at close range, is persistent when structure-placed, and has modest loot. |
 | **Lantern Tick** | ![](../src/main/resources/assets/hemomancy/textures/entity/lantern_tick/model_lantern_tick.png) | Monster | Rare underground parasite in cave biomes. It glows as a lure when no player is nearby, leaps at close players, latches onto their head, and periodically drains active blood volume; if no active blood pool is available, it deals small fallback damage. Drops the Lantern Tick Helmet. |
 
@@ -2991,8 +2996,9 @@ Registered in `EntityInit.commonSetup`:
 - Prism Cuttle -> `IN_WATER`, warm/lukewarm ocean biome tag only
 - Venom-Rib Centipede -> `ON_GROUND`, rare damp temperate biome tag with low-light ground checks
 - Fargone â†’ `ON_GROUND` (monster rules)
+- Desiccant -> `ON_GROUND`, dry hot biome tag with sand, red sand, sandstone, red sandstone, and terracotta surface checks
 - Abhorent Thought â†’ `ON_GROUND` (monster rules)
-- Dormant tendency placeholder mobs -> disabled/commented out: Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, and Myelin Borer.
+- Dormant tendency placeholder mobs -> disabled/commented out: Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, and Myelin Borer.
 - Vesper phase 1, Vesper phase 2, and The Mycophant intentionally have no natural spawn placement. Current access is direct `/summon` until their endgame summoning rituals are implemented.
 - Crimson Doe â†’ `ON_GROUND`
 - Hemojelly â†’ `ON_GROUND`
@@ -3012,7 +3018,8 @@ Notable implemented drop families:
 |-----------------|------------|
 | Chitinite / Fervent Chitinite / Chthonian / Chthonian Queen | Chitinous Husk, with Chthonian Queen also rolling Ferric Enzyme |
 | Leech / Blood aquatic or arthropod mobs | Blood/hemolymph materials such as Swollen Leech or Cleansing Hemolymph |
-| Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob; Morphling Polyps drop the base Morphling Polyp item and can roll a small layer-hint item from their active appendages |
+| Fargone / Thirster / Abhorent Thought / Lump of Thought / Morphling Polyp | Sanguine Formation / fungal ingredients depending on mob; Fargones also drop Fargone Proboscis; Morphling Polyps drop the base Morphling Polyp item and can roll a small layer-hint item from their active appendages |
+| Desiccant | Telson, the scorpion stinger and bulb used in Aculeate Vitriol; the mob's sting inflicts Blood Loss and drains 250 ml from active-blood players |
 | Blood Drunk Puppeteer / Enthralled Doll | Puppeteering Thread from the puppeteer; puppeteer-summoned dolls are support minions and do not create extra loot |
 | Chalybeate Snail | Killing gives only a rare small Hematic Iron Scrap fallback; reliable Chalybeate Sclerites come from knapper harvesting while retracted |
 | Hematic Burrower | Ordinary death loot is clay-only; the rare coal/raw copper/raw iron reward is emitted only during the panic dig-away escape behavior |
@@ -3637,7 +3644,7 @@ This section is a maintenance rollup, not a changelog. It uses the status legend
 - **GhastlyAlembic Custom Renderer** â€” `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** â€” `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
 - **Morphling Incubator Blood Flask Transfer Fix** â€” Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
-- **New Monster Mobs** â€” `Partial`: Crimson Doe, Hemojelly, and Venous Strider remain active creature additions. The placeholder tendency mobs (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, and Myelin Borer) are dormant/commented out with their spawn hooks, biome modifiers, loot tables, spawn eggs, and reagent drops disabled.
+- **New Monster Mobs** â€” `Partial`: Crimson Doe, Hemojelly, Venous Strider, and Desiccant remain active creature additions. Desiccant spawns in dry hot biomes, drops Telson for Aculeate Vitriol, and now has a synced sting state that plays a tail/telson swell animation while applying Blood Loss and an immediate 250 ml active-blood drain. The remaining placeholder tendency mobs (Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, and Myelin Borer) are dormant/commented out with their spawn hooks, biome modifiers, loot tables, spawn eggs, and reagent drops disabled.
 - **New NPC Entities Dialogue** â€” `Partial`: full dialogue trees are implemented for the main Harbinger and Unstained NPCs, including Zealot, Acolyte, Guardian item/ambient dialogue, Scout, and Our Lady whisper events. Item inquiry is now merged into normal NPC dialogue through `DialogueItemInquiryNodes` instead of replacing the tree when the player holds an item. Guardian/Scout/Acolyte renderers and church spawning are active. Spectral Companion is registered with AI/rendering, but its player-facing summon flow remains WIP.
 - **Fungal Whisper System** â€” `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4â€“7, with degree 8 using the Archon-tier whisper set) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals. Additional one-shot event dialogues: `postMonolithShatter()` (Entity comments on the seed hiding inside), `postBloom()` (acknowledgment of first fruiting), `pomeDropped(index, offerMemo)` (per-husk drop announcement; always delivered to the online bloom owner, with memo capture only when still relevant), `qliphothCommunion()` (nine-shell completion), `coreWitnessDialogue()` (Archon dimension choice fork). Whisper nodes now include Hematic Field Notes memo capture options where appropriate; ordinary high-tier whispers unlock Entity/Hyphae knowledge, while truth, communion, and core-witness moments unlock Truth or Qliphoth pages.
 - **Ancestral Communion Dialogue** â€” `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.

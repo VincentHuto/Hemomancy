@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
@@ -40,12 +41,14 @@ public class ChamberOfWillManager extends SavedData {
             Registries.DIMENSION, Hemomancy.rloc("chamber_of_will"));
 
     public static final ResourceLocation THEME_WILL_DEFAULT = Hemomancy.rloc("will_default");
+    public static final ResourceLocation THEME_MNEMONIC_LOWTIDE = Hemomancy.rloc("mnemonic_lowtide");
     public static final ResourceLocation THEME_ARCHON_REVELATION = Hemomancy.rloc("archon_revelation");
     public static final ResourceLocation THEME_QLIPHOTH_COMMUNION = Hemomancy.rloc("qliphoth_communion");
     public static final ResourceLocation THEME_SILENT_ARCHON = Hemomancy.rloc("silent_archon");
     public static final ResourceLocation THEME_APOTHEOS = Hemomancy.rloc("apotheos");
     private static final List<ResourceLocation> ORDERED_SKY_THEMES = List.of(
             THEME_WILL_DEFAULT,
+            THEME_MNEMONIC_LOWTIDE,
             THEME_ARCHON_REVELATION,
             THEME_QLIPHOTH_COMMUNION,
             THEME_SILENT_ARCHON,
@@ -58,7 +61,6 @@ public class ChamberOfWillManager extends SavedData {
     public static final int MAX_ROOM_TIER = 3;
 
     private static final String DATA_NAME = "chamber_of_will_data";
-
     private int nextId = 0;
     private final Map<UUID, Integer> ids = new HashMap<>();
     private final Map<UUID, ReturnPoint> returnPoints = new HashMap<>();
@@ -240,6 +242,9 @@ public class ChamberOfWillManager extends SavedData {
         }
         if (degree >= 7) {
             return new ChamberState(1, THEME_ARCHON_REVELATION);
+        }
+        if (degree >= 6 && HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(player)) {
+            return new ChamberState(1, THEME_MNEMONIC_LOWTIDE);
         }
         return new ChamberState(0, THEME_WILL_DEFAULT);
     }

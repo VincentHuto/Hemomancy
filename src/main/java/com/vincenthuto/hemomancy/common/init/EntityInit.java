@@ -277,6 +277,10 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<FargoneEntity>> fargone = ENTITY_TYPES.register("fargone",
             () -> EntityType.Builder.of(FargoneEntity::new, MobCategory.MONSTER).sized(1F, 1.8F)
                     .build(Hemomancy.rloc("fargone").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<DesiccantEntity>> desiccant = ENTITY_TYPES.register(
+            "desiccant",
+            () -> EntityType.Builder.of(DesiccantEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 0.5F).build(Hemomancy.rloc("desiccant").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<ThirsterEntity>> thirster = ENTITY_TYPES.register("thirster",
             () -> EntityType.Builder.of(ThirsterEntity::new, MobCategory.MONSTER).sized(1F, 1.8F)
                     .build(Hemomancy.rloc("thirster").toString()));
@@ -443,11 +447,6 @@ public class EntityInit {
 
     // New biome mobs
     // Tendency placeholder mobs are dormant until they have a stronger gameplay role.
-//    public static final DeferredHolder<EntityType<?>, EntityType<DessicantEntity>> dessicant = ENTITY_TYPES.register(
-//            "dessicant",
-//            () -> EntityType.Builder.of(DessicantEntity::new, MobCategory.MONSTER)
-//                    .sized(0.8F, 0.5F).build(Hemomancy.rloc("dessicant").toString()));
-//
 //    public static final DeferredHolder<EntityType<?>, EntityType<CruorFiendEntity>> cruor_fiend = ENTITY_TYPES.register(
 //            "cruor_fiend",
 //            () -> EntityType.Builder.of(CruorFiendEntity::new, MobCategory.MONSTER)
@@ -673,9 +672,9 @@ public class EntityInit {
         event.register(EntityInit.abhorent_thought.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
-//        event.register(EntityInit.dessicant.get(), SpawnPlacementTypes.ON_GROUND,
-//                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DessicantEntity::canSpawnHere,
-//                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.desiccant.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DesiccantEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
 //        event.register(EntityInit.cruor_fiend.get(), SpawnPlacementTypes.ON_GROUND,
 //                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CruorFiendEntity::canSpawnHere,
 //                RegisterSpawnPlacementsEvent.Operation.OR);
@@ -806,7 +805,7 @@ public class EntityInit {
         event.put(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalEntity.setAttributes().build());
         event.put(EntityInit.vesper_evening_star.get(), VesperTheEveningStarEntity.setAttributes().build());
         event.put(EntityInit.mycophant.get(), MycophantEntity.setAttributes().build());
-//        event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
+        event.put(EntityInit.desiccant.get(), DesiccantEntity.setAttributes().build());
 //        event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
 //        event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
 //        event.put(EntityInit.frozen_clot.get(), FrozenClotEntity.setAttributes().build());

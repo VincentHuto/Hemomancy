@@ -348,8 +348,13 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("fargone_proboscis", "Fargone Proboscis",
-                "A blood-drinking proboscis prepared for corrosive armor baths.",
+                "A blood-drinking proboscis cut from a Fargone.",
                 "Materials", () -> new ItemStack(ItemInit.fargone_proboscis.get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("telson", "Telson",
+                "A desiccant scorpion stinger and venom bulb prepared for corrosive armor baths.",
+                "Materials", () -> new ItemStack(ItemInit.telson.get()),
                 true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("queens_physogastrism", "Queen's Physogastrism",

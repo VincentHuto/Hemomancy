@@ -39,6 +39,7 @@ public final class ChamberThemeCommandSourceTest {
 				"ChamberOfWillManager.orderedSkyThemes()");
 
 		assertContains("manager keeps stable theme order", manager, "ORDERED_SKY_THEMES");
+		assertContains("manager command theme order includes mnemonic lowtide", manager, "mnemonic_lowtide");
 		assertContains("manager stores testing overrides", manager, "skyThemeOverrides");
 		assertContains("manager sets sky override", manager, "setSkyThemeOverride");
 		assertContains("manager clears sky override", manager, "clearSkyThemeOverride");
