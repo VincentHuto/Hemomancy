@@ -52,6 +52,10 @@ public class ShaderInit {
 	public static ShaderHolder MYCELIAL_CRUCIBLE_BASIN = new ShaderHolder(Hemomancy.rloc("world/mycelial_crucible_basin"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "BasinSeed", "SwirlIntensity");
 
+	public static ShaderHolder MNEMONIC_LOWTIDE_LAKE = new ShaderHolder(Hemomancy.rloc("world/mnemonic_lowtide_lake"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "LakeSeed", "WaveStrength", "NoiseScale",
+			"GlossStrength", "EdgeFade");
+
 	public static ShaderHolder SILENT_ARCHON_FOG = new ShaderHolder(Hemomancy.rloc("world/silent_archon_fog"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed", "FogLayer", "FogDensity");
 
@@ -84,6 +88,7 @@ public class ShaderInit {
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));
+        registerShader(event, MNEMONIC_LOWTIDE_LAKE.createInstance(provider));
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));

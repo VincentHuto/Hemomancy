@@ -274,6 +274,38 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType mnemonicLowtideLake(float gameTime, float lakeSeed, float waveStrength,
+			float noiseScale, float glossStrength, float edgeFade) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"mnemonic_lowtide_lake_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_LAKE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "LakeSeed", lakeSeed);
+					setUniform(shader, "WaveStrength", waveStrength);
+					setUniform(shader, "NoiseScale", noiseScale);
+					setUniform(shader, "GlossStrength", glossStrength);
+					setUniform(shader, "EdgeFade", edgeFade);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_LAKE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("mnemonic_lowtide_lake",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 16384, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MNEMONIC_LOWTIDE_LAKE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType qliphothBlackHole(ResourceLocation texture, float gameTime, float holeSeed,
 			float lensStrength, float ringIntensity, boolean finalHole) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
