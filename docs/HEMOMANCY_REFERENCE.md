@@ -575,7 +575,7 @@ The sky renderer now reads a `ChamberSkyTheme` through `ChamberSkyThemeRegistry`
 
 The active state syncs to the client through `PacketSyncChamberOfWill`; missing or invalid theme ids fall back to `will_default`.
 
-The Mnemonic Lowtide progression slot currently exists as a reserved transitional Chamber theme between the default refuge state and later Archon/Qliphoth branches. Its previous bespoke visual pass has been intentionally removed so the theme can be rebuilt from a clean blank-skybox baseline.
+The Mnemonic Lowtide progression slot is the first transitional disturbance between the default refuge state and later Archon/Qliphoth branches. It keeps the sky restrained, but renders a nearby but unreachable glossy black, red, and parchment-beige subfloor tide below the blood-wood refuge. The lake is renderer-only: it adds no fluid, collision, hazard, or movement rule, and the Chamber floor occludes it naturally so it reads as blood-memory pressing up beneath the player's private room rather than a fallable ocean.
 
 The Qliphoth Communion sky uses dedicated dark red-purple-blue sky and mist textures with root-script/star-glyph overlays. While the owner consumes Qliphoth Pomes, the chamber sync also carries the pome count: pomes 1-8 each add a small red-black shader vortex in the sky, and the ninth collapses those into residual rings plus a massive zenith black hole. These black holes are shader quads that lens the theme sky texture rather than static black-hole PNGs.
 
