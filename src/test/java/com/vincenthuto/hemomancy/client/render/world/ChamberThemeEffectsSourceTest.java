@@ -5,19 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class ChamberThemeEffectsSourceTest {
-	private static final Path RENDERER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffects.java");
-	private static final Path HELPERS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillRenderHelpers.java");
-	private static final Path REGISTRY = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ChamberSkyThemeRegistry.java");
-	private static final Path QLIPHOTH_EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/QliphothCommunionChamberEffects.java");
-	private static final Path SILENT_ARCHON_EFFECTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world/SilentArchonChamberEffects.java");
-	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 	private static final Path PACKAGE = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/render/world");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill");
+	private static final Path RENDERER = PACKAGE.resolve("ChamberOfWillEffects.java");
+	private static final Path HELPERS = PACKAGE.resolve("ChamberOfWillRenderHelpers.java");
+	private static final Path REGISTRY = PACKAGE.resolve("ChamberSkyThemeRegistry.java");
+	private static final Path QLIPHOTH_EFFECTS = PACKAGE.resolve("QliphothCommunionChamberEffects.java");
+	private static final Path SILENT_ARCHON_EFFECTS = PACKAGE.resolve("SilentArchonChamberEffects.java");
+	private static final Path LOWTIDE_EFFECTS = PACKAGE.resolve("MnemonicLowtideChamberEffects.java");
+	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	private ChamberThemeEffectsSourceTest() {
 	}
@@ -28,6 +24,7 @@ public final class ChamberThemeEffectsSourceTest {
 		String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
 		String qliphothEffects = Files.readString(QLIPHOTH_EFFECTS).replace("\r\n", "\n");
 		String silentArchonEffects = Files.readString(SILENT_ARCHON_EFFECTS).replace("\r\n", "\n");
+		String lowtideEffects = Files.readString(LOWTIDE_EFFECTS).replace("\r\n", "\n");
 		String reference = Files.readString(REFERENCE).replace("\r\n", "\n");
 
 		assertFileExists("theme effects interface exists", "ChamberThemeEffects.java");
@@ -39,6 +36,7 @@ public final class ChamberThemeEffectsSourceTest {
 		assertFileExists("qliphoth communion theme effects exists", "QliphothCommunionChamberEffects.java");
 		assertFileExists("silent archon theme effects exists", "SilentArchonChamberEffects.java");
 		assertFileExists("apotheos theme effects exists", "ApotheosChamberEffects.java");
+		assertFileExists("mnemonic lowtide effects exists", "MnemonicLowtideChamberEffects.java");
 
 		assertContains("renderer delegates sky rendering to active theme effects", renderer,
 				"return ChamberSkyThemeRegistry.activeEffects().renderSky(context);");
@@ -63,8 +61,16 @@ public final class ChamberThemeEffectsSourceTest {
 				"new QliphothCommunionChamberEffects(");
 		assertContains("silent archon effects are registered", registry,
 				"new SilentArchonChamberEffects(");
-		assertContains("mnemonic lowtide uses blank theme effects", registry,
+		assertContains("mnemonic lowtide effects are registered", registry,
+				"new MnemonicLowtideChamberEffects(mnemonicLowtide)");
+		assertNotContains("mnemonic lowtide no longer uses blank theme effects", registry,
 				"new BlankChamberThemeEffects(mnemonicLowtide)");
+		assertContains("lowtide effects own lake render entry", lowtideEffects,
+				"public static void renderLake(RenderLevelStageEvent event)");
+		assertContains("lowtide effects use lowtide lake render type", lowtideEffects,
+				"HemoRenderTypes.mnemonicLowtideLake(");
+		assertContains("lowtide effects place lake below floor", lowtideEffects,
+				"ChamberOfWillManager.FLOOR_Y - LAKE_DEPTH");
 		assertContains("apotheos effects are registered", registry,
 				"new ApotheosChamberEffects(");
 
