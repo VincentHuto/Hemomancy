@@ -16,6 +16,7 @@ import java.util.List;
 public class SanguineMonolithShatterRenderer {
 
 	private static final int BURST_COUNT = 54;
+	private static final int SHARD_PULSE_COUNT = 18;
 	private static final float MIN_SIZE = 0.05f;
 	private static final float MAX_SIZE = 0.16f;
 	private static final int MIN_LIFETIME = 14;
@@ -43,12 +44,22 @@ public class SanguineMonolithShatterRenderer {
 
 	public static void spawnBurst(Vec3 center, RandomSource random) {
 		ACTIVE_PULSES.add(new Pulse(center, PULSE_CORE_MAX_RADIUS, PULSE_SHELL_MAX_RADIUS, PULSE_LIFETIME));
-		for (int i = 0; i < BURST_COUNT; i++) {
+		spawnShards(center, random, BURST_COUNT, 1.0D, 1.0F, 0);
+	}
+
+	public static void spawnShardPulse(Vec3 center, RandomSource random) {
+		spawnShards(center, random, SHARD_PULSE_COUNT, 0.62D, 0.85F, -4);
+	}
+
+	private static void spawnShards(Vec3 center, RandomSource random, int count, double speedScale,
+			float sizeScale, int lifetimeOffset) {
+		for (int i = 0; i < count; i++) {
 			Vec3 dir = randomDirection(random);
-			double speed = BASE_SPEED + random.nextDouble() * SPEED_VARIANCE;
+			double speed = (BASE_SPEED + random.nextDouble() * SPEED_VARIANCE) * speedScale;
 			Vec3 vel = dir.scale(speed);
-			float size = MIN_SIZE + random.nextFloat() * (MAX_SIZE - MIN_SIZE);
-			int lifetime = MIN_LIFETIME + random.nextInt(MAX_LIFETIME - MIN_LIFETIME + 1);
+			float size = (MIN_SIZE + random.nextFloat() * (MAX_SIZE - MIN_SIZE)) * sizeScale;
+			int lifetime = Math.max(6, MIN_LIFETIME + random.nextInt(MAX_LIFETIME - MIN_LIFETIME + 1)
+					+ lifetimeOffset);
 			Vec3 spinAxis = randomDirection(random);
 			float spinSpeed = (random.nextFloat() - 0.5f) * 0.55f;
 			Vec3 v1 = randomDirection(random).scale(size);

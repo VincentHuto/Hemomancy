@@ -14,9 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinEntity {
 	@Inject(method = "move", at = @At("HEAD"), remap = false)
 	private void hemomancy$applySilentSlippingNoClip(MoverType type, Vec3 movement, CallbackInfo ci) {
-		System.out.println("MixinEntity.move called for entity: " + ((Entity) (Object) this).getName().getString() + " of type: " + ((Entity) (Object) this).getType().getDescriptionId());
 		if ((Object) this instanceof Player player) {
-			System.out.println("Checking if we should apply Silent Slipping No Clip for player: " + player.getName().getString());
 			SilentArchonArmorAbilityHandler.applySilentSlippingNoClip(player);
 		}
 	}

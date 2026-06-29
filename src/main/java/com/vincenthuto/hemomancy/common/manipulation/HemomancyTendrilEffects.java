@@ -26,8 +26,10 @@ public final class HemomancyTendrilEffects {
 	private static final int ICE_GLOW = 0xA870CFFF;
 	private static final int BONE_CORE = 0xE8EFE5C8;
 	private static final int BONE_GLOW = 0xA8B5F4FF;
-	private static final int ROOT_CORE = 0xE80A0502;
-	private static final int ROOT_GLOW = 0xA8D8B74A;
+	private static final int QLIPHOTH_SEED_ROOT_CORE = 0xF0050003;
+	private static final int QLIPHOTH_SEED_ROOT_GLOW = 0xB8D10B1A;
+	private static final int SILENT_SEVERANCE_TENDRILS = 14;
+	private static final double SILENT_SEVERANCE_TENDRIL_SPIN = Math.PI * (3.0D - Math.sqrt(5.0D));
 
 	private HemomancyTendrilEffects() {
 	}
@@ -101,12 +103,25 @@ public final class HemomancyTendrilEffects {
 
 	public static TendrilEffectConfig rootConfig(double range, long seed) {
 		return TendrilEffectConfig.defaults()
-				.withColors(ROOT_CORE, ROOT_GLOW)
+				.withColors(QLIPHOTH_SEED_ROOT_CORE, QLIPHOTH_SEED_ROOT_GLOW)
 				.withRange(range(range))
 				.withLifecycle(6, 12, 12)
 				.withShape(18, 2, 0.075F, 0.06F)
 				.withBranching(4, 2, 0.3F, 0.95F)
 				.withWrithe(0.14F, 0.055F, 0.85F, 0.08F)
+				.withBlendColors(false)
+				.withFixedSeed(true, seed);
+	}
+
+	public static TendrilEffectConfig silentSeveranceConfig(double range, long seed) {
+		return TendrilEffectConfig.defaults()
+				.withMode(TendrilEffectConfig.Mode.FREEFORM)
+				.withColors(QLIPHOTH_SEED_ROOT_CORE, QLIPHOTH_SEED_ROOT_GLOW)
+				.withRange(range(range))
+				.withLifecycle(3, 8, 10)
+				.withShape(18, 2, 0.052F, 0.055F)
+				.withBranching(2, 1, 0.16F, 0.72F)
+				.withWrithe(0.085F, 0.09F, 0.22F, 0.0F)
 				.withBlendColors(false)
 				.withFixedSeed(true, seed);
 	}
@@ -142,6 +157,21 @@ public final class HemomancyTendrilEffects {
 					Math.sin(angle) * distance);
 			spawn(level, caster, new TendrilAnchor.Point(origin), new TendrilAnchor.Point(end),
 					voidSurfaceConfig(radius + 4.0D, worldSeed(level, caster, center.asLong() + i)));
+		}
+	}
+
+	public static void silentSeverance(ServerPlayer player, double radius) {
+		ServerLevel level = player.serverLevel();
+		Vec3 origin = player.position().add(0.0D, player.getBbHeight() * 0.58D, 0.0D);
+		double rotation = level.getGameTime() * 0.29D + player.getId();
+		for (int i = 0; i < SILENT_SEVERANCE_TENDRILS; i++) {
+			double angle = rotation + i * SILENT_SEVERANCE_TENDRIL_SPIN;
+			double reach = radius * (0.52D + 0.35D * level.random.nextDouble());
+			double height = -0.45D + 1.45D * level.random.nextDouble();
+			Vec3 end = origin.add(Math.cos(angle) * reach, height, Math.sin(angle) * reach);
+			long seed = worldSeed(level, player, i * 0x51F15EEDL + Double.doubleToLongBits(reach));
+			spawn(level, player, entity(player, TendrilAnchor.AnchorPoint.CENTER, 0.0D, 0.16D, 0.0D),
+					new TendrilAnchor.Point(end), silentSeveranceConfig(radius + 4.0D, seed));
 		}
 	}
 

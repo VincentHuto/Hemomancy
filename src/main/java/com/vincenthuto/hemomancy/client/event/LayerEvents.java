@@ -49,7 +49,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RenderLivingEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID,  value = Dist.CLIENT)
 public class LayerEvents {
@@ -116,8 +115,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(LeechModel.LAYER_LOCATION, LeechModel::createBodyLayer);
 		event.registerLayerDefinition(ToothPecksModel.LAYER_LOCATION, ToothPecksModel::createBodyLayer);
 		event.registerLayerDefinition(LumpOfThoughtModel.LAYER_LOCATION, LumpOfThoughtModel::createBodyLayer);
-		event.registerLayerDefinition(BloodDrunkPuppeteerModel.LAYER_LOCATION,
-				BloodDrunkPuppeteerModel::createbodyLayer);
+		event.registerLayerDefinition(BloodDrunkPuppeteerModel.LAYER_LOCATION,BloodDrunkPuppeteerModel::createBodyLayer);
 		event.registerLayerDefinition(ErythromyceliumEruptusModel.LAYER_LOCATION,
 				ErythromyceliumEruptusModel::createBodyLayer);
 		event.registerLayerDefinition(EnthralledDollModel.LAYER_LOCATION, EnthralledDollModel::createBodyLayer);
@@ -352,12 +350,6 @@ public class LayerEvents {
 		addLayerToPlayerSkin(event, PlayerSkin.Model.WIDE);
 		addLayerToPlayerSkin(event, PlayerSkin.Model.SLIM);
 
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@SubscribeEvent
-	public static void renderMonolithicDislocationShell(RenderLivingEvent.Post event) {
-		MonolithicDislocationShellLayer.renderFallback(event);
 	}
 
 //	@SuppressWarnings("deprecation")

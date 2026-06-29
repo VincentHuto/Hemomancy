@@ -171,7 +171,12 @@ dependencies {
     implementation files("libs/buildinggadgets2-1.3.9.jar")
 
     implementation files("libs/worldedit-mod-7.3.8.jar")
-    
+    implementation files ("libs/moonlight-neoforge-1.21.1-3.0.20.jar")
+
+    implementation files ("libs/dummmmmmy-1.21-2.0.12-neoforge.jar")
+
+    implementation files ("libs/theoneprobe-1.21_neo-12.0.8.jar")
+
     // Optional client-side LOD testing mod. Disabled for alpha smoke tests because
     // 3.0.3-b crashes during its startup updater on NeoForge dev launch.
     implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")

@@ -35,6 +35,16 @@ public final class SilentArchonIncorporealitySourceTest {
 		assertContains("active state query", handler, "isSilentSlippingActive");
 		assertContains("tick update", handler, "updateSilentSlipping");
 		assertContains("incoming physical defense", handler, "negateIncomingPhysicalDamage");
+		assertContains("incoming damage hook checks silent archon player", handler,
+				"event.getEntity() instanceof ServerPlayer player");
+		assertContains("incoming damage hook cancels archon physical hits", handler,
+				"negateIncomingPhysicalDamage(player, event)");
+		assertContains("early physical defense overload", handler,
+				"negateIncomingPhysicalDamage(ServerPlayer player, LivingIncomingDamageEvent event)");
+		assertContains("early physical defense cancels hit", handler,
+				"event.setCanceled(true)");
+		assertContains("early physical defense clears incoming amount", handler,
+				"event.setAmount(0.0F)");
 		assertContains("outgoing physical restriction", handler, "suppressMundanePhysicalOffense");
 		assertContains("physical damage classifier", handler, "isPhysicalDamage");
 		assertContains("living weapon allowance", handler, "isLivingWeapon");

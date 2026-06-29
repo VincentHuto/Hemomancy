@@ -17,6 +17,7 @@ public class SpawnMonolithShatterBurstPacket implements CustomPacketPayload {
 		SpawnMonolithShatterBurstPacket msg = new SpawnMonolithShatterBurstPacket();
 		try {
 			msg.pos = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+			msg.shardOnly = buf.readableBytes() > 0 && buf.readBoolean();
 		} catch (IllegalArgumentException | IndexOutOfBoundsException e) {
 			return msg;
 		}
@@ -27,26 +28,42 @@ public class SpawnMonolithShatterBurstPacket implements CustomPacketPayload {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
 		buf.writeDouble(msg.getPos().z);
+		buf.writeBoolean(msg.isShardOnly());
 	}
 
 	public static void handle(final SpawnMonolithShatterBurstPacket msg, final IPayloadContext ctxSupplier) {
 		if (ctxSupplier.player() == null) return;
-		ctxSupplier.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnBurst(
-				msg.getPos(), ctxSupplier.player().level().random));
+		ctxSupplier.enqueueWork(() -> {
+			if (msg.isShardOnly()) {
+				SanguineMonolithShatterRenderer.spawnShardPulse(msg.getPos(), ctxSupplier.player().level().random);
+			} else {
+				SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), ctxSupplier.player().level().random);
+			}
+		});
 	}
 
 	private Vec3 pos;
+	private boolean shardOnly;
 
 	public SpawnMonolithShatterBurstPacket() {
-		this.pos = Vec3.ZERO;
+		this(Vec3.ZERO, false);
 	}
 
 	public SpawnMonolithShatterBurstPacket(Vec3 pos) {
+		this(pos, false);
+	}
+
+	public SpawnMonolithShatterBurstPacket(Vec3 pos, boolean shardOnly) {
 		this.pos = pos;
+		this.shardOnly = shardOnly;
 	}
 
 	public Vec3 getPos() {
 		return pos;
+	}
+
+	public boolean isShardOnly() {
+		return shardOnly;
 	}
 
 	@Override

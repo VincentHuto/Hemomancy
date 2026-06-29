@@ -31,6 +31,9 @@ This alpha focuses on the playable Harbinger and Unstained progression loops,
 with later boss, compat, and world-placement systems still being hardened.
 '''
 
+[[mixins]]
+    config="hemomancy.mixins.json"
+
 # Dependencies
 # NeoForge format uses type="required" / type="optional" instead of mandatory=
 

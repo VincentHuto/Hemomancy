@@ -16,6 +16,8 @@ public final class SilentArchonInputAndCombatSourceTest {
 				"com/vincenthuto/hemomancy/common/armor/ability/ArmorSetAbilityRegistry.java"));
 		String handler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/SilentArchonArmorAbilityHandler.java"));
+		String tendrils = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/manipulation/HemomancyTendrilEffects.java"));
 		String packet = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/ToggleSilentSlippingC2SPacket.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
@@ -37,6 +39,12 @@ public final class SilentArchonInputAndCombatSourceTest {
 		assertContains("handler combat radius", handler, "SILENT_SEVERANCE_RADIUS");
 		assertContains("handler combat damage", handler, "SILENT_SEVERANCE_DAMAGE");
 		assertContains("handler uses monolith burst", handler, "sendMonolithShatterBurst");
+		assertContains("handler uses severance tendril burst", handler, "HemomancyTendrilEffects.silentSeverance");
+		String severanceBody = methodBody(handler, "public static void activateSilentArchonSeverance(ServerPlayer player)");
+		assertDoesNotContain("silent severance no longer emits sculk soul particles", severanceBody,
+				"ParticleTypes.SCULK_SOUL");
+		assertDoesNotContain("silent severance no longer emits reverse portal particles", severanceBody,
+				"ParticleTypes.REVERSE_PORTAL");
 		assertContains("handler applies severance effect", handler, "EffectInit.monolithic_dislocation");
 		assertDoesNotContain("handler no longer applies darkness", handler,
 				"new MobEffectInstance(MobEffects.DARKNESS");
@@ -46,6 +54,16 @@ public final class SilentArchonInputAndCombatSourceTest {
 				"new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN");
 		assertDoesNotContain("handler no longer applies blood loss", handler,
 				"new MobEffectInstance(EffectInit.blood_loss");
+
+		assertContains("tendril helper exposes silent severance burst", tendrils,
+				"silentSeverance(ServerPlayer player, double radius)");
+		assertContains("silent severance tendrils use qliphoth seed black core", tendrils,
+				"QLIPHOTH_SEED_ROOT_CORE = 0xF0050003");
+		assertContains("silent severance tendrils use qliphoth seed red glow", tendrils,
+				"QLIPHOTH_SEED_ROOT_GLOW = 0xB8D10B1A");
+		assertDoesNotContain("silent severance tendrils avoid yellow root glow", tendrils, "0xA8D8B74A");
+		assertContains("silent severance tendrils are radial", tendrils, "SILENT_SEVERANCE_TENDRILS");
+		assertContains("silent severance tendrils use hutoslib spawner", tendrils, "TendrilEffectSpawner.spawn");
 
 		assertContains("toggle packet type", packet, "ToggleSilentSlippingC2SPacket");
 		assertContains("toggle packet has no fields", packet, "record ToggleSilentSlippingC2SPacket()");
@@ -61,6 +79,7 @@ public final class SilentArchonInputAndCombatSourceTest {
 		assertContains("client sends toggle packet", clientEvents, "new ToggleSilentSlippingC2SPacket()");
 
 		assertContains("docs mention radial combat", docs, "radial combat ability");
+		assertContains("docs mention silent severance tendrils", docs, "red-black Qliphoth Seed-style tendrils");
 		assertContains("docs mention double tap", docs, "double-tap jump");
 	}
 
@@ -81,5 +100,29 @@ public final class SilentArchonInputAndCombatSourceTest {
 		if (text.contains(forbidden)) {
 			throw new AssertionError(label + ": still contains " + forbidden);
 		}
+	}
+
+	private static String methodBody(String source, String signature) {
+		int start = source.indexOf(signature);
+		if (start < 0) {
+			throw new AssertionError("missing method " + signature);
+		}
+		int brace = source.indexOf('{', start);
+		if (brace < 0) {
+			throw new AssertionError("missing method body for " + signature);
+		}
+		int depth = 0;
+		for (int i = brace; i < source.length(); i++) {
+			char ch = source.charAt(i);
+			if (ch == '{') {
+				depth++;
+			} else if (ch == '}') {
+				depth--;
+				if (depth == 0) {
+					return source.substring(brace, i + 1);
+				}
+			}
+		}
+		throw new AssertionError("unterminated method body for " + signature);
 	}
 }

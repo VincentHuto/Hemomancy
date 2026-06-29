@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ITendencyAlignedWeapon;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingToolItem;
+import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncSilentSlippingStateS2CPacket;
 import net.minecraft.ChatFormatting;
@@ -46,9 +47,14 @@ public final class SilentArchonArmorAbilityHandler {
 	private static final String SILENT_SLIPPING_UNTIL_KEY = "hemomancy:silent_slipping_until";
 	private static final String SILENT_SLIPPING_MARKER_KEY = "hemomancy:silent_slipping_active";
 	private static final String CLIENT_SILENT_SLIPPING_UNTIL_KEY = "hemomancy:client_silent_slipping_until";
+	private static final String SILENT_SLIPPING_INSIDE_SOLID_KEY = "hemomancy:silent_slipping_inside_solid";
+	private static final String SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_UNTIL_KEY =
+			"hemomancy:silent_slipping_shard_pulse_cooldown_until";
 	private static final String SILENT_SLIPPING_COOLDOWN_UNTIL_KEY = "hemomancy:silent_slipping_cooldown_until";
 	private static final int SILENT_SLIPPING_DURATION_TICKS = 100;
 	private static final int SILENT_SLIPPING_COOLDOWN_TICKS = 240;
+	private static final int SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_TICKS = 4;
+	private static final double SILENT_SLIPPING_SHARD_PULSE_RADIUS = 48.0D;
 	private static final double SILENT_SLIPPING_BLOOD_COST = 250.0D;
 	private static final int SAFE_EXIT_RADIUS = 6;
 	private static final float SILENT_SLIPPING_FLIGHT_SPEED = 0.035F;
@@ -104,11 +110,10 @@ public final class SilentArchonArmorAbilityHandler {
 		long until = player.level().getGameTime() + SILENT_SLIPPING_DURATION_TICKS;
 		player.getPersistentData().putLong(SILENT_SLIPPING_UNTIL_KEY, until);
 		player.getPersistentData().putBoolean(SILENT_SLIPPING_MARKER_KEY, true);
+		player.getPersistentData().putBoolean(SILENT_SLIPPING_INSIDE_SOLID_KEY, isInsideBlock(player));
 		applySilentSlippingMovement(player);
 		syncSilentSlipping(player, true, SILENT_SLIPPING_DURATION_TICKS);
-		player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,
-				player.getX(), player.getY() + 1.0D, player.getZ(),
-				42, 0.45D, 0.75D, 0.45D, 0.035D);
+		sendSilentSlippingShardPulse(player);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
 				SoundSource.PLAYERS, 0.6F, 0.55F);
 		player.displayClientMessage(Component.literal("Silent Slipping.").withStyle(ChatFormatting.GRAY), true);
@@ -117,12 +122,7 @@ public final class SilentArchonArmorAbilityHandler {
 	public static void activateSilentArchonSeverance(ServerPlayer player) {
 		Vec3 center = player.position().add(0.0D, 1.0D, 0.0D);
 		PacketHandler.sendMonolithShatterBurst(center, 64.0D, player.serverLevel());
-		player.serverLevel().sendParticles(ParticleTypes.SCULK_SOUL,
-				center.x, center.y, center.z,
-				54, 0.9D, 0.45D, 0.9D, 0.045D);
-		player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,
-				center.x, center.y, center.z,
-				72, 1.15D, 0.65D, 1.15D, 0.075D);
+		HemomancyTendrilEffects.silentSeverance(player, SILENT_SEVERANCE_RADIUS);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK,
 				SoundSource.PLAYERS, 0.7F, 0.55F);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.WARDEN_SONIC_BOOM,
@@ -135,8 +135,11 @@ public final class SilentArchonArmorAbilityHandler {
 				continue;
 			}
 			target.hurt(player.damageSources().magic(), SILENT_SEVERANCE_DAMAGE);
-			target.addEffect(new MobEffectInstance(EffectInit.monolithic_dislocation,
-					SILENT_SEVERANCE_EFFECT_TICKS, 0, false, true, true));
+			MobEffectInstance dislocationEffect = new MobEffectInstance(EffectInit.monolithic_dislocation,
+					SILENT_SEVERANCE_EFFECT_TICKS, 0, false, true, true);
+			if (target.addEffect(dislocationEffect)) {
+				PacketHandler.sendMonolithicDislocationVisual(target, SILENT_SEVERANCE_EFFECT_TICKS);
+			}
 			Vec3 away = target.position().subtract(player.position());
 			if (away.lengthSqr() > 1.0E-4D) {
 				target.setDeltaMovement(target.getDeltaMovement().add(away.normalize().scale(0.35D)).add(0.0D, 0.08D, 0.0D));
@@ -196,7 +199,12 @@ public final class SilentArchonArmorAbilityHandler {
 		if (suppressMonolithicDislocationOffense(event)) {
 			return;
 		}
-		negateMonolithicDislocationIncomingDamage(event);
+		if (negateMonolithicDislocationIncomingDamage(event)) {
+			return;
+		}
+		if (event.getEntity() instanceof ServerPlayer player) {
+			negateIncomingPhysicalDamage(player, event);
+		}
 	}
 
 	@SubscribeEvent
@@ -222,11 +230,7 @@ public final class SilentArchonArmorAbilityHandler {
 				return;
 			}
 			applySilentSlippingMovement(player);
-			if (player.tickCount % 10 == 0) {
-				player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,
-						player.getX(), player.getY() + 1.0D, player.getZ(),
-						8, 0.25D, 0.45D, 0.25D, 0.015D);
-			}
+			updateSilentSlippingSolidTransition(player);
 		} else if (marked) {
 			stopSilentSlipping(player, true, true);
 		}
@@ -284,6 +288,17 @@ public final class SilentArchonArmorAbilityHandler {
 					player.getX(), player.getY() + 1.0D, player.getZ(),
 					12, 0.35D, 0.55D, 0.35D, 0.02D);
 		}
+		return true;
+	}
+
+	public static boolean negateIncomingPhysicalDamage(ServerPlayer player, LivingIncomingDamageEvent event) {
+		if (!hasFullSilentArchonSet(player) || !isPhysicalDamage(event.getSource())) {
+			return false;
+		}
+		event.setAmount(0.0F);
+		event.setCanceled(true);
+		player.fallDistance = 0.0F;
+		player.resetFallDistance();
 		return true;
 	}
 
@@ -395,6 +410,27 @@ public final class SilentArchonArmorAbilityHandler {
 		}
 	}
 
+	private static void updateSilentSlippingSolidTransition(ServerPlayer player) {
+		boolean insideSolid = isInsideBlock(player);
+		boolean wasInsideSolid = player.getPersistentData().getBoolean(SILENT_SLIPPING_INSIDE_SOLID_KEY);
+		if (wasInsideSolid != insideSolid) {
+			sendSilentSlippingShardPulse(player);
+		}
+		player.getPersistentData().putBoolean(SILENT_SLIPPING_INSIDE_SOLID_KEY, insideSolid);
+	}
+
+	private static void sendSilentSlippingShardPulse(ServerPlayer player) {
+		long now = player.level().getGameTime();
+		long cooldownUntil = player.getPersistentData().getLong(SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_UNTIL_KEY);
+		if (cooldownUntil > now) {
+			return;
+		}
+		player.getPersistentData().putLong(SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_UNTIL_KEY,
+				now + SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_TICKS);
+		Vec3 center = player.position().add(0.0D, player.getBbHeight() * 0.55D, 0.0D);
+		PacketHandler.sendMonolithShardPulse(center, SILENT_SLIPPING_SHARD_PULSE_RADIUS, player.serverLevel());
+	}
+
 	private static void applySilentSlippingMovement(ServerPlayer player) {
 		applySilentSlippingNoClip(player);
 		player.getAbilities().mayfly = true;
@@ -405,8 +441,10 @@ public final class SilentArchonArmorAbilityHandler {
 	}
 
 	private static void stopSilentSlipping(ServerPlayer player, boolean moveToSafePosition, boolean syncClient) {
+		boolean wasMarked = player.getPersistentData().getBoolean(SILENT_SLIPPING_MARKER_KEY);
 		player.getPersistentData().remove(SILENT_SLIPPING_UNTIL_KEY);
 		player.getPersistentData().remove(SILENT_SLIPPING_MARKER_KEY);
+		player.getPersistentData().remove(SILENT_SLIPPING_INSIDE_SOLID_KEY);
 		if (moveToSafePosition && isInsideBlock(player)) {
 			BlockPos safePos = findNearestSafePosition(player);
 			if (safePos != null) {
@@ -424,6 +462,9 @@ public final class SilentArchonArmorAbilityHandler {
 		player.onUpdateAbilities();
 		player.fallDistance = 0.0F;
 		player.resetFallDistance();
+		if (wasMarked) {
+			sendSilentSlippingShardPulse(player);
+		}
 		if (syncClient) {
 			syncSilentSlipping(player, false, 0);
 		}

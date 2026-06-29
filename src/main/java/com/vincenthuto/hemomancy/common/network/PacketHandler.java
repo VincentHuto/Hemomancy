@@ -28,6 +28,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -156,6 +157,9 @@ public class PacketHandler {
                 ToggleSilentSlippingC2SPacket::handle);
         net.playToClient(SyncSilentSlippingStateS2CPacket.TYPE, SyncSilentSlippingStateS2CPacket.STREAM_CODEC,
                 SyncSilentSlippingStateS2CPacket::handle);
+        net.playToClient(SyncMonolithicDislocationVisualS2CPacket.TYPE,
+                SyncMonolithicDislocationVisualS2CPacket.STREAM_CODEC,
+                SyncMonolithicDislocationVisualS2CPacket::handle);
 
         // ── Particles ─────────────────────────────────────────────────────────
         net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
@@ -272,6 +276,11 @@ public class PacketHandler {
                 new SpawnMonolithShatterBurstPacket(pos));
     }
 
+    public static void sendMonolithShardPulse(Vec3 pos, double radius, ServerLevel level) {
+        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+                new SpawnMonolithShatterBurstPacket(pos, true));
+    }
+
     public static void sendSanguineOmenEffect(Vec3 pos, double radius, ServerLevel level, int durationTicks, float peakAlpha) {
         sendSanguineOmenEffect(pos, radius, level, durationTicks, peakAlpha, false);
     }
@@ -289,6 +298,11 @@ public class PacketHandler {
     public static void sendBlackVeil(Vec3 pos, double radius, ServerLevel level, int durationTicks) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius + 48.0,
                 new SpawnBlackVeilPacket(pos, (float) radius, durationTicks, level.random.nextInt()));
+    }
+
+    public static void sendMonolithicDislocationVisual(LivingEntity target, int durationTicks) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+                new SyncMonolithicDislocationVisualS2CPacket(target.getId(), durationTicks));
     }
 
     public static void sendClientElytraPacket() {

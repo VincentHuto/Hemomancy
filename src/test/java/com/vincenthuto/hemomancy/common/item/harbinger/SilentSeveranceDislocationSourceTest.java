@@ -17,6 +17,10 @@ public final class SilentSeveranceDislocationSourceTest {
 				"com/vincenthuto/hemomancy/common/init/EffectInit.java"));
 		String handler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/SilentArchonArmorAbilityHandler.java"));
+		String packetHandler = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
+		String visualPacket = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/network/capa/harbinger/SyncMonolithicDislocationVisualS2CPacket.java"));
 		String lang = read(RESOURCES_ROOT.resolve(
 				"assets/hemomancy/lang/en_us.json"));
 		String docs = read(DOCS_ROOT.resolve("HEMOMANCY_REFERENCE.md"));
@@ -29,6 +33,10 @@ public final class SilentSeveranceDislocationSourceTest {
 		assertContains("severance duration constant", handler, "SILENT_SEVERANCE_EFFECT_TICKS");
 		assertContains("severance applies new effect", handler,
 				"new MobEffectInstance(EffectInit.monolithic_dislocation");
+		assertContains("severance only syncs visual after accepted effect", handler,
+				"if (target.addEffect(dislocationEffect))");
+		assertContains("severance syncs target visual state", handler,
+				"PacketHandler.sendMonolithicDislocationVisual(target, SILENT_SEVERANCE_EFFECT_TICKS)");
 		assertDoesNotContain("severance removed darkness", handler,
 				"new MobEffectInstance(MobEffects.DARKNESS");
 		assertDoesNotContain("severance removed weakness", handler,
@@ -62,6 +70,21 @@ public final class SilentSeveranceDislocationSourceTest {
 		assertContains("living weapon carrier allowance", handler, "CombatWeaponCarrierProjectile");
 		assertContains("blood projectile allowance", handler, "isHemomancyProjectile(direct)");
 		assertContains("damage is suppressed", handler, "event.setNewDamage(0.0F);");
+
+		assertContains("visual sync packet registered", packetHandler,
+				"SyncMonolithicDislocationVisualS2CPacket.TYPE");
+		assertContains("visual sync helper exists", packetHandler,
+				"sendMonolithicDislocationVisual(LivingEntity target, int durationTicks)");
+		assertContains("visual sync tracks entity and self", packetHandler,
+				"PacketDistributor.sendToPlayersTrackingEntityAndSelf(target");
+		assertContains("visual packet type", visualPacket,
+				"SyncMonolithicDislocationVisualS2CPacket");
+		assertContains("visual packet writes entity id", visualPacket,
+				"buffer.writeVarInt(packet.entityId())");
+		assertContains("visual packet writes duration", visualPacket,
+				"buffer.writeVarInt(packet.durationTicks())");
+		assertContains("visual packet updates client state", visualPacket,
+				"MonolithicDislocationClientState.markActive(packet.entityId(), packet.durationTicks())");
 
 		assertContains("docs mention dislocation", docs, "Monolithic Dislocation");
 		assertContains("docs mention incoming exceptions", docs, "blood manipulations and living weapons");

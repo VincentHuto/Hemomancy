@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstCl
 import com.vincenthuto.hemomancy.client.data.ActiveSanguineFormationProjectionClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
+import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
@@ -217,6 +218,7 @@ public class ClientEvents {
         BloodBallClientData.tick();
         VeinSpiderCourierClientData.tick();
         SanguineMonolithShatterRenderer.tick();
+        MonolithicDislocationClientState.tick();
         if (SanguineOmenOverlay.instance != null) {
             SanguineOmenOverlay.instance.tick();
         }
@@ -709,20 +711,20 @@ public class ClientEvents {
             event.enqueueWork(() -> {
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_fan.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_wood_leaves.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourdvine_tap.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_lantern.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_silver_chain.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_chain.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_bars.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.pale_silver_bars.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_door.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_trapdoor.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(BlockInit.lethean_poppy_wreath.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_fan.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.erythrocoral_tendril.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_wood_leaves.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.gourdvine_tap.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_lantern.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.pallid_silver_chain.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_chain.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_bars.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.pale_silver_bars.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_door.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.hematic_iron_trapdoor.get(), RenderType.cutout());
+//                ItemBlockRenderTypes.setRenderLayer(BlockInit.lethean_poppy_wreath.get(), RenderType.cutout());
             });
             NeoForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
             BloodVolumeOverlay.instance = new BloodVolumeOverlay();

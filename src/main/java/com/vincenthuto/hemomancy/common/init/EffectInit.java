@@ -242,6 +242,10 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> monolithic_dislocation = EFFECTS.register("monolithic_dislocation",
             () -> new MonolithicDislocationEffect(MobEffectCategory.HARMFUL, 0x1D2226));
+    public static final DeferredHolder<Potion, Potion> potion_of_monolithic_dislocation = POTION_TYPES.register(
+            "potion_of_monolithic_dislocation",
+            () -> new Potion("potion_of_monolithic_dislocation",
+                    new MobEffectInstance(monolithic_dislocation, MnemonicPotionRules.WHISPERS_DURATION_TICKS, 0)));
 
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
