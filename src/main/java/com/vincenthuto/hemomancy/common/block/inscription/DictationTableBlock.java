@@ -69,7 +69,7 @@ public class DictationTableBlock extends Block implements EntityBlock, SimpleWat
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DictationTableBlock extends Block implements EntityBlock, SimpleWat
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.MODEL;
     }
 
     @Override

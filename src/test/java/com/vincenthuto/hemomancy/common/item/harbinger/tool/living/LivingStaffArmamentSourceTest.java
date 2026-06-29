@@ -25,6 +25,9 @@ public final class LivingStaffArmamentSourceTest {
 		assertContains("flail memory registration", itemInit, "memory_living_flail = BASEITEMS.register(\"memory_living_flail\"");
 		assertContains("torch uses item class", itemInit, "new LivingTorchItem");
 		assertContains("flail uses item class", itemInit, "new LivingFlailItem");
+		assertContains("living staff defaults to iron sword attack attributes", compact(itemInit),
+				"newLivingStaffItem(newItem.Properties().stacksTo(1)"
+						+ ".attributes(SwordItem.createAttributes(Tiers.IRON,3.0F,-2.4F)))");
 
 		assertContains("torch manipulation registration", manipInit, "MANIPS.register(\"conjure_torch\"");
 		assertContains("flail manipulation registration", manipInit, "MANIPS.register(\"conjure_flail\"");
@@ -97,6 +100,10 @@ public final class LivingStaffArmamentSourceTest {
 
 	private static String read(String path) throws IOException {
 		return Files.readString(ROOT.resolve(path)).replace("\r\n", "\n");
+	}
+
+	private static String compact(String text) {
+		return text.replaceAll("\\s+", "");
 	}
 
 	private static void assertResource(String label, String path) {

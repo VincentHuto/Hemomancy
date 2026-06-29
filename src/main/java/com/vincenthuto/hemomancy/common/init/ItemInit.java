@@ -511,7 +511,8 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> living_syringe = SPECIALITEMS.register("living_syringe",
             () -> new LivingSyringeItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_staff = SPECIALITEMS.register("living_staff",
-            () -> new LivingStaffItem(new Item.Properties().stacksTo(1)));
+            () -> new LivingStaffItem(new Item.Properties().stacksTo(1)
+                    .attributes(SwordItem.createAttributes(Tiers.IRON, 3.0F, -2.4F))));
     public static final DeferredHolder<Item, Item> living_blade = SPECIALITEMS.register("living_blade",
             () -> new LivingBladeItem(25f, 3, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> living_axe = SPECIALITEMS.register("living_axe",

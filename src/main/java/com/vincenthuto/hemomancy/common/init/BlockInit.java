@@ -29,7 +29,6 @@ import com.vincenthuto.hemomancy.common.block.unstained.functional.PaleSilverBel
 import com.vincenthuto.hemomancy.common.block.unstained.plant.GhostPipeBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.LetheanPoppyBlock;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.*;
-import com.vincenthuto.hemomancy.common.item.shared.tile.DictationTableBlockItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -44,7 +43,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -55,7 +53,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BlockInit {
 	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(Registries.BLOCK,
 			Hemomancy.MOD_ID);
@@ -779,9 +777,6 @@ public class BlockInit {
 		}
 		if (b == BlockInit.mnemonic_reliquary.get()) {
 			return Pair.of(block.getSecond(), new MnemonicReliquaryBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.dictation_table.get()) {
-			return Pair.of(block.getSecond(), new DictationTableBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.earthen_vein.get()) {
 			return Pair.of(block.getSecond(), new EarthenVeinBlockItem(b, new Item.Properties()));

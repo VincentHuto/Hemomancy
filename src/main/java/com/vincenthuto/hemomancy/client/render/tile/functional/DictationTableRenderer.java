@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.functional.DictationTableModel;
 import com.vincenthuto.hemomancy.common.block.inscription.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.tile.functional.DictationTableBlockEntity;
@@ -25,14 +24,11 @@ import net.minecraft.world.item.ItemStack;
 
 public class DictationTableRenderer implements BlockEntityRenderer<DictationTableBlockEntity> {
 	private static final ResourceLocation FALLBACK_TEXTURE = Hemomancy.rloc("textures/entity/liber_sanguinum.png");
-	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_dictation_table.png");
 
 	private final BookModel bookModel;
-	private final DictationTableModel tableModel;
 
 	public DictationTableRenderer(BlockEntityRendererProvider.Context context) {
 		this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
-		this.tableModel = new DictationTableModel(context.bakeLayer(DictationTableModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -40,16 +36,6 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		ItemStack liber = table.getLiber();
 		Direction facing = table.getBlockState().getValue(DictationTableBlock.FACING);
-
-		poseStack.pushPose();
-		poseStack.translate(0.5D, 1.5D, 0.5D);
-		poseStack.mulPose(Axis.YP.rotationDegrees(rotationForFacing(facing) + 90.0F));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-		VertexConsumer vertexTableConsumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
-		tableModel.renderToBuffer(poseStack, vertexTableConsumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
-		poseStack.popPose();
-
-
 		if (!MemoHelper.isLiber(liber)) {
 			return;
 		}
@@ -68,9 +54,9 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 
 		ResourceLocation texture = item.getTexture() != null ? item.getTexture() : FALLBACK_TEXTURE;
 		poseStack.pushPose();
-		poseStack.translate(0.5D, 1.15D, 0.5D);
+		poseStack.translate(0.55D, 1.25D, 0.5D);
 		poseStack.mulPose(Axis.YP.rotationDegrees(rotationForFacing(facing) + 90.0F));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(80.0F));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
 		poseStack.scale(1, 1F, 1F);
 		// The book is always shown open on the table (close = 1.0F); page-flip angles
 		// come from the local client's cached guidebook animation state.
@@ -82,10 +68,10 @@ public class DictationTableRenderer implements BlockEntityRenderer<DictationTabl
 
 	private static float rotationForFacing(Direction facing) {
 		return switch (facing) {
-		case NORTH -> 0.0F;
-		case EAST -> -90.0F;
-		case WEST -> 90.0F;
-		default -> 180.0F;
+		case NORTH -> 180.0F;
+		case EAST -> 90.F;
+		case WEST -> -90.0F;
+		default -> 0.0F;
 		};
 	}
 }

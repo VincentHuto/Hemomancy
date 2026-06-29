@@ -110,6 +110,38 @@ public final class MnemonicLowtideLakeSourceTest {
 				"fogFadePulse");
 		assertContains("watery fog uses intentionally visible ribbon bands", lowtideEffects,
 				"LOWTIDE_WATERY_FOG_BAND_COUNT");
+		assertContains("watery fog uses enough horizontal samples to soften triangle interpolation",
+				lowtideEffects, "LOWTIDE_WATERY_FOG_COLUMNS = 14");
+		assertContains("watery fog uses enough vertical samples to soften triangle interpolation",
+				lowtideEffects, "LOWTIDE_WATERY_FOG_ROWS = 9");
+		assertNotContains("watery fog should not stack crossing ribbons that read as X-shaped artifacts",
+				lowtideEffects, "yaw + 82.0F");
+		assertContains("watery fog breaks up the lower ribbon silhouette in geometry", lowtideEffects,
+				"lowtideWateryFogLowerEdgeOffset");
+		assertContains("watery fog confines lower-edge movement near the lake surface", lowtideEffects,
+				"lowtideWateryFogEdgeInfluence");
+		assertContains("watery fog fades out unevenly at the bottom edge", lowtideEffects,
+				"bottomEdgeFade");
+		assertContains("watery fog warps side edges as geometry instead of keeping vertical cuts",
+				lowtideEffects, "lowtideWateryFogX(");
+		assertContains("watery fog drives side-edge motion from a dedicated all-edge influence",
+				lowtideEffects, "lowtideWateryFogHorizontalEdgeInfluence");
+		assertContains("watery fog drives top and bottom motion from a dedicated all-edge influence",
+				lowtideEffects, "lowtideWateryFogVerticalEdgeInfluence");
+		assertContains("watery fog fades left and right edges unevenly", lowtideEffects,
+				"leftRightEdgeFade");
+		assertContains("watery fog fades the top edge unevenly", lowtideEffects,
+				"topEdgeFade");
+		assertContains("watery fog computes a per-band lifecycle progress", lowtideEffects,
+				"lowtideWateryFogCycleProgress(time, band)");
+		assertContains("watery fog computes a per-band lifecycle index for respawn placement", lowtideEffects,
+				"lowtideWateryFogCycleIndex(time, band)");
+		assertContains("watery fog fades each ribbon in and out over its lifecycle", lowtideEffects,
+				"lowtideWateryFogCycleFade(cycleProgress)");
+		assertContains("watery fog respawns from a deterministic lifecycle seed", lowtideEffects,
+				"lowtideWateryFogLifecycleRandom(band, cycleIndex)");
+		assertNotContains("watery fog should not keep every cloud at a fixed seeded ring position",
+				lowtideEffects, "Random random = new Random(73129L);");
 		assertContains("watery fog starts close above the lowtide surface", lowtideEffects,
 				"LOWTIDE_WATERY_FOG_MIN_HEIGHT_SCALE = 0.018F");
 		assertContains("watery fog stays near the lowtide surface instead of floating in the sky", lowtideEffects,

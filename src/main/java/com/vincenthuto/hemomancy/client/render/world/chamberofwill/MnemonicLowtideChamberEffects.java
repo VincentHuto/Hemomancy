@@ -15,14 +15,17 @@ import java.util.Random;
 
 public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 	private static final int SKY_LAKE_SUBDIVISIONS = 80;
-	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT = 10;
-	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 6;
-	private static final int LOWTIDE_WATERY_FOG_ROWS = 4;
+	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT =12;
+	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 14;
+	private static final int LOWTIDE_WATERY_FOG_ROWS = 9;
 	private static final float SKY_LAKE_Y_SCALE = -0.05F;
 	private static final float SKY_LAKE_HALF_SPAN_SCALE = 3.2F;
 	private static final float SKY_LAKE_DEPTH_BOW_SCALE = 0.020F;
 	private static final float LOWTIDE_WATERY_FOG_MIN_HEIGHT_SCALE = 0.018F;
 	private static final float LOWTIDE_WATERY_FOG_MAX_HEIGHT_SCALE = 0.045F;
+	private static final float LOWTIDE_WATERY_FOG_EDGE_LIVELINESS = 0.17F;
+	private static final float LOWTIDE_WATERY_FOG_CYCLE_SPEED = 0.00082F;
+	private static final float LOWTIDE_WATERY_FOG_CYCLE_STAGGER = 0.173F;
 	private static final float LOWTIDE_SHADER_TIME_SCALE = 0.115F;
 	private static final float WAVE_STRENGTH = 2.05F;
 	private static final float WAVE_DETAIL_SCALE = 3.0F;
@@ -68,14 +71,20 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 
 		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 		VertexConsumer consumer = buffer.getBuffer(HemoRenderTypes.MNEMONIC_LOWTIDE_WATERY_FOG);
-		Random random = new Random(73129L);
 		float lakeY = skyDistance * SKY_LAKE_Y_SCALE;
 		for (int band = 0; band < LOWTIDE_WATERY_FOG_BAND_COUNT; band++) {
-			float ringT = (band + 0.5F) / LOWTIDE_WATERY_FOG_BAND_COUNT;
+			float cycleProgress = lowtideWateryFogCycleProgress(time, band);
+			float cycleFade = lowtideWateryFogCycleFade(cycleProgress);
+			if (cycleFade <= 0.01F) {
+				continue;
+			}
+			long cycleIndex = lowtideWateryFogCycleIndex(time, band);
+			Random random = lowtideWateryFogLifecycleRandom(band, cycleIndex);
+			float ringT = random.nextFloat();
 			float angle = ringT * Mth.TWO_PI + Mth.lerp(random.nextFloat(), -0.18F, 0.18F);
 			float distance = skyDistance * Mth.lerp(random.nextFloat(), 0.24F, 0.92F);
-			float driftX = Mth.sin(time * 0.0009F + band * 0.73F) * skyDistance * 0.035F;
-			float driftZ = Mth.cos(time * 0.0007F + band * 0.61F) * skyDistance * 0.035F;
+			float driftX = Mth.sin(time * 0.0009F + band * 1.73F + cycleIndex * 0.37F) * skyDistance * 0.035F;
+			float driftZ = Mth.cos(time * 0.007F + band * 1.61F + cycleIndex * 0.29F) * skyDistance * 0.035F;
 			float x = Mth.cos(angle) * distance + driftX;
 			float z = Mth.sin(angle) * distance + driftZ;
 			float baseY = lakeY + skyDistance
@@ -85,12 +94,11 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 			float halfWidth = skyDistance * Mth.lerp(random.nextFloat(), 0.18F, 0.42F);
 			float depthBow = skyDistance * Mth.lerp(random.nextFloat(), 0.018F, 0.055F);
 			float yaw = angle * Mth.RAD_TO_DEG + 90.0F + Mth.sin(time * 0.0012F + band) * 10.0F;
-			float fogFadePulse = 0.52F + 0.48F * (0.5F + 0.5F * Mth.sin(time * 0.0015F + band * 1.19F));
-			float phase = time * 0.00018F + band * 0.137F;
+			float fogFadePulse = cycleFade
+					* (0.58F + 0.42F * (0.5F + 0.5F * Mth.sin(time * 0.0015F + band * 1.19F)));
+			float phase = cycleProgress + time * 0.00018F + band * 0.137F + cycleIndex * 0.061F;
 			emitLowtideWateryFogRibbon(consumer, poseStack.last().pose(), x, baseY, topY, z, yaw, halfWidth, depthBow,
 					phase, fogFadePulse);
-			emitLowtideWateryFogRibbon(consumer, poseStack.last().pose(), x, baseY, topY, z, yaw + 82.0F,
-					halfWidth * 0.62F, depthBow * 0.72F, phase + 0.37F, fogFadePulse * 0.78F);
 		}
 
 		buffer.endBatch(HemoRenderTypes.MNEMONIC_LOWTIDE_WATERY_FOG);
@@ -126,20 +134,26 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 			float fogFadePulse) {
 		float x0 = Mth.lerp(x0T, -halfWidth, halfWidth);
 		float x1 = Mth.lerp(x1T, -halfWidth, halfWidth);
-		float y0 = Mth.lerp(y0T, bottomY, topY);
-		float y1 = Mth.lerp(y1T, bottomY, topY);
+		float x00 = lowtideWateryFogX(x0, halfWidth, x0T, y0T, phase);
+		float x01 = lowtideWateryFogX(x0, halfWidth, x0T, y1T, phase);
+		float x11 = lowtideWateryFogX(x1, halfWidth, x1T, y1T, phase);
+		float x10 = lowtideWateryFogX(x1, halfWidth, x1T, y0T, phase);
+		float y00 = lowtideWateryFogY(bottomY, topY, x0T, y0T, phase);
+		float y01 = lowtideWateryFogY(bottomY, topY, x0T, y1T, phase);
+		float y11 = lowtideWateryFogY(bottomY, topY, x1T, y1T, phase);
+		float y10 = lowtideWateryFogY(bottomY, topY, x1T, y0T, phase);
 		float z00 = lowtideWateryFogBow(x0T, y0T, depthBow, phase);
 		float z01 = lowtideWateryFogBow(x0T, y1T, depthBow, phase);
 		float z11 = lowtideWateryFogBow(x1T, y1T, depthBow, phase);
 		float z10 = lowtideWateryFogBow(x1T, y0T, depthBow, phase);
 
-		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x0, y0,
+		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x00, y00,
 				z00, x0T, y0T, phase, fogFadePulse);
-		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x0, y1,
+		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x01, y01,
 				z01, x0T, y1T, phase, fogFadePulse);
-		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x1, y1,
+		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x11, y11,
 				z11, x1T, y1T, phase, fogFadePulse);
-		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x1, y0,
+		addLowtideWateryFogVertex(consumer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x10, y10,
 				z10, x1T, y0T, phase, fogFadePulse);
 	}
 
@@ -160,6 +174,74 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		return depthBow * (center * 0.68F + roll);
 	}
 
+	private static float lowtideWateryFogX(float xOffset, float halfWidth, float xT, float yT, float phase) {
+		float side = xT < 0.5F ? -1.0F : 1.0F;
+		float sidePhase = side > 0.0F ? 0.41F : 0.0F;
+		float broadCurl = Mth.sin((yT * 3.2F + phase * 2.4F + sidePhase) * Mth.TWO_PI);
+		float tornCurl = Mth.sin((yT * 8.1F - phase * 4.3F + sidePhase * 0.53F) * Mth.TWO_PI);
+		float edgeOffset = (broadCurl * 0.58F + tornCurl * 0.42F) * LOWTIDE_WATERY_FOG_EDGE_LIVELINESS;
+		return xOffset + side * edgeOffset * halfWidth * 0.22F * lowtideWateryFogHorizontalEdgeInfluence(xT);
+	}
+
+	private static float lowtideWateryFogY(float bottomY, float topY, float xT, float yT, float phase) {
+		float height = topY - bottomY;
+		return Mth.lerp(yT, bottomY, topY)
+				+ (lowtideWateryFogLowerEdgeOffset(xT, phase) * lowtideWateryFogEdgeInfluence(yT)
+						+ lowtideWateryFogUpperEdgeOffset(xT, phase) * lowtideWateryFogTopEdgeInfluence(yT))
+						* height * lowtideWateryFogVerticalEdgeInfluence(yT);
+	}
+
+	private static float lowtideWateryFogLowerEdgeOffset(float xT, float phase) {
+		float broadSag = Mth.sin((xT * 2.7F + phase * 2.1F) * Mth.TWO_PI);
+		float tornLift = Mth.sin((xT * 8.9F - phase * 3.8F) * Mth.TWO_PI);
+		return (broadSag * 0.62F + tornLift * 0.38F) * LOWTIDE_WATERY_FOG_EDGE_LIVELINESS;
+	}
+
+	private static float lowtideWateryFogEdgeInfluence(float yT) {
+		float influence = Mth.clamp(1.0F - yT / 0.38F, 0.0F, 1.0F);
+		return influence * influence * (3.0F - 2.0F * influence);
+	}
+
+	private static float lowtideWateryFogUpperEdgeOffset(float xT, float phase) {
+		float broadLift = Mth.sin((xT * 2.2F - phase * 1.8F + 0.31F) * Mth.TWO_PI);
+		float tornLift = Mth.sin((xT * 7.4F + phase * 4.6F + 0.17F) * Mth.TWO_PI);
+		return (broadLift * 0.56F + tornLift * 0.44F) * LOWTIDE_WATERY_FOG_EDGE_LIVELINESS;
+	}
+
+	private static float lowtideWateryFogTopEdgeInfluence(float yT) {
+		float influence = Mth.clamp((yT - 0.62F) / 0.38F, 0.0F, 1.0F);
+		return influence * influence * (3.0F - 2.0F * influence);
+	}
+
+	private static float lowtideWateryFogHorizontalEdgeInfluence(float xT) {
+		float edgeDistance = Math.min(xT, 1.0F - xT);
+		float influence = Mth.clamp((0.32F - edgeDistance) / 0.32F, 0.0F, 1.0F);
+		return influence * influence * (3.0F - 2.0F * influence);
+	}
+
+	private static float lowtideWateryFogVerticalEdgeInfluence(float yT) {
+		return Math.max(lowtideWateryFogEdgeInfluence(yT), lowtideWateryFogTopEdgeInfluence(yT));
+	}
+
+	private static float lowtideWateryFogCycleProgress(float time, int band) {
+		float cycle = time * LOWTIDE_WATERY_FOG_CYCLE_SPEED + band * LOWTIDE_WATERY_FOG_CYCLE_STAGGER;
+		return cycle - Mth.floor(cycle);
+	}
+
+	private static long lowtideWateryFogCycleIndex(float time, int band) {
+		return Mth.floor(time * LOWTIDE_WATERY_FOG_CYCLE_SPEED + band * LOWTIDE_WATERY_FOG_CYCLE_STAGGER);
+	}
+
+	private static float lowtideWateryFogCycleFade(float cycleProgress) {
+		float fadeIn = lowtideSmoothstep(0.06F, 0.24F, cycleProgress);
+		float fadeOut = 1.0F - lowtideSmoothstep(0.72F, 0.96F, cycleProgress);
+		return fadeIn * fadeOut;
+	}
+
+	private static Random lowtideWateryFogLifecycleRandom(int band, long cycleIndex) {
+		return new Random(73129L + band * 8191L + cycleIndex * 104729L);
+	}
+
 	private static int lowtideWateryFogColor(float xT, float yT, float phase, float fogFadePulse) {
 		float warm = 0.5F + 0.5F * Mth.sin((xT * 4.2F + yT * 1.7F + phase) * Mth.TWO_PI);
 		float redVeil = 0.5F + 0.5F * Mth.sin((xT * 6.8F - yT * 2.3F + phase * 0.71F) * Mth.TWO_PI);
@@ -176,7 +258,24 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		float baseLift = Mth.clamp(1.0F - yT * 0.44F, 0.54F, 1.0F);
 		float edgeFade = Mth.clamp(Math.min(xFade, yFade) * 1.85F, 0.0F, 1.0F);
 		float tornWisps = 0.70F + 0.30F * Mth.sin((xT * 5.0F + yT * 7.0F + phase * 3.0F) * Mth.PI);
-		return (int) Mth.clamp(168.0F * edgeFade * baseLift * tornWisps * fogFadePulse, 0.0F, 178.0F);
+		float bottomBreakup = 0.13F
+				+ 0.08F * (0.5F + 0.5F * Mth.sin((xT * 9.0F + phase * 5.2F) * Mth.TWO_PI));
+		float bottomEdgeFade = lowtideSmoothstep(0.015F, bottomBreakup, yT);
+		float sideBreakup = 0.08F
+				+ 0.05F * (0.5F + 0.5F * Mth.sin((yT * 8.6F - phase * 4.7F) * Mth.TWO_PI));
+		float leftRightEdgeFade = lowtideSmoothstep(0.010F, sideBreakup, Math.min(xT, 1.0F - xT));
+		float topBreakup = 0.09F
+				+ 0.06F * (0.5F + 0.5F * Mth.sin((xT * 7.7F - phase * 3.6F) * Mth.TWO_PI));
+		float topEdgeFade = lowtideSmoothstep(0.012F, topBreakup, 1.0F - yT);
+		return (int) Mth.clamp(
+				168.0F * edgeFade * baseLift * tornWisps * bottomEdgeFade * leftRightEdgeFade * topEdgeFade
+						* fogFadePulse,
+				0.0F, 178.0F);
+	}
+
+	private static float lowtideSmoothstep(float edge0, float edge1, float value) {
+		float t = Mth.clamp((value - edge0) / (edge1 - edge0), 0.0F, 1.0F);
+		return t * t * (3.0F - 2.0F * t);
 	}
 
 	private static void emitSkyLakeGrid(VertexConsumer consumer, Matrix4f matrix, float skyDistance) {
