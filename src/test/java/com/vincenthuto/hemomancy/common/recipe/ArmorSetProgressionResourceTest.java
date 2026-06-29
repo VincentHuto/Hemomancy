@@ -19,6 +19,9 @@ public final class ArmorSetProgressionResourceTest {
 		assertBloodLustLineage("barbed");
 		assertBloodLustLineage("chitinite");
 		assertBloodLustLineage("prismatic");
+		assertFinalBloodLustLineage("barbed", "edacious_blood_lust", "tengu_mask", "fargone_proboscis");
+		assertFinalBloodLustLineage("chitinite", "sheolic_blood_lust", "lodestone_faceplate", "fervent_husk");
+		assertFinalBloodLustLineage("prismatic", "phantasmal_blood_lust", "grinning_mask", "mnemonic_ambergris");
 	}
 
 	private static void assertSidegradeBranch(String lineage, String reagent) throws IOException {
@@ -47,6 +50,31 @@ public final class ArmorSetProgressionResourceTest {
 			assertContains(lineage + " " + slot + " should carry Blood Lust lineage data",
 					recipe, "\"hemomancy:lineage\": \"" + lineage + "\"");
 		}
+	}
+
+	private static void assertFinalBloodLustLineage(String lineage, String resultPrefix,
+			String helmetReagent, String armorReagent) throws IOException {
+		for (String slot : SLOTS) {
+			String recipe = read(ARMATURE_RECIPES.resolve(lineage + "_to_" + resultPrefix + "_" + slot + ".json"));
+			assertContains(resultPrefix + " " + slot + " should require the Monolithic Armature",
+					recipe, "\"required_degree\": 7");
+			assertContains(resultPrefix + " " + slot + " should upgrade from its sidegrade armor",
+					recipe, "\"item\": \"hemomancy:" + lineage + "_" + resultSlot(slot) + "\"");
+			String reagent = slot.equals("helm") ? helmetReagent : armorReagent;
+			assertContains(resultPrefix + " " + slot + " should use its final ascension reagent",
+					recipe, "\"item\": \"" + itemId(reagent) + "\"");
+			assertContains(resultPrefix + " " + slot + " should produce final lineage armor",
+					recipe, "\"id\": \"hemomancy:" + resultPrefix + "_" + bloodLustResultSlot(slot) + "\"");
+		}
+	}
+
+	private static String bloodLustResultSlot(String slot) {
+		return switch (slot) {
+			case "chestplate" -> "chest";
+			case "leggings" -> "legs";
+			case "boots" -> "boots";
+			default -> "helm";
+		};
 	}
 
 	private static String resultSlot(String slot) {

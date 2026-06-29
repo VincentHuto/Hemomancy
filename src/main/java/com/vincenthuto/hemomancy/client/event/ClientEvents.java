@@ -85,6 +85,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.SporeImplantScree
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -105,6 +106,7 @@ import com.vincenthuto.hemomancy.common.network.capa.unstained.UseStillArtKeyPac
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleSilentSlippingC2SPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -191,6 +193,9 @@ public class ClientEvents {
             "key.hemomancy.category");
 
     private static boolean menuKey = false;
+    private static final int SILENT_ARCHON_DOUBLE_TAP_JUMP_WINDOW = 7;
+    private static boolean silentArchonJumpWasDown = false;
+    private static long lastSilentArchonJumpTapTick = -1000L;
     private static CameraType cameraBeforeArmature = null;
     private static final float ARMATURE_CAMERA_DISTANCE = 7.0F;
 
@@ -311,6 +316,31 @@ public class ClientEvents {
                 });
             }
         }
+        handleSilentArchonDoubleTapJump();
+    }
+
+    private static void handleSilentArchonDoubleTapJump() {
+        Minecraft mc = Minecraft.getInstance();
+        boolean noScreenOpen = mc.screen == null;
+        if (mc.player == null || mc.level == null || !noScreenOpen) {
+            silentArchonJumpWasDown = false;
+            return;
+        }
+        boolean jumpDown = mc.options.keyJump.isDown();
+        if (jumpDown && !silentArchonJumpWasDown) {
+            long now = mc.level.getGameTime();
+            if (SilentArchonArmorAbilityHandler.hasFullSilentArchonSet(mc.player)) {
+                if (now - lastSilentArchonJumpTapTick <= SILENT_ARCHON_DOUBLE_TAP_JUMP_WINDOW) {
+                    PacketHandler.sendToServer(new ToggleSilentSlippingC2SPacket());
+                    lastSilentArchonJumpTapTick = -1000L;
+                } else {
+                    lastSilentArchonJumpTapTick = now;
+                }
+            } else {
+                lastSilentArchonJumpTapTick = -1000L;
+            }
+        }
+        silentArchonJumpWasDown = jumpDown;
     }
 
     private static void handleRadialMenuTick() {

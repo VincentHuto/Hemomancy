@@ -28,6 +28,7 @@ import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystal
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.model.tile.functional.*;
+import com.vincenthuto.hemomancy.client.render.layer.MonolithicDislocationShellLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.*;
 import com.vincenthuto.hemomancy.client.render.layer.mob.HuskEffigyControlGlowLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -48,6 +49,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID,  value = Dist.CLIENT)
 public class LayerEvents {
@@ -211,8 +213,8 @@ public class LayerEvents {
 				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_TENGU_LAYER,
 				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.TENGU));
-		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_HORNED_LAYER,
-				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.HORNED));
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_GRINNING_LAYER,
+				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.GRINNING));
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_CHEST_LAYER,
 				() -> BloodLustArmorModel.createBodyLayer(EquipmentSlot.CHEST));
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_LEGS_LAYER,
@@ -297,6 +299,22 @@ public class LayerEvents {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void addMonolithicDislocationShellLayers(EntityRenderersEvent.AddLayers event) {
+		for (EntityType<?> entityType : event.getEntityTypes()) {
+			EntityRenderer<?> renderer = event.getRenderer(entityType);
+			if (renderer instanceof LivingEntityRenderer livingRenderer) {
+				livingRenderer.addLayer(new MonolithicDislocationShellLayer(livingRenderer));
+			}
+		}
+		for (PlayerSkin.Model skinModel : event.getSkins()) {
+			EntityRenderer<? extends Player> renderer = event.getSkin(skinModel);
+			if (renderer instanceof LivingEntityRenderer livingRenderer) {
+				livingRenderer.addLayer(new MonolithicDislocationShellLayer(livingRenderer));
+			}
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, PlayerSkin.Model skinModel) {
 		EntityRenderer<? extends Player> render = event.getSkin(skinModel);
 		if (render instanceof LivingEntityRenderer livingRenderer) {
@@ -320,6 +338,7 @@ public class LayerEvents {
 
 	@SubscribeEvent
 	public static void constructLayers(EntityRenderersEvent.AddLayers event) {
+		addMonolithicDislocationShellLayers(event);
 
 		addLayerToEntity(event, EntityType.ARMOR_STAND);
 		addLayerToEntity(event, EntityType.ZOMBIE);
@@ -333,6 +352,12 @@ public class LayerEvents {
 		addLayerToPlayerSkin(event, PlayerSkin.Model.WIDE);
 		addLayerToPlayerSkin(event, PlayerSkin.Model.SLIM);
 
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SubscribeEvent
+	public static void renderMonolithicDislocationShell(RenderLivingEvent.Post event) {
+		MonolithicDislocationShellLayer.renderFallback(event);
 	}
 
 //	@SuppressWarnings("deprecation")

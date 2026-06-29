@@ -4,11 +4,13 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "hemomancy.refmap.json",
   "mixins": [
+    "MixinEntity",
     "MixinFishingHook",
     "MixinLivingEntity"
   ],
   "client": [
     "MixinHumanoidArmorLayer",
+    "MixinLivingEntityRenderer",
     "MixinLocalPlayer",
     "MixinPlayerItemInHandLayer"
   ],

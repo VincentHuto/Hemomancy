@@ -139,7 +139,7 @@ public final class HarbingerArmor3dModelResourceTest {
 
 		assertItemModelParent("blood_lust_helm", "builtin/entity");
 		assertItemModelParent("blood_lust_helm_tengu", "builtin/entity");
-		assertItemModelParent("blood_lust_helm_horned", "builtin/entity");
+		assertItemModelParent("blood_lust_helm_grinning", "builtin/entity");
 		assertItemModelParent("blood_lust_helm_lodestone", "builtin/entity");
 		assertItemModelParent("blood_lust_helm_velorum", "builtin/entity");
 		assertItemModelParent("blood_lust_chest", "builtin/entity");

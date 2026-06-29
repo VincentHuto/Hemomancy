@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
+	private boolean bloodburstNeedle = false;
 
 	public BloodNeedleEntity(EntityType<? extends BloodNeedleEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -46,6 +47,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		if (!this.combatWeaponItem.isEmpty()) {
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
+		compound.putBoolean("BloodburstNeedle", this.bloodburstNeedle);
 
 	}
 
@@ -61,6 +63,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		Entity entity = living;
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
+			applyBloodburstEffects((LivingEntity) entity);
 
 		}
 
@@ -79,6 +82,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
+			applyBloodburstEffects((LivingEntity) entity);
 
 		}
 
@@ -90,6 +94,11 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;
+		this.bloodburstNeedle = compound.getBoolean("BloodburstNeedle");
+	}
+
+	public void setBloodburstNeedle(boolean bloodburstNeedle) {
+		this.bloodburstNeedle = bloodburstNeedle;
 	}
 
 	@Override
@@ -118,6 +127,14 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 
 	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
 		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
+	}
+
+	private void applyBloodburstEffects(LivingEntity target) {
+		if (!this.bloodburstNeedle) {
+			return;
+		}
+		target.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.HUNGER, 160, 1, false, true, true));
+		target.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 100, 0, false, true, true));
 	}
 
 }

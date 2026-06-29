@@ -286,7 +286,7 @@ public class ArmorSetBonusHandler {
 		}
 		switch (maskType) {
 			case TENGU -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, true, true));
-			case HORNED -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
+			case GRINNING -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
 			case LODESTONE -> HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				if (volume.isActive() && !volume.isFull()) {
 					volume.fill(4.0D);

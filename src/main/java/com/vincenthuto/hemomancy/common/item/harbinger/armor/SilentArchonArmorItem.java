@@ -31,6 +31,10 @@ public class SilentArchonArmorItem extends ArmorItem implements HemoClientItemEx
 			List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(Component.translatable("tooltip.hemomancy.silent_archon_set_bonus")
 				.withStyle(ChatFormatting.DARK_PURPLE));
+		tooltip.add(Component.translatable("tooltip.hemomancy.silent_archon_incorporeal")
+				.withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.translatable("tooltip.hemomancy.silent_archon_slipping")
+				.withStyle(ChatFormatting.GRAY));
 	}
 
 	@Override

@@ -630,7 +630,7 @@ public class ItemInit {
     // Masks
     public static final DeferredHolder<Item, Item> tengu_mask = BASEITEMS.register("tengu_mask",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> horned_mask = BASEITEMS.register("horned_mask",
+    public static final DeferredHolder<Item, Item> grinning_mask = BASEITEMS.register("grinning_mask",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> lodestone_faceplate = BASEITEMS.register("lodestone_faceplate",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
@@ -642,9 +642,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> blood_lust_helm_tengu = BASEITEMS.register("blood_lust_helm_tengu",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     BloodLustArmorItem.MaskType.TENGU));
-    public static final DeferredHolder<Item, Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
+    public static final DeferredHolder<Item, Item> blood_lust_helm_grinning = BASEITEMS.register("blood_lust_helm_grinning",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
-                    BloodLustArmorItem.MaskType.HORNED));
+                    BloodLustArmorItem.MaskType.GRINNING));
     public static final DeferredHolder<Item, Item> blood_lust_helm_lodestone = BASEITEMS.register("blood_lust_helm_lodestone",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
                     BloodLustArmorItem.MaskType.LODESTONE));
@@ -658,6 +658,42 @@ public class ItemInit {
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
                     BloodLustArmorItem.MaskType.NONE));
     public static final DeferredHolder<Item, Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> edacious_blood_lust_helm = BASEITEMS.register("edacious_blood_lust_helm",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
+                    BloodLustArmorItem.MaskType.TENGU));
+    public static final DeferredHolder<Item, Item> edacious_blood_lust_chest = BASEITEMS.register("edacious_blood_lust_chest",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> edacious_blood_lust_legs = BASEITEMS.register("edacious_blood_lust_legs",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> edacious_blood_lust_boots = BASEITEMS.register("edacious_blood_lust_boots",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> sheolic_blood_lust_helm = BASEITEMS.register("sheolic_blood_lust_helm",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
+                    BloodLustArmorItem.MaskType.LODESTONE));
+    public static final DeferredHolder<Item, Item> sheolic_blood_lust_chest = BASEITEMS.register("sheolic_blood_lust_chest",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> sheolic_blood_lust_legs = BASEITEMS.register("sheolic_blood_lust_legs",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> sheolic_blood_lust_boots = BASEITEMS.register("sheolic_blood_lust_boots",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> phantasmal_blood_lust_helm = BASEITEMS.register("phantasmal_blood_lust_helm",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.HELMET,
+                    BloodLustArmorItem.MaskType.VELORUM));
+    public static final DeferredHolder<Item, Item> phantasmal_blood_lust_chest = BASEITEMS.register("phantasmal_blood_lust_chest",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.CHESTPLATE,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> phantasmal_blood_lust_legs = BASEITEMS.register("phantasmal_blood_lust_legs",
+            () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.LEGGINGS,
+                    BloodLustArmorItem.MaskType.NONE));
+    public static final DeferredHolder<Item, Item> phantasmal_blood_lust_boots = BASEITEMS.register("phantasmal_blood_lust_boots",
             () -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST.holder(), ArmorItem.Type.BOOTS,
                     BloodLustArmorItem.MaskType.NONE));
     // Silent Archon

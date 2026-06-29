@@ -6,7 +6,10 @@ import com.vincenthuto.hemomancy.client.event.ClientEvents;
 import com.vincenthuto.hemomancy.client.screen.radial.BlitRadialMenuItem;
 import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
 import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
+import com.vincenthuto.hemomancy.client.screen.radial.ItemStackRadialMenuItem;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
+import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbility;
+import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
@@ -17,6 +20,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentManipPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -37,6 +41,7 @@ import java.util.List;
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
 	private static final int SELECTED_MANIP_SLICE_TINT = 0x9F7A0D0D;
+	private static final int UNAVAILABLE_ABILITY_SLICE_TINT = 0x7F3F1010;
 
 	@SubscribeEvent
 	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
@@ -129,6 +134,7 @@ public class RadialChooseManipScreen extends Screen {
 
 			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_ABSORPTION, selectedManipName);
 			addMechanicalManipulation(allManips, ManipulationEquipHelper.BLOOD_PROJECTION, selectedManipName);
+			addArmorSetAbility();
 
 			for (int i = 0; i < allManips.size(); i++) {
 				BloodManipulation c = allManips.get(i);
@@ -191,6 +197,28 @@ public class RadialChooseManipScreen extends Screen {
 				return;
 			}
 		}
+	}
+
+	private void addArmorSetAbility() {
+		ArmorSetAbilityRegistry.getActiveAbility(mc.player).ifPresent(ability -> {
+			ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(this.menu, -1,
+					ability.getDisplayIcon(mc.player), ability.displayName()) {
+				@Override
+				public boolean onClick() {
+					PacketHandler.sendToServer(new ActivateArmorSetAbilityC2SPacket(ability.id()));
+					RadialChooseManipScreen.this.menu.close();
+					return true;
+				}
+			};
+			long cooldownUntil = ArmorSetAbilityRegistry.getCooldownUntil(mc.player, ability);
+			long now = mc.level != null ? mc.level.getGameTime() : 0L;
+			if (cooldownUntil > now || !ability.canActivate(mc.player)) {
+				item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
+			}
+			item.setCentralText(ability.displayName().copy());
+			item.setVisible(true);
+			this.cachedMechanicalItems.add(item);
+		});
 	}
 
 	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot, String selectedManipName) {

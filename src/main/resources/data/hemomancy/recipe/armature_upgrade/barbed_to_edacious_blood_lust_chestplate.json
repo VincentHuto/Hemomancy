@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 7,
+  "armor_slot": "chest",
+  "base": { "item": "hemomancy:barbed_chestplate" },
+  "reagent": { "item": "hemomancy:fargone_proboscis" },
+  "blood_cost": 1800,
+  "result": { "id": "hemomancy:edacious_blood_lust_chest" }
+}

@@ -240,6 +240,9 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> mnemonic_screams = EFFECTS.register("mnemonic_screams",
             () -> new MnemonicScreamsEffect(MobEffectCategory.HARMFUL, 0x3F102B));
 
+    public static final DeferredHolder<MobEffect, MobEffect> monolithic_dislocation = EFFECTS.register("monolithic_dislocation",
+            () -> new MonolithicDislocationEffect(MobEffectCategory.HARMFUL, 0x1D2226));
+
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
     }

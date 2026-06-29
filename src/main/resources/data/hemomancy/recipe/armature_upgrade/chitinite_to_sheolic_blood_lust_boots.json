@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 7,
+  "armor_slot": "feet",
+  "base": { "item": "hemomancy:chitinite_boots" },
+  "reagent": { "item": "hemomancy:fervent_husk" },
+  "blood_cost": 1800,
+  "result": { "id": "hemomancy:sheolic_blood_lust_boots" }
+}

@@ -39,20 +39,38 @@ public final class ModelBackedArmorItemRenderHelper {
 		if (stack.is(ItemInit.blood_lust_helm.get()) || stack.is(ItemInit.blood_lust_helm_lodestone.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.helmet::get,
 					BLOOD_LUST_LAYER_1);
-		} else if (stack.is(ItemInit.blood_lust_helm_horned.get())) {
-			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.horned::get,
+		} else if (stack.is(ItemInit.blood_lust_helm_grinning.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.grinning::get,
 					BLOOD_LUST_LAYER_1);
 		} else if (stack.is(ItemInit.blood_lust_helm_tengu.get())
 				|| stack.is(ItemInit.blood_lust_helm_velorum.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.tengu::get,
 					BLOOD_LUST_LAYER_1);
-		} else if (stack.is(ItemInit.blood_lust_chest.get())) {
+		} else if (stack.is(ItemInit.edacious_blood_lust_helm.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.tengu::get,
+					BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.sheolic_blood_lust_helm.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.helmet::get,
+					BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.phantasmal_blood_lust_helm.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.tengu::get,
+					BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.blood_lust_chest.get())
+				|| stack.is(ItemInit.edacious_blood_lust_chest.get())
+				|| stack.is(ItemInit.sheolic_blood_lust_chest.get())
+				|| stack.is(ItemInit.phantasmal_blood_lust_chest.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, BloodLustArmorModel.chest::get,
 					BLOOD_LUST_LAYER_1);
-		} else if (stack.is(ItemInit.blood_lust_legs.get())) {
+		} else if (stack.is(ItemInit.blood_lust_legs.get())
+				|| stack.is(ItemInit.edacious_blood_lust_legs.get())
+				|| stack.is(ItemInit.sheolic_blood_lust_legs.get())
+				|| stack.is(ItemInit.phantasmal_blood_lust_legs.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, BloodLustArmorModel.legs::get,
 					BLOOD_LUST_LAYER_2);
-		} else if (stack.is(ItemInit.blood_lust_boots.get())) {
+		} else if (stack.is(ItemInit.blood_lust_boots.get())
+				|| stack.is(ItemInit.edacious_blood_lust_boots.get())
+				|| stack.is(ItemInit.sheolic_blood_lust_boots.get())
+				|| stack.is(ItemInit.phantasmal_blood_lust_boots.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, BloodLustArmorModel.boots::get,
 					BLOOD_LUST_LAYER_1);
 		} else if (stack.is(ItemInit.barbed_helm.get())) {

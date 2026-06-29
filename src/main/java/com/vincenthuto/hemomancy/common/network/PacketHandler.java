@@ -150,6 +150,12 @@ public class PacketHandler {
         // ── Key-bind packets ──────────────────────────────────────────────────
         net.playToServer(BloodFormationKeyPressPacket.TYPE, BloodFormationKeyPressPacket.STREAM_CODEC, BloodFormationKeyPressPacket::handle);
         net.playToServer(BloodCraftingKeyPressPacket.TYPE, BloodCraftingKeyPressPacket.STREAM_CODEC, BloodCraftingKeyPressPacket::handle);
+        net.playToServer(ActivateArmorSetAbilityC2SPacket.TYPE, ActivateArmorSetAbilityC2SPacket.STREAM_CODEC,
+                ActivateArmorSetAbilityC2SPacket::handle);
+        net.playToServer(ToggleSilentSlippingC2SPacket.TYPE, ToggleSilentSlippingC2SPacket.STREAM_CODEC,
+                ToggleSilentSlippingC2SPacket::handle);
+        net.playToClient(SyncSilentSlippingStateS2CPacket.TYPE, SyncSilentSlippingStateS2CPacket.STREAM_CODEC,
+                SyncSilentSlippingStateS2CPacket::handle);
 
         // ── Particles ─────────────────────────────────────────────────────────
         net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);

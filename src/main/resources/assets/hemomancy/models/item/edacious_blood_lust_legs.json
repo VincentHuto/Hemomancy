@@ -1,0 +1,9 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "layer0": "hemomancy:item/blood_lust_legs",
+    "particle": "hemomancy:item/blood_lust_legs"
+  },
+  "gui_light": "front",
+  "display": {}
+}

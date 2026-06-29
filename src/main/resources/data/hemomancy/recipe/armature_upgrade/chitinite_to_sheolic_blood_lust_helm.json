@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:armature_upgrade",
+  "required_degree": 7,
+  "armor_slot": "head",
+  "base": { "item": "hemomancy:chitinite_helm" },
+  "reagent": { "item": "hemomancy:lodestone_faceplate" },
+  "blood_cost": 1800,
+  "result": { "id": "hemomancy:sheolic_blood_lust_helm" }
+}

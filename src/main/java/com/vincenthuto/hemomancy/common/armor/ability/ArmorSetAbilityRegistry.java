@@ -1,0 +1,170 @@
+package com.vincenthuto.hemomancy.common.armor.ability;
+
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+public final class ArmorSetAbilityRegistry {
+	public static final ResourceLocation EDACIOUS_BLOODBURST = Hemomancy.rloc("edacious_bloodburst");
+	public static final ResourceLocation SHEOLIC_BASTION_STANCE = Hemomancy.rloc("sheolic_bastion_stance");
+	public static final ResourceLocation PHANTASMAL_STEP = Hemomancy.rloc("phantasmal_step");
+	public static final ResourceLocation SILENT_ARCHON_SEVERANCE = Hemomancy.rloc("silent_archon_severance");
+
+	private static final String COOLDOWN_PREFIX = "hemomancy:armor_set_ability_cooldown:";
+	private static final Map<ResourceLocation, ArmorSetAbility> ABILITIES = new LinkedHashMap<>();
+
+	static {
+		register(new SimpleArmorSetAbility(
+				EDACIOUS_BLOODBURST,
+				Component.literal("Bloodburst"),
+				requiredSet(ItemInit.edacious_blood_lust_helm, ItemInit.edacious_blood_lust_chest,
+						ItemInit.edacious_blood_lust_legs, ItemInit.edacious_blood_lust_boots),
+				ItemInit.edacious_blood_lust_helm,
+				player -> true,
+				FinalBloodlustArmorAbilityHandler::activateBloodburst,
+				240,
+				250.0D));
+		register(new SimpleArmorSetAbility(
+				SHEOLIC_BASTION_STANCE,
+				Component.literal("Bastion Stance"),
+				requiredSet(ItemInit.sheolic_blood_lust_helm, ItemInit.sheolic_blood_lust_chest,
+						ItemInit.sheolic_blood_lust_legs, ItemInit.sheolic_blood_lust_boots),
+				ItemInit.sheolic_blood_lust_helm,
+				player -> true,
+				FinalBloodlustArmorAbilityHandler::activateBastionStance,
+				360,
+				0.0D));
+		register(new SimpleArmorSetAbility(
+				PHANTASMAL_STEP,
+				Component.literal("Phantasmal Step"),
+				requiredSet(ItemInit.phantasmal_blood_lust_helm, ItemInit.phantasmal_blood_lust_chest,
+						ItemInit.phantasmal_blood_lust_legs, ItemInit.phantasmal_blood_lust_boots),
+				ItemInit.phantasmal_blood_lust_helm,
+				player -> true,
+				FinalBloodlustArmorAbilityHandler::activatePhantasmalStep,
+				0,
+				0.0D));
+		register(new SimpleArmorSetAbility(
+				SILENT_ARCHON_SEVERANCE,
+				Component.literal("Silent Severance"),
+				requiredSet(ItemInit.silent_archon_helm, ItemInit.silent_archon_chestplate,
+						ItemInit.silent_archon_leggings, ItemInit.silent_archon_boots),
+				ItemInit.silent_archon_helm,
+				player -> true,
+				SilentArchonArmorAbilityHandler::activateSilentArchonSeverance,
+				240,
+				300.0D));
+	}
+
+	private ArmorSetAbilityRegistry() {
+	}
+
+	public static void register(ArmorSetAbility ability) {
+		ABILITIES.put(ability.id(), ability);
+	}
+
+	public static Collection<ArmorSetAbility> all() {
+		return ABILITIES.values();
+	}
+
+	public static Optional<ArmorSetAbility> get(ResourceLocation id) {
+		return Optional.ofNullable(ABILITIES.get(id));
+	}
+
+	public static Optional<ArmorSetAbility> getActiveAbility(Player player) {
+		if (player == null) {
+			return Optional.empty();
+		}
+		return ABILITIES.values().stream()
+				.filter(ability -> ability.isAvailable(player))
+				.findFirst();
+	}
+
+	public static boolean tryActivate(ServerPlayer player, ResourceLocation abilityId) {
+		ArmorSetAbility ability = ABILITIES.get(abilityId);
+		if (ability == null) {
+			message(player, Component.literal("No such armor ability.").withStyle(ChatFormatting.RED));
+			return false;
+		}
+		if (!ability.isAvailable(player)) {
+			message(player, Component.literal("The armor is incomplete.").withStyle(ChatFormatting.RED));
+			return false;
+		}
+		if (!ability.canActivate(player)) {
+			message(player, Component.literal("The armor refuses.").withStyle(ChatFormatting.RED));
+			return false;
+		}
+		if (SHEOLIC_BASTION_STANCE.equals(ability.id())
+				&& FinalBloodlustArmorAbilityHandler.isBastionActive(player)) {
+			ability.activate(player);
+			return true;
+		}
+		long now = player.level().getGameTime();
+		long cooldownUntil = getCooldownUntil(player, ability);
+		if (cooldownUntil > now) {
+			message(player, Component.literal("Armor ability recharging.").withStyle(ChatFormatting.RED));
+			return false;
+		}
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		if (ability.bloodCost() > 0.0D) {
+			if (volume == null || !volume.isActive() || volume.getBloodVolume() < ability.bloodCost()) {
+				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));
+				return false;
+			}
+			if (!volume.drain(ability.bloodCost())) {
+				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));
+				return false;
+			}
+			BloodVolumeEvents.syncVolume(player, volume);
+		}
+		if (ability.cooldownTicks() > 0) {
+			setCooldownUntil(player, ability, now + ability.cooldownTicks());
+		}
+		ability.activate(player);
+		return true;
+	}
+
+	public static long getCooldownUntil(Player player, ArmorSetAbility ability) {
+		return player.getPersistentData().getLong(COOLDOWN_PREFIX + ability.id());
+	}
+
+	public static boolean isAbilityAvailable(Player player, ResourceLocation abilityId) {
+		ArmorSetAbility ability = ABILITIES.get(abilityId);
+		return ability != null && ability.isAvailable(player);
+	}
+
+	private static void setCooldownUntil(Player player, ArmorSetAbility ability, long cooldownUntil) {
+		player.getPersistentData().putLong(COOLDOWN_PREFIX + ability.id(), cooldownUntil);
+	}
+
+	private static Map<EquipmentSlot, Supplier<? extends Item>> requiredSet(
+			Supplier<? extends Item> helmet,
+			Supplier<? extends Item> chest,
+			Supplier<? extends Item> legs,
+			Supplier<? extends Item> boots) {
+		return Map.of(
+				EquipmentSlot.HEAD, helmet,
+				EquipmentSlot.CHEST, chest,
+				EquipmentSlot.LEGS, legs,
+				EquipmentSlot.FEET, boots);
+	}
+
+	private static void message(ServerPlayer player, Component message) {
+		player.displayClientMessage(message, true);
+	}
+}

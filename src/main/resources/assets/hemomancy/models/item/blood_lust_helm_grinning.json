@@ -1,0 +1,9 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "layer0": "hemomancy:item/blood_lust_helm_grinning",
+    "particle": "hemomancy:item/blood_lust_helm_grinning"
+  },
+  "gui_light": "front",
+  "display": {}
+}

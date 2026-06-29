@@ -159,6 +159,37 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType monolithicDislocationShell(float gameTime, float shardSeed) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"monolithic_dislocation_shell_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "ShardSeed", shardSeed);
+					setUniform(shader, "Burden", 0.32f);
+					setUniform(shader, "Attuned", 1.0f);
+					setUniform(shader, "FractalScale", 12.5f);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MONOLITH_FRAGMENT_ENTITY.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("monolithic_dislocation_shell",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MONOLITH_FRAGMENT_ENTITY.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.OVERLAY)
+						.createCompositeState(false));
+	}
+
 	public static RenderType monolithEntitySurface(float gameTime, float shardSeed, float burden, float attuned,
 			float fractalScale) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

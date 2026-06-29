@@ -30,7 +30,7 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 	public enum MaskType {
 		NONE,
 		TENGU,
-		HORNED,
+		GRINNING,
 		LODESTONE,
 		VELORUM
 	}
@@ -68,19 +68,31 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
 				if (itemStack.getItem() == ItemInit.blood_lust_helm.get()) {
 					return BloodLustArmorModel.helmet.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_horned.get()) {
-					return BloodLustArmorModel.horned.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()) {
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_grinning.get()) {
+					return BloodLustArmorModel.grinning.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()
+						|| itemStack.getItem() == ItemInit.edacious_blood_lust_helm.get()) {
 					return BloodLustArmorModel.tengu.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_lodestone.get()) {
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_lodestone.get()
+						|| itemStack.getItem() == ItemInit.sheolic_blood_lust_helm.get()) {
 					return BloodLustArmorModel.helmet.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_velorum.get()) {
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_velorum.get()
+						|| itemStack.getItem() == ItemInit.phantasmal_blood_lust_helm.get()) {
 					return BloodLustArmorModel.tengu.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()) {
+				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()
+						|| itemStack.getItem() == ItemInit.edacious_blood_lust_chest.get()
+						|| itemStack.getItem() == ItemInit.sheolic_blood_lust_chest.get()
+						|| itemStack.getItem() == ItemInit.phantasmal_blood_lust_chest.get()) {
 					return BloodLustArmorModel.chest.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_legs.get()) {
+				} else if (itemStack.getItem() == ItemInit.blood_lust_legs.get()
+						|| itemStack.getItem() == ItemInit.edacious_blood_lust_legs.get()
+						|| itemStack.getItem() == ItemInit.sheolic_blood_lust_legs.get()
+						|| itemStack.getItem() == ItemInit.phantasmal_blood_lust_legs.get()) {
 					return BloodLustArmorModel.legs.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_boots.get()) {
+				} else if (itemStack.getItem() == ItemInit.blood_lust_boots.get()
+						|| itemStack.getItem() == ItemInit.edacious_blood_lust_boots.get()
+						|| itemStack.getItem() == ItemInit.sheolic_blood_lust_boots.get()
+						|| itemStack.getItem() == ItemInit.phantasmal_blood_lust_boots.get()) {
 					return BloodLustArmorModel.boots.get();
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);

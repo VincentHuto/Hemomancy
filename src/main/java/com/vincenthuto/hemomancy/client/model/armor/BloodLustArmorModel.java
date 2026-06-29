@@ -18,14 +18,14 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 
 	public static enum EnumBloodLustMaskTypes {
-		NONE, HORNED, TENGU
+		NONE, GRINNING, TENGU
 	}
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_LAYER = new ModelLayerLocation(
 			Hemomancy.rloc("blood_lust_helmet"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_TENGU_LAYER = new ModelLayerLocation(
 			Hemomancy.rloc("blood_lust_helmet_tengu"), "main");
-	public static final ModelLayerLocation BLOOD_LUST_HEAD_HORNED_LAYER = new ModelLayerLocation(
-			Hemomancy.rloc("blood_lust_helmet_horned"), "main");
+	public static final ModelLayerLocation BLOOD_LUST_HEAD_GRINNING_LAYER = new ModelLayerLocation(
+			Hemomancy.rloc("blood_lust_helmet_grinning"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_CHEST_LAYER = new ModelLayerLocation(
 			Hemomancy.rloc("blood_lust_chest"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_LEGS_LAYER = new ModelLayerLocation(
@@ -35,7 +35,7 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 			Hemomancy.rloc("blood_lust_boots"), "main");
     public static final Lazy<BloodLustArmorModel<LivingEntity>> helmet = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> tengu = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_TENGU_LAYER)));
-    public static final Lazy<BloodLustArmorModel<LivingEntity>> horned = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_HORNED_LAYER)));
+    public static final Lazy<BloodLustArmorModel<LivingEntity>> grinning = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_GRINNING_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> chest = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_CHEST_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> legs = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_LEGS_LAYER)));
 
@@ -503,7 +503,7 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 						PartPose.offsetAndRotation(0.85F, -4.9F, -1.1F, 0.0F, 0.7854F, 0.0F));
 
 			}
-			if (maskType == EnumBloodLustMaskTypes.HORNED) {
+			if (maskType == EnumBloodLustMaskTypes.GRINNING) {
 				PartDefinition mask2 = head.addOrReplaceChild("mask2",
 						CubeListBuilder.create().texOffs(85, 202)
 								.addBox(-2.0316F, -27.2893F, -6.5862F, 6.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))

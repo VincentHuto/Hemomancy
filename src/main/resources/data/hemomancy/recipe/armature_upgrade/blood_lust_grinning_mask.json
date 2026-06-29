@@ -3,7 +3,7 @@
   "required_degree": 5,
   "armor_slot": "head",
   "base": { "item": "hemomancy:blood_lust_helm" },
-  "reagent": { "item": "hemomancy:horned_mask" },
+  "reagent": { "item": "hemomancy:grinning_mask" },
   "blood_cost": 350,
-  "result": { "id": "hemomancy:blood_lust_helm_horned" }
+  "result": { "id": "hemomancy:blood_lust_helm_grinning" }
 }

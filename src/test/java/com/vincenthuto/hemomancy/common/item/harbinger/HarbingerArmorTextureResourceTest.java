@@ -11,8 +11,10 @@ public final class HarbingerArmorTextureResourceTest {
 	private static final String[] DISTINCT_ITEM_TEXTURES = {
 			"crimson_lacquer",
 			"monolith_imbued_cloth",
+			"grinning_mask",
 			"lodestone_faceplate",
 			"velorum_mask",
+			"blood_lust_helm_grinning",
 			"blood_lust_helm_lodestone",
 			"blood_lust_helm_velorum",
 			"silent_archon_helm",
@@ -55,6 +57,14 @@ public final class HarbingerArmorTextureResourceTest {
 				"monolith_wrapped_cloth");
 		assertNoTextFilesContain("legacy monolith wrapped cloth id should be fully renamed in resources", RESOURCE_ROOT,
 				"monolith_wrapped_cloth");
+		assertNoTextFilesContain("legacy horned mask id should be fully renamed in source", SOURCE_ROOT,
+				"horned_mask");
+		assertNoTextFilesContain("legacy horned mask id should be fully renamed in resources", RESOURCE_ROOT,
+				"horned_mask");
+		assertNoTextFilesContain("legacy horned Blood Lust helm id should be fully renamed in source", SOURCE_ROOT,
+				"blood_lust_helm_horned");
+		assertNoTextFilesContain("legacy horned Blood Lust helm id should be fully renamed in resources", RESOURCE_ROOT,
+				"blood_lust_helm_horned");
 
 		String armorTiers = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/shared/armor/EnumModArmorTiers.java"));
