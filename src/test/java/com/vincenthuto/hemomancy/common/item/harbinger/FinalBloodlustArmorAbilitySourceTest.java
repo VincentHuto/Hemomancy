@@ -24,10 +24,14 @@ public final class FinalBloodlustArmorAbilitySourceTest {
 
 		assertContains("edacious id", registry, "edacious_bloodburst");
 		assertContains("sheolic id", registry, "sheolic_bastion_stance");
-		assertContains("phantasmal id", registry, "phantasmal_step");
+		assertContains("phantasmal id", registry, "masquerade_of_the_forgotten");
+		assertContains("phantasmal constant", registry, "MASQUERADE_OF_THE_FORGOTTEN");
+		assertContains("phantasmal display", registry, "Masquerade of the Forgotten");
+		assertNotContains("phantasmal radial should not be duplicate teleport", registry, "phantasmal_step");
 		assertContains("edacious full set", registry, "ItemInit.edacious_blood_lust_helm");
 		assertContains("sheolic full set", registry, "ItemInit.sheolic_blood_lust_helm");
 		assertContains("phantasmal full set", registry, "ItemInit.phantasmal_blood_lust_helm");
+		assertContains("server rejects dead players", registry, "!player.isAlive()");
 		assertContains("packet carries resource id", packet, "ResourceLocation abilityId");
 		assertContains("packet validates via registry", packet, "ArmorSetAbilityRegistry.tryActivate");
 		assertContains("packet registered", packetHandler, "ActivateArmorSetAbilityC2SPacket.TYPE");
@@ -37,6 +41,10 @@ public final class FinalBloodlustArmorAbilitySourceTest {
 		assertContains("flight passive handled", handler, "updateEdaciousFlight");
 		assertContains("bastion damage handled", handler, "isBastionActive");
 		assertContains("phantasmal reactive handled", handler, "triggerDistortedPresence");
+		assertContains("masquerade activation handled", handler, "activateMasqueradeOfTheForgotten");
+		assertContains("masquerade spawns echoes", handler, "PhantasmalEchoEntity");
+		assertContains("masquerade count", handler, "MASQUERADE_ECHO_COUNT = 8");
+		assertContains("masquerade duration", handler, "MASQUERADE_ECHO_DURATION_TICKS = 200");
 	}
 
 	private static String read(Path path) throws IOException {
@@ -49,6 +57,12 @@ public final class FinalBloodlustArmorAbilitySourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + ": still contains " + unexpected);
 		}
 	}
 }

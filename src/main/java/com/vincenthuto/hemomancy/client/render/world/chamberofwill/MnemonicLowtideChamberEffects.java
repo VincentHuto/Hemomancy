@@ -14,10 +14,23 @@ import org.joml.Matrix4f;
 import java.util.Random;
 
 public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
+	private static final int LOWTIDE_SKYBOX_FACE_COUNT = 6;
 	private static final int SKY_LAKE_SUBDIVISIONS = 80;
 	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT =12;
 	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 14;
 	private static final int LOWTIDE_WATERY_FOG_ROWS = 9;
+	private static final float LOWTIDE_SKYBOX_DISTANCE_SCALE = 0.965F;
+	private static final float LOWTIDE_SKYBOX_TIME_SCALE = 0.040F;
+	private static final float LOWTIDE_SKYBOX_BASE_TIME_SCALE = 0.026F;
+	private static final float LOWTIDE_SKYBOX_TUNNEL_SEED = 41.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_SEED = 113.0F;
+	private static final float LOWTIDE_SKYBOX_FACE_SEED_STEP = 37.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_NODULE_SCALE = 1.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_VEIN_INTENSITY = 1.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_INTENSITY = 1.02F;
+	private static final float LOWTIDE_SKYBOX_TUNNEL_SCALE = 1.12F;
+	private static final float LOWTIDE_SKYBOX_BUBBLE_SCALE = 1.14F;
+	private static final float LOWTIDE_SKYBOX_TENDRIL_INTENSITY = 1.22F;
 	private static final float SKY_LAKE_Y_SCALE = -0.05F;
 	private static final float SKY_LAKE_HALF_SPAN_SCALE = 3.2F;
 	private static final float SKY_LAKE_DEPTH_BOW_SCALE = 0.020F;
@@ -39,8 +52,91 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 
 	@Override
 	protected void renderBeforeSharedLayers(ChamberThemeRenderContext context) {
+		renderLowtideSkyboxBase(context.poseStack(), context.time(), context.skyDistance());
+		renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideSkyLake(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideWateryFog(context.poseStack(), context.time(), context.skyDistance());
+	}
+
+	static void renderLowtideSkyboxBase(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		float faceDistance = skyDistance * LOWTIDE_SKYBOX_DISTANCE_SCALE;
+		for (int face = 0; face < LOWTIDE_SKYBOX_FACE_COUNT; face++) {
+			poseStack.pushPose();
+			ChamberOfWillRenderHelpers.rotateSkyFace(poseStack, face);
+			float coverageBias = lowtideSkyboxCoverageBias(face);
+			RenderType renderType = HemoRenderTypes.mnemonicLowtideSkyboxBase(time * LOWTIDE_SKYBOX_BASE_TIME_SCALE,
+					LOWTIDE_SKYBOX_BASE_SEED + face * LOWTIDE_SKYBOX_FACE_SEED_STEP, coverageBias,
+					LOWTIDE_SKYBOX_BASE_NODULE_SCALE, LOWTIDE_SKYBOX_BASE_VEIN_INTENSITY,
+					LOWTIDE_SKYBOX_BASE_INTENSITY);
+			VertexConsumer consumer = buffer.getBuffer(renderType);
+			emitLowtideSkyboxFace(consumer, poseStack.last().pose(), faceDistance, coverageBias);
+			buffer.endBatch(renderType);
+			poseStack.popPose();
+		}
+
+		RenderSystem.depthMask(true);
+		RenderSystem.enableCull();
+	}
+
+	static void renderLowtideTunnelSkybox(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		float faceDistance = skyDistance * LOWTIDE_SKYBOX_DISTANCE_SCALE;
+		for (int face = 0; face < LOWTIDE_SKYBOX_FACE_COUNT; face++) {
+			poseStack.pushPose();
+			ChamberOfWillRenderHelpers.rotateSkyFace(poseStack, face);
+			float coverageBias = lowtideSkyboxCoverageBias(face);
+			RenderType renderType = HemoRenderTypes.mnemonicLowtideSkybox(time * LOWTIDE_SKYBOX_TIME_SCALE,
+					LOWTIDE_SKYBOX_TUNNEL_SEED + face * LOWTIDE_SKYBOX_FACE_SEED_STEP, coverageBias,
+					LOWTIDE_SKYBOX_TUNNEL_SCALE, LOWTIDE_SKYBOX_BUBBLE_SCALE,
+					LOWTIDE_SKYBOX_TENDRIL_INTENSITY);
+			VertexConsumer consumer = buffer.getBuffer(renderType);
+			emitLowtideSkyboxFace(consumer, poseStack.last().pose(), faceDistance, coverageBias);
+			buffer.endBatch(renderType);
+			poseStack.popPose();
+		}
+
+		RenderSystem.depthMask(true);
+		RenderSystem.enableCull();
+	}
+
+	private static float lowtideSkyboxCoverageBias(int face) {
+		return switch (face) {
+			case 0 -> 0.46F;
+			case 1 -> 1.0F;
+			case 2 -> 0.78F;
+			default -> 0.88F;
+		};
+	}
+
+	private static void emitLowtideSkyboxFace(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
+			float coverageBias) {
+		int alpha = Mth.floor(Mth.clamp(coverageBias * 236.0F, 0.0F, 236.0F));
+		emitLowtideSkyboxVertex(consumer, matrix, -skyDistance, -skyDistance, -skyDistance, 0.0F, 0.0F, alpha);
+		emitLowtideSkyboxVertex(consumer, matrix, -skyDistance, -skyDistance, skyDistance, 0.0F, 1.0F, alpha);
+		emitLowtideSkyboxVertex(consumer, matrix, skyDistance, -skyDistance, skyDistance, 1.0F, 1.0F, alpha);
+		emitLowtideSkyboxVertex(consumer, matrix, skyDistance, -skyDistance, -skyDistance, 1.0F, 0.0F, alpha);
+	}
+
+	private static void emitLowtideSkyboxVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z,
+			float u, float v, int alpha) {
+		consumer.addVertex(matrix, x, y, z)
+				.setUv(u, v)
+				.setColor(255, 255, 255, alpha);
 	}
 
 	static void renderLowtideSkyLake(PoseStack poseStack, float time, float skyDistance) {

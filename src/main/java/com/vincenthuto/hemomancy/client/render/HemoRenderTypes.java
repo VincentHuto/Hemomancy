@@ -349,6 +349,70 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	public static RenderType mnemonicLowtideSkybox(float gameTime, float faceSeed, float coverageBias,
+			float tunnelScale, float bubbleScale, float tendrilIntensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"mnemonic_lowtide_skybox_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_SKYBOX.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "FaceSeed", faceSeed);
+					setUniform(shader, "CoverageBias", coverageBias);
+					setUniform(shader, "TunnelScale", tunnelScale);
+					setUniform(shader, "BubbleScale", bubbleScale);
+					setUniform(shader, "TendrilIntensity", tendrilIntensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_SKYBOX.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("mnemonic_lowtide_skybox",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 1536, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MNEMONIC_LOWTIDE_SKYBOX.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	public static RenderType mnemonicLowtideSkyboxBase(float gameTime, float faceSeed, float coverageBias,
+			float noduleScale, float veinIntensity, float baseIntensity) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"mnemonic_lowtide_skybox_base_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_SKYBOX_BASE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "FaceSeed", faceSeed);
+					setUniform(shader, "CoverageBias", coverageBias);
+					setUniform(shader, "NoduleScale", noduleScale);
+					setUniform(shader, "VeinIntensity", veinIntensity);
+					setUniform(shader, "BaseIntensity", baseIntensity);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_SKYBOX_BASE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("mnemonic_lowtide_skybox_base",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 1536, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MNEMONIC_LOWTIDE_SKYBOX_BASE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType qliphothBlackHole(ResourceLocation texture, float gameTime, float holeSeed,
 			float lensStrength, float ringIntensity, boolean finalHole) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

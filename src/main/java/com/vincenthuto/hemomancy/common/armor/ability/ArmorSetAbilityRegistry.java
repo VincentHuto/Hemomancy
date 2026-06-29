@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public final class ArmorSetAbilityRegistry {
 	public static final ResourceLocation EDACIOUS_BLOODBURST = Hemomancy.rloc("edacious_bloodburst");
 	public static final ResourceLocation SHEOLIC_BASTION_STANCE = Hemomancy.rloc("sheolic_bastion_stance");
-	public static final ResourceLocation PHANTASMAL_STEP = Hemomancy.rloc("phantasmal_step");
+	public static final ResourceLocation MASQUERADE_OF_THE_FORGOTTEN = Hemomancy.rloc("masquerade_of_the_forgotten");
 	public static final ResourceLocation SILENT_ARCHON_SEVERANCE = Hemomancy.rloc("silent_archon_severance");
 
 	private static final String COOLDOWN_PREFIX = "hemomancy:armor_set_ability_cooldown:";
@@ -50,15 +50,15 @@ public final class ArmorSetAbilityRegistry {
 				360,
 				0.0D));
 		register(new SimpleArmorSetAbility(
-				PHANTASMAL_STEP,
-				Component.literal("Phantasmal Step"),
+				MASQUERADE_OF_THE_FORGOTTEN,
+				Component.literal("Masquerade of the Forgotten"),
 				requiredSet(ItemInit.phantasmal_blood_lust_helm, ItemInit.phantasmal_blood_lust_chest,
 						ItemInit.phantasmal_blood_lust_legs, ItemInit.phantasmal_blood_lust_boots),
 				ItemInit.phantasmal_blood_lust_helm,
 				player -> true,
-				FinalBloodlustArmorAbilityHandler::activatePhantasmalStep,
-				0,
-				0.0D));
+				FinalBloodlustArmorAbilityHandler::activateMasqueradeOfTheForgotten,
+				1200,
+				250.0D));
 		register(new SimpleArmorSetAbility(
 				SILENT_ARCHON_SEVERANCE,
 				Component.literal("Silent Severance"),
@@ -99,6 +99,10 @@ public final class ArmorSetAbilityRegistry {
 		ArmorSetAbility ability = ABILITIES.get(abilityId);
 		if (ability == null) {
 			message(player, Component.literal("No such armor ability.").withStyle(ChatFormatting.RED));
+			return false;
+		}
+		if (!player.isAlive()) {
+			message(player, Component.literal("The armor is silent.").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		if (!ability.isAvailable(player)) {

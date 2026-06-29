@@ -121,6 +121,14 @@ public class EntityInit {
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("spectral_companion").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<PhantasmalEchoEntity>> phantasmal_echo = ENTITY_TYPES.register(
+            "phantasmal_echo",
+            () -> EntityType.Builder.of(PhantasmalEchoEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.95F)
+                    .clientTrackingRange(8)
+                    .updateInterval(2)
+                    .build(Hemomancy.rloc("phantasmal_echo").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<HarbingerHermitEntity>> harbinger_hermit = ENTITY_TYPES.register(
             "harbinger_hermit",
             () -> EntityType.Builder.of(HarbingerHermitEntity::new, MobCategory.CREATURE)
@@ -787,6 +795,7 @@ public class EntityInit {
         event.put(EntityInit.unstained_acolyte.get(), UnstainedAcolyteEntity.setAttributes().build());
         event.put(EntityInit.unstained_scout.get(), UnstainedScoutEntity.setAttributes().build());
         event.put(EntityInit.spectral_companion.get(), SpectralCompanionEntity.setAttributes().build());
+        event.put(EntityInit.phantasmal_echo.get(), PhantasmalEchoEntity.setAttributes().build());
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_cicatrix_anchorite.get(), HarbingerCicatrixAnchoriteEntity.setAttributes().build());

@@ -1,0 +1,25 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "hemomancy:world/mnemonic_lowtide_skybox_base",
+  "fragment": "hemomancy:world/mnemonic_lowtide_skybox_base",
+  "attributes": [
+    "Position",
+    "Color",
+    "UV0"
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ColorModulator", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+    { "name": "HemoTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "FaceSeed", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "CoverageBias", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "NoduleScale", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "VeinIntensity", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "BaseIntensity", "type": "float", "count": 1, "values": [ 1.0 ] }
+  ]
+}

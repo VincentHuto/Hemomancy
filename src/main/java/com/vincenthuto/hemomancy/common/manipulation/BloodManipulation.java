@@ -199,7 +199,14 @@ public class BloodManipulation  {
 		if (cooldownTicks <= 0) {
 			return false;
 		}
+		if (ignoresCooldown(player)) {
+			return false;
+		}
 		return isAnyManipOnCooldown(player);
+	}
+
+	public boolean ignoresCooldown(Player player) {
+		return false;
 	}
 
 	public static boolean isAnyManipOnCooldown(Player player) {
@@ -303,7 +310,7 @@ public class BloodManipulation  {
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
-			if (isAnyManipOnCooldown(player)) {
+			if (!ignoresCooldown(player) && isAnyManipOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
 				player.displayClientMessage(
@@ -423,7 +430,7 @@ public class BloodManipulation  {
 							invokeMnAComboHelper(player);
 						}
 
-						long appliedCooldown = startCooldown(player);
+						long appliedCooldown = ignoresCooldown(player) ? 0L : startCooldown(player);
 						PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket((int) appliedCooldown));
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")

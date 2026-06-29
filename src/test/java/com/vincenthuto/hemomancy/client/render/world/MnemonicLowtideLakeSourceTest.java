@@ -21,6 +21,18 @@ public final class MnemonicLowtideLakeSourceTest {
 			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_lake.vsh");
 	private static final Path SHADER_FRAGMENT = Path.of(
 			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_lake.fsh");
+	private static final Path SKYBOX_SHADER_JSON = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_skybox.json");
+	private static final Path SKYBOX_SHADER_VERTEX = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_skybox.vsh");
+	private static final Path SKYBOX_SHADER_FRAGMENT = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_skybox.fsh");
+	private static final Path SKYBOX_BASE_SHADER_JSON = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_skybox_base.json");
+	private static final Path SKYBOX_BASE_SHADER_VERTEX = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_skybox_base.vsh");
+	private static final Path SKYBOX_BASE_SHADER_FRAGMENT = Path.of(
+			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_skybox_base.fsh");
 	private static final Path SURFACE_FOG_SHADER_JSON = Path.of(
 			"src/main/resources/assets/hemomancy/shaders/core/world/mnemonic_lowtide_surface_fog.json");
 	private static final Path SURFACE_FOG_SHADER_VERTEX = Path.of(
@@ -37,6 +49,12 @@ public final class MnemonicLowtideLakeSourceTest {
 		assertFileExists("lowtide shader json", SHADER_JSON);
 		assertFileExists("lowtide vertex shader", SHADER_VERTEX);
 		assertFileExists("lowtide fragment shader", SHADER_FRAGMENT);
+		assertFileExists("lowtide tunnel skybox shader json", SKYBOX_SHADER_JSON);
+		assertFileExists("lowtide tunnel skybox vertex shader", SKYBOX_SHADER_VERTEX);
+		assertFileExists("lowtide tunnel skybox fragment shader", SKYBOX_SHADER_FRAGMENT);
+		assertFileExists("lowtide nodule skybox base shader json", SKYBOX_BASE_SHADER_JSON);
+		assertFileExists("lowtide nodule skybox base vertex shader", SKYBOX_BASE_SHADER_VERTEX);
+		assertFileExists("lowtide nodule skybox base fragment shader", SKYBOX_BASE_SHADER_FRAGMENT);
 		assertFileDoesNotExist("obsolete lowtide surface fog shader json", SURFACE_FOG_SHADER_JSON);
 		assertFileDoesNotExist("obsolete lowtide surface fog vertex shader", SURFACE_FOG_SHADER_VERTEX);
 		assertFileDoesNotExist("obsolete lowtide surface fog fragment shader", SURFACE_FOG_SHADER_FRAGMENT);
@@ -49,6 +67,12 @@ public final class MnemonicLowtideLakeSourceTest {
 		String shaderJson = read(SHADER_JSON);
 		String vertexShader = read(SHADER_VERTEX);
 		String fragmentShader = read(SHADER_FRAGMENT);
+		String skyboxShaderJson = read(SKYBOX_SHADER_JSON);
+		String skyboxVertexShader = read(SKYBOX_SHADER_VERTEX);
+		String skyboxFragmentShader = read(SKYBOX_SHADER_FRAGMENT);
+		String skyboxBaseShaderJson = read(SKYBOX_BASE_SHADER_JSON);
+		String skyboxBaseVertexShader = read(SKYBOX_BASE_SHADER_VERTEX);
+		String skyboxBaseFragmentShader = read(SKYBOX_BASE_SHADER_FRAGMENT);
 		String reference = read(REFERENCE);
 
 		assertContains("registry registers dedicated lowtide effects", registry,
@@ -62,15 +86,31 @@ public final class MnemonicLowtideLakeSourceTest {
 
 		assertContains("shader init declares lowtide lake shader", shaderInit,
 				"MNEMONIC_LOWTIDE_LAKE");
+		assertContains("shader init declares lowtide tunnel skybox shader", shaderInit,
+				"MNEMONIC_LOWTIDE_SKYBOX");
+		assertContains("shader init declares lowtide nodule skybox base shader", shaderInit,
+				"MNEMONIC_LOWTIDE_SKYBOX_BASE");
 		assertNotContains("shader init should not keep obsolete lowtide surface fog shader", shaderInit,
 				"MNEMONIC_LOWTIDE_SURFACE_FOG");
 		assertContains("shader init uses world lowtide shader path", shaderInit,
 				"Hemomancy.rloc(\"world/mnemonic_lowtide_lake\")");
+		assertContains("shader init uses world lowtide skybox shader path", shaderInit,
+				"Hemomancy.rloc(\"world/mnemonic_lowtide_skybox\")");
+		assertContains("shader init uses world lowtide skybox base shader path", shaderInit,
+				"Hemomancy.rloc(\"world/mnemonic_lowtide_skybox_base\")");
 		assertContains("shader init registers lowtide lake shader", shaderInit,
 				"registerShader(event, MNEMONIC_LOWTIDE_LAKE.createInstance(provider));");
+		assertContains("shader init registers lowtide tunnel skybox shader", shaderInit,
+				"registerShader(event, MNEMONIC_LOWTIDE_SKYBOX.createInstance(provider));");
+		assertContains("shader init registers lowtide nodule skybox base shader", shaderInit,
+				"registerShader(event, MNEMONIC_LOWTIDE_SKYBOX_BASE.createInstance(provider));");
 
 		assertContains("render type method exists", renderTypes,
 				"public static RenderType mnemonicLowtideLake(");
+		assertContains("skybox render type method exists", renderTypes,
+				"public static RenderType mnemonicLowtideSkybox(");
+		assertContains("skybox base render type method exists", renderTypes,
+				"public static RenderType mnemonicLowtideSkyboxBase(");
 		assertContains("watery fog uses a simple position-color render type", renderTypes,
 				"MNEMONIC_LOWTIDE_WATERY_FOG");
 		assertContains("watery fog render type avoids custom shader fragility", renderTypes,
@@ -79,6 +119,20 @@ public final class MnemonicLowtideLakeSourceTest {
 				"mnemonicLowtideSurfaceFog(");
 		assertContains("render type uses lowtide shader shard", renderTypes,
 				"ShaderInit.MNEMONIC_LOWTIDE_LAKE.getShard()");
+		assertContains("render type uses lowtide skybox shader shard", renderTypes,
+				"ShaderInit.MNEMONIC_LOWTIDE_SKYBOX.getShard()");
+		assertContains("render type uses lowtide skybox base shader shard", renderTypes,
+				"ShaderInit.MNEMONIC_LOWTIDE_SKYBOX_BASE.getShard()");
+		assertContains("render type uploads per-face skybox seed", renderTypes,
+				"setUniform(shader, \"FaceSeed\", faceSeed);");
+		assertContains("render type uploads tunnel skybox coverage", renderTypes,
+				"setUniform(shader, \"CoverageBias\", coverageBias);");
+		assertContains("render type uploads nodule base scale", renderTypes,
+				"setUniform(shader, \"NoduleScale\", noduleScale);");
+		assertContains("render type uploads nodule base vein intensity", renderTypes,
+				"setUniform(shader, \"VeinIntensity\", veinIntensity);");
+		assertContains("render type uploads nodule base intensity", renderTypes,
+				"setUniform(shader, \"BaseIntensity\", baseIntensity);");
 		assertContains("render type disables depth test for skybox lake", renderTypes,
 				"RenderType.NO_DEPTH_TEST");
 		assertContains("render type uses color-only write mask", renderTypes,
@@ -92,6 +146,30 @@ public final class MnemonicLowtideLakeSourceTest {
 				"renderLowtideSkyLake(");
 		assertContains("renderer calls watery fog independently of lake rendering", lowtideEffects,
 				"renderLowtideWateryFog(context.poseStack(), context.time(), context.skyDistance())");
+		assertContains("renderer calls tunnel skybox before lowtide lake", lowtideEffects,
+				"renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance())");
+		assertContains("renderer calls nodule base skybox before tunnel membranes", lowtideEffects,
+				"renderLowtideSkyboxBase(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderLowtideTunnelSkybox");
+		assertContains("renderer sends per-face nodule base skybox seed", lowtideEffects,
+				"LOWTIDE_SKYBOX_BASE_SEED");
+		assertContains("renderer uses a moderated nodule base backdrop", lowtideEffects,
+				"LOWTIDE_SKYBOX_BASE_INTENSITY = 1.02F");
+		assertContains("renderer keeps nodule base behind the membrane skybox", lowtideEffects,
+				"HemoRenderTypes.mnemonicLowtideSkyboxBase");
+		assertContains("renderer uses stronger tunnel membranes over the nodule base", lowtideEffects,
+				"LOWTIDE_SKYBOX_TUNNEL_SCALE = 1.12F");
+		assertContains("renderer uses stronger bubble membranes over the nodule base", lowtideEffects,
+				"LOWTIDE_SKYBOX_BUBBLE_SCALE = 1.14F");
+		assertContains("renderer uses stronger tendril membranes over the nodule base", lowtideEffects,
+				"LOWTIDE_SKYBOX_TENDRIL_INTENSITY = 1.22F");
+		assertContains("renderer renders all six tunnel skybox faces", lowtideEffects,
+				"LOWTIDE_SKYBOX_FACE_COUNT = 6");
+		assertContains("renderer rotates tunnel skybox faces with shared chamber helper", lowtideEffects,
+				"ChamberOfWillRenderHelpers.rotateSkyFace(poseStack, face)");
+		assertContains("renderer sends per-face tunnel skybox seed", lowtideEffects,
+				"LOWTIDE_SKYBOX_FACE_SEED_STEP");
+		assertContains("renderer keeps tunnel skybox behind lake/fog depth writes", lowtideEffects,
+				"HemoRenderTypes.mnemonicLowtideSkybox");
 		assertContains("renderer scales lake from the chamber skybox", lowtideEffects,
 				"skyDistance *");
 		assertContains("renderer raises lowtide close to the refuge without becoming physical", lowtideEffects,
@@ -257,10 +335,90 @@ public final class MnemonicLowtideLakeSourceTest {
 		assertNotContains("lowtide lake fragment shader should not contain surface fog feature", fragmentShader,
 				"wateryFog");
 
+		assertContains("skybox shader json points to vertex program", skyboxShaderJson,
+				"\"vertex\": \"hemomancy:world/mnemonic_lowtide_skybox\"");
+		assertContains("skybox shader json exposes face seed", skyboxShaderJson,
+				"\"name\": \"FaceSeed\"");
+		assertContains("skybox shader json exposes coverage bias", skyboxShaderJson,
+				"\"name\": \"CoverageBias\"");
+		assertContains("skybox vertex shader passes skybox UVs", skyboxVertexShader,
+				"texCoord0 = UV0;");
+		assertContains("skybox fragment shader uses curling tunnel masks", skyboxFragmentShader,
+				"tunnelMask");
+		assertContains("skybox fragment shader uses glass bubble membranes", skyboxFragmentShader,
+				"bubbleMembrane");
+		assertContains("skybox fragment shader boosts membranes over red nodule base", skyboxFragmentShader,
+				"foregroundLift");
+		assertContains("skybox fragment shader keeps warm membrane fill near cube-face edges",
+				skyboxFragmentShader, "foregroundEdgeFill");
+		assertContains("skybox fragment shader uses red tendril borders", skyboxFragmentShader,
+				"redTendril");
+		assertContains("skybox fragment shader uses parchment tendril highlights", skyboxFragmentShader,
+				"parchmentTendril");
+		assertContains("skybox fragment shader adds small vein flecks to tunnel and bubble lines",
+				skyboxFragmentShader, "lineVeinFlecks");
+		assertContains("skybox fragment shader adds breakup points to membrane lines", skyboxFragmentShader,
+				"membraneBreakupPoints");
+		assertContains("skybox fragment shader preserves dark negative sky space", skyboxFragmentShader,
+				"negativeSpace");
+		assertContains("skybox fragment shader fades lower faces more than overhead", skyboxFragmentShader,
+				"CoverageBias");
+		assertContains("skybox fragment shader uses noisy cube-face edge cleanup", skyboxFragmentShader,
+				"edgeCleanup");
+		assertContains("skybox fragment shader breaks up the edge fade organically", skyboxFragmentShader,
+				"edgeBreakup");
+		assertNotContains("skybox fragment shader should not drop all foreground coverage at cube-face edges",
+				skyboxFragmentShader, "CoverageBias * edgeCleanup");
+		assertContains("skybox fragment shader fades tendril masks before cube-face boundaries",
+				skyboxFragmentShader, "tendrilEdgeFade");
+		assertContains("skybox fragment shader fades tunnel and bubble masks before cube-face boundaries",
+				skyboxFragmentShader, "structureEdgeFade");
+		assertNotContains("skybox fragment shader should not use a hard narrow cube-face seam fade",
+				skyboxFragmentShader, "smoothstep(0.0, 0.018, faceEdge)");
+		assertNotContains("skybox fragment shader should not use Java float suffixes", skyboxFragmentShader,
+				"2f");
+		assertNotContains("skybox fragment shader should not require a static skybox sampler", skyboxFragmentShader,
+				"sampler2D");
+
+		assertContains("skybox base shader json points to vertex program", skyboxBaseShaderJson,
+				"\"vertex\": \"hemomancy:world/mnemonic_lowtide_skybox_base\"");
+		assertContains("skybox base shader json exposes nodule scale", skyboxBaseShaderJson,
+				"\"name\": \"NoduleScale\"");
+		assertContains("skybox base shader json exposes vein intensity", skyboxBaseShaderJson,
+				"\"name\": \"VeinIntensity\"");
+		assertContains("skybox base shader json exposes base intensity", skyboxBaseShaderJson,
+				"\"name\": \"BaseIntensity\"");
+		assertContains("skybox base vertex shader passes skybox UVs", skyboxBaseVertexShader,
+				"texCoord0 = UV0;");
+		assertContains("skybox base fragment shader uses red bulbous nodule forms", skyboxBaseFragmentShader,
+				"noduleBulge");
+		assertContains("skybox base fragment shader uses small black veins", skyboxBaseFragmentShader,
+				"blackVeinWeb");
+		assertContains("skybox base fragment shader adds smaller capillary veins", skyboxBaseFragmentShader,
+				"capillaryVeins");
+		assertContains("skybox base fragment shader uses cellular boundaries between nodules",
+				skyboxBaseFragmentShader, "cellularBoundary");
+		assertContains("skybox base fragment shader reduces blank black with red ambient wash",
+				skyboxBaseFragmentShader, "ambientRedWash");
+		assertContains("skybox base fragment shader keeps red fill through cube corners",
+				skyboxBaseFragmentShader, "cornerRedFill");
+		assertContains("skybox base fragment shader uses moderate base layer presence",
+				skyboxBaseFragmentShader, "basePresence = clamp(0.26");
+		assertContains("skybox base fragment shader cleans up cube-face edges", skyboxBaseFragmentShader,
+				"edgeCleanup");
+		assertNotContains("skybox base fragment shader should not use Java float suffixes",
+				skyboxBaseFragmentShader, "2f");
+		assertNotContains("skybox base fragment shader should not require a static skybox sampler",
+				skyboxBaseFragmentShader, "sampler2D");
+
 		assertContains("reference documents lowtide skybox tide", reference,
 				"Mnemonic Lowtide");
 		assertContains("reference documents unreachable horizon lake", reference,
 				"skybox-space");
+		assertContains("reference documents lowtide tunnel bubble skybox", reference,
+				"curling membrane tunnels");
+		assertContains("reference documents lowtide nodule base skybox", reference,
+				"red bulbous nodule");
 	}
 
 	private static String read(Path path) throws IOException {

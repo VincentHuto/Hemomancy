@@ -2,8 +2,9 @@ package com.vincenthuto.hemomancy.common.armor.ability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,14 +15,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -39,7 +37,10 @@ public final class FinalBloodlustArmorAbilityHandler {
 	private static final int BASTION_DURATION_TICKS = 120;
 	private static final int BLOODBURST_NEEDLE_COUNT = 36;
 	private static final double BLOODBURST_DAMAGE = 4.0D;
-	private static final double PHANTASMAL_STEP_RANGE = 32.0D;
+	private static final int MASQUERADE_ECHO_COUNT = 8;
+	private static final int MASQUERADE_ECHO_DURATION_TICKS = 200;
+	private static final double MASQUERADE_MIN_SPAWN_RADIUS = 1.5D;
+	private static final double MASQUERADE_MAX_SPAWN_RADIUS = 3.0D;
 	private static final double PHANTASMAL_DISPLACEMENT = 8.0D;
 	private static final int PHANTASMAL_REACTIVE_COOLDOWN_TICKS = 40;
 
@@ -83,24 +84,16 @@ public final class FinalBloodlustArmorAbilityHandler {
 		player.displayClientMessage(Component.literal("Bastion Stance.").withStyle(ChatFormatting.DARK_RED), true);
 	}
 
-	public static void activatePhantasmalStep(ServerPlayer player) {
-		BlockPos landingPos = findLookLandingPosition(player, PHANTASMAL_STEP_RANGE);
-		if (landingPos == null) {
-			player.displayClientMessage(Component.literal("No visible landing place.").withStyle(ChatFormatting.DARK_PURPLE), true);
-			return;
-		}
-		Vec3 oldPos = player.position();
-		double destX = landingPos.getX() + 0.5D;
-		double destY = landingPos.getY();
-		double destZ = landingPos.getZ() + 0.5D;
-		player.teleportTo(destX, destY, destZ);
-		player.fallDistance = 0.0F;
-		player.resetFallDistance();
-		player.level().playSound(null, landingPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.15F);
-		player.serverLevel().sendParticles(ParticleTypes.PORTAL, oldPos.x, oldPos.y + 1.0D, oldPos.z,
-				35, 0.45D, 0.75D, 0.45D, 0.08D);
-		player.serverLevel().sendParticles(ParticleTypes.PORTAL, destX, destY + 1.0D, destZ,
-				35, 0.45D, 0.75D, 0.45D, 0.08D);
+	public static void activateMasqueradeOfTheForgotten(ServerPlayer player) {
+		spawnMasqueradeEchoes(player);
+		player.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL,
+				player.getX(), player.getY() + 1.0D, player.getZ(),
+				90, 1.0D, 0.75D, 1.0D, 0.08D);
+		player.serverLevel().sendParticles(ParticleTypes.SMOKE,
+				player.getX(), player.getY() + 0.8D, player.getZ(),
+				45, 0.9D, 0.45D, 0.9D, 0.02D);
+		player.level().playSound(null, player.blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE,
+				SoundSource.PLAYERS, 0.9F, 0.85F);
 	}
 
 	public static void updateEdaciousFlight(ServerPlayer player) {
@@ -168,7 +161,7 @@ public final class FinalBloodlustArmorAbilityHandler {
 				triggerCrimsonRetribution(player, attacker);
 			}
 		}
-		if (ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.PHANTASMAL_STEP)
+		if (ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.MASQUERADE_OF_THE_FORGOTTEN)
 				&& event.getSource().getEntity() instanceof LivingEntity attacker && attacker != player) {
 			triggerDistortedPresence(player, attacker);
 		}
@@ -248,22 +241,53 @@ public final class FinalBloodlustArmorAbilityHandler {
 				32, 0.45D, 0.75D, 0.45D, 0.04D);
 	}
 
-	private static BlockPos findLookLandingPosition(ServerPlayer player, double range) {
-		Vec3 eyePos = player.getEyePosition(1.0F);
-		Vec3 lookVec = player.getViewVector(1.0F);
-		Vec3 endPos = eyePos.add(lookVec.scale(range));
-		BlockHitResult hitResult = player.level().clip(new ClipContext(
-				eyePos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-		if (hitResult.getType() == HitResult.Type.MISS) {
-			return null;
+	private static void spawnMasqueradeEchoes(ServerPlayer player) {
+		boolean hasNearbyHostiles = !player.level().getEntitiesOfClass(Monster.class,
+				player.getBoundingBox().inflate(18.0D), Monster::isAlive).isEmpty();
+		for (int i = 0; i < MASQUERADE_ECHO_COUNT; i++) {
+			double angle = (Math.PI * 2.0D * i) / MASQUERADE_ECHO_COUNT
+					+ player.getRandom().nextDouble() * 0.35D;
+			double radius = MASQUERADE_MIN_SPAWN_RADIUS
+					+ player.getRandom().nextDouble() * (MASQUERADE_MAX_SPAWN_RADIUS - MASQUERADE_MIN_SPAWN_RADIUS);
+			BlockPos spawnPos = findEchoSpawnPosition(player, angle, radius);
+			PhantasmalEchoEntity echo = new PhantasmalEchoEntity(EntityInit.phantasmal_echo.get(), player.level());
+			echo.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D,
+					player.getYRot(), player.getXRot());
+			Vec3 outward = new Vec3(Math.cos(angle), 0.08D, Math.sin(angle))
+					.normalize()
+					.scale(0.35D + player.getRandom().nextDouble() * 0.25D);
+			echo.configureFromOwner(player, chooseMasqueradeMode(i, hasNearbyHostiles),
+					MASQUERADE_ECHO_DURATION_TICKS, outward);
+			player.level().addFreshEntity(echo);
 		}
-		BlockPos targetBlock = hitResult.getBlockPos();
-		BlockPos landingPos = targetBlock.above();
-		if (isSafeLanding(player, landingPos)) {
-			return landingPos;
+	}
+
+	private static PhantasmalEchoEntity.BehaviorMode chooseMasqueradeMode(int index, boolean hasNearbyHostiles) {
+		if (hasNearbyHostiles && index < 2) {
+			return PhantasmalEchoEntity.BehaviorMode.AGGRESSIVE;
 		}
-		landingPos = targetBlock.relative(hitResult.getDirection());
-		return isSafeLanding(player, landingPos) ? landingPos : null;
+		return switch (index % 4) {
+			case 0 -> PhantasmalEchoEntity.BehaviorMode.MIRRORING;
+			case 1 -> PhantasmalEchoEntity.BehaviorMode.FLEEING;
+			case 2 -> PhantasmalEchoEntity.BehaviorMode.CIRCLING;
+			default -> PhantasmalEchoEntity.BehaviorMode.AGGRESSIVE;
+		};
+	}
+
+	private static BlockPos findEchoSpawnPosition(ServerPlayer player, double angle, double radius) {
+		BlockPos center = BlockPos.containing(player.getX() + Math.cos(angle) * radius,
+				player.getY(), player.getZ() + Math.sin(angle) * radius);
+		for (int y = 1; y >= -2; y--) {
+			for (int x = -1; x <= 1; x++) {
+				for (int z = -1; z <= 1; z++) {
+					BlockPos candidate = center.offset(x, y, z);
+					if (isSafeLanding(player, candidate)) {
+						return candidate;
+					}
+				}
+			}
+		}
+		return player.blockPosition();
 	}
 
 	private static BlockPos findAttackerDisplacement(ServerPlayer player, LivingEntity attacker) {

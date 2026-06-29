@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
+import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -49,8 +50,14 @@ public class UmbralStepManip extends BloodManipulation {
 	}
 
 	@Override
+	public boolean ignoresCooldown(Player player) {
+		return ArmorSetHelper.hasFullPhantasmalBloodlust(player);
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
+		boolean phantasmalStep = ArmorSetHelper.hasFullPhantasmalBloodlust(player);
 
 		Vec3 eyePos = player.getEyePosition(1.0F);
 		Vec3 lookVec = player.getViewVector(1.0F);
@@ -72,7 +79,7 @@ public class UmbralStepManip extends BloodManipulation {
 
 		// Umbral Step requires darkness at the destination
 		int lightAtDest = world.getMaxLocalRawBrightness(landingPos);
-		if (!BlackVeilCovenantManager.isDarkEnough(world, landingPos, MAX_LIGHT_LEVEL)) {
+		if (!phantasmalStep && !BlackVeilCovenantManager.isDarkEnough(world, landingPos, MAX_LIGHT_LEVEL)) {
 			player.displayClientMessage(
 					Component.literal("§5The shadows there are too thin... (light level " + lightAtDest + ")"),
 					true);

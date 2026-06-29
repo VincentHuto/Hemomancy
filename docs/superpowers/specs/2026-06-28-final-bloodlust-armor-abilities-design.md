@@ -10,7 +10,7 @@ This design covers the reusable armor ability system, radial menu integration, s
 
 - `hemomancy:edacious_bloodburst`
 - `hemomancy:sheolic_bastion_stance`
-- `hemomancy:phantasmal_step`
+- `hemomancy:masquerade_of_the_forgotten`
 
 The design also covers the passive and reactive identities required for the three final Bloodlust sets where they are tied to the same full-set detection.
 
@@ -43,10 +43,11 @@ Server handling:
 
 1. Look up the ability id in `ArmorSetAbilityRegistry`.
 2. Confirm the player still wears the complete required armor set.
-3. Confirm the ability-specific validation predicate passes.
-4. Confirm the player has enough blood if the ability has a blood cost.
-5. Confirm cooldown has expired if the ability has a cooldown.
-6. Drain blood, set cooldown, and run the ability activation handler.
+3. Confirm the player is alive.
+4. Confirm the ability-specific validation predicate passes.
+5. Confirm the player has enough blood if the ability has a blood cost.
+6. Confirm cooldown has expired if the ability has a cooldown.
+7. Drain blood, set cooldown, and run the ability activation handler.
 
 Invalid requests fail silently or send a short action-bar message. The server remains authoritative for all effects.
 
@@ -82,7 +83,7 @@ Activation: toggle a timed Bastion Stance. While active, the player is rooted, c
 
 Passive and reactive behavior: full set grants fall damage immunity, fire/lava damage immunity, and persistent Fire Resistance. When damaged by an attacker, it applies Crimson Retribution by dealing magic fire-themed damage, spawning crimson spore particles, and placing existing `crimson_flames` at the attacker's block position when that position is replaceable.
 
-### Phantasmal Step
+### Masquerade of the Forgotten
 
 Required set:
 
@@ -93,7 +94,9 @@ Required set:
 
 Display icon: `phantasmal_blood_lust_helm`
 
-Activation: teleport the player to a visible target location using the existing Umbral Step raycast approach, without light-level or environmental restrictions. It has no ability cooldown and no blood cost, but the server still validates range, line of sight, and safe landing space.
+Activation: spawn several `phantasmal_echo` decoys around the player. Echoes scatter using aggressive, fleeing, circling, and mirroring behavior, deal low `hemomancy:phantasmal_echo` magic damage, and vanish when struck in a smoke burst that blinds, nauseates, slows, and briefly resets hostile mob targets. Natural expiration dissolves quietly. The ability has a cooldown and blood cost.
+
+Passive: while the full set is worn, the existing Umbral Step manipulation ignores its normal darkness and manipulation-cooldown checks. This does not unlock Umbral Step by itself; the player still needs the manipulation normally, and range, line-of-sight targeting, and blood cost remain unchanged.
 
 Reactive behavior: when struck, a high-chance response blinds and outlines the attacker, then teleports the attacker roughly eight blocks away from the player if a safe displacement position exists.
 

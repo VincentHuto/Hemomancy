@@ -2941,6 +2941,10 @@
   "dimension.hemomancy.chamber_of_will": "The Chamber of Will",
   "item.hemomancy.chamber_of_will_teleporter": "Chamber of Will Teleporter",
   "chat.hemomancy.chamber_of_will.block_out_of_bounds": "You cannot place blocks beyond the chamber's current boundary",
-  "item.hemomancy.chamber_of_will_teleporter.desc": "Right-click to enter The Chamber of Will, right-click again to return."
+  "item.hemomancy.chamber_of_will_teleporter.desc": "Right-click to enter The Chamber of Will, right-click again to return.",
+  "ability.hemomancy.masquerade_of_the_forgotten": "Masquerade of the Forgotten",
+  "death.attack.phantasmal_echo": "%1$s was lost in the masquerade",
+  "death.attack.phantasmal_echo.player": "%1$s was lost in %2$s's masquerade",
+  "entity.hemomancy.phantasmal_echo": "Phantasmal Echo"
 
 }

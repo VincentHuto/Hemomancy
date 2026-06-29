@@ -56,6 +56,9 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					if (selManip instanceof SummonThrallManip && SummonThrallManip.hasPendingThrall(player.getUUID())) {
 						bypassCooldown = true;
 					}
+					if (selManip != null && selManip.ignoresCooldown(player)) {
+						bypassCooldown = true;
+					}
 				}
 
 				if (!bypassCooldown && BloodManipulation.isAnyManipOnCooldown(player)) {
