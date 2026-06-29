@@ -22,6 +22,6 @@
     { "name": "WaveDetailScale", "type": "float", "count": 1, "values": [ 1.0 ] },
     { "name": "NoiseScale", "type": "float", "count": 1, "values": [ 8.0 ] },
     { "name": "GlossStrength", "type": "float", "count": 1, "values": [ 0.85 ] },
-    { "name": "EdgeFade", "type": "float", "count": 1, "values": [ 0.16 ] }
+    { "name": "EdgeFade", "type": "float", "count": 1, "values": [ 0.42 ] }
   ]
 }

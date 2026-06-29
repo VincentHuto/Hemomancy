@@ -44,7 +44,8 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static final float WAVE_DETAIL_SCALE = 3.0F;
 	private static final float NOISE_SCALE =  222.0F;
 	private static final float GLOSS_STRENGTH = 0.005F;
-	private static final float EDGE_FADE = 0F;
+	// Lake-local rim width. The shader clamps near 0.49 because the UV edge distance tops out at 0.5.
+	private static final float EDGE_FADE = 0.47F;
 
 	MnemonicLowtideChamberEffects(ChamberSkyTheme theme) {
 		super(theme);

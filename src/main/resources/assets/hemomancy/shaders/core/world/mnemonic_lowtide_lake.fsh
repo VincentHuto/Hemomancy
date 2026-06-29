@@ -57,16 +57,22 @@ void main() {
     float blackPocket = smoothstep(0.30, 0.74, fbm(warped * 4.0 - vec2(time * 0.08, time * 0.11)));
     float greyPinkMarble = smoothstep(0.28, 0.72, fbm(warped * 6.2 + vec2(-time * 0.16, time * 0.12)));
     float microBreakup = fbm(warped * 31.0 + vec2(time * 0.52, -time * 0.47) + high * 0.36);
+    float edgeDistance = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
+    float lakeEdgeWidth = clamp(EdgeFade, 0.001, 0.49);
+    float lakeEdgeBreakup = fbm(warped * 18.0 + vec2(time * 0.19, -time * 0.14) + microBreakup * 0.33);
+    float stableLakeEdgeDistance = edgeDistance + (lakeEdgeBreakup - 0.5) * lakeEdgeWidth * 0.22;
+    float lakeEdgeDetailFade = smoothstep(0.0, lakeEdgeWidth, stableLakeEdgeDistance);
+    float lakeEdgeDarkMask = 1.0 - smoothstep(0.0, lakeEdgeWidth * 1.08, stableLakeEdgeDistance);
     float parchmentNoise = fbm(warped * 13.0 + vec2(-time * 0.34, time * 0.29));
     float parchmentFine = fbm(warped * 24.0 + vec2(time * 0.27, -time * 0.33) + microBreakup * 0.42);
-    float parchmentHighlight = smoothstep(0.68, 0.94, parchmentNoise);
+    float parchmentHighlight = smoothstep(0.68, 0.94, parchmentNoise) * lakeEdgeDetailFade;
     float beigeStreak = pow(smoothstep(0.64, 0.98,
             parchmentNoise + parchmentFine * 0.24 + high * 0.12 + rippleHighlight * 0.18), 5.0);
     float parchmentVein = beigeStreak * smoothstep(0.42, 0.84, microBreakup + redStream * 0.18);
     float brightRedVein = pow(smoothstep(0.52, 0.91, redStream + microBreakup * 0.18 + rippleHighlight * 0.16), 2.4);
     float glintStreak = pow(smoothstep(0.58, 0.95, high + rippleHighlight * 0.45 + microBreakup * 0.16), 4.0)
-            * GlossStrength;
-    float glossLine = pow(max(0.0, high), 6.0) * GlossStrength;
+            * GlossStrength * lakeEdgeDetailFade;
+    float glossLine = pow(max(0.0, high), 6.0) * GlossStrength * lakeEdgeDetailFade;
 
     vec3 blackBase = vec3(0.012, 0.011, 0.012);
     vec3 oxblood = vec3(0.56, 0.045, 0.048);
@@ -79,12 +85,12 @@ void main() {
     vec3 color = mix(blackBase, deepOxblood, blackPocket * 0.66);
     color = mix(color, greyPink, greyPinkMarble * 0.24);
     color = mix(color, oxblood, redStream * 0.48);
-    color = mix(color, brightRed, brightRedVein * 0.18);
+    color = mix(color, brightRed, brightRedVein * 0.18 * lakeEdgeDetailFade);
     color = mix(color, blackBase, smoothstep(0.18, 0.58, microBreakup) * 0.16);
     color += parchment * parchmentHighlight * 0.08;
-    color += warmBeigeVein * parchmentVein * (0.24 + glintStreak * 0.22);
+    color += warmBeigeVein * parchmentVein * lakeEdgeDetailFade * (0.24 + glintStreak * 0.22);
     color += vec3(0.90, 0.65, 0.58) * glossLine * (0.08 + parchmentVein * 0.16);
-    color += vec3(0.76, 0.48, 0.50) * rippleHighlight * 0.18;
+    color += vec3(0.76, 0.48, 0.50) * rippleHighlight * 0.18 * lakeEdgeDetailFade;
     color += vec3(0.94, 0.78, 0.54) * glintStreak * 0.18;
     color += greyPink * abs(waveLiftAmount) * 0.28;
     float luma = dot(color, vec3(0.299, 0.587, 0.114));
@@ -93,11 +99,13 @@ void main() {
     color = mix(vec3(luma), color, saturationBoost);
     color = (color - vec3(0.16)) * contrastLift + vec3(0.13);
 
-    float edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
-    float horizonFade = smoothstep(0.0, EdgeFade * 1.85, edge);
-    float edgeFade = smoothstep(0.0, EdgeFade, edge) * horizonFade;
+    vec3 lakeEdgeRimColor = mix(vec3(0.004, 0.003, 0.004), deepOxblood, 0.28 + lakeEdgeBreakup * 0.22);
+    color = mix(color, lakeEdgeRimColor, lakeEdgeDarkMask * 0.90);
+    float lakeEdgeOpacityFade = mix(0.16, 1.0, smoothstep(lakeEdgeWidth * 0.16, lakeEdgeWidth, stableLakeEdgeDistance));
+    float terminalAlphaFeather = min(lakeEdgeWidth * 0.16, 0.085);
+    float terminalAlpha = smoothstep(0.0, terminalAlphaFeather, edgeDistance);
     float alpha = (0.80 + redStream * 0.08 + parchmentVein * 0.14 + glossLine * 0.11
-            + rippleHighlight * 0.06 + glintStreak * 0.08) * edgeFade;
+            + rippleHighlight * 0.06 * lakeEdgeDetailFade + glintStreak * 0.08) * lakeEdgeOpacityFade * terminalAlpha;
     alpha *= vertexColor.a * ColorModulator.a;
 
     fragColor = vec4(color * ColorModulator.rgb, min(alpha, 0.95));

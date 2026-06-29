@@ -178,6 +178,12 @@ public final class MnemonicLowtideLakeSourceTest {
 				"WAVE_STRENGTH =");
 		assertContains("renderer exposes wave detail scale separately from texture noise", lowtideEffects,
 				"WAVE_DETAIL_SCALE =");
+		assertContains("renderer exposes a lake edge fade width", lowtideEffects,
+				"private static final float EDGE_FADE =");
+		assertContains("renderer uses a visible lake-local rim width below the shader cap", lowtideEffects,
+				"EDGE_FADE = 0.42F");
+		assertNotContains("renderer should not disable lake edge fading", lowtideEffects,
+				"EDGE_FADE = 0F");
 		assertContains("renderer sends faster shader time so the lake visibly moves", lowtideEffects,
 				"LOWTIDE_SHADER_TIME_SCALE =");
 		assertContains("renderer applies the lowtide time scale", lowtideEffects,
@@ -253,6 +259,8 @@ public final class MnemonicLowtideLakeSourceTest {
 				"\"name\": \"WaveDetailScale\"");
 		assertContains("shader json exposes gloss strength", shaderJson,
 				"\"name\": \"GlossStrength\"");
+		assertContains("shader json defaults edge fade to the visible lake-local rim width", shaderJson,
+				"\"name\": \"EdgeFade\", \"type\": \"float\", \"count\": 1, \"values\": [ 0.42 ]");
 		assertNotContains("shader json should not expose fog start for skybox lake", shaderJson,
 				"\"name\": \"FogStart\"");
 		assertNotContains("shader json should not expose fog end for skybox lake", shaderJson,
@@ -270,8 +278,12 @@ public final class MnemonicLowtideLakeSourceTest {
 				"WaveDetailScale");
 		assertContains("vertex shader passes ripple highlight to fragment shader", vertexShader,
 				"rippleHighlight =");
-		assertContains("vertex shader damps edges", vertexShader,
+		assertContains("vertex shader damps mesh-edge waves independently from horizon fade", vertexShader,
+				"meshEdgeWaveDamping");
+		assertNotContains("vertex shader should not use horizon edge fade for uv wave damping", vertexShader,
 				"smoothstep(0.0, EdgeFade, edge)");
+		assertNotContains("vertex shader should not derive lake edge fading from camera projection", vertexShader,
+				"projectedLakeY");
 		assertNotContains("vertex shader should not couple texture noise scale to animated ripple highlights", vertexShader,
 				"NoiseScale");
 		assertContains("render type uploads wave detail scale", renderTypes,
@@ -316,8 +328,40 @@ public final class MnemonicLowtideLakeSourceTest {
 				"saturationBoost");
 		assertContains("fragment shader restores lake contrast after color mixing", fragmentShader,
 				"contrastLift");
-		assertContains("fragment shader softens the far skybox lake edge", fragmentShader,
-				"horizonFade");
+		assertContains("fragment shader computes edge distance for rim darkening", fragmentShader,
+				"edgeDistance");
+		assertNotContains("fragment shader should not derive lake edge fading from camera projection", fragmentShader,
+				"projectedLakeY");
+		assertContains("fragment shader treats edge fade as a lake-local rim width", fragmentShader,
+				"lakeEdgeWidth");
+		assertContains("fragment shader clamps lake-local rim width at the largest useful edge-only value",
+				fragmentShader, "clamp(EdgeFade, 0.001, 0.49)");
+		assertNotContains("fragment shader should not hide large edge fade tuning behind a narrow cap",
+				fragmentShader, "clamp(EdgeFade, 0.001, 0.24)");
+		assertContains("fragment shader builds the rim from stable uv edge distance", fragmentShader,
+				"stableLakeEdgeDistance");
+		assertContains("fragment shader breaks up the lake-local rim organically", fragmentShader,
+				"lakeEdgeBreakup");
+		assertContains("fragment shader suppresses bright lake details near the stable rim", fragmentShader,
+				"lakeEdgeDetailFade");
+		assertContains("fragment shader darkens the stable lake rim instead of the whole lake",
+				fragmentShader, "lakeEdgeRimColor");
+		assertContains("fragment shader reduces opacity across the stable lake rim",
+				fragmentShader, "lakeEdgeOpacityFade");
+		assertContains("fragment shader leaves the central lake opaque while making the widened rim readable",
+				fragmentShader, "mix(0.16, 1.0");
+		assertContains("fragment shader keeps a narrow terminal lake edge alpha feather", fragmentShader,
+				"terminalAlphaFeather");
+		assertContains("fragment shader scales the terminal alpha feather with the stable rim width",
+				fragmentShader, "min(lakeEdgeWidth * 0.16, 0.085)");
+		assertContains("fragment shader applies stable edge opacity falloff to lake alpha",
+				fragmentShader, "* lakeEdgeOpacityFade * terminalAlpha");
+		assertNotContains("fragment shader should not keep projected horizon distance fading", fragmentShader,
+				"horizonDistance");
+		assertNotContains("fragment shader should not keep broad horizon opacity fade", fragmentShader,
+				"smoothstep(0.0, EdgeFade * 1.85");
+		assertNotContains("fragment shader should not use texture uv edge as the primary lake horizon fade",
+				fragmentShader, "float edgeDarkenWidth = max(EdgeFade");
 		assertContains("fragment shader adds small water-surface breakup", fragmentShader,
 				"microBreakup");
 		assertContains("fragment shader adds thin glossy glint streaks", fragmentShader,

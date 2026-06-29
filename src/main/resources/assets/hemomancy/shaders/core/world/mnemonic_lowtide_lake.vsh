@@ -6,7 +6,6 @@ uniform float HemoTime;
 uniform float LakeSeed;
 uniform float WaveStrength;
 uniform float WaveDetailScale;
-uniform float EdgeFade;
 
 in vec3 Position;
 in vec4 Color;
@@ -24,7 +23,8 @@ float wave(vec2 uv, vec2 axis, float scale, float speed, float phase) {
 void main() {
     vec2 uv = UV0;
     float edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
-    float edgeDamping = smoothstep(0.0, EdgeFade, edge);
+    float meshEdgeWaveDamping = 0.055;
+    float edgeDamping = smoothstep(0.0, meshEdgeWaveDamping, edge);
     float waveDetailScale = max(0.1, WaveDetailScale);
     float broad = wave(uv, normalize(vec2(1.0, 0.31)), 13.0 * waveDetailScale, 0.052, 0.017);
     float cross = wave(uv, normalize(vec2(-0.42, 1.0)), 21.0 * waveDetailScale, -0.073, 0.029);
