@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -84,7 +85,7 @@ public class VitricCombustionManip extends BloodManipulation {
 		for (LivingEntity target : targets) {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
-			target.igniteForSeconds(FIRE_SECONDS);
+			CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS);
 			float damage = (float) (BLAST_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 			target.hurt(world.damageSources().explosion(null, player),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));

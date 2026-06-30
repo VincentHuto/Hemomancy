@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.hematic.LivingTorchItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +24,7 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 		if (LivingStaffWeaponFormHelper.wasRestoredOutOfHand(stack, attacker)) {
 			return true;
 		}
-		target.igniteForSeconds(4);
+		CrimsonFireHelper.igniteCrimson(target, 4);
 		if (!attacker.level().isClientSide) {
 			attacker.level().playSound(null, target.blockPosition(), SoundEvents.FLINTANDSTEEL_USE,
 					SoundSource.PLAYERS, 0.45f, 0.85f);

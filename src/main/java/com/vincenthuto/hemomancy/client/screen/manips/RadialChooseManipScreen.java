@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentManipPacket;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -36,11 +37,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
 	private static final int SELECTED_MANIP_SLICE_TINT = 0x9F7A0D0D;
+	private static final int RECHARGING_ABILITY_SLICE_TINT = 0xBFA00000;
 	private static final int UNAVAILABLE_ABILITY_SLICE_TINT = 0x7F3F1010;
 
 	@SubscribeEvent
@@ -202,22 +205,44 @@ public class RadialChooseManipScreen extends Screen {
 	private void addArmorSetAbility() {
 		ArmorSetAbilityRegistry.getActiveAbility(mc.player).ifPresent(ability -> {
 			ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(this.menu, -1,
-					ability.getDisplayIcon(mc.player), ability.displayName(), ability.tooltip()) {
+					ability.getDisplayIcon(mc.player), ability.displayName(), () -> armorAbilityTooltip(ability)) {
 				@Override
 				public boolean onClick() {
 					PacketHandler.sendToServer(new ActivateArmorSetAbilityC2SPacket(ability.id()));
 					RadialChooseManipScreen.this.menu.close();
 					return true;
 				}
+
+				@Override
+				public int getBackgroundColor(int fallbackColor) {
+					return isArmorAbilityRecharging(ability) ? RECHARGING_ABILITY_SLICE_TINT
+							: super.getBackgroundColor(fallbackColor);
+				}
 			};
-			long cooldownUntil = ArmorSetAbilityRegistry.getCooldownUntil(mc.player, ability);
-			long now = mc.level != null ? mc.level.getGameTime() : 0L;
-			if (cooldownUntil > now || !ability.canActivate(mc.player)) {
+			if (!ability.canActivate(mc.player)) {
 				item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
 			}
 			item.setVisible(true);
 			this.cachedMechanicalItems.add(item);
 		});
+	}
+
+	private List<Component> armorAbilityTooltip(ArmorSetAbility ability) {
+		List<Component> tooltip = new ArrayList<>(ability.tooltip());
+		long cooldownUntil = ArmorSetAbilityRegistry.getClientCooldownUntil(mc.player, ability);
+		long now = mc.level != null ? mc.level.getGameTime() : 0L;
+		if (cooldownUntil > now) {
+			long remainingSeconds = Math.max(1L, (cooldownUntil - now + 19L) / 20L);
+			tooltip.add(Component.translatable("ability.hemomancy.armor_set.recharging", remainingSeconds)
+					.withStyle(ChatFormatting.RED));
+		}
+		return tooltip;
+	}
+
+	private boolean isArmorAbilityRecharging(ArmorSetAbility ability) {
+		long cooldownUntil = ArmorSetAbilityRegistry.getClientCooldownUntil(mc.player, ability);
+		long now = mc.level != null ? mc.level.getGameTime() : 0L;
+		return cooldownUntil > now;
 	}
 
 	private BlitRadialMenuItem createManipulationItem(BloodManipulation manipulation, int slot, String selectedManipName) {

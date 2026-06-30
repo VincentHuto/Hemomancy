@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.*;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -322,7 +323,7 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						target.igniteForSeconds(6);
+						CrimsonFireHelper.igniteCrimson(target, 6);
 						return true;
 					}, "Sets nearest hostile on fire"));
 
@@ -470,7 +471,7 @@ public class ManipulationInit {
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						if (mobs.isEmpty()) return false;
 						mobs.forEach(m -> {
-							m.igniteForSeconds(10);
+							CrimsonFireHelper.igniteCrimson(m, 10);
 							m.hurt(world.damageSources().onFire(), 3.0f);
 						});
 						return true;
@@ -658,7 +659,7 @@ public class ManipulationInit {
 						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
-						target.igniteForSeconds(8);
+						CrimsonFireHelper.igniteCrimson(target, 8);
 						target.hurt(world.damageSources().onFire(), 2.0f);
 						return true;
 					}, "Sets nearest hostile on fire"));
@@ -673,7 +674,7 @@ public class ManipulationInit {
 						if (mobs.isEmpty()) return false;
 						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f;
 						mobs.forEach(m -> {
-							m.igniteForSeconds(12);
+							CrimsonFireHelper.igniteCrimson(m, 12);
 							m.hurt(world.damageSources().onFire(), dmg);
 						});
 						return true;
@@ -690,7 +691,7 @@ public class ManipulationInit {
 						AABB area = new AABB(centre).inflate(radius / 2.0);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
 						mobs.forEach(m -> {
-							m.igniteForSeconds(5);
+							CrimsonFireHelper.igniteCrimson(m, 5);
 							m.hurt(world.damageSources().onFire(), 2.0F);
 						});
 						return true;

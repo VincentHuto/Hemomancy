@@ -6,12 +6,13 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ItemStackRadialMenuItem extends TextRadialMenuItem
 {
     private final int slot;
     private final ItemStack stack;
-    private final List<Component> customTooltip;
+    private final Supplier<List<Component>> customTooltip;
 
     public int getSlot()
     {
@@ -31,10 +32,16 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
     public ItemStackRadialMenuItem(GenericRadialMenu owner, int slot, ItemStack stack, Component altText,
             List<Component> customTooltip)
     {
+        this(owner, slot, stack, altText, () -> customTooltip);
+    }
+
+    public ItemStackRadialMenuItem(GenericRadialMenu owner, int slot, ItemStack stack, Component altText,
+            Supplier<List<Component>> customTooltip)
+    {
         super(owner, altText, 0x7FFFFFFF);
         this.slot = slot;
         this.stack = stack;
-        this.customTooltip = List.copyOf(customTooltip);
+        this.customTooltip = customTooltip;
     }
 
     @Override
@@ -61,9 +68,10 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
     @Override
     public void drawTooltips(DrawingContext context)
     {
-        if (!customTooltip.isEmpty())
+        List<Component> tooltip = List.copyOf(customTooltip.get());
+        if (!tooltip.isEmpty())
         {
-            context.graphics.renderTooltip(context.font, customTooltip, Optional.empty(), (int) context.x, (int) context.y);
+            context.graphics.renderTooltip(context.font, tooltip, Optional.empty(), (int) context.x, (int) context.y);
             return;
         }
         if (stack.getCount() > 0)

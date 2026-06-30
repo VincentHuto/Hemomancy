@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel;
 
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -256,7 +257,7 @@ public class PutricielEntity extends Monster {
                 new AABB(this.blockPosition()).inflate(radius))) {
             player.hurt(this.damageSources().magic(), ROT_NOVA_DAMAGE);
             player.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, witherAmp, false, true));
-            player.igniteForSeconds(3);
+            CrimsonFireHelper.igniteCrimson(player, 3);
         }
     }
 

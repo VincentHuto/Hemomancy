@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBl
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -247,7 +248,7 @@ public class ScarDefinition {
 	public void onPlayerDefend(Player player, LivingEntity attacker) {
 		double masteryMult = scarEffectDurationMultiplier(player);
 		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
-			attacker.igniteForSeconds(tier >= 3 ? 4.0F : 2.0F);
+			CrimsonFireHelper.igniteCrimson(attacker, tier >= 3 ? 4.0F : 2.0F);
 		}
 		if (assignedTendency == EnumBloodTendency.FERRIC && tier >= 1) {
 			attacker.hurt(player.damageSources().thorns(player), tier);

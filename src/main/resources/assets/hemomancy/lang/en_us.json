@@ -2946,6 +2946,7 @@
   "item.hemomancy.chamber_of_will_teleporter.desc": "Right-click to enter The Chamber of Will, right-click again to return.",
   "ability.hemomancy.armor_set.cooldown": "Cooldown: %s seconds",
   "ability.hemomancy.armor_set.cost": "Blood cost: %s mL",
+  "ability.hemomancy.armor_set.recharging": "Recharging: %s seconds remaining",
   "ability.hemomancy.edacious_bloodburst.tooltip": "Fire barbed blood needles outward, applying Blood Loss, Hunger, and Wither.",
   "ability.hemomancy.masquerade_of_the_forgotten": "Masquerade of the Forgotten",
   "ability.hemomancy.masquerade_of_the_forgotten.tooltip": "Spawn eight phantasmal echoes for 10 seconds to distract, harry, and punish nearby enemies.",

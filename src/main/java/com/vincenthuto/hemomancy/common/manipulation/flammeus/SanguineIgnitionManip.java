@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -57,7 +58,7 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		int hit = 0;
 		for (LivingEntity target : targets) {
 			if (target.distanceTo(player) <= RADIUS) {
-				target.igniteForSeconds((float) FIRE_SECONDS);
+				CrimsonFireHelper.igniteCrimson(target, FIRE_SECONDS);
 				float damage = (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 				target.hurt(world.damageSources().onFire(),
 						TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));

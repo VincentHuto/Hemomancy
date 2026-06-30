@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -38,7 +39,7 @@ public class CauterizingRebukeManip extends BloodManipulation {
 		float damage = (float) (2.5F * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
 				e -> e != player && e.isAlive())) {
-			target.igniteForSeconds(5);
+			CrimsonFireHelper.igniteCrimson(target, 5);
 			target.hurt(world.damageSources().onFire(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, damage));
 		}

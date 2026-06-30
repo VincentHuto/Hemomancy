@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.util.CrimsonFireHelper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -44,7 +45,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
 				e -> e != player && e.isAlive())) {
-			target.igniteForSeconds(3);
+			CrimsonFireHelper.igniteCrimson(target, 3);
 			target.hurt(world.damageSources().onFire(),
 					TendencyAffinityRules.adjustManipulationDamage(player, target, this, 1.5F));
 		}

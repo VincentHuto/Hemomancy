@@ -9,6 +9,7 @@
     "MixinLivingEntity"
   ],
   "client": [
+    "MixinEntityRenderDispatcher",
     "MixinHumanoidArmorLayer",
     "MixinLivingEntityRenderer",
     "MixinLocalPlayer",

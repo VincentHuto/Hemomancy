@@ -22,6 +22,8 @@ public final class RadialChooseManipScreenSourceTest {
 				"this.menu.addAllInner(this.cachedMechanicalItems);");
 		assertContains("radial screen defines the selected manipulation slice tint", screen,
 				"SELECTED_MANIP_SLICE_TINT");
+		assertContains("radial screen defines a distinct recharging armor ability tint", screen,
+				"RECHARGING_ABILITY_SLICE_TINT");
 		assertContains("radial screen compares item names to the selected manipulation", screen,
 				"manipulation.getName().equals(selectedManipName)");
 		assertContains("selected radial item applies the tint to the whole slice", screen,
@@ -44,6 +46,16 @@ public final class RadialChooseManipScreenSourceTest {
 				"customTooltip");
 		assertContains("armor ability radial entry uses ability tooltip instead of helmet tooltip", screen,
 				"ability.tooltip()");
+		assertContains("armor ability tooltip is generated dynamically while hovered", screen,
+				"armorAbilityTooltip(ability)");
+		assertContains("armor ability tooltip shows live recharge remaining text", screen,
+				"ability.hemomancy.armor_set.recharging");
+		assertContains("armor ability radial reads client-synced cooldown state", screen,
+				"getClientCooldownUntil");
+		assertContains("armor ability wedge computes the recharge tint while cooldown remains", screen,
+				"getBackgroundColor(int fallbackColor)");
+		assertContains("item-stack radial entries support dynamic tooltip suppliers", itemStackRadial,
+				"Supplier<List<Component>> customTooltip");
 		assertNotContains("armor ability radial entry does not duplicate the tooltip title as central hover text", screen,
 				"item.setCentralText(ability.displayName().copy());");
 		assertContains("generic radial supports inner band items", menu,

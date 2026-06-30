@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -12,31 +11,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
-public final class FinalBloodlustArmorAbilityHandler {
-	private static final String EDACIOUS_FLIGHT_KEY = "hemomancy:edacious_flight_enabled";
-	private static final String BASTION_UNTIL_KEY = "hemomancy:sheolic_bastion_until";
-	private static final String BASTION_X_KEY = "hemomancy:sheolic_bastion_x";
-	private static final String BASTION_Y_KEY = "hemomancy:sheolic_bastion_y";
-	private static final String BASTION_Z_KEY = "hemomancy:sheolic_bastion_z";
+public final class PhanstmalBloodlustArmorAbilityHandler {
 	private static final String PHANTASMAL_REACTIVE_COOLDOWN_KEY = "hemomancy:phantasmal_reactive_until";
-	private static final int BASTION_DURATION_TICKS = 120;
-	private static final int BLOODBURST_NEEDLE_COUNT = 36;
-	private static final double BLOODBURST_DAMAGE = 4.0D;
 	private static final int MASQUERADE_ECHO_COUNT = 8;
 	private static final int MASQUERADE_ECHO_DURATION_TICKS = 200;
 	private static final double MASQUERADE_MIN_SPAWN_RADIUS = 1.5D;
@@ -44,44 +32,7 @@ public final class FinalBloodlustArmorAbilityHandler {
 	private static final double PHANTASMAL_DISPLACEMENT = 8.0D;
 	private static final int PHANTASMAL_REACTIVE_COOLDOWN_TICKS = 40;
 
-	private FinalBloodlustArmorAbilityHandler() {
-	}
-
-	public static void activateBloodburst(ServerPlayer player) {
-		Vec3 origin = player.position().add(0.0D, 1.0D, 0.0D);
-		for (int i = 0; i < BLOODBURST_NEEDLE_COUNT; i++) {
-			double yaw = (Math.PI * 2.0D * i) / BLOODBURST_NEEDLE_COUNT;
-			double pitch = (player.getRandom().nextDouble() - 0.5D) * 0.45D;
-			Vec3 direction = new Vec3(Math.cos(yaw), pitch, Math.sin(yaw)).normalize();
-			BloodNeedleEntity needle = new BloodNeedleEntity(player.level(), player);
-			needle.setPos(origin.x, origin.y, origin.z);
-			needle.setBloodburstNeedle(true);
-			needle.setBaseDamage(BLOODBURST_DAMAGE);
-			needle.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-			needle.shoot(direction.x, direction.y, direction.z, 1.65F, 3.0F);
-			player.level().addFreshEntity(needle);
-		}
-		player.serverLevel().sendParticles(ParticleTypes.CRIMSON_SPORE,
-				player.getX(), player.getY() + 1.0D, player.getZ(),
-				80, 1.0D, 0.55D, 1.0D, 0.05D);
-		player.level().playSound(null, player.blockPosition(), SoundEvents.TRIDENT_RIPTIDE_3.value(),
-				SoundSource.PLAYERS, 0.9F, 0.6F);
-	}
-
-	public static void activateBastionStance(ServerPlayer player) {
-		if (isBastionActive(player)) {
-			clearBastion(player);
-			player.displayClientMessage(Component.literal("Bastion Stance released.").withStyle(ChatFormatting.DARK_RED), true);
-			return;
-		}
-		long until = player.level().getGameTime() + BASTION_DURATION_TICKS;
-		player.getPersistentData().putLong(BASTION_UNTIL_KEY, until);
-		player.getPersistentData().putDouble(BASTION_X_KEY, player.getX());
-		player.getPersistentData().putDouble(BASTION_Y_KEY, player.getY());
-		player.getPersistentData().putDouble(BASTION_Z_KEY, player.getZ());
-		player.setDeltaMovement(Vec3.ZERO);
-		player.fallDistance = 0.0F;
-		player.displayClientMessage(Component.literal("Bastion Stance.").withStyle(ChatFormatting.DARK_RED), true);
+	private PhanstmalBloodlustArmorAbilityHandler() {
 	}
 
 	public static void activateMasqueradeOfTheForgotten(ServerPlayer player) {
@@ -96,33 +47,6 @@ public final class FinalBloodlustArmorAbilityHandler {
 				SoundSource.PLAYERS, 0.9F, 0.85F);
 	}
 
-	public static void updateEdaciousFlight(ServerPlayer player) {
-		boolean hasSet = ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.EDACIOUS_BLOODBURST);
-		boolean marked = player.getPersistentData().getBoolean(EDACIOUS_FLIGHT_KEY);
-		if (hasSet) {
-			if (!player.getAbilities().mayfly || !marked) {
-				player.getAbilities().mayfly = true;
-				player.getPersistentData().putBoolean(EDACIOUS_FLIGHT_KEY, true);
-			}
-			player.getAbilities().setFlyingSpeed(0.025F);
-			player.onUpdateAbilities();
-			player.fallDistance = 0.0F;
-		} else if (marked) {
-			player.getPersistentData().remove(EDACIOUS_FLIGHT_KEY);
-			if (!player.isCreative() && !player.isSpectator()) {
-				player.getAbilities().mayfly = false;
-				player.getAbilities().flying = false;
-			}
-			player.getAbilities().setFlyingSpeed(0.05F);
-			player.onUpdateAbilities();
-		}
-	}
-
-	public static boolean isBastionActive(ServerPlayer player) {
-		long until = player.getPersistentData().getLong(BASTION_UNTIL_KEY);
-		return until > player.level().getGameTime();
-	}
-
 	public static void triggerDistortedPresence(ServerPlayer player) {
 		if (player.getLastHurtByMob() instanceof LivingEntity attacker) {
 			triggerDistortedPresence(player, attacker);
@@ -130,93 +54,14 @@ public final class FinalBloodlustArmorAbilityHandler {
 	}
 
 	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent.Post event) {
-		if (!(event.getEntity() instanceof ServerPlayer player)) {
-			return;
-		}
-		updateEdaciousFlight(player);
-		updateSheolicPassives(player);
-		updateBastionRoot(player);
-	}
-
-	@SubscribeEvent
 	public static void onPlayerDamage(LivingDamageEvent.Pre event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) {
 			return;
-		}
-		if (isBastionActive(player)) {
-			event.setNewDamage(0.0F);
-			player.setDeltaMovement(Vec3.ZERO);
-			player.fallDistance = 0.0F;
-			return;
-		}
-		if (ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.SHEOLIC_BASTION_STANCE)) {
-			if (event.getSource().is(DamageTypeTags.IS_FIRE)
-					|| event.getSource().is(net.minecraft.world.damagesource.DamageTypes.LAVA)
-					|| event.getSource().is(net.minecraft.world.damagesource.DamageTypes.FALL)) {
-				event.setNewDamage(0.0F);
-				player.clearFire();
-			}
-			if (event.getSource().getEntity() instanceof LivingEntity attacker && attacker != player) {
-				triggerCrimsonRetribution(player, attacker);
-			}
 		}
 		if (ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.MASQUERADE_OF_THE_FORGOTTEN)
 				&& event.getSource().getEntity() instanceof LivingEntity attacker && attacker != player) {
 			triggerDistortedPresence(player, attacker);
 		}
-	}
-
-	private static void updateSheolicPassives(ServerPlayer player) {
-		if (!ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.SHEOLIC_BASTION_STANCE)) {
-			return;
-		}
-		player.fallDistance = 0.0F;
-		player.clearFire();
-		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, false, false, true));
-	}
-
-	private static void updateBastionRoot(ServerPlayer player) {
-		if (!isBastionActive(player)) {
-			if (player.getPersistentData().contains(BASTION_UNTIL_KEY)
-					&& player.getPersistentData().getLong(BASTION_UNTIL_KEY) <= player.level().getGameTime()) {
-				clearBastion(player);
-			}
-			return;
-		}
-		if (!ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.SHEOLIC_BASTION_STANCE)) {
-			clearBastion(player);
-			return;
-		}
-		double x = player.getPersistentData().getDouble(BASTION_X_KEY);
-		double y = player.getPersistentData().getDouble(BASTION_Y_KEY);
-		double z = player.getPersistentData().getDouble(BASTION_Z_KEY);
-		player.teleportTo(x, y, z);
-		player.setDeltaMovement(Vec3.ZERO);
-		player.fallDistance = 0.0F;
-		player.stopFallFlying();
-		player.getAbilities().flying = false;
-		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 255, false, false, false));
-	}
-
-	private static void clearBastion(ServerPlayer player) {
-		player.getPersistentData().remove(BASTION_UNTIL_KEY);
-		player.getPersistentData().remove(BASTION_X_KEY);
-		player.getPersistentData().remove(BASTION_Y_KEY);
-		player.getPersistentData().remove(BASTION_Z_KEY);
-	}
-
-	private static void triggerCrimsonRetribution(ServerPlayer player, LivingEntity attacker) {
-		attacker.hurt(player.damageSources().magic(), 4.0F);
-		attacker.setRemainingFireTicks(Math.max(attacker.getRemainingFireTicks(), 80));
-		BlockPos pos = attacker.blockPosition();
-		BlockState state = player.level().getBlockState(pos);
-		if (state.canBeReplaced() || state.isAir()) {
-			player.level().setBlock(pos, BlockInit.crimson_flames.get().defaultBlockState(), 3);
-		}
-		player.serverLevel().sendParticles(ParticleTypes.CRIMSON_SPORE,
-				attacker.getX(), attacker.getY() + 0.8D, attacker.getZ(),
-				28, 0.35D, 0.65D, 0.35D, 0.04D);
 	}
 
 	private static void triggerDistortedPresence(ServerPlayer player, LivingEntity attacker) {

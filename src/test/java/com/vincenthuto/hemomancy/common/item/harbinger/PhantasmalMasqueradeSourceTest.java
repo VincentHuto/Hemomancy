@@ -14,7 +14,7 @@ public final class PhantasmalMasqueradeSourceTest {
 	public static void main(String[] args) throws IOException {
 		String entityInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/EntityInit.java"));
 		String handler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/armor/ability/FinalBloodlustArmorAbilityHandler.java"));
+				"com/vincenthuto/hemomancy/common/armor/ability/PhanstmalBloodlustArmorAbilityHandler.java"));
 		String echo = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/summon/PhantasmalEchoEntity.java"));
 		String renderer = read(SOURCE_ROOT.resolve(

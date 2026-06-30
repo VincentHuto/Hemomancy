@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncArmorSetAbilityCooldownS2CPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +41,7 @@ public final class ArmorSetAbilityRegistry {
 						ItemInit.edacious_blood_lust_legs, ItemInit.edacious_blood_lust_boots),
 				ItemInit.edacious_blood_lust_helm,
 				player -> true,
-				FinalBloodlustArmorAbilityHandler::activateBloodburst,
+				EdaciousBloodburstArmorAbilityHandler::activateBloodburst,
 				240,
 				250.0D));
 		register(new SimpleArmorSetAbility(
@@ -50,7 +52,7 @@ public final class ArmorSetAbilityRegistry {
 						ItemInit.sheolic_blood_lust_legs, ItemInit.sheolic_blood_lust_boots),
 				ItemInit.sheolic_blood_lust_helm,
 				player -> true,
-				FinalBloodlustArmorAbilityHandler::activateBastionStance,
+				SheolicBastionBloodlustArmorAbilityHandler::activateBastionStance,
 				360,
 				0.0D));
 		register(new SimpleArmorSetAbility(
@@ -61,7 +63,7 @@ public final class ArmorSetAbilityRegistry {
 						ItemInit.phantasmal_blood_lust_legs, ItemInit.phantasmal_blood_lust_boots),
 				ItemInit.phantasmal_blood_lust_helm,
 				player -> true,
-				FinalBloodlustArmorAbilityHandler::activateMasqueradeOfTheForgotten,
+				PhanstmalBloodlustArmorAbilityHandler::activateMasqueradeOfTheForgotten,
 				1200,
 				250.0D));
 		register(new SimpleArmorSetAbility(
@@ -120,13 +122,14 @@ public final class ArmorSetAbilityRegistry {
 			return false;
 		}
 		if (SHEOLIC_BASTION_STANCE.equals(ability.id())
-				&& FinalBloodlustArmorAbilityHandler.isBastionActive(player)) {
+				&& SheolicBastionBloodlustArmorAbilityHandler.isBastionActive(player)) {
 			ability.activate(player);
 			return true;
 		}
 		long now = player.level().getGameTime();
 		long cooldownUntil = getCooldownUntil(player, ability);
 		if (cooldownUntil > now) {
+			syncCooldown(player, ability, cooldownUntil);
 			message(player, Component.literal("Armor ability recharging.").withStyle(ChatFormatting.RED));
 			return false;
 		}
@@ -153,13 +156,33 @@ public final class ArmorSetAbilityRegistry {
 		return player.getPersistentData().getLong(COOLDOWN_PREFIX + ability.id());
 	}
 
+	public static long getClientCooldownUntil(Player player, ArmorSetAbility ability) {
+		return getCooldownUntil(player, ability);
+	}
+
+	public static void handleClientCooldownSync(Player player, ResourceLocation abilityId, int remainingTicks) {
+		ArmorSetAbility ability = ABILITIES.get(abilityId);
+		if (ability == null || player.level() == null) {
+			return;
+		}
+		long cooldownUntil = remainingTicks > 0 ? player.level().getGameTime() + remainingTicks : 0L;
+		player.getPersistentData().putLong(COOLDOWN_PREFIX + ability.id(), cooldownUntil);
+	}
+
 	public static boolean isAbilityAvailable(Player player, ResourceLocation abilityId) {
 		ArmorSetAbility ability = ABILITIES.get(abilityId);
 		return ability != null && ability.isAvailable(player);
 	}
 
-	private static void setCooldownUntil(Player player, ArmorSetAbility ability, long cooldownUntil) {
+	private static void setCooldownUntil(ServerPlayer player, ArmorSetAbility ability, long cooldownUntil) {
 		player.getPersistentData().putLong(COOLDOWN_PREFIX + ability.id(), cooldownUntil);
+		syncCooldown(player, ability, cooldownUntil);
+	}
+
+	private static void syncCooldown(ServerPlayer player, ArmorSetAbility ability, long cooldownUntil) {
+		long remainingTicks = Math.max(0L, cooldownUntil - player.level().getGameTime());
+		PacketHandler.sendToPlayer(player, new SyncArmorSetAbilityCooldownS2CPacket(
+				ability.id(), (int) Math.min(Integer.MAX_VALUE, remainingTicks)));
 	}
 
 	private static List<Component> tooltip(String descriptionKey, int cooldownTicks, double bloodCost) {

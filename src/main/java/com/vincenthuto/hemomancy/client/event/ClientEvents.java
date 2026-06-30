@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureOfferingBurstClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveSanguineFormationProjectionClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
+import com.vincenthuto.hemomancy.client.data.CrimsonFireClientState;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
@@ -53,6 +54,7 @@ import com.vincenthuto.hemomancy.client.render.entity.summon.*;
 import com.vincenthuto.hemomancy.client.render.item.MorphicNectarItemDecorator;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemEntityRenderer;
+import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
@@ -220,6 +222,7 @@ public class ClientEvents {
         VeinSpiderCourierClientData.tick();
         SanguineMonolithShatterRenderer.tick();
         MonolithicDislocationClientState.tick();
+        CrimsonFireClientState.tick();
         if (SanguineOmenOverlay.instance != null) {
             SanguineOmenOverlay.instance.tick();
         }
@@ -229,6 +232,16 @@ public class ClientEvents {
         EndgameBossMusicHandler.tick();
         handleArmatureCameraFallback();
         handleCommonClientTickInput();
+    }
+
+    @SubscribeEvent
+    public static void onRenderBlockScreenEffect(RenderBlockScreenEffectEvent event) {
+        if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE
+                || !CrimsonFireClientState.isActive(event.getPlayer())) {
+            return;
+        }
+        CrimsonFireRenderer.renderScreenOverlay(Minecraft.getInstance(), event.getPoseStack());
+        event.setCanceled(true);
     }
 
     @SubscribeEvent

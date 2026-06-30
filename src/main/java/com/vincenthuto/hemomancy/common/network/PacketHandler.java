@@ -153,6 +153,9 @@ public class PacketHandler {
         net.playToServer(BloodCraftingKeyPressPacket.TYPE, BloodCraftingKeyPressPacket.STREAM_CODEC, BloodCraftingKeyPressPacket::handle);
         net.playToServer(ActivateArmorSetAbilityC2SPacket.TYPE, ActivateArmorSetAbilityC2SPacket.STREAM_CODEC,
                 ActivateArmorSetAbilityC2SPacket::handle);
+        net.playToClient(SyncArmorSetAbilityCooldownS2CPacket.TYPE,
+                SyncArmorSetAbilityCooldownS2CPacket.STREAM_CODEC,
+                SyncArmorSetAbilityCooldownS2CPacket::handle);
         net.playToServer(ToggleSilentSlippingC2SPacket.TYPE, ToggleSilentSlippingC2SPacket.STREAM_CODEC,
                 ToggleSilentSlippingC2SPacket::handle);
         net.playToClient(SyncSilentSlippingStateS2CPacket.TYPE, SyncSilentSlippingStateS2CPacket.STREAM_CODEC,
@@ -160,6 +163,9 @@ public class PacketHandler {
         net.playToClient(SyncMonolithicDislocationVisualS2CPacket.TYPE,
                 SyncMonolithicDislocationVisualS2CPacket.STREAM_CODEC,
                 SyncMonolithicDislocationVisualS2CPacket::handle);
+        net.playToClient(SyncCrimsonFireVisualS2CPacket.TYPE,
+                SyncCrimsonFireVisualS2CPacket.STREAM_CODEC,
+                SyncCrimsonFireVisualS2CPacket::handle);
 
         // ── Particles ─────────────────────────────────────────────────────────
         net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
@@ -303,6 +309,11 @@ public class PacketHandler {
     public static void sendMonolithicDislocationVisual(LivingEntity target, int durationTicks) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
                 new SyncMonolithicDislocationVisualS2CPacket(target.getId(), durationTicks));
+    }
+
+    public static void sendCrimsonFireVisual(LivingEntity target, int durationTicks) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+                new SyncCrimsonFireVisualS2CPacket(target.getId(), durationTicks));
     }
 
     public static void sendClientElytraPacket() {
