@@ -20,7 +20,7 @@ import java.util.List;
 public class UnstainedArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 
 	public UnstainedArmorItem(Holder<ArmorMaterial> materialIn, Type slot) {
-		super(materialIn, slot, new Item.Properties().fireResistant());
+		super(materialIn, slot, new Item.Properties().fireResistant().stacksTo(1));
 	}
 
 	@Override

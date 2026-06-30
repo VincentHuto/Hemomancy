@@ -57,6 +57,8 @@ public final class HarbingerArmor3dModelResourceTest {
 				"SilentArchonArmorModel.SILENT_ARCHON_BOOTS_LAYER");
 		assertContains("silent archon shader overlay player layer registration", layerEvents,
 				"new SilentArchonArmorOverlayLayer");
+		assertMethodContains("silent archon shader overlay entity layer registration", layerEvents,
+				"addLayerToEntity", "new SilentArchonArmorOverlayLayer");
 		assertContains("chalybeate layer registration", layerEvents,
 				"ChalybeateFortressArmorModel.CHALYBEATE_FORTRESS_BOOTS_LAYER");
 		assertContains("covenant layer registration", layerEvents,
@@ -238,6 +240,12 @@ public final class HarbingerArmor3dModelResourceTest {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
 		}
+	}
+
+	private static void assertMethodContains(String label, String source, String methodName, String expected) {
+		String method = source.substring(source.indexOf(methodName));
+		method = method.substring(0, method.indexOf("\n\t}\n") + 4);
+		assertContains(label, method, expected);
 	}
 
 	private static void assertNotContains(String label, String text, String forbidden) {

@@ -20,7 +20,7 @@ import java.util.List;
 public class MarrowCrownArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 
 	public MarrowCrownArmorItem(Holder<ArmorMaterial> materialIn, Type slot) {
-		super(materialIn, slot, new Item.Properties().rarity(Rarity.EPIC));
+		super(materialIn, slot, new Item.Properties().rarity(Rarity.EPIC).stacksTo(1));
 	}
 	
 	@Override

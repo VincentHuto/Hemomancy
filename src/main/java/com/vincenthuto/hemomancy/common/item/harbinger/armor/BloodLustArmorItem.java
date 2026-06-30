@@ -43,7 +43,7 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 	MaskType maskType;
 
 	public BloodLustArmorItem(Holder<ArmorMaterial> materialIn, Type slot, MaskType maskType) {
-		super(materialIn, slot, new Item.Properties());
+		super(materialIn, slot, new Item.Properties().stacksTo(1));
 		this.maskType = maskType;
 	}
 

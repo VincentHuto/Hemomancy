@@ -20,7 +20,7 @@ import java.util.List;
 public class BarbedArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 
 	public BarbedArmorItem(Holder<ArmorMaterial> materialIn, ArmorItem.Type slot) {
-		super(materialIn, slot, new Item.Properties().fireResistant());
+		super(materialIn, slot, new Item.Properties().fireResistant().stacksTo(1));
 	}
 
 	@Override

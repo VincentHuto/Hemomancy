@@ -23,7 +23,7 @@ import java.util.List;
 
 public class SilentArchonArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 	public SilentArchonArmorItem(Holder<ArmorMaterial> material, Type slot) {
-		super(material, slot, new Item.Properties().fireResistant());
+		super(material, slot, new Item.Properties().fireResistant().stacksTo(1));
 	}
 
 	@Override

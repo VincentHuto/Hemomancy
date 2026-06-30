@@ -312,6 +312,7 @@ public class LayerEvents {
 //			renderer.addLayer(new VascCharmLayer<>(renderer));
 			renderer.addLayer(new HemolymphopodaHeadpieceLayer(renderer));
 			renderer.addLayer(new LanternTickHelmetLayer(renderer));
+			renderer.addLayer(new SilentArchonArmorOverlayLayer(renderer));
 		}
 	}
 

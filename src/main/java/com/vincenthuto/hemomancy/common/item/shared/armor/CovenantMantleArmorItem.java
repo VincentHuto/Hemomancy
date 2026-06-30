@@ -23,7 +23,7 @@ import java.util.List;
 
 public class CovenantMantleArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
 	public CovenantMantleArmorItem(Holder<ArmorMaterial> material, Type slot) {
-		super(material, slot, new Item.Properties().fireResistant());
+		super(material, slot, new Item.Properties().fireResistant().stacksTo(1));
 	}
 
 	@Override
