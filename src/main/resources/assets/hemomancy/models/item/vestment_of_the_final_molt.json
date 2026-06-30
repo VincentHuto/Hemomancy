@@ -1,0 +1,9 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "layer0": "hemomancy:item/vestment_of_the_final_molt",
+    "particle": "hemomancy:item/vestment_of_the_final_molt"
+  },
+  "gui_light": "front",
+  "display": {}
+}

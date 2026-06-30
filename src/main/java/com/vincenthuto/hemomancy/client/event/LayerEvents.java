@@ -232,6 +232,8 @@ public class LayerEvents {
 				ChalybeateFortressArmorModel::createBodyLayer);
 		event.registerLayerDefinition(CovenantLeaderArmorModel.COVENANT_LEADER_CHEST_LAYER,
 				CovenantLeaderArmorModel::createBodyLayer);
+		event.registerLayerDefinition(VestmentOfTheFinalMoltArmorModel.VESTMENT_OF_THE_FINAL_MOLT_CHEST_LAYER,
+				VestmentOfTheFinalMoltArmorModel::createBodyLayer);
 
 		event.registerLayerDefinition(ChitiniteArmorModel.CHITINITE_HELMET_LAYER,
 				() -> ChitiniteArmorModel.createHeadLayer(EquipmentSlot.HEAD));
@@ -259,6 +261,33 @@ public class LayerEvents {
 				() -> PrismaticArmorModel.createBodyLayer(EquipmentSlot.LEGS));
 		event.registerLayerDefinition(PrismaticArmorModel.PRISMATIC_FEET_LAYER,
 				() -> PrismaticArmorModel.createBodyLayer(EquipmentSlot.FEET));
+
+		event.registerLayerDefinition(EdaciousBloodLustArmorModel.EDACIOUS_BLOOD_LUST_HELMET_LAYER,
+				() -> EdaciousBloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(EdaciousBloodLustArmorModel.EDACIOUS_BLOOD_LUST_CHEST_LAYER,
+				() -> EdaciousBloodLustArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(EdaciousBloodLustArmorModel.EDACIOUS_BLOOD_LUST_LEGS_LAYER,
+				() -> EdaciousBloodLustArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(EdaciousBloodLustArmorModel.EDACIOUS_BLOOD_LUST_FEET_LAYER,
+				() -> EdaciousBloodLustArmorModel.createBodyLayer(EquipmentSlot.FEET));
+
+		event.registerLayerDefinition(SheolicBloodLustArmorModel.SHEOLIC_BLOOD_LUST_HELMET_LAYER,
+				() -> SheolicBloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(SheolicBloodLustArmorModel.SHEOLIC_BLOOD_LUST_CHEST_LAYER,
+				() -> SheolicBloodLustArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(SheolicBloodLustArmorModel.SHEOLIC_BLOOD_LUST_LEGS_LAYER,
+				() -> SheolicBloodLustArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(SheolicBloodLustArmorModel.SHEOLIC_BLOOD_LUST_FEET_LAYER,
+				() -> SheolicBloodLustArmorModel.createBodyLayer(EquipmentSlot.FEET));
+
+		event.registerLayerDefinition(PhantasmalBloodLustArmorModel.PHANTASMAL_BLOOD_LUST_HELMET_LAYER,
+				() -> PhantasmalBloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(PhantasmalBloodLustArmorModel.PHANTASMAL_BLOOD_LUST_CHEST_LAYER,
+				() -> PhantasmalBloodLustArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(PhantasmalBloodLustArmorModel.PHANTASMAL_BLOOD_LUST_LEGS_LAYER,
+				() -> PhantasmalBloodLustArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(PhantasmalBloodLustArmorModel.PHANTASMAL_BLOOD_LUST_FEET_LAYER,
+				() -> PhantasmalBloodLustArmorModel.createBodyLayer(EquipmentSlot.FEET));
 
 		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_HELMET_LAYER,
 				() -> UnstainedArmorModel.createHeadLayer(EquipmentSlot.HEAD));

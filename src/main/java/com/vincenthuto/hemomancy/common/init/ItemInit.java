@@ -28,6 +28,7 @@ import com.vincenthuto.hemomancy.common.item.unstained.*;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.*;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.UnstainedArmorItem;
 import com.vincenthuto.hemomancy.common.item.unstained.armor.UnstainedShieldItem;
+import com.vincenthuto.hemomancy.common.item.unstained.armor.VestmentOfTheFinalMoltArmorItem;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.ChatFormatting;
@@ -627,6 +628,41 @@ public class ItemInit {
             () -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_iron_knapper = HANDHELDITEMS.register("hematic_iron_knapper",
             () -> new ItemKnapper(42f, 1, 0, EnumModToolTiers.HEMATIC_IRON, new Item.Properties()));
+    // Barbed/Barbed
+    public static final DeferredHolder<Item, Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
+            () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
+            () -> new BarbedShieldItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> barbed_helm = BASEITEMS.register("barbed_helm",
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.LEGGINGS));
+    public static final DeferredHolder<Item, Item> barbed_boots = BASEITEMS.register("barbed_boots",
+            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.BOOTS));
+    // Chitinite
+    public static final DeferredHolder<Item, Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
+            () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
+            () -> new ChitiniteShieldItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.LEGGINGS));
+    public static final DeferredHolder<Item, Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
+            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.BOOTS));
+    // Prismatic
+    public static final DeferredHolder<Item, Item> prismatic_helm = BASEITEMS.register("prismatic_helm",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> prismatic_chestplate = BASEITEMS.register("prismatic_chestplate",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> prismatic_leggings = BASEITEMS.register("prismatic_leggings",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.LEGGINGS));
+    public static final DeferredHolder<Item, Item> prismatic_boots = BASEITEMS.register("prismatic_boots",
+            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.BOOTS));
     // Blood Lust
     // Masks
     public static final DeferredHolder<Item, Item> tengu_mask = BASEITEMS.register("tengu_mask",
@@ -711,41 +747,7 @@ public class ItemInit {
             () -> new VenousStriderSabatonsItem(EnumModArmorTiers.VENOUS_STRIDER.holder(), ArmorItem.Type.BOOTS));
     public static final DeferredHolder<Item, Item> covenant_mantle = BASEITEMS.register("covenant_mantle",
             () -> new CovenantMantleArmorItem(EnumModArmorTiers.COVENANT_MANTLE.holder(), ArmorItem.Type.CHESTPLATE));
-    // Barbed/Barbed
-    public static final DeferredHolder<Item, Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
-            () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
-            () -> new BarbedShieldItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> barbed_helm = BASEITEMS.register("barbed_helm",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> barbed_boots = BASEITEMS.register("barbed_boots",
-            () -> new BarbedArmorItem(EnumModArmorTiers.BARBED.holder(), ArmorItem.Type.BOOTS));
-    // Chitinite
-    public static final DeferredHolder<Item, Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
-            () -> new SwordItem(EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
-            () -> new ChitiniteShieldItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
-            () -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE.holder(), ArmorItem.Type.BOOTS));
-    // Prismatic
-    public static final DeferredHolder<Item, Item> prismatic_helm = BASEITEMS.register("prismatic_helm",
-            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> prismatic_chestplate = BASEITEMS.register("prismatic_chestplate",
-            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> prismatic_leggings = BASEITEMS.register("prismatic_leggings",
-            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> prismatic_boots = BASEITEMS.register("prismatic_boots",
-            () -> new PrismaticArmorItem(EnumModArmorTiers.PRISMATIC.holder(), ArmorItem.Type.BOOTS));
+
     // Unstained
     public static final DeferredHolder<Item, Item> unstained_helm = BASEITEMS.register("unstained_helm",
             () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.HELMET));
@@ -755,6 +757,10 @@ public class ItemInit {
             () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> unstained_boots = BASEITEMS.register("unstained_boots",
             () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.BOOTS));
+    public static final DeferredHolder<Item, Item> vestment_of_the_final_molt = BASEITEMS.register(
+            "vestment_of_the_final_molt",
+            () -> new VestmentOfTheFinalMoltArmorItem(EnumModArmorTiers.UNSTAINED.holder(),
+                    ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
             () -> new UnstainedWarhammerItem(8f, -3.4f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));

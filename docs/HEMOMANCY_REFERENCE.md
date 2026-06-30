@@ -1493,7 +1493,7 @@ All Unstained rites have `bloodCost: 0` â€” they draw from purity/clarity r
 | Rite of Glass Lungs | `glass_lungs` | Lesser | 7 (Vigilant) | Reusable, non-breaking rite; clears poison/wither/fire, grants clean breath and slow falling, and grants Memory Shear + Absolving Step |
 | Rite of the Pale Vigil | `pale_vigil` | Greater | 7 (Vigilant) | Bursts +10 clarity, Silver Ward (amp 2, 30 min), and Verdigris Aura (amp 2, 30 min) to all clarity-bearing Unstained within 40 blocks. Grants `ADV_VIGILANT`. |
 | Rite of Moon-Washed Copper | `moon_washed_copper` | Greater | 7 (Vigilant) | Reusable, non-breaking rite; grants Verdigris Aura/Silver Ward, +5 clarity (+10 at night), Quietus Bell, and Autoimmune Edge if Enlightened |
-| Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`. |
+| Rite of the Lethean Font | `lethean_font` | Grand | 8 (Enlightened) | Pinnacle Unstained rite. Opens a Lethe Covenant domain spanning 8 chunks for 1 hour. Bursts +20 clarity, Silver Ward (amp 3), and Verdigris Aura (amp 3) for 1 hour to all clarity-bearers within 50 blocks. Grants `ADV_ENLIGHTENED_SEEKER`, whose first completion awards the Vestment of the Final Molt. |
 
 ### 15.3 Unstained Crafting & Recipe Data
 
@@ -2322,7 +2322,7 @@ Crimson Lodge combat vestment upgraded from either D3 armor fork:
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_2.png)
 >
-> Runtime rendering uses `BloodLustArmorModel` for piecewise 3D armor renders, with mask variants routed through the custom armor model layer and item textures above. Inventory, hand, frame, and dropped item stacks route through `ModelBackedArmorItemRenderer` instead of flat generated sprites.
+> Runtime rendering uses `BloodLustArmorModel` for standard Blood Lust piecewise 3D armor renders. Edacious, Sheolic, and Phantasmal Bloodlust now have independent cloned armor model classes and texture atlases seeded from Barbed, Chitinite, and Prismatic respectively, so future model/texture passes can edit the final lineages directly. Mask variants still route through the custom armor model layer and item textures above. Inventory, hand, frame, and dropped item stacks route through `ModelBackedArmorItemRenderer` instead of flat generated sprites.
 
 ### 22.3 Barbed Armor
 
@@ -2364,12 +2364,13 @@ Flash-evasion armor blending Scarlet Serpent hood scales, Blood Drunk Puppeteer 
 
 > Armor model: ![](../src/main/resources/assets/hemomancy/textures/models/armor/prismatic_layer_1.png) ![](../src/main/resources/assets/hemomancy/textures/models/armor/prismatic_layer_2.png)
 >
-> Current resources use placeholder flat item sprites and vanilla armor layers so final bespoke models can replace them without changing progression ids.
+> Current resources use a Blood Drunk Puppeteer-derived split armor model with blue-purple 128px armor texture atlases that preserve the yellow accents.
 
 ### 22.6 Unstained Armor
 
 Anti-blood zealot armor (for the Unstained path):
 - ![](../src/main/resources/assets/hemomancy/textures/item/unstained_helm.png) Helm, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_chestplate.png) Chestplate, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_leggings.png) Leggings, ![](../src/main/resources/assets/hemomancy/textures/item/unstained_boots.png) Boots
+- ![](../src/main/resources/assets/hemomancy/textures/item/vestment_of_the_final_molt.png) **Vestment of the Final Molt:** pinnacle Enlightened reward chestpiece. Uses the Unstained armor tier for set-bonus counting, with a luna moth hood/cloak model whose hood lowers when a helmet is worn.
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability Ã—37, Enchantability 15
 - **Repair:** Chitinous Husk (placeholder â€” should be Pale Silver Ingot or Consecrated Copper)
 - **Set Bonus (4 pieces):** Immunity to Blood Loss and Hemolysis effects (auto-removed on tick)

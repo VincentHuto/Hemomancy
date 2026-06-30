@@ -224,6 +224,181 @@ public class TempDeformationModel {
   }
 }
 
+async function testAddOrReplaceChildReplacesEarlierSiblingDefinition() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "TempArmorReplacementModel.java");
+  const outputFile = path.join(outputDir, "TempArmorReplacementModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+
+public class TempArmorReplacementModel {
+  public static LayerDefinition createBodyLayer() {
+    MeshDefinition mesh = new MeshDefinition();
+    PartDefinition root = mesh.getRoot();
+    root.addOrReplaceChild("right_leg", CubeListBuilder.create()
+      .texOffs(0, 0).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F),
+      PartPose.offset(-1.9F, 12.0F, 0.0F));
+    root.addOrReplaceChild("left_leg", CubeListBuilder.create()
+      .texOffs(0, 0).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F),
+      PartPose.offset(1.9F, 12.0F, 0.0F));
+    PartDefinition rightLeg = root.addOrReplaceChild("right_leg", CubeListBuilder.create()
+      .texOffs(16, 42).addBox(-2.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F),
+      PartPose.offset(-1.9F, 12.0F, 0.0F));
+    rightLeg.addOrReplaceChild("right_leg2", CubeListBuilder.create()
+      .texOffs(59, 48).addBox(-3.1F, 0.0F, -3.0F, 6.0F, 0.0F, 6.0F),
+      PartPose.offset(0.0F, 4.15F, 0.0F));
+    PartDefinition leftLeg = root.addOrReplaceChild("left_leg", CubeListBuilder.create()
+      .texOffs(0, 42).addBox(-2.0F, 6.0F, -2.0F, 4.0F, 6.0F, 4.0F),
+      PartPose.offset(1.9F, 12.0F, 0.0F));
+    leftLeg.addOrReplaceChild("left_leg2", CubeListBuilder.create()
+      .texOffs(59, 48).addBox(-2.9F, 0.0F, -3.0F, 6.0F, 0.0F, 6.0F),
+      PartPose.offset(0.0F, 4.15F, 0.0F));
+    return LayerDefinition.create(mesh, 128, 128);
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/models/armor/prismatic_layer_1.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+    const rightLegGroups = groupNames.filter((name) => name === "right_leg");
+    const leftLegGroups = groupNames.filter((name) => name === "left_leg");
+
+    assert.deepEqual(rightLegGroups, ["right_leg"], "right_leg placeholder should be replaced");
+    assert.deepEqual(leftLegGroups, ["left_leg"], "left_leg placeholder should be replaced");
+    assert.ok(groupNames.includes("right_leg2"), "replacement right leg child should remain");
+    assert.ok(groupNames.includes("left_leg2"), "replacement left leg child should remain");
+    assert.equal(
+      bbmodel.elements.filter((element) => element.name.startsWith("right_leg_")).length,
+      1,
+      "right leg should only export replacement cube geometry"
+    );
+    assert.equal(
+      bbmodel.elements.filter((element) => element.name.startsWith("left_leg_")).length,
+      1,
+      "left leg should only export replacement cube geometry"
+    );
+    assert.equal(
+      bbmodel.elements.some((element) => element.name.startsWith("right_leg_0_0_")),
+      false,
+      "right leg placeholder cube should not remain"
+    );
+    assert.equal(
+      bbmodel.elements.some((element) => element.name.startsWith("left_leg_0_0_")),
+      false,
+      "left leg placeholder cube should not remain"
+    );
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
+async function testSlotBranchesKeepSameNamedLegPartsDistinct() {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
+  const sourceFile = path.join(outputDir, "TempSlotBranchArmorModel.java");
+  const outputFile = path.join(outputDir, "TempSlotBranchArmorModel.bbmodel");
+
+  const javaModel = `
+package temp;
+
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.world.entity.EquipmentSlot;
+
+public class TempSlotBranchArmorModel {
+  public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
+    MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
+    PartDefinition root = mesh.getRoot();
+    if (slot.equals(EquipmentSlot.LEGS)) {
+      PartDefinition leftLeg = root.addOrReplaceChild("left_leg", CubeListBuilder.create()
+        .texOffs(50, 116).addBox(-1.4F, -0.9F, -2.3F, 3.0F, 4.0F, 1.0F)
+        .texOffs(0, 16).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F).mirror(false),
+        PartPose.offset(1.9F, 12.0F, 0.0F));
+      leftLeg.addOrReplaceChild("left_shin_plate", CubeListBuilder.create()
+        .texOffs(29, 88).addBox(-0.4F, 6.6F, 3.25F, 1.0F, 3.0F, 1.0F),
+        PartPose.ZERO);
+      PartDefinition rightLeg = root.addOrReplaceChild("right_leg", CubeListBuilder.create()
+        .texOffs(50, 116).addBox(-1.6F, -0.9F, -2.3F, 3.0F, 4.0F, 1.0F)
+        .texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F),
+        PartPose.offset(-1.9F, 12.0F, 0.0F));
+      rightLeg.addOrReplaceChild("right_shin_plate", CubeListBuilder.create()
+        .texOffs(43, 74).addBox(-0.6F, 6.6F, 3.25F, 1.0F, 3.0F, 1.0F),
+        PartPose.ZERO);
+    }
+    if (slot.equals(EquipmentSlot.FEET)) {
+      root.addOrReplaceChild("left_leg", CubeListBuilder.create()
+        .texOffs(38, 91).addBox(-1.9F, 10.1F, -2.75F, 4.0F, 2.0F, 5.0F),
+        PartPose.offset(1.9F, 12.0F, 0.0F));
+      root.addOrReplaceChild("right_leg", CubeListBuilder.create()
+        .texOffs(39, 97).addBox(-2.1F, 10.1F, -2.75F, 4.0F, 2.0F, 5.0F),
+        PartPose.offset(-1.9F, 12.0F, 0.0F));
+    }
+    return LayerDefinition.create(mesh, 256, 256);
+  }
+}
+`;
+
+  try {
+    await writeFile(sourceFile, javaModel, "utf8");
+
+    await runConverter([
+      "--source",
+      sourceFile,
+      "--texture",
+      "textures/models/armor/sheolic_blood_lust_layer_1.png",
+      "--output",
+      outputFile,
+    ]);
+
+    const bbmodel = JSON.parse(await readFile(outputFile, "utf8"));
+    const groupNames = [];
+    collectGroupNames(bbmodel.outliner, groupNames);
+    const uuids = bbmodel.elements.map((element) => element.uuid);
+
+    assert.ok(groupNames.includes("left_leg_legs"), "leggings left_leg group should be kept");
+    assert.ok(groupNames.includes("right_leg_legs"), "leggings right_leg group should be kept");
+    assert.ok(groupNames.includes("left_leg_feet"), "boots left_leg group should be kept");
+    assert.ok(groupNames.includes("right_leg_feet"), "boots right_leg group should be kept");
+    assert.ok(groupNames.includes("left_shin_plate"), "left shin child should remain attached");
+    assert.ok(groupNames.includes("right_shin_plate"), "right shin child should remain attached");
+    assert.equal(new Set(uuids).size, uuids.length, "same-named slot branch cubes should not reuse UUIDs");
+    assert.ok(
+      bbmodel.elements.some((element) => element.name.startsWith("left_leg_legs_50_116_")),
+      "leggings left shin cube should export under the leggings group name"
+    );
+    assert.ok(
+      bbmodel.elements.some((element) => element.name.startsWith("left_leg_feet_38_91_")),
+      "boots left foot cube should export under the feet group name"
+    );
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}
+
 async function testChalybeateSnailForLoopPartsConvert() {
   const outputDir = await mkdtemp(path.join(tmpdir(), "hemomancy-bbmodel-"));
   const outputFile = path.join(outputDir, "ChalybeateSnailModel.bbmodel");
@@ -599,6 +774,8 @@ const tests = [
   ["drop wrapper writes the bbmodel beside the dropped Java file", testDropWrapperOutputsBesideDroppedFile],
   ["converts PartPose.rotation without an offset", testPartPoseRotationConverts],
   ["keeps CubeDeformation in inflate instead of baking it into position and size", testCubeDeformationDoesNotBakeIntoPositionAndSize],
+  ["honors addOrReplaceChild replacement for repeated sibling names", testAddOrReplaceChildReplacesEarlierSiblingDefinition],
+  ["keeps same-named leg parts distinct across equipment slot branches", testSlotBranchesKeepSameNamedLegPartsDistinct],
   ["converts ChalybeateSnailModel parts declared inside a simple for loop", testChalybeateSnailForLoopPartsConvert],
   ["converts PrismCuttleModel loop-generated arms and rule constants", testPrismCuttleLoopGeneratedArmsConvert],
   ["converts VenomRibCentipedeModel nested loop-generated segments", testVenomRibCentipedeNestedSegmentsConvert],

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.render.armor.ArmorItemDisplayTransformHe
 import com.vincenthuto.hemomancy.client.render.armor.ArmorItemModelPoseHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ModelBackedArmorItemRenderHelper;
 import com.vincenthuto.hemomancy.client.render.armor.ModelBackedArmorItemRenderHelper.ArmorItemRenderDefinition;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -40,6 +41,7 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 
 		poseStack.pushPose();
 		ArmorItemDisplayTransformHelper.apply(displayContext, definition.slot(), poseStack);
+		applyManualGuiTransforms(stack, displayContext, poseStack);
 		HumanoidModel<LivingEntity> model = definition.model().get();
 		ArmorItemModelPoseHelper.reset(model);
 		applySlotVisibility(model, definition.slot());
@@ -74,6 +76,25 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 				model.leftLeg.visible = true;
 			}
 			default -> model.setAllVisible(true);
+		}
+	}
+	private static void applyManualFirstPersonTransforms(ItemStack stack, ItemDisplayContext displayContext,
+	                                             PoseStack poseStack) {
+		if (displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND  ) {
+		}
+	}
+
+	private static void applyManualGuiTransforms(ItemStack stack, ItemDisplayContext displayContext,
+			PoseStack poseStack) {
+		if (displayContext == ItemDisplayContext.GUI ){
+			if( stack.is(ItemInit.vestment_of_the_final_molt.get())) {
+				poseStack.translate(0.0F, 0F, 0.0F);
+				poseStack.scale(0.6F, 0.6F, 0.6F);
+			}
+			if( stack.is(ItemInit.covenant_mantle.get())) {
+				poseStack.translate(0.0F, 0F, 0.0F);
+				poseStack.scale(0.78F, 0.78F, 0.78F);
+			}
 		}
 	}
 }

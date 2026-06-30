@@ -266,6 +266,33 @@ function parseJavaModel(source, model) {
 
   const parts = [];
 
+  const removeReplacedSibling = (parentVar, name, branchKey) => {
+    const removedVarNames = new Set();
+    for (let index = parts.length - 1; index >= 0; index--) {
+      const part = parts[index];
+      if (part.parentVar === parentVar && part.name === name && part.branchKey === branchKey) {
+        removedVarNames.add(part.varName);
+        parts.splice(index, 1);
+      }
+    }
+    if (removedVarNames.size === 0) {
+      return;
+    }
+
+    let removedChild;
+    do {
+      removedChild = false;
+      for (let index = parts.length - 1; index >= 0; index--) {
+        const part = parts[index];
+        if (removedVarNames.has(part.parentVar)) {
+          removedVarNames.add(part.varName);
+          parts.splice(index, 1);
+          removedChild = true;
+        }
+      }
+    } while (removedChild);
+  };
+
   const addPartFromCall = (callSource, callAt, baseLocals = new Map(), declarationStart = null, callSiteAt = callAt) => {
     const parentVar = parseParentVariable(callSource, callAt);
     const assignedVar = parseAssignedVariable(callSource, callAt);
@@ -294,14 +321,23 @@ function parseJavaModel(source, model) {
       const name = parseNameExpression(callArgs[0], parseScopedNumeric, scopedLocals);
       const cubes = parseCubes(callArgs[1], parseScopedNumeric);
       const pose = parsePose(callArgs.slice(2).join(","), parseScopedNumeric);
-      const varName = modelPartVariableName(assignedVar, name, loopContext, locals, parts.length, parentVar);
-      const resolvedParentVar = modelPartParentVariable(parent, loopContext, locals, name, loopExitPartAliases, callSiteAt);
+      const branchKey = slotBranchKeyForCall(source, callSiteAt);
+      const varName = branchScopedVarName(
+        modelPartVariableName(assignedVar, name, loopContext, locals, parts.length, parentVar),
+        branchKey
+      );
+      const resolvedParentVar = branchScopedParentVarName(
+        modelPartParentVariable(parent, loopContext, locals, name, loopExitPartAliases, callSiteAt),
+        branchKey
+      );
+      removeReplacedSibling(resolvedParentVar, name, branchKey);
       parts.push({
         name,
         varName,
         parentVar: resolvedParentVar,
         cubes,
         pose,
+        branchKey,
       });
     }
     return closeParen;
@@ -688,21 +724,24 @@ function toBlockbenchModel(model, parsed, outputPath) {
   const elements = [];
   const groups = [];
   const partToGroup = new Map();
+  const duplicateSiblingKeys = duplicateSiblingNameKeys(parsed.parts);
 
   for (const [partIndex, part] of parsed.parts.entries()) {
-    const partUuid = uuidFor(`${model.name}:${part.name}:part`);
+    const partIdentity = partIdentityFor(part, partIndex);
+    const groupName = groupNameFor(part, duplicateSiblingKeys);
+    const partUuid = uuidFor(`${model.name}:${partIdentity}:part`);
     const cubeUuids = [];
     const origin = toBlockbenchOrigin(part.worldOffset);
     const rotation = toBlockbenchRotation(part.pose.rotation);
 
     for (const [cubeIndex, cube] of part.cubes.entries()) {
-      const cubeUuid = uuidFor(`${model.name}:${part.name}:cube:${cubeIndex}`);
-      elements.push(toElement(model, part, cube, cubeUuid, partIndex));
+      const cubeUuid = uuidFor(`${model.name}:${partIdentity}:cube:${cubeIndex}`);
+      elements.push(toElement(model, part, cube, cubeUuid, partIndex, groupName));
       cubeUuids.push(cubeUuid);
     }
 
     const group = {
-      name: part.name,
+      name: groupName,
       origin,
       color: partIndex % 8,
       uuid: partUuid,
@@ -759,7 +798,7 @@ function toBlockbenchModel(model, parsed, outputPath) {
   };
 }
 
-function toElement(model, part, cube, uuid, color) {
+function toElement(model, part, cube, uuid, color, groupName = part.name) {
   const [pivotX, pivotY, pivotZ] = part.worldOffset;
   const inflate = cube.inflate ?? 0;
   const from = [
@@ -774,7 +813,7 @@ function toElement(model, part, cube, uuid, color) {
   ];
 
   const element = {
-    name: `${part.name}_${cube.uv[0]}_${cube.uv[1]}_${uuid.slice(0, 8)}`,
+    name: `${groupName}_${cube.uv[0]}_${cube.uv[1]}_${uuid.slice(0, 8)}`,
     rescale: false,
     locked: false,
     from: roundArray(from),
@@ -796,6 +835,45 @@ function toElement(model, part, cube, uuid, color) {
   }
 
   return element;
+}
+
+function duplicateSiblingNameKeys(parts) {
+  const counts = new Map();
+  for (const part of parts) {
+    const key = `${part.parentVar}\u0000${part.name}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return new Set([...counts.entries()].filter(([, count]) => count > 1).map(([key]) => key));
+}
+
+function groupNameFor(part, duplicateSiblingKeys) {
+  const key = `${part.parentVar}\u0000${part.name}`;
+  if (part.branchKey && duplicateSiblingKeys.has(key)) {
+    return `${part.name}_${part.branchKey}`;
+  }
+  return part.name;
+}
+
+function partIdentityFor(part, partIndex) {
+  return `${part.varName}:${part.parentVar}:${part.branchKey ?? "default"}:${partIndex}`;
+}
+
+function branchScopedVarName(varName, branchKey) {
+  if (!branchKey || varName.endsWith(`_${branchKey}`)) {
+    return varName;
+  }
+  return `${varName}_${branchKey}`;
+}
+
+function branchScopedParentVarName(parentVar, branchKey) {
+  if (!branchKey || isRootPartDefinitionVariable(parentVar) || parentVar.endsWith(`_${branchKey}`)) {
+    return parentVar;
+  }
+  return `${parentVar}_${branchKey}`;
+}
+
+function isRootPartDefinitionVariable(varName) {
+  return varName === "root" || varName === "partdefinition" || varName === "meshdefinition.getRoot()";
 }
 
 function facesFor(cube) {
@@ -1547,6 +1625,51 @@ function withWorldOffsets(parts) {
   }
 
   return parts;
+}
+
+function slotBranchKeyForCall(source, callAt) {
+  let branchKey = null;
+  let searchAt = 0;
+  while (true) {
+    const ifAt = source.indexOf("if", searchAt);
+    if (ifAt === -1 || ifAt > callAt) {
+      break;
+    }
+    if (!isWordBoundary(source, ifAt - 1) || !isWordBoundary(source, ifAt + 2)) {
+      searchAt = ifAt + 2;
+      continue;
+    }
+    const openParen = source.indexOf("(", ifAt);
+    if (openParen === -1 || openParen > callAt) {
+      break;
+    }
+    const closeParen = findMatching(source, openParen, "(", ")");
+    const condition = source.slice(openParen + 1, closeParen);
+    const slotMatch = condition.match(/EquipmentSlot\.([A-Z_]+)/);
+    const openBrace = source.indexOf("{", closeParen);
+    if (!slotMatch || openBrace === -1 || openBrace > callAt || !isEquipmentSlotCondition(condition)) {
+      searchAt = closeParen + 1;
+      continue;
+    }
+    const closeBrace = findMatching(source, openBrace, "{", "}");
+    if (openBrace < callAt && callAt < closeBrace) {
+      branchKey = slotMatch[1].toLowerCase();
+    }
+    searchAt = closeParen + 1;
+  }
+  return branchKey;
+}
+
+function isWordBoundary(source, index) {
+  if (index < 0 || index >= source.length) {
+    return true;
+  }
+  return !/[A-Za-z_$0-9]/.test(source[index]);
+}
+
+function isEquipmentSlotCondition(condition) {
+  return /\bslot\s*(?:==|\.equals\s*\()\s*EquipmentSlot\.[A-Z_]+/.test(condition)
+    || /EquipmentSlot\.[A-Z_]+\s*==\s*slot\b/.test(condition);
 }
 
 function parseCliArgs(rawArgs) {

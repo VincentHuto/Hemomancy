@@ -18,26 +18,26 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.util.Lazy;
 
-public class PrismaticArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
-	public static final ModelLayerLocation PRISMATIC_HELMET_LAYER = new ModelLayerLocation(
-			Hemomancy.rloc("prismatic_helmet"), "main");
-	public static final ModelLayerLocation PRISMATIC_CHEST_LAYER = new ModelLayerLocation(
-			Hemomancy.rloc("prismatic_chest"), "main");
-	public static final ModelLayerLocation PRISMATIC_LEGS_LAYER = new ModelLayerLocation(
-			Hemomancy.rloc("prismatic_leggings"), "main");
-	public static final ModelLayerLocation PRISMATIC_FEET_LAYER = new ModelLayerLocation(
-			Hemomancy.rloc("prismatic_boots"), "main");
+public class PhantasmalBloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
+	public static final ModelLayerLocation PHANTASMAL_BLOOD_LUST_HELMET_LAYER = new ModelLayerLocation(
+			Hemomancy.rloc("phantasmal_blood_lust_helmet"), "main");
+	public static final ModelLayerLocation PHANTASMAL_BLOOD_LUST_CHEST_LAYER = new ModelLayerLocation(
+			Hemomancy.rloc("phantasmal_blood_lust_chest"), "main");
+	public static final ModelLayerLocation PHANTASMAL_BLOOD_LUST_LEGS_LAYER = new ModelLayerLocation(
+			Hemomancy.rloc("phantasmal_blood_lust_leggings"), "main");
+	public static final ModelLayerLocation PHANTASMAL_BLOOD_LUST_FEET_LAYER = new ModelLayerLocation(
+			Hemomancy.rloc("phantasmal_blood_lust_boots"), "main");
 
-	public static final Lazy<PrismaticArmorModel<LivingEntity>> helmet = Lazy.of(() -> new PrismaticArmorModel<>(
-			Minecraft.getInstance().getEntityModels().bakeLayer(PRISMATIC_HELMET_LAYER)));
-	public static final Lazy<PrismaticArmorModel<LivingEntity>> chest = Lazy.of(() -> new PrismaticArmorModel<>(
-			Minecraft.getInstance().getEntityModels().bakeLayer(PRISMATIC_CHEST_LAYER)));
-	public static final Lazy<PrismaticArmorModel<LivingEntity>> legs = Lazy.of(() -> new PrismaticArmorModel<>(
-			Minecraft.getInstance().getEntityModels().bakeLayer(PRISMATIC_LEGS_LAYER)));
-	public static final Lazy<PrismaticArmorModel<LivingEntity>> boots = Lazy.of(() -> new PrismaticArmorModel<>(
-			Minecraft.getInstance().getEntityModels().bakeLayer(PRISMATIC_FEET_LAYER)));
+	public static final Lazy<PhantasmalBloodLustArmorModel<LivingEntity>> helmet = Lazy.of(() -> new PhantasmalBloodLustArmorModel<>(
+			Minecraft.getInstance().getEntityModels().bakeLayer(PHANTASMAL_BLOOD_LUST_HELMET_LAYER)));
+	public static final Lazy<PhantasmalBloodLustArmorModel<LivingEntity>> chest = Lazy.of(() -> new PhantasmalBloodLustArmorModel<>(
+			Minecraft.getInstance().getEntityModels().bakeLayer(PHANTASMAL_BLOOD_LUST_CHEST_LAYER)));
+	public static final Lazy<PhantasmalBloodLustArmorModel<LivingEntity>> legs = Lazy.of(() -> new PhantasmalBloodLustArmorModel<>(
+			Minecraft.getInstance().getEntityModels().bakeLayer(PHANTASMAL_BLOOD_LUST_LEGS_LAYER)));
+	public static final Lazy<PhantasmalBloodLustArmorModel<LivingEntity>> boots = Lazy.of(() -> new PhantasmalBloodLustArmorModel<>(
+			Minecraft.getInstance().getEntityModels().bakeLayer(PHANTASMAL_BLOOD_LUST_FEET_LAYER)));
 
-	public PrismaticArmorModel(ModelPart root) {
+	public PhantasmalBloodLustArmorModel(ModelPart root) {
 		super(root, RenderType::entityTranslucent);
 	}
 

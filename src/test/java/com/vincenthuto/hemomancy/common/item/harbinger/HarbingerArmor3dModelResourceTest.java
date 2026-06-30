@@ -132,9 +132,29 @@ public final class HarbingerArmor3dModelResourceTest {
 				"com/vincenthuto/hemomancy/client/render/armor/ArmorItemDisplayTransformHelper.java"));
 		assertContains("armor item normalized gui offset", displayTransformHelper,
 				"translateWithNormalizedSlotOffset(poseStack, slot, -0.35D, 0.0D, 1.0D);");
+		assertContains("armor item helmet gui transform", displayTransformHelper,
+				"applyHelmetGuiTransform(slot, poseStack);");
+		assertContains("armor item helmet gui transform", displayTransformHelper,
+				"private static void applyHelmetGuiTransform(EquipmentSlot slot, PoseStack poseStack)");
+		assertContains("armor item helmet gui transform", displayTransformHelper,
+				"if (slot == EquipmentSlot.HEAD)");
+		assertContains("armor item helmet gui transform", displayTransformHelper,
+				"poseStack.mulPose(Axis.YP.rotationDegrees(-24.0F));");
+		assertContains("armor item helmet first-person transform", displayTransformHelper,
+				"applyHelmetFirstPersonTransform(context, slot, poseStack);");
+		assertContains("armor item helmet first-person transform", displayTransformHelper,
+				"private static void applyHelmetFirstPersonTransform(ItemDisplayContext context, EquipmentSlot slot, PoseStack poseStack)");
+		assertContains("armor item helmet first-person transform", displayTransformHelper,
+				"context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? -24.0F : 24.0F");
+		assertNotContains("armor item helmet first-person transform should not use reversed yaw", displayTransformHelper,
+				"context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? 24.0F : -24.0F");
+		assertContains("armor item helmet first-person transform", displayTransformHelper,
+				"poseStack.translate(0.0D, 0.28D, 0.0D);");
+		assertContains("armor item helmet first-person transform", displayTransformHelper,
+				"poseStack.mulPose(Axis.YP.rotationDegrees(yaw));");
 		assertContains("armor item head y normalization", displayTransformHelper, "case HEAD -> 0.55D;");
 		assertContains("armor item chest y normalization", displayTransformHelper, "case CHEST -> 0.15D;");
-		assertContains("armor item legs y normalization", displayTransformHelper, "case LEGS -> -0.12D;");
+		assertContains("armor item legs y normalization", displayTransformHelper, "case LEGS -> -0.30D;");
 		assertContains("armor item boots y normalization", displayTransformHelper, "case FEET -> -0.45D;");
 
 		assertItemModelParent("blood_lust_helm", "builtin/entity");
@@ -171,7 +191,7 @@ public final class HarbingerArmor3dModelResourceTest {
 		assertImageSize("venous strider sabatons worn texture",
 				"assets/hemomancy/textures/models/armor/venous_strider_layer_1.png", 256, 128);
 		assertImageSize("silent archon outer worn texture",
-				"assets/hemomancy/textures/models/armor/silent_archon_layer_1.png", 256, 128);
+				"assets/hemomancy/textures/models/armor/silent_archon_layer_1.png", 128, 128);
 		assertImageSize("silent archon inner worn texture",
 				"assets/hemomancy/textures/models/armor/silent_archon_layer_2.png", 256, 128);
 		assertImageSize("covenant mantle worn texture",

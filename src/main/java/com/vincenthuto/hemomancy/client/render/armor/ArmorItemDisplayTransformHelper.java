@@ -17,7 +17,11 @@ public final class ArmorItemDisplayTransformHelper {
 		switch (context) {
 			case GUI -> {
 				translateWithNormalizedSlotOffset(poseStack, slot, -0.35D, 0.0D, 1.0D);
-				poseStack.mulPose(Axis.YP.rotationDegrees(-28.0F));
+				if (slot == EquipmentSlot.HEAD) {
+					applyHelmetGuiTransform(slot, poseStack);
+				} else {
+					poseStack.mulPose(Axis.YP.rotationDegrees(-28.0F));
+				}
 				poseStack.mulPose(Axis.ZP.rotationDegrees(8.0F));
 				scaleForSlot(poseStack, slot, 0.72F);
 			}
@@ -32,6 +36,7 @@ public final class ArmorItemDisplayTransformHelper {
 			}
 			case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> {
 				translateWithNormalizedSlotOffset(poseStack, slot, -0.55D, -0.18D, 0.45D);
+				applyArmorFirstPersonTransform(context, slot, poseStack);
 				scaleForSlot(poseStack, slot, 0.36F);
 			}
 			case THIRD_PERSON_LEFT_HAND, THIRD_PERSON_RIGHT_HAND -> {
@@ -58,6 +63,22 @@ public final class ArmorItemDisplayTransformHelper {
 			case FEET -> -0.45D;
 			default -> 0.0D;
 		};
+	}
+
+	private static void applyHelmetGuiTransform(EquipmentSlot slot, PoseStack poseStack) {
+		if (slot == EquipmentSlot.HEAD) {
+			poseStack.mulPose(Axis.YP.rotationDegrees(-24.0F));
+		}
+	}
+
+	private static void applyArmorFirstPersonTransform(ItemDisplayContext context, EquipmentSlot slot, PoseStack poseStack) {
+			float yaw = context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND ? -54.0F : 54.0F;
+		if (slot != EquipmentSlot.FEET) {
+			poseStack.translate(0.0D, 0.15D, 0.0D);
+		}else{
+			poseStack.translate(0.0D, 0.1D, 0.0D);
+		}
+			poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
 	}
 
 	private static void scaleForSlot(PoseStack poseStack, EquipmentSlot slot, float scale) {

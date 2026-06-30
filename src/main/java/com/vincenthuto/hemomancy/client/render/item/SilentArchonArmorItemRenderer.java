@@ -34,6 +34,11 @@ public class SilentArchonArmorItemRenderer extends BlockEntityWithoutLevelRender
 		boolean gui = displayContext == ItemDisplayContext.GUI;
 		if (gui) {
 			Lighting.setupForEntityInInventory();
+			if(slot.equals(EquipmentSlot.CHEST)) {
+				poseStack.scale(.8f,.8f,.8f);
+				poseStack.translate(.15,.25,0);
+
+			}
 		}
 
 		poseStack.pushPose();

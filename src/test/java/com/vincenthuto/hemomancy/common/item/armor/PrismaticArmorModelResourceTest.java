@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.imageio.ImageIO;
+
 public final class PrismaticArmorModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -29,6 +31,10 @@ public final class PrismaticArmorModelResourceTest {
 		assertContains("model should expose chest supplier", model, "chest = Lazy");
 		assertContains("model should expose legs supplier", model, "legs = Lazy");
 		assertContains("model should expose boots supplier", model, "boots = Lazy");
+		assertContains("model should use puppeteer head tentacle geometry", model, "HeadTentacles");
+		assertContains("model should use puppeteer jingle geometry", model, "jingles");
+		assertContains("model should use puppeteer lower leg geometry", model, "left_leg2");
+		assertContains("model should use puppeteer 128px texture atlas", model, "LayerDefinition.create(mesh, 128, 128)");
 
 		assertContains("item should provide client extensions", item, "implements HemoClientItemExtensionsProvider");
 		assertContains("item should provide model-backed stack renderer", item, "new ModelBackedArmorItemRenderer");
@@ -53,6 +59,11 @@ public final class PrismaticArmorModelResourceTest {
 			assertContains("prismatic " + piece + " should use the custom stack renderer", itemModel,
 					"\"parent\": \"builtin/entity\"");
 		}
+
+		assertTextureSize("Prismatic layer 1 should use the puppeteer atlas size",
+				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/prismatic_layer_1.png"), 128, 128);
+		assertTextureSize("Prismatic layer 2 should use the puppeteer atlas size",
+				RESOURCE_ROOT.resolve("assets/hemomancy/textures/models/armor/prismatic_layer_2.png"), 128, 128);
 	}
 
 	private static String read(Path path) throws IOException {
@@ -65,6 +76,17 @@ public final class PrismaticArmorModelResourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing " + expected);
+		}
+	}
+
+	private static void assertTextureSize(String label, Path path, int expectedWidth, int expectedHeight) throws IOException {
+		var image = ImageIO.read(path.toFile());
+		if (image == null) {
+			throw new AssertionError(label + ": not a readable image at " + path);
+		}
+		if (image.getWidth() != expectedWidth || image.getHeight() != expectedHeight) {
+			throw new AssertionError(label + ": expected " + expectedWidth + "x" + expectedHeight + " but got "
+					+ image.getWidth() + "x" + image.getHeight());
 		}
 	}
 }

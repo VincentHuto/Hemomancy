@@ -1,8 +1,8 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/blood_lust_chest",
-    "particle": "hemomancy:item/blood_lust_chest"
+    "layer0": "hemomancy:item/chitinite_chestplate",
+    "particle": "hemomancy:item/chitinite_chestplate"
   },
   "gui_light": "front",
   "display": {}

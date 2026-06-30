@@ -8,8 +8,12 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.ChalybeateFortressArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CovenantLeaderArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.EdaciousBloodLustArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.PhantasmalBloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.PrismaticArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.SheolicBloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
+import com.vincenthuto.hemomancy.client.model.armor.VestmentOfTheFinalMoltArmorModel;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.model.HumanoidModel;
@@ -27,8 +31,16 @@ public final class ModelBackedArmorItemRenderHelper {
 	public static final ResourceLocation CHITINITE_LAYER_2 = armorTexture("chitinite_layer_2");
 	public static final ResourceLocation PRISMATIC_LAYER_1 = armorTexture("prismatic_layer_1");
 	public static final ResourceLocation PRISMATIC_LAYER_2 = armorTexture("prismatic_layer_2");
+	public static final ResourceLocation EDACIOUS_BLOOD_LUST_LAYER_1 = armorTexture("edacious_blood_lust_layer_1");
+	public static final ResourceLocation EDACIOUS_BLOOD_LUST_LAYER_2 = armorTexture("edacious_blood_lust_layer_2");
+	public static final ResourceLocation SHEOLIC_BLOOD_LUST_LAYER_1 = armorTexture("sheolic_blood_lust_layer_1");
+	public static final ResourceLocation SHEOLIC_BLOOD_LUST_LAYER_2 = armorTexture("sheolic_blood_lust_layer_2");
+	public static final ResourceLocation PHANTASMAL_BLOOD_LUST_LAYER_1 = armorTexture("phantasmal_blood_lust_layer_1");
+	public static final ResourceLocation PHANTASMAL_BLOOD_LUST_LAYER_2 = armorTexture("phantasmal_blood_lust_layer_2");
 	public static final ResourceLocation UNSTAINED_LAYER_1 = armorTexture("unstained_layer_1");
 	public static final ResourceLocation UNSTAINED_LAYER_2 = armorTexture("unstained_layer_2");
+	public static final ResourceLocation VESTMENT_OF_THE_FINAL_MOLT_LAYER_1 = armorTexture(
+			"vestment_of_the_final_molt_layer_1");
 	public static final ResourceLocation VENOUS_STRIDER_LAYER_1 = armorTexture("venous_strider_layer_1");
 	public static final ResourceLocation COVENANT_MANTLE_LAYER_1 = armorTexture("covenant_mantle_layer_1");
 
@@ -47,30 +59,48 @@ public final class ModelBackedArmorItemRenderHelper {
 			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.tengu::get,
 					BLOOD_LUST_LAYER_1);
 		} else if (stack.is(ItemInit.edacious_blood_lust_helm.get())) {
-			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.tengu::get,
-					BLOOD_LUST_LAYER_1);
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, EdaciousBloodLustArmorModel.helmet::get,
+					EDACIOUS_BLOOD_LUST_LAYER_1);
 		} else if (stack.is(ItemInit.sheolic_blood_lust_helm.get())) {
-			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.helmet::get,
-					BLOOD_LUST_LAYER_1);
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, SheolicBloodLustArmorModel.helmet::get,
+					SHEOLIC_BLOOD_LUST_LAYER_1);
 		} else if (stack.is(ItemInit.phantasmal_blood_lust_helm.get())) {
-			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, BloodLustArmorModel.tengu::get,
-					BLOOD_LUST_LAYER_1);
-		} else if (stack.is(ItemInit.blood_lust_chest.get())
-				|| stack.is(ItemInit.edacious_blood_lust_chest.get())
-				|| stack.is(ItemInit.sheolic_blood_lust_chest.get())
-				|| stack.is(ItemInit.phantasmal_blood_lust_chest.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.HEAD, PhantasmalBloodLustArmorModel.helmet::get,
+					PHANTASMAL_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.edacious_blood_lust_chest.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, EdaciousBloodLustArmorModel.chest::get,
+					EDACIOUS_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.sheolic_blood_lust_chest.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, SheolicBloodLustArmorModel.chest::get,
+					SHEOLIC_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.phantasmal_blood_lust_chest.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, PhantasmalBloodLustArmorModel.chest::get,
+					PHANTASMAL_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.blood_lust_chest.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, BloodLustArmorModel.chest::get,
 					BLOOD_LUST_LAYER_1);
-		} else if (stack.is(ItemInit.blood_lust_legs.get())
-				|| stack.is(ItemInit.edacious_blood_lust_legs.get())
-				|| stack.is(ItemInit.sheolic_blood_lust_legs.get())
-				|| stack.is(ItemInit.phantasmal_blood_lust_legs.get())) {
+		} else if (stack.is(ItemInit.edacious_blood_lust_legs.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, EdaciousBloodLustArmorModel.legs::get,
+					EDACIOUS_BLOOD_LUST_LAYER_2);
+		} else if (stack.is(ItemInit.sheolic_blood_lust_legs.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, SheolicBloodLustArmorModel.legs::get,
+					SHEOLIC_BLOOD_LUST_LAYER_2);
+		} else if (stack.is(ItemInit.phantasmal_blood_lust_legs.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, PhantasmalBloodLustArmorModel.legs::get,
+					PHANTASMAL_BLOOD_LUST_LAYER_2);
+		} else if (stack.is(ItemInit.blood_lust_legs.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, BloodLustArmorModel.legs::get,
 					BLOOD_LUST_LAYER_2);
-		} else if (stack.is(ItemInit.blood_lust_boots.get())
-				|| stack.is(ItemInit.edacious_blood_lust_boots.get())
-				|| stack.is(ItemInit.sheolic_blood_lust_boots.get())
-				|| stack.is(ItemInit.phantasmal_blood_lust_boots.get())) {
+		} else if (stack.is(ItemInit.edacious_blood_lust_boots.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, EdaciousBloodLustArmorModel.boots::get,
+					EDACIOUS_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.sheolic_blood_lust_boots.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, SheolicBloodLustArmorModel.boots::get,
+					SHEOLIC_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.phantasmal_blood_lust_boots.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, PhantasmalBloodLustArmorModel.boots::get,
+					PHANTASMAL_BLOOD_LUST_LAYER_1);
+		} else if (stack.is(ItemInit.blood_lust_boots.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.FEET, BloodLustArmorModel.boots::get,
 					BLOOD_LUST_LAYER_1);
 		} else if (stack.is(ItemInit.barbed_helm.get())) {
@@ -115,6 +145,9 @@ public final class ModelBackedArmorItemRenderHelper {
 		} else if (stack.is(ItemInit.unstained_chestplate.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, UnstainedArmorModel.chest::get,
 					UNSTAINED_LAYER_1);
+		} else if (stack.is(ItemInit.vestment_of_the_final_molt.get())) {
+			return new ArmorItemRenderDefinition(EquipmentSlot.CHEST, VestmentOfTheFinalMoltArmorModel.chest::get,
+					VESTMENT_OF_THE_FINAL_MOLT_LAYER_1);
 		} else if (stack.is(ItemInit.unstained_leggings.get())) {
 			return new ArmorItemRenderDefinition(EquipmentSlot.LEGS, UnstainedArmorModel.legs::get,
 					UNSTAINED_LAYER_2);

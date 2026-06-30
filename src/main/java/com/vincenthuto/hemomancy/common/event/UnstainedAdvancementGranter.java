@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Utility class for programmatically granting Hemomancy Unstained-path
@@ -64,6 +66,16 @@ public final class UnstainedAdvancementGranter {
 
 		for (String criterion : progress.getRemainingCriteria()) {
 			player.getAdvancements().award(advancement, criterion);
+		}
+		if (ADV_ENLIGHTENED_SEEKER.equals(id) && progress.isDone()) {
+			awardVestmentOfTheFinalMolt(player);
+		}
+	}
+
+	private static void awardVestmentOfTheFinalMolt(ServerPlayer player) {
+		ItemStack stack = new ItemStack(ItemInit.vestment_of_the_final_molt.get());
+		if (!player.addItem(stack) && !stack.isEmpty()) {
+			player.drop(stack, false);
 		}
 	}
 }
