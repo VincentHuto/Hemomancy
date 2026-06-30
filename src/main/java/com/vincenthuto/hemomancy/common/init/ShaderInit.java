@@ -64,6 +64,10 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FaceSeed", "CoverageBias", "TunnelScale",
 			"BubbleScale", "TendrilIntensity");
 
+	public static ShaderHolder MNEMONIC_LOWTIDE_PARCHMENT = new ShaderHolder(
+			Hemomancy.rloc("world/mnemonic_lowtide_parchment"), DefaultVertexFormat.POSITION_TEX_COLOR,
+			"HemoTime", "ParchmentSeed", "WindRippleStrength", "WindRippleScale", "WindDirection");
+
 	public static ShaderHolder SILENT_ARCHON_FOG = new ShaderHolder(Hemomancy.rloc("world/silent_archon_fog"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed", "FogLayer", "FogDensity");
 
@@ -99,6 +103,7 @@ public class ShaderInit {
         registerShader(event, MNEMONIC_LOWTIDE_LAKE.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_SKYBOX_BASE.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_SKYBOX.createInstance(provider));
+        registerShader(event, MNEMONIC_LOWTIDE_PARCHMENT.createInstance(provider));
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));

@@ -3,12 +3,13 @@ package com.vincenthuto.hemomancy.client.render;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.common.init.ShaderInit;
 
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -74,6 +75,42 @@ public final class HemoRenderTypes {
 					.setCullState(RenderType.NO_CULL)
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
+
+	public static final ResourceLocation MNEMONIC_LOWTIDE_PARCHMENT_TEXTURE = Hemomancy.rloc(
+			"textures/world/lowtide_parchment/parchment_atlas.png");
+
+	public static RenderType mnemonicLowtideParchment(float gameTime, float parchmentSeed, float windRippleStrength,
+			float windRippleScale, float windDirectionX, float windDirectionY) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"mnemonic_lowtide_parchment_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_PARCHMENT.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "ParchmentSeed", parchmentSeed);
+					setUniform(shader, "WindRippleStrength", windRippleStrength);
+					setUniform(shader, "WindRippleScale", windRippleScale);
+					setUniform(shader, "WindDirection", windDirectionX, windDirectionY, 0.0F);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.MNEMONIC_LOWTIDE_PARCHMENT.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("mnemonic_lowtide_parchment",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 8192, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MNEMONIC_LOWTIDE_PARCHMENT.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(MNEMONIC_LOWTIDE_PARCHMENT_TEXTURE,
+								false, false))
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.NO_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
 
 	public static RenderType loomOrbShell(float gameTime, float orbSeed, float centerX, float centerY, float centerZ,
 			float orbRadius, float writheStrength, float threadScale, boolean glowLayer) {

@@ -34,25 +34,50 @@ import org.joml.Matrix4f;
 import java.util.Random;
 
 public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
+	// ========== SKYBOX ==========
 	private static final int LOWTIDE_SKYBOX_FACE_COUNT = 6;
+	private static final float LOWTIDE_SKYBOX_DISTANCE_SCALE = 0.965F;
+	private static final float LOWTIDE_SKYBOX_TIME_SCALE = 0.040F;
+	private static final float LOWTIDE_SKYBOX_BASE_TIME_SCALE = 0.026F;
+	private static final float LOWTIDE_SKYBOX_TUNNEL_SEED = 41.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_SEED = 113.0F;
+	private static final float LOWTIDE_SKYBOX_FACE_SEED_STEP = 37.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_NODULE_SCALE = 1.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_VEIN_INTENSITY = 1.0F;
+	private static final float LOWTIDE_SKYBOX_BASE_INTENSITY = 1.02F;
+	private static final float LOWTIDE_SKYBOX_TUNNEL_SCALE = 1.12F;
+	private static final float LOWTIDE_SKYBOX_BUBBLE_SCALE = 1.14F;
+	private static final float LOWTIDE_SKYBOX_TENDRIL_INTENSITY = 1.22F;
+
+	// ========== SKY LAKE ==========
 	private static final int SKY_LAKE_SUBDIVISIONS = 80;
+	private static final float SKY_LAKE_Y_SCALE = -0.05F;
+	private static final float SKY_LAKE_HALF_SPAN_SCALE = 3.2F;
+	private static final float SKY_LAKE_DEPTH_BOW_SCALE = 0.020F;
+
+	// ========== RUIN CLUSTERS ==========
 	private static final int LOWTIDE_RUIN_HIGH_FAR_CLUSTER_COUNT = 127;
 	private static final int LOWTIDE_RUIN_HIGH_DISTANT_CLUSTER_COUNT = 12;
 	private static final int LOWTIDE_RUIN_LOW_FAR_CLUSTER_COUNT = 27;
 	private static final int LOWTIDE_RUIN_LOW_DISTANT_CLUSTER_COUNT = 6;
+	private static final long LOWTIDE_RUIN_SEED = 108571L;
+	private static final float LOWTIDE_RUIN_FAR_LIGHT = 0.56F;
+	private static final float LOWTIDE_RUIN_DISTANT_LIGHT = 0.30F;
+
+	// ========== RUIN OBJECT SCALES ==========
+	private static final float LOWTIDE_RUIN_OBJ_FOUNDATION_SCALE = 0.34F;
+	private static final float LOWTIDE_RUIN_OBJ_TOWER_SCALE = 0.33F;
+	private static final float LOWTIDE_RUIN_OBJ_ARCH_SCALE = 0.25F;
+	private static final float LOWTIDE_RUIN_OBJ_DOME_SCALE = 0.25F;
+	private static final float LOWTIDE_RUIN_OBJ_SPIRE_SCALE = 0.22F;
+
+	// ========== CEILING ROOTS ==========
 	private static final int LOWTIDE_CEILING_ROOT_CLUSTER_COUNT = 24;
 	private static final int LOWTIDE_CEILING_ROOT_MIN_STRANDS = 5;
 	private static final int LOWTIDE_CEILING_ROOT_MAX_STRANDS = 11;
 	private static final int LOWTIDE_CEILING_ROOT_SEGMENTS = 22;
 	private static final int LOWTIDE_CEILING_ROOT_FORK_SEGMENTS = 9;
-	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT =12;
-	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 14;
-	private static final int LOWTIDE_WATERY_FOG_ROWS = 9;
-	private static final long LOWTIDE_RUIN_SEED = 108571L;
 	private static final long LOWTIDE_CEILING_ROOT_SEED = 219781L;
-	private static final float LOWTIDE_SKYBOX_DISTANCE_SCALE = 0.965F;
-	private static final float LOWTIDE_SKYBOX_TIME_SCALE = 0.040F;
-	private static final float LOWTIDE_SKYBOX_BASE_TIME_SCALE = 0.026F;
 	private static final float LOWTIDE_CEILING_ROOT_TIME_SCALE = 0.018F;
 	private static final float LOWTIDE_CEILING_ROOT_CEILING_Y_SCALE = 0.80F;
 	private static final float LOWTIDE_CEILING_ROOT_MIN_LENGTH_SCALE = 0.20F;
@@ -63,34 +88,48 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static final float LOWTIDE_CEILING_ROOT_MAX_WIDTH_SCALE = 0.0058F;
 	private static final float LOWTIDE_CEILING_ROOT_BODY_ALPHA = 214.0F;
 	private static final float LOWTIDE_CEILING_ROOT_HIGHLIGHT_ALPHA = 132.0F;
-	private static final float LOWTIDE_SKYBOX_TUNNEL_SEED = 41.0F;
-	private static final float LOWTIDE_SKYBOX_BASE_SEED = 113.0F;
-	private static final float LOWTIDE_SKYBOX_FACE_SEED_STEP = 37.0F;
-	private static final float LOWTIDE_SKYBOX_BASE_NODULE_SCALE = 1.0F;
-	private static final float LOWTIDE_SKYBOX_BASE_VEIN_INTENSITY = 1.0F;
-	private static final float LOWTIDE_SKYBOX_BASE_INTENSITY = 1.02F;
-	private static final float LOWTIDE_SKYBOX_TUNNEL_SCALE = 1.12F;
-	private static final float LOWTIDE_SKYBOX_BUBBLE_SCALE = 1.14F;
-	private static final float LOWTIDE_SKYBOX_TENDRIL_INTENSITY = 1.22F;
-	private static final float LOWTIDE_RUIN_FAR_LIGHT = 0.56F;
-	private static final float LOWTIDE_RUIN_DISTANT_LIGHT = 0.30F;
-	private static final float LOWTIDE_RUIN_OBJ_FOUNDATION_SCALE = 0.34F;
-	private static final float LOWTIDE_RUIN_OBJ_TOWER_SCALE = 0.33F;
-	private static final float LOWTIDE_RUIN_OBJ_ARCH_SCALE = 0.25F;
-	private static final float LOWTIDE_RUIN_OBJ_DOME_SCALE = 0.25F;
-	private static final float LOWTIDE_RUIN_OBJ_SPIRE_SCALE = 0.22F;
-	private static final float SKY_LAKE_Y_SCALE = -0.05F;
-	private static final float SKY_LAKE_HALF_SPAN_SCALE = 3.2F;
-	private static final float SKY_LAKE_DEPTH_BOW_SCALE = 0.020F;
+
+	// ========== PARCHMENT ==========
+	private static final int LOWTIDE_WATER_PARCHMENT_COUNT = 24;
+	private static final int LOWTIDE_AIR_PARCHMENT_COUNT = 12;
+	private static final int LOWTIDE_PARCHMENT_DISTANCE_LAYER_PERIOD = 3;
+	private static final int LOWTIDE_PARCHMENT_GRID_COLUMNS = 6;
+	private static final int LOWTIDE_PARCHMENT_GRID_ROWS = 4;
+	private static final long LOWTIDE_PARCHMENT_SEED = 317219L;
+	private static final float LOWTIDE_PARCHMENT_TIME_SCALE = 0.010F;
+	private static final float LOWTIDE_PARCHMENT_SHADER_TIME_SCALE = 0.060F;
+	private static final float LOWTIDE_PARCHMENT_WATER_WIND_STRENGTH = 0.055F;
+	private static final float LOWTIDE_PARCHMENT_AIR_WIND_STRENGTH = 0.420F;
+	private static final float LOWTIDE_PARCHMENT_WIND_SCALE = 1.6F;
+	private static final float LOWTIDE_PARCHMENT_WATER_MIN_DISTANCE_SCALE = 0.38F;
+	private static final float LOWTIDE_PARCHMENT_WATER_MAX_DISTANCE_SCALE = 1.16F;
+	private static final float LOWTIDE_PARCHMENT_AIR_MIN_DISTANCE_SCALE = 0.42F;
+	private static final float LOWTIDE_PARCHMENT_AIR_MAX_DISTANCE_SCALE = 1.22F;
+	private static final float LOWTIDE_PARCHMENT_AIR_MIN_UPRIGHT_PITCH = 1.02F;
+	private static final float LOWTIDE_PARCHMENT_AIR_MAX_UPRIGHT_PITCH = 1.34F;
+	private static final float LOWTIDE_PARCHMENT_NEAR_DISTANCE_SCALE = 0.20F;
+	private static final float[][] LOWTIDE_PARCHMENT_ATLAS_VARIANTS = {
+			{ 0.0F, 0.0F, 0.25F, 1.0F },
+			{ 0.25F, 0.0F, 0.5F, 1.0F },
+			{ 0.5F, 0.0F, 0.75F, 1.0F },
+			{ 0.75F, 0.0F, 1.0F, 1.0F }
+	};
+
+	// ========== WATERY FOG ==========
+	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT = 12;
+	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 14;
+	private static final int LOWTIDE_WATERY_FOG_ROWS = 9;
 	private static final float LOWTIDE_WATERY_FOG_MIN_HEIGHT_SCALE = 0.018F;
 	private static final float LOWTIDE_WATERY_FOG_MAX_HEIGHT_SCALE = 0.045F;
 	private static final float LOWTIDE_WATERY_FOG_EDGE_LIVELINESS = 0.17F;
 	private static final float LOWTIDE_WATERY_FOG_CYCLE_SPEED = 0.00082F;
 	private static final float LOWTIDE_WATERY_FOG_CYCLE_STAGGER = 0.173F;
+
+	// ========== SHADER & WAVE EFFECTS ==========
 	private static final float LOWTIDE_SHADER_TIME_SCALE = 0.115F;
 	private static final float WAVE_STRENGTH = 2.05F;
 	private static final float WAVE_DETAIL_SCALE = 3.0F;
-	private static final float NOISE_SCALE =  222.0F;
+	private static final float NOISE_SCALE = 222.0F;
 	private static final float GLOSS_STRENGTH = 0.005F;
 	// Lake-local rim width. The shader clamps near 0.49 because the UV edge distance tops out at 0.5.
 	private static final float EDGE_FADE = 0.47F;
@@ -113,7 +152,9 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideCeilingRoots(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideRuinedStructures(context.poseStack(), context.time(), context.skyDistance());
+		renderLowtideWaterParchment(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideSkyLake(context.poseStack(), context.time(), context.skyDistance());
+		renderLowtideAirParchment(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideWateryFog(context.poseStack(), context.time(), context.skyDistance());
 	}
 
@@ -433,6 +474,177 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		RenderSystem.depthMask(true);
 		RenderSystem.enableDepthTest();
 		RenderSystem.enableCull();
+	}
+
+	static void renderLowtideWaterParchment(PoseStack poseStack, float time, float skyDistance) {
+		renderLowtideParchmentLayer(poseStack, time, skyDistance, true);
+	}
+
+	static void renderLowtideAirParchment(PoseStack poseStack, float time, float skyDistance) {
+		renderLowtideParchmentLayer(poseStack, time, skyDistance, false);
+	}
+
+	private static void renderLowtideParchmentLayer(PoseStack poseStack, float time, float skyDistance,
+			boolean waterLayer) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		float windStrength = waterLayer ? LOWTIDE_PARCHMENT_WATER_WIND_STRENGTH : LOWTIDE_PARCHMENT_AIR_WIND_STRENGTH;
+		RenderType renderType = HemoRenderTypes.mnemonicLowtideParchment(time * LOWTIDE_PARCHMENT_SHADER_TIME_SCALE,
+				waterLayer ? 23.0F : 61.0F, windStrength, LOWTIDE_PARCHMENT_WIND_SCALE,
+				waterLayer ? 0.82F : 0.36F, waterLayer ? 0.27F : 0.93F);
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		int count = waterLayer ? LOWTIDE_WATER_PARCHMENT_COUNT : LOWTIDE_AIR_PARCHMENT_COUNT;
+		float lakeY = skyDistance * SKY_LAKE_Y_SCALE;
+		float parchmentTime = time * LOWTIDE_PARCHMENT_TIME_SCALE;
+		Random random = new Random(LOWTIDE_PARCHMENT_SEED + (waterLayer ? 13L : 71L));
+		for (int piece = 0; piece < count; piece++) {
+			Random pieceRandom = new Random(LOWTIDE_PARCHMENT_SEED + (waterLayer ? 101L : 503L)
+					+ piece * 104729L);
+			float ringT = (piece + random.nextFloat() * 0.82F) / count;
+			float angle = ringT * Mth.TWO_PI + Mth.lerp(pieceRandom.nextFloat(), -0.18F, 0.18F);
+			boolean nearLayer = piece % LOWTIDE_PARCHMENT_DISTANCE_LAYER_PERIOD == 0;
+			float minDistance = nearLayer ? LOWTIDE_PARCHMENT_NEAR_DISTANCE_SCALE
+					: waterLayer
+							? LOWTIDE_PARCHMENT_WATER_MIN_DISTANCE_SCALE
+							: LOWTIDE_PARCHMENT_AIR_MIN_DISTANCE_SCALE;
+			float maxDistance = nearLayer ? (waterLayer ? 0.38F : 0.40F)
+					: waterLayer
+							? LOWTIDE_PARCHMENT_WATER_MAX_DISTANCE_SCALE
+							: LOWTIDE_PARCHMENT_AIR_MAX_DISTANCE_SCALE;
+			float distance = skyDistance * Mth.lerp(pieceRandom.nextFloat(), minDistance, maxDistance);
+			float phase = pieceRandom.nextFloat() * Mth.TWO_PI + piece * 0.37F;
+			float radialX = Mth.cos(angle);
+			float radialZ = Mth.sin(angle);
+			float tangentX = -radialZ;
+			float tangentZ = radialX;
+			float radialDrift = Mth.sin(parchmentTime * (waterLayer ? 0.48F : 0.62F) + phase)
+					* skyDistance * (waterLayer ? 0.012F : 0.020F);
+			float tangentDrift = Mth.cos(parchmentTime * (waterLayer ? 0.57F : 0.74F) + phase * 0.73F)
+					* skyDistance * (waterLayer ? 0.024F : 0.038F);
+			float centerX = radialX * (distance + radialDrift) + tangentX * tangentDrift;
+			float centerZ = radialZ * (distance + radialDrift) + tangentZ * tangentDrift;
+			float heightScale = waterLayer
+					? Mth.lerp(pieceRandom.nextFloat(), 0.006F, 0.030F)
+					: Mth.lerp(pieceRandom.nextFloat(), 0.070F, 0.270F);
+			float bob = Mth.sin(parchmentTime * (waterLayer ? 0.86F : 1.08F) + phase)
+					* skyDistance * (waterLayer ? 0.0032F : 0.012F);
+			float centerY = lakeY + skyDistance * heightScale + bob;
+			float landmarkScale = nearLayer ? 0.88F : piece % (waterLayer ? 7 : 4) == 0 ? 1.18F : 1.0F;
+			float sheetWidth = skyDistance * (waterLayer
+					? Mth.lerp(pieceRandom.nextFloat(), 0.040F, 0.092F)
+					: Mth.lerp(pieceRandom.nextFloat(), 0.040F, 0.078F)) * landmarkScale;
+			float sheetHeight = sheetWidth * Mth.lerp(pieceRandom.nextFloat(), waterLayer ? 0.30F : 0.46F,
+					waterLayer ? 0.54F : 0.72F);
+			float yaw = Mth.HALF_PI - angle + Mth.lerp(pieceRandom.nextFloat(), -0.44F, 0.44F)
+					+ parchmentTime * (waterLayer ? 0.026F : 0.054F);
+			float pitch = waterLayer
+					? Mth.lerp(pieceRandom.nextFloat(), -0.075F, 2.075F)
+							+ Mth.sin(parchmentTime * 0.72F + phase) * 0.038F
+					: Mth.lerp(pieceRandom.nextFloat(), LOWTIDE_PARCHMENT_AIR_MIN_UPRIGHT_PITCH,
+							LOWTIDE_PARCHMENT_AIR_MAX_UPRIGHT_PITCH)
+							+ Mth.sin(parchmentTime * 0.86F + phase) * 0.16F;
+			float roll = waterLayer
+					? Mth.lerp(pieceRandom.nextFloat(), -0.18F, 0.18F)
+							+ Mth.cos(parchmentTime * 0.66F + phase) * 0.052F
+					: Mth.lerp(pieceRandom.nextFloat(), -0.48F, 0.48F)
+							+ Mth.cos(parchmentTime * 0.92F + phase) * 0.22F;
+			float fadePulse = 0.78F + 0.22F * Mth.sin(parchmentTime * 0.54F + phase);
+			float alphaScale = (waterLayer
+					? Mth.lerp(pieceRandom.nextFloat(), 0.78F, 1.0F)
+					: Mth.lerp(pieceRandom.nextFloat(), 0.80F, 1.0F)) * fadePulse;
+
+			poseStack.pushPose();
+			poseStack.translate(centerX, centerY + 1.0F, centerZ);
+			poseStack.mulPose(Axis.YP.rotation(yaw));
+			poseStack.mulPose(Axis.XP.rotation(pitch));
+			poseStack.mulPose(Axis.ZP.rotation(roll));
+			emitLowtideTexturedParchmentSheet(consumer, poseStack.last().pose(), sheetWidth * 0.5F,
+					sheetHeight * 0.5F, piece, parchmentTime + phase, alphaScale, waterLayer);
+			poseStack.popPose();
+		}
+
+		buffer.endBatch(renderType);
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
+	}
+
+	private static void emitLowtideTexturedParchmentSheet(VertexConsumer consumer, Matrix4f matrix, float halfWidth,
+			float halfHeight, int seed, float flutterTime, float alphaScale, boolean waterLayer) {
+		float[] uvBounds = LOWTIDE_PARCHMENT_ATLAS_VARIANTS[Math.floorMod(seed,
+				LOWTIDE_PARCHMENT_ATLAS_VARIANTS.length)];
+		int color = lowtideParchmentTextureTint(seed, alphaScale, waterLayer);
+		for (int row = 0; row < LOWTIDE_PARCHMENT_GRID_ROWS; row++) {
+			float zT0 = row / (float) LOWTIDE_PARCHMENT_GRID_ROWS;
+			float zT1 = (row + 1) / (float) LOWTIDE_PARCHMENT_GRID_ROWS;
+			for (int column = 0; column < LOWTIDE_PARCHMENT_GRID_COLUMNS; column++) {
+				float xT0 = column / (float) LOWTIDE_PARCHMENT_GRID_COLUMNS;
+				float xT1 = (column + 1) / (float) LOWTIDE_PARCHMENT_GRID_COLUMNS;
+				addLowtideParchmentGridVertex(consumer, matrix, halfWidth, halfHeight, seed, flutterTime,
+						waterLayer, uvBounds, xT0, zT0, color);
+				addLowtideParchmentGridVertex(consumer, matrix, halfWidth, halfHeight, seed + column * 17 + 3,
+						flutterTime, waterLayer, uvBounds, xT1, zT0, color);
+				addLowtideParchmentGridVertex(consumer, matrix, halfWidth, halfHeight, seed + column * 17 + row * 31,
+						flutterTime, waterLayer, uvBounds, xT1, zT1, color);
+				addLowtideParchmentGridVertex(consumer, matrix, halfWidth, halfHeight, seed + row * 31 + 5,
+						flutterTime, waterLayer, uvBounds, xT0, zT1, color);
+			}
+		}
+	}
+
+	private static float lowtideParchmentCurl(float x, float z, float halfWidth, float halfHeight, int seed,
+			float flutterTime, boolean waterLayer) {
+		float safeHalfWidth = Math.max(halfWidth, 0.001F);
+		float safeHalfHeight = Math.max(halfHeight, 0.001F);
+		float xT = x / safeHalfWidth;
+		float zT = z / safeHalfHeight;
+		float broad = Mth.sin(flutterTime * (waterLayer ? 0.48F : 0.72F) + seed * 0.43F + xT * 1.7F);
+		float torn = Mth.cos(flutterTime * (waterLayer ? 0.36F : 0.58F) + seed * 0.31F + zT * 3.6F);
+		float edgeLift = lowtideSmoothstep(0.18F, 0.96F, Math.max(Math.abs(xT), Math.abs(zT)));
+		return (broad * 0.034F + torn * 0.018F) * Math.max(halfWidth, halfHeight)
+				* edgeLift * (waterLayer ? 0.36F : 1.0F);
+	}
+
+	private static void addLowtideParchmentGridVertex(VertexConsumer consumer, Matrix4f matrix, float halfWidth,
+			float halfHeight, int seed, float flutterTime, boolean waterLayer, float[] uvBounds, float xT, float zT,
+			int color) {
+		float x = Mth.lerp(xT, -halfWidth, halfWidth);
+		float z = Mth.lerp(zT, -halfHeight, halfHeight);
+		float y = lowtideParchmentCurl(x, z, halfWidth, halfHeight, seed, flutterTime, waterLayer);
+		float u = Mth.lerp(xT, uvBounds[0], uvBounds[2]);
+		float v = Mth.lerp(zT, uvBounds[1], uvBounds[3]);
+		addLowtideParchmentTexturedVertex(consumer, matrix, x, y, z, u, v, color);
+	}
+
+	private static int lowtideParchmentTextureTint(int seed, float alphaScale, boolean waterLayer) {
+		int red = waterLayer ? 232 + Math.floorMod(seed, 3) * 5 : 248 + Math.floorMod(seed, 2) * 3;
+		int green = waterLayer ? 218 + Math.floorMod(seed, 4) * 4 : 239 + Math.floorMod(seed, 3) * 3;
+		int blue = waterLayer ? 198 + Math.floorMod(seed, 3) * 3 : 220 + Math.floorMod(seed, 4) * 2;
+		float alpha = (waterLayer ? 245.0F : 238.0F) * alphaScale;
+		return lowtideParchmentTextureColor(red, green, blue, alpha);
+	}
+
+	private static int lowtideParchmentTextureColor(int red, int green, int blue, float alpha) {
+		int packedAlpha = Mth.floor(Mth.clamp(alpha, 0.0F, 255.0F));
+		return packedAlpha << 24
+				| Mth.floor(Mth.clamp(red, 0.0F, 255.0F)) << 16
+				| Mth.floor(Mth.clamp(green, 0.0F, 255.0F)) << 8
+				| Mth.floor(Mth.clamp(blue, 0.0F, 255.0F));
+	}
+
+	private static void addLowtideParchmentTexturedVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y,
+			float z, float u, float v, int color) {
+		consumer.addVertex(matrix, x, y, z)
+				.setUv(u, v)
+				.setColor((color >> 16) & 255, (color >> 8) & 255, color & 255, (color >> 24) & 255);
 	}
 
 	static void renderLowtideRuinedStructures(PoseStack poseStack, float time, float skyDistance) {
