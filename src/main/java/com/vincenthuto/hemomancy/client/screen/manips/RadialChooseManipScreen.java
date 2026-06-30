@@ -215,7 +215,6 @@ public class RadialChooseManipScreen extends Screen {
 			if (cooldownUntil > now || !ability.canActivate(mc.player)) {
 				item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
 			}
-			item.setCentralText(ability.displayName().copy());
 			item.setVisible(true);
 			this.cachedMechanicalItems.add(item);
 		});

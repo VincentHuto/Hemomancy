@@ -44,6 +44,8 @@ public final class RadialChooseManipScreenSourceTest {
 				"customTooltip");
 		assertContains("armor ability radial entry uses ability tooltip instead of helmet tooltip", screen,
 				"ability.tooltip()");
+		assertNotContains("armor ability radial entry does not duplicate the tooltip title as central hover text", screen,
+				"item.setCentralText(ability.displayName().copy());");
 		assertContains("generic radial supports inner band items", menu,
 				"visibleInnerItems");
 		assertContains("generic radial exposes inner add API", menu,
@@ -61,6 +63,12 @@ public final class RadialChooseManipScreenSourceTest {
 	private static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + " (missing '" + expected + "')");
+		}
+	}
+
+	private static void assertNotContains(String label, String text, String unexpected) {
+		if (text.contains(unexpected)) {
+			throw new AssertionError(label + " (still contains '" + unexpected + "')");
 		}
 	}
 }
