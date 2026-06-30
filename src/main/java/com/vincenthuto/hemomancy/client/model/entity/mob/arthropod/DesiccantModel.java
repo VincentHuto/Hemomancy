@@ -111,7 +111,25 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 
 	@Override
 	public void setupAnim(DesiccantEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		float legSwing = (float) Math.cos(limbSwing * 0.6662F) * 0.4F * limbSwingAmount;
+		this.lLegs.zRot += legSwing;
+		this.rLegs.zRot += -legSwing;
+		this.telson.xScale = 1.0F;
+		this.telson.yScale = 1.0F;
+		this.telson.zScale = 1.0F;
+		this.telsonStingSwell = 0.0F;
 
+		if (entity.isStinging()) {
+			float stingProgress = entity.getStingProgress();
+			float strike = Mth.sin(stingProgress * Mth.PI);
+			this.telsonStingSwell = strike;
+			this.tail.xRot = -0.35F - strike * 0.75F;
+			this.telson.xRot = this.tail.xRot - strike * 0.25F;
+			float telsonScale = 1.0F + strike * 0.45F;
+			this.telson.xScale = telsonScale;
+			this.telson.yScale = telsonScale;
+			this.telson.zScale = telsonScale;
+		}
 	}
 
 	@Override

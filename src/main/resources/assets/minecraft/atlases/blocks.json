@@ -12,9 +12,14 @@
 			"type": "single",
 			"resource": "hemomancy:entity/chitinite_shield/model_chitinite_shield"
 		},
-		 {
-            "type": "single",
-            "resource": "hemomancy:gui/empty_banner_slot_background"
-        }
+		{
+			"type": "single",
+			"resource": "hemomancy:gui/empty_banner_slot_background"
+		},
+		{
+			"type": "directory",
+			"source": "world/lowtide_ruin",
+			"prefix": "world/lowtide_ruin/"
+		}
 	]
 }

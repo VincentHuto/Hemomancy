@@ -1,0 +1,17 @@
+﻿{
+  "parent": "neoforge:item/default",
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "hemomancy:world/lowtide_ruin/dome_chapel"
+  },
+  "children": {
+    "main": {
+      "loader": "neoforge:obj",
+      "automatic_culling": false,
+      "shade_quads": true,
+      "flip_v": true,
+      "emissive_ambient": false,
+      "model": "hemomancy:models/world/lowtide_ruin/obj/dome_chapel.obj"
+    }
+  }
+}

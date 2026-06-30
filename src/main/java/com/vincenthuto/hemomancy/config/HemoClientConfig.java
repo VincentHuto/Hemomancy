@@ -15,6 +15,13 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_MUTATION_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_ORB_RENDERER;
 	public static ModConfigSpec.BooleanValue RENDER_FANE_BOUNDARY;
+	public static ModConfigSpec.EnumValue<LowtideRuinStructureQuality> LOWTIDE_RUIN_STRUCTURE_QUALITY;
+
+	public enum LowtideRuinStructureQuality {
+		HIGH,
+		LOW,
+		OFF
+	}
 
 	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
@@ -71,7 +78,17 @@ public class HemoClientConfig {
 				.comment("Render Founding Fane boundary domes and screen distortion.")
 				.define("renderFaneBoundary", true);
 
+		LOWTIDE_RUIN_STRUCTURE_QUALITY = CLIENT_BUILDER
+				.comment("Controls Mnemonic Lowtide Chamber ruin structure density. HIGH uses the full distant OBJ ruin field, LOW uses fewer OBJ ruin clusters, and OFF disables the ruin structures while keeping the Lowtide sky, lake, and fog.")
+				.defineEnum("lowtideRuinStructureQuality", LowtideRuinStructureQuality.HIGH);
+
 		CLIENT_BUILDER.pop();
+	}
+
+	public static LowtideRuinStructureQuality lowtideRuinStructureQuality() {
+		return LOWTIDE_RUIN_STRUCTURE_QUALITY == null
+				? LowtideRuinStructureQuality.HIGH
+				: LOWTIDE_RUIN_STRUCTURE_QUALITY.get();
 	}
 
 }

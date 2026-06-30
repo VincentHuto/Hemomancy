@@ -179,7 +179,7 @@ dependencies {
 
     // Optional client-side LOD testing mod. Disabled for alpha smoke tests because
     // 3.0.3-b crashes during its startup updater on NeoForge dev launch.
-    implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
+   // implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
 
 
     // ── HutosLib – use the local workspace build when available ─────────────────

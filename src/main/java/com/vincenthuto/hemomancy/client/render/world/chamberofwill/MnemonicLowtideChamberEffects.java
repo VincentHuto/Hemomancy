@@ -2,13 +2,33 @@ package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
+import com.vincenthuto.hemomancy.config.HemoClientConfig.LowtideRuinStructureQuality;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Matrix4f;
 
 import java.util.Random;
@@ -16,9 +36,14 @@ import java.util.Random;
 public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEffects {
 	private static final int LOWTIDE_SKYBOX_FACE_COUNT = 6;
 	private static final int SKY_LAKE_SUBDIVISIONS = 80;
+	private static final int LOWTIDE_RUIN_HIGH_FAR_CLUSTER_COUNT = 127;
+	private static final int LOWTIDE_RUIN_HIGH_DISTANT_CLUSTER_COUNT = 12;
+	private static final int LOWTIDE_RUIN_LOW_FAR_CLUSTER_COUNT = 27;
+	private static final int LOWTIDE_RUIN_LOW_DISTANT_CLUSTER_COUNT = 6;
 	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT =12;
 	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 14;
 	private static final int LOWTIDE_WATERY_FOG_ROWS = 9;
+	private static final long LOWTIDE_RUIN_SEED = 108571L;
 	private static final float LOWTIDE_SKYBOX_DISTANCE_SCALE = 0.965F;
 	private static final float LOWTIDE_SKYBOX_TIME_SCALE = 0.040F;
 	private static final float LOWTIDE_SKYBOX_BASE_TIME_SCALE = 0.026F;
@@ -31,6 +56,13 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static final float LOWTIDE_SKYBOX_TUNNEL_SCALE = 1.12F;
 	private static final float LOWTIDE_SKYBOX_BUBBLE_SCALE = 1.14F;
 	private static final float LOWTIDE_SKYBOX_TENDRIL_INTENSITY = 1.22F;
+	private static final float LOWTIDE_RUIN_FAR_LIGHT = 0.56F;
+	private static final float LOWTIDE_RUIN_DISTANT_LIGHT = 0.30F;
+	private static final float LOWTIDE_RUIN_OBJ_FOUNDATION_SCALE = 0.34F;
+	private static final float LOWTIDE_RUIN_OBJ_TOWER_SCALE = 0.33F;
+	private static final float LOWTIDE_RUIN_OBJ_ARCH_SCALE = 0.25F;
+	private static final float LOWTIDE_RUIN_OBJ_DOME_SCALE = 0.25F;
+	private static final float LOWTIDE_RUIN_OBJ_SPIRE_SCALE = 0.22F;
 	private static final float SKY_LAKE_Y_SCALE = -0.05F;
 	private static final float SKY_LAKE_HALF_SPAN_SCALE = 3.2F;
 	private static final float SKY_LAKE_DEPTH_BOW_SCALE = 0.020F;
@@ -46,15 +78,24 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static final float GLOSS_STRENGTH = 0.005F;
 	// Lake-local rim width. The shader clamps near 0.49 because the UV edge distance tops out at 0.5.
 	private static final float EDGE_FADE = 0.47F;
+	private static VertexBuffer lowtideRuinObjVertexBuffer;
+	private static float lowtideRuinObjVertexBufferSkyDistance = Float.NaN;
+	private static LowtideRuinStructureQuality lowtideRuinObjVertexBufferQuality = LowtideRuinStructureQuality.HIGH;
+	private static boolean lowtideRuinObjVertexBufferDirty = true;
 
 	MnemonicLowtideChamberEffects(ChamberSkyTheme theme) {
 		super(theme);
+	}
+
+	static void invalidateLowtideObjRuinCache() {
+		lowtideRuinObjVertexBufferDirty = true;
 	}
 
 	@Override
 	protected void renderBeforeSharedLayers(ChamberThemeRenderContext context) {
 		renderLowtideSkyboxBase(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance());
+		renderLowtideRuinedStructures(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideSkyLake(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideWateryFog(context.poseStack(), context.time(), context.skyDistance());
 	}
@@ -143,6 +184,7 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	static void renderLowtideSkyLake(PoseStack poseStack, float time, float skyDistance) {
 		RenderSystem.enableBlend();
 		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
 		RenderSystem.depthMask(false);
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
@@ -155,7 +197,713 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		emitSkyLakeGrid(consumer, poseStack.last().pose(), skyDistance);
 		buffer.endBatch(renderType);
 		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
 		RenderSystem.enableCull();
+	}
+
+	static void renderLowtideRuinedStructures(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthMask(true);
+		LowtideRuinStructureQuality quality = HemoClientConfig.lowtideRuinStructureQuality();
+		if (quality != LowtideRuinStructureQuality.OFF) {
+			renderLowtideObjRuinField(poseStack, time, skyDistance, quality);
+		}
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
+	}
+
+	private static void renderLowtideObjRuinField(PoseStack poseStack, float time, float skyDistance,
+			LowtideRuinStructureQuality quality) {
+		RenderSystem.enableCull();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		if (!ensureLowtideObjRuinVertexBuffer(skyDistance, quality)) {
+			return;
+		}
+
+		ShaderInstance shader = GameRenderer.getRendertypeSolidShader();
+		if (shader == null) {
+			return;
+		}
+
+		RenderType renderType = RenderType.solid();
+		renderType.setupRenderState();
+		lowtideRuinObjVertexBuffer.bind();
+		lowtideRuinObjVertexBuffer.drawWithShader(poseStack.last().pose(), RenderSystem.getProjectionMatrix(), shader);
+		VertexBuffer.unbind();
+		renderType.clearRenderState();
+	}
+
+	private static boolean ensureLowtideObjRuinVertexBuffer(float skyDistance, LowtideRuinStructureQuality quality) {
+		if (!lowtideRuinObjVertexBufferDirty && lowtideRuinObjVertexBuffer != null
+				&& Float.compare(lowtideRuinObjVertexBufferSkyDistance, skyDistance) == 0
+				&& lowtideRuinObjVertexBufferQuality == quality) {
+			return true;
+		}
+
+		BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+		BlockState state = Blocks.AIR.defaultBlockState();
+		PoseStack ruinPoseStack = new PoseStack();
+		Random random = new Random(LOWTIDE_RUIN_SEED + 4049L);
+		int farClusterCount = lowtideRuinFarClusterCount(quality);
+		int distantClusterCount = lowtideRuinDistantClusterCount(quality);
+		for (int cluster = 0; cluster < farClusterCount; cluster++) {
+			float ringT = (cluster + random.nextFloat() * 0.72F) / farClusterCount;
+			float angle = ringT * Mth.TWO_PI + Mth.lerp(random.nextFloat(), -0.12F, 0.12F);
+			float depthLane = random.nextFloat();
+			float distanceT;
+			if (depthLane < 0.22F) {
+				distanceT = Mth.lerp(random.nextFloat(), 0.58F, 0.78F);
+			} else if (depthLane < 0.58F) {
+				distanceT = Mth.lerp(random.nextFloat(), 0.82F, 1.08F);
+			} else if (depthLane < 0.86F) {
+				distanceT = Mth.lerp(random.nextFloat(), 1.14F, 1.42F);
+			} else {
+				distanceT = Mth.lerp(random.nextFloat(), 1.50F, 1.74F);
+			}
+			distanceT += Mth.sin(cluster * 2.173F) * 0.035F;
+			float distance = skyDistance * distanceT;
+			float distanceFade = Mth.clamp((distanceT - 0.58F) / 1.16F, 0.0F, 1.0F);
+			float scale = skyDistance * Mth.lerp(distanceFade, Mth.lerp(random.nextFloat(), 0.026F, 0.040F),
+					Mth.lerp(random.nextFloat(), 0.010F, 0.020F));
+			float light = Mth.lerp(distanceFade, 0.64F, 0.34F);
+			emitLowtideObjRuinCluster(ruinPoseStack, buffer, state, skyDistance, cluster, angle,
+					distance, scale, light, false,
+					new Random(LOWTIDE_RUIN_SEED + 9001L + cluster * 1871L));
+		}
+
+		random = new Random(LOWTIDE_RUIN_SEED + 19731L);
+		for (int cluster = 0; cluster < distantClusterCount; cluster++) {
+			float ringT = (cluster + random.nextFloat() * 0.86F) / distantClusterCount;
+			float angle = ringT * Mth.TWO_PI + Mth.lerp(random.nextFloat(), -0.10F, 0.10F);
+			float distanceT = Mth.lerp(random.nextFloat(), 1.62F, 2.05F) + Mth.sin(cluster * 1.719F) * 0.045F;
+			float distance = skyDistance * distanceT;
+			float scale = skyDistance * Mth.lerp(random.nextFloat(), 0.007F, 0.014F);
+			float light = Mth.lerp(Mth.clamp((distanceT - 1.62F) / 0.43F, 0.0F, 1.0F), LOWTIDE_RUIN_DISTANT_LIGHT,
+					0.18F);
+			emitLowtideObjRuinCluster(ruinPoseStack, buffer, state, skyDistance,
+					farClusterCount + cluster, angle, distance, scale,
+					light, true, new Random(LOWTIDE_RUIN_SEED + 31817L + cluster * 1327L));
+		}
+
+		MeshData meshData = buffer.build();
+		if (meshData == null) {
+			lowtideRuinObjVertexBufferDirty = true;
+			return false;
+		}
+
+		if (lowtideRuinObjVertexBuffer != null) {
+			lowtideRuinObjVertexBuffer.close();
+		}
+		lowtideRuinObjVertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		lowtideRuinObjVertexBuffer.bind();
+		lowtideRuinObjVertexBuffer.upload(meshData);
+		VertexBuffer.unbind();
+		lowtideRuinObjVertexBufferSkyDistance = skyDistance;
+		lowtideRuinObjVertexBufferQuality = quality;
+		lowtideRuinObjVertexBufferDirty = false;
+		return true;
+	}
+
+	private static int lowtideRuinFarClusterCount(LowtideRuinStructureQuality quality) {
+		return quality == LowtideRuinStructureQuality.LOW
+				? LOWTIDE_RUIN_LOW_FAR_CLUSTER_COUNT
+				: LOWTIDE_RUIN_HIGH_FAR_CLUSTER_COUNT;
+	}
+
+	private static int lowtideRuinDistantClusterCount(LowtideRuinStructureQuality quality) {
+		return quality == LowtideRuinStructureQuality.LOW
+				? LOWTIDE_RUIN_LOW_DISTANT_CLUSTER_COUNT
+				: LOWTIDE_RUIN_HIGH_DISTANT_CLUSTER_COUNT;
+	}
+
+	private static void emitLowtideObjRuinCluster(PoseStack poseStack, VertexConsumer consumer, BlockState state,
+			float skyDistance, int cluster, float angle,
+			float distance, float scale, float lightLevel, boolean distant, Random random) {
+		float lakeY = skyDistance * SKY_LAKE_Y_SCALE;
+		float drift = Mth.sin(cluster * 0.83F) * skyDistance * (distant ? 0.0018F : 0.0028F);
+		float centerX = Mth.cos(angle) * distance + Mth.cos(angle + Mth.PI * 0.5F) * drift;
+		float centerZ = Mth.sin(angle) * distance + Mth.sin(angle + Mth.PI * 0.5F) * drift;
+		float rightX = -Mth.sin(angle);
+		float rightZ = Mth.cos(angle);
+		float forwardX = Mth.cos(angle);
+		float forwardZ = Mth.sin(angle);
+		float bobY = Mth.sin(cluster * 1.17F) * skyDistance * (distant ? 0.0007F : 0.0011F);
+		float yaw = Mth.HALF_PI - angle + Mth.lerp(random.nextFloat(), -0.16F, 0.16F);
+		float redScale = lightLevel;
+		float greenScale = lightLevel * 0.92F;
+		float blueScale = lightLevel * 0.82F;
+		float xOffset = scale * Mth.lerp(random.nextFloat(), -1.8F, 1.8F);
+		float zOffset = scale * Mth.lerp(random.nextFloat(), -1.4F, 1.4F);
+		LowtideRuinObjModels.Piece piece = lowtideRuinObjPieceForCluster(cluster);
+		float modelScale = scale * lowtideRuinObjScale(piece);
+
+		emitLowtideObjPiece(poseStack, consumer, state, piece, centerX, centerZ, rightX, rightZ,
+				forwardX, forwardZ, xOffset, lakeY + bobY + lowtideRuinObjBaseLift(piece, scale), zOffset, yaw,
+				modelScale, lowtideRuinObjSourceCenterX(piece), lowtideRuinObjSourceCenterZ(piece),
+				lowtideRuinObjRed(piece) * redScale, lowtideRuinObjGreen(piece) * greenScale,
+				lowtideRuinObjBlue(piece) * blueScale);
+	}
+
+	private static LowtideRuinObjModels.Piece lowtideRuinObjPieceForCluster(int cluster) {
+		if (cluster % 5 == 0) {
+			return LowtideRuinObjModels.Piece.ARCH_FRAGMENT;
+		}
+		if (cluster % 7 == 0) {
+			return LowtideRuinObjModels.Piece.DOME_CHAPEL;
+		}
+		return switch (Math.floorMod(cluster, 3)) {
+			case 0 -> LowtideRuinObjModels.Piece.FOUNDATION_RUBBLE;
+			case 1 -> LowtideRuinObjModels.Piece.SPIRE_FRAGMENT;
+			default -> LowtideRuinObjModels.Piece.TOWER_SHORT;
+		};
+	}
+
+	private static float lowtideRuinObjScale(LowtideRuinObjModels.Piece piece) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE -> LOWTIDE_RUIN_OBJ_FOUNDATION_SCALE;
+			case TOWER_SHORT -> LOWTIDE_RUIN_OBJ_TOWER_SCALE;
+			case ARCH_FRAGMENT -> LOWTIDE_RUIN_OBJ_ARCH_SCALE;
+			case DOME_CHAPEL -> LOWTIDE_RUIN_OBJ_DOME_SCALE;
+			case SPIRE_FRAGMENT -> LOWTIDE_RUIN_OBJ_SPIRE_SCALE;
+		};
+	}
+
+	private static float lowtideRuinObjBaseLift(LowtideRuinObjModels.Piece piece, float scale) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE -> -scale * 0.18F;
+			case TOWER_SHORT -> scale * 0.14F;
+			case ARCH_FRAGMENT -> scale * 0.22F;
+			case DOME_CHAPEL -> scale * 0.10F;
+			case SPIRE_FRAGMENT -> scale * 0.26F;
+		};
+	}
+
+	private static float lowtideRuinObjSourceCenterX(LowtideRuinObjModels.Piece piece) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE, ARCH_FRAGMENT -> 7.0F;
+			case TOWER_SHORT -> 3.0F;
+			case DOME_CHAPEL -> 6.0F;
+			case SPIRE_FRAGMENT -> 2.0F;
+		};
+	}
+
+	private static float lowtideRuinObjSourceCenterZ(LowtideRuinObjModels.Piece piece) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE -> 4.0F;
+			case TOWER_SHORT -> 3.0F;
+			case ARCH_FRAGMENT, SPIRE_FRAGMENT -> 2.0F;
+			case DOME_CHAPEL -> 6.0F;
+		};
+	}
+
+	private static float lowtideRuinObjRed(LowtideRuinObjModels.Piece piece) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE -> 0.96F;
+			case TOWER_SHORT -> 0.90F;
+			case ARCH_FRAGMENT -> 0.88F;
+			case DOME_CHAPEL -> 0.86F;
+			case SPIRE_FRAGMENT -> 0.92F;
+		};
+	}
+
+	private static float lowtideRuinObjGreen(LowtideRuinObjModels.Piece piece) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE -> 0.90F;
+			case TOWER_SHORT -> 0.84F;
+			case ARCH_FRAGMENT -> 0.80F;
+			case DOME_CHAPEL -> 0.78F;
+			case SPIRE_FRAGMENT -> 0.83F;
+		};
+	}
+
+	private static float lowtideRuinObjBlue(LowtideRuinObjModels.Piece piece) {
+		return switch (piece) {
+			case FOUNDATION_RUBBLE -> 0.78F;
+			case TOWER_SHORT -> 0.72F;
+			case ARCH_FRAGMENT -> 0.68F;
+			case DOME_CHAPEL -> 0.66F;
+			case SPIRE_FRAGMENT -> 0.70F;
+		};
+	}
+
+	private static void emitLowtideObjPiece(PoseStack poseStack, VertexConsumer consumer, BlockState state,
+			LowtideRuinObjModels.Piece piece, float centerX, float centerZ, float rightX,
+			float rightZ, float forwardX, float forwardZ, float xOffset, float baseY, float zOffset, float yaw,
+			float modelScale, float sourceCenterX, float sourceCenterZ, float red, float green, float blue) {
+		BakedModel model = LowtideRuinObjModels.model(piece);
+		if (model == null) {
+			return;
+		}
+
+		float x = centerX + rightX * xOffset + forwardX * zOffset;
+		float z = centerZ + rightZ * xOffset + forwardZ * zOffset;
+		poseStack.pushPose();
+		poseStack.translate(x, baseY, z);
+		poseStack.mulPose(Axis.YP.rotation(yaw));
+		poseStack.scale(modelScale, modelScale, modelScale);
+		poseStack.translate(-sourceCenterX, 0.5F, -sourceCenterZ);
+		emitLowtideObjModelQuads(consumer, poseStack.last(), state, model, red, green, blue);
+		poseStack.popPose();
+	}
+
+	private static void emitLowtideObjModelQuads(VertexConsumer consumer, PoseStack.Pose pose, BlockState state,
+			BakedModel model, float red, float green, float blue) {
+		RandomSource random = RandomSource.create(42L);
+		for (Direction direction : Direction.values()) {
+			random.setSeed(42L);
+			emitLowtideObjQuadList(consumer, pose, model.getQuads(state, direction, random, ModelData.EMPTY,
+					RenderType.solid()), red, green, blue);
+		}
+		random.setSeed(42L);
+		emitLowtideObjQuadList(consumer, pose, model.getQuads(state, null, random, ModelData.EMPTY,
+				RenderType.solid()), red, green, blue);
+	}
+
+	private static void emitLowtideObjQuadList(VertexConsumer consumer, PoseStack.Pose pose, Iterable<BakedQuad> quads,
+			float red, float green, float blue) {
+		for (BakedQuad quad : quads) {
+			consumer.putBulkData(pose, quad, red, green, blue, 1.0F, LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY);
+		}
+	}
+
+	private static void renderLowtideRetiredPanelRuinCluster(BufferBuilder buffer, Matrix4f matrix, float time,
+			float skyDistance, int cluster, float angle, float distance, float scale, boolean near, float lightLevel,
+			Random random) {
+		float lakeY = skyDistance * SKY_LAKE_Y_SCALE;
+		float drift = Mth.sin(time * 0.00055F + cluster * 0.83F) * skyDistance * (near ? 0.0045F : 0.0025F);
+		float centerX = Mth.cos(angle) * distance + Mth.cos(angle + Mth.PI * 0.5F) * drift;
+		float centerZ = Mth.sin(angle) * distance + Mth.sin(angle + Mth.PI * 0.5F) * drift;
+		float rightX = -Mth.sin(angle);
+		float rightZ = Mth.cos(angle);
+		float forwardX = Mth.cos(angle);
+		float forwardZ = Mth.sin(angle);
+		float distanceFade = lowtideRuinDistanceFade(distance, skyDistance, near);
+		float span = scale * Mth.lerp(random.nextFloat(), near ? 4.9F : 3.6F, near ? 7.2F : 5.3F);
+		float foundationHeight = scale * Mth.lerp(random.nextFloat(), 0.58F, 0.96F);
+		float foundationDepth = scale * Mth.lerp(random.nextFloat(), 0.72F, 1.12F);
+		float bobY = Mth.sin(time * 0.0011F + cluster * 1.17F) * skyDistance * 0.0018F;
+
+		renderLowtideRuinReflection(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				lakeY + bobY, span, scale, distanceFade, lightLevel, near, random);
+		renderLowtideRuinFoundation(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				lakeY + bobY, span, foundationHeight, foundationDepth, distanceFade, lightLevel, cluster, random);
+
+		int towerCount = near ? 2 + random.nextInt(2) : 1 + random.nextInt(2);
+		for (int tower = 0; tower < towerCount; tower++) {
+			float xOffset = Mth.lerp(random.nextFloat(), -span * 0.38F, span * 0.38F);
+			float zOffset = Mth.lerp(random.nextFloat(), -foundationDepth * 0.20F, foundationDepth * 0.22F);
+			float radius = scale * Mth.lerp(random.nextFloat(), near ? 0.38F : 0.30F, near ? 0.62F : 0.48F);
+			float height = scale * Mth.lerp(random.nextFloat(), near ? 2.9F : 2.0F, near ? 5.5F : 3.8F);
+			float baseY = lakeY + bobY + foundationHeight * Mth.lerp(random.nextFloat(), 0.20F, 0.45F);
+			boolean dome = tower == 0 && random.nextBoolean();
+			renderLowtideRuinTower(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+					baseY, zOffset, radius, height, 5 + random.nextInt(3), random.nextFloat() * Mth.TWO_PI,
+					distanceFade, lightLevel, cluster + tower * 31, dome, random);
+		}
+
+		float archX = Mth.lerp(random.nextFloat(), -span * 0.36F, span * 0.36F);
+		float archBaseY = lakeY + bobY + foundationHeight * Mth.lerp(random.nextFloat(), 0.24F, 0.54F);
+		renderLowtideRuinArch(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, archX, archBaseY,
+				-foundationDepth * Mth.lerp(random.nextFloat(), 0.18F, 0.44F), scale * Mth.lerp(random.nextFloat(),
+						near ? 1.15F : 0.88F, near ? 1.65F : 1.25F), distanceFade, lightLevel, cluster, random);
+
+		int spireCount = near ? 3 : 2;
+		for (int spire = 0; spire < spireCount; spire++) {
+			float xOffset = Mth.lerp(random.nextFloat(), -span * 0.48F, span * 0.48F);
+			float baseY = lakeY + bobY + foundationHeight * Mth.lerp(random.nextFloat(), 0.38F, 0.82F);
+			renderLowtideRuinSpire(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+					baseY, foundationDepth * Mth.lerp(random.nextFloat(), -0.18F, 0.25F),
+					scale * Mth.lerp(random.nextFloat(), near ? 1.65F : 1.10F, near ? 2.75F : 1.95F),
+					scale * Mth.lerp(random.nextFloat(), 0.13F, 0.24F), distanceFade, lightLevel);
+		}
+
+		int slabCount = near ? 4 : 2;
+		for (int slab = 0; slab < slabCount; slab++) {
+			float xOffset = Mth.lerp(random.nextFloat(), -span * 0.55F, span * 0.55F);
+			float y = lakeY + bobY + foundationHeight * Mth.lerp(random.nextFloat(), 0.15F, 0.62F);
+			float zOffset = -foundationDepth * Mth.lerp(random.nextFloat(), 0.28F, 0.62F);
+			float tilt = Mth.lerp(random.nextFloat(), -0.58F, 0.58F);
+			float slabHalfWidth = scale * Mth.lerp(random.nextFloat(), 0.42F, 0.82F);
+			float slabHalfHeight = scale * Mth.lerp(random.nextFloat(), 0.18F, 0.35F);
+			float stoneAlpha = lowtideRuinStructureAlpha(distanceFade);
+			int color = lowtideRuinLitColor(184, 144, 92, 218.0F * stoneAlpha, lightLevel);
+			addLowtideRuinRotatedPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+					y, zOffset, slabHalfWidth, slabHalfHeight, tilt, color);
+			int pageLineColor = lowtideRuinLitColor(76, 48, 34, 150.0F * stoneAlpha, lightLevel);
+			addLowtideRuinRotatedPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					xOffset - slabHalfWidth * 0.10F, y + slabHalfHeight * 0.18F, zOffset - scale * 0.018F,
+					slabHalfWidth * 0.58F, slabHalfHeight * 0.030F, tilt, pageLineColor);
+			addLowtideRuinRotatedPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					xOffset + slabHalfWidth * 0.06F, y - slabHalfHeight * 0.18F, zOffset - scale * 0.020F,
+					slabHalfWidth * 0.44F, slabHalfHeight * 0.026F, tilt, pageLineColor);
+		}
+
+		int stainCount = near ? 3 : 1;
+		for (int stain = 0; stain < stainCount; stain++) {
+			float xOffset = Mth.lerp(random.nextFloat(), -span * 0.42F, span * 0.42F);
+			float topY = lakeY + bobY + foundationHeight * Mth.lerp(random.nextFloat(), 0.66F, 1.12F);
+			float bottomY = topY - scale * Mth.lerp(random.nextFloat(), near ? 0.48F : 0.26F, near ? 1.20F : 0.70F);
+			float halfWidth = scale * Mth.lerp(random.nextFloat(), 0.035F, 0.075F);
+			float zOffset = -foundationDepth * Mth.lerp(random.nextFloat(), 0.36F, 0.58F);
+			int color = lowtideRuinLitColor(116, 28, 20, 176.0F * lowtideRuinStructureAlpha(distanceFade),
+					lightLevel);
+			addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					xOffset - halfWidth, topY, zOffset, xOffset + halfWidth, topY, zOffset,
+					xOffset + halfWidth * 0.58F, bottomY, zOffset - scale * 0.04F,
+					xOffset - halfWidth * 0.45F, bottomY, zOffset - scale * 0.02F, color);
+		}
+	}
+
+	private static void renderLowtideRuinFoundation(BufferBuilder buffer, Matrix4f matrix, float centerX,
+			float centerZ, float rightX, float rightZ, float forwardX, float forwardZ, float lakeY, float span,
+			float height, float depth, float alpha, float lightLevel, int seed, Random random) {
+		float stoneAlpha = lowtideRuinStructureAlpha(alpha);
+		int segments = 9;
+		for (int segment = 0; segment < segments; segment++) {
+			float x0T = segment / (float) segments;
+			float x1T = (segment + 1) / (float) segments;
+			float x0 = Mth.lerp(x0T, -span * 0.5F, span * 0.5F);
+			float x1 = Mth.lerp(x1T, -span * 0.5F, span * 0.5F);
+			float edge = Math.min(x0T, 1.0F - x1T) * 2.0F;
+			float top = lakeY + height * Mth.lerp(random.nextFloat(), 0.02F, 0.36F) * Mth.clamp(edge + 0.28F, 0.0F,
+					1.0F);
+			float bottom = lakeY - height * Mth.lerp(random.nextFloat(), 0.35F, 0.95F);
+			float z = Mth.lerp(random.nextFloat(), -depth * 0.20F, depth * 0.16F);
+			float shade = 0.72F + random.nextFloat() * 0.30F;
+			int color = lowtideRuinLitTint(132, 96, 58, shade, 242.0F * stoneAlpha, lightLevel);
+			addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					x0, bottom, z, x1, bottom - height * 0.10F, z + depth * 0.08F, x1, top, z, x0, top + height
+							* Mth.lerp(random.nextFloat(), -0.05F, 0.12F), z - depth * 0.07F, color);
+		}
+
+		int capColor = lowtideRuinLitColor(172, 132, 78, 232.0F * stoneAlpha, lightLevel);
+		addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				-span * 0.48F, lakeY + height * 0.18F, -depth * 0.48F,
+				span * 0.48F, lakeY + height * 0.15F, -depth * 0.40F,
+				span * 0.42F, lakeY + height * 0.06F, depth * 0.24F,
+				-span * 0.42F, lakeY + height * 0.08F, depth * 0.20F, capColor);
+		renderLowtideRuinMasonryTexture(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				0.0F, lakeY - height * 0.24F, lakeY + height * 0.18F, -depth * 0.50F, span * 0.44F,
+				Math.max(height, depth), stoneAlpha, lightLevel, seed * 23 + 5);
+	}
+
+	private static void renderLowtideRuinTower(BufferBuilder buffer, Matrix4f matrix, float centerX, float centerZ,
+			float rightX, float rightZ, float forwardX, float forwardZ, float xOffset, float baseY, float zOffset,
+			float radius, float height, int sideCount, float twist, float alpha, float lightLevel, int seed, boolean dome,
+			Random random) {
+		sideCount = Math.max(4, sideCount);
+		float topY = baseY + height;
+		float[] cornerX = new float[sideCount + 1];
+		float[] cornerZ = new float[sideCount + 1];
+		float[] topX = new float[sideCount + 1];
+		float[] topZ = new float[sideCount + 1];
+		float[] cornerTopY = new float[sideCount + 1];
+		for (int corner = 0; corner < sideCount; corner++) {
+			float angle = twist + corner / (float) sideCount * Mth.TWO_PI;
+			float baseRadius = radius * (0.86F + ((seed + corner * 13) % 7) * 0.030F);
+			float taperRadius = radius * (0.58F + ((seed + corner * 17) % 5) * 0.036F);
+			cornerX[corner] = xOffset + Mth.cos(angle) * baseRadius;
+			cornerZ[corner] = zOffset + Mth.sin(angle) * baseRadius * 0.58F;
+			topX[corner] = xOffset + Mth.cos(angle + 0.08F) * taperRadius;
+			topZ[corner] = zOffset + Mth.sin(angle + 0.08F) * taperRadius * 0.58F;
+			cornerTopY[corner] = topY - radius * ((seed + corner * 19) % 4) * 0.18F;
+		}
+		cornerX[sideCount] = cornerX[0];
+		cornerZ[sideCount] = cornerZ[0];
+		topX[sideCount] = topX[0];
+		topZ[sideCount] = topZ[0];
+		cornerTopY[sideCount] = cornerTopY[0];
+
+		for (int side = 0; side < sideCount; side++) {
+			float shade = 0.68F + (side % 3) * 0.13F + random.nextFloat() * 0.08F;
+			int color = lowtideRuinLitTint(156, 118, 72, shade, 248.0F * lowtideRuinStructureAlpha(alpha),
+					lightLevel);
+			addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					cornerX[side], baseY, cornerZ[side], cornerX[side + 1], baseY, cornerZ[side + 1],
+					topX[side + 1], cornerTopY[side + 1], topZ[side + 1], topX[side], cornerTopY[side],
+					topZ[side], color);
+		}
+
+		float stoneAlpha = lowtideRuinStructureAlpha(alpha);
+		int windowColor = lowtideRuinLitColor(28, 16, 16, 238.0F * stoneAlpha, lightLevel);
+		float frontZ = zOffset - radius * 0.50F;
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset - radius * 0.18F, baseY + height * 0.34F, frontZ - 0.02F,
+				radius * 0.11F, height * 0.18F, windowColor);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset + radius * 0.18F, baseY + height * 0.56F, frontZ - 0.03F,
+				radius * 0.09F, height * 0.16F, windowColor);
+		renderLowtideRuinMasonryTexture(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset, baseY + height * 0.08F, baseY + height * 0.88F, frontZ - radius * 0.04F,
+				radius * 0.56F, radius, stoneAlpha, lightLevel, seed + 410);
+
+		if (dome) {
+			renderLowtideRuinDome(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+					topY - radius * 0.24F, zOffset - radius * 0.03F, radius * 1.28F, radius * 0.92F, alpha,
+					lightLevel);
+		} else {
+			renderLowtideRuinSpire(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+					topY - radius * 0.10F, zOffset, radius * 1.45F, radius * 0.34F, alpha, lightLevel);
+		}
+	}
+
+	private static void renderLowtideRuinDome(BufferBuilder buffer, Matrix4f matrix, float centerX, float centerZ,
+			float rightX, float rightZ, float forwardX, float forwardZ, float xOffset, float baseY, float zOffset,
+			float halfWidth, float height, float alpha, float lightLevel) {
+		int bands = 5;
+		for (int band = 0; band < bands; band++) {
+			float t0 = band / (float) bands;
+			float t1 = (band + 1) / (float) bands;
+			float y0 = baseY + height * t0;
+			float y1 = baseY + height * t1;
+			float half0 = halfWidth * Mth.cos(t0 * Mth.PI * 0.5F);
+			float half1 = halfWidth * Mth.cos(t1 * Mth.PI * 0.5F);
+			int color = lowtideRuinLitTint(174, 133, 82, 0.74F + band * 0.055F,
+					(236.0F - band * 6.0F) * lowtideRuinStructureAlpha(alpha), lightLevel);
+			addLowtideRuinTrapezoid(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+					zOffset, y0, y1, half0, half1, color);
+		}
+		float stoneAlpha = lowtideRuinStructureAlpha(alpha);
+		int rimColor = lowtideRuinLitColor(78, 44, 34, 226.0F * stoneAlpha, lightLevel);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+				baseY + height * 0.05F, zOffset - 0.04F, halfWidth * 1.05F, height * 0.055F, rimColor);
+		int ribColor = lowtideRuinLitColor(76, 48, 34, 156.0F * stoneAlpha, lightLevel);
+		for (int rib = -1; rib <= 1; rib++) {
+			addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					xOffset + halfWidth * rib * 0.30F, baseY + height * 0.42F, zOffset - 0.055F,
+					halfWidth * 0.018F, height * 0.32F, ribColor);
+		}
+	}
+
+	private static void renderLowtideRuinArch(BufferBuilder buffer, Matrix4f matrix, float centerX, float centerZ,
+			float rightX, float rightZ, float forwardX, float forwardZ, float xOffset, float baseY, float zOffset,
+			float scale, float alpha, float lightLevel, int seed, Random random) {
+		float pillarHeight = scale * Mth.lerp(random.nextFloat(), 1.18F, 1.66F);
+		float openingHalf = scale * Mth.lerp(random.nextFloat(), 0.58F, 0.86F);
+		float thickness = scale * Mth.lerp(random.nextFloat(), 0.16F, 0.24F);
+		float stoneAlpha = lowtideRuinStructureAlpha(alpha);
+		int pillarColor = lowtideRuinLitColor(164, 121, 72, 244.0F * stoneAlpha, lightLevel);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset - openingHalf, baseY + pillarHeight * 0.50F, zOffset, thickness, pillarHeight * 0.50F,
+				pillarColor);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset + openingHalf, baseY + pillarHeight * 0.43F, zOffset, thickness * 0.82F,
+				pillarHeight * 0.43F, pillarColor);
+		renderLowtideRuinMasonryTexture(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset - openingHalf, baseY, baseY + pillarHeight * 0.94F, zOffset - scale * 0.018F,
+				thickness * 0.50F, scale, stoneAlpha, lightLevel, seed * 37 + 7);
+		renderLowtideRuinMasonryTexture(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset + openingHalf, baseY, baseY + pillarHeight * 0.80F, zOffset - scale * 0.020F,
+				thickness * 0.42F, scale, stoneAlpha, lightLevel, seed * 37 + 11);
+
+		int chunks = 7;
+		for (int chunk = 0; chunk < chunks; chunk++) {
+			if (chunk == 2 + seed % 3) {
+				continue;
+			}
+			float t = chunk / (float) (chunks - 1);
+			float theta = Mth.PI - t * Mth.PI;
+			float archX = xOffset + Mth.cos(theta) * openingHalf;
+			float archY = baseY + pillarHeight + Mth.sin(theta) * openingHalf * 0.72F;
+			float tilt = theta - Mth.PI * 0.5F;
+			int color = lowtideRuinLitTint(174, 132, 82, 0.74F + random.nextFloat() * 0.24F,
+					236.0F * stoneAlpha, lightLevel);
+			addLowtideRuinRotatedPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					archX, archY, zOffset - 0.05F, thickness * 0.92F, thickness * 0.45F, tilt, color);
+		}
+
+		int shadowColor = lowtideRuinLitColor(36, 20, 18, 205.0F * stoneAlpha, lightLevel);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+				baseY + pillarHeight * 0.48F, zOffset - 0.08F, openingHalf * 0.42F, pillarHeight * 0.30F,
+				shadowColor);
+	}
+
+	private static void renderLowtideRuinSpire(BufferBuilder buffer, Matrix4f matrix, float centerX, float centerZ,
+			float rightX, float rightZ, float forwardX, float forwardZ, float xOffset, float baseY, float zOffset,
+			float height, float halfWidth, float alpha, float lightLevel) {
+		float stoneAlpha = lowtideRuinStructureAlpha(alpha);
+		int shaftColor = lowtideRuinLitColor(134, 93, 58, 224.0F * stoneAlpha, lightLevel);
+		int tipColor = lowtideRuinLitColor(190, 144, 84, 232.0F * stoneAlpha, lightLevel);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+				baseY + height * 0.28F, zOffset, halfWidth * 0.28F, height * 0.28F, shaftColor);
+		addLowtideRuinTrapezoid(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+				zOffset - 0.03F, baseY + height * 0.50F, baseY + height, halfWidth, halfWidth * 0.08F, tipColor);
+		int bandColor = lowtideRuinLitColor(76, 48, 34, 156.0F * stoneAlpha, lightLevel);
+		addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, xOffset,
+				baseY + height * 0.52F, zOffset - 0.045F, halfWidth * 0.48F, height * 0.018F, bandColor);
+	}
+
+	private static void renderLowtideRuinReflection(BufferBuilder buffer, Matrix4f matrix, float centerX,
+			float centerZ, float rightX, float rightZ, float forwardX, float forwardZ, float lakeY, float span,
+			float scale, float alpha, float lightLevel, boolean near, Random random) {
+		int streaks = near ? 8 : 4;
+		for (int streak = 0; streak < streaks; streak++) {
+			float xOffset = Mth.lerp(random.nextFloat(), -span * 0.48F, span * 0.48F);
+			float width = scale * Mth.lerp(random.nextFloat(), 0.035F, 0.090F);
+			float topY = lakeY - scale * Mth.lerp(random.nextFloat(), 0.08F, 0.22F);
+			float bottomY = topY - scale * Mth.lerp(random.nextFloat(), near ? 1.5F : 0.8F, near ? 3.6F : 2.0F);
+			float lean = scale * Mth.lerp(random.nextFloat(), -0.45F, 0.45F);
+			int color = random.nextInt(5) == 0
+					? lowtideRuinLitColor(126, 32, 24, 32.0F * alpha, lightLevel)
+					: lowtideRuinLitColor(192, 145, 86, 30.0F * alpha, lightLevel);
+			addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					xOffset - width, topY, -scale * 0.16F, xOffset + width, topY, -scale * 0.18F,
+					xOffset + width * 0.40F + lean, bottomY, -scale * 0.28F,
+					xOffset - width * 0.40F + lean, bottomY, -scale * 0.30F, color);
+		}
+	}
+
+	private static float lowtideRuinDistanceFade(float distance, float skyDistance, boolean near) {
+		float distanceT = Mth.clamp(distance / skyDistance, 0.0F, 1.25F);
+		float base = near ? Mth.lerp(distanceT, 1.0F, 0.90F) : Mth.lerp(distanceT, 0.90F, 0.64F);
+		return Mth.clamp(base, near ? 0.86F : 0.58F, 1.0F);
+	}
+
+	private static float lowtideRuinStructureAlpha(float alpha) {
+		return Mth.clamp(alpha + 0.18F, 0.0F, 1.0F);
+	}
+
+	private static int lowtideRuinTint(int red, int green, int blue, float shade, float alpha) {
+		return lowtideRuinColor(Mth.floor(red * shade), Mth.floor(green * shade), Mth.floor(blue * shade), alpha);
+	}
+
+	private static int lowtideRuinLitTint(int red, int green, int blue, float shade, float alpha, float lightLevel) {
+		return lowtideRuinLitColor(Mth.floor(red * shade), Mth.floor(green * shade), Mth.floor(blue * shade),
+				alpha, lightLevel);
+	}
+
+	private static int lowtideRuinLitColor(int red, int green, int blue, float alpha, float lightLevel) {
+		float light = Mth.clamp(lightLevel, 0.0F, 1.0F);
+		float alphaScale = Mth.lerp(light, 0.68F, 1.0F);
+		return lowtideRuinColor(Mth.floor(red * light), Mth.floor(green * light), Mth.floor(blue * light),
+				alpha * alphaScale);
+	}
+
+	private static int lowtideRuinColor(int red, int green, int blue, float alpha) {
+		int packedAlpha = Mth.floor(Mth.clamp(alpha, 0.0F, 255.0F));
+		return packedAlpha << 24
+				| Mth.floor(Mth.clamp(red, 0.0F, 255.0F)) << 16
+				| Mth.floor(Mth.clamp(green, 0.0F, 255.0F)) << 8
+				| Mth.floor(Mth.clamp(blue, 0.0F, 255.0F));
+	}
+
+	private static void addLowtideRuinPanel(BufferBuilder buffer, Matrix4f matrix, float centerX, float centerZ,
+			float rightX, float rightZ, float forwardX, float forwardZ, float xOffset, float centerY,
+			float zOffset, float halfWidth, float halfHeight, int color) {
+		addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset - halfWidth, centerY - halfHeight, zOffset, xOffset + halfWidth, centerY - halfHeight,
+				zOffset, xOffset + halfWidth, centerY + halfHeight, zOffset, xOffset - halfWidth,
+				centerY + halfHeight, zOffset, color);
+	}
+
+	private static void addLowtideRuinTrapezoid(BufferBuilder buffer, Matrix4f matrix, float centerX,
+			float centerZ, float rightX, float rightZ, float forwardX, float forwardZ, float xOffset,
+			float zOffset, float bottomY, float topY, float bottomHalfWidth, float topHalfWidth, int color) {
+		addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				xOffset - bottomHalfWidth, bottomY, zOffset, xOffset + bottomHalfWidth, bottomY, zOffset,
+				xOffset + topHalfWidth, topY, zOffset, xOffset - topHalfWidth, topY, zOffset, color);
+	}
+
+	private static void addLowtideRuinRotatedPanel(BufferBuilder buffer, Matrix4f matrix, float centerX,
+			float centerZ, float rightX, float rightZ, float forwardX, float forwardZ, float xOffset,
+			float centerY, float zOffset, float halfWidth, float halfHeight, float tilt, int color) {
+		float cos = Mth.cos(tilt);
+		float sin = Mth.sin(tilt);
+		float x0 = xOffset + -halfWidth * cos - -halfHeight * sin;
+		float y0 = centerY + -halfWidth * sin + -halfHeight * cos;
+		float x1 = xOffset + halfWidth * cos - -halfHeight * sin;
+		float y1 = centerY + halfWidth * sin + -halfHeight * cos;
+		float x2 = xOffset + halfWidth * cos - halfHeight * sin;
+		float y2 = centerY + halfWidth * sin + halfHeight * cos;
+		float x3 = xOffset + -halfWidth * cos - halfHeight * sin;
+		float y3 = centerY + -halfWidth * sin + halfHeight * cos;
+		addLowtideRuinLocalQuad(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+				x0, y0, zOffset, x1, y1, zOffset, x2, y2, zOffset, x3, y3, zOffset, color);
+	}
+
+	private static void renderLowtideRuinMasonryTexture(BufferBuilder buffer, Matrix4f matrix, float centerX,
+			float centerZ, float rightX, float rightZ, float forwardX, float forwardZ, float xOffset,
+			float bottomY, float topY, float zOffset, float halfWidth, float scale, float alpha, float lightLevel,
+			int seed) {
+		if (topY <= bottomY || halfWidth <= 0.0F || scale <= 0.0F) {
+			return;
+		}
+
+		Random random = new Random(LOWTIDE_RUIN_SEED + seed * 3067L);
+		float height = topY - bottomY;
+		float faceZ = zOffset - scale * 0.018F;
+		int courseCount = Math.max(3, Math.min(8, Mth.floor(height / Math.max(scale * 0.30F, 0.001F))));
+		for (int course = 0; course < courseCount; course++) {
+			float y = bottomY + height * (course + 1.0F) / (courseCount + 1.0F)
+					+ Mth.lerp(random.nextFloat(), -height * 0.022F, height * 0.022F);
+			float lineHalfWidth = halfWidth * Mth.lerp(random.nextFloat(), 0.68F, 1.02F);
+			float lineHalfHeight = Math.max(scale * 0.010F, height * 0.004F);
+			int color = lowtideRuinLitColor(74, 50, 36,
+					Mth.lerp(random.nextFloat(), 126.0F, 184.0F) * alpha, lightLevel);
+			addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					xOffset + Mth.lerp(random.nextFloat(), -halfWidth * 0.05F, halfWidth * 0.05F), y, faceZ,
+					lineHalfWidth, lineHalfHeight, color);
+		}
+
+		int crackCount = 2 + random.nextInt(3);
+		for (int crack = 0; crack < crackCount; crack++) {
+			float crackX = xOffset + Mth.lerp(random.nextFloat(), -halfWidth * 0.78F, halfWidth * 0.78F);
+			float crackBottom = bottomY + height * Mth.lerp(random.nextFloat(), 0.08F, 0.72F);
+			float crackTop = Math.min(topY, crackBottom + height * Mth.lerp(random.nextFloat(), 0.16F, 0.44F));
+			int color = lowtideRuinLitColor(48, 32, 28,
+					Mth.lerp(random.nextFloat(), 150.0F, 218.0F) * alpha, lightLevel);
+			addLowtideRuinPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					crackX, (crackBottom + crackTop) * 0.5F, faceZ - scale * 0.010F,
+					Math.max(scale * 0.012F, halfWidth * 0.022F), (crackTop - crackBottom) * 0.50F, color);
+		}
+
+		int chipCount = 2 + random.nextInt(4);
+		for (int chip = 0; chip < chipCount; chip++) {
+			boolean highlight = random.nextBoolean();
+			float chipX = xOffset + Mth.lerp(random.nextFloat(), -halfWidth * 0.76F, halfWidth * 0.76F);
+			float chipY = bottomY + height * Mth.lerp(random.nextFloat(), 0.10F, 0.90F);
+			float chipHalfWidth = halfWidth * Mth.lerp(random.nextFloat(), 0.035F, 0.090F);
+			float chipHalfHeight = height * Mth.lerp(random.nextFloat(), 0.012F, 0.036F);
+			int color = highlight
+					? lowtideRuinLitColor(220, 176, 108,
+							Mth.lerp(random.nextFloat(), 84.0F, 128.0F) * alpha, lightLevel)
+					: lowtideRuinLitColor(86, 54, 34,
+							Mth.lerp(random.nextFloat(), 126.0F, 178.0F) * alpha, lightLevel);
+			addLowtideRuinRotatedPanel(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ,
+					chipX, chipY, faceZ - scale * 0.016F, chipHalfWidth, chipHalfHeight,
+					Mth.lerp(random.nextFloat(), -0.28F, 0.28F), color);
+		}
+	}
+
+	private static void addLowtideRuinLocalQuad(BufferBuilder buffer, Matrix4f matrix, float centerX,
+			float centerZ, float rightX, float rightZ, float forwardX, float forwardZ, float x0, float y0,
+			float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3,
+			float z3, int color) {
+		addLowtideRuinVertex(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x0, y0, z0,
+				color);
+		addLowtideRuinVertex(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x1, y1, z1,
+				color);
+		addLowtideRuinVertex(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x2, y2, z2,
+				color);
+		addLowtideRuinVertex(buffer, matrix, centerX, centerZ, rightX, rightZ, forwardX, forwardZ, x3, y3, z3,
+				color);
+	}
+
+	private static void addLowtideRuinVertex(BufferBuilder buffer, Matrix4f matrix, float centerX, float centerZ,
+			float rightX, float rightZ, float forwardX, float forwardZ, float xOffset, float y, float zOffset,
+			int color) {
+		float x = centerX + rightX * xOffset + forwardX * zOffset;
+		float z = centerZ + rightZ * xOffset + forwardZ * zOffset;
+		buffer.addVertex(matrix, x, y, z)
+				.setColor((color >> 16) & 255, (color >> 8) & 255, color & 255, (color >> 24) & 255);
 	}
 
 	static void renderLowtideWateryFog(PoseStack poseStack, float time, float skyDistance) {

@@ -64,6 +64,7 @@ import com.vincenthuto.hemomancy.client.render.tile.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.*;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberOfWillEffects;
+import com.vincenthuto.hemomancy.client.render.world.chamberofwill.LowtideRuinObjModels;
 import com.vincenthuto.hemomancy.client.screen.item.PuppeteersSpindleScreen;
 import com.vincenthuto.hemomancy.client.screen.item.ScryingDiagnosticsScreen;
 import com.vincenthuto.hemomancy.client.screen.item.StructureSpawnerScreen;
@@ -1000,6 +1001,7 @@ public class ClientEvents {
         public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
+            LowtideRuinObjModels.register(event);
 
         }
 
@@ -1009,6 +1011,7 @@ public class ClientEvents {
                     .get(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
             bloodProjectionModel = evt.getModels()
                     .get(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
+            LowtideRuinObjModels.cache(evt);
         }
 
         @SubscribeEvent

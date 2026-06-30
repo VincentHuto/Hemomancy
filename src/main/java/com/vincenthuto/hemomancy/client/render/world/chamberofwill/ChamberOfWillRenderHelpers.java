@@ -560,7 +560,8 @@ final class ChamberOfWillRenderHelpers {
             float depth = -skyDistance * (layer.depthScale() + vein * 0.008F + face * 0.008F);
             float span = layeredSpan(skyDistance * (0.22F + (seed % 4) * 0.026F), layer);
             float laneOffset = (mirroredLaneBase + laneJitter) * skyDistance;
-            float angle = faceVenousAngle(face, vein % 4) + Mth.sin(layerTime * 1.1122F + seed) * Mth.lerp(layer.t(), 1.0F, 3.2F);
+            float angleDriftTime = layerTime * 0.0112F;
+            float angle = faceVenousAngle(face, vein % 4) + Mth.sin(angleDriftTime + seed) * Mth.lerp(layer.t(), 1.0F, 3.2F);
             float wave = 0.62F + (seed % 4) * 0.08F + layer.t() * 0.20F;
             float phase = seed * .71F;
             float baseWidth = layeredSize(Mth.lerp(layer.t(), 0.035F, 0.24F) + (seed % 3) * 0.016F, layer);

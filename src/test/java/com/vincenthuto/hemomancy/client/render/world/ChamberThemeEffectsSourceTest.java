@@ -112,6 +112,12 @@ public final class ChamberThemeEffectsSourceTest {
 
 		assertNotContains("shared helpers should not contain mnemonic lowtide render bodies", helpers,
 				"renderMnemonicLowtide");
+		assertContains("blue vein orientation uses a deliberately slow drift scalar", helpers,
+				"float angleDriftTime = layerTime * 0.0112F;");
+		assertContains("blue vein orientation applies slow drift instead of rapid tick-scale wobble", helpers,
+				"float angle = faceVenousAngle(face, vein % 4) + Mth.sin(angleDriftTime + seed) * Mth.lerp(layer.t(), 1.0F, 3.2F);");
+		assertNotContains("blue vein orientation should not rapidly bounce on raw layer time", helpers,
+				"Mth.sin(layerTime * 1.1122F + seed)");
 
 		assertContains("reference documents per-theme effects ownership", reference,
 				"Each registered Chamber sky theme also owns a `ChamberThemeEffects` strategy");
