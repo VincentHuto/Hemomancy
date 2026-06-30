@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.MorphlingJarModel;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -37,7 +38,10 @@ public class MorphlingJarLayer<T extends LivingEntity, M extends HumanoidModel<T
         }
         if (ent instanceof Player player) {
             HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-                var stack = inv.getStackInSlot(7);
+                if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.JAR_SLOT_INDEX)) {
+                    return;
+                }
+                var stack = inv.getStackInSlot(HarbingerEquipmentMenu.JAR_SLOT_INDEX);
                 if (stack.getItem() instanceof ItemMorphlingJar jar) {
                     this.translateToBody(matrixStack);
                     VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(texture));

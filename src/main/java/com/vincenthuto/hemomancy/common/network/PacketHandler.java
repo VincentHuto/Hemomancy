@@ -113,6 +113,10 @@ public class PacketHandler {
         net.playBidirectional(PacketToggleBinderMessage.TYPE, PacketToggleBinderMessage.STREAM_CODEC, PacketToggleBinderMessage::handle);
         net.playBidirectional(PacketCurvedHornAnimation.TYPE, PacketCurvedHornAnimation.STREAM_CODEC, PacketCurvedHornAnimation::handle);
         net.playBidirectional(ToggleGourdKeyPacket.TYPE, ToggleGourdKeyPacket.STREAM_CODEC, ToggleGourdKeyPacket::handle);
+        net.playToServer(ToggleEquipmentLayerVisibilityPacket.TYPE,
+                ToggleEquipmentLayerVisibilityPacket.STREAM_CODEC, ToggleEquipmentLayerVisibilityPacket::handle);
+        net.playToClient(SyncEquipmentLayerVisibilityPacket.TYPE,
+                SyncEquipmentLayerVisibilityPacket.STREAM_CODEC, SyncEquipmentLayerVisibilityPacket::handle);
 
         // ── Known Manipulations ───────────────────────────────────────────────
         net.playBidirectional(KnownManipulationClientPacket.TYPE, KnownManipulationClientPacket.STREAM_CODEC, KnownManipulationClientPacket::handle);

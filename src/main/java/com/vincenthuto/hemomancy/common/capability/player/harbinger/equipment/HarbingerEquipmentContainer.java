@@ -22,6 +22,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	private final static int SCAR_SLOTS = 8;
 	private final ItemStack[] eventPrevious = new ItemStack[SCAR_SLOTS];
 	private final ItemStack[] syncPrevious = new ItemStack[SCAR_SLOTS];
+	private final boolean[] renderLayerVisible = new boolean[SCAR_SLOTS];
 	private boolean[] changed = new boolean[SCAR_SLOTS];
 	private boolean blockEvents = false;
 	private boolean EquipmentUnlocked = false;
@@ -32,6 +33,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 		this.holder = null;
 		Arrays.fill(eventPrevious, ItemStack.EMPTY);
 		Arrays.fill(syncPrevious, ItemStack.EMPTY);
+		Arrays.fill(renderLayerVisible, true);
 	}
 
 	public HarbingerEquipmentContainer(LivingEntity player) {
@@ -39,6 +41,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 		this.holder = player;
 		Arrays.fill(eventPrevious, ItemStack.EMPTY);
 		Arrays.fill(syncPrevious, ItemStack.EMPTY);
+		Arrays.fill(renderLayerVisible, true);
 	}
 
 	public LivingEntity getHolder() {
@@ -95,8 +98,22 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	}
 
 	@Override
+	public boolean isRenderLayerVisible(int slot) {
+		if (slot < 0 || slot >= renderLayerVisible.length) return true;
+		return renderLayerVisible[slot];
+	}
+
+	@Override
 	public void setEquipmentUnlocked(boolean unlocked) {
 		this.EquipmentUnlocked = unlocked;
+	}
+
+	@Override
+	public void setRenderLayerVisible(int slot, boolean visible) {
+		if (slot < 0 || slot >= renderLayerVisible.length) {
+			return;
+		}
+		renderLayerVisible[slot] = visible;
 	}
 
 	@Override
@@ -138,6 +155,11 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag nbt = super.serializeNBT(provider);
 		nbt.putBoolean("EquipmentUnlocked", EquipmentUnlocked);
+		CompoundTag visibilityTag = new CompoundTag();
+		for (int i = 0; i < renderLayerVisible.length; i++) {
+			visibilityTag.putBoolean(Integer.toString(i), renderLayerVisible[i]);
+		}
+		nbt.put("RenderLayerVisibility", visibilityTag);
 		return nbt;
 	}
 
@@ -145,6 +167,15 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 		super.deserializeNBT(provider, nbt);
 		this.EquipmentUnlocked = nbt.getBoolean("EquipmentUnlocked");
+		Arrays.fill(renderLayerVisible, true);
+		if (nbt.contains("RenderLayerVisibility")) {
+			CompoundTag visibilityTag = nbt.getCompound("RenderLayerVisibility");
+			for (int i = 0; i < renderLayerVisible.length; i++) {
+				if (visibilityTag.contains(Integer.toString(i))) {
+					renderLayerVisible[i] = visibilityTag.getBoolean(Integer.toString(i));
+				}
+			}
+		}
 	}
 
 	@Override

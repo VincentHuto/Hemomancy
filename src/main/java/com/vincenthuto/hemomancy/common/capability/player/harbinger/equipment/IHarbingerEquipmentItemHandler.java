@@ -11,9 +11,13 @@ public interface IHarbingerEquipmentItemHandler extends IItemHandlerModifiable {
 
 	boolean isEquipmentUnlocked();
 
+	boolean isRenderLayerVisible(int slot);
+
 	void setEquipmentUnlocked(boolean unlocked);
 
 	void setEventBlock(boolean blockEvents);
+
+	void setRenderLayerVisible(int slot, boolean visible);
 
 	void tick();
 }

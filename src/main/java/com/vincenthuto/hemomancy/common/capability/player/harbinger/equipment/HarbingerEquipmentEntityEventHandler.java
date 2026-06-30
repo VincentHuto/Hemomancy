@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketGourdScarSync;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncEquipmentLayerVisibilityPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketEquipmentSync;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +37,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -100,6 +102,9 @@ public class HarbingerEquipmentEntityEventHandler {
         if (target instanceof ServerPlayer) {
             syncSlots((ServerPlayer) target, Collections.singletonList(event.getEntity()));
         }
+        if (event.getEntity() instanceof ServerPlayer tracker && target instanceof ServerPlayer trackedPlayer) {
+            syncLayerVisibilityToPlayer(trackedPlayer, tracker);
+        }
     }
     private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
         HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
@@ -121,6 +126,28 @@ public class HarbingerEquipmentEntityEventHandler {
         Entity entity = event.getEntity();
         if (entity instanceof ServerPlayer player) {
             syncSlots(player, Collections.singletonList(player));
+            syncLayerVisibilityToClient(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer) {
+            syncLayerVisibilityToClient((ServerPlayer) event.getEntity());
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            syncLayerVisibilityToClient(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            syncLayerVisibilityToClient(player);
         }
     }
     // --- Capability lifecycle ---
@@ -158,6 +185,26 @@ public class HarbingerEquipmentEntityEventHandler {
             for (byte i = 0; i < equipment.getSlots(); i++) {
                 syncSlot(player, i, equipment.getStackInSlot(i), receivers);
             }
+        });
+    }
+
+    public static void syncLayerVisibilityToClient(ServerPlayer player) {
+        HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
+                    new SyncEquipmentLayerVisibilityPacket(player.getId(),
+                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
+                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
+                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
+        });
+    }
+
+    public static void syncLayerVisibilityToPlayer(ServerPlayer source, ServerPlayer receiver) {
+        HemoCapabilityAccess.getEquipment(source).ifPresent(equipment -> {
+            PacketDistributor.sendToPlayer(receiver,
+                    new SyncEquipmentLayerVisibilityPacket(source.getId(),
+                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
+                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
+                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
         });
     }
 

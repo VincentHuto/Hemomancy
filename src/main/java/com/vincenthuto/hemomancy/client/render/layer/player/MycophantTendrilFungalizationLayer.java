@@ -86,7 +86,8 @@ public class MycophantTendrilFungalizationLayer<T extends LivingEntity, M extend
 
 	private static boolean hasMycophantTendril(Player player) {
 		return HemoCapabilityAccess.getEquipment(player)
-				.map(inv -> inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get()))
+				.map(inv -> inv.isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)
+						&& inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get()))
 				.orElse(false);
 	}
 

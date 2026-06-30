@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.model.armor.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -68,7 +69,10 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
         }
         if (ent instanceof Player player) {
             HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-                var stack = inv.getStackInSlot(6);
+                if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.GOURD_SLOT_INDEX)) {
+                    return;
+                }
+                var stack = inv.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
                 if (stack.getItem() instanceof BloodGourdItem gourd) {
                     this.translateToBody(matrixStack);
 

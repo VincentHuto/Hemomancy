@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -31,7 +32,10 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 		}
 		if (ent instanceof Player player) {
 			HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-				ItemStack charmStack = inv.getStackInSlot(5);
+				if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)) {
+					return;
+				}
+				ItemStack charmStack = inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
 				if (charmStack.getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();
 					matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());

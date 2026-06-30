@@ -2664,6 +2664,8 @@
   "message.hemomancy.saint_sarcophagus.responsive_hint": "The corpus stirs. Continue drawing blood with empty Blood Vials; then process the Consecrated Syringe in a Vial Centrifuge.",
   "message.hemomancy.saint_sarcophagus.success": "The Saint's remains yield an enzyme.",
   "screen.hemomancy.discovery_inscription.open_rite": "Open Rite",
+  "screen.hemomancy.scarlet_vanity.layer.hide": "Hide layer",
+  "screen.hemomancy.scarlet_vanity.layer.show": "Show layer",
   "screen.hemomancy.harbinger_assignment_ledger.degree": "Current degree: %s",
   "screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.complete": "All eight enzyme expressions recorded. The Vial Centrifuge has nothing left to prove to you.",
   "screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.desc": "Carry one of each enzyme to prove mastery of blood sampling and centrifuge separation.",

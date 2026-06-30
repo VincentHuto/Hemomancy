@@ -3258,7 +3258,7 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 
 | Screen | Opened From | Purpose |
 |--------|------------|---------|
-| `CharmGourdScreen` | Scarlet Vanity | Equip Charm of Vascularium, Blood Gourds, and Morphling Jar |
+| `CharmGourdScreen` | Scarlet Vanity | Equip Charm of Vascularium, Blood Gourds, and Morphling Jar. The jar, charm, and gourd slots include eye toggles that persist per player and control whether those equipped layers render on the player for other clients. |
 | `HarbingerProgressScreen` | Sanguine Conduit | Harbinger progress suite (Skills/Manipulations/Crafting/Scars/Rites/Materials), now tab-controller modularized; Skills overlay includes rank title text. The Manipulations tab detail panel wraps its description text within the available area so longer descriptions do not clip into the known-status and requirement sections. |
 | `SynapticLoadoutScreen` | Dendritic Distributor | Carousel UI for remembered manipulation loadouts. Empty slots save the current normal manipulation set for 100 blood + 25 raw XP; existing patterns can be applied, renamed, or overwritten. |
 | `TendencyViewScreen` | Blood Tendency Gauge | View blood tendency alignments |

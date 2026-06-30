@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.menu.slot.EquipmentArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveEquipmentTypeSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.VasculariumCharmSlot;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleEquipmentLayerVisibilityPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -36,6 +38,7 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	private static final int MIRROR_W = 74;
 	private static final int MIRROR_H = 87;
 	private static final int VEIN_COUNT = 18;
+	private static final int LAYER_TOGGLE_SIZE = 7;
 	private static final ResourceLocation EMPTY_CHARM_SLOT =
 			Hemomancy.rloc("textures/gui/empty_charm_slot_background.png");
 	private static final ResourceLocation EMPTY_GOURD_SLOT =
@@ -97,9 +100,19 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
+		renderLayerToggleIcons(graphics, mouseX, mouseY);
 		this.renderTooltip(graphics, mouseX, mouseY);
+		renderLayerToggleTooltip(graphics, mouseX, mouseY);
 		this.oldMouseX = mouseX;
 		this.oldMouseY = mouseY;
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (handleLayerToggleClick(mouseX, mouseY, button)) {
+			return true;
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
 	}
 
 	@Override
@@ -189,6 +202,87 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 		}
 
 		renderEmptySlotOverlay(gfx, sx, sy, slot);
+	}
+
+	private void renderLayerToggleIcons(GuiGraphics gfx, int mouseX, int mouseY) {
+		renderLayerToggleIcon(gfx, mouseX, mouseY, 4, HarbingerEquipmentMenu.JAR_SLOT_INDEX);
+		renderLayerToggleIcon(gfx, mouseX, mouseY, 5, HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+		renderLayerToggleIcon(gfx, mouseX, mouseY, 6, HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
+	}
+
+	private void renderLayerToggleIcon(GuiGraphics gfx, int mouseX, int mouseY, int menuSlot, int slotIndex) {
+		Slot slot = this.menu.slots.get(menuSlot);
+		int iconX = this.leftPos + slot.x + 16;
+		int iconY = this.topPos + slot.y -5;
+		boolean visible = this.menu.equipment.isRenderLayerVisible(slotIndex);
+		boolean hovered = isMouseOver(iconX, iconY, LAYER_TOGGLE_SIZE, LAYER_TOGGLE_SIZE, mouseX, mouseY);
+		drawLayerVisibilityIcon(gfx, iconX, iconY, visible, hovered);
+	}
+
+	private void drawLayerVisibilityIcon(GuiGraphics gfx, int x, int y, boolean visible, boolean hovered) {
+		int outline = visible ? 0xFFE3A2A8 : 0xFF5E3538;
+		int pupil = visible ? 0xFFFFD0D5 : 0xFF7A484C;
+		int shadow = hovered ? 0xAA2A080A : 0x880A0203;
+
+		gfx.fill(x, y, x + LAYER_TOGGLE_SIZE, y + LAYER_TOGGLE_SIZE, shadow);
+		gfx.fill(x + 1, y + 2, x + 6, y + 3, outline);
+		gfx.fill(x, y + 3, x + 2, y + 4, outline);
+		gfx.fill(x + 5, y + 3, x + 7, y + 4, outline);
+		gfx.fill(x + 1, y + 4, x + 6, y + 5, outline);
+		gfx.fill(x + 3, y + 3, x + 4, y + 4, pupil);
+		if (!visible) {
+			gfx.fill(x + 1, y + 5, x + 2, y + 6, 0xFFFF4A52);
+			gfx.fill(x + 2, y + 4, x + 3, y + 5, 0xFFFF4A52);
+			gfx.fill(x + 3, y + 3, x + 4, y + 4, 0xFFFF4A52);
+			gfx.fill(x + 4, y + 2, x + 5, y + 3, 0xFFFF4A52);
+			gfx.fill(x + 5, y + 1, x + 6, y + 2, 0xFFFF4A52);
+		}
+	}
+
+	private void renderLayerToggleTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
+		Integer slotIndex = layerToggleSlotAt(mouseX, mouseY);
+		if (slotIndex == null) {
+			return;
+		}
+		String key = this.menu.equipment.isRenderLayerVisible(slotIndex)
+				? "screen.hemomancy.scarlet_vanity.layer.hide"
+				: "screen.hemomancy.scarlet_vanity.layer.show";
+		gfx.renderTooltip(this.font, Component.translatable(key), mouseX, mouseY);
+	}
+
+	private boolean handleLayerToggleClick(double mouseX, double mouseY, int button) {
+		if (button != 0) {
+			return false;
+		}
+		Integer slotIndex = layerToggleSlotAt(mouseX, mouseY);
+		if (slotIndex == null) {
+			return false;
+		}
+		PacketHandler.sendToServer(new ToggleEquipmentLayerVisibilityPacket(slotIndex));
+		return true;
+	}
+
+	private Integer layerToggleSlotAt(double mouseX, double mouseY) {
+		if (isOverLayerToggle(this.menu.slots.get(4), mouseX, mouseY)) {
+			return HarbingerEquipmentMenu.JAR_SLOT_INDEX;
+		}
+		if (isOverLayerToggle(this.menu.slots.get(5), mouseX, mouseY)) {
+			return HarbingerEquipmentMenu.CHARM_SLOT_INDEX;
+		}
+		if (isOverLayerToggle(this.menu.slots.get(6), mouseX, mouseY)) {
+			return HarbingerEquipmentMenu.GOURD_SLOT_INDEX;
+		}
+		return null;
+	}
+
+	private boolean isOverLayerToggle(Slot slot, double mouseX, double mouseY) {
+		int iconX = this.leftPos + slot.x + 16;
+		int iconY = this.topPos + slot.y -5;
+		return isMouseOver(iconX, iconY, LAYER_TOGGLE_SIZE, LAYER_TOGGLE_SIZE, mouseX, mouseY);
+	}
+
+	private static boolean isMouseOver(int x, int y, int width, int height, double mouseX, double mouseY) {
+		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 
 	private void renderEmptySlotOverlay(GuiGraphics gfx, int sx, int sy, Slot slot) {
