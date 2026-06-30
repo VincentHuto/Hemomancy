@@ -75,6 +75,8 @@ public final class ChamberThemeEffectsSourceTest {
 				"new BlankChamberThemeEffects(mnemonicLowtide)");
 		assertContains("lowtide effects own skybox lake render entry", lowtideEffects,
 				"renderLowtideSkyLake(");
+		assertContains("lowtide effects own ceiling root render entry", lowtideEffects,
+				"renderLowtideCeilingRoots(");
 		assertContains("lowtide effects use lowtide lake render type", lowtideEffects,
 				"HemoRenderTypes.mnemonicLowtideLake(");
 		assertContains("lowtide effects place lake in skybox space", lowtideEffects,
@@ -112,6 +114,8 @@ public final class ChamberThemeEffectsSourceTest {
 
 		assertNotContains("shared helpers should not contain mnemonic lowtide render bodies", helpers,
 				"renderMnemonicLowtide");
+		assertNotContains("shared helpers should not contain lowtide ceiling root render bodies", helpers,
+				"renderLowtideCeilingRoots");
 		assertContains("blue vein orientation uses a deliberately slow drift scalar", helpers,
 				"float angleDriftTime = layerTime * 0.0112F;");
 		assertContains("blue vein orientation applies slow drift instead of rapid tick-scale wobble", helpers,

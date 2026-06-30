@@ -40,13 +40,29 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static final int LOWTIDE_RUIN_HIGH_DISTANT_CLUSTER_COUNT = 12;
 	private static final int LOWTIDE_RUIN_LOW_FAR_CLUSTER_COUNT = 27;
 	private static final int LOWTIDE_RUIN_LOW_DISTANT_CLUSTER_COUNT = 6;
+	private static final int LOWTIDE_CEILING_ROOT_CLUSTER_COUNT = 24;
+	private static final int LOWTIDE_CEILING_ROOT_MIN_STRANDS = 5;
+	private static final int LOWTIDE_CEILING_ROOT_MAX_STRANDS = 11;
+	private static final int LOWTIDE_CEILING_ROOT_SEGMENTS = 22;
+	private static final int LOWTIDE_CEILING_ROOT_FORK_SEGMENTS = 9;
 	private static final int LOWTIDE_WATERY_FOG_BAND_COUNT =12;
 	private static final int LOWTIDE_WATERY_FOG_COLUMNS = 14;
 	private static final int LOWTIDE_WATERY_FOG_ROWS = 9;
 	private static final long LOWTIDE_RUIN_SEED = 108571L;
+	private static final long LOWTIDE_CEILING_ROOT_SEED = 219781L;
 	private static final float LOWTIDE_SKYBOX_DISTANCE_SCALE = 0.965F;
 	private static final float LOWTIDE_SKYBOX_TIME_SCALE = 0.040F;
 	private static final float LOWTIDE_SKYBOX_BASE_TIME_SCALE = 0.026F;
+	private static final float LOWTIDE_CEILING_ROOT_TIME_SCALE = 0.018F;
+	private static final float LOWTIDE_CEILING_ROOT_CEILING_Y_SCALE = 0.80F;
+	private static final float LOWTIDE_CEILING_ROOT_MIN_LENGTH_SCALE = 0.20F;
+	private static final float LOWTIDE_CEILING_ROOT_MAX_LENGTH_SCALE = 0.56F;
+	private static final float LOWTIDE_CEILING_ROOT_SPAN_SCALE = 0.82F;
+	private static final float LOWTIDE_CEILING_ROOT_CLUSTER_RADIUS_SCALE = 0.044F;
+	private static final float LOWTIDE_CEILING_ROOT_MIN_WIDTH_SCALE = 0.0024F;
+	private static final float LOWTIDE_CEILING_ROOT_MAX_WIDTH_SCALE = 0.0058F;
+	private static final float LOWTIDE_CEILING_ROOT_BODY_ALPHA = 214.0F;
+	private static final float LOWTIDE_CEILING_ROOT_HIGHLIGHT_ALPHA = 132.0F;
 	private static final float LOWTIDE_SKYBOX_TUNNEL_SEED = 41.0F;
 	private static final float LOWTIDE_SKYBOX_BASE_SEED = 113.0F;
 	private static final float LOWTIDE_SKYBOX_FACE_SEED_STEP = 37.0F;
@@ -95,6 +111,7 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	protected void renderBeforeSharedLayers(ChamberThemeRenderContext context) {
 		renderLowtideSkyboxBase(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance());
+		renderLowtideCeilingRoots(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideRuinedStructures(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideSkyLake(context.poseStack(), context.time(), context.skyDistance());
 		renderLowtideWateryFog(context.poseStack(), context.time(), context.skyDistance());
@@ -179,6 +196,223 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		consumer.addVertex(matrix, x, y, z)
 				.setUv(u, v)
 				.setColor(255, 255, 255, alpha);
+	}
+
+	static void renderLowtideCeilingRoots(PoseStack poseStack, float time, float skyDistance) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableCull();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		VertexConsumer consumer = buffer.getBuffer(HemoRenderTypes.MNEMONIC_LOWTIDE_CEILING_ROOTS);
+		Matrix4f matrix = poseStack.last().pose();
+		Random random = new Random(LOWTIDE_CEILING_ROOT_SEED);
+		float rootTime = time * LOWTIDE_CEILING_ROOT_TIME_SCALE;
+		float ceilingY = skyDistance * LOWTIDE_CEILING_ROOT_CEILING_Y_SCALE;
+		for (int cluster = 0; cluster < LOWTIDE_CEILING_ROOT_CLUSTER_COUNT; cluster++) {
+			float ringT = (cluster + random.nextFloat() * 0.78F) / LOWTIDE_CEILING_ROOT_CLUSTER_COUNT;
+			float angle = ringT * Mth.TWO_PI + Mth.lerp(random.nextFloat(), -0.16F, 0.16F);
+			float distance = skyDistance * Mth.lerp(random.nextFloat(), 0.10F, LOWTIDE_CEILING_ROOT_SPAN_SCALE);
+			if (cluster % 6 == 0) {
+				distance *= 0.58F;
+			}
+			float clusterX = Mth.cos(angle) * distance;
+			float clusterZ = Mth.sin(angle) * distance;
+			float clusterY = ceilingY + skyDistance * Mth.lerp(random.nextFloat(), -0.026F, 0.018F);
+			int strandCount = LOWTIDE_CEILING_ROOT_MIN_STRANDS
+					+ random.nextInt(LOWTIDE_CEILING_ROOT_MAX_STRANDS - LOWTIDE_CEILING_ROOT_MIN_STRANDS + 1);
+			for (int strand = 0; strand < strandCount; strand++) {
+				Random strandRandom = new Random(LOWTIDE_CEILING_ROOT_SEED + cluster * 1299709L + strand * 64271L);
+				float localAngle = strandRandom.nextFloat() * Mth.TWO_PI;
+				float localDistance = skyDistance * LOWTIDE_CEILING_ROOT_CLUSTER_RADIUS_SCALE
+						* Mth.lerp(strandRandom.nextFloat(), 0.08F, 1.12F);
+				float anchorX = clusterX + Mth.cos(localAngle) * localDistance;
+				float anchorY = clusterY + skyDistance * Mth.lerp(strandRandom.nextFloat(), -0.010F, 0.010F);
+				float anchorZ = clusterZ + Mth.sin(localAngle) * localDistance;
+				float length = skyDistance * Mth.lerp(strandRandom.nextFloat(),
+						LOWTIDE_CEILING_ROOT_MIN_LENGTH_SCALE, LOWTIDE_CEILING_ROOT_MAX_LENGTH_SCALE);
+				float baseWidth = skyDistance * Mth.lerp(strandRandom.nextFloat(),
+						LOWTIDE_CEILING_ROOT_MIN_WIDTH_SCALE, LOWTIDE_CEILING_ROOT_MAX_WIDTH_SCALE);
+				float ribbonAngle = localAngle + Mth.lerp(strandRandom.nextFloat(), -0.40F, 0.40F);
+				float phase = strandRandom.nextFloat() * Mth.TWO_PI + cluster * 0.47F;
+				float alphaScale = Mth.lerp(strandRandom.nextFloat(), 0.82F, 1.0F);
+				int seed = cluster * 97 + strand * 29;
+				emitLowtideCeilingRootStrand(consumer, matrix, anchorX, anchorY, anchorZ, length, baseWidth,
+						ribbonAngle, phase, rootTime, alphaScale, seed);
+			}
+		}
+
+		buffer.endBatch(HemoRenderTypes.MNEMONIC_LOWTIDE_CEILING_ROOTS);
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableCull();
+	}
+
+	private static void emitLowtideCeilingRootStrand(VertexConsumer consumer, Matrix4f matrix, float anchorX,
+			float anchorY, float anchorZ, float length, float baseWidth, float ribbonAngle, float phase,
+			float rootTime, float alphaScale, int seed) {
+		for (int segment = 0; segment < LOWTIDE_CEILING_ROOT_SEGMENTS; segment++) {
+			float t0 = segment / (float) LOWTIDE_CEILING_ROOT_SEGMENTS;
+			float t1 = (segment + 1) / (float) LOWTIDE_CEILING_ROOT_SEGMENTS;
+			float x0 = lowtideCeilingRootX(anchorX, length, t0, phase, rootTime, seed);
+			float y0 = lowtideCeilingRootY(anchorY, length, t0, phase, rootTime);
+			float z0 = lowtideCeilingRootZ(anchorZ, length, t0, phase, rootTime, seed);
+			float x1 = lowtideCeilingRootX(anchorX, length, t1, phase, rootTime, seed);
+			float y1 = lowtideCeilingRootY(anchorY, length, t1, phase, rootTime);
+			float z1 = lowtideCeilingRootZ(anchorZ, length, t1, phase, rootTime, seed);
+			float width0 = lowtideCeilingRootWidth(baseWidth, t0, phase, rootTime);
+			float width1 = lowtideCeilingRootWidth(baseWidth, t1, phase, rootTime);
+			int body0 = lowtideCeilingRootBodyColor(seed, t0, alphaScale);
+			int body1 = lowtideCeilingRootBodyColor(seed, t1, alphaScale);
+			emitLowtideCeilingRootCrossRibbon(consumer, matrix, x0, y0, z0, width0, body0, x1, y1, z1, width1,
+					body1, ribbonAngle);
+
+			if ((seed + segment) % 3 == 0) {
+				int glint0 = lowtideCeilingRootParchmentColor(seed, t0, alphaScale);
+				int glint1 = lowtideCeilingRootParchmentColor(seed, t1, alphaScale);
+				emitLowtideCeilingRootCrossRibbon(consumer, matrix, x0, y0, z0, width0 * 0.28F, glint0,
+						x1, y1, z1, width1 * 0.24F, glint1, ribbonAngle + 0.28F);
+			}
+		}
+
+		if (seed % 3 != 1) {
+			emitLowtideCeilingRootFork(consumer, matrix, anchorX, anchorY, anchorZ, length, baseWidth, ribbonAngle,
+					phase, rootTime, alphaScale, seed);
+		}
+	}
+
+	private static void emitLowtideCeilingRootFork(VertexConsumer consumer, Matrix4f matrix, float anchorX,
+			float anchorY, float anchorZ, float parentLength, float parentWidth, float ribbonAngle, float phase,
+			float rootTime, float alphaScale, int seed) {
+		float forkT = 0.36F + Math.floorMod(seed, 7) * 0.055F;
+		float startX = lowtideCeilingRootX(anchorX, parentLength, forkT, phase, rootTime, seed);
+		float startY = lowtideCeilingRootY(anchorY, parentLength, forkT, phase, rootTime);
+		float startZ = lowtideCeilingRootZ(anchorZ, parentLength, forkT, phase, rootTime, seed);
+		float side = seed % 2 == 0 ? 1.0F : -1.0F;
+		float forkAngle = ribbonAngle + side * (0.70F + Math.floorMod(seed, 5) * 0.09F);
+		float forkLength = parentLength * (0.14F + Math.floorMod(seed, 6) * 0.018F);
+		float alongX = Mth.cos(forkAngle);
+		float alongZ = Mth.sin(forkAngle);
+		float forkPhase = phase + seed * 0.37F;
+		for (int segment = 0; segment < LOWTIDE_CEILING_ROOT_FORK_SEGMENTS; segment++) {
+			float t0 = segment / (float) LOWTIDE_CEILING_ROOT_FORK_SEGMENTS;
+			float t1 = (segment + 1) / (float) LOWTIDE_CEILING_ROOT_FORK_SEGMENTS;
+			float x0 = lowtideCeilingRootForkX(startX, alongX, forkLength, t0, forkPhase, rootTime);
+			float y0 = lowtideCeilingRootForkY(startY, forkLength, t0, forkPhase, rootTime);
+			float z0 = lowtideCeilingRootForkZ(startZ, alongZ, forkLength, t0, forkPhase, rootTime);
+			float x1 = lowtideCeilingRootForkX(startX, alongX, forkLength, t1, forkPhase, rootTime);
+			float y1 = lowtideCeilingRootForkY(startY, forkLength, t1, forkPhase, rootTime);
+			float z1 = lowtideCeilingRootForkZ(startZ, alongZ, forkLength, t1, forkPhase, rootTime);
+			float width0 = lowtideCeilingRootWidth(parentWidth * 0.42F, t0, forkPhase, rootTime);
+			float width1 = lowtideCeilingRootWidth(parentWidth * 0.42F, t1, forkPhase, rootTime);
+			int color0 = lowtideCeilingRootParchmentColor(seed + 11, t0, alphaScale * 0.74F);
+			int color1 = lowtideCeilingRootParchmentColor(seed + 11, t1, alphaScale * 0.74F);
+			emitLowtideCeilingRootCrossRibbon(consumer, matrix, x0, y0, z0, width0, color0, x1, y1, z1, width1,
+					color1, forkAngle);
+		}
+	}
+
+	private static float lowtideCeilingRootX(float anchorX, float length, float t, float phase, float rootTime,
+			int seed) {
+		float rootEase = lowtideSmoothstep(0.0F, 0.18F, t);
+		float broad = Mth.sin(rootTime * 0.73F + phase + t * 4.6F);
+		float fine = Mth.sin(rootTime * 1.17F + phase * 0.47F + t * 13.2F);
+		float fixedCurl = Mth.sin(seed * 0.31F + t * Mth.PI * 1.35F);
+		return anchorX + (broad * 0.018F + fine * 0.006F + fixedCurl * 0.010F) * length * rootEase;
+	}
+
+	private static float lowtideCeilingRootY(float anchorY, float length, float t, float phase, float rootTime) {
+		float tremble = Mth.sin(rootTime * 0.42F + phase + t * 5.8F) * length * 0.004F * t;
+		return anchorY - length * t + tremble;
+	}
+
+	private static float lowtideCeilingRootZ(float anchorZ, float length, float t, float phase, float rootTime,
+			int seed) {
+		float rootEase = lowtideSmoothstep(0.0F, 0.18F, t);
+		float broad = Mth.cos(rootTime * 0.68F + phase * 0.83F + t * 4.1F);
+		float fine = Mth.sin(rootTime * 1.03F + phase * 0.59F + t * 12.4F);
+		float fixedCurl = Mth.cos(seed * 0.27F + t * Mth.PI * 1.48F);
+		return anchorZ + (broad * 0.017F + fine * 0.006F + fixedCurl * 0.010F) * length * rootEase;
+	}
+
+	private static float lowtideCeilingRootForkX(float startX, float alongX, float forkLength, float t,
+			float phase, float rootTime) {
+		float curl = Mth.sin(rootTime * 0.92F + phase + t * 7.4F) * forkLength * 0.040F;
+		return startX + alongX * forkLength * t + curl;
+	}
+
+	private static float lowtideCeilingRootForkY(float startY, float forkLength, float t, float phase,
+			float rootTime) {
+		float sag = Mth.sin(t * Mth.PI) * forkLength * 0.10F;
+		float flutter = Mth.sin(rootTime * 0.74F + phase + t * 5.0F) * forkLength * 0.010F;
+		return startY - forkLength * 0.66F * t - sag + flutter;
+	}
+
+	private static float lowtideCeilingRootForkZ(float startZ, float alongZ, float forkLength, float t,
+			float phase, float rootTime) {
+		float curl = Mth.cos(rootTime * 0.88F + phase * 0.71F + t * 6.7F) * forkLength * 0.040F;
+		return startZ + alongZ * forkLength * t + curl;
+	}
+
+	private static float lowtideCeilingRootWidth(float baseWidth, float t, float phase, float rootTime) {
+		float taper = Mth.clamp(1.12F - t * 0.96F, 0.080F, 1.0F);
+		float pulse = 0.88F + 0.12F * Mth.sin(rootTime * 1.6F + phase + t * 9.0F);
+		return baseWidth * taper * pulse;
+	}
+
+	private static int lowtideCeilingRootBodyColor(int seed, float t, float alphaScale) {
+		float damp = 0.88F + Math.floorMod(seed, 5) * 0.040F;
+		int red = Mth.floor(Mth.clamp((88.0F + Math.floorMod(seed, 4) * 10.0F) * damp, 0.0F, 255.0F));
+		int green = Mth.floor(Mth.clamp(28.0F + t * 24.0F, 0.0F, 255.0F));
+		int blue = Mth.floor(Mth.clamp(18.0F + t * 14.0F, 0.0F, 255.0F));
+		int alpha = lowtideCeilingRootAlpha(t, alphaScale, LOWTIDE_CEILING_ROOT_BODY_ALPHA);
+		return (alpha << 24) | (red << 16) | (green << 8) | blue;
+	}
+
+	private static int lowtideCeilingRootParchmentColor(int seed, float t, float alphaScale) {
+		int red = 206 + Math.floorMod(seed, 5) * 6;
+		int green = Mth.floor(Mth.clamp(142.0F + t * 30.0F, 0.0F, 255.0F));
+		int blue = Mth.floor(Mth.clamp(82.0F + t * 22.0F, 0.0F, 255.0F));
+		int alpha = lowtideCeilingRootAlpha(t, alphaScale, LOWTIDE_CEILING_ROOT_HIGHLIGHT_ALPHA);
+		return (alpha << 24) | (red << 16) | (green << 8) | blue;
+	}
+
+	private static int lowtideCeilingRootAlpha(float t, float alphaScale, float baseAlpha) {
+		float tipFade = 1.0F - lowtideSmoothstep(0.72F, 1.0F, t);
+		float rootFade = Mth.clamp(0.42F + t * 5.0F, 0.0F, 1.0F);
+		float lowerFade = Mth.clamp(1.0F - t * 0.24F, 0.42F, 1.0F);
+		return Mth.floor(Mth.clamp(baseAlpha * tipFade * rootFade * lowerFade * alphaScale, 0.0F, 220.0F));
+	}
+
+	private static void emitLowtideCeilingRootCrossRibbon(VertexConsumer consumer, Matrix4f matrix, float x0,
+			float y0, float z0, float width0, int color0, float x1, float y1, float z1, float width1, int color1,
+			float ribbonAngle) {
+		emitLowtideCeilingRootRibbon(consumer, matrix, x0, y0, z0, width0, color0, x1, y1, z1, width1, color1,
+				ribbonAngle);
+		emitLowtideCeilingRootRibbon(consumer, matrix, x0, y0, z0, width0, color0, x1, y1, z1, width1, color1,
+				ribbonAngle + Mth.HALF_PI);
+	}
+
+	private static void emitLowtideCeilingRootRibbon(VertexConsumer consumer, Matrix4f matrix, float x0, float y0,
+			float z0, float width0, int color0, float x1, float y1, float z1, float width1, int color1,
+			float ribbonAngle) {
+		float normalX = Mth.cos(ribbonAngle);
+		float normalZ = Mth.sin(ribbonAngle);
+		addLowtideCeilingRootVertex(consumer, matrix, x0 - normalX * width0, y0, z0 - normalZ * width0, color0);
+		addLowtideCeilingRootVertex(consumer, matrix, x0 + normalX * width0, y0, z0 + normalZ * width0, color0);
+		addLowtideCeilingRootVertex(consumer, matrix, x1 + normalX * width1, y1, z1 + normalZ * width1, color1);
+		addLowtideCeilingRootVertex(consumer, matrix, x1 - normalX * width1, y1, z1 - normalZ * width1, color1);
+	}
+
+	private static void addLowtideCeilingRootVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y,
+			float z, int color) {
+		consumer.addVertex(matrix, x, y, z)
+				.setColor((color >> 16) & 255, (color >> 8) & 255, color & 255, (color >> 24) & 255);
 	}
 
 	static void renderLowtideSkyLake(PoseStack poseStack, float time, float skyDistance) {

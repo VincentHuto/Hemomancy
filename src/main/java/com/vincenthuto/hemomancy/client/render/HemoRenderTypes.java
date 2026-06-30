@@ -63,6 +63,18 @@ public final class HemoRenderTypes {
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	public static final RenderType MNEMONIC_LOWTIDE_CEILING_ROOTS = RenderType.create(
+			"mnemonic_lowtide_ceiling_roots",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 8192, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(RenderType.NO_DEPTH_TEST)
+					.setWriteMaskState(RenderType.COLOR_WRITE)
+					.setCullState(RenderType.NO_CULL)
+					.setLightmapState(RenderType.NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static RenderType loomOrbShell(float gameTime, float orbSeed, float centerX, float centerY, float centerZ,
 			float orbRadius, float writheStrength, float threadScale, boolean glowLayer) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(

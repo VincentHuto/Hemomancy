@@ -113,6 +113,8 @@ public final class MnemonicLowtideLakeSourceTest {
 				"public static RenderType mnemonicLowtideSkyboxBase(");
 		assertContains("watery fog uses a simple position-color render type", renderTypes,
 				"MNEMONIC_LOWTIDE_WATERY_FOG");
+		assertContains("ceiling roots use a simple position-color render type", renderTypes,
+				"MNEMONIC_LOWTIDE_CEILING_ROOTS");
 		assertContains("watery fog render type avoids custom shader fragility", renderTypes,
 				"DefaultVertexFormat.POSITION_COLOR");
 		assertNotContains("render types should not keep obsolete lowtide surface fog shader binding", renderTypes,
@@ -146,10 +148,32 @@ public final class MnemonicLowtideLakeSourceTest {
 				"renderLowtideSkyLake(");
 		assertContains("renderer calls watery fog independently of lake rendering", lowtideEffects,
 				"renderLowtideWateryFog(context.poseStack(), context.time(), context.skyDistance())");
+		assertContains("renderer calls ceiling roots independently of lake rendering", lowtideEffects,
+				"renderLowtideCeilingRoots(context.poseStack(), context.time(), context.skyDistance())");
 		assertContains("renderer calls tunnel skybox before lowtide lake", lowtideEffects,
 				"renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance())");
+		assertContains("renderer places ceiling roots after tunnel membranes and before flooded ruins", lowtideEffects,
+				"renderLowtideTunnelSkybox(context.poseStack(), context.time(), context.skyDistance());\n"
+						+ "\t\trenderLowtideCeilingRoots(context.poseStack(), context.time(), context.skyDistance());\n"
+						+ "\t\trenderLowtideRuinedStructures(context.poseStack(), context.time(), context.skyDistance());");
 		assertContains("renderer calls nodule base skybox before tunnel membranes", lowtideEffects,
 				"renderLowtideSkyboxBase(context.poseStack(), context.time(), context.skyDistance());\n\t\trenderLowtideTunnelSkybox");
+		assertContains("ceiling roots use deterministic pronounced cluster count", lowtideEffects,
+				"LOWTIDE_CEILING_ROOT_CLUSTER_COUNT = 24");
+		assertContains("ceiling roots hang lower from upper skybox space", lowtideEffects,
+				"LOWTIDE_CEILING_ROOT_CEILING_Y_SCALE = 0.80F");
+		assertContains("ceiling roots use more visible minimum lengths", lowtideEffects,
+				"LOWTIDE_CEILING_ROOT_MIN_LENGTH_SCALE = 0.20F");
+		assertContains("ceiling roots use longer visible maximum lengths", lowtideEffects,
+				"LOWTIDE_CEILING_ROOT_MAX_LENGTH_SCALE = 0.56F");
+		assertContains("ceiling roots use thicker body ribbons", lowtideEffects,
+				"LOWTIDE_CEILING_ROOT_MIN_WIDTH_SCALE = 0.0024F");
+		assertContains("ceiling roots keep enough highlight opacity to read against the red ceiling", lowtideEffects,
+				"LOWTIDE_CEILING_ROOT_HIGHLIGHT_ALPHA = 132.0F");
+		assertContains("ceiling roots emit crossed ribbon strands", lowtideEffects,
+				"emitLowtideCeilingRootCrossRibbon");
+		assertContains("ceiling roots can fork into fine fibers", lowtideEffects,
+				"emitLowtideCeilingRootFork");
 		assertContains("renderer sends per-face nodule base skybox seed", lowtideEffects,
 				"LOWTIDE_SKYBOX_BASE_SEED");
 		assertContains("renderer uses a moderated nodule base backdrop", lowtideEffects,
@@ -181,7 +205,7 @@ public final class MnemonicLowtideLakeSourceTest {
 		assertContains("renderer exposes a lake edge fade width", lowtideEffects,
 				"private static final float EDGE_FADE =");
 		assertContains("renderer uses a visible lake-local rim width below the shader cap", lowtideEffects,
-				"EDGE_FADE = 0.42F");
+				"EDGE_FADE = 0.47F");
 		assertNotContains("renderer should not disable lake edge fading", lowtideEffects,
 				"EDGE_FADE = 0F");
 		assertContains("renderer sends faster shader time so the lake visibly moves", lowtideEffects,
@@ -463,6 +487,8 @@ public final class MnemonicLowtideLakeSourceTest {
 				"curling membrane tunnels");
 		assertContains("reference documents lowtide nodule base skybox", reference,
 				"red bulbous nodule");
+		assertContains("reference documents visual-only hanging ceiling roots", reference,
+				"hanging fibrous ceiling roots");
 	}
 
 	private static String read(Path path) throws IOException {
