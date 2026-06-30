@@ -29,7 +29,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.Random;
 
@@ -66,10 +69,22 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 
 	// ========== RUIN OBJECT SCALES ==========
 	private static final float LOWTIDE_RUIN_OBJ_FOUNDATION_SCALE = 0.34F;
-	private static final float LOWTIDE_RUIN_OBJ_TOWER_SCALE = 0.33F;
+	private static final float LOWTIDE_RUIN_OBJ_TOWER_SCALE = 0.23F;
 	private static final float LOWTIDE_RUIN_OBJ_ARCH_SCALE = 0.25F;
 	private static final float LOWTIDE_RUIN_OBJ_DOME_SCALE = 0.25F;
-	private static final float LOWTIDE_RUIN_OBJ_SPIRE_SCALE = 0.22F;
+	private static final float LOWTIDE_RUIN_OBJ_SPIRE_SCALE = 0.122F;
+	private static final float LOWTIDE_RUIN_UNDERWATER_RED_DIMMING_STRENGTH = 0.92F;
+	private static final float LOWTIDE_RUIN_UNDERWATER_DIMMING_HEIGHT = 5.8F;
+	private static final float LOWTIDE_RUIN_UNDERWATER_RED_FLOOR = 0.38F;
+	private static final float LOWTIDE_RUIN_UNDERWATER_GREEN_FLOOR = 0.13F;
+	private static final float LOWTIDE_RUIN_UNDERWATER_BLUE_FLOOR = 0.10F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_AMBIENT = 0.74F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_TOP_STRENGTH = 0.34F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_SIDE_STRENGTH = 0.26F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_SIDE_X = -0.48F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_SIDE_Y = 0.34F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_SIDE_Z = 0.81F;
+	private static final float LOWTIDE_RUIN_OBJ_LIGHT_MAX = 1.22F;
 
 	// ========== CEILING ROOTS ==========
 	private static final int LOWTIDE_CEILING_ROOT_CLUSTER_COUNT = 24;
@@ -961,9 +976,66 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static void emitLowtideObjQuadList(VertexConsumer consumer, PoseStack.Pose pose, Iterable<BakedQuad> quads,
 			float red, float green, float blue) {
 		for (BakedQuad quad : quads) {
-			consumer.putBulkData(pose, quad, red, green, blue, 1.0F, LightTexture.FULL_BRIGHT,
-					OverlayTexture.NO_OVERLAY);
+			emitLowtideObjQuadWithUnderwaterDimming(consumer, pose, quad, red, green, blue);
 		}
+	}
+
+	private static void emitLowtideObjQuadWithUnderwaterDimming(VertexConsumer consumer, PoseStack.Pose pose,
+			BakedQuad quad, float red, float green, float blue) {
+		int[] vertexData = quad.getVertices();
+		int vertexCount = vertexData.length / 8;
+		Matrix4f positionMatrix = pose.pose();
+		Matrix3f normalMatrix = pose.normal();
+
+		for (int vertex = 0; vertex < vertexCount; vertex++) {
+			int offset = vertex * 8;
+			float x = Float.intBitsToFloat(vertexData[offset]);
+			float y = Float.intBitsToFloat(vertexData[offset + 1]);
+			float z = Float.intBitsToFloat(vertexData[offset + 2]);
+			float u = Float.intBitsToFloat(vertexData[offset + 4]);
+			float v = Float.intBitsToFloat(vertexData[offset + 5]);
+			int packedNormal = vertexData[offset + 7];
+			float nx = (byte) (packedNormal & 255) / 127.0F;
+			float ny = (byte) ((packedNormal >> 8) & 255) / 127.0F;
+			float nz = (byte) ((packedNormal >> 16) & 255) / 127.0F;
+			float dimming = lowtideRuinUnderwaterDimming(y);
+			float vertexRed = red * Mth.lerp(dimming, 1.0F, LOWTIDE_RUIN_UNDERWATER_RED_FLOOR);
+			float vertexGreen = green * Mth.lerp(dimming, 1.0F, LOWTIDE_RUIN_UNDERWATER_GREEN_FLOOR);
+			float vertexBlue = blue * Mth.lerp(dimming, 1.0F, LOWTIDE_RUIN_UNDERWATER_BLUE_FLOOR);
+
+			Vector4f position = new Vector4f(x, y, z, 1.0F);
+			position.mul(positionMatrix);
+			Vector3f normal = new Vector3f(nx, ny, nz);
+			normal.mul(normalMatrix);
+			normal.normalize();
+			float lighting = lowtideRuinObjVertexLighting(normal);
+			vertexRed *= lighting;
+			vertexGreen *= lighting;
+			vertexBlue *= lighting;
+
+			consumer.addVertex(position.x(), position.y(), position.z())
+					.setColor(Mth.clamp(vertexRed, 0.0F, 1.0F), Mth.clamp(vertexGreen, 0.0F, 1.0F),
+							Mth.clamp(vertexBlue, 0.0F, 1.0F), 1.0F)
+					.setUv(u, v)
+					.setOverlay(OverlayTexture.NO_OVERLAY)
+					.setLight(LightTexture.FULL_BRIGHT)
+					.setNormal(normal.x(), normal.y(), normal.z());
+		}
+	}
+
+	private static float lowtideRuinObjVertexLighting(Vector3f normal) {
+		float topLight = Math.max(normal.y(), 0.0F) * LOWTIDE_RUIN_OBJ_LIGHT_TOP_STRENGTH;
+		float sideDot = normal.x() * LOWTIDE_RUIN_OBJ_LIGHT_SIDE_X
+				+ normal.y() * LOWTIDE_RUIN_OBJ_LIGHT_SIDE_Y
+				+ normal.z() * LOWTIDE_RUIN_OBJ_LIGHT_SIDE_Z;
+		float sideLight = Math.max(sideDot, 0.0F) * LOWTIDE_RUIN_OBJ_LIGHT_SIDE_STRENGTH;
+		return Mth.clamp(LOWTIDE_RUIN_OBJ_LIGHT_AMBIENT + topLight + sideLight,
+				LOWTIDE_RUIN_OBJ_LIGHT_AMBIENT, LOWTIDE_RUIN_OBJ_LIGHT_MAX);
+	}
+
+	private static float lowtideRuinUnderwaterDimming(float modelY) {
+		float heightT = 1.0F - lowtideSmoothstep(0.0F, LOWTIDE_RUIN_UNDERWATER_DIMMING_HEIGHT, modelY);
+		return Mth.clamp(heightT * LOWTIDE_RUIN_UNDERWATER_RED_DIMMING_STRENGTH, 0.0F, 1.0F);
 	}
 
 	private static void renderLowtideRetiredPanelRuinCluster(BufferBuilder buffer, Matrix4f matrix, float time,

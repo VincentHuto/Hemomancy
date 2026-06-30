@@ -4,10 +4,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+import java.util.Optional;
+
 public class ItemStackRadialMenuItem extends TextRadialMenuItem
 {
     private final int slot;
     private final ItemStack stack;
+    private final List<Component> customTooltip;
 
     public int getSlot()
     {
@@ -21,9 +25,16 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
 
     public ItemStackRadialMenuItem(GenericRadialMenu owner, int slot, ItemStack stack, Component altText)
     {
+        this(owner, slot, stack, altText, List.of());
+    }
+
+    public ItemStackRadialMenuItem(GenericRadialMenu owner, int slot, ItemStack stack, Component altText,
+            List<Component> customTooltip)
+    {
         super(owner, altText, 0x7FFFFFFF);
         this.slot = slot;
         this.stack = stack;
+        this.customTooltip = List.copyOf(customTooltip);
     }
 
     @Override
@@ -50,6 +61,11 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
     @Override
     public void drawTooltips(DrawingContext context)
     {
+        if (!customTooltip.isEmpty())
+        {
+            context.graphics.renderTooltip(context.font, customTooltip, Optional.empty(), (int) context.x, (int) context.y);
+            return;
+        }
         if (stack.getCount() > 0)
         {
             context.graphics.renderTooltip(context.font, stack, (int) context.x, (int) context.y);

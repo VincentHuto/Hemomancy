@@ -98,6 +98,26 @@ public final class LowtideRuinObjAssetResourceTest {
 				"float pitch = lowtideRuinObjPitch(piece, distant, random);");
 		assertContains("renderer gives OBJ ruins varied water-damaged roll", effects,
 				"float roll = lowtideRuinObjRoll(piece, distant, random);");
+		assertContains("renderer exposes tweakable underwater red dimming strength", effects,
+				"private static final float LOWTIDE_RUIN_UNDERWATER_RED_DIMMING_STRENGTH");
+		assertContains("renderer exposes tweakable underwater red dimming height", effects,
+				"private static final float LOWTIDE_RUIN_UNDERWATER_DIMMING_HEIGHT");
+		assertContains("renderer exposes tweakable underwater red color floor", effects,
+				"private static final float LOWTIDE_RUIN_UNDERWATER_RED_FLOOR");
+		assertContains("renderer applies underwater dimming per OBJ vertex", effects,
+				"float dimming = lowtideRuinUnderwaterDimming(y);");
+		assertContains("renderer tints submerged OBJ bases toward red shadow", effects,
+				"float vertexGreen = green * Mth.lerp(dimming, 1.0F, LOWTIDE_RUIN_UNDERWATER_GREEN_FLOOR);");
+		assertContains("renderer exposes tweakable OBJ ruin ambient lighting", effects,
+				"private static final float LOWTIDE_RUIN_OBJ_LIGHT_AMBIENT");
+		assertContains("renderer exposes tweakable OBJ ruin top lighting", effects,
+				"private static final float LOWTIDE_RUIN_OBJ_LIGHT_TOP_STRENGTH");
+		assertContains("renderer exposes tweakable OBJ ruin side lighting", effects,
+				"private static final float LOWTIDE_RUIN_OBJ_LIGHT_SIDE_STRENGTH");
+		assertContains("renderer computes OBJ lighting from transformed normals", effects,
+				"float lighting = lowtideRuinObjVertexLighting(normal);");
+		assertContains("renderer applies OBJ lighting after underwater dimming", effects,
+				"vertexRed *= lighting;");
 		assertContains("renderer passes sunken tilted transforms to OBJ ruin pieces", effects,
 				"modelScale, pitch, roll, lowtideRuinObjSourceCenterX(piece)");
 		assertContains("OBJ ruin pieces pitch into the lake surface", effects,
@@ -140,6 +160,7 @@ public final class LowtideRuinObjAssetResourceTest {
 				"LOWTIDE_RUIN_DISTANT_LIGHT");
 		assertContains("renderer draws lowtide ruins before the glossy lake overlay", effects,
 				"renderLowtideRuinedStructures(context.poseStack(), context.time(), context.skyDistance());\n"
+						+ "\t\trenderLowtideWaterParchment(context.poseStack(), context.time(), context.skyDistance());\n"
 						+ "\t\trenderLowtideSkyLake(context.poseStack(), context.time(), context.skyDistance());");
 		assertContains("OBJ ruins render with culling enabled to avoid inside-out backsides", effects,
 				"private static void renderLowtideObjRuinField(PoseStack poseStack, float time, float skyDistance,\n"
@@ -160,6 +181,10 @@ public final class LowtideRuinObjAssetResourceTest {
 				"LowtideRuinObjModels.cache(evt);");
 		assertContains("reference documents OBJ lowtide ruin field", reference,
 				"OBJ-only flooded ruin field");
+		assertContains("reference documents red dimming on lower OBJ ruin vertices", reference,
+				"tweakable red dimming gradient baked into their lower OBJ vertices");
+		assertContains("reference documents normal-based lighting on OBJ ruins", reference,
+				"normal-based top and face lighting");
 		assertContains("block atlas stitches lowtide OBJ texture directory", blockAtlas,
 				"\"source\": \"world/lowtide_ruin\"");
 		assertFileDoesNotExist("old unused tower broken OBJ should not stay in active asset set",

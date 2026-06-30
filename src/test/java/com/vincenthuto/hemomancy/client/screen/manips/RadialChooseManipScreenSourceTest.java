@@ -13,6 +13,7 @@ public final class RadialChooseManipScreenSourceTest {
 	public static void main(String[] args) throws IOException {
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
 		String menu = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
+		String itemStackRadial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/ItemStackRadialMenuItem.java");
 		String reliquary = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
 
 		assertContains("radial screen imports fixed mechanical helper", screen,
@@ -39,6 +40,10 @@ public final class RadialChooseManipScreenSourceTest {
 				"ManipulationEquipHelper.BLOOD_PROJECTION");
 		assertContains("outer ring skips fixed mechanical manipulations", screen,
 				"ManipulationEquipHelper.isFixedMechanicalManip(c.getName())");
+		assertContains("item-stack radial entries can render custom tooltip lines", itemStackRadial,
+				"customTooltip");
+		assertContains("armor ability radial entry uses ability tooltip instead of helmet tooltip", screen,
+				"ability.tooltip()");
 		assertContains("generic radial supports inner band items", menu,
 				"visibleInnerItems");
 		assertContains("generic radial exposes inner add API", menu,

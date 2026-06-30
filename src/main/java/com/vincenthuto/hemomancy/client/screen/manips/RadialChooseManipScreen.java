@@ -202,7 +202,7 @@ public class RadialChooseManipScreen extends Screen {
 	private void addArmorSetAbility() {
 		ArmorSetAbilityRegistry.getActiveAbility(mc.player).ifPresent(ability -> {
 			ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(this.menu, -1,
-					ability.getDisplayIcon(mc.player), ability.displayName()) {
+					ability.getDisplayIcon(mc.player), ability.displayName(), ability.tooltip()) {
 				@Override
 				public boolean onClick() {
 					PacketHandler.sendToServer(new ActivateArmorSetAbilityC2SPacket(ability.id()));

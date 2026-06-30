@@ -13,7 +13,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +34,7 @@ public final class ArmorSetAbilityRegistry {
 		register(new SimpleArmorSetAbility(
 				EDACIOUS_BLOODBURST,
 				Component.literal("Bloodburst"),
+				tooltip("ability.hemomancy.edacious_bloodburst.tooltip", 240, 250.0D),
 				requiredSet(ItemInit.edacious_blood_lust_helm, ItemInit.edacious_blood_lust_chest,
 						ItemInit.edacious_blood_lust_legs, ItemInit.edacious_blood_lust_boots),
 				ItemInit.edacious_blood_lust_helm,
@@ -42,6 +45,7 @@ public final class ArmorSetAbilityRegistry {
 		register(new SimpleArmorSetAbility(
 				SHEOLIC_BASTION_STANCE,
 				Component.literal("Bastion Stance"),
+				tooltip("ability.hemomancy.sheolic_bastion_stance.tooltip", 360, 0.0D),
 				requiredSet(ItemInit.sheolic_blood_lust_helm, ItemInit.sheolic_blood_lust_chest,
 						ItemInit.sheolic_blood_lust_legs, ItemInit.sheolic_blood_lust_boots),
 				ItemInit.sheolic_blood_lust_helm,
@@ -52,6 +56,7 @@ public final class ArmorSetAbilityRegistry {
 		register(new SimpleArmorSetAbility(
 				MASQUERADE_OF_THE_FORGOTTEN,
 				Component.literal("Masquerade of the Forgotten"),
+				tooltip("ability.hemomancy.masquerade_of_the_forgotten.tooltip", 1200, 250.0D),
 				requiredSet(ItemInit.phantasmal_blood_lust_helm, ItemInit.phantasmal_blood_lust_chest,
 						ItemInit.phantasmal_blood_lust_legs, ItemInit.phantasmal_blood_lust_boots),
 				ItemInit.phantasmal_blood_lust_helm,
@@ -62,6 +67,7 @@ public final class ArmorSetAbilityRegistry {
 		register(new SimpleArmorSetAbility(
 				SILENT_ARCHON_SEVERANCE,
 				Component.literal("Silent Severance"),
+				tooltip("ability.hemomancy.silent_archon_severance.tooltip", 240, 300.0D),
 				requiredSet(ItemInit.silent_archon_helm, ItemInit.silent_archon_chestplate,
 						ItemInit.silent_archon_leggings, ItemInit.silent_archon_boots),
 				ItemInit.silent_archon_helm,
@@ -154,6 +160,20 @@ public final class ArmorSetAbilityRegistry {
 
 	private static void setCooldownUntil(Player player, ArmorSetAbility ability, long cooldownUntil) {
 		player.getPersistentData().putLong(COOLDOWN_PREFIX + ability.id(), cooldownUntil);
+	}
+
+	private static List<Component> tooltip(String descriptionKey, int cooldownTicks, double bloodCost) {
+		List<Component> tooltip = new ArrayList<>();
+		tooltip.add(Component.translatable(descriptionKey).withStyle(ChatFormatting.GRAY));
+		if (bloodCost > 0.0D) {
+			tooltip.add(Component.translatable("ability.hemomancy.armor_set.cost", (int) bloodCost)
+					.withStyle(ChatFormatting.DARK_RED));
+		}
+		if (cooldownTicks > 0) {
+			tooltip.add(Component.translatable("ability.hemomancy.armor_set.cooldown", cooldownTicks / 20)
+					.withStyle(ChatFormatting.DARK_GRAY));
+		}
+		return List.copyOf(tooltip);
 	}
 
 	private static Map<EquipmentSlot, Supplier<? extends Item>> requiredSet(

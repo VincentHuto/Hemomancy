@@ -13,6 +13,10 @@ public final class FinalBloodlustArmorAbilitySourceTest {
 	public static void main(String[] args) throws IOException {
 		String registry = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/ArmorSetAbilityRegistry.java"));
+		String ability = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/armor/ability/ArmorSetAbility.java"));
+		String simpleAbility = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/armor/ability/SimpleArmorSetAbility.java"));
 		String packet = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/ActivateArmorSetAbilityC2SPacket.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
@@ -27,6 +31,12 @@ public final class FinalBloodlustArmorAbilitySourceTest {
 		assertContains("phantasmal id", registry, "masquerade_of_the_forgotten");
 		assertContains("phantasmal constant", registry, "MASQUERADE_OF_THE_FORGOTTEN");
 		assertContains("phantasmal display", registry, "Masquerade of the Forgotten");
+		assertContains("armor ability exposes tooltip lines", ability, "List<Component> tooltip()");
+		assertContains("simple ability stores tooltip lines separately from display icon", simpleAbility, "tooltip");
+		assertContains("edacious tooltip describes the power", registry, "ability.hemomancy.edacious_bloodburst.tooltip");
+		assertContains("sheolic tooltip describes the power", registry, "ability.hemomancy.sheolic_bastion_stance.tooltip");
+		assertContains("phantasmal tooltip describes the power", registry, "ability.hemomancy.masquerade_of_the_forgotten.tooltip");
+		assertContains("silent archon tooltip describes the power", registry, "ability.hemomancy.silent_archon_severance.tooltip");
 		assertNotContains("phantasmal radial should not be duplicate teleport", registry, "phantasmal_step");
 		assertContains("edacious full set", registry, "ItemInit.edacious_blood_lust_helm");
 		assertContains("sheolic full set", registry, "ItemInit.sheolic_blood_lust_helm");

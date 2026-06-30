@@ -8,6 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -16,6 +18,7 @@ import java.util.function.Supplier;
 public class SimpleArmorSetAbility implements ArmorSetAbility {
 	private final ResourceLocation id;
 	private final Component displayName;
+	private final List<Component> tooltip;
 	private final Map<EquipmentSlot, Supplier<? extends Item>> requiredPieces;
 	private final Supplier<? extends Item> displayIcon;
 	private final Predicate<Player> validation;
@@ -24,6 +27,7 @@ public class SimpleArmorSetAbility implements ArmorSetAbility {
 	private final double bloodCost;
 
 	public SimpleArmorSetAbility(ResourceLocation id, Component displayName,
+			List<Component> tooltip,
 			Map<EquipmentSlot, Supplier<? extends Item>> requiredPieces,
 			Supplier<? extends Item> displayIcon,
 			Predicate<Player> validation,
@@ -32,6 +36,10 @@ public class SimpleArmorSetAbility implements ArmorSetAbility {
 			double bloodCost) {
 		this.id = id;
 		this.displayName = displayName;
+		List<Component> tooltipLines = new ArrayList<>();
+		tooltipLines.add(displayName.copy());
+		tooltipLines.addAll(tooltip);
+		this.tooltip = List.copyOf(tooltipLines);
 		this.requiredPieces = Map.copyOf(requiredPieces);
 		this.displayIcon = displayIcon;
 		this.validation = validation;
@@ -48,6 +56,11 @@ public class SimpleArmorSetAbility implements ArmorSetAbility {
 	@Override
 	public Component displayName() {
 		return displayName;
+	}
+
+	@Override
+	public List<Component> tooltip() {
+		return tooltip;
 	}
 
 	@Override
