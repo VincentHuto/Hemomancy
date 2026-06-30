@@ -343,10 +343,13 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		float zOffset = scale * Mth.lerp(random.nextFloat(), -1.4F, 1.4F);
 		LowtideRuinObjModels.Piece piece = lowtideRuinObjPieceForCluster(cluster);
 		float modelScale = scale * lowtideRuinObjScale(piece);
+		float sinkDepth = lowtideRuinObjSinkDepth(piece, scale, distant, random);
+		float pitch = lowtideRuinObjPitch(piece, distant, random);
+		float roll = lowtideRuinObjRoll(piece, distant, random);
 
 		emitLowtideObjPiece(poseStack, consumer, state, piece, centerX, centerZ, rightX, rightZ,
-				forwardX, forwardZ, xOffset, lakeY + bobY + lowtideRuinObjBaseLift(piece, scale), zOffset, yaw,
-				modelScale, lowtideRuinObjSourceCenterX(piece), lowtideRuinObjSourceCenterZ(piece),
+				forwardX, forwardZ, xOffset, lakeY + bobY + lowtideRuinObjBaseLift(piece, scale) - sinkDepth,
+				zOffset, yaw, modelScale, pitch, roll, lowtideRuinObjSourceCenterX(piece), lowtideRuinObjSourceCenterZ(piece),
 				lowtideRuinObjRed(piece) * redScale, lowtideRuinObjGreen(piece) * greenScale,
 				lowtideRuinObjBlue(piece) * blueScale);
 	}
@@ -383,6 +386,46 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 			case DOME_CHAPEL -> scale * 0.10F;
 			case SPIRE_FRAGMENT -> scale * 0.26F;
 		};
+	}
+
+	private static float lowtideRuinObjSinkDepth(LowtideRuinObjModels.Piece piece, float scale, boolean distant,
+			Random random) {
+		float baseSink = switch (piece) {
+			case FOUNDATION_RUBBLE -> Mth.lerp(random.nextFloat(), 0.12F, 0.34F);
+			case TOWER_SHORT -> Mth.lerp(random.nextFloat(), 0.24F, 0.52F);
+			case ARCH_FRAGMENT -> Mth.lerp(random.nextFloat(), 0.18F, 0.44F);
+			case DOME_CHAPEL -> Mth.lerp(random.nextFloat(), 0.26F, 0.58F);
+			case SPIRE_FRAGMENT -> Mth.lerp(random.nextFloat(), 0.30F, 0.66F);
+		};
+		return scale * (baseSink + (distant ? Mth.lerp(random.nextFloat(), 0.10F, 0.26F) : 0.0F));
+	}
+
+	private static float lowtideRuinObjPitch(LowtideRuinObjModels.Piece piece, boolean distant, Random random) {
+		float maxPitch = switch (piece) {
+			case FOUNDATION_RUBBLE -> 0.10F;
+			case TOWER_SHORT -> 0.22F;
+			case ARCH_FRAGMENT -> 0.18F;
+			case DOME_CHAPEL -> 0.20F;
+			case SPIRE_FRAGMENT -> 0.28F;
+		};
+		if (distant) {
+			maxPitch *= 1.22F;
+		}
+		return Mth.lerp(random.nextFloat(), -maxPitch, maxPitch);
+	}
+
+	private static float lowtideRuinObjRoll(LowtideRuinObjModels.Piece piece, boolean distant, Random random) {
+		float maxRoll = switch (piece) {
+			case FOUNDATION_RUBBLE -> 0.12F;
+			case TOWER_SHORT -> 0.30F;
+			case ARCH_FRAGMENT -> 0.24F;
+			case DOME_CHAPEL -> 0.22F;
+			case SPIRE_FRAGMENT -> 0.34F;
+		};
+		if (distant) {
+			maxRoll *= 1.18F;
+		}
+		return Mth.lerp(random.nextFloat(), -maxRoll, maxRoll);
 	}
 
 	private static float lowtideRuinObjSourceCenterX(LowtideRuinObjModels.Piece piece) {
@@ -436,7 +479,8 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 	private static void emitLowtideObjPiece(PoseStack poseStack, VertexConsumer consumer, BlockState state,
 			LowtideRuinObjModels.Piece piece, float centerX, float centerZ, float rightX,
 			float rightZ, float forwardX, float forwardZ, float xOffset, float baseY, float zOffset, float yaw,
-			float modelScale, float sourceCenterX, float sourceCenterZ, float red, float green, float blue) {
+			float modelScale, float pitch, float roll, float sourceCenterX, float sourceCenterZ, float red, float green,
+			float blue) {
 		BakedModel model = LowtideRuinObjModels.model(piece);
 		if (model == null) {
 			return;
@@ -447,6 +491,8 @@ public final class MnemonicLowtideChamberEffects extends AbstractChamberThemeEff
 		poseStack.pushPose();
 		poseStack.translate(x, baseY, z);
 		poseStack.mulPose(Axis.YP.rotation(yaw));
+		poseStack.mulPose(Axis.XP.rotation(pitch));
+		poseStack.mulPose(Axis.ZP.rotation(roll));
 		poseStack.scale(modelScale, modelScale, modelScale);
 		poseStack.translate(-sourceCenterX, 0.5F, -sourceCenterZ);
 		emitLowtideObjModelQuads(consumer, poseStack.last(), state, model, red, green, blue);

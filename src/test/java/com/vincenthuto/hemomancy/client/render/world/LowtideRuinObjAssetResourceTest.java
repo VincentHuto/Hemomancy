@@ -92,6 +92,18 @@ public final class LowtideRuinObjAssetResourceTest {
 				"LowtideRuinObjModels.Piece piece = lowtideRuinObjPieceForCluster(cluster);");
 		assertContains("renderer picks per-piece model scale once per cluster", effects,
 				"float modelScale = scale * lowtideRuinObjScale(piece);");
+		assertContains("renderer gives OBJ ruins varied lake sink depth", effects,
+				"float sinkDepth = lowtideRuinObjSinkDepth(piece, scale, distant, random);");
+		assertContains("renderer gives OBJ ruins varied water-damaged pitch", effects,
+				"float pitch = lowtideRuinObjPitch(piece, distant, random);");
+		assertContains("renderer gives OBJ ruins varied water-damaged roll", effects,
+				"float roll = lowtideRuinObjRoll(piece, distant, random);");
+		assertContains("renderer passes sunken tilted transforms to OBJ ruin pieces", effects,
+				"modelScale, pitch, roll, lowtideRuinObjSourceCenterX(piece)");
+		assertContains("OBJ ruin pieces pitch into the lake surface", effects,
+				"poseStack.mulPose(Axis.XP.rotation(pitch));");
+		assertContains("OBJ ruin pieces roll unevenly in the lake surface", effects,
+				"poseStack.mulPose(Axis.ZP.rotation(roll));");
 		assertContains("renderer caches OBJ ruin geometry in a static vertex buffer", effects,
 				"private static VertexBuffer lowtideRuinObjVertexBuffer;");
 		assertContains("renderer marks OBJ ruin cache dirty for model reloads", effects,
