@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasPath;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabController;
@@ -61,7 +62,7 @@ public class UnstainedProgressScreen extends Screen {
 	private final RitesTabController ritesTab = new RitesTabController(true);
 	private final CraftingTabController craftingTab = new CraftingTabController(true);
 	private final MaterialsTabController materialsTab = new MaterialsTabController(
-			MaterialsData.getUnstainedEntries(), EnumNodeShape.DIAMOND,
+			MaterialAtlasPath.UNSTAINED, MaterialsData.getUnstainedEntries(), EnumNodeShape.DIAMOND,
 			UTab.MATERIALS.color, 0x0080B0A0, 0xFF6088B0,
 			0xFF203050, 0xDD101828, MiniRecipeRenderer.UNSTAINED);
 

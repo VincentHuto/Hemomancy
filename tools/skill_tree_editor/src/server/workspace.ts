@@ -116,7 +116,7 @@ function sortObject<T extends Record<string, unknown>>(value: T): T {
   return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b))) as T;
 }
 
-function loadIconRegistryOptions(repoRoot: string): IconRegistryOptions {
+export function loadIconRegistryOptions(repoRoot: string): IconRegistryOptions {
   return {
     items: loadDeferredHolderFields(safeResolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java')),
     blocks: loadDeferredHolderFields(safeResolve(repoRoot, 'src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java'))

@@ -11,7 +11,7 @@ export interface DragPanUpdate {
   moved: boolean;
 }
 
-const PAN_BLOCK_SELECTOR = '.skill-node, button, input, select, textarea, a';
+const PAN_BLOCK_SELECTOR = '.skill-node, .material-node, .bucket-root, .label-plaque, button, input, select, textarea, a';
 
 export function beginDragPan(
   clientX: number,

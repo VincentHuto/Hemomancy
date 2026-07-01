@@ -21,3 +21,4 @@ for (const [label, cmd, args] of commands) {
 console.log('Skill Tree Editor dev servers starting...');
 console.log('Open http://127.0.0.1:5184/workspace.html');
 console.log('Manipulations: http://127.0.0.1:5184/manipulations.html');
+console.log('Materials: http://127.0.0.1:5184/materials.html');

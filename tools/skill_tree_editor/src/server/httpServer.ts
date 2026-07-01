@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import type { ManipulationPreviewRequest, PreviewRequest } from '../shared/types';
+import type { ManipulationPreviewRequest, MaterialAtlasPreviewRequest, PreviewRequest } from '../shared/types';
 import {
   applyPreview,
   defaultRepoRoot,
@@ -10,6 +10,7 @@ import {
   safeResolve
 } from './workspace';
 import { loadManipulationWorkspace, previewManipulationWorkspaceChanges } from './manipulationWorkspace';
+import { loadMaterialAtlasWorkspace, previewMaterialAtlasWorkspaceChanges } from './materialAtlasWorkspace';
 
 const repoRoot = process.env.HEMO_REPO_ROOT ?? defaultRepoRoot();
 const port = Number(process.env.SKILL_TREE_API_PORT ?? 5185);
@@ -27,12 +28,20 @@ const server = createServer(async (req, res) => {
       return send(res, 200, await loadManipulationWorkspace(repoRoot));
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/materials') {
+      return send(res, 200, await loadMaterialAtlasWorkspace(repoRoot));
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/preview') {
       return send(res, 200, await previewWorkspaceChanges(repoRoot, await readJson(req) as PreviewRequest));
     }
 
     if (req.method === 'POST' && url.pathname === '/api/manipulations/preview') {
       return send(res, 200, await previewManipulationWorkspaceChanges(repoRoot, await readJson(req) as ManipulationPreviewRequest));
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/materials/preview') {
+      return send(res, 200, await previewMaterialAtlasWorkspaceChanges(repoRoot, await readJson(req) as MaterialAtlasPreviewRequest));
     }
 
     if (req.method === 'POST' && url.pathname === '/api/apply') {

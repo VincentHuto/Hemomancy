@@ -12,11 +12,15 @@ test('converts pointer movement into inverse scroll movement', () => {
   });
 });
 
-test('does not start panning from skill nodes or form controls', () => {
-  const element = (blocked: boolean) => ({
-    closest: (_selector: string) => blocked ? {} : null
+test('does not start panning from graph nodes or form controls', () => {
+  const element = (className: string | null) => ({
+    closest: (selector: string) => className && selector.includes(className) ? {} : null
   }) as unknown as EventTarget;
 
-  expect(shouldStartDragPan(element(false))).toBe(true);
-  expect(shouldStartDragPan(element(true))).toBe(false);
+  expect(shouldStartDragPan(element(null))).toBe(true);
+  expect(shouldStartDragPan(element('skill-node'))).toBe(false);
+  expect(shouldStartDragPan(element('material-node'))).toBe(false);
+  expect(shouldStartDragPan(element('bucket-root'))).toBe(false);
+  expect(shouldStartDragPan(element('label-plaque'))).toBe(false);
+  expect(shouldStartDragPan(element('button'))).toBe(false);
 });

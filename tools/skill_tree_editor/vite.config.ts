@@ -15,7 +15,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         workspace: 'workspace.html',
-        manipulations: 'manipulations.html'
+        manipulations: 'manipulations.html',
+        materials: 'materials.html'
       }
     }
   }

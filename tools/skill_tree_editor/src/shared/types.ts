@@ -106,3 +106,66 @@ export interface ManipulationWorkspace {
 export interface ManipulationPreviewRequest {
   nodes: ManipulationNodeModel[];
 }
+
+export type MaterialAtlasPathKey = 'HARBINGER' | 'UNSTAINED';
+
+export type MaterialGateType = 'ALWAYS' | 'DEGREE' | 'PURITY' | 'CLARITY';
+
+export interface MaterialGateModel {
+  type: MaterialGateType;
+  value: number | null;
+}
+
+export interface MaterialAtlasBucketModel {
+  path: MaterialAtlasPathKey;
+  id: string;
+  label: string;
+  rootMaterialId: string;
+  color: string;
+  centerX: number;
+  centerY: number;
+  plaqueX: number;
+  plaqueY: number;
+}
+
+export interface MaterialCatalogEntryModel {
+  path: MaterialAtlasPathKey;
+  id: string;
+  displayName: string;
+  description: string;
+  category: string;
+  iconSource: Exclude<IconSource, null>;
+  iconField: string;
+  hasRecipe: boolean;
+  gate: MaterialGateModel;
+}
+
+export interface MaterialAtlasEntryModel {
+  path: MaterialAtlasPathKey;
+  id: string;
+  bucketId: string;
+  gate: MaterialGateModel;
+  order: number;
+  parentIds: string[];
+  nodeX: number | null;
+  nodeY: number | null;
+  catalog?: MaterialCatalogEntryModel;
+}
+
+export interface MaterialAtlasPathModel {
+  path: MaterialAtlasPathKey;
+  buckets: MaterialAtlasBucketModel[];
+  entries: MaterialAtlasEntryModel[];
+}
+
+export interface MaterialAtlasWorkspace {
+  repoRoot: string;
+  paths: MaterialAtlasPathModel[];
+  iconOptions: IconRegistryOptions;
+  diagnostics: Diagnostic[];
+}
+
+export interface MaterialAtlasPreviewRequest {
+  paths: MaterialAtlasPathModel[];
+  catalogueEntries: MaterialCatalogEntryModel[];
+}

@@ -531,6 +531,78 @@ small {
   stroke-width: 2px;
 }
 
+.material-atlas .graph {
+  background: #090102;
+}
+
+.atlas-trace {
+  stroke-width: 2.2px;
+  opacity: 0.48;
+}
+
+.bucket-root,
+.label-plaque,
+.material-node {
+  cursor: grab;
+}
+
+.bucket-root:active,
+.label-plaque:active,
+.material-node:active {
+  cursor: grabbing;
+}
+
+.bucket-root-core,
+.label-plaque-box {
+  fill: rgba(12, 3, 3, 0.78);
+  stroke-width: 2.4px;
+}
+
+.bucket-root line {
+  stroke-width: 1.3px;
+  opacity: 0.68;
+  pointer-events: none;
+}
+
+.bucket-root.selected .bucket-root-core,
+.label-plaque.selected .label-plaque-box,
+.material-node.selected .node-frame {
+  stroke: #f0b24a !important;
+}
+
+.label-plaque text {
+  font: 13px/1 "Cascadia Code", Consolas, monospace;
+  font-weight: 800;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: #120101;
+  stroke-width: 3px;
+}
+
+.material-node .node-glow {
+  fill: rgba(44, 0, 0, 0.62);
+}
+
+.material-node .node-frame {
+  fill: #120203;
+  stroke-width: 4px;
+}
+
+.material-node .node-core {
+  fill: #252121;
+  stroke: #3a2d2d;
+  stroke-width: 1.5;
+}
+
+.material-node image {
+  pointer-events: none;
+}
+
+.badge {
+  color: #d9a98f;
+  font-weight: 800;
+}
+
 .inspector {
   overflow: auto;
   background: #191413;

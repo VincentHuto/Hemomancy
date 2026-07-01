@@ -1126,7 +1126,7 @@ Opened from the **Sanguine Conduit** item/block. Has six tabs:
 - **Crafting** â€” sidebar listing blood structure recipes grouped by tier (Basic/Advanced/Expert) with degree gating (0/2/4)
 - **Scars** â€” sidebar listing scar station recipes grouped by tier (1/2/3) with degree gating (4/4/5)
 - **Rites** â€” sidebar listing cardinal rite recipes
-- **Materials** â€” panning/zoomable catalogue of mod items and blocks
+- **Materials** â€” panning/zoomable atlas catalogue of mod items and blocks. Harbinger and Unstained share the atlas controller, but use path-specific bucket labels, colors, and vein traces. Locked future materials stay hidden; only the immediate next tier appears as next-tier veiled material nodes with requirement text and without revealing names, icons, recipes, or descriptions.
 
 Skills cost **skill points** (earned from using manipulations) and many require a **minimum initiatory degree**:
 
