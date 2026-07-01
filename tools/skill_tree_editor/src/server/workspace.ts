@@ -126,7 +126,7 @@ export function loadIconRegistryOptions(repoRoot: string): IconRegistryOptions {
 function loadDeferredHolderFields(path: string): string[] {
   if (!existsSync(path)) return [];
   const source = readFileSync(path, 'utf8');
-  return [...source.matchAll(/public\s+static\s+final\s+DeferredHolder<[^;=]+>\s+(\w+)\s*=\s*\w+\.register\(/g)]
+  return [...source.matchAll(/public\s+static\s+final\s+DeferredHolder<[^;=]+>\s+(\w+)\s*=\s*\w+\s*\.\s*register\(/g)]
     .map(match => match[1])
     .sort((a, b) => a.localeCompare(b));
 }

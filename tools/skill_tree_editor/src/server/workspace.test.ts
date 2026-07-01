@@ -64,6 +64,33 @@ public class BlockInit {
   });
 });
 
+test('loads wrapped DeferredHolder registry fields for icon options', async () => {
+  const root = makeRepo();
+  writeBranch(root, 'CoreSkillBranch.java', coreBranchSource);
+  writeLang(root, {});
+  writeInit(root, 'ItemInit.java', `package example;
+public class ItemInit {
+  public static final DeferredHolder<Item, Item> blood_rock = BASEITEMS
+      .register("blood_rock", () -> null);
+}
+`);
+  writeInit(root, 'BlockInit.java', `package example;
+public class BlockInit {
+  public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
+      .register("somatic_loom", () -> null);
+  public static final DeferredHolder<Block, Block> chiseled_hematic_iron_block = BASEBLOCKS
+      .register("chiseled_hematic_iron_block", () -> null);
+}
+`);
+
+  const workspace = await loadWorkspace(root);
+
+  expect(workspace.iconOptions).toEqual({
+    items: ['blood_rock'],
+    blocks: ['chiseled_hematic_iron_block', 'somatic_loom']
+  });
+});
+
 test('previews Java branch edits and lang changes without applying them', async () => {
   const root = makeRepo();
   writeBranch(root, 'CoreSkillBranch.java', coreBranchSource);
