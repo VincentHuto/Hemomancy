@@ -33,6 +33,18 @@ public final class SilentArchonMonolithDepthSourceTest {
 				"HemoRenderTypes.silentArchonSkyMonolithSurface(");
 		assertContains("normal monolith fragment remains fog-aware for sky depth", normalMonolithFragment,
 				"linear_fog(");
+		assertContains("silent archon lower monoliths should draw a base-anchored shadow skirt", silentArchonEffects,
+				"renderSilentArchonMonolithBaseShadow(");
+		assertContains("silent archon base shadow should be tied to the actual pillar base", silentArchonEffects,
+				"float baseShadowY = Mth.lerp(0.34F, baseY, cloudCenterY);");
+		assertContains("silent archon near pillar tops should fade before the visible end", silentArchonEffects,
+				"float topFadeStart = Mth.lerp(0.78F, baseY, topY);");
+		assertNotContains("silent archon near pillar tops should not draw a storm-cloud crown", silentArchonEffects,
+				"renderSilentArchonPillarTopCrown(");
+		assertContains("silent archon near pillar bases should extend below their old endpoint", silentArchonEffects,
+				"float extendedBaseY = baseY - height * 0.24F;");
+		assertContains("silent archon near pillar bases should fade before the full shaft", silentArchonEffects,
+				"float bottomFadeEnd = Mth.lerp(0.16F, baseY, topY);");
 		assertNotContains("shader init should not keep unused no-fog sky monolith shader", shaderInit,
 				"SILENT_ARCHON_SKY_MONOLITH");
 		assertNotContains("render types should not keep unused no-fog sky monolith material", renderTypes,

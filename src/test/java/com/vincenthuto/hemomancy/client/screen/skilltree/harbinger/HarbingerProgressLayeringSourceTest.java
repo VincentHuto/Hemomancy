@@ -17,7 +17,13 @@ public final class HarbingerProgressLayeringSourceTest {
 		String screenDrawUtils = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/util/ScreenDrawUtils.java");
 
 		assertContains("materials detail panel keeps high-z reference pattern",
-				materialsView, "pose.translate(0.0F, 0.0F, 400.0F)");
+				materialsView, "INFO_PANEL_Z = 400.0F");
+		assertContains("materials detail panel uses its named high-z layer",
+				materialsView, "pose.translate(0.0F, 0.0F, INFO_PANEL_Z)");
+		assertContains("materials tooltip defines a higher layer than raised recipe item stacks",
+				materialsView, "MATERIAL_TOOLTIP_Z = INFO_PANEL_Z + 500.0F");
+		assertContains("materials tooltip renders above selected material details",
+				materialsView, "pose.translate(0.0F, 0.0F, MATERIAL_TOOLTIP_Z)");
 		assertContains("harbinger screen defines a high-z chrome layer",
 				progressScreen, "SCREEN_CHROME_Z = 400.0F");
 		assertContains("harbinger tabs render above node item stacks",
@@ -80,6 +86,12 @@ public final class HarbingerProgressLayeringSourceTest {
 				screenDrawUtils, "hovered ? 0xFF180404");
 		assertContains("tab helper uses opaque idle backgrounds",
 				screenDrawUtils, "0xFF120303");
+		assertContains("tab helper computes fitted tab geometry for narrow screens",
+				screenDrawUtils, "fittedTabLayout(font, tabs, guiWidth, tabPad)");
+		assertContains("tab helper truncates labels when fitted tabs shrink",
+				screenDrawUtils, "truncateText(font, tab.label(), Math.max(1, tw - 10))");
+		assertContains("tab hit testing uses the same fitted geometry as rendering",
+				screenDrawUtils, "List<TabLayout> layout = fittedTabLayout(font, tabs, guiWidth, tabPad)");
 	}
 
 	private static String read(String path) throws IOException {

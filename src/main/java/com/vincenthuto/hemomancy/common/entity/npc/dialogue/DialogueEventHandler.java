@@ -2,16 +2,21 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodStructureHintItem;
 import com.vincenthuto.hemomancy.common.item.shared.PreWrittenMemoItem;
 import com.vincenthuto.hemomancy.common.item.shared.RiteHintItem;
@@ -62,6 +67,10 @@ public class DialogueEventHandler {
 				HarbingerAlchemistDialogueTrees.RedTaxonomySample.fromEventId(event.getEventId());
 		if (redTaxonomySample != null) {
 			handleAlchemistRedTaxonomy(player, redTaxonomySample);
+			return;
+		}
+		if (isAlchemistBestiaryEvent(event.getEventId())) {
+			handleAlchemistBestiary(player, event.getEntityId(), event.getEventId());
 			return;
 		}
 		switch (event.getEventId()) {
@@ -446,6 +455,127 @@ public class DialogueEventHandler {
 				Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_placeholder_reward")
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 				false);
+	}
+
+	private static boolean isAlchemistBestiaryEvent(String eventId) {
+		return HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_RECORD.equals(eventId)
+				|| HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_SURRENDER.equals(eventId)
+				|| (eventId != null && eventId.startsWith(
+						HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX));
+	}
+
+	private static void handleAlchemistBestiary(ServerPlayer player, int entityId, String eventId) {
+		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 2) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_bestiary_unready")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		ItemStack held = player.getMainHandItem();
+		if (!SpecimenJarData.hasSpecimen(held)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_bestiary_missing_specimen")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		var specimen = SpecimenJarData.getSpecimen(held);
+		ResourceLocation specimenId = SpecimenJarData.getSpecimenEntityId(specimen).orElse(null);
+		Component specimenName = SpecimenJarData.getSpecimenName(specimen);
+		if (!SpecimenBestiaryDefinitions.isResearchSpecimen(specimenId)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_bestiary_not_research",
+									specimenName)
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		var progress = HemoCapabilityAccess.requireSpecimenBestiary(player);
+		if (HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_RECORD.equals(eventId)) {
+			boolean newSpecimen = progress.recordSpecimen(specimenId);
+			int newLayers = 0;
+			for (MorphlingPolypLayer layer : SpecimenJarData.getMorphlingLayers(specimen)) {
+				if (progress.recordMorphlingLayer(layer)) {
+					newLayers++;
+				}
+			}
+			player.displayClientMessage(
+					Component.translatable(newSpecimen || newLayers > 0
+									? SpecimenBestiaryDefinitions.recordedDialogueKey(specimenId)
+									: "hemomancy.dialogue.event.alchemist_bestiary_known",
+							specimenName, progress.recordedSpecimenCount(),
+							SpecimenBestiaryDefinitions.totalResearchSpecimens())
+							.withStyle(newSpecimen || newLayers > 0 ? ChatFormatting.DARK_RED : ChatFormatting.GRAY),
+					false);
+			SpecimenBestiaryEvents.sync(player, progress);
+			return;
+		}
+
+		MorphlingPolypLayer requestedLayer = morphlingLayerFromEvent(eventId);
+		if (requestedLayer != null) {
+			handleAlchemistPolypSurrender(player, entityId, held, specimen, specimenId, requestedLayer, progress);
+			return;
+		}
+
+		progress.recordSpecimen(specimenId);
+		progress.surrenderSpecimen(specimenId);
+		ItemStack reward = SpecimenBestiaryDefinitions.createSurrenderReward(specimenId);
+		SpecimenJarData.clearSpecimen(held);
+		if (!reward.isEmpty()) {
+			giveOrDropAtEntity(player, entityId, reward);
+		}
+		player.displayClientMessage(
+				Component.translatable(SpecimenBestiaryDefinitions.surrenderedDialogueKey(specimenId),
+								specimenName, reward.getHoverName())
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+		SpecimenBestiaryEvents.sync(player, progress);
+	}
+
+	private static void handleAlchemistPolypSurrender(ServerPlayer player, int entityId, ItemStack held,
+			net.minecraft.nbt.CompoundTag specimen, ResourceLocation specimenId, MorphlingPolypLayer requestedLayer,
+			SpecimenBestiaryProgress progress) {
+		if (!SpecimenJarData.getMorphlingLayers(specimen).contains(requestedLayer)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.event.alchemist_bestiary_layer_missing")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		ItemStack morphling = SpecimenBestiaryDefinitions.createWildBoundMorphling(requestedLayer);
+		if (morphling.isEmpty()) {
+			return;
+		}
+		progress.recordSpecimen(specimenId);
+		progress.recordMorphlingLayer(requestedLayer);
+		progress.surrenderSpecimen(specimenId);
+		SpecimenJarData.clearSpecimen(held);
+		giveOrDropAtEntity(player, entityId, morphling);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.event.alchemist_bestiary_polyp_surrendered",
+								morphling.getHoverName())
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
+		SpecimenBestiaryEvents.sync(player, progress);
+	}
+
+	private static MorphlingPolypLayer morphlingLayerFromEvent(String eventId) {
+		if (eventId == null || !eventId.startsWith(
+				HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX)) {
+			return null;
+		}
+		String layerName = eventId.substring(
+				HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX.length());
+		for (MorphlingPolypLayer layer : MorphlingPolypLayer.values()) {
+			if (layer.serializedName().equals(layerName)) {
+				return layer;
+			}
+		}
+		return null;
 	}
 
 	private static void handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {

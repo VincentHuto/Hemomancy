@@ -48,6 +48,7 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.hemolymphopoda.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.desiccant.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.fargone.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.venom_rib_centipede.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.tooth_pecks.getId()));
 
 		// All hemomancy monster entities — used by PurityGainEvents for kill rewards

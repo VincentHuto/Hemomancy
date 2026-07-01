@@ -24,6 +24,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean redTaxonomyComplete,
 		int enzymeMasteryCount,
 		boolean enzymeMasteryComplete,
+		int livingBestiaryCount,
+		int livingBestiaryTotal,
+		int morphlingLayerCount,
 		boolean hasBlankHematicMemory,
 		boolean mnemonistWovenVesselComplete,
 		boolean mnemonistFirstWeaveComplete,
@@ -55,6 +58,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.redTaxonomyComplete);
 		buf.writeVarInt(msg.enzymeMasteryCount);
 		buf.writeBoolean(msg.enzymeMasteryComplete);
+		buf.writeVarInt(msg.livingBestiaryCount);
+		buf.writeVarInt(msg.livingBestiaryTotal);
+		buf.writeVarInt(msg.morphlingLayerCount);
 		buf.writeBoolean(msg.hasBlankHematicMemory);
 		buf.writeBoolean(msg.mnemonistWovenVesselComplete);
 		buf.writeBoolean(msg.mnemonistFirstWeaveComplete);
@@ -84,6 +90,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readVarInt(),
 				buf.readBoolean(),
+				buf.readVarInt(),
+				buf.readVarInt(),
+				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readBoolean(),
 				buf.readBoolean(),
@@ -103,7 +112,9 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.hasVialCentrifuge, msg.hasSampledBloodVial,
 				msg.firstSeparationStarted, msg.hasAnyEnzyme,
 				msg.redTaxonomyCount, msg.redTaxonomyComplete,
-				msg.enzymeMasteryCount, msg.enzymeMasteryComplete, msg.hasBlankHematicMemory,
+				msg.enzymeMasteryCount, msg.enzymeMasteryComplete,
+				msg.livingBestiaryCount, msg.livingBestiaryTotal, msg.morphlingLayerCount,
+				msg.hasBlankHematicMemory,
 				msg.mnemonistWovenVesselComplete, msg.mnemonistFirstWeaveComplete, msg.vicarMasonsRespiteDirective,
 				msg.veinMasonFirstLesson, msg.veinMasonFirstScarCarved,
 				msg.veinMasonFirstScarLearned, msg.veinMasonFirstEffigyPattern,

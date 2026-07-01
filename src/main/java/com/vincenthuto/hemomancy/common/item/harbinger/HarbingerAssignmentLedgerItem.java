@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -51,6 +52,11 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 					HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer),
 					HarbingerAdvancementGranter.isEnzymeMasteryComplete(serverPlayer),
+					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer)
+							.map(progress -> progress.recordedSpecimenCount()).orElse(0),
+					SpecimenBestiaryDefinitions.totalResearchSpecimens(),
+					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer)
+							.map(progress -> progress.recordedMorphlingLayerCount()).orElse(0),
 					hasBlankHematicMemory(serverPlayer),
 					HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
 					HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(serverPlayer),

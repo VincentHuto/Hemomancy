@@ -25,6 +25,9 @@ import org.joml.Matrix4f;
 import java.util.Random;
 
 final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
+    private static final int SILENT_ARCHON_PILLAR_BOTTOM_FADE_SEGMENTS = 4;
+    private static final int SILENT_ARCHON_PILLAR_TOP_FADE_SEGMENTS = 4;
+
 	SilentArchonChamberEffects(ChamberSkyTheme theme) {
 		super(theme);
 	}
@@ -261,6 +264,15 @@ final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
         VertexConsumer consumer = bufferSource.getBuffer(renderType);
         Matrix4f matrix = poseStack.last().pose();
 
+        float baseShadowY = Mth.lerp(0.34F, baseY, cloudCenterY);
+        float shadowAngle = twist + 0.18F + Mth.sin(time * 0.0011F + pillar) * 0.09F;
+        float shadowRightX = Mth.cos(shadowAngle);
+        float shadowRightZ = Mth.sin(shadowAngle);
+        float shadowForwardX = -shadowRightZ;
+        float shadowForwardZ = shadowRightX;
+        renderSilentArchonMonolithBaseShadow(consumer, matrix, x, baseShadowY, z, shadowRightX, shadowRightZ,
+                shadowForwardX, shadowForwardZ, radius, skyDistance, distanceT, pillar);
+
         int bankLayers = 5;
         int cellColumns = 6;
         int cellRows = 4;
@@ -292,6 +304,54 @@ final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
         bufferSource.endBatch(renderType);
     }
 
+    static void renderSilentArchonMonolithBaseShadow(VertexConsumer consumer, Matrix4f matrix,
+                                                             float centerX, float centerY, float centerZ,
+                                                             float rightX, float rightZ, float forwardX,
+                                                             float forwardZ, float radius, float skyDistance,
+                                                             float distanceT, int pillar) {
+        int shadowLayers = 4;
+        float shadowSpan = radius * Mth.lerp(distanceT, 11.4F, 17.2F) + skyDistance * 0.026F;
+        float shadowDepth = radius * Mth.lerp(distanceT, 7.0F, 11.6F) + skyDistance * 0.017F;
+        for (int layer = 0; layer < shadowLayers; layer++) {
+            float t = layer / (float) Math.max(1, shadowLayers - 1);
+            float layerYaw = layer * 0.31F + Mth.sin(pillar * 0.73F + layer) * 0.10F;
+            float rotatedRightX = rightX * Mth.cos(layerYaw) - forwardX * Mth.sin(layerYaw);
+            float rotatedRightZ = rightZ * Mth.cos(layerYaw) - forwardZ * Mth.sin(layerYaw);
+            float rotatedForwardX = -rotatedRightZ;
+            float rotatedForwardZ = rotatedRightX;
+            float layerY = centerY + Mth.lerp(t, -radius * 2.1F, radius * 5.8F);
+            float halfWidth = shadowSpan * Mth.lerp(t, 1.12F, 0.64F);
+            float halfDepth = shadowDepth * Mth.lerp(t, 0.86F, 0.46F);
+            int alpha = (int) Mth.clamp(Mth.lerp(distanceT, 126.0F, 86.0F) * Mth.lerp(t, 1.0F, 0.50F),
+                    32.0F, 134.0F);
+            int red = Mth.floor(Mth.lerp(distanceT, 20.0F, 12.0F));
+            int green = Mth.floor(Mth.lerp(distanceT, 30.0F, 22.0F));
+            int blue = Mth.floor(Mth.lerp(distanceT, 31.0F, 24.0F));
+            renderSilentArchonMonolithBaseShadowQuad(consumer, matrix, centerX, layerY, centerZ, rotatedRightX,
+                    rotatedRightZ, rotatedForwardX, rotatedForwardZ, halfWidth, halfDepth, red, green, blue, alpha);
+        }
+    }
+
+    static void renderSilentArchonMonolithBaseShadowQuad(VertexConsumer consumer, Matrix4f matrix,
+                                                                float centerX, float centerY, float centerZ,
+                                                                float rightX, float rightZ, float forwardX,
+                                                                float forwardZ, float halfWidth, float halfDepth,
+                                                                int red, int green, int blue, int alpha) {
+        float x0 = centerX - rightX * halfWidth - forwardX * halfDepth;
+        float z0 = centerZ - rightZ * halfWidth - forwardZ * halfDepth;
+        float x1 = centerX - rightX * halfWidth + forwardX * halfDepth;
+        float z1 = centerZ - rightZ * halfWidth + forwardZ * halfDepth;
+        float x2 = centerX + rightX * halfWidth + forwardX * halfDepth;
+        float z2 = centerZ + rightZ * halfWidth + forwardZ * halfDepth;
+        float x3 = centerX + rightX * halfWidth - forwardX * halfDepth;
+        float z3 = centerZ + rightZ * halfWidth - forwardZ * halfDepth;
+
+        consumer.addVertex(matrix, x0, centerY, z0).setUv(0.0F, 1.0F).setColor(red, green, blue, alpha);
+        consumer.addVertex(matrix, x1, centerY, z1).setUv(0.0F, 0.0F).setColor(red, green, blue, alpha);
+        consumer.addVertex(matrix, x2, centerY, z2).setUv(1.0F, 0.0F).setColor(red, green, blue, alpha);
+        consumer.addVertex(matrix, x3, centerY, z3).setUv(1.0F, 1.0F).setColor(red, green, blue, alpha);
+    }
+
     static void renderSilentArchonStormCloudBankLayer(VertexConsumer consumer, Matrix4f matrix,
                                                               float centerX, float centerY, float centerZ,
                                                               float rightX, float rightZ, float forwardX,
@@ -309,7 +369,7 @@ final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
                 float zOffset = Mth.lerp(zT, -halfDepth, halfDepth);
                 float zEdge = 1.0F - Math.abs(zT - 0.5F) * 2.0F;
                 float noise = Mth.sin((xCell * 31.7F + zCell * 17.3F + ripple * 149.0F) * 0.37F) * 0.5F + 0.5F;
-                float edgeFade = Mth.clamp(Math.min(xEdge, zEdge) * 1.85F + noise * 0.22F, 0.0F, 1.0F);
+                float edgeFade = Mth.clamp(Math.min(xEdge, zEdge) *0.85F + noise * 0.1F, .0F, 1.0F);
                 if (edgeFade < 0.20F) {
                     continue;
                 }
@@ -320,8 +380,8 @@ final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
                 float cellCenterZ = centerZ + rightZ * (xOffset + jitterRight) + forwardZ * (zOffset + jitterForward);
                 float cellCenterY = centerY
                         + Mth.sin(ripple * 13.0F + xCell * 0.83F + zCell * 1.17F) * halfDepth * 0.052F;
-                float cellHalfWidth = cellWidth * Mth.lerp(noise, 0.54F, 0.84F);
-                float cellHalfDepth = cellDepth * Mth.lerp(1.0F - noise, 0.62F, 0.96F);
+                float cellHalfWidth = cellWidth * Mth.lerp(noise, 1.54F, 1.84F);
+                float cellHalfDepth = cellDepth * Mth.lerp(1.0F - noise, 1.62F, 1.96F);
                 int cellAlpha = (int) Mth.clamp(alpha * edgeFade * Mth.lerp(noise, 0.68F, 1.10F), 0.0F, 132.0F);
                 if (cellAlpha < 12) {
                     continue;
@@ -667,6 +727,10 @@ final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
         PoseStack.Pose pose = poseStack.last();
         Matrix4f matrix = pose.pose();
         float height = topY - baseY;
+        float extendedBaseY = baseY - height * 0.24F;
+        float bottomFadeEnd = Mth.lerp(0.16F, baseY, topY);
+        float topFadeStart = Mth.lerp(0.78F, baseY, topY);
+        float extendedHeight = topY - extendedBaseY;
         sideCount = Math.max(3, sideCount);
         float[] cornerX = new float[sideCount + 1];
         float[] cornerZ = new float[sideCount + 1];
@@ -695,13 +759,67 @@ final class SilentArchonChamberEffects extends AbstractChamberThemeEffects {
             float normalZ = Mth.sin((a0 + a1) * 0.5F);
             float u0 = side / (float) sideCount;
             float u1 = (side + 1) / (float) sideCount;
-            float v1 = Math.max(2.0F, height / Math.max(1.0F, radius * 7.0F));
+            float v1 = Math.max(2.0F, extendedHeight / Math.max(1.0F, radius * 7.0F));
+            float bottomFadeEndV = v1 * Mth.clamp((bottomFadeEnd - extendedBaseY) / Math.max(1.0F,
+                    extendedHeight), 0.0F, 1.0F);
+            float fadeStartV = v1 * Mth.clamp((topFadeStart - extendedBaseY) / Math.max(1.0F, extendedHeight),
+                    0.0F, 1.0F);
 
-            addSilentArchonPillarVertex(consumer, pose, matrix, x0, baseY, z0, u0, 0.0F, color, normalX, normalZ);
-            addSilentArchonPillarVertex(consumer, pose, matrix, x1, baseY, z1, u1, 0.0F, color, normalX, normalZ);
-            addSilentArchonPillarVertex(consumer, pose, matrix, x1, top1, z1, u1, v1, color, normalX, normalZ);
-            addSilentArchonPillarVertex(consumer, pose, matrix, x0, top0, z0, u0, v1, color, normalX, normalZ);
+            for (int segment = 0; segment < SILENT_ARCHON_PILLAR_BOTTOM_FADE_SEGMENTS; segment++) {
+                float fadeT0 = segment / (float) SILENT_ARCHON_PILLAR_BOTTOM_FADE_SEGMENTS;
+                float fadeT1 = (segment + 1) / (float) SILENT_ARCHON_PILLAR_BOTTOM_FADE_SEGMENTS;
+                float y0 = Mth.lerp(fadeT0, extendedBaseY, bottomFadeEnd);
+                float y1 = Mth.lerp(fadeT1, extendedBaseY, bottomFadeEnd);
+                float v0 = Mth.lerp(fadeT0, 0.0F, bottomFadeEndV);
+                float v2 = Mth.lerp(fadeT1, 0.0F, bottomFadeEndV);
+                int color0 = silentArchonPillarColorWithAlpha(color, silentArchonPillarBottomAlpha(fadeT0));
+                int color1 = silentArchonPillarColorWithAlpha(color, silentArchonPillarBottomAlpha(fadeT1));
+
+                addSilentArchonPillarVertex(consumer, pose, matrix, x0, y0, z0, u0, v0, color0, normalX, normalZ);
+                addSilentArchonPillarVertex(consumer, pose, matrix, x1, y0, z1, u1, v0, color0, normalX, normalZ);
+                addSilentArchonPillarVertex(consumer, pose, matrix, x1, y1, z1, u1, v2, color1, normalX, normalZ);
+                addSilentArchonPillarVertex(consumer, pose, matrix, x0, y1, z0, u0, v2, color1, normalX, normalZ);
+            }
+
+            addSilentArchonPillarVertex(consumer, pose, matrix, x0, bottomFadeEnd, z0, u0, bottomFadeEndV, color,
+                    normalX, normalZ);
+            addSilentArchonPillarVertex(consumer, pose, matrix, x1, bottomFadeEnd, z1, u1, bottomFadeEndV, color,
+                    normalX, normalZ);
+            addSilentArchonPillarVertex(consumer, pose, matrix, x1, topFadeStart, z1, u1, fadeStartV, color,
+                    normalX, normalZ);
+            addSilentArchonPillarVertex(consumer, pose, matrix, x0, topFadeStart, z0, u0, fadeStartV, color,
+                    normalX, normalZ);
+
+            for (int segment = 0; segment < SILENT_ARCHON_PILLAR_TOP_FADE_SEGMENTS; segment++) {
+                float fadeT0 = segment / (float) SILENT_ARCHON_PILLAR_TOP_FADE_SEGMENTS;
+                float fadeT1 = (segment + 1) / (float) SILENT_ARCHON_PILLAR_TOP_FADE_SEGMENTS;
+                float y00 = Mth.lerp(fadeT0, topFadeStart, top0);
+                float y01 = Mth.lerp(fadeT0, topFadeStart, top1);
+                float y10 = Mth.lerp(fadeT1, topFadeStart, top0);
+                float y11 = Mth.lerp(fadeT1, topFadeStart, top1);
+                float v0 = Mth.lerp(fadeT0, fadeStartV, v1);
+                float v2 = Mth.lerp(fadeT1, fadeStartV, v1);
+                int color0 = silentArchonPillarColorWithAlpha(color, silentArchonPillarTopAlpha(fadeT0));
+                int color1 = silentArchonPillarColorWithAlpha(color, silentArchonPillarTopAlpha(fadeT1));
+
+                addSilentArchonPillarVertex(consumer, pose, matrix, x0, y00, z0, u0, v0, color0, normalX, normalZ);
+                addSilentArchonPillarVertex(consumer, pose, matrix, x1, y01, z1, u1, v0, color0, normalX, normalZ);
+                addSilentArchonPillarVertex(consumer, pose, matrix, x1, y11, z1, u1, v2, color1, normalX, normalZ);
+                addSilentArchonPillarVertex(consumer, pose, matrix, x0, y10, z0, u0, v2, color1, normalX, normalZ);
+            }
         }
+    }
+
+    static int silentArchonPillarBottomAlpha(float fadeT) {
+        return Mth.floor(Mth.lerp(1.0F - (1.0F - fadeT) * (1.0F - fadeT), 18.0F, 255.0F));
+    }
+
+    static int silentArchonPillarTopAlpha(float fadeT) {
+        return Mth.floor(Mth.lerp(fadeT * fadeT, 255.0F, 24.0F));
+    }
+
+    static int silentArchonPillarColorWithAlpha(int color, int alpha) {
+        return (color & 0x00FFFFFF) | (Math.max(0, Math.min(255, alpha)) << 24);
     }
 
     static void addSilentArchonPillarVertex(VertexConsumer consumer, PoseStack.Pose pose, Matrix4f matrix,

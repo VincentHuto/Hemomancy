@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.network;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.capa.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketRequestSpecimenBestiary;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketSyncSpecimenBestiary;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.summon.KnownSummonsRequestPacket;
@@ -146,6 +148,8 @@ public class PacketHandler {
         net.playToClient(StillArtCooldownPacket.TYPE, StillArtCooldownPacket.STREAM_CODEC, StillArtCooldownPacket::handle);
         net.playToServer(KnownSummonsRequestPacket.TYPE, KnownSummonsRequestPacket.STREAM_CODEC, KnownSummonsRequestPacket::handle);
         net.playToClient(KnownSummonsServerPacket.TYPE, KnownSummonsServerPacket.STREAM_CODEC, KnownSummonsServerPacket::handle);
+        net.playToServer(PacketRequestSpecimenBestiary.TYPE, PacketRequestSpecimenBestiary.STREAM_CODEC, PacketRequestSpecimenBestiary::handle);
+        net.playToClient(PacketSyncSpecimenBestiary.TYPE, PacketSyncSpecimenBestiary.STREAM_CODEC, PacketSyncSpecimenBestiary::handle);
         net.playToServer(PacketPuppeteersSpindleAction.TYPE, PacketPuppeteersSpindleAction.STREAM_CODEC, PacketPuppeteersSpindleAction::handle);
         net.playToClient(PacketSyncLastDeathMemory.TYPE, PacketSyncLastDeathMemory.STREAM_CODEC, PacketSyncLastDeathMemory::handle);
         net.playToClient(PacketSyncSutureLinks.TYPE, PacketSyncSutureLinks.STREAM_CODEC, PacketSyncSutureLinks::handle);

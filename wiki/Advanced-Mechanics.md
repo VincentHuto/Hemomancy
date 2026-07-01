@@ -1,6 +1,6 @@
 # Advanced Mechanics
 
-Hemomancy's deeper systems branch out well beyond basic blood casting. **Morphlings** are symbiotic fungal organisms cultivated through the **Morphling Incubator**, equipped through the **Morphling Jar**, and cycled through the **Living Staff**. Different morphling species provide different passive and reactive powers, and late-game **Primal** morphlings add capstone transformations and client-side mutation rendering.
+Hemomancy's deeper systems branch out well beyond basic blood casting. **Morphlings** are symbiotic fungal organisms introduced through wild Morphling Polyps, the Alchemist's Living Bestiary, and later full cultivation in the **Morphling Incubator**. Captured wild polyps can be surrendered for matching wild-bound morphlings, which are usable early but capped until incubated. Fully cultivated morphlings are equipped through the **Morphling Jar** and cycled through the **Living Staff**. Different morphling species provide different passive and reactive powers, and late-game **Primal** morphlings add capstone transformations and client-side mutation rendering.
 
 **Puppeteering** gives Harbingers a distinct summon-control lane. The **Marionette Crossbar** stores summon bindings and thread charge, while the **Puppeteer's Spindle** manages fueling, summon selection, and trial preparation. Summons are earned through blood-crafting-adjacent puppeteer trials, consume thread over time, and are capped by skill investment rather than inventory stockpiling.
 

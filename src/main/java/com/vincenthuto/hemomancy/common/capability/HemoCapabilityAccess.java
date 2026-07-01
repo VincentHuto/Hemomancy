@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
@@ -142,6 +143,22 @@ public static ILivingStaffProgress requireLivingStaffProgress(Player player) {
 
 public static ILivingStaffProgress requireLivingStaffProgress(Entity entity) {
     return getLivingStaffProgress(entity).orElseThrow(IllegalStateException::new);
+}
+
+public static Optional<SpecimenBestiaryProgress> getSpecimenBestiary(Player player) {
+    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.SPECIMEN_BESTIARY));
+}
+
+public static Optional<SpecimenBestiaryProgress> getSpecimenBestiary(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.SPECIMEN_BESTIARY));
+}
+
+public static SpecimenBestiaryProgress requireSpecimenBestiary(Player player) {
+    return getSpecimenBestiary(player).orElseThrow(IllegalStateException::new);
+}
+
+public static SpecimenBestiaryProgress requireSpecimenBestiary(Entity entity) {
+    return getSpecimenBestiary(entity).orElseThrow(IllegalStateException::new);
 }
 
 public static Optional<IKnownStillArts> getKnownStillArts(Player player) {

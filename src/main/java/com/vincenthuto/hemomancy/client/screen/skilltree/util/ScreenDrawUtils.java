@@ -137,6 +137,7 @@ public final class ScreenDrawUtils {
 	 * whether it is the currently active tab.
 	 */
 	public record TabDesc(String label, int accentColor, boolean active) {}
+	private record TabLayout(int width, String label) {}
 
 	/**
 	 * Draws a row of tab buttons flush to the top-right of the GUI viewport.
@@ -158,12 +159,14 @@ public final class ScreenDrawUtils {
 								int guiLeft, int guiTop, int guiWidth,
 								int tabH, int tabPad,
 								int mouseX, int mouseY) {
+		List<TabLayout> layout = fittedTabLayout(font, tabs, guiWidth, tabPad);
 		int x = guiLeft + guiWidth - tabPad;
 		int y = guiTop + tabPad;
 
 		for (int i = tabs.size() - 1; i >= 0; i--) {
 			TabDesc tab = tabs.get(i);
-			int tw = font.width(tab.label()) + 10;
+			TabLayout tabLayout = layout.get(i);
+			int tw = tabLayout.width();
 			int tx = x - tw;
 
 			boolean hovered = mouseX >= tx && mouseX <= tx + tw
@@ -183,7 +186,7 @@ public final class ScreenDrawUtils {
 			}
 
 			int textCol = tab.active() ? tab.accentColor() : (hovered ? 0xFFAAAAAA : 0xFF777777);
-			gfx.drawCenteredString(font, tab.label(), tx + tw / 2, y + (tabH - 8) / 2, textCol);
+			gfx.drawCenteredString(font, tabLayout.label(), tx + tw / 2, y + (tabH - 8) / 2, textCol);
 
 			x = tx - tabPad;
 		}
@@ -198,12 +201,12 @@ public final class ScreenDrawUtils {
 									int guiLeft, int guiTop, int guiWidth,
 									int tabH, int tabPad,
 									double mouseX, double mouseY) {
+		List<TabLayout> layout = fittedTabLayout(font, tabs, guiWidth, tabPad);
 		int x = guiLeft + guiWidth - tabPad;
 		int y = guiTop  + tabPad;
 
 		for (int i = tabs.size() - 1; i >= 0; i--) {
-			TabDesc tab = tabs.get(i);
-			int tw = font.width(tab.label()) + 10;
+			int tw = layout.get(i).width();
 			int tx = x - tw;
 
 			if (mouseX >= tx && mouseX <= tx + tw && mouseY >= y && mouseY <= y + tabH) {
@@ -212,6 +215,30 @@ public final class ScreenDrawUtils {
 			x = tx - tabPad;
 		}
 		return -1;
+	}
+
+	private static List<TabLayout> fittedTabLayout(Font font, List<TabDesc> tabs, int guiWidth, int tabPad) {
+		List<TabLayout> layout = new ArrayList<>();
+		if (tabs.isEmpty()) {
+			return layout;
+		}
+		int available = Math.max(1, guiWidth - tabPad * 2);
+		int totalGap = Math.max(0, tabs.size() - 1) * tabPad;
+		int widthBudget = Math.max(tabs.size(), available - totalGap);
+		int naturalTotal = 0;
+		for (TabDesc tab : tabs) {
+			naturalTotal += font.width(tab.label()) + 10;
+		}
+		int perTabMax = naturalTotal > widthBudget
+				? Math.max(1, widthBudget / tabs.size())
+				: Integer.MAX_VALUE;
+		for (TabDesc tab : tabs) {
+			int naturalWidth = font.width(tab.label()) + 10;
+			int tw = Math.min(naturalWidth, perTabMax);
+			String label = tw < naturalWidth ? truncateText(font, tab.label(), Math.max(1, tw - 10)) : tab.label();
+			layout.add(new TabLayout(tw, label));
+		}
+		return layout;
 	}
 
 	// ── Node icon rendering ──────────────────────────────────────

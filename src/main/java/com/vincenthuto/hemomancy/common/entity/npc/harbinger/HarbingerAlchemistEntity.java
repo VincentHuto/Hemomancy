@@ -5,11 +5,14 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.RedTaxonomySample;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -101,8 +104,9 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
                 tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
             } else {
                 RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
+                HeldSpecimenJar heldSpecimenJar = degree >= 2 ? findHeldSpecimenJar(held) : null;
                 tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
-                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample);
+                        isNpcInPlayerBloodline(player, this), heldRedTaxonomySample, heldSpecimenJar);
             }
             tree = DialogueItemInquiryNodes.withHeldItemInquiry(tree, held, "alchemist",
                     "hemomancy.alchemist.item_inquiry.unknown", degree, 0f);
@@ -114,6 +118,16 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
 
     private static RedTaxonomySample findHeldRedTaxonomySample(ItemStack stack) {
         return RedTaxonomySample.fromStack(stack);
+    }
+
+    private static HeldSpecimenJar findHeldSpecimenJar(ItemStack stack) {
+        if (!SpecimenJarData.hasSpecimen(stack)) {
+            return null;
+        }
+        CompoundTag specimen = SpecimenJarData.getSpecimen(stack);
+        return SpecimenJarData.getSpecimenEntityId(specimen)
+                .map(id -> new HeldSpecimenJar(id, SpecimenJarData.getMorphlingLayers(specimen)))
+                .orElse(null);
     }
 
     /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */

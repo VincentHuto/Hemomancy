@@ -165,9 +165,9 @@ public final class ModelFirstTileRendererResourceTest {
 				"interactLivingEntity");
 		assertContains("specimen jar item keeps specimen tooltip behavior", specimenJarBlockItem,
 				"SpecimenJarData.getSpecimenName");
-		assertDoesNotContain("specimen jar item should not request the old full custom item renderer",
+		assertContains("specimen jar item should request the dynamic specimen item renderer",
 				specimenJarBlockItem, "SpecimenJarItemRenderer");
-		assertDoesNotContain("specimen jar item should not request a custom item renderer",
+		assertContains("specimen jar item should expose a custom item renderer",
 				specimenJarBlockItem, "getCustomRenderer");
 
 		String lanternRenderer = read(SOURCE_ROOT.resolve(
@@ -231,6 +231,10 @@ public final class ModelFirstTileRendererResourceTest {
 				"renderSpecimen");
 		assertDoesNotContain("specimen jar renderer should not render the static model body", specimenJarRenderer,
 				"SpecimenJarModel");
+
+		String specimenJarItemModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/specimen_jar.json"));
+		assertContains("specimen jar item model should allow the custom item renderer",
+				specimenJarItemModel, "\"parent\": \"builtin/entity\"");
 
 		String altarBlockstate = read(RESOURCE_ROOT.resolve("assets/hemomancy/blockstates/altar_of_cleansing.json"));
 		assertContains("altar model should rotate 180 degrees for north-facing placement", altarBlockstate,

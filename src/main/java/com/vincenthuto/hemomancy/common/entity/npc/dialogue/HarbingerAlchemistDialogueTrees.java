@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -23,6 +25,9 @@ public final class HarbingerAlchemistDialogueTrees {
 	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/harbinger_alchemist/harbinger_alchemist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
 	public static final String EVENT_RED_TAXONOMY_PREFIX = "alchemist_red_taxonomy_";
+	public static final String EVENT_BESTIARY_RECORD = "alchemist_bestiary_record";
+	public static final String EVENT_BESTIARY_SURRENDER = "alchemist_bestiary_surrender";
+	public static final String EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX = "alchemist_bestiary_surrender_morphling_";
 
 	private HarbingerAlchemistDialogueTrees() {}
 
@@ -35,18 +40,23 @@ public final class HarbingerAlchemistDialogueTrees {
 	 * @param isNpcRecruited Whether this alchemist has already pledged to the player's bloodline.
 	 */
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited) {
-		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, null);
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, null, null);
 	}
 
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			RedTaxonomySample heldRedTaxonomySample) {
-		if (degree >= 2 && heldRedTaxonomySample != null) {
-			return votary(entityId, heldRedTaxonomySample);
+		return forDegree(degree, entityId, hasBloodline, isNpcRecruited, heldRedTaxonomySample, null);
+	}
+
+	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
+			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar) {
+		if (degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null)) {
+			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar);
 		}
 		return switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
-			case 2 -> votary(entityId, heldRedTaxonomySample);
+			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
@@ -54,6 +64,12 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited);
 			default -> apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
 		};
+	}
+
+	public record HeldSpecimenJar(ResourceLocation specimenId, List<MorphlingPolypLayer> morphlingLayers) {
+		public boolean isResearchSpecimen() {
+			return SpecimenBestiaryDefinitions.isResearchSpecimen(specimenId);
+		}
 	}
 
 	public enum RedTaxonomySample {
@@ -256,11 +272,32 @@ public final class HarbingerAlchemistDialogueTrees {
 	}
 
 	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample) {
+		return votary(entityId, heldRedTaxonomySample, null);
+	}
+
+	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
+			HeldSpecimenJar heldSpecimenJar) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
+		if (heldSpecimenJar != null && heldSpecimenJar.isResearchSpecimen()) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.record_living_specimen",
+					null, EVENT_BESTIARY_RECORD));
+			if (heldSpecimenJar.morphlingLayers().isEmpty()) {
+				greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.surrender_living_specimen",
+						null, EVENT_BESTIARY_SURRENDER));
+			} else {
+				for (MorphlingPolypLayer layer : heldSpecimenJar.morphlingLayers()) {
+					greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.surrender_polyp_"
+							+ layer.serializedName(), null,
+							EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX + layer.serializedName()));
+				}
+			}
+		}
 		if (heldRedTaxonomySample != null) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.submit_red_taxonomy_sample",
 					"red_taxonomy_" + heldRedTaxonomySample.key(), heldRedTaxonomySample.eventId()));
 		}
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_living_bestiary",
+				"living_bestiary_intro", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_red_taxonomy",
 				"red_taxonomy_intro", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
@@ -287,6 +324,20 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 								"centrifuge_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("living_bestiary_intro", List.of(
+						"hemomancy.alchemist.living_bestiary.intro.line1",
+						"hemomancy.alchemist.living_bestiary.intro.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphlings",
+								"living_bestiary_morphlings", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("living_bestiary_morphlings", List.of(
+						"hemomancy.alchemist.living_bestiary.morphlings.line1",
+						"hemomancy.alchemist.living_bestiary.morphlings.line2"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("red_taxonomy_infected_fungus", List.of(

@@ -27,6 +27,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int FIRST_SEPARATION_HEIGHT = 180;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
 	private static final int ENZYME_MASTERY_HEIGHT = 56;
+	private static final int LIVING_BESTIARY_HEIGHT = 68;
 	private static final int WOVEN_VESSEL_HEIGHT = 68;
 	private static final int VEIN_MASON_HEIGHT = 68;
 	private static final int SCROLLBAR_WIDTH = 6;
@@ -64,6 +65,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean redTaxonomyComplete;
 	private final int enzymeMasteryCount;
 	private final boolean enzymeMasteryComplete;
+	private final int livingBestiaryCount;
+	private final int livingBestiaryTotal;
+	private final int morphlingLayerCount;
 	private final boolean hasBlankHematicMemory;
 	private final boolean mnemonistWovenVesselComplete;
 	private final boolean mnemonistFirstWeaveComplete;
@@ -90,6 +94,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean firstSeparationStarted, boolean hasAnyEnzyme,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete,
+			int livingBestiaryCount, int livingBestiaryTotal, int morphlingLayerCount,
 			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
 			boolean mnemonistFirstWeaveComplete,
 			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
@@ -112,6 +117,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.redTaxonomyComplete = redTaxonomyComplete;
 		this.enzymeMasteryCount = enzymeMasteryCount;
 		this.enzymeMasteryComplete = enzymeMasteryComplete;
+		this.livingBestiaryCount = livingBestiaryCount;
+		this.livingBestiaryTotal = livingBestiaryTotal;
+		this.morphlingLayerCount = morphlingLayerCount;
 		this.hasBlankHematicMemory = hasBlankHematicMemory;
 		this.mnemonistWovenVesselComplete = mnemonistWovenVesselComplete;
 		this.mnemonistFirstWeaveComplete = mnemonistFirstWeaveComplete;
@@ -130,6 +138,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean firstSeparationStarted, boolean hasAnyEnzyme,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete,
+			int livingBestiaryCount, int livingBestiaryTotal, int morphlingLayerCount,
 			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
 			boolean mnemonistFirstWeaveComplete,
 			boolean vicarMasonsRespiteDirective, boolean veinMasonFirstLesson,
@@ -139,7 +148,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				degree, firstAwakening, degreeOne, vesselFilled, liberSanguinumCrafted, hematicIronBlockCrafted,
 				firstRemnant, ledgerGranted, hasVialCentrifuge, hasSampledBloodVial,
 				firstSeparationStarted, hasAnyEnzyme,
-				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete, hasBlankHematicMemory,
+				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete,
+				livingBestiaryCount, livingBestiaryTotal, morphlingLayerCount, hasBlankHematicMemory,
 				mnemonistWovenVesselComplete, mnemonistFirstWeaveComplete, vicarMasonsRespiteDirective,
 				veinMasonFirstLesson, veinMasonFirstScarCarved, veinMasonFirstScarLearned,
 				veinMasonFirstEffigyPattern, veinMasonFirstEffigyLoadout));
@@ -258,6 +268,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		cardY += FIRST_SEPARATION_HEIGHT + SECTION_GAP;
 		renderRedTaxonomy(gfx, x, cardY, w, mouseX, mouseY);
 		cardY += RED_TAXONOMY_HEIGHT + SECTION_GAP;
+		renderLivingBestiary(gfx, x, cardY, w, mouseX, mouseY);
+		cardY += LIVING_BESTIARY_HEIGHT + SECTION_GAP;
 		renderEnzymeMastery(gfx, x, cardY, w, mouseX, mouseY);
 		cardY += ENZYME_MASTERY_HEIGHT + SECTION_GAP;
 		renderWovenVessel(gfx, x, cardY, w, mouseX, mouseY);
@@ -374,6 +386,30 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 						? "screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.complete"
 						: "screen.hemomancy.harbinger_assignment_ledger.enzyme_mastery.desc"),
 				x + 8, y + 42, w - 16, enzymeMasteryComplete ? TEXT : MUTED, mouseX, mouseY);
+	}
+
+	private void renderLivingBestiary(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int total = Math.max(1, livingBestiaryTotal);
+		gfx.fill(x, y, x + w, y + LIVING_BESTIARY_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, LIVING_BESTIARY_HEIGHT, BORDER, BORDER_MUTED);
+		renderLivingBestiaryHeader(gfx, x + 8, y + 6, w - 16, total);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, Math.min(livingBestiaryCount, total), total);
+		renderTruncatedDescription(gfx,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.living_bestiary.desc",
+						morphlingLayerCount),
+				x + 8, y + 42, w - 16, MUTED, mouseX, mouseY);
+	}
+
+	private void renderLivingBestiaryHeader(GuiGraphics gfx, int x, int y, int w, int total) {
+		List<FormattedCharSequence> wrapped = font.split(
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.living_bestiary.side_title"), w);
+		if (!wrapped.isEmpty()) {
+			gfx.drawString(font, wrapped.get(0), x, y, HEADER, false);
+		}
+		gfx.drawString(font,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.living_bestiary.progress",
+						livingBestiaryCount, total),
+				x, y + 12, livingBestiaryCount >= total ? DONE : CURRENT, false);
 	}
 
 	private void renderEnzymeMasteryHeader(GuiGraphics gfx, int x, int y, int w) {
@@ -590,7 +626,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private int totalAssignmentContentHeight() {
 		return FIRST_BLOODCRAFT_HEIGHT + SECTION_GAP + HERMIT_ROAD_HEIGHT
 				+ SECTION_GAP + FIRST_SEPARATION_HEIGHT
-				+ SECTION_GAP + RED_TAXONOMY_HEIGHT + SECTION_GAP + ENZYME_MASTERY_HEIGHT
+				+ SECTION_GAP + RED_TAXONOMY_HEIGHT + SECTION_GAP + LIVING_BESTIARY_HEIGHT
+				+ SECTION_GAP + ENZYME_MASTERY_HEIGHT
 				+ SECTION_GAP + WOVEN_VESSEL_HEIGHT
 				+ SECTION_GAP + VEIN_MASON_HEIGHT;
 	}

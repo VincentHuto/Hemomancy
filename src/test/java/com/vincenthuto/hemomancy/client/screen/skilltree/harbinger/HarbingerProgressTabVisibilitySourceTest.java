@@ -14,12 +14,12 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 		String progressScreen = Files.readString(ROOT.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/HarbingerProgressScreen.java"));
 
-		assertContains("crafting tab is hidden until degree 2",
-				progressScreen, "CRAFTING(\"Crafting\", 0xFFAA2222, 2)");
+		assertContains("crafting tab is visible by default",
+				progressScreen, "CRAFTING(\"Crafting\", 0xFFAA2222, 0, false)");
 		assertContains("manipulations tab is hidden until degree 3",
-				progressScreen, "MANIPULATIONS(\"Manipulations\", 0xFFCC8833, 3)");
+				progressScreen, "MANIPULATIONS(\"Manipulations\", 0xFFCC8833, 3, false)");
 		assertContains("scars tab is hidden until degree 4",
-				progressScreen, "SCARS(\"Scars\", 0xFF44AACC, 4)");
+				progressScreen, "SCARS(\"Scars\", 0xFF44AACC, 4, false)");
 		assertContains("tab descriptors are built from visible tabs",
 				progressScreen, "for (Tab tab : visibleTabs(playerDegree))");
 		assertContains("hit testing maps visible index back to visible tab list",

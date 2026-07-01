@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -48,6 +49,9 @@ public final class HemoCapabilityKeys {
 
     public static final EntityCapability<ILivingStaffProgress, Void> LIVING_STAFF_PROGRESS =
             EntityCapability.createVoid(Hemomancy.rloc("living_staff_progress"), ILivingStaffProgress.class);
+
+    public static final EntityCapability<SpecimenBestiaryProgress, Void> SPECIMEN_BESTIARY =
+            EntityCapability.createVoid(Hemomancy.rloc("specimen_bestiary"), SpecimenBestiaryProgress.class);
 
     public static final EntityCapability<IKnownStillArts, Void> KNOWN_STILL_ARTS =
             EntityCapability.createVoid(Hemomancy.rloc("known_still_arts"), IKnownStillArts.class);

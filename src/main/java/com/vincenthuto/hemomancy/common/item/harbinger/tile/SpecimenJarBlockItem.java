@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tile;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.render.item.tile.functional.SpecimenJarItemRenderer;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.util.SpecimenJarData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -11,10 +15,11 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class SpecimenJarBlockItem extends BlockItem {
+public class SpecimenJarBlockItem extends BlockItem implements HemoClientItemExtensionsProvider {
 
 	public SpecimenJarBlockItem(Block block, Properties properties) {
 		super(block, properties);
@@ -32,11 +37,13 @@ public class SpecimenJarBlockItem extends BlockItem {
 
 		ItemStack filled = new ItemStack(this);
 		SpecimenJarData.setSpecimen(filled, SpecimenJarData.captureEntity(target));
-		if (!player.getAbilities().instabuild) {
-			stack.shrink(1);
-		}
-		if (stack.isEmpty()) {
+		if (!player.getAbilities().instabuild && stack.getCount() <= 1) {
 			player.setItemInHand(hand, filled);
+		} else if (!player.getAbilities().instabuild) {
+			stack.shrink(1);
+			if (!player.addItem(filled)) {
+				player.drop(filled, false);
+			}
 		} else if (!player.addItem(filled)) {
 			player.drop(filled, false);
 		}
@@ -52,6 +59,7 @@ public class SpecimenJarBlockItem extends BlockItem {
 				|| target.getType() == EntityInit.fervent_chitinite.get()
 				|| target.getType() == EntityInit.hemolymphopoda.get()
 				|| target.getType() == EntityInit.fargone.get()
+				|| target.getType() == EntityInit.venom_rib_centipede.get()
 				|| target.getType() == EntityInit.tooth_pecks.get();
 	}
 
@@ -63,5 +71,19 @@ public class SpecimenJarBlockItem extends BlockItem {
 		} else {
 			tooltip.add(Component.translatable("tooltip.hemomancy.specimen_jar.empty"));
 		}
+	}
+
+	@Override
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return new IClientItemExtensions() {
+			private final BlockEntityWithoutLevelRenderer renderer = new SpecimenJarItemRenderer(
+					Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+					Minecraft.getInstance().getEntityModels());
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return renderer;
+			}
+		};
 	}
 }

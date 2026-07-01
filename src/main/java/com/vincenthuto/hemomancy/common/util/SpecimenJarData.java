@@ -1,12 +1,15 @@
 package com.vincenthuto.hemomancy.common.util;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
+import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayerRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,9 +18,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 import java.util.Optional;
+import java.util.List;
 
 public final class SpecimenJarData {
 	public static final String TAG_SPECIMEN = "Specimen";
+	public static final String TAG_MORPHLING_LAYERS = "MorphlingLayers";
+	public static final String MORPHLING_POLYP_ID = "hemomancy:morphling_polyp";
 
 	private static final String TAG_ID = "id";
 	private static final String TAG_POS = "Pos";
@@ -95,6 +101,28 @@ public final class SpecimenJarData {
 		return EntityType.byString(specimen.getString(TAG_ID))
 				.map(EntityType::getDescription)
 				.orElse(Component.literal(specimen.getString(TAG_ID)));
+	}
+
+	public static Optional<ResourceLocation> getSpecimenEntityId(ItemStack stack) {
+		return getSpecimenEntityId(getSpecimen(stack));
+	}
+
+	public static Optional<ResourceLocation> getSpecimenEntityId(CompoundTag specimen) {
+		if (specimen == null || !specimen.contains(TAG_ID, Tag.TAG_STRING)) {
+			return Optional.empty();
+		}
+		return Optional.ofNullable(ResourceLocation.tryParse(specimen.getString(TAG_ID)));
+	}
+
+	public static int getMorphlingLayerMask(CompoundTag specimen) {
+		if (specimen == null || !MORPHLING_POLYP_ID.equals(specimen.getString(TAG_ID))) {
+			return 0;
+		}
+		return MorphlingPolypLayerRules.sanitizeMask(specimen.getInt(TAG_MORPHLING_LAYERS));
+	}
+
+	public static List<MorphlingPolypLayer> getMorphlingLayers(CompoundTag specimen) {
+		return MorphlingPolypLayerRules.layersFromMask(getMorphlingLayerMask(specimen));
 	}
 
 	private static void sanitizeStoredEntity(CompoundTag specimen) {

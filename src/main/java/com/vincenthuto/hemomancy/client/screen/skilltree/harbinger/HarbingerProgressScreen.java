@@ -17,21 +17,24 @@ public class HarbingerProgressScreen extends Screen {
 
     // ── Tabs ──
     private enum Tab {
-        SKILLS("Skills", 0xFFCC3333, 0),
-        MANIPULATIONS("Manipulations", 0xFFCC8833, 3),
-        CRAFTING("Crafting", 0xFFAA2222, 0),
-        SCARS("Scars", 0xFF44AACC, 4),
-        SUMMONS("Summons", 0xFFBB3355, 2),
-        RITES("Rites", 0xFF8844CC, 0),
-        MATERIALS("Materials", 0xFFCC6644, 0);
+        SKILLS("Skills", 0xFFCC3333, 0, false),
+        MANIPULATIONS("Manipulations", 0xFFCC8833, 3, false),
+        CRAFTING("Crafting", 0xFFAA2222, 0, false),
+        SCARS("Scars", 0xFF44AACC, 4, false),
+        SUMMONS("Summons", 0xFFBB3355, 2, false),
+        RITES("Rites", 0xFF8844CC, 0, false),
+        MATERIALS("Materials", 0xFFCC6644, 0, false),
+        BESTIARY("Bestiary", 0xFF77AA66, 2, true);
 
         final String label;
         final int color;
         final int requiredDegree;
-        Tab(String label, int color, int requiredDegree) {
+        final boolean bottomRight;
+        Tab(String label, int color, int requiredDegree, boolean bottomRight) {
             this.label = label;
             this.color = color;
             this.requiredDegree = requiredDegree;
+            this.bottomRight = bottomRight;
         }
 
         boolean visibleAtDegree(int degree) {
@@ -60,6 +63,7 @@ public class HarbingerProgressScreen extends Screen {
     private final ScarsTabController          scars     = new ScarsTabController();
     private final SummonsTabController summons = new SummonsTabController();
     private final MaterialsTabController materials = new MaterialsTabController();
+    private final BestiaryTabController bestiary = new BestiaryTabController();
 
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
 
@@ -86,6 +90,7 @@ public class HarbingerProgressScreen extends Screen {
             case SCARS         -> scars;
             case SUMMONS       -> summons;
             case MATERIALS     -> materials;
+            case BESTIARY      -> bestiary;
         };
     }
 
@@ -113,7 +118,7 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private IProgressTab[] allTabs() {
-        return new IProgressTab[]{skills, manips, rites, crafting, scars, summons, materials};
+        return new IProgressTab[]{skills, manips, rites, crafting, scars, summons, materials, bestiary};
     }
 
     private PanZoomState viewForTab(Tab tab) {
@@ -279,6 +284,7 @@ public class HarbingerProgressScreen extends Screen {
         pose.pushPose();
         pose.translate(0.0F, 0.0F, SCREEN_CHROME_Z);
         drawTabs(gfx, mouseX, mouseY);
+        drawBottomRightTabs(gfx, mouseX, mouseY);
         pose.popPose();
     }
 
@@ -313,9 +319,42 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private Tab tabUnder(double mx, double my) {
+        Tab bottomRight = bottomRightTabUnder(mx, my);
+        if (bottomRight != null) {
+            return bottomRight;
+        }
         List<Tab> visibleTabs = visibleTabs(playerDegree);
         int idx = ScreenDrawUtils.tabIndexUnder(font, buildTabDescs(), guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mx, my);
         return idx >= 0 ? visibleTabs.get(idx) : null;
+    }
+
+    private void drawBottomRightTabs(GuiGraphics gfx, int mouseX, int mouseY) {
+        for (Tab tab : bottomRightTabs(playerDegree)) {
+            int tw = font.width(tab.label) + 14;
+            int tx = guiLeft + guiWidth - TAB_PAD - tw;
+            int ty = guiTop + guiHeight - TAB_PAD - TAB_HEIGHT;
+            boolean hovered = mouseX >= tx && mouseX <= tx + tw && mouseY >= ty && mouseY <= ty + TAB_HEIGHT;
+            boolean active = tab == activeTab;
+            gfx.fill(tx, ty, tx + tw, ty + TAB_HEIGHT, active ? 0xFF07120B : (hovered ? 0xFF0A160D : 0xFF050B07));
+            ScreenDrawUtils.drawSimpleBorder(gfx, tx, ty, tw, TAB_HEIGHT, active ? tab.color : 0xFF444444);
+            if (active) {
+                gfx.fill(tx + 1, ty + 1, tx + tw - 1, ty + 2, tab.color);
+            }
+            gfx.drawCenteredString(font, tab.label, tx + tw / 2, ty + (TAB_HEIGHT - 8) / 2,
+                    active ? tab.color : (hovered ? 0xFFB8C8B8 : 0xFF777777));
+        }
+    }
+
+    private Tab bottomRightTabUnder(double mx, double my) {
+        for (Tab tab : bottomRightTabs(playerDegree)) {
+            int tw = font.width(tab.label) + 14;
+            int tx = guiLeft + guiWidth - TAB_PAD - tw;
+            int ty = guiTop + guiHeight - TAB_PAD - TAB_HEIGHT;
+            if (mx >= tx && mx <= tx + tw && my >= ty && my <= ty + TAB_HEIGHT) {
+                return tab;
+            }
+        }
+        return null;
     }
 
     private static Tab firstVisibleTab(int degree) {
@@ -325,7 +364,17 @@ public class HarbingerProgressScreen extends Screen {
     private static List<Tab> visibleTabs(int degree) {
         List<Tab> visible = new ArrayList<>();
         for (Tab tab : Tab.values()) {
-            if (tab.visibleAtDegree(degree)) {
+            if (!tab.bottomRight && tab.visibleAtDegree(degree)) {
+                visible.add(tab);
+            }
+        }
+        return visible;
+    }
+
+    private static List<Tab> bottomRightTabs(int degree) {
+        List<Tab> visible = new ArrayList<>();
+        for (Tab tab : Tab.values()) {
+            if (tab.bottomRight && tab.visibleAtDegree(degree)) {
                 visible.add(tab);
             }
         }

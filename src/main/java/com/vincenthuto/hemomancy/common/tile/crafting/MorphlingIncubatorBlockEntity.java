@@ -328,6 +328,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		tag.putFloat("EnzymePower", existingPower + totalStrength);
 		int existingFeedings = tag.getInt("EnzymeFeedings");
 		tag.putInt("EnzymeFeedings", existingFeedings + enzymeCount);
+		tag.remove(MorphlingItem.WILD_BOUND_KEY);
 		result.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		// Move center to output

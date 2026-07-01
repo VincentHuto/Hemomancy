@@ -54,6 +54,8 @@ public final class MaterialsTabView {
 	// Node rendering colours (common across both screens)
 	private static final int COL_NODE_BG = 0xCC0C0808;
 	private static final int INFO_PANEL_SHADOW = 0xAA000000;
+	private static final float INFO_PANEL_Z = 400.0F;
+	private static final float MATERIAL_TOOLTIP_Z = INFO_PANEL_Z + 500.0F;
 
 	private MaterialsTabView() {}
 
@@ -298,7 +300,7 @@ public final class MaterialsTabView {
 
 		var pose = gfx.pose();
 		pose.pushPose();
-		pose.translate(0.0F, 0.0F, 400.0F);
+		pose.translate(0.0F, 0.0F, INFO_PANEL_Z);
 		// Background. This must be opaque and above the pan/zoom material canvas
 		// because item renders and labels can carry their own GUI depth.
 		gfx.fill(panelX - 2, panelY - 2, panelX + panelW + 2, panelY + panelH + 2, INFO_PANEL_SHADOW);
@@ -399,7 +401,11 @@ public final class MaterialsTabView {
 						.withStyle(s -> s.withColor(recipePrompt)));
 			}
 
+			var pose = gfx.pose();
+			pose.pushPose();
+			pose.translate(0.0F, 0.0F, MATERIAL_TOOLTIP_Z);
 			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
+			pose.popPose();
 			break;
 		}
 	}

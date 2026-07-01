@@ -33,6 +33,7 @@ public class MorphlingItem extends Item implements IMorphling {
 
 	public int bloodCost;
 	public static final String PRIMALIZED_KEY = "Primalized";
+	public static final String WILD_BOUND_KEY = "WildBound";
 	public static final String PRIMAL_ABILITY_PREFIX = "Primal:";
 
 	// Maturity thresholds based on effective EnzymePower
@@ -81,10 +82,15 @@ public class MorphlingItem extends Item implements IMorphling {
 		if (PrimalMorphlingRules.isPrimalMaturity(power, tag.getBoolean(PRIMALIZED_KEY))) {
 			return PrimalMorphlingRules.PRIMAL_LEVEL;
 		}
+		int maturity = 0;
 		for (int i = PrimalMorphlingRules.APEX_LEVEL; i > 0; i--) {
-			if (power >= MATURITY_THRESHOLDS[i]) return i;
+			if (power >= MATURITY_THRESHOLDS[i]) {
+				maturity = i;
+				break;
+			}
 		}
-		return 0;
+		return WildMorphlingRules.applyMaturityCap(maturity, tag.getBoolean(WILD_BOUND_KEY),
+				tag.getBoolean(PRIMALIZED_KEY));
 	}
 
 	public static boolean isPrimal(ItemStack stack) {
@@ -94,8 +100,34 @@ public class MorphlingItem extends Item implements IMorphling {
 	public static void setPrimalized(ItemStack stack) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putBoolean(PRIMALIZED_KEY, true);
+		tag.remove(WILD_BOUND_KEY);
 		float power = Math.max(tag.getFloat("EnzymePower"), MATURITY_THRESHOLDS[PrimalMorphlingRules.APEX_LEVEL]);
 		tag.putFloat("EnzymePower", power);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	public static boolean isWildBound(ItemStack stack) {
+		if (!stack.has(DataComponents.CUSTOM_DATA)) {
+			return false;
+		}
+		return stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(WILD_BOUND_KEY);
+	}
+
+	public static void setWildBound(ItemStack stack) {
+		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		tag.putBoolean(WILD_BOUND_KEY, true);
+		tag.putFloat("EnzymePower", Math.max(tag.getFloat("EnzymePower"),
+				MATURITY_THRESHOLDS[WildMorphlingRules.WILD_BOUND_MAX_MATURITY]));
+		tag.putInt("EnzymeFeedings", Math.max(tag.getInt("EnzymeFeedings"), 1));
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+	}
+
+	public static void clearWildBound(ItemStack stack) {
+		if (!stack.has(DataComponents.CUSTOM_DATA)) {
+			return;
+		}
+		CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+		tag.remove(WILD_BOUND_KEY);
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
@@ -147,6 +179,10 @@ public class MorphlingItem extends Item implements IMorphling {
 						.withStyle(ChatFormatting.DARK_GREEN));
 				tooltip.add(Component.literal("Feedings: " + feedings)
 						.withStyle(ChatFormatting.GOLD));
+				if (morphTag.getBoolean(WILD_BOUND_KEY)) {
+					tooltip.add(Component.literal("Wild-bound: Incubate to unlock further maturity")
+							.withStyle(ChatFormatting.DARK_AQUA));
+				}
 
 				// Show progress to next level
 				if (maturity < PrimalMorphlingRules.APEX_LEVEL) {
