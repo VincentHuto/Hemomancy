@@ -38,11 +38,11 @@ public final class MaterialsTabView {
 		positionsOut.clear();
 		boundsOut[0] = 0;
 		boundsOut[1] = 0;
-		if (nodes.isEmpty()) {
+		Map<String, int[]> allPositions = atlasEntryPositions(path);
+		if (allPositions.isEmpty()) {
 			return;
 		}
 
-		LinkedHashMap<String, List<MaterialAtlasNode>> byBucket = groupByBucket(path, nodes);
 		int hubX = MaterialAtlasSpec.hubX(path);
 		int hubY = MaterialAtlasSpec.hubY(path);
 		int hubLabelX = MaterialAtlasSpec.hubLabelX(path);
@@ -57,62 +57,91 @@ public final class MaterialsTabView {
 		maxX = Math.max(maxX, hubLabelX + CONTENT_PAD);
 		maxY = Math.max(maxY, hubLabelY + CONTENT_PAD);
 
+		for (int[] pos : allPositions.values()) {
+			minX = Math.min(minX, pos[0] - nodeSize - CONTENT_PAD / 2);
+			minY = Math.min(minY, pos[1] - nodeSize - CONTENT_PAD / 2);
+			maxX = Math.max(maxX, pos[0] + nodeSize + CONTENT_PAD / 2);
+			maxY = Math.max(maxY, pos[1] + nodeSize + CONTENT_PAD / 2);
+		}
+
 		for (MaterialAtlasBucket bucket : MaterialAtlasSpec.buckets(path)) {
-			List<MaterialAtlasNode> bucketNodes = byBucket.get(bucket.id());
-			if (bucketNodes == null || bucketNodes.isEmpty()) {
-				continue;
-			}
-			bucketNodes.sort(Comparator.comparingInt(n -> n.atlasEntry().order()));
-			List<MaterialAtlasNode> branchNodes = new ArrayList<>(bucketNodes);
-
-			double angle = Math.atan2(bucket.centerY() - hubY, bucket.centerX() - hubX);
-			double ux = Math.cos(angle);
-			double uy = Math.sin(angle);
-			double tx = -uy;
-			double ty = ux;
-			int cols = Math.max(1, Math.min(5, (int) Math.ceil(Math.sqrt(branchNodes.size() * 1.25))));
-
-			for (int i = 0; i < branchNodes.size(); i++) {
-				MaterialAtlasNode node = branchNodes.get(i);
-				int x;
-				int y;
-				if (node.atlasEntry().hasExplicitPosition()) {
-					x = node.atlasEntry().nodeX();
-					y = node.atlasEntry().nodeY();
-				} else {
-					int row = i / cols;
-					int col = i % cols;
-					int rowCount = Math.min(cols, branchNodes.size() - row * cols);
-					double lateral = (col - (rowCount - 1) * 0.5D) * NODE_GAP_X + jitter(node.entry().name(), 9);
-					double radial = NODE_GAP_Y + row * NODE_GAP_Y + ((i & 1) == 0 ? 0 : 11);
-					x = (int) Math.round(bucket.centerX() + tx * lateral + ux * radial);
-					y = (int) Math.round(bucket.centerY() + ty * lateral + uy * radial);
-				}
-				positionsOut.put(node, new int[] {x, y});
-				minX = Math.min(minX, x - nodeSize - CONTENT_PAD / 2);
-				minY = Math.min(minY, y - nodeSize - CONTENT_PAD / 2);
-				maxX = Math.max(maxX, x + nodeSize + CONTENT_PAD / 2);
-				maxY = Math.max(maxY, y + nodeSize + CONTENT_PAD / 2);
-			}
-
 			minX = Math.min(minX, Math.min(bucket.centerX(), bucket.plaqueX()) - CONTENT_PAD);
 			minY = Math.min(minY, Math.min(bucket.centerY(), bucket.plaqueY()) - CONTENT_PAD);
 			maxX = Math.max(maxX, Math.max(bucket.centerX(), bucket.plaqueX()) + CONTENT_PAD);
 			maxY = Math.max(maxY, Math.max(bucket.centerY(), bucket.plaqueY()) + CONTENT_PAD);
 		}
 
-		if (minX < 0 || minY < 0) {
-			int offX = minX < 0 ? -minX : 0;
-			int offY = minY < 0 ? -minY : 0;
-			for (int[] pos : positionsOut.values()) {
-				pos[0] += offX;
-				pos[1] += offY;
+		int offX = minX < 0 ? -minX : 0;
+		int offY = minY < 0 ? -minY : 0;
+		for (MaterialAtlasNode node : nodes) {
+			int[] pos = allPositions.get(node.entry().name());
+			if (pos != null) {
+				positionsOut.put(node, new int[] {pos[0] + offX, pos[1] + offY});
 			}
+		}
+
+		if (offX != 0 || offY != 0) {
 			maxX += offX;
 			maxY += offY;
 		}
 		boundsOut[0] = Math.max(1, maxX + CONTENT_PAD);
 		boundsOut[1] = Math.max(1, maxY + CONTENT_PAD);
+	}
+
+	private static Map<String, int[]> atlasEntryPositions(MaterialAtlasPath path) {
+		LinkedHashMap<String, int[]> positions = new LinkedHashMap<>();
+		LinkedHashMap<String, List<MaterialAtlasEntry>> allEntriesByBucket = groupEntriesByBucket(path);
+		int hubX = MaterialAtlasSpec.hubX(path);
+		int hubY = MaterialAtlasSpec.hubY(path);
+
+		for (MaterialAtlasBucket bucket : MaterialAtlasSpec.buckets(path)) {
+			List<MaterialAtlasEntry> bucketEntries = allEntriesByBucket.get(bucket.id());
+			if (bucketEntries == null || bucketEntries.isEmpty()) {
+				continue;
+			}
+			bucketEntries.sort(Comparator.comparingInt(MaterialAtlasEntry::order));
+
+			double angle = Math.atan2(bucket.centerY() - hubY, bucket.centerX() - hubX);
+			double ux = Math.cos(angle);
+			double uy = Math.sin(angle);
+			double tx = -uy;
+			double ty = ux;
+			int cols = Math.max(1, Math.min(5, (int) Math.ceil(Math.sqrt(bucketEntries.size() * 1.25))));
+
+			for (int i = 0; i < bucketEntries.size(); i++) {
+				MaterialAtlasEntry entry = bucketEntries.get(i);
+				int x;
+				int y;
+				if (entry.hasExplicitPosition()) {
+					x = entry.nodeX();
+					y = entry.nodeY();
+				} else {
+					int row = i / cols;
+					int col = i % cols;
+					int rowCount = Math.min(cols, bucketEntries.size() - row * cols);
+					double lateral = (col - (rowCount - 1) * 0.5D) * NODE_GAP_X + jitter(entry.materialId(), 9);
+					double radial = NODE_GAP_Y + row * NODE_GAP_Y + ((i & 1) == 0 ? 0 : 11);
+					x = (int) Math.round(bucket.centerX() + tx * lateral + ux * radial);
+					y = (int) Math.round(bucket.centerY() + ty * lateral + uy * radial);
+				}
+				positions.put(entry.materialId(), new int[] {x, y});
+			}
+		}
+		return positions;
+	}
+
+	private static LinkedHashMap<String, List<MaterialAtlasEntry>> groupEntriesByBucket(MaterialAtlasPath path) {
+		LinkedHashMap<String, List<MaterialAtlasEntry>> byBucket = new LinkedHashMap<>();
+		for (MaterialAtlasBucket bucket : MaterialAtlasSpec.buckets(path)) {
+			byBucket.put(bucket.id(), new ArrayList<>());
+		}
+		for (MaterialAtlasEntry entry : MaterialAtlasSpec.entries(path)) {
+			List<MaterialAtlasEntry> bucketEntries = byBucket.get(entry.bucket().id());
+			if (bucketEntries != null) {
+				bucketEntries.add(entry);
+			}
+		}
+		return byBucket;
 	}
 
 	public static void drawAtlasTrace(MaterialAtlasTraceLayerCache traceCache,

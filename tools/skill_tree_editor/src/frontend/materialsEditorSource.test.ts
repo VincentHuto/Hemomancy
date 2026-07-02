@@ -30,6 +30,17 @@ test('materials frontend exposes graph layers inspector creation and editor navi
   expect(source).toContain('data-action="align-tolerance-y"');
   expect(source).toContain('clampAlignmentTolerance');
   expect(source).toContain('{ x: alignToleranceX, y: alignToleranceY }');
+  expect(source).toContain('selectedMaterialIds');
+  expect(source).toContain('marqueeState');
+  expect(source).toContain('materialSelectionIdsInRect');
+  expect(source).toContain('updateMarqueeSelectionRect');
+  expect(source).toContain("kind: 'material-group-position-change'");
+  expect(source).toContain('setMaterialRenderedPositions(change.before)');
+  expect(source).toContain('setMaterialRenderedPositions(change.after)');
+  expect(source).toContain("kind: 'material-remove-change'");
+  expect(source).toContain('data-action="remove-material-node"');
+  expect(source).toContain('removeSelectedMaterialNodes');
+  expect(source).toContain('stripRemovedParentIds');
   expect(source).toContain('.material-node, .label-plaque, .atlas-hub');
   expect(source).toContain('class="node-frame" x="-13" y="-13" width="26" height="26"');
   expect(source).toContain('class="node-glow" x="-15" y="-15" width="30" height="30"');

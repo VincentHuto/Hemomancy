@@ -215,6 +215,20 @@ export function alignMaterialPositionToNodes(
   return { x: alignedX, y: alignedY };
 }
 
+export function materialSelectionIdsInRect(
+  nodes: Array<Pick<MaterialGraphNode, 'id' | 'x' | 'y'>>,
+  start: { x: number; y: number },
+  end: { x: number; y: number }
+): string[] {
+  const minX = Math.min(start.x, end.x);
+  const maxX = Math.max(start.x, end.x);
+  const minY = Math.min(start.y, end.y);
+  const maxY = Math.max(start.y, end.y);
+  return nodes
+    .filter(node => node.x >= minX && node.x <= maxX && node.y >= minY && node.y <= maxY)
+    .map(node => node.id);
+}
+
 export function materialPositionFromDrag(request: MaterialDragRequest): { x: number; y: number } {
   const zoom = request.zoom || 1;
   const rawX = request.origin.x + ((request.pointerCurrent.x + request.scrollCurrent.x) - (request.pointerStart.x + request.scrollStart.x)) / zoom;

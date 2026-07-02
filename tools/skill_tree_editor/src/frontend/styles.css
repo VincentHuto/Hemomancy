@@ -368,6 +368,10 @@ small {
   cursor: crosshair;
 }
 
+.graph-scroll.marquee-selecting {
+  cursor: crosshair;
+}
+
 .graph {
   display: block;
   background: #090102;
@@ -433,6 +437,14 @@ small {
   stroke-linejoin: round;
   stroke-dasharray: 8 7;
   opacity: 0.84;
+  pointer-events: none;
+}
+
+.marquee-selection {
+  fill: rgba(240, 178, 74, 0.14);
+  stroke: #f0b24a;
+  stroke-width: 1.5px;
+  stroke-dasharray: 6 4;
   pointer-events: none;
 }
 
@@ -788,6 +800,17 @@ textarea:focus {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+}
+
+.danger-button {
+  border-color: #7d2f2f;
+  color: #ffd6d1;
+  background: #351515;
+}
+
+.danger-button:hover {
+  border-color: #c64a42;
+  background: #4a1c1a;
 }
 
 .empty {

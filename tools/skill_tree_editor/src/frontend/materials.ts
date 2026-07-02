@@ -15,6 +15,7 @@ import {
   alignMaterialPositionToNodes,
   materialModelPositionFromRendered,
   materialPositionFromDrag,
+  materialSelectionIdsInRect,
   sanitizeMaterialParents,
   type MaterialGraphLayout
 } from './materialsGraph';
@@ -62,7 +63,21 @@ interface AutoPositionChange {
   afterNodeY: number | null;
 }
 
-type HistoryChange = PositionChange | BucketChange | ParentChange | AutoPositionChange;
+interface MaterialGroupPositionChange {
+  kind: 'material-group-position-change';
+  ids: string[];
+  before: Record<string, { x: number; y: number }>;
+  after: Record<string, { x: number; y: number }>;
+}
+
+interface MaterialRemoveChange {
+  kind: 'material-remove-change';
+  removedIds: string[];
+  beforeEntries: MaterialAtlasEntryModel[];
+  afterEntries: MaterialAtlasEntryModel[];
+}
+
+type HistoryChange = PositionChange | BucketChange | ParentChange | AutoPositionChange | MaterialGroupPositionChange | MaterialRemoveChange;
 
 interface DragState {
   kind: Exclude<SelectionKind, 'create-entry'>;
@@ -71,6 +86,13 @@ interface DragState {
   pointerStart: { x: number; y: number };
   scrollStart: { x: number; y: number };
   origin: { x: number; y: number };
+  groupOrigins?: Record<string, { x: number; y: number }>;
+}
+
+interface MarqueeState {
+  pointerId: number;
+  start: { x: number; y: number };
+  current: { x: number; y: number };
 }
 
 const graphMinZoom = 0.55;
@@ -92,9 +114,11 @@ let alignToleranceY = 10;
 let graphZoom = 1;
 let dragState: DragState | null = null;
 let dragPan: DragPanState | null = null;
+let marqueeState: MarqueeState | null = null;
 let connectionState: ConnectionDragState | null = null;
 let connectionSource: { x: number; y: number } | null = null;
 let connectionPointerId: number | null = null;
+let selectedMaterialIds = new Set<string>();
 let undoStack: HistoryChange[] = [];
 let redoStack: HistoryChange[] = [];
 let lastLayout: MaterialGraphLayout | null = null;
@@ -281,7 +305,7 @@ function renderLabelPlaque(plaque: MaterialGraphLayout['labelPlaques'][number]):
 }
 
 function renderMaterialNode(node: MaterialGraphLayout['nodes'][number]): string {
-  const selected = selection.kind === 'material' && selection.id === node.id ? 'selected' : '';
+  const selected = selection.kind === 'material' && selection.id === node.id || selectedMaterialIds.has(node.id) ? 'selected' : '';
   const label = node.entry.catalog?.displayName ?? 'Unknown material';
   return `<g class="material-node ${selected}" data-select-kind="material" data-select-id="${escapeAttr(node.id)}" transform="translate(${node.x} ${node.y})">
     <rect class="node-hit" x="-20" y="-20" width="40" height="40"></rect>
@@ -344,6 +368,8 @@ function renderBucketInspector(bucket: MaterialAtlasBucketModel): string {
 
 function renderMaterialInspector(entry: MaterialAtlasEntryModel): string {
   const catalog = ensureCatalog(entry);
+  const selectedCount = selectedMaterialIds.has(entry.id) ? selectedMaterialIds.size : 1;
+  const removeLabel = selectedCount > 1 ? `Remove ${selectedCount} Atlas Nodes` : 'Remove Atlas Node';
   const parentOptions = parentOptionsFor(entry);
   const parentLabels = new Map(currentPath().entries.map(candidate => [
     candidate.id,
@@ -387,6 +413,7 @@ function renderMaterialInspector(entry: MaterialAtlasEntryModel): string {
     </div>
     <div class="form-actions">
       <button type="button" data-action="clear-node-position">Use Auto Position</button>
+      <button type="button" class="danger-button" data-action="remove-material-node">${escapeHtml(removeLabel)}</button>
     </div>
   </form>`;
 }
@@ -454,6 +481,7 @@ function wireEvents(): void {
     button.addEventListener('click', () => {
       activePath = button.dataset.path as MaterialAtlasPathKey;
       selection = { kind: 'material', id: currentPath().entries[0]?.id ?? '' };
+      selectedMaterialIds = new Set();
       preview = null;
       render();
     });
@@ -470,6 +498,9 @@ function wireEvents(): void {
         kind: element.dataset.selectKind as SelectionKind,
         id: element.dataset.selectId ?? ''
       };
+      if (selection.kind !== 'material' || !selectedMaterialIds.has(selection.id)) {
+        selectedMaterialIds = new Set();
+      }
       renderPreservingGraphViewport(captureCurrentGraphViewport());
     });
   }
@@ -527,6 +558,15 @@ function wireGraphEvents(): void {
     const target = event.target as Element | null;
     const draggable = target?.closest<SVGGElement>('.material-node, .label-plaque, .atlas-hub');
     if (!draggable) {
+      if (event.shiftKey && target?.closest('.material-graph')) {
+        const start = graphPointFromPointer(scroller, event);
+        marqueeState = { pointerId: event.pointerId, start, current: start };
+        updateMarqueeSelectionRect(scroller, marqueeState);
+        scroller.setPointerCapture(event.pointerId);
+        scroller.classList.add('marquee-selecting');
+        event.preventDefault();
+        return;
+      }
       if (shouldStartDragPan(event.target)) {
         dragPan = beginDragPan(event.clientX, event.clientY, scroller.scrollLeft, scroller.scrollTop);
         scroller.setPointerCapture(event.pointerId);
@@ -540,6 +580,9 @@ function wireGraphEvents(): void {
     const origin = positionFor(kind, id);
     if (!origin) return;
     selection = { kind, id };
+    if (kind !== 'material' || !selectedMaterialIds.has(id)) {
+      selectedMaterialIds = new Set();
+    }
     if (kind === 'material' && (event.ctrlKey || event.metaKey)) {
       connectionState = beginConnectionDrag(id);
       connectionSource = origin;
@@ -550,13 +593,17 @@ function wireGraphEvents(): void {
       event.preventDefault();
       return;
     }
+    const groupOrigins = kind === 'material' && selectedMaterialIds.has(id) && selectedMaterialIds.size > 1
+      ? materialPositionsForIds(selectedMaterialIds)
+      : undefined;
     dragState = {
       kind,
       id,
       pointerId: event.pointerId,
       pointerStart: { x: event.clientX, y: event.clientY },
       scrollStart: { x: scroller.scrollLeft, y: scroller.scrollTop },
-      origin
+      origin,
+      groupOrigins
     };
     scroller.setPointerCapture(event.pointerId);
     event.preventDefault();
@@ -573,6 +620,12 @@ function wireGraphEvents(): void {
       event.preventDefault();
       return;
     }
+    if (marqueeState && event.pointerId === marqueeState.pointerId) {
+      marqueeState.current = graphPointFromPointer(scroller, event);
+      updateMarqueeSelectionRect(scroller, marqueeState);
+      event.preventDefault();
+      return;
+    }
     if (!dragState || event.pointerId !== dragState.pointerId) return;
     const dragged = materialPositionFromDrag({
       origin: dragState.origin,
@@ -584,12 +637,27 @@ function wireGraphEvents(): void {
       snap: snapToGrid ? 8 : 1
     });
     const layout = lastLayout ?? layoutMaterialAtlasPath(currentPath());
+    const groupIds = dragState.groupOrigins ? new Set(Object.keys(dragState.groupOrigins)) : new Set<string>();
+    const alignmentNodes = groupIds.size
+      ? layout.nodes.filter(node => !groupIds.has(node.id) || node.id === dragState!.id)
+      : layout.nodes;
     const next = alignToNodes && dragState.kind === 'material'
-      ? alignMaterialPositionToNodes(dragged, layout.nodes, dragState.id, { x: alignToleranceX, y: alignToleranceY })
+      ? alignMaterialPositionToNodes(dragged, alignmentNodes, dragState.id, { x: alignToleranceX, y: alignToleranceY })
       : dragged;
-    setPosition(dragState.kind, dragState.id, next);
-    const element = app.querySelector<SVGGElement>(draggedGraphElementSelector(dragState.kind, dragState.id));
-    element?.setAttribute('transform', `translate(${next.x} ${next.y})`);
+    if (dragState.groupOrigins && dragState.kind === 'material') {
+      const dx = next.x - dragState.origin.x;
+      const dy = next.y - dragState.origin.y;
+      for (const [materialId, groupOrigin] of Object.entries(dragState.groupOrigins)) {
+        const groupPosition = { x: groupOrigin.x + dx, y: groupOrigin.y + dy };
+        setPosition('material', materialId, groupPosition);
+        const element = app.querySelector<SVGGElement>(draggedGraphElementSelector('material', materialId));
+        element?.setAttribute('transform', `translate(${groupPosition.x} ${groupPosition.y})`);
+      }
+    } else {
+      setPosition(dragState.kind, dragState.id, next);
+      const element = app.querySelector<SVGGElement>(draggedGraphElementSelector(dragState.kind, dragState.id));
+      element?.setAttribute('transform', `translate(${next.x} ${next.y})`);
+    }
     updateMaterialGraphDomTraces();
     updatePositionInputs(dragState.kind, dragState.id);
     preview = null;
@@ -599,6 +667,20 @@ function wireGraphEvents(): void {
     if (dragPan) {
       dragPan = null;
       scroller.classList.remove('panning');
+      return;
+    }
+    if (marqueeState && event.pointerId === marqueeState.pointerId) {
+      marqueeState.current = graphPointFromPointer(scroller, event);
+      const layout = lastLayout ?? layoutMaterialAtlasPath(currentPath());
+      const ids = materialSelectionIdsInRect(layout.nodes, marqueeState.start, marqueeState.current);
+      selectedMaterialIds = new Set(ids);
+      if (ids.length) selection = { kind: 'material', id: ids[0] };
+      statusText = ids.length === 1 ? 'Selected 1 material.' : `Selected ${ids.length} materials.`;
+      marqueeState = null;
+      removeMarqueeSelectionRect(scroller);
+      scroller.classList.remove('marquee-selecting');
+      event.preventDefault();
+      renderPreservingGraphViewport(viewport);
       return;
     }
     if (connectionState && connectionPointerId === event.pointerId) {
@@ -620,11 +702,25 @@ function wireGraphEvents(): void {
       return;
     }
     if (!dragState || event.pointerId !== dragState.pointerId) return;
-    const after = positionFor(dragState.kind, dragState.id);
-    if (after && (after.x !== dragState.origin.x || after.y !== dragState.origin.y)) {
-      undoStack.push({ kind: dragState.kind, id: dragState.id, before: dragState.origin, after });
-      redoStack = [];
-      statusText = `Moved ${dragState.id}.`;
+    if (dragState.groupOrigins && dragState.kind === 'material') {
+      const after = materialPositionsForIds(new Set(Object.keys(dragState.groupOrigins)));
+      if (!samePositionRecords(dragState.groupOrigins, after)) {
+        undoStack.push({
+          kind: 'material-group-position-change',
+          ids: Object.keys(dragState.groupOrigins),
+          before: dragState.groupOrigins,
+          after
+        });
+        redoStack = [];
+        statusText = `Moved ${Object.keys(dragState.groupOrigins).length} materials.`;
+      }
+    } else {
+      const after = positionFor(dragState.kind, dragState.id);
+      if (after && (after.x !== dragState.origin.x || after.y !== dragState.origin.y)) {
+        undoStack.push({ kind: dragState.kind, id: dragState.id, before: dragState.origin, after });
+        redoStack = [];
+        statusText = `Moved ${dragState.id}.`;
+      }
     }
     dragState = null;
     renderPreservingGraphViewport(viewport);
@@ -661,6 +757,9 @@ function handleAction(action: string): void {
       return;
     case 'clear-node-position':
       clearNodePosition();
+      return;
+    case 'remove-material-node':
+      removeSelectedMaterialNodes();
       return;
     case 'create-material':
       createMaterial();
@@ -898,6 +997,15 @@ function undoMovement(): void {
   } else if (change.kind === 'auto-position-change') {
     setEntryNodePosition(change.id, change.beforeNodeX, change.beforeNodeY);
     statusText = `Undid auto position for ${change.id}.`;
+  } else if (change.kind === 'material-group-position-change') {
+    setMaterialRenderedPositions(change.before);
+    selectedMaterialIds = new Set(change.ids);
+    statusText = `Undid move for ${change.ids.length} materials.`;
+  } else if (change.kind === 'material-remove-change') {
+    setMaterialEntries(change.beforeEntries);
+    selectedMaterialIds = new Set(change.removedIds);
+    selection = { kind: 'material', id: change.removedIds[0] ?? currentPath().entries[0]?.id ?? '' };
+    statusText = `Restored ${change.removedIds.length} material atlas node${change.removedIds.length === 1 ? '' : 's'}.`;
   } else {
     setPosition(change.kind, change.id, change.before);
     statusText = `Undid move for ${change.id}.`;
@@ -919,6 +1027,15 @@ function redoMovement(): void {
   } else if (change.kind === 'auto-position-change') {
     setEntryNodePosition(change.id, change.afterNodeX, change.afterNodeY);
     statusText = `Redid auto position for ${change.id}.`;
+  } else if (change.kind === 'material-group-position-change') {
+    setMaterialRenderedPositions(change.after);
+    selectedMaterialIds = new Set(change.ids);
+    statusText = `Redid move for ${change.ids.length} materials.`;
+  } else if (change.kind === 'material-remove-change') {
+    setMaterialEntries(change.afterEntries);
+    selectedMaterialIds = new Set();
+    selection = { kind: 'material', id: currentPath().entries[0]?.id ?? '' };
+    statusText = `Removed ${change.removedIds.length} material atlas node${change.removedIds.length === 1 ? '' : 's'}.`;
   } else {
     setPosition(change.kind, change.id, change.after);
     statusText = `Redid move for ${change.id}.`;
@@ -926,6 +1043,30 @@ function redoMovement(): void {
   undoStack.push(change);
   preview = null;
   render();
+}
+
+function removeSelectedMaterialNodes(): void {
+  if (selection.kind !== 'material') return;
+  const path = currentPath();
+  const ids = selectedMaterialIds.has(selection.id)
+    ? Array.from(selectedMaterialIds)
+    : [selection.id];
+  const existingIds = new Set(path.entries.map(entry => entry.id));
+  const removedIds = ids.filter(id => existingIds.has(id));
+  if (!removedIds.length) return;
+
+  const beforeEntries = cloneMaterialEntries(path.entries);
+  const removed = new Set(removedIds);
+  path.entries = stripRemovedParentIds(path.entries.filter(entry => !removed.has(entry.id)), removed);
+  const afterEntries = cloneMaterialEntries(path.entries);
+
+  undoStack.push({ kind: 'material-remove-change', removedIds, beforeEntries, afterEntries });
+  redoStack = [];
+  selectedMaterialIds = new Set();
+  selection = { kind: 'material', id: path.entries[0]?.id ?? '' };
+  statusText = `Removed ${removedIds.length} material atlas node${removedIds.length === 1 ? '' : 's'}.`;
+  preview = null;
+  renderPreservingGraphViewport(captureCurrentGraphViewport());
 }
 
 function clearNodePosition(): void {
@@ -1010,6 +1151,55 @@ function setEntryNodePosition(id: string, nodeX: number | null, nodeY: number | 
 function setEntryParents(id: string, parentIds: string[]): void {
   const entry = currentPath().entries.find(candidate => candidate.id === id);
   if (entry) entry.parentIds = [...parentIds];
+}
+
+function setMaterialEntries(entries: MaterialAtlasEntryModel[]): void {
+  currentPath().entries = cloneMaterialEntries(entries);
+}
+
+function stripRemovedParentIds(entries: MaterialAtlasEntryModel[], removedIds: Set<string>): MaterialAtlasEntryModel[] {
+  return entries.map(entry => ({
+    ...cloneMaterialEntry(entry),
+    parentIds: entry.parentIds.filter(parentId => !removedIds.has(parentId))
+  }));
+}
+
+function cloneMaterialEntries(entries: MaterialAtlasEntryModel[]): MaterialAtlasEntryModel[] {
+  return entries.map(cloneMaterialEntry);
+}
+
+function cloneMaterialEntry(entry: MaterialAtlasEntryModel): MaterialAtlasEntryModel {
+  return {
+    ...entry,
+    gate: { ...entry.gate },
+    parentIds: [...entry.parentIds],
+    catalog: entry.catalog ? { ...entry.catalog, gate: { ...entry.catalog.gate } } : undefined
+  };
+}
+
+function materialPositionsForIds(ids: Set<string>): Record<string, { x: number; y: number }> {
+  const layout = lastLayout ?? layoutMaterialAtlasPath(currentPath());
+  const positions: Record<string, { x: number; y: number }> = {};
+  for (const node of layout.nodes) {
+    if (ids.has(node.id)) positions[node.id] = { x: node.x, y: node.y };
+  }
+  return positions;
+}
+
+function setMaterialRenderedPositions(positions: Record<string, { x: number; y: number }>): void {
+  for (const [id, position] of Object.entries(positions)) {
+    setPosition('material', id, position);
+  }
+}
+
+function samePositionRecords(
+  left: Record<string, { x: number; y: number }>,
+  right: Record<string, { x: number; y: number }>
+): boolean {
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+  return leftKeys.length === rightKeys.length
+    && leftKeys.every(key => right[key] && left[key].x === right[key].x && left[key].y === right[key].y);
 }
 
 function updateMaterialGraphDomTraces(): void {
@@ -1098,7 +1288,7 @@ function bucketButton(bucket: MaterialAtlasBucketModel): string {
 }
 
 function materialButton(entry: MaterialAtlasEntryModel): string {
-  const selected = selection.kind === 'material' && selection.id === entry.id ? 'selected' : '';
+  const selected = selection.kind === 'material' && selection.id === entry.id || selectedMaterialIds.has(entry.id) ? 'selected' : '';
   return `<button class="skill-button ${selected}" data-select-kind="material" data-select-id="${escapeAttr(entry.id)}">
     <span>${escapeHtml(entry.catalog?.displayName ?? 'Unknown material')}</span>
     <small>${escapeHtml(entry.id)}</small>
@@ -1221,6 +1411,29 @@ function graphPointFromPointer(scroller: HTMLElement, event: PointerEvent): { x:
     x: (event.clientX - rect.left + scroller.scrollLeft) / graphZoom,
     y: (event.clientY - rect.top + scroller.scrollTop) / graphZoom
   };
+}
+
+function updateMarqueeSelectionRect(scroller: HTMLElement, state: MarqueeState): void {
+  const svg = scroller.querySelector<SVGSVGElement>('svg.graph');
+  if (!svg) return;
+  let rect = svg.querySelector<SVGRectElement>('.marquee-selection');
+  if (!rect) {
+    rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('class', 'marquee-selection');
+    svg.appendChild(rect);
+  }
+  const x = Math.min(state.start.x, state.current.x);
+  const y = Math.min(state.start.y, state.current.y);
+  const width = Math.abs(state.current.x - state.start.x);
+  const height = Math.abs(state.current.y - state.start.y);
+  rect.setAttribute('x', String(x));
+  rect.setAttribute('y', String(y));
+  rect.setAttribute('width', String(width));
+  rect.setAttribute('height', String(height));
+}
+
+function removeMarqueeSelectionRect(scroller: HTMLElement): void {
+  scroller.querySelector('.marquee-selection')?.remove();
 }
 
 function updateConnectionPreview(scroller: HTMLElement, from: { x: number; y: number }, to: { x: number; y: number }): void {

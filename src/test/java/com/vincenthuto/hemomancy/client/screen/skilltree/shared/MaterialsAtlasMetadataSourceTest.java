@@ -38,6 +38,8 @@ public final class MaterialsAtlasMetadataSourceTest {
 		assertContains("atlas entries expose explicit position check", atlasEntry, "hasExplicitPosition()");
 		assertContains("atlas spec keeps auto-layout entry helper", spec, "private static void entry(String materialId");
 		assertContains("atlas spec exposes authored coordinate entry helper", spec, "private static void entryAt(String materialId");
+		assertContains("atlas spec exposes all authored entries for stable filtered layouts",
+				spec, "public static Collection<MaterialAtlasEntry> entries(MaterialAtlasPath path)");
 		assertEquals("atlas spec keeps one entryAt helper to avoid varargs overload ambiguity", 1,
 				countOccurrences(spec,
 						"private static void entryAt(String materialId, MaterialAtlasPath path, String bucketId, MaterialGate gate,"));
@@ -51,9 +53,9 @@ public final class MaterialsAtlasMetadataSourceTest {
 				read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasBucket.java"),
 				"rootMaterialId");
 
-		Set<String> atlasIds = extractAtlasIds(spec);
-		assertAllCovered("Harbinger material atlas metadata", materialIds(data, "buildBloodEntries"), atlasIds);
-		assertAllCovered("Unstained material atlas metadata", materialIds(data, "buildUnstainedEntries"), atlasIds);
+		Set<String> materialIds = materialIds(data, "buildBloodEntries");
+		materialIds.addAll(materialIds(data, "buildUnstainedEntries"));
+		assertAllKnown("Material atlas metadata", extractAtlasIds(spec), materialIds);
 		assertContains("materials controller filters through atlas visibility",
 				controller, "MaterialVisibility.NEXT_PREVIEW");
 		assertContains("materials controller keeps selected details unlocked-only",
@@ -68,10 +70,16 @@ public final class MaterialsAtlasMetadataSourceTest {
 				view, "NODE_GAP_Y + row * NODE_GAP_Y");
 		assertContains("materials view prefers authored atlas node coordinates",
 				view, "hasExplicitPosition()");
+		assertContains("materials view keeps node placement stable when locked materials are hidden",
+				view, "MaterialAtlasSpec.entries(path)");
+		assertContains("materials view calculates auto positions from the full atlas, not the visible subset",
+				view, "allEntriesByBucket");
 		assertNotContains("materials view does not draw node-like label chips",
 				view, "PLAQUE_CHIP");
 		assertNotContains("materials view does not draw filled label backplates through nodes",
-				view, "labelW");
+				view, "plaqueW");
+		assertContains("materials view draws category labels from authored center coordinates",
+				view, "int textX = x - textW / 2;");
 		assertContains("materials view renders veiled preview nodes",
 				view, "drawVeiledNode");
 		assertContains("materials view uses cached atlas traces",
@@ -121,11 +129,11 @@ public final class MaterialsAtlasMetadataSourceTest {
 		return ids;
 	}
 
-	private static void assertAllCovered(String label, Set<String> materialIds, Set<String> atlasIds) {
-		Set<String> missing = new LinkedHashSet<>(materialIds);
-		missing.removeAll(atlasIds);
-		if (!missing.isEmpty()) {
-			throw new AssertionError(label + " missing atlas ids: " + missing);
+	private static void assertAllKnown(String label, Set<String> atlasIds, Set<String> materialIds) {
+		Set<String> unknown = new LinkedHashSet<>(atlasIds);
+		unknown.removeAll(materialIds);
+		if (!unknown.isEmpty()) {
+			throw new AssertionError(label + " references unknown material ids: " + unknown);
 		}
 	}
 

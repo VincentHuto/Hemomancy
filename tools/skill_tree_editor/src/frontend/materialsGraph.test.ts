@@ -3,6 +3,7 @@ import {
   layoutMaterialAtlasPath,
   materialModelPositionFromRendered,
   materialPositionFromDrag,
+  materialSelectionIdsInRect,
   sanitizeMaterialParents
 } from './materialsGraph';
 import type { MaterialAtlasPathModel } from '../shared/types';
@@ -146,6 +147,17 @@ test('material alignment respects separate x and y tolerances', () => {
   ], 'self', { x: 8, y: 4 });
 
   expect(aligned).toEqual({ x: 200, y: 207 });
+});
+
+test('material marquee selection returns node ids inside an unordered drag box', () => {
+  const ids = materialSelectionIdsInRect([
+    { id: 'northwest', x: 120, y: 80 },
+    { id: 'inside_a', x: 220, y: 160 },
+    { id: 'inside_b', x: 300, y: 240 },
+    { id: 'east', x: 420, y: 180 }
+  ], { x: 340, y: 260 }, { x: 180, y: 120 });
+
+  expect(ids).toEqual(['inside_a', 'inside_b']);
 });
 
 test('material alignment chooses the nearest matching axis candidate', () => {
