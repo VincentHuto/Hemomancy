@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,11 @@ public class BestiaryTabState {
 		MORPHLING
 	}
 
+	enum PreviewDragMode {
+		NONE,
+		ROTATE
+	}
+
 	final List<Entry> entries = new ArrayList<>();
 	int selectedIndex = -1;
 	int listScroll;
@@ -19,6 +27,18 @@ public class BestiaryTabState {
 	int recordedSpecimenCount;
 	int surrenderedSpecimenCount;
 	int recordedMorphlingLayerCount;
+	float previewPanX;
+	float previewPanY;
+	float previewZoom = 1.0F;
+	float previewRotationAngle;
+	float previewPitchAngle;
+	boolean previewDragging;
+	PreviewDragMode previewDragMode = PreviewDragMode.NONE;
+	double previewDragLastX;
+	double previewDragLastY;
+	String previewKey;
+	ClientLevel previewLevel;
+	LivingEntity previewEntity;
 
 	void rebuild(Set<String> recordedSpecimens, Set<String> surrenderedSpecimens, Set<String> recordedMorphlingLayers) {
 		String selectedKey = selectedEntry() == null ? "" : selectedEntry().key();
@@ -50,8 +70,27 @@ public class BestiaryTabState {
 	}
 
 	void select(Entry entry) {
-		selectedIndex = entries.indexOf(entry);
+		int newIndex = entries.indexOf(entry);
+		if (newIndex != selectedIndex) {
+			resetPreviewView();
+		}
+		selectedIndex = newIndex;
 		infoScroll = 0;
+	}
+
+	void resetPreviewView() {
+		previewPanX = 0.0F;
+		previewPanY = 0.0F;
+		previewZoom = 1.0F;
+		previewRotationAngle = 0.0F;
+		previewPitchAngle = 0.0F;
+		previewDragging = false;
+		previewDragMode = PreviewDragMode.NONE;
+		previewDragLastX = 0.0D;
+		previewDragLastY = 0.0D;
+		previewKey = null;
+		previewLevel = null;
+		previewEntity = null;
 	}
 
 	private int indexOf(String key) {
@@ -68,5 +107,11 @@ public class BestiaryTabState {
 
 	record Entry(Kind kind, String key, String titleKey, String descriptionKey, String sourceKey,
 			boolean discovered, boolean surrendered) {
+		ResourceLocation previewId() {
+			if (kind != Kind.SPECIMEN) {
+				return null;
+			}
+			return ResourceLocation.tryParse(key);
+		}
 	}
 }

@@ -16,6 +16,10 @@ public final class BestiaryTabView {
 	private static final int PAD = 10;
 	private static final int LIST_INSET = 5;
 	private static final int LIST_SCROLLBAR_W = 6;
+	private static final int DETAIL_PAD = 10;
+	private static final int PREVIEW_GAP = 10;
+	private static final int PREVIEW_MIN_W = 96;
+	private static final int TEXT_MIN_W = 120;
 
 	private BestiaryTabView() {
 	}
@@ -31,7 +35,7 @@ public final class BestiaryTabView {
 
 		drawHeader(gfx, ctx, x, y, w, state);
 		drawList(gfx, ctx, state, x, y + TOP_H, listW, h - TOP_H, mouseX, mouseY);
-		drawDetail(gfx, ctx, state, detailX, y + TOP_H, detailW, h - TOP_H);
+		drawDetail(gfx, ctx, state, detailX, y + TOP_H, detailW, h - TOP_H, mouseX, mouseY);
 	}
 
 	static int listHeight(ProgressScreenContext ctx) {
@@ -80,6 +84,16 @@ public final class BestiaryTabView {
 			rowY += ROW_H;
 		}
 		return null;
+	}
+
+	static boolean hasPreviewForSelected(BestiaryTabState state) {
+		BestiaryTabState.Entry entry = state == null ? null : state.selectedEntry();
+		return entry != null && entry.discovered() && BestiaryEntityPreview.hasPreview(entry.previewId());
+	}
+
+	static boolean isOverPreview(ProgressScreenContext ctx, BestiaryTabState state, double mx, double my) {
+		PreviewBounds bounds = previewBounds(ctx, state);
+		return bounds != null && bounds.contains(mx, my);
 	}
 
 	private static void drawHeader(GuiGraphics gfx, ProgressScreenContext ctx, int x, int y, int w,
@@ -157,7 +171,7 @@ public final class BestiaryTabView {
 	}
 
 	private static void drawDetail(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState state,
-			int x, int y, int w, int h) {
+			int x, int y, int w, int h, int mouseX, int mouseY) {
 		gfx.fill(x, y, x + w, y + h, PANEL_BG);
 		ScreenDrawUtils.drawSimpleBorder(gfx, x, y, w, h, PANEL_BORDER);
 		BestiaryTabState.Entry entry = state.selectedEntry();
@@ -167,29 +181,127 @@ public final class BestiaryTabView {
 			return;
 		}
 
-		int cy = y + 10 - state.infoScroll;
+		if (entry.discovered() && BestiaryEntityPreview.hasPreview(entry.previewId())) {
+			drawPreviewDossier(gfx, ctx, state, entry, x, y, w, h, mouseX, mouseY);
+			return;
+		}
+		drawTextDossier(gfx, ctx, state, entry, x + DETAIL_PAD, y + DETAIL_PAD,
+				w - DETAIL_PAD * 2, h - DETAIL_PAD * 2);
+	}
+
+	private static void drawPreviewDossier(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState state,
+			BestiaryTabState.Entry entry, int x, int y, int w, int h, int mouseX, int mouseY) {
+		PreviewBounds bounds = previewBounds(x, y, w, h);
+		if (bounds == null) {
+			drawTextDossier(gfx, ctx, state, entry, x + DETAIL_PAD, y + DETAIL_PAD,
+					w - DETAIL_PAD * 2, h - DETAIL_PAD * 2);
+			return;
+		}
+
+		gfx.fill(bounds.x(), bounds.y(), bounds.right(), bounds.bottom(), 0xAA031007);
+		ScreenDrawUtils.drawSimpleBorder(gfx, bounds.x(), bounds.y(), bounds.w(), bounds.h(), 0xFF24442D);
+		gfx.enableScissor(bounds.x() + 1, bounds.y() + 1, bounds.right() - 1, bounds.bottom() - 1);
+		try {
+			BestiaryEntityPreview.render(gfx, ctx, state, entry, bounds.x() + 1, bounds.y() + 1,
+					bounds.right() - 1, bounds.bottom() - 1);
+		} finally {
+			gfx.disableScissor();
+		}
+		if (bounds.contains(mouseX, mouseY)) {
+			drawPreviewHint(gfx, ctx, "Rotate | Zoom",
+					bounds.x() + 4, bounds.bottom() - 13, bounds.w() - 8);
+		}
+
+		int textX = bounds.right() + PREVIEW_GAP;
+		int textW = x + w - DETAIL_PAD - textX;
+		drawTextDossier(gfx, ctx, state, entry, textX, y + DETAIL_PAD, textW, h - DETAIL_PAD * 2);
+	}
+
+	private static void drawTextDossier(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState state,
+			BestiaryTabState.Entry entry, int x, int y, int w, int h) {
+		int cy = y - state.infoScroll;
 		Component title = entry.discovered()
 				? Component.translatable(entry.titleKey())
 				: Component.translatable("bestiary.hemomancy.locked.title");
 		gfx.drawString(ctx.font(), title.copy().withStyle(s -> s.withColor(TAB_COLOR).withBold(true)),
-				x + 10, cy, 0, false);
+				x, cy, 0, false);
 		cy += 16;
 		String statusKey = statusKey(entry);
 		gfx.drawString(ctx.font(), Component.translatable(statusKey).withStyle(s -> s.withColor(0xFF9DB09D)),
-				x + 10, cy, 0, false);
+				x, cy, 0, false);
 		cy += 16;
-		gfx.fill(x + 10, cy, x + w - 10, cy + 1, 0xFF24442D);
+		gfx.fill(x, cy, x + w, cy + 1, 0xFF24442D);
 		cy += 9;
 
 		String description = entry.discovered()
 				? Component.translatable(entry.descriptionKey()).getString()
 				: Component.translatable("bestiary.hemomancy.locked.description").getString();
-		cy = drawWrapped(gfx, ctx, description, x + 10, cy, w - 20, 0xFFD0D8CC);
+		cy = drawWrapped(gfx, ctx, description, x, cy, w, 0xFFD0D8CC);
 		cy += 10;
 		String source = entry.discovered()
 				? Component.translatable(entry.sourceKey()).getString()
 				: Component.translatable("bestiary.hemomancy.locked.source").getString();
-		drawWrapped(gfx, ctx, source, x + 10, cy, w - 20, 0xFF91A091);
+		drawWrapped(gfx, ctx, source, x, cy, w, 0xFF91A091);
+	}
+
+	private static PreviewBounds previewBounds(ProgressScreenContext ctx, BestiaryTabState state) {
+		if (ctx == null || !hasPreviewForSelected(state)) {
+			return null;
+		}
+		int x = ctx.guiLeft() + PAD;
+		int y = ctx.guiTop() + 24;
+		int w = ctx.guiWidth() - PAD * 2;
+		int h = ctx.guiHeight() - 34;
+		int listW = Math.min(220, Math.max(160, w / 3));
+		int detailX = x + listW + PAD;
+		int detailW = w - listW - PAD;
+		return previewBounds(detailX, y + TOP_H, detailW, h - TOP_H);
+	}
+
+	private static PreviewBounds previewBounds(int x, int y, int w, int h) {
+		int availableW = w - DETAIL_PAD * 2;
+		int maxPreviewW = availableW - PREVIEW_GAP - TEXT_MIN_W;
+		if (maxPreviewW < PREVIEW_MIN_W) {
+			return null;
+		}
+		int preferred = w >= 360 ? Math.round(availableW * 0.45F) : Math.round(availableW * 0.38F);
+		int previewW = Math.max(PREVIEW_MIN_W, Math.min(preferred, maxPreviewW));
+		return new PreviewBounds(x + DETAIL_PAD, y + DETAIL_PAD, previewW, h - DETAIL_PAD * 2);
+	}
+
+	static float previewHintScale(int textWidth, int availableWidth) {
+		if (textWidth <= 0 || availableWidth <= 0 || textWidth <= availableWidth) {
+			return 1.0F;
+		}
+		return Math.max(0.5F, availableWidth / (float) textWidth);
+	}
+
+	private static void drawPreviewHint(GuiGraphics gfx, ProgressScreenContext ctx, String text, int x, int y,
+			int availableWidth) {
+		int textWidth = ctx.font().width(text);
+		float scale = previewHintScale(textWidth, availableWidth);
+		gfx.pose().pushPose();
+		try {
+			gfx.pose().translate(x + availableWidth / 2.0F, y, 0.0F);
+			gfx.pose().scale(scale, scale, 1.0F);
+			gfx.drawString(ctx.font(), text, Math.round(-textWidth / 2.0F), 0, 0xFF8CA88C, false);
+		} finally {
+			gfx.pose().popPose();
+		}
+	}
+
+	private record PreviewBounds(int x, int y, int w, int h) {
+		int right() {
+			return x + w;
+		}
+
+		int bottom() {
+			return y + h;
+		}
+
+		boolean contains(double mx, double my) {
+			return mx >= x && mx <= right() && my >= y && my <= bottom();
+		}
 	}
 
 	private static String statusKey(BestiaryTabState.Entry entry) {

@@ -12,6 +12,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import java.util.Set;
 
 public class BestiaryTabController implements IProgressTab {
+	static final float PREVIEW_DRAG_ROTATION_SPEED = 0.02F;
+	private static final float PREVIEW_SCROLL_ZOOM_SPEED = 0.15F;
+
 	private final BestiaryTabState state = new BestiaryTabState();
 
 	@Override
@@ -57,17 +60,35 @@ public class BestiaryTabController implements IProgressTab {
 		BestiaryTabState.Entry entry = BestiaryTabView.entryUnder(ctx, state, mx, my);
 		if (entry != null) {
 			state.select(entry);
+			return true;
+		}
+		if (BestiaryTabView.isOverPreview(ctx, state, mx, my)) {
+			state.previewDragging = true;
+			state.previewDragMode = BestiaryTabState.PreviewDragMode.ROTATE;
+			state.previewDragLastX = mx;
+			state.previewDragLastY = my;
+			return true;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean mouseReleased(ProgressScreenContext ctx, double mx, double my, int btn) {
+		if (btn == 0) {
+			state.previewDragging = false;
+			state.previewDragMode = BestiaryTabState.PreviewDragMode.NONE;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean mouseDragged(ProgressScreenContext ctx, double mx, double my, int btn, double dx, double dy) {
+		if (state.previewDragging && btn == 0) {
+			applyPreviewRotation(state, mx - state.previewDragLastX, my - state.previewDragLastY);
+			state.previewDragLastX = mx;
+			state.previewDragLastY = my;
+			return true;
+		}
 		return false;
 	}
 
@@ -77,6 +98,9 @@ public class BestiaryTabController implements IProgressTab {
 		if (BestiaryTabView.isOverList(ctx, mx, my)) {
 			int max = Math.max(0, BestiaryTabView.contentHeight(state) - BestiaryTabView.listHeight(ctx));
 			state.listScroll = Math.max(0, Math.min(max, state.listScroll + scrollAmount));
+		} else if (BestiaryTabView.isOverPreview(ctx, state, mx, my)) {
+			state.previewZoom = BestiaryEntityPreview.clampZoom(
+					state.previewZoom + (float) delta * PREVIEW_SCROLL_ZOOM_SPEED);
 		} else {
 			state.infoScroll = Math.max(0, state.infoScroll + scrollAmount);
 		}
@@ -86,5 +110,13 @@ public class BestiaryTabController implements IProgressTab {
 	@Override
 	public PanZoomState getPanZoomState() {
 		return null;
+	}
+
+	static void applyPreviewRotation(BestiaryTabState state, double dx, double dy) {
+		if (state.previewDragMode != BestiaryTabState.PreviewDragMode.ROTATE) {
+			return;
+		}
+		state.previewRotationAngle += (float) dx * PREVIEW_DRAG_ROTATION_SPEED;
+		state.previewPitchAngle -= (float) dy * PREVIEW_DRAG_ROTATION_SPEED;
 	}
 }
