@@ -47,6 +47,11 @@ interface BucketChange {
   afterBucketId: string;
 }
 
+interface BucketCreateChange {
+  kind: 'bucket-create-change';
+  bucket: MaterialAtlasBucketModel;
+}
+
 interface ParentChange {
   kind: 'parent-change';
   id: string;
@@ -77,7 +82,7 @@ interface MaterialRemoveChange {
   afterEntries: MaterialAtlasEntryModel[];
 }
 
-type HistoryChange = PositionChange | BucketChange | ParentChange | AutoPositionChange | MaterialGroupPositionChange | MaterialRemoveChange;
+type HistoryChange = PositionChange | BucketChange | BucketCreateChange | ParentChange | AutoPositionChange | MaterialGroupPositionChange | MaterialRemoveChange;
 
 interface DragState {
   kind: Exclude<SelectionKind, 'create-entry'>;
@@ -185,6 +190,9 @@ function render(): void {
           ${workspace.paths.map(path => pathButton(path)).join('')}
           <button class="branch-button ${selection.kind === 'create-entry' ? 'selected' : ''}" data-select-kind="create-entry" data-select-id="new">
             <span>Create Entry</span><b>+</b>
+          </button>
+          <button class="branch-button" data-action="create-category">
+            <span>Create Category</span><b>+</b>
           </button>
         </div>
         <div class="skill-list">
@@ -764,6 +772,9 @@ function handleAction(action: string): void {
     case 'create-material':
       createMaterial();
       return;
+    case 'create-category':
+      createMaterialCategory();
+      return;
   }
 }
 
@@ -939,6 +950,32 @@ function createMaterial(): void {
   render();
 }
 
+function createMaterialCategory(): void {
+  const path = currentPath();
+  const center = currentViewportGraphCenter();
+  const id = uniqueBucketId('new_category');
+  const label = `New Category ${path.buckets.length + 1}`;
+  const color = activePath === 'UNSTAINED' ? '0xFF9EC8D8' : '0xFFD99B2D';
+  const bucket: MaterialAtlasBucketModel = {
+    path: activePath,
+    id,
+    label,
+    color,
+    centerX: center.x,
+    centerY: center.y,
+    plaqueX: center.x,
+    plaqueY: center.y - 70
+  };
+  path.buckets.push(bucket);
+  undoStack.push({ kind: 'bucket-create-change', bucket: { ...bucket } });
+  redoStack = [];
+  selection = { kind: 'label-plaque', id };
+  selectedMaterialIds = new Set();
+  preview = null;
+  statusText = `Created material category ${label}.`;
+  renderPreservingGraphViewport(captureCurrentGraphViewport());
+}
+
 async function runPreview(): Promise<void> {
   if (!workspace) return;
   isBusy = true;
@@ -991,6 +1028,10 @@ function undoMovement(): void {
   if (change.kind === 'bucket-change') {
     setEntryBucket(change.id, change.beforeBucketId);
     statusText = `Undid bucket change for ${change.id}.`;
+  } else if (change.kind === 'bucket-create-change') {
+    removeBucket(change.bucket.id);
+    selection = { kind: 'material', id: currentPath().entries[0]?.id ?? '' };
+    statusText = `Removed category ${change.bucket.label}.`;
   } else if (change.kind === 'parent-change') {
     setEntryParents(change.id, change.beforeParentIds);
     statusText = `Undid parent change for ${change.id}.`;
@@ -1021,6 +1062,10 @@ function redoMovement(): void {
   if (change.kind === 'bucket-change') {
     setEntryBucket(change.id, change.afterBucketId);
     statusText = `Redid bucket change for ${change.id}.`;
+  } else if (change.kind === 'bucket-create-change') {
+    restoreBucket(change.bucket);
+    selection = { kind: 'label-plaque', id: change.bucket.id };
+    statusText = `Restored category ${change.bucket.label}.`;
   } else if (change.kind === 'parent-change') {
     setEntryParents(change.id, change.afterParentIds);
     statusText = `Redid parent change for ${change.id}.`;
@@ -1138,6 +1183,17 @@ function setPosition(kind: Exclude<SelectionKind, 'create-entry'>, id: string, p
 function setEntryBucket(id: string, bucketId: string): void {
   const entry = currentPath().entries.find(candidate => candidate.id === id);
   if (entry) entry.bucketId = bucketId;
+}
+
+function removeBucket(id: string): void {
+  const path = currentPath();
+  path.buckets = path.buckets.filter(bucket => bucket.id !== id);
+}
+
+function restoreBucket(bucket: MaterialAtlasBucketModel): void {
+  const path = currentPath();
+  if (path.buckets.some(candidate => candidate.id === bucket.id)) return;
+  path.buckets.push({ ...bucket });
 }
 
 function setEntryNodePosition(id: string, nodeX: number | null, nodeY: number | null): void {
@@ -1309,6 +1365,30 @@ function bucketOptions(selected: string): string {
 
 function bucketLabel(bucketId: string): string {
   return currentPath().buckets.find(bucket => bucket.id === bucketId)?.label ?? bucketId;
+}
+
+function uniqueBucketId(base: string): string {
+  const existing = new Set(currentPath().buckets.map(bucket => bucket.id));
+  if (!existing.has(base)) return base;
+  for (let i = 2; ; i += 1) {
+    const candidate = `${base}_${i}`;
+    if (!existing.has(candidate)) return candidate;
+  }
+}
+
+function currentViewportGraphCenter(): { x: number; y: number } {
+  const scroller = app.querySelector<HTMLElement>('.graph-scroll');
+  if (scroller) {
+    return {
+      x: Math.round((scroller.scrollLeft + scroller.clientWidth / 2) / graphZoom),
+      y: Math.round((scroller.scrollTop + scroller.clientHeight / 2) / graphZoom)
+    };
+  }
+  const path = currentPath();
+  return {
+    x: path.hubLabelX,
+    y: path.hubLabelY
+  };
 }
 
 function gateOptions(selected: MaterialGateType): string {

@@ -74,6 +74,11 @@ test('materials frontend exposes graph layers inspector creation and editor navi
   expect(source).toContain('afterBucketId');
   expect(source).toContain('setEntryBucket(change.id, change.beforeBucketId)');
   expect(source).toContain('setEntryBucket(change.id, change.afterBucketId)');
+  expect(source).toContain("kind: 'bucket-create-change'");
+  expect(source).toContain('data-action="create-category"');
+  expect(source).toContain('createMaterialCategory');
+  expect(source).toContain('removeBucket(change.bucket.id)');
+  expect(source).toContain('restoreBucket(change.bucket)');
   expect(source).toContain("kind: 'auto-position-change'");
   expect(source).toContain('beforeNodeX');
   expect(source).toContain('beforeNodeY');
