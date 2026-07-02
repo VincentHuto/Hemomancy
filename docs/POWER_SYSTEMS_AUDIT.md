@@ -4,6 +4,8 @@
 > **Scope:** Cross-system design audit of the three main player buff/bonus systems: Blood Manipulations, Harbinger Armor Sets, and Morphlings. Covers role comparison, overlap diagnosis, cleanup/cut targets, and the forward plan for coherent, balanced growth.
 > **Sources:** [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) §8 (Manipulations), §13 (Scars & Spores), §16 (Morphlings), §22 (Armor Sets); [MORPHLING_REFERENCE.md](MORPHLING_REFERENCE.md); current code anchors listed per section. Current code and data are authoritative where this document and older prose disagree.
 > **Status vocabulary:** `implemented` / `partial` / `dormant` / `planned`, matching HEMOMANCY_REFERENCE.md.
+> **Follow-on specs (2026-07-02):** [Rogue Hemomancer Wills](superpowers/specs/2026-07-02-rogue-hemomancer-wills-design.md) → [Fungal Scar Consolidation](superpowers/specs/2026-07-02-fungal-scar-consolidation-design.md) → [Morphling Fungal-Strain Reframe](superpowers/specs/2026-07-02-morphling-fungal-strain-reframe-design.md). These three cross-linked docs carry the morphling 12→8, fungal-scar 9→8, naming register, and the Wills ambusher system forward from this audit.
+> **Companion examination:** [BLOOD_MANIPULATION_EXAMINATION.md](BLOOD_MANIPULATION_EXAMINATION.md) — current-state deep dive on the manipulation (expenditure) system: the 60-entry catalog by tendency, acquisition lanes, modifier economy, and code-verified runway gaps.
 
 ---
 
@@ -83,7 +85,7 @@ Concrete migrations, ordered by severity. "Re-role" preserves the fantasy while 
 ### 3.2 MEDIUM — stacking discipline (shared mechanics, not nerf whack-a-mole)
 
 5. **One circulation for passive blood income.** Route all passive/reactive blood income (armor regen, morphling siphons, mask trickles, cradle leeching, routing trickle) through a single helper — working name `CirculationIncomeHelper` — with a per-second **circulation bandwidth** ceiling scaled by degree and the Capacity skill. Stacking income sources then yields diminishing returns instead of additive snowballing, and balance becomes one tunable number. `BloodVolumeEvents` and `BloodRoutingHelper` already centralize most of these paths, so this is a consolidation, not a rewrite. Theme: one blood, one circulation, finite flow.
-6. **One "Last Rite."** All death-prevention effects (Ink Mantle Reprieve, Split Husk, Silent Archon refusal) share a single tag and a single armed slot or shared cooldown group. The most recently equipped source arms; the others read as dormant in their tooltips. Doctrine: *your blood may refuse the return only once.*
+6. **One "Last Rite."** All death-prevention effects (Ink Mantle Reprieve, Winter Shroud Cryptobiosis, Silent Archon refusal — the fungal-scar Split Husk having since been cut as redundant) share a single tag and a single armed slot or shared cooldown group. The most recently equipped source arms; the others read as dormant in their tooltips. Doctrine: *your blood may refuse the return only once.*
 7. **Speed and toughness caps.** Keep collisions #6/#7 as-is mechanically, but clamp total bonus move/attack speed and toughness contributed by the triad (attribute-modifier group caps in `ArmorSetBonusHandler` + morphling effect application). Rename the Chitinite morphling's passive (e.g., *Sclerite Bulwark*) so the same effect name no longer appears in two systems.
 
 ### 3.3 Runway gaps inside single systems (not overlaps, but part of this audit)
@@ -183,7 +185,7 @@ Phased to match the alpha posture in [PUBLIC_ALPHA_READINESS.md](PUBLIC_ALPHA_RE
 
 - [ ] Adopt §4 ownership rules as the review checklist for new triad content.
 - [ ] Implement the circulation bandwidth helper and route Hematic Iron regen, Leeches siphon, Lodestone trickle, and cradle leeching through it.
-- [ ] Implement the shared Last Rite tag/cooldown across Ink Mantle, Split Husk, and Silent Archon refusal.
+- [ ] Implement the shared Last Rite tag/cooldown across Ink Mantle, Winter Shroud Cryptobiosis, and Silent Archon refusal.
 - [ ] Rename the Chitinite morphling passive so no effect name is shared across systems.
 
 ### Phase 2 — Collision migrations
@@ -217,4 +219,4 @@ Each phase should land with focused resource/source tests per repo convention an
 2. Does the Cradle count as a second morphling "slot" against the power budget, or as covenant infrastructure outside it? Current lean: infrastructure — it already pays staged blood upkeep.
 3. Do Saint Canon memories participate in triad Resonance, or stay outside it (they already ignore Dynamic Use)? Current lean: outside — imprinted, not aligned.
 4. Should hunger apply to wild-bound (Developing-capped) morphlings, or only Mature+? Starting gentler on early-game players is probably right.
-5. When scars get their tuning pass, do fungal scars keep their wildcard actives (Split Husk, Feeding Wake) or migrate those toward morphling/armor lanes as well? Deferred until the triad migrations land.
+5. When scars get their tuning pass, do fungal scars keep their wildcard actives (Feeding Wake, Cryostroma's conserve) or migrate those toward morphling/armor lanes as well? Deferred until the triad migrations land.
